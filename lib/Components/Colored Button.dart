@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/colors/color.dart';
+
 
 class ColoredButton extends StatelessWidget {
   final String text;
@@ -15,7 +17,8 @@ class ColoredButton extends StatelessWidget {
           height: 60,
           width: 400,
           decoration: BoxDecoration(
-              color: Color(0xffEF233c),
+              color: MyColors.red,
+              // color: Colors.transparent,
               borderRadius: BorderRadius.circular(10)),
           child: Center(
               child: Text(text,
