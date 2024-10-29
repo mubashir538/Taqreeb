@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
+import 'package:taqreeb/theme/images.dart';
 
 class Header extends StatelessWidget {
   final String heading;
@@ -16,10 +17,15 @@ class Header extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     bool hasSomething =
         heading.isNotEmpty || para.isNotEmpty || image.isNotEmpty;
-
+    double MaximumThing;
+    if (screenWidth > screenHeight) {
+      MaximumThing = screenWidth;
+    } else {
+      MaximumThing = screenHeight;
+    }
     return Container(
       height: hasSomething ? null : screenHeight * 0.09,
-      width: double.infinity,
+      width: screenWidth,
       padding:
           EdgeInsets.symmetric(horizontal: screenWidth * 0.02, vertical: 3),
       decoration: BoxDecoration(
@@ -48,13 +54,18 @@ class Header extends StatelessWidget {
               Icon(Icons.settings, color: MyColors.white, size: 40),
             ],
           ),
+          // for png image
+          // Image.asset(MyImages.Logo),
+          Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwG60sgdJ0mekPNNLzmpn3hrp6rwHt99pYBA&s')
+          // for svg image
+          // SvgPicture.asset(MyImages.FreelancerSignup),
           heading.isNotEmpty
               ? Column(children: [
                   SizedBox(height: 10),
                   Text(
                     heading,
                     style: GoogleFonts.montserrat(
-                        fontSize: 33,
+                        fontSize: MaximumThing * 0.02,
                         fontWeight: FontWeight.w700,
                         color: MyColors.Yellow),
                   ),

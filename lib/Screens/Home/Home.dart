@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/function.dart';
 import 'package:taqreeb/Components/header.dart';
 
 class Home extends StatelessWidget {
@@ -12,7 +13,9 @@ class Home extends StatelessWidget {
       // appBar: AppBar(title: const Text('Taqreeb')),
       body: Column(
         children: [
-          Header(heading: 'Taqreeb'),
+          Header(),
+          Function1(),
+          ColoredButton(text: 'Hello')
         ],
       ),
     );
