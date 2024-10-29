@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
 
 dev_dependencies:
@@ -29,4 +30,5 @@ flutter:
         weight: 200
       - asset: assets\fonts\Mosk Light 300.ttf
         weight: 300
-        
+  assets:
+    - assets/images/
