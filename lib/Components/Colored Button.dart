@@ -5,7 +5,7 @@ import 'package:taqreeb/colors/color.dart';
 
 class ColoredButton extends StatelessWidget {
   final String text;
-  ColoredButton({required String this.text});
+  const ColoredButton({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
