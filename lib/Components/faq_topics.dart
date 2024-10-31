@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/colors/color.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class VenueSelection extends StatelessWidget {
   final String text;
