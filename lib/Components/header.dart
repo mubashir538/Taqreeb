@@ -24,7 +24,7 @@ class Header extends StatelessWidget {
       MaximumThing = screenHeight;
     }
     return Container(
-      height: hasSomething ? null : screenHeight * 0.09,
+      height: hasSomething ? null : screenHeight * 0.009,
       width: screenWidth,
       padding:
           EdgeInsets.symmetric(horizontal: screenWidth * 0.02, vertical: 3),
@@ -56,7 +56,11 @@ class Header extends StatelessWidget {
           ),
           // for png image
           // Image.asset(MyImages.Logo),
+<<<<<<< Updated upstream
           // Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwG60sgdJ0mekPNNLzmpn3hrp6rwHt99pYBA&s')
+=======
+          Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwG60sgdJ0mekPNNLzmpn3hrp6rwHt99pYBA&s'),
+>>>>>>> Stashed changes
           // for svg image
           // SvgPicture.asset(MyImages.FreelancerSignup),
           heading.isNotEmpty
