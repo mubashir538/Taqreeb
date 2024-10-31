@@ -90,7 +90,7 @@ class Header extends StatelessWidget {
               ? Column(
                   children: [
                     SizedBox(height: 10),
-                    SvgPicture.asset(image),
+                    SvgPicture.asset(image,height: 15,width: 20,),
                     SizedBox(height: 15),
                   ],
                 )

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class IconedButton extends StatelessWidget {
   final String text;
-  IconedButton({required this.text});
+  const IconedButton({required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class IconedButton extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: 12,
               fontWeight: FontWeight.w200,
-              color: Colors.white,                                 X
+              color: Colors.white,
             ),
           ),
         ),
