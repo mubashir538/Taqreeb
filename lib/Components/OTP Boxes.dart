@@ -8,93 +8,81 @@ class OTPBoxes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center, 
         children: [
-          SizedBox(
-          width: 200,
-        ),
           Container(
             height: 63,
             width: 63.99,
             decoration: BoxDecoration(
-            color:Color(0xff242526),
-            borderRadius: BorderRadius.circular(10),
-            
-      ),
-      
-      child: Center(
-        child: Text("4",
+              color: Color(0xff242526),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                "4",
                 style: GoogleFonts.montserrat(
                   fontSize: 15,
-                  fontWeight: FontWeight.w400
+                  fontWeight: FontWeight.w400,
                 ),
-                ),
-      ),
+              ),
+            ),
           ),
-        SizedBox(
-          width: 20,
-        ),
-            Container(
-        height: 63,
-        width: 63.99,
-        decoration: BoxDecoration(
-          color:Color(0xff242526),
-          borderRadius: BorderRadius.circular(10),
-      
-
-        ),
-        child: Center(
-          child: Text("4",
-                style: GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400
-                ),
-                ),
-        ),
+          SizedBox(width: 20),
+          Container(
+            height: 63,
+            width: 63.99,
+            decoration: BoxDecoration(
+              color: Color(0xff242526),
+              borderRadius: BorderRadius.circular(10),
             ),
-            SizedBox(
-          width: 20,
-        ),
-            Container(
-              height: 63,
-              width: 63.99,
-              decoration: BoxDecoration(
-                color:Color(0xff242526),
-                borderRadius: BorderRadius.circular(10),
-                
-
-              ),
-              child: Center(
-                child: Text("4",
+            child: Center(
+              child: Text(
+                "4",
                 style: GoogleFonts.montserrat(
                   fontSize: 15,
-                  fontWeight: FontWeight.w400
-                ),
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
-            SizedBox(
-          width: 20,
-        ),
-           Container(
-              height: 63,
-              width: 63.99,
-              decoration: BoxDecoration(
-                color:Color(0xff242526),
-                borderRadius: BorderRadius.circular(10),
-            
-
-              ),
-              child: Center(
-                child: Text("4",
+          ),
+          SizedBox(width: 20),
+          Container(
+            height: 63,
+            width: 63.99,
+            decoration: BoxDecoration(
+              color: Color(0xff242526),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                "4",
                 style: GoogleFonts.montserrat(
                   fontSize: 15,
-                  fontWeight: FontWeight.w400
-                ),
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
-          ],
-        ),
-        );
+          ),
+          SizedBox(width: 20),
+          Container(
+            height: 63,
+            width: 63.99,
+            decoration: BoxDecoration(
+              color: Color(0xff242526),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                "4",
+                style: GoogleFonts.montserrat(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

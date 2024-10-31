@@ -23,7 +23,11 @@ class ColoredButton extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: Color(
                         0xffEDF2F4,
-                      ))))),
+                      ),
+                      ),
+                      ),
+                      ),
+                      ),
     );
   }
 }
