@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart'; 
 import 'package:taqreeb/Components/Border%20Button.dart'; 
 import 'package:taqreeb/Components/Message%20Chats,dart';
@@ -33,6 +33,7 @@ class Home extends StatelessWidget {
 
     return Scaffold(
 
+
       body: SingleChildScrollView(),
       backgroundColor: MyColors.Dark,
       body: Column(
@@ -51,6 +52,10 @@ class Home extends StatelessWidget {
           ,
           ForgotPassword(),
           Navbar()
+          Center(
+        child: CategoryIcon(
+          label: 'Caterers',
+        )
         ],
 
       ),
