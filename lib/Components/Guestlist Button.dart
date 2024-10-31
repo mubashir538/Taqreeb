@@ -19,6 +19,7 @@ class GuestListButton extends StatelessWidget {
           color: Color(0xFF303030), 
           borderRadius: BorderRadius.circular(10), 
         ),
+        
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10), // name aur number se phle ki jagaj
           child: Column(
