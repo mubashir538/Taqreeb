@@ -1,10 +1,6 @@
 class MyImages {
-  static const String BusinessSignup =
-<<<<<<< Updated upstream
-      'images/screenImages/businesssignup.svg';  
-=======
+  static const String BusinessSignup =  
       'images/screenImages/businesssignup.svg'; //'assets/images/screenImages/businesssignup.svg 
->>>>>>> Stashed changes
   static const String BusinessSignup4 =
       'images/screenImages/businesssignup4.svg';//'assets/images/screenImages/businesssignup4.svg 
   static const String CheckList = 'images/screenImages/checklist.svg';//'assets/images/screenImages/checklist.svg 
