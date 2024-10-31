@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Cake%20Box.dart';
 import 'package:taqreeb/Components/Cart%20Item.dart';
-import 'package:taqreeb/Components/Checklist%20Items%20Adder.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/OTP%20Boxes.dart';
 import 'package:taqreeb/Components/Selection%20Dialog.dart';

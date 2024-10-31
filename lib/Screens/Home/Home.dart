@@ -18,7 +18,6 @@ import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 import 'package:taqreeb/Components/Cake%20Box.dart';
 import 'package:taqreeb/Components/Cart%20Item.dart';
-import 'package:taqreeb/Components/Checklist%20Items%20Adder.dart';
 import 'package:taqreeb/Components/OTP%20Boxes.dart';
 import 'package:taqreeb/Components/Selection%20Dialog.dart';
 import 'package:taqreeb/screen/forgot%20password.dart';
@@ -32,9 +31,6 @@ class Home extends StatelessWidget {
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
-
-
-      body: SingleChildScrollView(),
       backgroundColor: MyColors.Dark,
       body: Column(
         children: [
@@ -51,11 +47,11 @@ class Home extends StatelessWidget {
           )
           ,
           ForgotPassword(),
-          Navbar()
+          Navbar(),
           Center(
         child: CategoryIcon(
           label: 'Caterers',
-        )
+        ))
         ],
 
       ),
