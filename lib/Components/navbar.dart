@@ -3,8 +3,21 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
-class Navbar extends StatelessWidget {
+class Navbar extends StatefulWidget {
   const Navbar({super.key});
+
+  @override
+  State<Navbar> createState() => _NavbarState();
+}
+
+class _NavbarState extends State<Navbar> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,28 +26,37 @@ class Navbar extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    return Container(
-        width: double.infinity,
-        height: screenHeight * 0.09,
-        decoration: BoxDecoration(
-            color: MyColors.red,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-              )
-            ]),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Flexible(child: SvgPicture.asset(MyIcons.home)),
-            Flexible(child: SvgPicture.asset(MyIcons.chats)),
-            Flexible(child: SvgPicture.asset(MyIcons.events)),
-            Flexible(child: SvgPicture.asset(MyIcons.profile)),
-          ],
-        ));
+    return BottomAppBar(
+      color: Colors.redAccent,
+      shape: CircularNotchedRectangle(),
+      notchMargin: 8.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          InkWell(
+            child: SvgPicture.asset(MyIcons.home,
+                color: _selectedIndex == 0 ? Colors.yellow : Colors.white),
+            onTap: () => _onItemTapped(0),
+          ),
+
+          InkWell(
+            onTap: () => _onItemTapped(1),
+            child: SvgPicture.asset(MyIcons.chats,
+                color: _selectedIndex == 1 ? Colors.yellow : Colors.white),
+          ),
+          SizedBox(width: 48.0), // space for the floating action button
+          InkWell(
+            child: SvgPicture.asset(MyIcons.events,
+                color: _selectedIndex == 2 ? Colors.yellow : Colors.white),
+            onTap: () => _onItemTapped(2),
+          ),
+          InkWell(
+            child: SvgPicture.asset(MyIcons.profile,
+                color: _selectedIndex == 3 ? Colors.yellow : Colors.white),
+            onTap: () => _onItemTapped(3),
+          ),
+        ],
+      ),
+    );
   }
 }
