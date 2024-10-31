@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Screens/Home/Home.dart';
+import 'package:taqreeb/Screens/Home/Home.dart';
+import 'package:taqreeb/sign_up_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,7 +12,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Home(),
+      home: SignUpScreen(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),

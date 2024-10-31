@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/colors/color.dart';
+import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class EditIcon extends StatelessWidget {
   const EditIcon({Key? key}) : super(key: key);

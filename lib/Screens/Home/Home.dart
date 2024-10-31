@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/Components/category_icon.dart';
 
 class Home extends StatelessWidget {
-  final TextEditingController firstNameController = TextEditingController();
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black, // Set a background color
       appBar: AppBar(
-        title: Text('Enter Your First Name'),
-        backgroundColor: Colors.black,
+        title: const Text('Home Screen'),
+        backgroundColor: Colors.black, // Customize AppBar color
       ),
-      backgroundColor: Colors.black, // Matches the background color
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child:
-            TextBox(controller: firstNameController), // Your TextBox component
+      body: Center(
+        child: CategoryIcon(
+          label: 'Caterers',
+        ),
       ),
     );
   }
