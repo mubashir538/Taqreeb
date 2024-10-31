@@ -54,11 +54,6 @@ class Header extends StatelessWidget {
               Icon(Icons.settings, color: MyColors.white, size: 40),
             ],
           ),
-          // for png image
-          // Image.asset(MyImages.Logo),
-          Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwG60sgdJ0mekPNNLzmpn3hrp6rwHt99pYBA&s')
-          // for svg image
-          // SvgPicture.asset(MyImages.FreelancerSignup),
           heading.isNotEmpty
               ? Column(children: [
                   SizedBox(height: 10),
