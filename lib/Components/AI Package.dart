@@ -21,36 +21,50 @@ class AIPackage extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     TextStyle heading = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.02,
-        fontWeight: FontWeight.w500,
-        color: Colors.white);
-    TextStyle body = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.02,
+        fontSize: MaximumThing * 0.015,
         fontWeight: FontWeight.w400,
         color: Colors.white);
+    TextStyle body = GoogleFonts.montserrat(
+        fontSize: MaximumThing * 0.015,
+        fontWeight: FontWeight.w300,
+        color: Colors.white);
+
     return Container(
-      width: screenWidth * 0.9,
-      height: screenHeight * 0.3,
+      width: screenWidth * 0.8,
+      height: screenHeight * 0.35,
+      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+      padding: EdgeInsets.all(MaximumThing * 0.02),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 4,
+                spreadRadius: 1,
+                offset: Offset(2, 2))
+          ],
           color: MyColors.DarkLighter),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Price',
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.03,
+                      fontSize: MaximumThing * 0.026,
                       fontWeight: FontWeight.w600,
                       color: Colors.white)),
               Text(price,
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.03,
+                      fontSize: MaximumThing * 0.026,
                       fontWeight: FontWeight.w600,
                       color: Colors.white)),
             ],
           ),
+          SizedBox(height: screenHeight * 0.01,),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Events',
@@ -63,6 +77,7 @@ class AIPackage extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Catering Cost', style: heading),
               Text(
@@ -72,6 +87,7 @@ class AIPackage extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Venue Cost', style: heading),
               Text(
@@ -81,6 +97,7 @@ class AIPackage extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Photographer Included',
@@ -92,8 +109,16 @@ class AIPackage extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(height: 10),
-          ColoredButton(text: 'See Details')
+          SizedBox(height: screenHeight * 0.01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ColoredButton(
+                text: 'See Details',
+                width: screenWidth * 0.4,
+              ),
+            ],
+          )
         ],
       ),
     );
