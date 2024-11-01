@@ -25,8 +25,8 @@ class HomePageProducts extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
+        color: MyColors.whiteDarker,
       ),
-      color: MyColors.whiteDarker,
       height: screenHeight * 0.4,
       width: screenWidth * 0.4,
       child: Column(
@@ -34,7 +34,8 @@ class HomePageProducts extends StatelessWidget {
           Image.network(image,
               height: MaximumThing * 0.2,
               width: MaximumThing * 0.2,
-              fit: BoxFit.cover, loadingBuilder: (BuildContext context,
+              fit: BoxFit.cover, 
+              loadingBuilder: (BuildContext context,
                   Widget child, ImageChunkEvent? loadingProgress) {
             if (loadingProgress == null) return child;
             return Center(

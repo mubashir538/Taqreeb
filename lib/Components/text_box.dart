@@ -2,34 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class TextBox extends StatelessWidget {
+class MyTextBox extends StatelessWidget {
   final String hint;
-  const TextBox({super.key,required this.hint});
+  const MyTextBox({super.key, required this.hint});
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
     return Container(
-      height: 60,
-      width: 400,
+      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+      height: screenHeight * 0.06,
+      width: screenWidth * 0.9,
       decoration: BoxDecoration(
         color: MyColors.DarkLighter,
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 4,
+              spreadRadius: 1,
+              offset: Offset(2, 2))
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: TextField(
           style: GoogleFonts.montserrat(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Color(0xffEDF2F4), // Text color
+            fontSize: MaximumThing * 0.018,
+            fontWeight: FontWeight.w400,
+            color: MyColors.white,
           ),
           decoration: InputDecoration(
-            hintText: hint, // This will show as a placeholder
+            hintText: hint,
             hintStyle: GoogleFonts.montserrat(
-              color: MyColors.white.withOpacity(0.6), // Hint text color
-              fontSize: 18,
+              color: MyColors.white.withOpacity(0.6),
+              fontSize: MaximumThing * 0.015,
             ),
-            border: InputBorder.none, // Remove the default border
+            border: InputBorder.none,
           ),
         ),
       ),
