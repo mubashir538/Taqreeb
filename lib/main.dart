@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/OTP%20Screen.dart';
-import 'package:taqreeb/Profile%20Screen.dart';
+import 'package:taqreeb/BusinessSignup1.dart';
 import 'Screens/Home/Home.dart';
 
 void main() {
@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ProfileScreen(),
+      home: BusinessSignup1(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
