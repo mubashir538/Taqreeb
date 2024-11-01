@@ -7,7 +7,6 @@ class SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 0.8;
 
     return Center(
       child: Container(

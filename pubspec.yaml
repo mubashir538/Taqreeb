@@ -19,16 +19,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+
   fonts:
   - family: Mosk
     fonts:
-      - asset: assets\fonts\Mosk Bold 700.ttf
+      - asset: assets/fonts/Mosk Bold 700.ttf
         weight: 700
-      - asset: assets\fonts\Mosk Extra-Bold 800.ttf
+      - asset: assets/fonts/Mosk Extra-Bold 800.ttf
         weight: 800
-      - asset: assets\fonts\Mosk Extra-Light 200.ttf
+      - asset: assets/fonts/Mosk Extra-Light 200.ttf
         weight: 200
-      - asset: assets\fonts\Mosk Light 300.ttf
+      - asset: assets/fonts/Mosk Light 300.ttf
         weight: 300
-  assets:
-    - assets/images/
+
