@@ -15,18 +15,24 @@ class SendMessage extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Container(
-      margin: EdgeInsets.only(bottom: MaximumThing * 0.01),
+      padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+      margin: EdgeInsets.only(bottom: MaximumThing * 0.02),
       width: screenWidth * 0.9,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
             time,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w300,
-              fontSize: MaximumThing * 0.017,
+              fontSize: MaximumThing * 0.013,
             ),
           ),
+          SizedBox(
+            width: 15,),
           Container(
+            constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
+            padding: EdgeInsets.all(MaximumThing * 0.02),
             decoration: BoxDecoration(
               color: MyColors.red,
               borderRadius: BorderRadius.only(
@@ -36,14 +42,14 @@ class SendMessage extends StatelessWidget {
                 bottomRight: Radius.circular(0),
               ),
             ),
-            child: Center(
-              child: Text(
-                text,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w200,
-                  color: MyColors.white,
-                ),
+            child: Text(
+              text,
+              softWrap: true,
+              textAlign: TextAlign.end,
+              style: GoogleFonts.montserrat(
+                fontSize: MaximumThing * 0.02,
+                fontWeight: FontWeight.w200,
+                color: MyColors.white,
               ),
             ),
           ),

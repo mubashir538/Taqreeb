@@ -15,37 +15,43 @@ class RecieveMessage extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Container(
-      margin: EdgeInsets.only(bottom: MaximumThing * 0.01),
+      padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+      margin: EdgeInsets.only(bottom: MaximumThing * 0.02),
       width: screenWidth * 0.9,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(MaximumThing * 0.01),
+            constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
+            padding: EdgeInsets.all(MaximumThing * 0.02),
             decoration: BoxDecoration(
-              color: MyColors.red,
+              color: MyColors.DarkLighter,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(0), // Left side more oval-like
-                bottomLeft: Radius.circular(15), // Left side more oval-like
-                topRight: Radius.circular(30), // Right side slightly curved
-                bottomRight: Radius.circular(30), // Right side slightly curved
+                topLeft: Radius.circular(0),
+                bottomLeft: Radius.circular(15),
+                topRight: Radius.circular(30),
+                bottomRight: Radius.circular(30),
               ),
             ),
-            child: Center(
-              child: Text(
-                text,
-                style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.025,
-                  fontWeight: FontWeight.w200,
-                  color: MyColors.white,
-                ),
+            child: Text(
+              text,
+              softWrap: true,
+              textAlign: TextAlign.start,
+              style: GoogleFonts.montserrat(
+                fontSize: MaximumThing * 0.02,
+                fontWeight: FontWeight.w200,
+                color: MyColors.white,
               ),
             ),
+          ),
+          SizedBox(
+            width: 15,
           ),
           Text(
             time,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w300,
-              fontSize: MaximumThing * 0.017,
+              fontSize: MaximumThing * 0.013,
             ),
           )
         ],

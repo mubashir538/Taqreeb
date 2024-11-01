@@ -59,6 +59,7 @@ class Header extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.02),
                   Text(
                     heading,
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                         fontSize: MaximumThing * 0.025,
                         fontWeight: FontWeight.w700,
@@ -92,7 +93,7 @@ class Header extends StatelessWidget {
                   children: [
                     SizedBox(height: screenHeight * 0.01),
                     SvgPicture.asset(image, height: screenHeight * 0.2),
-                    SizedBox(height: screenHeight* 0.03),
+                    SizedBox(height: screenHeight * 0.03),
                   ],
                 )
               : Container(),

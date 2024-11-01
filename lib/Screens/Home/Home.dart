@@ -20,21 +20,7 @@ class Home extends StatelessWidget {
       body: Column(
         children: [
           Header(),
-          Function1(),
-          ColoredButton(text: 'Hello'),
-          ProgressBar(Progress: 3),
-          HomePageProducts(
-            category: 'Spa',
-            name: 'Taqreeb',
-            price: 'Rs. 10,000 - 15,000',
-            image:
-                'https://img.freepik.com/premium-photo/young-man-barbershop-trimming-shaving_752325-15382.jpg?semt=ais_hybrid',
-          ),
-          Navbar(),
-          Center(
-        child: CategoryIcon(
-          label: 'Caterers',
-        ))
+          CategoryIcon(label: 'Venue')
         ],
 
       ),

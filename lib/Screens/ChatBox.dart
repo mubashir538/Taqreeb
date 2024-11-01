@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/message.dart';
@@ -87,12 +89,49 @@ class _ChatBoxState extends State<ChatBox> {
         Expanded(
           child: ListView.builder(
             itemBuilder: (context, index) => messages[index].isSent
-                ? RecieveMessage(
+                ? SendMessage(
                     text: messages[index].text, time: messages[index].time)
-                : SendMessage(
+                : RecieveMessage(
                     text: messages[index].text, time: messages[index].time),
-            itemCount: 10,
+            itemCount: 5,
           ),
+        ),
+        SizedBox(
+          width: screenWidth * 0.9,
+          height: screenHeight * 0.06,
+          child: TextField(
+              cursorColor: MyColors.white,
+              style: GoogleFonts.montserrat(
+                fontSize: MaximumThing * 0.015,
+                fontWeight: FontWeight.w400,
+              ),
+              decoration: InputDecoration(
+                  fillColor: MyColors.DarkLighter,
+                  filled: true,
+                  suffixIcon: Icon(
+                    Icons.mic,
+                    color: MyColors.white,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.attachment_rounded,
+                    color: MyColors.Yellow,
+                    size: MaximumThing * 0.03,
+                  ),
+                  hintText: "Type Message",
+                  hintStyle: GoogleFonts.montserrat(
+                    fontSize: MaximumThing * 0.015,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: MyColors.white,
+                        width: 0.1,
+                        style: BorderStyle.solid),
+                    borderRadius: BorderRadius.circular(30),
+                  ))),
+        ),
+        SizedBox(
+          height: MaximumThing * 0.02,
         )
       ]),
     );
