@@ -1,4 +1,5 @@
 class MyIcons {
+  static const String tick ="images/tick.svg";//"assets/images/tick.svg
   static const String radioButton ="images/radiobutton.svg";//"assets/images/radiobutton.svg
   static const String home = "images/home.svg";//"assets/images/home.svg
   static const String accounts = "images/Accounting.svg";//"assets/images/Accounting.svg
