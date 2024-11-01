@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/theme/color.dart';
 
 class CakeBox extends StatelessWidget {
   const CakeBox({super.key});

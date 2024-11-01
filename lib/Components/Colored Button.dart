@@ -4,30 +4,35 @@ import 'package:taqreeb/theme/color.dart';
 
 class ColoredButton extends StatelessWidget {
   final String text;
-  const ColoredButton({required this.text, super.key});
+  final double height;
+  final double width; 
+  const ColoredButton({required this.text, super.key,this.height = 0, this.width = 0});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-          height: 60,
-          width: 400,
-          decoration: BoxDecoration(
-              color: MyColors.red,
-              // color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10)),
-          child: Center(
-              child: Text(text,
-                  style: GoogleFonts.montserrat(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Color(
-                        0xffEDF2F4,
-                      ),
-                      ),
-                      ),
-                      ),
-                      ),
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+      height: height != 0 ? height : screenHeight * 0.06,
+      width: width != 0 ? width : screenWidth * 0.9,
+      decoration: BoxDecoration(
+          color: MyColors.red,
+          // color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10)),
+      child: Center(
+        child: Text(
+          text,
+          style: GoogleFonts.montserrat(
+            fontSize: MaximumThing*0.018,
+            fontWeight: FontWeight.w500,
+            color: MyColors.white,
+          ),
+        ),
+      ),
     );
   }
 }
