@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:taqreeb/Components/Border%20Button.dart';
-import 'package:taqreeb/Components/Cake%20Box.dart';
-import 'package:taqreeb/Components/Cart%20Item.dart';
-import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/OTP%20Boxes.dart';
-import 'package:taqreeb/Components/Selection%20Dialog.dart';
-import 'package:taqreeb/Components/abc.dart';
-import 'package:taqreeb/Components/header.dart';
-import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/theme/images.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:taqreeb/Components/Border%20Button.dart';
+// import 'package:taqreeb/Components/Cake%20Box.dart';
+// import 'package:taqreeb/Components/Cart%20Item.dart';
+// import 'package:taqreeb/Components/Colored%20Button.dart';
+// import 'package:taqreeb/Components/OTP%20Boxes.dart';
+// import 'package:taqreeb/Components/Selection%20Dialog.dart';
+// import 'package:taqreeb/Components/abc.dart';
+// import 'package:taqreeb/Components/header.dart';
+// import 'package:taqreeb/theme/color.dart';
+// import 'package:taqreeb/theme/icons.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:taqreeb/theme/images.dart';
 
 // class ForgotPassword extends StatelessWidget {
 //   const ForgotPassword({super.key});
@@ -205,81 +205,81 @@ import 'package:taqreeb/theme/images.dart';
           // Wrapping OTPBoxes in Center
          
 
-class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({super.key});
+// class ForgotPassword extends StatelessWidget {
+//   const ForgotPassword({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-   body: Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-Header(
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//    body: Container(
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+// Header(
   
-  heading: "Create New Password",
+//   heading: "Create New Password",
   
-  para: "This password should br different  from the previous password",
+//   para: "This password should br different  from the previous password",
   
-),
-  SizedBox(height: 50),
-  Column(
-    children: [
-      Row(
+// ),
+//   SizedBox(height: 50),
+//   Column(
+//     children: [
+//       Row(
   
-    children: [
-      SizedBox(width: 50,),
-      SvgPicture.asset(MyIcons.tick,
-       height: 20,
-               width: 20,
-               color: MyColors.white),
-               SizedBox(width: 20,),
-               Text("At least 8 characters"),
-    ]
-  ),
+//     children: [
+//       SizedBox(width: 50,),
+//       SvgPicture.asset(MyIcons.tick,
+//        height: 20,
+//                width: 20,
+//                color: MyColors.white),
+//                SizedBox(width: 20,),
+//                Text("At least 8 characters"),
+//     ]
+//   ),
 
-  SizedBox(height: 10,),
-  Row(
+//   SizedBox(height: 10,),
+//   Row(
   
-    children: [
-      SizedBox(width: 50,),
-      SvgPicture.asset(MyIcons.tick,
-       height: 20,
-               width: 20,
-               color: MyColors.white),
-               SizedBox(width: 20,),
-               Text("At least 1 number"),
-    ]
-  ),
-    SizedBox(height: 10,),
-  Row(
+//     children: [
+//       SizedBox(width: 50,),
+//       SvgPicture.asset(MyIcons.tick,
+//        height: 20,
+//                width: 20,
+//                color: MyColors.white),
+//                SizedBox(width: 20,),
+//                Text("At least 1 number"),
+//     ]
+//   ),
+//     SizedBox(height: 10,),
+//   Row(
   
-    children: [
-      SizedBox(width: 50,),
-      SvgPicture.asset(MyIcons.tick,
-       height: 20,
-               width: 20,
-               color: MyColors.white),
-               SizedBox(width: 20,),
-               Text("Both upper and lower case letters"),
-    ]
-  ),
-    ],
-  ),
-  SizedBox(height: 50),
+//     children: [
+//       SizedBox(width: 50,),
+//       SvgPicture.asset(MyIcons.tick,
+//        height: 20,
+//                width: 20,
+//                color: MyColors.white),
+//                SizedBox(width: 20,),
+//                Text("Both upper and lower case letters"),
+//     ]
+//   ),
+//     ],
+//   ),
+//   SizedBox(height: 50),
          
-            Container(
-              width: 370,
-              child: Divider(
-                color: MyColors.DarkLighter,
-                thickness: 1.5,
-              ),
-            ),
-            SizedBox(height: 30),
-            ColoredButton(text: "Reset Password")
-        ],
-      ),
-   ),
-    );
-  }
-}
+//             Container(
+//               width: 370,
+//               child: Divider(
+//                 color: MyColors.DarkLighter,
+//                 thickness: 1.5,
+//               ),
+//             ),
+//             SizedBox(height: 30),
+//             ColoredButton(text: "Reset Password")
+//         ],
+//       ),
+//    ),
+//     );
+//   }
+// }

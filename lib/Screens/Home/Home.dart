@@ -6,7 +6,6 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/home%20page%20products.dart';
 import 'package:taqreeb/Components/navbar.dart';
 import 'package:taqreeb/Components/progressbar.dart';
-import 'package:taqreeb/Screens/Home/Screens%20chats.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class Home extends StatelessWidget {
