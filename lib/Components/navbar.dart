@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
 class Navbar extends StatefulWidget {
