@@ -4,6 +4,7 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/Iconed Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/icons.dart';
 
 class SignUpScreen extends StatelessWidget {
   final TextEditingController firstNameController = TextEditingController();
@@ -27,13 +28,13 @@ class SignUpScreen extends StatelessWidget {
                 image: "assets/your_image.svg",
               ),
               SizedBox(height: 20),
-              TextBox(hint: "First Name"),
+              MyTextBox(hint: "First Name"),
               SizedBox(height: 10),
-              TextBox(hint: "Last Name"),
+              MyTextBox(hint: "Last Name"),
               SizedBox(height: 10),
-              TextBox(hint: "Password"),
+              MyTextBox(hint: "Password"),
               SizedBox(height: 10),
-              TextBox(hint: "Confirm Password"),
+              MyTextBox(hint: "Confirm Password"),
               SizedBox(height: 20),
               ColoredButton(
                 text: "Continue",
@@ -49,10 +50,12 @@ class SignUpScreen extends StatelessWidget {
               SizedBox(height: 20),
               IconedButton(
                 text: "Continue with Google",
+                icon: MyIcons.google,
               ),
               SizedBox(height: 10),
               IconedButton(
                 text: "Continue with Facebook",
+                icon: MyIcons.facebook,
               ),
               SizedBox(height: 10),
             ],

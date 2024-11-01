@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart'; 
 import 'package:taqreeb/Components/Border%20Button.dart'; 
-import 'package:taqreeb/Components/Message%20Chats,dart';
+import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/Recieve%20Message.dart';
 import 'package:taqreeb/Components/Search%20Box.dart'; 
 import 'package:taqreeb/Components/Iconed%20Button.dart'; 
@@ -20,7 +20,6 @@ import 'package:taqreeb/Components/Cake%20Box.dart';
 import 'package:taqreeb/Components/Cart%20Item.dart';
 import 'package:taqreeb/Components/OTP%20Boxes.dart';
 import 'package:taqreeb/Components/Selection%20Dialog.dart';
-import 'package:taqreeb/screen/forgot%20password.dart';
 
 
 class Home extends StatelessWidget {
@@ -44,9 +43,7 @@ class Home extends StatelessWidget {
             price: 'Rs. 10,000 - 15,000',
             image:
                 'https://img.freepik.com/premium-photo/young-man-barbershop-trimming-shaving_752325-15382.jpg?semt=ais_hybrid',
-          )
-          ,
-          ForgotPassword(),
+          ),
           Navbar(),
           Center(
         child: CategoryIcon(
