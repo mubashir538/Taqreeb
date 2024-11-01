@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/Colored%20Button.dart'; // Import ColoredButton
-import 'package:taqreeb/Components/Border%20Button.dart'; // Import BorderButton
+import 'package:taqreeb/Components/category_icon.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart'; 
+import 'package:taqreeb/Components/Border%20Button.dart'; 
 import 'package:taqreeb/Components/Message%20Chats,dart';
 import 'package:taqreeb/Components/Recieve%20Message.dart';
-import 'package:taqreeb/Components/Search%20Box.dart'; // Import SearchBox
-import 'package:taqreeb/Components/Iconed%20Button.dart'; // Import IconedButton
-import 'package:taqreeb/Components/GuestList%20Button.dart'; // Import GuestListButton
-import 'package:taqreeb/Components/Send%20Message.dart'; // Import SendMessage
-import 'package:taqreeb/Components/ProductCard.dart'; // Import ProductCard
-import 'package:taqreeb/Components/ProductCard.dart'; // Import MessageChatButton
+import 'package:taqreeb/Components/Search%20Box.dart'; 
+import 'package:taqreeb/Components/Iconed%20Button.dart'; 
+import 'package:taqreeb/Components/GuestList%20Button.dart'; 
+import 'package:taqreeb/Components/Send%20Message.dart'; 
+import 'package:taqreeb/Components/ProductCard.dart'; 
+import 'package:taqreeb/Components/function.dart';
+import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/home%20page%20products.dart';
+import 'package:taqreeb/Components/navbar.dart';
+import 'package:taqreeb/Components/progressbar.dart';
+import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/theme/images.dart';
+import 'package:taqreeb/Components/Cake%20Box.dart';
+import 'package:taqreeb/Components/Cart%20Item.dart';
+import 'package:taqreeb/Components/OTP%20Boxes.dart';
+import 'package:taqreeb/Components/Selection%20Dialog.dart';
+import 'package:taqreeb/screen/forgot%20password.dart';
+
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -18,47 +31,31 @@ class Home extends StatelessWidget {
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: Color(0xff18191A),
-      appBar: AppBar(title: const Text('Taqreeb')),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SearchBox(controller: searchController), // Call SearchBox
-            const SizedBox(height: 20),
-            ColoredButton(text: 'Continue'), // Call ColoredButton
-            const SizedBox(height: 20), // Add space between buttons
-            BorderButton(text: 'Cancel'), // Call BorderButton
-            const SizedBox(height: 20),
-            IconedButton(text: 'Continue with Google'), // Call IconedButton
-            const SizedBox(height: 20),
-            GuestListButton(
-              // Call GuestListButton
-              name: 'Mubashir Ahmed',
-              phoneNumber: '03361273819',
-            ),
-            const SizedBox(height: 20),
-            SendMessage(text: 'Hi Haziq, How are you???'), // Call SendMessageButton
-            const SizedBox(height: 20),
-            RecieveMessage(text: 'Bhai!!, Shadi kr rha hoon, My Life Update :)'), // Call RecieveMessage
-            //call Product Card
-        Productcard(
-            imageUrl: 'https://tse4.mm.bing.net/th?id=OIP.A_WsK5iy-v39XTnXrp-RJAHaE8&pid=Api&P=0&h=220',
-            venueName: 'Qasar-e-Noor',
-            location: 'North Nazimabad - Block M - Karachi',
-            type: 'Venue',
-            ),
-            //Call MessageChatButton
-            const SizedBox(height: 20),
-        MessageChatButton( 
-          name: 'Mubashir Ahmed',
-          message: 'Assalam-u-alikom', 
-          time: '10:00 AM',
-          ),
+      backgroundColor: MyColors.Dark,
+      body: Column(
+        children: [
+          Header(),
+          Function1(),
+          ColoredButton(text: 'Hello'),
+          ProgressBar(Progress: 3),
+          HomePageProducts(
+            category: 'Spa',
+            name: 'Taqreeb',
+            price: 'Rs. 10,000 - 15,000',
+            image:
+                'https://img.freepik.com/premium-photo/young-man-barbershop-trimming-shaving_752325-15382.jpg?semt=ais_hybrid',
+          )
+          ,
+          ForgotPassword(),
+          Navbar(),
+          Center(
+        child: CategoryIcon(
+          label: 'Caterers',
+        ))
+        ],
 
-          ],
-        ),
       ),
+
     );
   }
 }
