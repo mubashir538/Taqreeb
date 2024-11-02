@@ -20,7 +20,7 @@ class SupportScreen extends StatelessWidget {
           child: Column(
             children: [
               Header(
-                heading: 'Help Center',
+                heading: 'Customer Support',
                 para: '',
                 image: '',
               ),
@@ -30,35 +30,36 @@ class SupportScreen extends StatelessWidget {
                 child: SearchBox(controller: searchController),
               ),
               SizedBox(height: 20),
+              Image.asset(
+                MyImages.CustomerSupport,
+                height: screenWidth * 0.5,
+              ),
+              SizedBox(height: 20),
               Text(
-                'Or Browse through our options to get the help you need',
+                'Hello, How can we Help you?',
                 style: TextStyle(
                   color: MyColors.white,
-                  fontSize: 15,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
-              Image.asset(
-                MyImages.HelpCenter,
-                height: screenWidth * 0.5,
-              ),
-              SizedBox(height: 20),
               GuideButton(
-                text: 'Guide',
-                leftIconPath: MyIcons.guide,
+                text: 'Contact Live Chat',
+                leftIconPath: MyIcons.communicate,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
-                text: 'FAQ',
+                text: 'Send Us an Email',
+                leftIconPath: MyIcons.email,
+                rightIconPath: MyIcons.sortArrow,
+              ),
+              SizedBox(height: 10),
+              GuideButton(
+                text: 'FAQs',
                 leftIconPath: MyIcons.faq,
-                rightIconPath: MyIcons.sortArrow,
-              ),
-              SizedBox(height: 10),
-              GuideButton(
-                text: 'Customer Support',
-                leftIconPath: MyIcons.people,
                 rightIconPath: MyIcons.sortArrow,
               ),
             ],
