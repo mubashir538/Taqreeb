@@ -15,7 +15,7 @@ class BusinessSignup2 extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: MyColors.black, // Set background color
+      backgroundColor: MyColors.Dark, // Set background color
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
