@@ -9,15 +9,16 @@ class Header extends StatelessWidget {
   final String image;
   const Header({this.heading = '', this.para = '', this.image = '', super.key});
 
-  @override
+  @overridem88
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool hasSomething =
         heading.isNotEmpty || para.isNotEmpty || image.isNotEmpty;
-
-    bool isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
-
+    bool isSvg = false;
+    if (image.isNotEmpty) {
+      isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
+    }
     double MaximumThing;
     if (screenWidth > screenHeight) {
       MaximumThing = screenWidth;
@@ -25,7 +26,7 @@ class Header extends StatelessWidget {
       MaximumThing = screenHeight;
     }
     return Container(
-      height: hasSomething ? null : screenHeight * 0.009,
+      height: hasSomething ? null : screenHeight * 0.1,
       width: screenWidth,
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
       decoration: BoxDecoration(
@@ -62,6 +63,7 @@ class Header extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.02),
                   Text(
                     heading,
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                         fontSize: MaximumThing * 0.025,
                         fontWeight: FontWeight.w700,
@@ -94,6 +96,8 @@ class Header extends StatelessWidget {
               ? Column(
                   children: [
                     SizedBox(height: screenHeight * 0.01),
+
+                    SizedBox(height: screenHeight * 0.03),
                     isSvg
                         ? SvgPicture.asset(image, height: screenHeight * 0.2)
                         : Image.asset(image, height: screenHeight * 0.2),
