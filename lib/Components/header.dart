@@ -9,7 +9,7 @@ class Header extends StatelessWidget {
   final String image;
   const Header({this.heading = '', this.para = '', this.image = '', super.key});
 
-  @overridem88
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -96,7 +96,6 @@ class Header extends StatelessWidget {
               ? Column(
                   children: [
                     SizedBox(height: screenHeight * 0.01),
-
                     SizedBox(height: screenHeight * 0.03),
                     isSvg
                         ? SvgPicture.asset(image, height: screenHeight * 0.2)
