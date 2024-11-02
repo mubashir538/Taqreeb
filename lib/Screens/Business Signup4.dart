@@ -9,6 +9,7 @@ class BusinessSignup4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
@@ -21,12 +22,10 @@ class BusinessSignup4 extends StatelessWidget {
                 'We\'ll notify you when it is Approved.',
             image: MyImages.BusinessSignup,
           ),
-
-          //Divider
-          MyDivider(width: 1000),
-          const SizedBox(height: 20),
-          SizedBox(height: 70), // Spacer between header and button
-
+          SizedBox(
+            height: screenHeight * 0.1,
+            child: Center(child: MyDivider()),
+          ),
           ColoredButton(
             text: 'Continue to Home',
           ),
