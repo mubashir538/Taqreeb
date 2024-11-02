@@ -9,7 +9,7 @@ class Header extends StatelessWidget {
   final String image;
   const Header({this.heading = '', this.para = '', this.image = '', super.key});
 
-  @overridem88
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;

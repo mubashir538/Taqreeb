@@ -1,4 +1,5 @@
 class MyImages {
+
   static const String BusinessSignup = 'assets/images/businesssignup.png';
   static const String BusinessSignup4 = 'assets/images/businesssignup4.png';
   static const String CheckList = 'assets/images/checklist.png';

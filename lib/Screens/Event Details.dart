@@ -10,6 +10,7 @@ import 'package:taqreeb/theme/images.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   const EventDetailsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

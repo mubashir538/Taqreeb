@@ -1,9 +1,24 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:taqreeb/Components/OTP%20Boxes.dart';
-import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+// // import 'package:flutter/material.dart';
+// // import 'package:flutter_svg/flutter_svg.dart';
+// // import 'package:taqreeb/Components/Border%20Button.dart';
+// // import 'package:taqreeb/Components/Cake%20Box.dart';
+// // import 'package:taqreeb/Components/Cart%20Item.dart';
+// // import 'package:taqreeb/Components/Colored%20Button.dart';
+// // import 'package:taqreeb/Components/OTP%20Boxes.dart';
+// // import 'package:taqreeb/Components/Selection%20Dialog.dart';
+// // import 'package:taqreeb/Components/abc.dart';
+// // import 'package:taqreeb/theme/color.dart';
+// // import 'package:taqreeb/theme/icons.dart';
+// // import 'package:google_fonts/google_fonts.dart';
+// // import 'package:taqreeb/theme/images.dart';
+
+// // class ForgotPassword extends StatelessWidget {
+// //   const ForgotPassword({super.key});
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return Center(
 
 // class ForgotPassword extends StatelessWidget {
 //   const ForgotPassword({super.key});
@@ -25,7 +40,19 @@ import 'package:google_fonts/google_fonts.dart';
 //       ),
 //        child: Column(
 //         children: [
-//           Row(
+//           Container(
+//             height: 244,
+//             width: 431,
+//             decoration: BoxDecoration(
+//               color: MyColors.red,
+//               borderRadius: BorderRadius.only(
+//                 bottomLeft: Radius.circular(20),
+//                 bottomRight: Radius.circular(20),
+//               ),
+//             ),
+//             child: Column(
+//               children: [
+//                 Row(
 //             children: [
 //               SvgPicture.asset(MyIcons.arrowLeft),
 //               SizedBox(
@@ -41,23 +68,16 @@ import 'package:google_fonts/google_fonts.dart';
 //                   ),
 //             ],
 //           ),
-//           Text( "Forgot Password",
-//                     style: GoogleFonts.montserrat(
-//                         fontSize: 30,
-//                         fontWeight: FontWeight.w700,
-//                         color: MyColors.Yellow),
+//                 SizedBox(height: 15),
+//                 Text(
+//                   "Upload your ID Card for Verification",
+//                   textAlign: TextAlign.center,
+//                   style: GoogleFonts.montserrat(
+//                     fontSize: 30,
+//                     fontWeight: FontWeight.w700,
+//                     color: MyColors.Yellow,
 //                   ),
-//                   SizedBox(
-//                 width: 15,
-//               ),
-//           Text(
-//                     "Enter the email address with your account  and we’ll send an email with confirmation to restet your password",
-//                     textAlign: TextAlign.center,
-//                     style: GoogleFonts.montserrat(
-//                         fontSize: 15,
-//                         fontWeight: FontWeight.w300,
-//                         color: MyColors.white),
-//                   ),
+
 //           SizedBox(
 //                 height: 30,
 //               ),
@@ -106,7 +126,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 //         ],
 //       ),
-//     )
 //     );
 //   }
 // }

@@ -1,29 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class Function1 extends StatelessWidget {
-  const Function1({super.key});
+import 'package:taqreeb/theme/color.dart';
+
+class Function12 extends StatelessWidget {
+  const Function12({super.key});
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            child: Center(
-              child: Text(''),
-            ),
-          ),
-          Container(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(''),
-                    Text('')
-                  ],
-=======
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
@@ -36,13 +22,16 @@ class Function1 extends StatelessWidget {
         width: screenWidth * 0.9,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20)),
+
           color: MyColors.DarkLighter,
         ),
         child: Column(
           children: [
             Container(
+
               height: screenHeight * 0.1,
               width: screenWidth * 0.9,
+
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -56,27 +45,10 @@ class Function1 extends StatelessWidget {
                       fontSize: MaximumThing * 0.03,
                       fontWeight: FontWeight.w500,
                       color: MyColors.white),
->>>>>>> Stashed changes
                 ),
-                Row(
-                   children: [
-                    Text(''),
-                    Text('')
-                  ],
-                ),
-                Row(
-                  children: [
-                    ColoredButton(text: ''),
-                    ColoredButton(text: '')
-                  ],
-                )
-              ],
+              ),
             ),
-<<<<<<< Updated upstream
-          )
-        ],
-        
-=======
+       
             Container(
               height: screenHeight*0.25,
               width: screenWidth * 0.8,
@@ -112,8 +84,9 @@ class Function1 extends StatelessWidget {
                         style: GoogleFonts.montserrat(
                             fontSize: 17,
                             fontWeight: FontWeight.w300,
+
                             color: MyColors.white),
-                      ),
+               ),
                       Text(
                         "15-dec-24 ",
                         style: GoogleFonts.montserrat(
@@ -144,7 +117,6 @@ class Function1 extends StatelessWidget {
             )
           ],
         ),
->>>>>>> Stashed changes
       ),
     );
   }
