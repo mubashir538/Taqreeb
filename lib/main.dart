@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup2.dart';
 import 'package:taqreeb/Screens/Login%20Screen.dart';
 
 void main() {
