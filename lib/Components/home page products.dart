@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePageProducts extends StatelessWidget {
   final String image;
@@ -15,9 +16,14 @@ class HomePageProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenHeight > screenWidth ? screenHeight : screenWidth;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Background color for the text section
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -35,9 +41,14 @@ class HomePageProducts extends StatelessWidget {
             child: Image.network(
               image,
               width: double.infinity,
-              height: 230,
+              height: screenHeight * 0.2,
               fit: BoxFit.cover, // Ensures the image fills the area
             ),
+          ),
+          Text(
+            name,
+            style: GoogleFonts.montserrat(
+                fontSize: MaximumThing * 0.03, fontWeight: FontWeight.w500),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

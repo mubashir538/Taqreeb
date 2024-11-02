@@ -3,12 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class AIFunctions extends StatelessWidget {
-  final String event,date,price;
-  const AIFunctions({super.key,required this.event,required this.date,required this.price});
+  final String event, date, price;
+  const AIFunctions(
+      {super.key,
+      required this.event,
+      required this.date,
+      required this.price});
 
   @override
   Widget build(BuildContext context) {
-     double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
@@ -24,13 +28,17 @@ class AIFunctions extends StatelessWidget {
 
     return Container(
       width: screenWidth * 0.9,
-      height: screenHeight * 0.3,
+      height: screenHeight * 0.2,
+      padding: EdgeInsets.all(MaximumThing * 0.02),
+      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           color: MyColors.DarkLighter),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Event',
@@ -43,6 +51,7 @@ class AIFunctions extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Date', style: heading),
               Text(
@@ -52,6 +61,7 @@ class AIFunctions extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Price', style: heading),
               Text(
@@ -60,7 +70,6 @@ class AIFunctions extends StatelessWidget {
               )
             ],
           ),
-        
         ],
       ),
     );
