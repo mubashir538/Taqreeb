@@ -1,69 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
-//import 'package:taqreeb/Components/textbox.dart'; 
 
-class SignUpScreen extends StatelessWidget {
-  SignUpScreen({Key? key}) : super(key: key);
-
-  final TextEditingController cnicController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController categoryController = TextEditingController();
-  final TextEditingController usernameController = TextEditingController();
+class BusinessSignup1 extends StatelessWidget {
+  const BusinessSignup1({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.black, 
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Header(
-                heading: 'Sign Up',
-                para: 'Unlock Success with Just One Click - Join Our Community Today!',
-                image: MyImages.BusinessSignup, 
-              ),
+      backgroundColor: MyColors.black, 
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Header(
+              heading: 'Sign Up',
+              para: 'Unlock Success with Just One Click - Join Our Community Today!',
+              image: MyImages.BusinessSignup, 
+            ),
+            const SizedBox(height: 20),
 
-              SizedBox(height: 20), // Spacing between header and text fields
+            //TextBoxes
+            MyTextBox(hint: 'CNIC'),
+            const SizedBox(height: 25),
+            MyTextBox(hint: 'City'),
+            const SizedBox(height: 25),
+            MyTextBox(hint: 'Category', ),
+            const SizedBox(height: 25),
+            MyTextBox(hint: 'Username'),
+            const SizedBox(height: 25),
 
-              // TextBoxes
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-                child: Column(
-                  children: [
-                    TextBox(controller: cnicController),
-                    SizedBox(height: 10),
-                    TextBox(controller: cityController),
-                    SizedBox(height: 10),
-                    TextBox(controller: categoryController),
-                    SizedBox(height: 10),
-                    TextBox(controller: usernameController),
-                  ],
-                ),
-              ),
+            // Divider
+            MyDivider(width: screenWidth * 0.8),
 
-              SizedBox(height: 30), // Spacing between text fields and divider
+            const SizedBox(height: 20),
 
-              // Divider bar
-              Divider(
-                color: Colors.grey, 
-                thickness: 1.5, 
-                indent: screenWidth * 0.1, 
-                endIndent: screenWidth * 0.1, 
-              ),
-
-              SizedBox(height: 30), // Spacing between divider and button
-
-              //Colored Button
-              ColoredButton(
-                text: 'Continue',
-              ),
-            ],
-          ),
+            // Continue Button
+            ColoredButton(
+              text: 'Continue',
+              height: screenHeight * 0.09,
+              width: screenWidth * 0.3,
+            ),
+          ],
         ),
       ),
     );

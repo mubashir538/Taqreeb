@@ -1,92 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
-//import 'package:taqreeb/Components/textbox.dart'; 
 
 class BusinessSignup2 extends StatelessWidget {
-  BusinessSignup2({Key? key}) : super(key: key);
-
-  final TextEditingController frontIDController = TextEditingController();
-  final TextEditingController backIDController = TextEditingController();
+  const BusinessSignup2({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.black, 
-      body: Center(
-        child: SingleChildScrollView(
+      backgroundColor: MyColors.black, // Set background color
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Header(
                 heading: 'Upload your ID Card for Verification',
-                para:
-                    'Uploading your ID card ensures secure identity verification for your account.',
+                para: 'Uploading your ID card ensures secure identity verification for your account.',
               ),
+              const SizedBox(height: 20),
 
-              SizedBox(height: 20), 
-
-              // Front ID 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              // Front Image and TextBox
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
                   children: [
-                    // Placeholder for ID front image
-                    Image(image: MyImages.Cnic, 
-                      height: 100,
+                    Image.asset("assets/images/CNIC.png", 
+                      width: 150, 
+                      height: 150,
+                      // fit: BoxFit.contain,
                     ),
-                    SizedBox(height: 10),
-
-                    // Upload front
-                    TextBox(controller: frontIDController),
-                    Text(
-                      'Upload Front',
-                      style: TextStyle(color: Colors.white),
+                    MyTextBox(
+                      hint: 'Upload Front',
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 30),
 
-              SizedBox(height: 20), 
-
-              // Back ID 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              // Back Image and TextBox
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
                   children: [
-                    // Placeholder for ID back image
-                    Image(image: MyImages.Cnic, 
-                      height: 100,
+                    SvgPicture.asset("images/cnic.svg", 
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.contain,
                     ),
-                    SizedBox(height: 10),
-                    
-                    // Upload back 
-                    TextBox(controller: backIDController),
-                    Text(
-                      'Upload Back',
-                      style: TextStyle(color: Colors.white),
+                    MyTextBox(
+                      hint: 'Upload Back',
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 30),
 
-              SizedBox(height: 20), 
+              // Divider to separate sections
+              MyDivider(width: screenWidth * 0.8),
+              const SizedBox(height: 20),
 
-              // Divider bar
-              Divider(
-                color: Colors.grey, 
-                thickness: 1.5, 
-                indent: screenWidth * 0.1, 
-                endIndent: screenWidth * 0.1, 
-              ),
-
-              SizedBox(height: 20), 
-
-              // Colored button
+              // Continue Button
               ColoredButton(
                 text: 'Continue',
+                height: screenHeight * 0.09,
+                width: screenWidth * 0.3,
               ),
             ],
           ),

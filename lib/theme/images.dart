@@ -2,7 +2,7 @@ class MyImages {
   static const String BusinessSignup =  'assets/images/businesssignup.svg';  
   static const String BusinessSignup4 ='assets/images/businesssignup4.svg'; 
   static const String CheckList = 'assets/images/checklist.svg'; 
-  static const String Cnic = 'assets/images/cnic.svg'; 
+  static const String Cnic = 'assets/images/CNIC.png'; 
   static const String CustomerSupport = 'assets/images/customersupport.svg'; 
   static const String EventDetails ='assets/images/eventdetails.png'; 
   static const String ForgotPassword ='assets/images/forgotpassword.svg'; 
