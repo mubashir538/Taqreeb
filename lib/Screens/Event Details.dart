@@ -81,8 +81,6 @@ class EventDetailsScreen extends StatelessWidget {
           //Colored Button
           ColoredButton(
             text: 'Create Event',
-            height: screenHeight * 0.09,
-            width: screenWidth * 0.3,
           ),
         ]),
       ),

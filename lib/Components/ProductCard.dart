@@ -24,7 +24,7 @@ class Productcard extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-      width: screenWidth * 0.9,
+      width: screenWidth * 0.7,
       height: screenHeight * 0.25,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
