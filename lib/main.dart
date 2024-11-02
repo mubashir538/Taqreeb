@@ -19,7 +19,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+<<<<<<< Updated upstream
       home: GuideScreen(),
+=======
+      home: SignUpScreen(),
+>>>>>>> Stashed changes
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
