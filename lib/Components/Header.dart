@@ -9,15 +9,16 @@ class Header extends StatelessWidget {
   final String image;
   const Header({this.heading = '', this.para = '', this.image = '', super.key});
 
-  @override
+  @overridem88
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool hasSomething =
         heading.isNotEmpty || para.isNotEmpty || image.isNotEmpty;
-
-    bool isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
-
+    bool isSvg = false;
+    if (image.isNotEmpty) {
+      isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
+    }
     double MaximumThing;
     if (screenWidth > screenHeight) {
       MaximumThing = screenWidth;
