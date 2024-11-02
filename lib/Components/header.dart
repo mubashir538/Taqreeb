@@ -96,6 +96,7 @@ class Header extends StatelessWidget {
               ? Column(
                   children: [
                     SizedBox(height: screenHeight * 0.01),
+
                     SizedBox(height: screenHeight * 0.03),
                     isSvg
                         ? SvgPicture.asset(image, height: screenHeight * 0.2)

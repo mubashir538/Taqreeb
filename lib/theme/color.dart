@@ -8,4 +8,6 @@ class MyColors {
   static const Color DarkLighter = Color(0xff242526);
   static const Color Yellow = Color(0xffffbe0b);
   static const Color green = Color(0xff7ae582);
+
+  static var black;
 }
