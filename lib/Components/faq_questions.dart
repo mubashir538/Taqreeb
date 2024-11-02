@@ -10,9 +10,8 @@ class FAQQuestion extends StatelessWidget {
 
   FAQQuestion({
     Key? key,
-    this.question = 'How do I find venues in my area?', 
-    this.answer =
-        'Use the search feature in the Venue Selection section to filter venues by location, size, and style.', 
+    required this.question,
+    required this.answer,
     required this.isExpanded,
     required this.onToggle,
   }) : super(key: key);
@@ -20,7 +19,7 @@ class FAQQuestion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onToggle, 
+      onTap: onToggle,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -33,12 +32,14 @@ class FAQQuestion extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  question,
-                  style: GoogleFonts.montserrat(
-                    color: MyColors.Yellow,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    question,
+                    style: GoogleFonts.montserrat(
+                      color: MyColors.Yellow,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Icon(
