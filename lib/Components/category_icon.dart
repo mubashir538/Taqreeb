@@ -3,14 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CategoryIcon extends StatelessWidget {
   final String label;
+  final String imageUrl;
 
-  const CategoryIcon({super.key, required this.label});
+  const CategoryIcon({super.key, required this.label, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
-    // Define the image URL directly in the component
-    const String imageUrl = 'https://via.placeholder.com/150';
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -18,13 +16,13 @@ class CategoryIcon extends StatelessWidget {
           radius: 50,
           backgroundImage: NetworkImage(imageUrl),
         ),
-        SizedBox(height: 10), // Space between image and text
+        SizedBox(height: 10),
         Text(
           label,
           style: GoogleFonts.montserrat(
             fontSize: 18,
             fontWeight: FontWeight.w500,
-            color: Colors.white, // Customize as per your design
+            color: Colors.white,
           ),
         ),
       ],
