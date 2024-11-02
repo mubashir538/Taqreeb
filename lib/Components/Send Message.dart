@@ -1,38 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class SendMessage extends StatelessWidget {
   final String text;
-  SendMessage({required this.text});
+  final String time;
+  SendMessage({required this.text, required this.time});
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 0.8;
-    print(width);
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    return Center(
-      child: Container(
-        height: 60,
-        width: 400,
-        decoration: BoxDecoration(
-          color: Color(0xffEF233c),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30), // Left side more oval-like
-            bottomLeft: Radius.circular(30), // Left side more oval-like
-            topRight: Radius.circular(15), // Right side slightly curved
-            bottomRight: Radius.circular(0), // Right side slightly curved
-          ),
-        ),
-        child: Center(
-          child: Text(
-            text,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+      margin: EdgeInsets.only(bottom: MaximumThing * 0.02),
+      width: screenWidth * 0.9,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(
+            time,
             style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w200,
-              color: Color(0xffEDF2F4),
+              fontWeight: FontWeight.w300,
+              fontSize: MaximumThing * 0.013,
             ),
           ),
-        ),
+          SizedBox(
+            width: 15,),
+          Container(
+            constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
+            padding: EdgeInsets.all(MaximumThing * 0.02),
+            decoration: BoxDecoration(
+              color: MyColors.red,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                bottomLeft: Radius.circular(30),
+                topRight: Radius.circular(15),
+                bottomRight: Radius.circular(0),
+              ),
+            ),
+            child: Text(
+              text,
+              softWrap: true,
+              textAlign: TextAlign.end,
+              style: GoogleFonts.montserrat(
+                fontSize: MaximumThing * 0.02,
+                fontWeight: FontWeight.w200,
+                color: MyColors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
