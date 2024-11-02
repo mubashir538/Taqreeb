@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-//import 'package:taqreeb/Screens/homepage.dart';
-//import 'package:taqreeb/Screens/helpcenter.dart';
-//import 'package:taqreeb/Screens/customersupport.dart';
-import 'package:taqreeb/Screens/helpcenter.dart';
+import 'package:taqreeb/Screens/Event%20Details.dart';
+import 'package:taqreeb/Screens/View%20Function.dart';
+
+import 'package:taqreeb/Screens/Home/Home.dart';
+import 'package:taqreeb/Screens/Login%20Screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,7 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SupportScreen(),
+      home: ViewFunctionsScreen(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
