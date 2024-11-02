@@ -15,6 +15,9 @@ class Header extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     bool hasSomething =
         heading.isNotEmpty || para.isNotEmpty || image.isNotEmpty;
+
+    bool isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
+
     double MaximumThing;
     if (screenWidth > screenHeight) {
       MaximumThing = screenWidth;
@@ -92,7 +95,10 @@ class Header extends StatelessWidget {
               ? Column(
                   children: [
                     SizedBox(height: screenHeight * 0.01),
-                    SvgPicture.asset(image, height: screenHeight * 0.2),
+                    SizedBox(height: screenHeight * 0.03),
+                    isSvg
+                        ? SvgPicture.asset(image, height: screenHeight * 0.2)
+                        : Image.asset(image, height: screenHeight * 0.2),
                     SizedBox(height: screenHeight * 0.03),
                   ],
                 )
