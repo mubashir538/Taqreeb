@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/AccountInfo1.dart';
 import 'package:taqreeb/Screens/Event%20Details.dart';
 import 'package:taqreeb/Screens/View%20Function.dart';
-
 import 'package:taqreeb/Screens/Home/Home.dart';
 import 'package:taqreeb/Screens/Login%20Screen.dart';
 
@@ -15,7 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ViewFunctionsScreen(),
+      home: AccountInfo1(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),

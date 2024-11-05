@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
-// import 'package:taqreeb/Components/Colored%20Button.dart';
-// import 'package:taqreeb/Components/function.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
-// import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
-// import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class ViewFunctionsScreen extends StatelessWidget {
@@ -243,8 +239,16 @@ class ViewFunctionsScreen extends StatelessWidget {
                         ],
                       ),
                       //Product Card: Banquet
-                      Productcard(imageUrl: "https://i.ytimg.com/vi/Ipgwk6VsAFA/maxresdefault.jpg", venueName: "The Mansion", location: "Karachi", type: 'Venue',),
-                      SizedBox(height: 10,),
+                      Productcard(
+                        imageUrl:
+                            "https://i.ytimg.com/vi/Ipgwk6VsAFA/maxresdefault.jpg",
+                        venueName: "The Mansion",
+                        location: "Karachi",
+                        type: 'Venue',
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
 
                       //Photographer
                       Row(
@@ -262,10 +266,17 @@ class ViewFunctionsScreen extends StatelessWidget {
                         ],
                       ),
                       //Product Card: Photographer
-                      Productcard(imageUrl: "https://tse4.mm.bing.net/th?id=OIP.yyNmzQIoPY519auR-e1AfgAAAA&pid=Api&P=0&h=220", venueName: "Mosako Hirata", location: "Karachi", type: 'Male/Female',),
-                      SizedBox(height: 10,),
+                      Productcard(
+                        imageUrl:
+                            "https://tse4.mm.bing.net/th?id=OIP.yyNmzQIoPY519auR-e1AfgAAAA&pid=Api&P=0&h=220",
+                        venueName: "Mosako Hirata",
+                        location: "Karachi",
+                        type: 'Male/Female',
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
 
-                      
                       //Salon
                       Row(
                         children: [
@@ -282,8 +293,16 @@ class ViewFunctionsScreen extends StatelessWidget {
                         ],
                       ),
                       //Product Card: Salon
-                      Productcard(imageUrl: "https://tse1.mm.bing.net/th?id=OIP.nqTGELzA5pGayw6DEbV5UQHaEo&pid=Api&P=0&h=220", venueName: "Nabila's Salon and Spa", location: "Karachi", type: 'salon',),
-                      SizedBox(height: 10,),
+                      Productcard(
+                        imageUrl:
+                            "https://tse1.mm.bing.net/th?id=OIP.nqTGELzA5pGayw6DEbV5UQHaEo&pid=Api&P=0&h=220",
+                        venueName: "Nabila's Salon and Spa",
+                        location: "Karachi",
+                        type: 'salon',
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
 
                       //Caters
                       Row(
@@ -301,69 +320,74 @@ class ViewFunctionsScreen extends StatelessWidget {
                         ],
                       ),
                       //Product Card: Caters
-                      Productcard(imageUrl: "https://tse1.mm.bing.net/th?id=OIP.PYU0xPDKXpVfbxgSm4pmzgHaE8&pid=Api&P=0&h=220", venueName: "Events by Harbor", location: "Karachi", type: 'Caters',),
-                      SizedBox(height: 20,),
+                      Productcard(
+                        imageUrl:
+                            "https://tse1.mm.bing.net/th?id=OIP.PYU0xPDKXpVfbxgSm4pmzgHaE8&pid=Api&P=0&h=220",
+                        venueName: "Events by Harbor",
+                        location: "Karachi",
+                        type: 'Caters',
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
 
                       //divider
                       MyDivider(width: screenWidth * 0.6),
                       const SizedBox(height: 20),
 
                       //List Buttons
-                       Container(
-                         decoration: BoxDecoration(
+                      Container(
+                        decoration: BoxDecoration(
                           color: MyColors.Dark,
                           borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text("View Guest List"),
-                          height: 30,
-                          width: 300,
-                          ),
-                          SizedBox(height: 30),
+                        ),
+                        child: Text("View Guest List"),
+                        height: 30,
+                        width: 300,
+                      ),
+                      SizedBox(height: 30),
 
                       Container(
-                         decoration: BoxDecoration(
+                        decoration: BoxDecoration(
                           color: MyColors.Dark,
                           borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text("View Check List"),
-                          height: 30,
-                          width: 300,
-                          ),
-                          SizedBox(height: 30),
+                        ),
+                        child: Text("View Check List"),
+                        height: 30,
+                        width: 300,
+                      ),
+                      SizedBox(height: 30),
 
                       Container(
-                         decoration: BoxDecoration(
+                        decoration: BoxDecoration(
                           color: MyColors.Dark,
                           borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text("View Invitation Card"),
-                          height: 30,
-                          width: 300,
-                          ),
-                          SizedBox(height: 30),
-
-                    ]
-                    ),
+                        ),
+                        child: Text("View Invitation Card"),
+                        height: 30,
+                        width: 300,
+                      ),
+                      SizedBox(height: 30),
+                    ]),
                   ),
-                  
                 ],
               ),
             ),
-            SizedBox(height: 50,),
+            SizedBox(
+              height: 50,
+            ),
 
+            //divider
+            MyDivider(width: screenWidth * 0.6),
+            const SizedBox(height: 20),
 
-                  //divider
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 20),
-
-                  //colored Button
-                  ColoredButton(
-                    text: 'Create Event',
-                    ),
+            //colored Button
+            ColoredButton(
+              text: 'Create Event',
+            ),
           ],
         ),
       ),
-    )
-    );
+    ));
   }
 }
