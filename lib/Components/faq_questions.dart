@@ -8,14 +8,14 @@ class FAQQuestion extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
 
-  FAQQuestion({
-    Key? key,
+  const FAQQuestion({
+    super.key,
     this.question = 'How do I find venues in my area?', 
     this.answer =
         'Use the search feature in the Venue Selection section to filter venues by location, size, and style.', 
     required this.isExpanded,
     required this.onToggle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

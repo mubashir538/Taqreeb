@@ -49,7 +49,7 @@ class Function12 extends StatelessWidget {
               ),
             ),
        
-            Container(
+            SizedBox(
               height: screenHeight*0.25,
               width: screenWidth * 0.8,
               child: Column(

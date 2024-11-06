@@ -8,13 +8,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class OTPScreen6 extends StatelessWidget {
+  const OTPScreen6({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: Container(
+          constraints: BoxConstraints(minHeight: 1000),
           child: Column(
             children: [
               Header(

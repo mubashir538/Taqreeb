@@ -10,6 +10,8 @@ import 'package:taqreeb/theme/color.dart';
 class HomeScreen extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
 
+  HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

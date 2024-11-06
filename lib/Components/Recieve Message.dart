@@ -5,7 +5,7 @@ import 'package:taqreeb/theme/color.dart';
 class RecieveMessage extends StatelessWidget {
   final String text;
   final String time;
-  RecieveMessage({required this.text, required this.time});
+  const RecieveMessage({super.key, required this.text, required this.time});
 
   @override
   Widget build(BuildContext context) {

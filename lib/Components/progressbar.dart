@@ -11,14 +11,15 @@ class ProgressBar extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    List<Color?> c = [MyColors.whiteDarker,const Color.fromARGB(255, 5, 3, 3),MyColors.whiteDarker,MyColors.whiteDarker,MyColors.whiteDarker];
+    List<Color?> c = [MyColors.whiteDarker,MyColors.whiteDarker,MyColors.whiteDarker,MyColors.whiteDarker,MyColors.whiteDarker];
     for(int i = 0;i<Progress;i++){
       c[i] = MyColors.Yellow;
     }
 
     return Container(
-      height: screenHeight * 0.04,
+      height: screenHeight * 0.02,
       width: screenWidth * 0.9,
+      margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

@@ -8,7 +8,7 @@ class GuideButton extends StatelessWidget {
   final String leftIconPath;
   final String rightIconPath;
   const GuideButton(
-      {required this.text,
+      {super.key, required this.text,
       required this.leftIconPath,
       required this.rightIconPath});
 

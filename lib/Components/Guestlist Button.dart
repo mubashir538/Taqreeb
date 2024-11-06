@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class GuestListButton extends StatelessWidget {
   final String name;
   final String phoneNumber;
-  GuestListButton({required this.name, required this.phoneNumber});
+  const GuestListButton({super.key, required this.name, required this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ import 'package:taqreeb/theme/color.dart';
 
 class BorderButton extends StatelessWidget {
   final String text;
-  BorderButton({required this.text});
+  const BorderButton({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
