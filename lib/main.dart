@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Create%20Checklist.dart';
 import 'package:taqreeb/Screens/Login%20Screen.dart';
+import 'package:taqreeb/Screens/Parlors.dart';
 import 'package:taqreeb/Screens/View%20Function.dart';
 
 
@@ -13,7 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginScreen(),
+      home: Parlors(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
