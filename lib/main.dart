@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/AccountInfo1.dart';
-import 'package:taqreeb/Screens/AccountInfo2.dart';
-import 'package:taqreeb/Screens/Create%20Checklist.dart';
-import 'package:taqreeb/Screens/Home/Home.dart';
+import 'package:taqreeb/Screens/Login%20Screen.dart';
+import 'package:taqreeb/Screens/View%20Function.dart';
+
 
 void main() {
   runApp(const MainApp());
@@ -14,7 +13,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CreateChecklist(),
+      home: LoginScreen(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),

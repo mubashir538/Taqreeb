@@ -15,7 +15,18 @@ class EventDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextStyle heading = GoogleFonts.montserrat(
+        fontSize: MaximumThing * 0.017,
+        fontWeight: FontWeight.w600,
+        color: MyColors.Yellow);
+
+    TextStyle text = GoogleFonts.montserrat(
+        fontSize: MaximumThing * 0.017,
+        fontWeight: FontWeight.w400,
+        color: MyColors.Yellow);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: [
@@ -23,60 +34,142 @@ class EventDetailsScreen extends StatelessWidget {
             heading: "Your Event Details",
             image: MyImages.EventDetails,
           ),
+          SizedBox(height: screenHeight * 0.03),
           Text(
             'WishFa',
             style: GoogleFonts.montserrat(
-                fontSize: 20,
+                fontSize: MaximumThing * 0.03,
                 fontWeight: FontWeight.w700,
                 color: MyColors.Yellow),
           ),
 
           SizedBox(height: screenHeight * 0.02),
-
-          // function card calling
-          Function12(),
           SizedBox(
-            height: 10,
+            width: screenWidth * 0.9,
+            child: Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Budget',
+                    style: heading,
+                  ),
+                  Text('200,000', style: text)
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Event Type', style: heading),
+                  Text('Shaadi', style: text)
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Guests', style: heading),
+                  Text('200-600', style: text)
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Date', style: heading),
+                  Text('15-20 Dec 24', style: text)
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+            ]),
           ),
-          Function12(),
+          SizedBox(height: screenHeight * 0.02),
 
-          //List Buttons
-          Container(
-            decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text("View Guest List"),
-            height: 25,
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return Function12();
+            },
+            itemCount: 3,
           ),
-          SizedBox(height: 30),
 
           Container(
+            margin: EdgeInsets.all(MaximumThing * 0.01),
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.01, horizontal: screenWidth * 0.03),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text("View Check  List"),
-            height: 25,
+                color: MyColors.DarkLighter,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ]),
+            child: Text("View GuestList"),
+            width: screenWidth * 0.8,
           ),
-          SizedBox(height: 30),
 
           Container(
+            margin: EdgeInsets.all(MaximumThing * 0.01),
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.01, horizontal: screenWidth * 0.03),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
-              borderRadius: BorderRadius.circular(5),
-            ),
+                color: MyColors.DarkLighter,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ]),
+            child: Text("View CheckLlist"),
+            width: screenWidth * 0.8,
+          ),
+
+          Container(
+            margin: EdgeInsets.all(MaximumThing * 0.01),
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.01, horizontal: screenWidth * 0.03),
+            decoration: BoxDecoration(
+                color: MyColors.DarkLighter,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ]),
             child: Text("View Invitation Card"),
-            height: 25,
+            width: screenWidth * 0.8,
           ),
-          SizedBox(height: 30),
 
           //icon (yh call ni horha)
-          Image.asset(MyIcons.add),
-
-          // divider
-          MyDivider(width: screenWidth * 0.8),
-          const SizedBox(height: 20),
+          Container(
+            margin: EdgeInsets.all(MaximumThing * 0.02),
+            width: screenWidth * 0.8,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Image.asset(
+                  MyIcons.add,
+                  color: MyColors.white,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: screenHeight * 0.1,
+            child: Center(child: MyDivider()),
+          ),
 
           //Colored Button
           ColoredButton(

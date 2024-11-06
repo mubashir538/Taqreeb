@@ -22,7 +22,7 @@ class CakeBox extends StatelessWidget {
               
              ),
               child: ClipRRect(
-                borderRadius: BorderRadius.only(topLeft:Radius.circular(29.35),topRight: Radius.circular(29.35)),
+                borderRadius: BorderRadius.only(topLeft:Radius.circular(20),topRight: Radius.circular(20)),
                 child: Image.network(
                   "https://mrbrownbakery.com/image/images/GJ7uCwGiteTF24HTWBclkziVTdhpQeZWH23MvQfq.jpeg?p=full",
                   
@@ -78,11 +78,13 @@ class CakeBox extends StatelessWidget {
               ),
             ),
              SizedBox(
-                    height: 15,
+                    height: 17,
                   ),
-            ColoredButton(text: "Rs, 2000",),
+            ColoredButton(text: "Rs, 200",
+            height: 16,width: 70,),
 
-            // ColoredButton(text: "Add to Cart"),
+            ColoredButton(text: "Add to Cart",
+            height: 21,width:120 ,),
           ],
         ),
       ),

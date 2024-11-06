@@ -9,95 +9,115 @@ class Function12 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
     return Center(
-      child: 
-  
-    Container(
-      height: 290,
-      width: 373,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(16)),
-        color: MyColors.DarkLighter,
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 76,
-            width: 373,
-            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(topLeft:Radius.circular(20),topRight: Radius.circular(20)),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+        height: screenHeight * 0.35,
+        width: screenWidth * 0.9,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
 
-              color: MyColors.red,
-            ),
-            child: Center(
-              child: Text("Mehndi ",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xffEDF2F4)),),
-            ),
-          ),
-                              SizedBox(height: 20,),
+          color: MyColors.DarkLighter,
+        ),
+        child: Column(
+          children: [
+            Container(
 
-          Container(
-            
-            child: Column(
-              
-              children: [
-                Row(
-                  
-                  children: [
-                    SizedBox(width: 20,),
-                    Text("Budget: ",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xffEDF2F4)),
+              height: screenHeight * 0.1,
+              width: screenWidth * 0.9,
+
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                color: MyColors.red,
+              ),
+              child: Center(
+                child: Text(
+                  "Mehndi ",
+                  style: GoogleFonts.montserrat(
+                      fontSize: MaximumThing * 0.03,
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.white),
+                ),
+              ),
+            ),
+       
+            Container(
+              height: screenHeight*0.25,
+              width: screenWidth * 0.8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Budget: ",
+                          style: GoogleFonts.montserrat(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w600,
+                              color: MyColors.white),
                         ),
-                        SizedBox(width: 70,),
-                    Text("10000000 ",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xffEDF2F4)),),
-                  ],
-                ),
-                SizedBox(height: 10,),
-                Row(
-                                     children: [
-                    SizedBox(width: 20,),
-                    Text("Date: ",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w300,
-                        color: Color(0xffEDF2F4)),),
-                        SizedBox(width: 135,),
-                    Text("15-dec-24 ",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w300,
-                        color: Color(0xffEDF2F4)),),
-                  ],
-                ),
-                SizedBox(height: 20,),
-                Row(
-                  children: [
-                    SizedBox(width:20 ,),
-                    ColoredButton(text: 'Edit Function',
-                    height: 43,width: 157,),
-                    SizedBox(width: 20,),
-                    ColoredButton(text: 'See Details',
-                    height: 43,width: 157,),
-                    // ColoredButton(text: '')
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-        
+                        Text(
+                          "10000000 ",
+                          style: GoogleFonts.montserrat(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffEDF2F4)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Date: ",
+                        style: GoogleFonts.montserrat(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w300,
+
+                            color: MyColors.white),
+               ),
+                      Text(
+                        "15-dec-24 ",
+                        style: GoogleFonts.montserrat(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w300,
+                            color: MyColors.white),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ColoredButton(
+                        text: 'Edit Function',
+                        height: 43,
+                        width: 157,
+                      ),
+                      ColoredButton(
+                        text: 'See Details',
+                        height: 43,
+                        width: 157,
+                      ),
+                      // ColoredButton(text: '')
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
-    ),
     );
   }
 }
