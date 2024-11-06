@@ -15,11 +15,10 @@ class Header extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     bool hasSomething =
         heading.isNotEmpty || para.isNotEmpty || image.isNotEmpty;
-    bool isSvg=false;
+    bool isSvg = false;
     if (image.isNotEmpty) {
       isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
     }
-
     double MaximumThing;
     if (screenWidth > screenHeight) {
       MaximumThing = screenWidth;

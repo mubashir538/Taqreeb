@@ -84,7 +84,6 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
 
-              // Category Icons Row with internet images
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -122,7 +121,6 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(height: 24),
 
-              // Adding spacing between HomePageProducts widgets
               Column(
                 children: [
                   Row(

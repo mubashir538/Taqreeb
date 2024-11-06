@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:taqreeb/Components/OTP%20Boxes.dart';
+
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 
 // class ForgotPassword extends StatelessWidget {
 //   const ForgotPassword({super.key});
@@ -12,14 +15,14 @@ import 'package:google_fonts/google_fonts.dart';
 //   Widget build(BuildContext context) {
 //     return Center(
 //     child: Container(
-
+    
 //       child: Column(
-//         children: [
+//         children: [ 
 //           Container(
 //         height: 380,
 //         width: 431,
 //         decoration: BoxDecoration(
-
+          
 //           color:MyColors.red,
 //           borderRadius: BorderRadius.only(bottomLeft:Radius.circular(20),bottomRight: Radius.circular(20)),
 //       ),
@@ -77,7 +80,7 @@ import 'package:google_fonts/google_fonts.dart';
 //           color: MyColors.DarkLighter,
 //           borderRadius: BorderRadius.circular(10),
 //         ),
-
+        
 //         child: Row(
 //           children: [
 //             SizedBox(height: 18, width: 20,),
@@ -90,7 +93,7 @@ import 'package:google_fonts/google_fonts.dart';
 //                   SizedBox(
 //                 width: 15,
 //               ),
-
+           
 //           ],
 //         ),
 //       ),
@@ -99,17 +102,20 @@ import 'package:google_fonts/google_fonts.dart';
 //               SizedBox(height: 30,),
 //               Divider(
 //                 color: MyColors.DarkLighter,
-//                 thickness: 1.5,
+//                 thickness: 1.5, 
 //               ),
 //                SizedBox(height: 30,),
 //                ColoredButton(text: "Send Code")
-
+       
 //         ],
 //       ),
 //     )
 //     );
 //   }
 // }
+
+
+
 
 class ForgotPassword extends StatelessWidget {
   const ForgotPassword({super.key});
@@ -133,20 +139,21 @@ class ForgotPassword extends StatelessWidget {
             child: Column(
               children: [
                 Row(
-                  children: [
-                    SvgPicture.asset(MyIcons.arrowLeft),
-                    SizedBox(
-                      width: 100,
-                    ),
-                    Text(
-                      "Taqreeb",
-                      style: GoogleFonts.montserrat(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: MyColors.white),
-                    ),
-                  ],
-                ),
+            children: [
+              SvgPicture.asset(MyIcons.arrowLeft),
+              SizedBox(
+                width: 100,
+              ),
+              Text(
+                    "Taqreeb",
+                    style: GoogleFonts.montserrat(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: MyColors.white
+                        ),
+                  ),
+            ],
+          ),
                 SizedBox(height: 15),
                 Text(
                   "Upload your ID Card for Verification",

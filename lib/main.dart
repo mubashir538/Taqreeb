@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-//import 'package:taqreeb/Screens/faq_venue_selection.dart';
-//import 'package:taqreeb/Screens/Home/Home.dart';
-//import 'package:taqreeb/Components/faq_questions.dart';
-//import 'package:taqreeb/Screens/homepage.dart';
-//import 'package:taqreeb/Screens/helpcenter.dart';
-//import 'package:taqreeb/Screens/customersupport.dart';
-//import 'package:taqreeb/Screens/helpcenter.dart';
-//import 'package:taqreeb/Screens/faq.dart';
-import 'package:taqreeb/Screens/guidescreen.dart';
+import 'package:taqreeb/Screens/Login%20Screen.dart';
+import 'package:taqreeb/Screens/View%20Function.dart';
+import 'package:taqreeb/Screens/signup.dart';
+
 
 void main() {
   runApp(const MainApp());
@@ -19,11 +14,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-<<<<<<< Updated upstream
-      home: GuideScreen(),
-=======
-      home: SignUpScreen(),
->>>>>>> Stashed changes
+    home: SignUpScreen(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
