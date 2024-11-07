@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Cake%20Box.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/Cart%20Item.dart';
 import 'package:taqreeb/Components/header.dart';
-// import 'package:taqreeb/Components/text_box.dart';
-// import 'package:taqreeb/theme/color.dart';
-// import 'package:taqreeb/theme/icons.dart';
 
 class BakeryAndSweets extends StatelessWidget {
   const BakeryAndSweets({super.key});
@@ -38,12 +34,12 @@ class BakeryAndSweets extends StatelessWidget {
           ],
         ),
         // gri(
-        //   children: [
-        //     SizedBox(child: CakeBox()),
-        //     SizedBox(width:60,),
-        //     CakeBox()
-        //   ],
-        // )
+          children: [
+            SizedBox(child: CakeBox()),
+            SizedBox(width:60,),
+            CakeBox()
+          ],
+        )
       ),
     );
   }
