@@ -5,7 +5,7 @@ import 'package:taqreeb/components/header.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class BusinessSignup4 extends StatelessWidget {
-  const BusinessSignup4({Key? key}) : super(key: key);
+  const BusinessSignup4({super.key});
 
   @override
   Widget build(BuildContext context) {

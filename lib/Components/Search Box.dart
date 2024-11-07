@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class SearchBox extends StatelessWidget {
   final TextEditingController controller;
-  SearchBox({required this.controller});
+  const SearchBox({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {

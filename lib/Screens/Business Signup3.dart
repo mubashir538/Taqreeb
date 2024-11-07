@@ -8,6 +8,8 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
 class BusinessSignup3 extends StatelessWidget {
+  const BusinessSignup3({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

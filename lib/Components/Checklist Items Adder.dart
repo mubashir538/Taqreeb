@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ChecklistItemsAdder extends StatelessWidget {
   final String text;
-  ChecklistItemsAdder({required String this.text});
+  const ChecklistItemsAdder({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {

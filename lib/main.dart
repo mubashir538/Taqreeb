@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/Cake%20Box.dart';
-import 'package:taqreeb/Screens/Create%20function.dart';
-import 'package:taqreeb/Screens/Home/Home.dart';
-import 'package:taqreeb/Screens/Service%20View%20Page.dart';
-import 'package:taqreeb/Screens/cartitem.dart';
-// import 'package:taqreeb/Components/Cart%20Item.dart';
-
+import 'package:taqreeb/Screens/Create%20guest%20list/creategueslist1.dart';
 
 void main() {
   runApp(const MainApp());
@@ -17,7 +11,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CartItem(),
+      home: CreateGuestList1(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
