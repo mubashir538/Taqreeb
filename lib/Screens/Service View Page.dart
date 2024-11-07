@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
-import 'package:taqreeb/Components/abc.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
