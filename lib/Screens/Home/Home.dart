@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:taqreeb/theme/color.dart';
 
 class Home extends StatelessWidget {
