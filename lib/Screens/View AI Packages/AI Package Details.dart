@@ -66,7 +66,7 @@ class AIPackageDetails extends StatelessWidget {
                 ],
               )),
           Expanded(
-            child: Container(
+            child: SizedBox(
               width: screenWidth * 0.9,
               child: ListView.builder(
                 itemCount: 5,

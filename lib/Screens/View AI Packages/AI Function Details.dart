@@ -49,7 +49,7 @@ class AIFunctionDetails extends StatelessWidget {
               )),
           SizedBox(height: MaximumThing * 0.02),
           Expanded(
-            child: Container(
+            child: SizedBox(
               width: screenWidth * 0.9,
               child: ListView.builder(
                 itemCount: 5,

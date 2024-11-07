@@ -7,7 +7,7 @@ class HomePageProducts extends StatelessWidget {
   final String category;
   final String price;
 
-  const HomePageProducts({
+  const HomePageProducts({super.key, 
     required this.image,
     required this.name,
     required this.category,
