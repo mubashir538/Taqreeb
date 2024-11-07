@@ -53,12 +53,12 @@ class Parlors extends StatelessWidget {
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // Image.asset("https://wolfcoveinn.com/wp-content/uploads/2019/01/WolfCove-spa-slide-1.jpg",
-                  // width: 20,
-                  // height: 30,
-                  // ),
+                  Image.network("https://t3.ftcdn.net/jpg/08/47/15/58/360_F_847155855_DsH51GZkt56KyrrsJpts9U2a1fwLhPlg.jpg",
+                  width: 190,
+                  height: 280,
+                 ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -67,18 +67,19 @@ class Parlors extends StatelessWidget {
                       MyDivider(
                         width: 50,
                       ),
-                      Text("Indulge in a variety of\n" 
-                      "spa services, from \n"
-                      "soothing massages to\n" 
-                      "revitalizing facials, for\n" 
-                      "the ultimate wellness\n" 
-                      "experience.",
-                      textAlign: TextAlign.end,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w200,
-                        color: MyColors.white
-                      ),)
+                      Text(
+                        "Indulge in a variety of\n"
+                        "spa services, from \n"
+                        "soothing massages to\n"
+                        "revitalizing facials, for\n"
+                        "the ultimate wellness\n"
+                        "experience.",
+                        textAlign: TextAlign.end,
+                        style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w200,
+                            color: MyColors.white),
+                      )
                     ],
                   )
                 ],
@@ -88,7 +89,6 @@ class Parlors extends StatelessWidget {
               height: 40,
             ),
 
-            
             //Makeup
             Container(
               height: 170,
@@ -99,12 +99,12 @@ class Parlors extends StatelessWidget {
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // Image.asset("https://wolfcoveinn.com/wp-content/uploads/2019/01/WolfCove-spa-slide-1.jpg",
-                  // width: 20,
-                  // height: 30,
-                  // ),
+                  Image.network("https://t3.ftcdn.net/jpg/08/47/15/58/360_F_847155855_DsH51GZkt56KyrrsJpts9U2a1fwLhPlg.jpg",
+                  width: 190,
+                  height: 250,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -113,20 +113,21 @@ class Parlors extends StatelessWidget {
                       MyDivider(
                         width: 40,
                       ),
-                      Text("Enhance your natural\n" 
-                      "beauty with expertly\n" 
-                      "applied makeup, tailored\n" 
-                      "to highlight your best\n" 
-                      "features. Perfect for any\n" 
-                      "occasion, from casual\n" 
-                      "outings to glamorous\n"
-                      "events.",
-                      textAlign: TextAlign.end,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w200,
-                        color: MyColors.white
-                      ),)
+                      Text(
+                        "Enhance your natural\n"
+                        "beauty with expertly\n"
+                        "applied makeup, tailored\n"
+                        "to highlight your best\n"
+                        "features. Perfect for any\n"
+                        "occasion, from casual\n"
+                        "outings to glamorous\n"
+                        "events.",
+                        textAlign: TextAlign.end,
+                        style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w200,
+                            color: MyColors.white),
+                      )
                     ],
                   )
                 ],
