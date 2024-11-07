@@ -34,7 +34,8 @@ class HomePageProducts extends StatelessWidget {
           Image.network(image,
               height: MaximumThing * 0.2,
               width: MaximumThing * 0.2,
-              fit: BoxFit.cover, loadingBuilder: (BuildContext context,
+              fit: BoxFit.cover, 
+              loadingBuilder: (BuildContext context,
                   Widget child, ImageChunkEvent? loadingProgress) {
             if (loadingProgress == null) return child;
             return Center(

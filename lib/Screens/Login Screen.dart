@@ -64,8 +64,13 @@ class LoginScreen extends StatelessWidget {
                         height: screenHeight * 0.05,
                         child: MyDivider(),
                       ),
-                      IconedButton(text: "Continue with Google",icon: MyIcons.google,),
-                      IconedButton(text: "Continue with Facebook",icon: MyIcons.facebook),
+                      IconedButton(
+                        text: "Continue with Google",
+                        icon: MyIcons.google,
+                      ),
+                      IconedButton(
+                          text: "Continue with Facebook",
+                          icon: MyIcons.facebook),
                     ],
                   ),
                 )

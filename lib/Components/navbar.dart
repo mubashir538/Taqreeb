@@ -22,13 +22,13 @@ class _NavbarState extends State<Navbar> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
+    double maximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return BottomAppBar(
       color: Colors.redAccent,
       shape: CircularNotchedRectangle(),
-      notchMargin: 8.0,
+      notchMargin: maximumThing * 0.01,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -37,13 +37,12 @@ class _NavbarState extends State<Navbar> {
                 color: _selectedIndex == 0 ? Colors.yellow : Colors.white),
             onTap: () => _onItemTapped(0),
           ),
-
           InkWell(
             onTap: () => _onItemTapped(1),
             child: SvgPicture.asset(MyIcons.chats,
                 color: _selectedIndex == 1 ? Colors.yellow : Colors.white),
           ),
-          SizedBox(width: 48.0), // space for the floating action button
+          SizedBox(width: screenWidth * 0.05),
           InkWell(
             child: SvgPicture.asset(MyIcons.events,
                 color: _selectedIndex == 2 ? Colors.yellow : Colors.white),
