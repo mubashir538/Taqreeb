@@ -110,8 +110,8 @@ class EventDetailsScreen extends StatelessWidget {
                     offset: Offset(2, 2),
                   ),
                 ]),
+            width: screenWidth * 0.8,
             child: Text("View GuestList"),
-            width: screenWidth * 0.8,
           ),
 
           Container(
@@ -129,8 +129,8 @@ class EventDetailsScreen extends StatelessWidget {
                     offset: Offset(2, 2),
                   ),
                 ]),
+            width: screenWidth * 0.8,
             child: Text("View CheckLlist"),
-            width: screenWidth * 0.8,
           ),
 
           Container(
@@ -148,8 +148,8 @@ class EventDetailsScreen extends StatelessWidget {
                     offset: Offset(2, 2),
                   ),
                 ]),
-            child: Text("View Invitation Card"),
             width: screenWidth * 0.8,
+            child: Text("View Invitation Card"),
           ),
 
           //icon (yh call ni horha)

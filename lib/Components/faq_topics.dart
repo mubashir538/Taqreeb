@@ -6,10 +6,9 @@ class VenueSelection extends StatelessWidget {
   final String text;
   final IconData icon;
 
-  // Setting a default value for text
   const VenueSelection({
     super.key,
-    this.text = 'Venue Selection', // Default text is now "Venue Selection"
+    this.text = 'Venue Selection', 
     required this.icon,
   });
 
@@ -30,17 +29,17 @@ class VenueSelection extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10.0),
               child: Icon(
                 icon,
-                color: Color(0xffEDF2F4), // Icon color
+                color: Color(0xffEDF2F4),
                 size: 24,
               ),
             ),
-            SizedBox(width: 20), // Add a SizedBox to create a gap of 20 pixels
+            SizedBox(width: 20), 
             Text(
-              text, // The text to display (default is "Venue Selection")
+              text,
               style: GoogleFonts.montserrat(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: Color(0xffEDF2F4), // Text color
+                color: Color(0xffEDF2F4), 
               ),
             ),
           ],

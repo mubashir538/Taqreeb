@@ -30,7 +30,7 @@ class LoginScreen extends StatelessWidget {
                 Header(
                   heading: "Login to Continue",
                   para:
-                      "We believe that your event should not be delayed so let\'s login your Account so we can get Started",
+                      "We believe that your event should not be delayed so let's login your Account so we can get Started",
                   image: MyImages.Login,
                 ),
                 Container(
