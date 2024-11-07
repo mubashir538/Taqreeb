@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class EditIcon extends StatelessWidget {
-  const EditIcon({Key? key}) : super(key: key);
+  const EditIcon({super.key});
 
   @override
   Widget build(BuildContext context) {
