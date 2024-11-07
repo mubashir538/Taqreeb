@@ -6,7 +6,7 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class OTPScreen extends StatelessWidget {
-  OTPScreen({Key? key}) : super(key: key);
+  OTPScreen({super.key});
 
   final TextEditingController phoneController = TextEditingController();
 

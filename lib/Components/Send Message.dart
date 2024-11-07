@@ -5,7 +5,7 @@ import 'package:taqreeb/theme/color.dart';
 class SendMessage extends StatelessWidget {
   final String text;
   final String time;
-  SendMessage({required this.text, required this.time});
+  const SendMessage({super.key, required this.text, required this.time});
 
   @override
   Widget build(BuildContext context) {
