@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Cake%20Box.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/function.dart';
@@ -18,7 +19,7 @@ class Home extends StatelessWidget {
       body: Column(
         children: [
           Header(),
-          Function1(),
+          CakeBox(),
           ColoredButton(text: 'Hello'),
           ProgressBar(Progress: 3),
           HomePageProducts(

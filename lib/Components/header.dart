@@ -22,7 +22,7 @@ class Header extends StatelessWidget {
       MaximumThing = screenHeight;
     }
     return Container(
-      height: hasSomething ? null : screenHeight * 0.009,
+      height: hasSomething ? null : screenHeight * 0.09,
       width: screenWidth,
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
       decoration: BoxDecoration(
