@@ -40,7 +40,8 @@ class AccountInfo1 extends StatelessWidget {
         ),
 
         //Circle Avatar
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, 
+        children: [
           SizedBox(
             width: 30,
             height: 40,
