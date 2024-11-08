@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:taqreeb/Screens/Create%20guest%20list/creategueslist1.dart';
-
+import 'package:taqreeb/Screens/AccountInfo1.dart';
+import 'package:taqreeb/Screens/AccountInfo2.dart';
 
 
 void main() {
@@ -14,10 +13,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-
-      home: CreateGuestList1(),
-
+      home: AccountInfo1(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),

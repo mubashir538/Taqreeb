@@ -40,8 +40,7 @@ class AccountInfo1 extends StatelessWidget {
         ),
 
         //Circle Avatar
-        Row(crossAxisAlignment: CrossAxisAlignment.start, 
-        children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(
             width: 30,
             height: 40,
@@ -64,15 +63,15 @@ class AccountInfo1 extends StatelessWidget {
                     color: MyColors.white),
               ),
 
-              //+Add Status
-              Text(
-                '+ Add Status',
-                style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.Yellow,
-                ),
-              ),
+              // //+Add Status
+              // Text(
+              //   '+ Add Status',
+              //   style: GoogleFonts.montserrat(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w700,
+              //     color: MyColors.Yellow,
+              //   ),
+              // ),
             ],
           ),
         ]),
@@ -97,27 +96,28 @@ class AccountInfo1 extends StatelessWidget {
             height: 20,
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(
+                  width: 20,
+                ),
                 SvgPicture.asset(MyIcons.profile),
                 SizedBox(
-                  height: 20,
+                  width: 20,
                 ),
-                Column(children: [
-                  Text(
-                    'Wishmak12',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
+                Text(
+                  'Wishmak12',
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w200,
+                    color: MyColors.white,
                   ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
+                ),
+              ]),
+          MyDivider(width: screenWidth * 0.6),
+          const SizedBox(height: 10),
         ]),
 
         //Phone
@@ -137,27 +137,28 @@ class AccountInfo1 extends StatelessWidget {
             height: 20,
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset(MyIcons.profile),
                 SizedBox(
-                  height: 20,
+                  width: 20,
                 ),
-                Column(children: [
-                  Text(
-                    '03352798062',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
+                Icon(Icons.phone),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  '03352798062',
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w200,
+                    color: MyColors.white,
                   ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
+                ),
+              ]),
+          MyDivider(width: screenWidth * 0.6),
+          const SizedBox(height: 10),
         ]),
 
         //Email
@@ -177,27 +178,28 @@ class AccountInfo1 extends StatelessWidget {
             height: 20,
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset(MyIcons.email),
                 SizedBox(
-                  height: 20,
+                  width: 20,
                 ),
-                Column(children: [
-                  Text(
-                    'Wishmak78@gmail.com',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
+                Icon(Icons.email),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Wishmak78@gmail.com',
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w200,
+                    color: MyColors.white,
                   ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
+                ),
+              ]),
+          MyDivider(width: screenWidth * 0.6),
+          const SizedBox(height: 10),
         ]),
 
         //Location
@@ -217,34 +219,33 @@ class AccountInfo1 extends StatelessWidget {
             height: 20,
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset(MyIcons.profile),
                 SizedBox(
-                  height: 20,
+                  width: 20,
                 ),
-                Column(children: [
-                  Text(
-                    'Karachi',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
+                Icon(Icons.location_city),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Karachi',
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w200,
+                    color: MyColors.white,
                   ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
+                ),
+              ]),
+          MyDivider(width: screenWidth * 0.6),
+          const SizedBox(height: 30),
         ]),
 
         //Navbar
         Navbar(),
       ]),
-    )
-    )
-    );
+    )));
   }
 }
