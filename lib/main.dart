@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Screens/Login%20Screen.dart';
 import 'package:taqreeb/Screens/View%20Function.dart';
+import 'package:taqreeb/Screens/aipackage.dart';
 import 'package:taqreeb/Screens/signup.dart';
 import 'package:taqreeb/Screens/sendemail.dart';
 
@@ -14,7 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SendEmailScreen(),
+      home: AIPackageScreen(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),

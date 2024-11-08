@@ -5,10 +5,6 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
 class SendEmailScreen extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController messageController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +32,7 @@ class SendEmailScreen extends StatelessWidget {
               MyTextBox(
                 hint: "Message",
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 10),
               ColoredButton(
                 text: "Send",
               ),
