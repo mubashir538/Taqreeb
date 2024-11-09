@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Header.dart';
-import 'package:taqreeb/Components/Navbar.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Components/category_icon.dart';
