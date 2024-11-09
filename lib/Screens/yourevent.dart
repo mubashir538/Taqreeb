@@ -4,6 +4,8 @@ import 'package:taqreeb/Components/function.dart';
 import 'package:taqreeb/Components/navbar.dart';
 
 class EventsScreen extends StatelessWidget {
+  const EventsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;

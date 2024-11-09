@@ -7,37 +7,50 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/progressbar.dart';
 
 class OTPScreen2 extends StatelessWidget {
+  const OTPScreen2({super.key});
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: Container(
+          constraints: BoxConstraints(minHeight: screenHeight),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Header(
-                heading: 'OTP Verification',
-                para: 'We have sent 4 digits verification code to your number',
+              Column(
+                children: [
+                  Header(
+                    heading: 'OTP Verification',
+                    para:
+                        'We have sent 4 digits verification code to your number, Please Check your Number',
+                  ),
+                  SizedBox(height: screenHeight * 0.1),
+                  OTPBoxes(),
+                  SizedBox(height: screenHeight * 0.02),
+                  Text(
+                    'Send Code Again 00:59',
+                    style: TextStyle(
+                      color: MyColors.white,
+                      fontSize: MaximumThing * 0.02,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.1,
+                    child: Center(child: MyDivider()),
+                  ),
+                  ColoredButton(
+                    text: 'Verification',
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              OTPBoxes(),
-              SizedBox(height: 20),
-              Text(
-                'Send Code Again 00:59',
-                style: TextStyle(
-                  color: MyColors.white,
-                  fontSize: 16,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-              SizedBox(height: 20),
-              MyDivider(),
-              SizedBox(height: 20),
-              ColoredButton(
-                text: 'Verification',
-              ),
-              SizedBox(height: 20),
               ProgressBar(
                 Progress: 1,
               ),

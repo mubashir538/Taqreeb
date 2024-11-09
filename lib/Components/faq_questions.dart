@@ -8,13 +8,15 @@ class FAQQuestion extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
 
+
   FAQQuestion({
     Key? key,
     required this.question,
     required this.answer,
+
     required this.isExpanded,
     required this.onToggle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

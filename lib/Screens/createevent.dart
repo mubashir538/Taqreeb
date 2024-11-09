@@ -6,6 +6,8 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class EventScreen extends StatefulWidget {
+  const EventScreen({super.key});
+
   @override
   _EventScreenState createState() => _EventScreenState();
 }

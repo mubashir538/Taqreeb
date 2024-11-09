@@ -9,6 +9,8 @@ import 'package:taqreeb/theme/images.dart';
 class FaqScreen extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
 
+  SupportScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

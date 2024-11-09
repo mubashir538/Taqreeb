@@ -5,10 +5,13 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/Components/home page products.dart';
+import 'package:taqreeb/Components/navbar.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class HomeScreen extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
+
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
