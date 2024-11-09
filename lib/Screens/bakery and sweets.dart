@@ -33,13 +33,6 @@ class BakeryAndSweets extends StatelessWidget {
             ),
           ],
         ),
-        // gri(
-          children: [
-            SizedBox(child: CakeBox()),
-            SizedBox(width:60,),
-            CakeBox()
-          ],
-        )
       ),
     );
   }
