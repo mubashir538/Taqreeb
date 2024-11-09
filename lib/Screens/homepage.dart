@@ -196,7 +196,7 @@ class HomeScreen extends StatelessWidget {
         child: Icon(Icons.add, color: MyColors.red),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Navbar(),
+      // bottomNavigationBar: Navbar(),
     );
   }
 }

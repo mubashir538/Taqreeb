@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 
 import 'package:taqreeb/Screens/Create%20guest%20list/creategueslist1.dart';
+import 'package:taqreeb/Screens/Venue.dart';
 
 
 
@@ -17,7 +18,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
 
 
-      home: CreateGuestList1(),
+      home: Venue(),
 
       theme: ThemeData.dark(
         useMaterial3: true,
