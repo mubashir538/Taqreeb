@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/AccountInfo1.dart';
-import 'package:taqreeb/Screens/AccountInfo2.dart';
+import 'package:taqreeb/Screens/Create%20guest%20list/creategueslist1.dart';
 import 'package:taqreeb/Screens/Decorators.dart';
+
 
 
 void main() {
