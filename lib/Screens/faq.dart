@@ -9,7 +9,7 @@ import 'package:taqreeb/theme/images.dart';
 class FaqScreen extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
 
-  SupportScreen({super.key});
+  FaqScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

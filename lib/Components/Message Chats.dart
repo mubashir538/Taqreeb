@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class MessageChatButton extends StatelessWidget {
   final String name;
@@ -15,64 +16,70 @@ class MessageChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        width: 400,
-        decoration: BoxDecoration(
-          color: const Color(0xFF303030),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: [
-            // Avatar Icon isme bs icon h image lgani hai
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.grey[700],
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+      padding: EdgeInsets.symmetric(
+          horizontal: MaximumThing * 0.02, vertical: MaximumThing * 0.02),
+      width: screenWidth * 0.9,
+      decoration: BoxDecoration(
+        color: MyColors.DarkLighter,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          // Avatar Icon isme bs icon h image lgani hai
+          Container(
+            margin: EdgeInsets.only(right: MaximumThing * 0.03),
+            child: CircleAvatar(
+              radius: 25,
+              backgroundColor: MyColors.red,
               child: Icon(
                 Icons.person,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        name,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        time,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Text(
-                    message,
+                    name,
                     style: GoogleFonts.montserrat(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white.withOpacity(0.9),
+                      fontSize: MaximumThing * 0.02,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    time,
+                    style: GoogleFonts.montserrat(
+                      fontSize: MaximumThing * 0.015,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white70,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
+              SizedBox(height: MaximumThing * 0.01),
+              Text(
+                message,
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

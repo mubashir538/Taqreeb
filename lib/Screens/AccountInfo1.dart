@@ -13,237 +13,231 @@ class AccountInfo1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
-        body: SingleChildScrollView(
-            child: Container(
-      child: Column(children: [
-        Header(
-          heading: "My Profile",
-        ),
-        SizedBox(
-          height: 10,
-        ),
+      body: SingleChildScrollView(
+          child: Container(
+        child: Column(children: [
+          Header(
+            heading: "My Profile",
+          ),
 
-        //Text
-        Text(
-            "Here is the account information for your profile;\n"
-            "please review and ensure all details are accurate for\n"
-            "a seamless experience.",
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: MaximumThing * 0.03, horizontal: MaximumThing * 0.02),
+            child: Text(
+                "Here is the account information for your profile,please review and ensure all details are accurate for a seamless experience.",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                    fontSize: MaximumThing * 0.015,
+                    fontWeight: FontWeight.w400,
+                    color: MyColors.white)),
+          ),
+
+          //Circle Avatar
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.04),
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              CircleAvatar(
+                radius: 40,
+                backgroundImage: NetworkImage(
+                    "https://static.vecteezy.com/system/resources/previews/030/798/360/non_2x/beautiful-asian-girl-wearing-over-size-hoodie-in-casual-style-ai-generative-photo.jpg" // backgroundImage: NetworkImage(),
+
+                    ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: MaximumThing * 0.03),
+                child: Text(
+                  "Wishma khan",
+                  style: GoogleFonts.montserrat(
+                      fontSize: MaximumThing * 0.02,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.white),
+                ),
+              ),
+            ]),
+          ),
+
+          SizedBox(
+            height: screenHeight * 0.1,
+            child: Center(child: MyDivider()),
+          ),
+
+          Text(
+            'Username',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: MyColors.white)),
-        SizedBox(
-          height: 20,
-        ),
-
-        //Circle Avatar
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-            width: 30,
-            height: 40,
+              fontSize: MaximumThing * 0.018,
+              fontWeight: FontWeight.w700,
+              color: MyColors.Yellow,
+            ),
           ),
-          CircleAvatar(
-            radius: 40,
-            backgroundImage: NetworkImage(
-                "https://cdn.pixabay.com/photo/2016/12/09/09/52/girl-1894125_640.jpg"),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-          Column(
-            children: [
-              Text(
-                "wishma khan",
-                style: GoogleFonts.montserrat(
-                    fontSize: 23,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.white),
-              ),
-
-              //+Add Status
-              Text(
-                '+ Add Status',
-                style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.Yellow,
-                ),
-              ),
-            ],
-          ),
-        ]),
-
-        //divider
-        MyDivider(width: screenWidth * 0.6),
-        const SizedBox(height: 10),
-
-        //Username
-        Text(
-          'Username',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: MyColors.Yellow,
-          ),
-        ),
-
-        Column(children: [
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: MaximumThing * 0.02, horizontal: MaximumThing * 0.01),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.04),
+              child: Row(children: [
                 SvgPicture.asset(MyIcons.profile),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(children: [
-                  Text(
-                    'Wishmak12',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
-                  ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
-        ]),
-
-        //Phone
-        Text(
-          'Phone',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: MyColors.Yellow,
+                Container(
+                  margin: EdgeInsets.only(left: MaximumThing * 0.02),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Wishmak12',
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.montserrat(
+                            fontSize: MaximumThing * 0.015,
+                            fontWeight: FontWeight.w200,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        MyDivider(width: screenWidth * 0.65),
+                      ]),
+                )
+              ]),
+            ),
           ),
+
+          Text(
+            'Phone',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: MaximumThing * 0.018,
+              fontWeight: FontWeight.w700,
+              color: MyColors.Yellow,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: MaximumThing * 0.02, horizontal: MaximumThing * 0.01),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.04),
+              child: Row(children: [
+                Icon(
+                  Icons.phone,
+                  color: MyColors.white,
+                  size: 30,
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: MaximumThing * 0.02),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '032182429727',
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.montserrat(
+                            fontSize: MaximumThing * 0.015,
+                            fontWeight: FontWeight.w200,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        MyDivider(width: screenWidth * 0.65),
+                      ]),
+                )
+              ]),
+            ),
+          ),
+
+          Text(
+            'Email',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: MaximumThing * 0.018,
+              fontWeight: FontWeight.w700,
+              color: MyColors.Yellow,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: MaximumThing * 0.02, horizontal: MaximumThing * 0.01),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.04),
+              child: Row(children: [
+                Icon(
+                  Icons.email,
+                  color: MyColors.white,
+                  size: 30,
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: MaximumThing * 0.02),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Wishmak78@gmail.com',
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.montserrat(
+                            fontSize: MaximumThing * 0.015,
+                            fontWeight: FontWeight.w200,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        MyDivider(width: screenWidth * 0.65),
+                      ]),
+                )
+              ]),
+            ),
+          ),
+
+          Text(
+            'Location',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: MaximumThing * 0.018,
+              fontWeight: FontWeight.w700,
+              color: MyColors.Yellow,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: MaximumThing * 0.02, horizontal: MaximumThing * 0.01),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.04),
+              child: Row(children: [
+                Icon(Icons.location_pin, color: MyColors.white,size: 30,),
+               
+                Container(
+                  margin: EdgeInsets.only(left: MaximumThing * 0.02),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Karachi, Pakistan',
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.montserrat(
+                            fontSize: MaximumThing * 0.015,
+                            fontWeight: FontWeight.w200,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        MyDivider(width: screenWidth * 0.65),
+                      ]),
+                )
+              ]),
+            ),
+          ),
+        ]),
+      )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: MyColors.Yellow,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        child: Icon(
+          Icons.add_rounded,
+          size: 40,
+          color: MyColors.Dark,
         ),
-
-        Column(children: [
-          SizedBox(
-            width: 30,
-            height: 20,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SvgPicture.asset(MyIcons.profile),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(children: [
-                  Text(
-                    '03352798062',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
-                  ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
-        ]),
-
-        //Email
-        Text(
-          'Email',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: MyColors.Yellow,
-          ),
-        ),
-
-        Column(children: [
-          SizedBox(
-            width: 30,
-            height: 20,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SvgPicture.asset(MyIcons.email),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(children: [
-                  Text(
-                    'Wishmak78@gmail.com',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
-                  ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
-        ]),
-
-        //Location
-        Text(
-          'Location',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: MyColors.Yellow,
-          ),
-        ),
-
-        Column(children: [
-          SizedBox(
-            width: 30,
-            height: 20,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SvgPicture.asset(MyIcons.profile),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(children: [
-                  Text(
-                    'Karachi',
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w200,
-                      color: MyColors.white,
-                    ),
-                  ),
-                  MyDivider(width: screenWidth * 0.6),
-                  const SizedBox(height: 10),
-                ])
-              ])
-        ]),
-
-        //Navbar
-        Navbar(),
-      ]),
-    )
-    )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: Navbar(),
     );
   }
 }

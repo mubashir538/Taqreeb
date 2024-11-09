@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
 class Navbar extends StatefulWidget {
@@ -25,35 +26,40 @@ class _NavbarState extends State<Navbar> {
     double maximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    return BottomAppBar(
-      color: Colors.redAccent,
-      shape: CircularNotchedRectangle(),
-      notchMargin: maximumThing * 0.01,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          InkWell(
-            child: SvgPicture.asset(MyIcons.home,
-                color: _selectedIndex == 0 ? Colors.yellow : Colors.white),
-            onTap: () => _onItemTapped(0),
-          ),
-          InkWell(
-            onTap: () => _onItemTapped(1),
-            child: SvgPicture.asset(MyIcons.chats,
-                color: _selectedIndex == 1 ? Colors.yellow : Colors.white),
-          ),
-          SizedBox(width: screenWidth * 0.05),
-          InkWell(
-            child: SvgPicture.asset(MyIcons.events,
-                color: _selectedIndex == 2 ? Colors.yellow : Colors.white),
-            onTap: () => _onItemTapped(2),
-          ),
-          InkWell(
-            child: SvgPicture.asset(MyIcons.profile,
-                color: _selectedIndex == 3 ? Colors.yellow : Colors.white),
-            onTap: () => _onItemTapped(3),
-          ),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+      clipBehavior: Clip.hardEdge,
+      child: BottomAppBar(
+        height: screenHeight * 0.08,
+        color: MyColors.red,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            InkWell(
+              child: SvgPicture.asset(MyIcons.home,
+                  color: _selectedIndex == 0 ? Colors.yellow : Colors.white),
+              onTap: () => _onItemTapped(0),
+            ),
+            InkWell(
+              onTap: () => _onItemTapped(1),
+              child: SvgPicture.asset(MyIcons.chats,
+                  color: _selectedIndex == 1 ? Colors.yellow : Colors.white),
+            ),
+            SizedBox(width: screenWidth * 0.05),
+            InkWell(
+              child: SvgPicture.asset(MyIcons.events,
+                  color: _selectedIndex == 2 ? Colors.yellow : Colors.white),
+              onTap: () => _onItemTapped(2),
+            ),
+            InkWell(
+              child: SvgPicture.asset(MyIcons.profile,
+                  color: _selectedIndex == 3 ? Colors.yellow : Colors.white),
+              onTap: () => _onItemTapped(3),
+            ),
+          ],
+        ),
       ),
     );
   }

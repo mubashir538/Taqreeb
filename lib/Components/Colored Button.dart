@@ -5,8 +5,14 @@ import 'package:taqreeb/theme/color.dart';
 class ColoredButton extends StatelessWidget {
   final String text;
   final double height;
-  final double width; 
-  const ColoredButton({required this.text, super.key,this.height = 0, this.width = 0});
+  final double width;
+  final VoidCallback? onPressed;
+  const ColoredButton(
+      {required this.text,
+      super.key,
+      this.height = 0,
+      this.width = 0,
+      this.onPressed });
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +21,24 @@ class ColoredButton extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-      height: height != 0 ? height : screenHeight * 0.06,
-      width: width != 0 ? width : screenWidth * 0.9,
-      decoration: BoxDecoration(
-          color: MyColors.red,
-          // color: Colors.transparent,
-          borderRadius: BorderRadius.circular(10)),
-      child: Center(
-        child: Text(
-          text,
-          style: GoogleFonts.montserrat(
-            fontSize: MaximumThing*0.018,
-            fontWeight: FontWeight.w500,
-            color: MyColors.white,
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+        height: height != 0 ? height : screenHeight * 0.06,
+        width: width != 0 ? width : screenWidth * 0.9,
+        decoration: BoxDecoration(
+            color: MyColors.red,
+            // color: Colors.transparent,
+            borderRadius: BorderRadius.circular(10)),
+        child: Center(
+          child: Text(
+            text,
+            style: GoogleFonts.montserrat(
+              fontSize: MaximumThing * 0.018,
+              fontWeight: FontWeight.w500,
+              color: MyColors.white,
+            ),
           ),
         ),
       ),

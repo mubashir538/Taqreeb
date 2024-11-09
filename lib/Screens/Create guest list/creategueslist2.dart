@@ -1,54 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
-
-
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
-
-import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
-
-
-
-
 
 class CreateGuestList2 extends StatelessWidget {
   const CreateGuestList2({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
     return Scaffold(
-      body: Container(
+      body: SingleChildScrollView(
         child: Column(
-          
           children: [
             Header(
               heading: 'Guest List',
             ),
-            SizedBox(height: 20,),
-            MyTextBox(hint: 'Family Name'),
-            SizedBox(height: 10,),
-            MyTextBox(hint: 'Members'),
-            
             SizedBox(
-              width: 400
-              ,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SvgPicture.asset(MyIcons.add,
-                  color: MyColors.white,
-                  ),
-                ],
-              ),
+              height: screenHeight * 0.05,
             ),
-            SizedBox(height: 500,),
-            ColoredButton(text: 'Add Family')
+            MyTextBox(hint: 'Family Name'),
+            MyTextBox(hint: 'Members'),
+            SizedBox(
+              height: screenHeight * 0.05,
+            ),
+            ColoredButton(
+              text: 'Add Family',
+              width: screenWidth * 0.7,
+            ),
+            BorderButton(text: 'Done', width: screenWidth * 0.7)
           ],
         ),
-        
       ),
     );
   }
