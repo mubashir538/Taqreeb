@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Screens/AccountInfo1.dart';
 import 'package:taqreeb/Screens/AccountInfo2.dart';
+import 'package:taqreeb/Screens/Decorators.dart';
 
 
 void main() {
@@ -13,7 +14,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: AccountInfo1(),
+      home: Decorators(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
