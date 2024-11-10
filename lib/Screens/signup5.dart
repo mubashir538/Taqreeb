@@ -12,10 +12,10 @@ class OTPScreen5 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
+    // double MaximumThing =
+    //     screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -44,6 +44,9 @@ class OTPScreen5 extends StatelessWidget {
                 ),
                 ColoredButton(
                   text: 'Continue',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/signup6');
+                    },
                 ),
               ]),
               ProgressBar(

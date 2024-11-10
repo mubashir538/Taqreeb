@@ -36,11 +36,19 @@ class SignUpScreen extends StatelessWidget {
             MyTextBox(hint: "Confirm Password"),
             ColoredButton(
               text: "Continue",
+              onPressed: () {
+                Navigator.pushNamed(context, '/signup1');
+              },
             ),
             SizedBox(height: 10),
-            Text(
-              "Already a Member? Login",
-              style: TextStyle(color: MyColors.Yellow),
+            InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              child: Text(
+                "Already a Member? Login",
+                style: TextStyle(color: MyColors.Yellow),
+              ),
             ),
             SizedBox(
               height: screenHeight * 0.1,

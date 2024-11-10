@@ -201,8 +201,11 @@ class AccountInfo1 extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.04),
               child: Row(children: [
-                Icon(Icons.location_pin, color: MyColors.white,size: 30,),
-               
+                Icon(
+                  Icons.location_pin,
+                  color: MyColors.white,
+                  size: 30,
+                ),
                 Container(
                   margin: EdgeInsets.only(left: MaximumThing * 0.02),
                   child: Column(

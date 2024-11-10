@@ -58,8 +58,18 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(
                         height: screenHeight * 0.03,
                       ),
-                      ColoredButton(text: "Login"),
-                      BorderButton(text: "Signup"),
+                      ColoredButton(
+                        text: "Login",
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/home');
+                        },
+                      ),
+                      BorderButton(
+                        text: "Signup",
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/signup');
+                        },
+                      ),
                       SizedBox(
                         height: screenHeight * 0.05,
                         child: MyDivider(),

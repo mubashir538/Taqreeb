@@ -3,10 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
-import 'package:taqreeb/Components/navbar.dart';
-import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
 
 class Parlors extends StatelessWidget {
   const Parlors({super.key});

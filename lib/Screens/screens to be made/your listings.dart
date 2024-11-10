@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
-import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';

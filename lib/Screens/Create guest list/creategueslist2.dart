@@ -11,8 +11,8 @@ class CreateGuestList2 extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
+    // double MaximumThing =
+    //     screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
       body: SingleChildScrollView(

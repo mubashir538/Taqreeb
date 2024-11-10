@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';

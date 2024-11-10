@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Checklist%20Items%20Adder.dart';
-import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
-import 'package:taqreeb/Components/Iconed%20Button.dart';
 import 'package:taqreeb/Components/checklist_items.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
-import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
@@ -18,9 +13,9 @@ class CreateChecklist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
+    // double screenHeight = MediaQuery.of(context).size.height;
+    // double MaximumThing =
+    //     screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
         backgroundColor: MyColors.Dark,

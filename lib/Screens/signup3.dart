@@ -44,6 +44,9 @@ class OTPScreen3 extends StatelessWidget {
                   ),
                   ColoredButton(
                     text: 'Send OTP',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/signup4');
+                    },
                   ),
                   Text(
                     'Skip for Later',

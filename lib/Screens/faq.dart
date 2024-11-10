@@ -4,7 +4,6 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Components/checklist_items.dart';
 import 'package:taqreeb/theme/icons.dart';
-import 'package:taqreeb/theme/images.dart';
 
 class FaqScreen extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
@@ -13,7 +12,7 @@ class FaqScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,

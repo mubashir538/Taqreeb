@@ -23,8 +23,8 @@ class _NavbarState extends State<Navbar> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double maximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
+    // double maximumThing =
+    //     screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Container(
       decoration: BoxDecoration(

@@ -16,23 +16,14 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          child: Header(
-            heading: 'Welcome!',
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Header(),
               SizedBox(height: 16),
-
               Row(
                 children: [
                   Expanded(
@@ -55,7 +46,6 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 16),
-
               Container(
                 height: 200,
                 alignment: Alignment.center,
@@ -66,7 +56,6 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -85,7 +74,6 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 16),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -117,12 +105,10 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 24),
-
               Center(
                 child: ColoredButton(text: 'Create Package with AI'),
               ),
               SizedBox(height: 24),
-
               Column(
                 children: [
                   Row(
@@ -195,7 +181,7 @@ class HomeScreen extends StatelessWidget {
         child: Icon(Icons.add, color: MyColors.red),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // bottomNavigationBar: Navbar(),
+      bottomNavigationBar: Navbar(),
     );
   }
 }

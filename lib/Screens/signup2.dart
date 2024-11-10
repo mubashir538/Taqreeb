@@ -48,6 +48,9 @@ class OTPScreen2 extends StatelessWidget {
                   ),
                   ColoredButton(
                     text: 'Verification',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/signup3');
+                    },
                   ),
                 ],
               ),

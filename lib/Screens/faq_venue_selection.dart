@@ -22,7 +22,7 @@ class _FAQScreenState extends State<FAQScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,

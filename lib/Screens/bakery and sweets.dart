@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Cake%20Box.dart';
-import 'package:taqreeb/Components/Cart%20Item.dart';
 import 'package:taqreeb/Components/header.dart';
 
 class BakeryAndSweets extends StatelessWidget {

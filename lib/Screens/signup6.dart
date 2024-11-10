@@ -53,6 +53,9 @@ class OTPScreen6 extends StatelessWidget {
               MyDivider(),
               ColoredButton(
                 text: 'Upload Profile',
+                onPressed: () {
+                  Navigator.pushNamed(context, '/home');
+                },
               ),
               SizedBox(height: 20),
               ProgressBar(Progress: 4)
