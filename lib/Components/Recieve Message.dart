@@ -38,8 +38,8 @@ class RecieveMessage extends StatelessWidget {
               softWrap: true,
               textAlign: TextAlign.start,
               style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.02,
-                fontWeight: FontWeight.w200,
+                fontSize: MaximumThing * 0.015,
+                fontWeight: FontWeight.w400,
                 color: MyColors.white,
               ),
             ),

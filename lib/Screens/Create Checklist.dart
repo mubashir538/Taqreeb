@@ -7,15 +7,30 @@ import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class CreateChecklist extends StatelessWidget {
-  const CreateChecklist({super.key});
+class CreateChecklist extends StatefulWidget {
+  CreateChecklist({super.key});
+  List<String> categories = [
+    "Venue",
+    "Catering",
+    "Decoration",
+    "Entertainment",
+    "Photography",
+    "Catering",
+    "Decoration",
+    "Entertainment",
+    "Photography",
+  ];
+  @override
+  State<CreateChecklist> createState() => _CreateChecklistState();
+}
 
+class _CreateChecklistState extends State<CreateChecklist> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    // double screenHeight = MediaQuery.of(context).size.height;
-    // double MaximumThing =
-    //     screenWidth > screenHeight ? screenWidth : screenHeight;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
         backgroundColor: MyColors.Dark,
@@ -26,57 +41,19 @@ class CreateChecklist extends StatelessWidget {
                 children: [
                   Header(
                     heading: "Create CheckList",
-                    para: "From to-do to done –\n" "one check at a time!",
+                    para: "From to-do to done one check at a time!",
                     image: MyImages.CheckList,
                   ),
-                  SizedBox(
-                    height: 10,
+
+                  ListView.builder(
+                    itemBuilder: (context, index) => ChecklistItemsAdder(
+                        text: widget.categories[index], add: true),
                   ),
 
-                  //Checklist Adders
-                  Row(
-                    children: [
-                      ChecklistItemsAdder(text: 'Venue +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Catering +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Photography +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Decorator +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Graphic Designer +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Salon and Spa +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Makeup +'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ChecklistItemsAdder(text: 'Video Editors'),
-                      SizedBox(
-                        width: 10,
-                      ),
-                    ],
-                  ),
                   SizedBox(
-                    height: 20,
+                    height: screenHeight * 0.1,
+                    child: Center(child: MyDivider()),
                   ),
-
-                  //Divider
-                  MyDivider(width: screenWidth * 0.3),
-                  const SizedBox(height: 20),
 
                   //Checklist Items
                   Column(
@@ -125,7 +102,9 @@ class CreateChecklist extends StatelessWidget {
                   ),
 
                   Icon(Icons.arrow_back),
-                  SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                 ]),
           ),
         ));
