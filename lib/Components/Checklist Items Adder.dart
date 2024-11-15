@@ -1,32 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class ChecklistItemsAdder extends StatelessWidget {
   final String text;
-  const ChecklistItemsAdder({super.key, required this.text});
+  final bool add;
+  const ChecklistItemsAdder({super.key, required this.text, this.add = false});
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 0.8;
-    print(width);
-
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
     return Center(
       child: Container(
-          height: 26,
-          width: 156,
+          margin: EdgeInsets.all(MaximumThing * 0.01),
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.08, vertical: screenHeight * 0.01),
+          height: screenHeight * 0.05,
           decoration: BoxDecoration(
-              color: Color(0xff18191A),
-              border: Border.all(color: Color(0xffEDF2F4,), 
-                        ),
+              color: Colors.transparent,
+              border: Border.all(
+                color: MyColors.whiteDarker,
+                width: 1.5,
+              ),
               borderRadius: BorderRadius.circular(50)),
-          child: Center(
-              child: Text(text,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(text,
                   style: GoogleFonts.montserrat(
-                      fontSize: 11,
+                      fontSize: MaximumThing * 0.015,
                       fontWeight: FontWeight.w500,
-                      color: Color(
-                        0xffEDF2F4,
-                      ))))),
+                      color: MyColors.whiteDarker)),
+              add
+                  ? Icon(
+                      Icons.add,
+                      color: MyColors.whiteDarker,
+                    )
+                  : Container(),
+            ],
+          )),
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Checklist%20Items%20Adder.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class BusinessProfileInfo extends StatelessWidget {
-  const BusinessProfileInfo({super.key});
+  BusinessProfileInfo({super.key});
+  List<String> items = ["Venue", "Catering", "Photography"];
 
   @override
   Widget build(BuildContext context) {
@@ -93,20 +95,33 @@ class BusinessProfileInfo extends StatelessWidget {
           ),
           SizedBox(
               height: screenHeight * 0.02, child: Center(child: MyDivider())),
-          Row(
-            children: [
-              Text("Category"),
-            ],
+          Container(
+            margin: EdgeInsets.only(
+                top: MaximumThing * 0.03, left: MaximumThing * 0.03),
+            child: Row(
+              children: [
+                Text(
+                  "Category",
+                  style: GoogleFonts.montserrat(
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: MaximumThing * 0.02),
+                ),
+              ],
+            ),
           ),
           SizedBox(
-            height: screenHeight * 0.2,
+            height: screenHeight * 0.1,
             child: ListView.builder(
-              itemCount: 5,
+              itemCount: items.length,
               itemBuilder: (context, index) {
-                return Text("Item $index");
+                return ChecklistItemsAdder(text: items[index]);
               },
               scrollDirection: Axis.horizontal,
             ),
+          ),
+          SizedBox(
+            height: screenHeight * 0.05,
           )
         ],
       )),
