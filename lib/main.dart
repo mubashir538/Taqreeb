@@ -1,32 +1,9 @@
+
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/AI%20Package.dart';
-import 'package:taqreeb/Screens/AccountInfo1.dart';
-import 'package:taqreeb/Screens/AccountInfo2.dart';
-import 'package:taqreeb/Screens/Business%20Profile%20Info.dart';
-import 'package:taqreeb/Screens/Business%20Signup3.dart';
-import 'package:taqreeb/Screens/Business%20Signup4.dart';
-import 'package:taqreeb/Screens/BusinessSignup1.dart';
-import 'package:taqreeb/Screens/Bussiness%20Signup2.dart';
-import 'package:taqreeb/Screens/ChatBox.dart';
-import 'package:taqreeb/Screens/Create%20Checklist.dart';
-import 'package:taqreeb/Screens/Login%20Screen.dart';
-import 'package:taqreeb/Screens/OTP%20Screen.dart';
-import 'package:taqreeb/Screens/View%20AI%20Packages/AI%20Function%20Details.dart';
-import 'package:taqreeb/Screens/View%20AI%20Packages/AI%20Package%20Details.dart';
-import 'package:taqreeb/Screens/View%20AI%20Packages/AI%20suggested%20packages.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/aipackage.dart';
-import 'package:taqreeb/Screens/bakery%20and%20sweets.dart';
-import 'package:taqreeb/Screens/cartitem.dart';
-import 'package:taqreeb/Screens/homepage.dart';
-import 'package:taqreeb/Screens/screens%20to%20be%20made/your%20listings.dart';
-import 'package:taqreeb/Screens/signup.dart';
-import 'package:taqreeb/Screens/signup2.dart';
-import 'package:taqreeb/Screens/signup3.dart';
-import 'package:taqreeb/Screens/signup4.dart';
-import 'package:taqreeb/Screens/signup5.dart';
-import 'package:taqreeb/Screens/signup6.dart';
-import 'package:taqreeb/Screens/splash%20screen.dart';
-import 'package:taqreeb/Screens/yourevent.dart';
+import 'package:taqreeb/Screens/Create%20function.dart';
+import 'package:taqreeb/Screens/Event%20Details.dart';
+import 'package:taqreeb/Screens/createevent.dart';
+
 
 void main() {
   runApp(const MainApp());
@@ -38,35 +15,81 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CreateChecklist(),
+      home: EventDetailsScreen(),
       // routes: {
-      //   // '/': (context) => SignUpScreen(),
-      //   '/signup': (context) => SignUpScreen(),
-      //   '/login': (context) => LoginScreen(),
-      //   '/home': (context) => HomeScreen(),
-      //   '/accountinfo': (context) => AccountInfo1(),
-      //   '/chats': (context) => ChatBox(),
-      //   '/homeScreen': (context) => HomeScreen(),
-      //   'createevent': (context) => EventsScreen(),
-      //   // 'createaipackage': (context) => CreateAI(),
-      //   'viewsuggestedPackages': (context) => AISuggestedPackages(),
-      //   'viewAIPackageDetails': (context) => AIPackageDetails(),
-      //   'viewAIPackageFunctions': (context) => AIFunctionDetails(),
-      //   'AccountInfo1': (context) => AccountInfo1(),
-      //   'AccountInfo2': (context) => AccountInfo2(),
-      //   // 'Create AI Package' : (context) => AIPackage,
-      //   'yourlistings': (context) => YourListings(),
-      //   '/BakersandSweets': (context) => BakeryAndSweets(),
-      //   '/BusinessProfile' : (context) => BusinessProfileInfo(),
-      //   '/BusinessSignup1' : (context) => BusinessSignup1(),
-      //   '/BusinessSignup2' : (context) => BusinessSignup2(),
-      //   '/BusinessSignup3' : (context) => BusinessSignup3(),
-      //   '/signup1': (context) => OTPScreen(),
-      //   '/signup2': (context) => OTPScreen2(),
-      //   '/signup3': (context) => OTPScreen3(),
-      //   '/signup4': (context) => OTPScreen4(),
-      //   '/signup5': (context) => OTPScreen5(),
-      //   '/signup6': (context) => OTPScreen6(),
+      //   '/': (context) => ,
+      //   '/basicSignup': (context) => ,
+      //   '/Signup_ContactOTPSend': (context) => ,
+      //   '/Signup_ContactOTPVerify': (context) => ,
+      //   '/Signup_EmailOTPSend': (context) => ,
+      //   '/Signup_EmailOTPVerify': (context) => ,
+      //   '/Signup_MoreInfo': (context) => ,
+      //   '/ProfilePictureUpload': (context) => ,
+      //   '/BusinessSignup_BasicInfo': (context) => ,
+      //   '/BusinessSignup_CNICUpload': (context) => ,
+      //   '/BusinessSignup_Description': (context) => ,
+      //   '/SubmissionSucessful': (context) => ,
+      //   '/HomePage': (context) => ,
+      //   '/Login': (context) => ,
+      //   '/CreateChecklistItems': (context) => ,
+      //   '/HelpCenter': (context) => ,
+      //   '/FreelancerSignup_BasicInfo': (context) => ,
+      //   '/FreelancerSignup_Description': (context) => ,
+      //   '/ForgotPassword_EmailorPhoneInput': (context) => ,
+      //   '/ForgotPassword_VerifyCode': (context) => ,
+      //   '/ForgotPassword_NewPassword': (context) => ,
+      //   '/CreateAIPackage': (context) => ,
+      //   '/ViewAIPackage': (context) => ,
+      //   '/AIPackage_EventDetail': (context) => ,
+      //   '/AIPackage_FunctionDetail': (context) => ,
+      //   '/ChatsScreen': (context) => ,
+      //   '/ChatBox': (context) => ,
+      //   '/SearchService': (context) => ,
+      //   '/YourListings': (context) => ,
+      //   '/AccountInfo': (context) => ,
+      //   '/AccountInfoEdit': (context) => ,
+      //   '/BusinessAccountInfo': (context) => ,
+      //   '/CreateGuestList': (context) => ,
+      //   '/CreateGuestList_AddFamily': (context) => ,
+      //   '/CreateGuestList_AddPerson': (context) => ,
+      //   '/CreateGuestList_List': (context) => ,
+      //   '/CreateFunction': (context) => ,
+      //   '/EventDetails': (context) => ,
+      //   '/CategoryView_Venue': (context) => ,
+      //   '/CategoryView_Saloon': (context) => ,
+      //   '/CategoryView_Parlour': (context) => ,
+      //   '/CategoryView_VideoEditor': (context) => ,
+      //   '/CategoryView_Decorator': (context) => ,
+      //   '/CategoryView_PhotographyPlace': (context) => ,
+      //   '/CategoryView_Photographer': (context) => ,
+      //   '/CategoryView_BakerySweet': (context) => ,
+      //   '/CategoryView_GraphicDesigner': (context) => ,
+      //   '/CategoryView_CarRenter': (context) => ,
+      //   '/FunctionDetail': (context) => ,
+      //   '/BakerySweet_Products': (context) => ,
+      //   '/Cart': (context) => ,
+      //   '/InvitationCardEdit': (context) => ,
+      //   '/CreateEvent': (context) => ,
+      //   '/YourEvents': (context) => ,
+      //   '/Dashboard': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+      //   // '/': (context) => ,
+
       // },
 
       theme: ThemeData.dark(
