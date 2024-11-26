@@ -5,8 +5,8 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class Decorators extends StatelessWidget {
-  const Decorators({super.key});
+class SalonAndSpa extends StatelessWidget {
+  const SalonAndSpa({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,6 @@ class Decorators extends StatelessWidget {
             Container(
               height: 1700,
               width: 428,
-              decoration: BoxDecoration(
-                color: MyColors.Dark,
-              ),
               child: Column(
                 children: [
                   SizedBox(height: 10),
@@ -35,7 +32,7 @@ class Decorators extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "Events by Harbor",
+                        "Nabila's Salon and Salon",
                         style: GoogleFonts.montserrat(
                           fontSize: 25,
                           fontWeight: FontWeight.w600,
@@ -93,7 +90,7 @@ class Decorators extends StatelessWidget {
                       ),
                       SizedBox(width: 40),
                       Text(
-                        "Rs. 99,000 - 100000",
+                        "Rs. 25,000 - 30,000",
                         style: GoogleFonts.montserrat(
                           fontSize: 21,
                           fontWeight: FontWeight.w300,
@@ -115,7 +112,7 @@ class Decorators extends StatelessWidget {
                       ),
                       SizedBox(width: 180),
                       Text(
-                        "99,000",
+                        "28,000",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -155,7 +152,7 @@ class Decorators extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Events by Harbour specializes in creating extraordinary decor for all types of events, whether it's a grand wedding, a corporate gala, or an intimate celebration. With a passion for perfection, they bring your vision to life by combining creativity, elegance, and attention to detail. Their team of skilled designers transforms any space into a stunning setting that perfectly reflects the occasion. From intricate floral arrangements to elegant lighting, they handle every aspect with professionalism and precision. No matter the size or theme of your event, Events by Harbour ensures a seamless experience from start to finish. For truly memorable events, they are the best choice in the business!",
+                          "Nabila’s Spa offers a luxurious retreat with rejuvenating treatments that relax both body and mind. From facials to massages, their expert therapists provide a serene and personalized experience. Step into tranquility and leave feeling completely refreshed.",
                           textAlign: TextAlign.start,
                           style: GoogleFonts.montserrat(
                             fontSize: 18,
