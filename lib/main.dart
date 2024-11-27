@@ -15,7 +15,6 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: SalonAndSpa(),
-
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
