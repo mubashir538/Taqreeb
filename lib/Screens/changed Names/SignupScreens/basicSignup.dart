@@ -8,14 +8,14 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class SignUpScreen extends StatelessWidget {
+class BasicSignup extends StatelessWidget {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  SignUpScreen({super.key});
+  BasicSignup({super.key});
 
   @override
   Widget build(BuildContext context) {

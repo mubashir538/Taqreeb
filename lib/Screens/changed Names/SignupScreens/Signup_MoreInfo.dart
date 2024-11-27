@@ -7,8 +7,8 @@ import 'package:taqreeb/Components/progressbar.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class OTPScreen3 extends StatelessWidget {
-  const OTPScreen3({super.key});
+class Signup_EmailOTPVerify extends StatelessWidget {
+  const Signup_EmailOTPVerify({super.key});
 
   @override
   Widget build(BuildContext context) {

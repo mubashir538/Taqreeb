@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Create%20function.dart';
-import 'package:taqreeb/Screens/Event%20Details.dart';
-import 'package:taqreeb/Screens/createevent.dart';
+import 'package:taqreeb/Screens/changed%20Names/Create%20function.dart';
+import 'package:taqreeb/Screens/changed%20Names/Event%20Details.dart';
+import 'package:taqreeb/Screens/changed%20Names/createevent.dart';
 
 
 void main() {

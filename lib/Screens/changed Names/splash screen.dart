@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/SignupScreens/signup.dart';
+import 'package:taqreeb/Screens/changed%20Names/SignupScreens/basicSignup.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 

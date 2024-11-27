@@ -10,8 +10,8 @@ import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class Login extends StatelessWidget {
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context) {

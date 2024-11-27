@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/question%20group.dart';
+import 'package:taqreeb/Screens/changed%20Names/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
