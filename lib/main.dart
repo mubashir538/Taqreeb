@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-
-
 import 'package:taqreeb/Screens/Create%20guest%20list/creategueslist1.dart';
+import 'package:taqreeb/Screens/Decorators.dart';
+import 'package:taqreeb/Screens/Salon%20And%20Spa.dart';
 import 'package:taqreeb/Screens/Venue.dart';
 import 'package:taqreeb/Screens/photograpger.dart';
 import 'package:taqreeb/Screens/videoeditor.dart';
-
-
 
 void main() {
   runApp(const MainApp());
@@ -18,10 +16,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-
-      home: VideoEditor(),
-
+      home: SalonAndSpa(),
       theme: ThemeData.dark(
         useMaterial3: true,
       ),

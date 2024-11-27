@@ -5,8 +5,8 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class VenueCategory extends StatelessWidget {
-  const VenueCategory({super.key});
+class Decorators extends StatelessWidget {
+  const Decorators({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class VenueCategory extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "Qasr - e - Noor Banquet",
+                        "Events by Harbor",
                         style: GoogleFonts.montserrat(
                           fontSize: 25,
                           fontWeight: FontWeight.w600,
@@ -66,13 +66,6 @@ class VenueCategory extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 10),
-                      Text(
-                        "North Nazimabad Block M, Karachi",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
                       // SvgPicture.asset(MyIcons.mapMarker,
                       // height: 20,width: 20,)
                       // Icon(Icons.mapMarker,
@@ -100,7 +93,7 @@ class VenueCategory extends StatelessWidget {
                       ),
                       SizedBox(width: 40),
                       Text(
-                        "Rs. 200,000 - 700000",
+                        "Rs. 99,000 - 100000",
                         style: GoogleFonts.montserrat(
                           fontSize: 21,
                           fontWeight: FontWeight.w300,
@@ -122,7 +115,7 @@ class VenueCategory extends StatelessWidget {
                       ),
                       SizedBox(width: 180),
                       Text(
-                        "200,000",
+                        "99,000",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -162,7 +155,7 @@ class VenueCategory extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Qasr-e-Noor is a premier marriage hall located in the heart of Karachi, offering an elegant and spacious venue for weddings, receptions, and other special events. The hall is designed to accommodate both large and intimate gatherings, with luxurious interiors, state-of-the-art facilities, and exceptional services to make your event unforgettable. Qasr-e-Noor prides itself on its attention to detail, professional staff, and a wide range of customizable options, including decor, catering, and event planning, ensuring a seamless and memorable experience for all guests.",
+                          "Events by Harbour specializes in creating extraordinary decor for all types of events, whether it's a grand wedding, a corporate gala, or an intimate celebration. With a passion for perfection, they bring your vision to life by combining creativity, elegance, and attention to detail. Their team of skilled designers transforms any space into a stunning setting that perfectly reflects the occasion. From intricate floral arrangements to elegant lighting, they handle every aspect with professionalism and precision. No matter the size or theme of your event, Events by Harbour ensures a seamless experience from start to finish. For truly memorable events, they are the best choice in the business!",
                           textAlign: TextAlign.start,
                           style: GoogleFonts.montserrat(
                             fontSize: 18,
@@ -186,7 +179,7 @@ class VenueCategory extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "Venue Type",
+                        "Decor Type",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -195,7 +188,7 @@ class VenueCategory extends StatelessWidget {
                       ),
                       SizedBox(width: 180),
                       Text(
-                        "Banquet",
+                        "Traditional",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -219,29 +212,6 @@ class VenueCategory extends StatelessWidget {
                       SizedBox(width: 130),
                       Text(
                         "Internal & External",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Guests",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 155),
-                      Text(
-                        "200- 500 Persons",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -413,7 +383,7 @@ class VenueCategory extends StatelessWidget {
                           child: PackageBox(
                               packagedetails: '',
                               packageprice: '',
-                              packagename: 'standard Package')),
+                              packagename: 'VIP Package')),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -429,7 +399,7 @@ class VenueCategory extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "REviews",
+                        "Reviews",
                         style: GoogleFonts.montserrat(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -603,7 +573,7 @@ class VenueCategory extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  ColoredButton(text: 'Book Venue')
+                  ColoredButton(text: 'Book Us')
                 ],
               ),
             )

@@ -33,9 +33,7 @@ class BakeryAndSweets extends StatelessWidget {
             ),
           ],
         ),
-        
-          
-        
+
       ),
     );
   }
