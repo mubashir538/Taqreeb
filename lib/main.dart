@@ -3,6 +3,8 @@ import 'package:taqreeb/Screens/Create%20guest%20list/creategueslist1.dart';
 import 'package:taqreeb/Screens/Decorators.dart';
 import 'package:taqreeb/Screens/Salon%20And%20Spa.dart';
 import 'package:taqreeb/Screens/Venue.dart';
+import 'package:taqreeb/Screens/photograpger.dart';
+import 'package:taqreeb/Screens/videoeditor.dart';
 
 void main() {
   runApp(const MainApp());
