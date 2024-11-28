@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/OTP%20Boxes.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my divider.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/progressbar.dart';
+import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/images.dart';
 
 class Signup_ContactOTPVerify extends StatelessWidget {
   const Signup_ContactOTPVerify({super.key});
@@ -28,29 +29,28 @@ class Signup_ContactOTPVerify extends StatelessWidget {
                 children: [
                   Header(
                     heading: 'OTP Verification',
-                    para:
-                        'We have sent 4 digits verification code to your number, Please Check your Number',
+                    para: 'Enter Phone number to send one time password',
+                    image: MyImages.SingupPng,
                   ),
-                  SizedBox(height: screenHeight * 0.1),
-                  OTPBoxes(),
-                  SizedBox(height: screenHeight * 0.02),
-                  Text(
-                    'Send Code Again 00:59',
-                    style: TextStyle(
-                      color: MyColors.white,
-                      fontSize: MaximumThing * 0.02,
-                      decoration: TextDecoration.underline,
-                    ),
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                  ),
+                  MyTextBox(
+                    hint: 'Contact Number',
                   ),
                   SizedBox(
                     height: screenHeight * 0.1,
                     child: Center(child: MyDivider()),
                   ),
                   ColoredButton(
-                    text: 'Verification',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/signup3');
-                    },
+                    text: 'Send OTP',
+                  ),
+                  Text(
+                    'Skip for Later',
+                    style: TextStyle(
+                      color: MyColors.Yellow,
+                      fontSize: MaximumThing * 0.015,
+                    ),
                   ),
                 ],
               ),

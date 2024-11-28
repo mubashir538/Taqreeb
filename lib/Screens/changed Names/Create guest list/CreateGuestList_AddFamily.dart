@@ -4,8 +4,8 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
-class CreateGuestList_AddPerson extends StatelessWidget {
-  const CreateGuestList_AddPerson({super.key});
+class CreateGuestList_AddFamily extends StatelessWidget {
+  const CreateGuestList_AddFamily({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +24,13 @@ class CreateGuestList_AddPerson extends StatelessWidget {
             SizedBox(
               height: screenHeight * 0.05,
             ),
-            MyTextBox(hint: 'Person Name'),
-            MyTextBox(hint: 'Contact Number'),
+            MyTextBox(hint: 'Family Name'),
+            MyTextBox(hint: 'Members'),
             SizedBox(
               height: screenHeight * 0.05,
             ),
             ColoredButton(
-              text: 'Add Person',
+              text: 'Add Family',
               width: screenWidth * 0.7,
             ),
             BorderButton(text: 'Done', width: screenWidth * 0.7)

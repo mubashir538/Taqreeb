@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+class CategoryView_Caterers extends StatelessWidget {
+  const CategoryView_Caterers({super.key});
 
   @override
   Widget build(BuildContext context) {

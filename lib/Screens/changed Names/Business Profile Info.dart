@@ -5,8 +5,8 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class BusinessProfileInfo extends StatelessWidget {
-  BusinessProfileInfo({super.key});
+class BusinessAccountInfo extends StatelessWidget {
+  BusinessAccountInfo({super.key});
   List<String> items = ["Venue", "Catering", "Photography"];
 
   @override

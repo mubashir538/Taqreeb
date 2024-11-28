@@ -6,8 +6,8 @@ import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class AccountInfo2 extends StatelessWidget {
-  const AccountInfo2({super.key});
+class AccountInfoEdit extends StatelessWidget {
+  const AccountInfoEdit({super.key});
 
   @override
   Widget build(BuildContext context) {

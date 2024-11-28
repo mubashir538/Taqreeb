@@ -6,14 +6,14 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class EventScreen extends StatefulWidget {
-  const EventScreen({super.key});
+class CreateEvent extends StatefulWidget {
+  const CreateEvent({super.key});
 
   @override
-  _EventScreenState createState() => _EventScreenState();
+  _CreateEventState createState() => _CreateEventState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class _CreateEventState extends State<CreateEvent> {
   double _currentBudgetValue = 100000;
 
   @override

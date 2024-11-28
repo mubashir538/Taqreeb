@@ -5,8 +5,8 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class FreelancerSignup2 extends StatelessWidget {
-  const FreelancerSignup2({super.key});
+class FreelancerSignup_Description extends StatelessWidget {
+  const FreelancerSignup_Description({super.key});
 
   @override
   Widget build(BuildContext context) {
