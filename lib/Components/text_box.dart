@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
+// ignore: must_be_immutable
 class MyTextBox extends StatelessWidget {
   final String hint;
   final String Value;

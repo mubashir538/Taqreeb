@@ -5,8 +5,10 @@ import 'package:taqreeb/theme/color.dart';
 
 class AIPackage extends StatelessWidget {
   final String price, events, cateringCost, venueCost, photographer;
+  final Function onpressed;
   const AIPackage(
       {super.key,
+      required this.onpressed,
       required this.cateringCost,
       required this.venueCost,
       required this.price,
@@ -62,7 +64,9 @@ class AIPackage extends StatelessWidget {
                       color: Colors.white)),
             ],
           ),
-          SizedBox(height: screenHeight * 0.01,),
+          SizedBox(
+            height: screenHeight * 0.01,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -116,6 +120,7 @@ class AIPackage extends StatelessWidget {
               ColoredButton(
                 text: 'See Details',
                 width: screenWidth * 0.4,
+                onPressed: () => onpressed(),
               ),
             ],
           )

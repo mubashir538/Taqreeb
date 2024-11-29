@@ -7,12 +7,14 @@ class ColoredButton extends StatelessWidget {
   final double height;
   final double width;
   final VoidCallback? onPressed;
+  final double textSize;
   const ColoredButton(
       {required this.text,
       super.key,
+      this.textSize = 0,
       this.height = 0,
       this.width = 0,
-      this.onPressed });
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class ColoredButton extends StatelessWidget {
           child: Text(
             text,
             style: GoogleFonts.montserrat(
-              fontSize: MaximumThing * 0.018,
+              fontSize: textSize == 0 ? MaximumThing * 0.018 : textSize,
               fontWeight: FontWeight.w500,
               color: MyColors.white,
             ),

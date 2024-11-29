@@ -5,11 +5,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class Function12 extends StatelessWidget {
-  const Function12({super.key});
+  final String name, head, budget;
+  final List<String> headings;
+  final List<String> values;
+  final String type;
+  const Function12(
+      {super.key,
+      required this.type,
+      required this.headings,
+      required this.values,
+      required this.name,
+      required this.head,
+      required this.budget});
 
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
@@ -17,21 +27,17 @@ class Function12 extends StatelessWidget {
 
     return Center(
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-        height: screenHeight * 0.35,
+        margin: EdgeInsets.only(bottom: MaximumThing * 0.02),
         width: screenWidth * 0.9,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20)),
-
           color: MyColors.DarkLighter,
         ),
         child: Column(
           children: [
             Container(
-
-              height: screenHeight * 0.1,
+              height: screenHeight * 0.07,
               width: screenWidth * 0.9,
-
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -40,77 +46,97 @@ class Function12 extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  "Mehndi ",
+                  name,
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.03,
-                      fontWeight: FontWeight.w500,
+                      fontSize: MaximumThing * 0.02,
+                      fontWeight: FontWeight.w600,
                       color: MyColors.white),
                 ),
               ),
             ),
-       
-            SizedBox(
-              height: screenHeight*0.25,
+            Container(
+              margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.03),
               width: screenWidth * 0.8,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
+                    margin: EdgeInsets.only(bottom: MaximumThing * 0.01),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Budget: ",
+                          head,
                           style: GoogleFonts.montserrat(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w600,
+                              fontSize: MaximumThing * 0.02,
+                              fontWeight: FontWeight.w500,
                               color: MyColors.white),
                         ),
                         Text(
-                          "10000000 ",
+                          budget,
                           style: GoogleFonts.montserrat(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xffEDF2F4)),
+                              fontSize: MaximumThing * 0.02,
+                              fontWeight: FontWeight.w500,
+                              color: MyColors.white),
                         ),
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Date: ",
-                        style: GoogleFonts.montserrat(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w300,
-
-                            color: MyColors.white),
-               ),
-                      Text(
-                        "15-dec-24 ",
-                        style: GoogleFonts.montserrat(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w300,
-                            color: MyColors.white),
+                  for (var items in headings)
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: MaximumThing * 0.005),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            items,
+                            style: GoogleFonts.montserrat(
+                                fontSize: MaximumThing * 0.015,
+                                fontWeight: FontWeight.w300,
+                                color: MyColors.white),
+                          ),
+                          Text(
+                            values[headings.indexOf(items)],
+                            style: GoogleFonts.montserrat(
+                                fontSize: MaximumThing * 0.015,
+                                fontWeight: FontWeight.w300,
+                                color: MyColors.white),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ColoredButton(
-                        text: 'Edit Function',
-                        height: 43,
-                        width: 157,
-                      ),
-                      ColoredButton(
-                        text: 'See Details',
-                        height: 43,
-                        width: 157,
-                      ),
-                      // ColoredButton(text: '')
-                    ],
+                    ),
+                  Container(
+                    margin: EdgeInsets.only(top: MaximumThing * 0.01),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ColoredButton(
+                          text: 'Edit $type',
+                          width: screenWidth * 0.38,
+                          textSize: MaximumThing * 0.015,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context,
+                                type == 'Event'
+                                    ? '/CreateEvent'
+                                    : '/CreateFunction');
+                          },
+                        ),
+                        ColoredButton(
+                          text: 'See Details',
+                          width: screenWidth * 0.38,
+                          textSize: MaximumThing * 0.015,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context,
+                                type == 'Event'
+                                    ? '/EventDetails'
+                                    : '/FunctionDetail');
+                          },
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
