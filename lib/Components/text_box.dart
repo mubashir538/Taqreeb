@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
+// ignore: must_be_immutable
 class MyTextBox extends StatelessWidget {
   final String hint;
-  const MyTextBox({super.key, required this.hint});
+  final String Value;
+  MyTextBox({super.key, required this.hint, this.Value = ''});
 
+  TextEditingController valueController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
+    valueController.text = Value;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
@@ -31,6 +35,7 @@ class MyTextBox extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: TextField(
+          controller: Value != '' ? valueController : null,
           style: GoogleFonts.montserrat(
             fontSize: MaximumThing * 0.018,
             fontWeight: FontWeight.w400,

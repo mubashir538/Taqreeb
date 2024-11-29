@@ -44,8 +44,11 @@ class Header extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.chevron_left_outlined,
-                    color: MyColors.white, size: MaximumThing * 0.03),
+                InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(Icons.chevron_left_outlined,
+                      color: MyColors.white, size: MaximumThing * 0.03),
+                ),
                 Text(
                   'Taqreeb',
                   style: GoogleFonts.montserrat(

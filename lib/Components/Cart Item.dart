@@ -1,127 +1,130 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-class CartItems extends StatelessWidget {
-  const CartItems({super.key});
+import 'package:taqreeb/theme/color.dart';
+
+// ignore: must_be_immutable
+class CartItems extends StatefulWidget {
+  CartItems(
+      {super.key, required this.name, required this.price, this.quantity = 1});
+  final String name;
+  final String price;
+  int quantity;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-        child: Container(
-      height: 140,
-      width: 405,
-      decoration: BoxDecoration(
-        color: Color(0xff242526),
-       border: Border.all(color: Color(0xffEDF2F4,), 
-                        ),
-              borderRadius: BorderRadius.circular(16)
-            
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-                    "Cakes",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 15,
-                      color: Color(0xffFFBE0B),
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-          
-          Divider(),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 20,
-              ),
-              ClipRRect(
-                 borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  "https://mrbrownbakery.com/image/images/GJ7uCwGiteTF24HTWBclkziVTdhpQeZWH23MvQfq.jpeg?p=full",
-                  height: 70,
-                  width: 70,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (BuildContext context, Object exception,
-                      StackTrace? stackTrace) {
-                    return Text('Failed to load image');
-                  },
-                ),
-              ),
+  State<CartItems> createState() => _CartItemsState();
+}
 
-              SizedBox(
-                width: 10,
+class _CartItemsState extends State<CartItems> {
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
+
+    return Container(
+      height: screenHeight * 0.2,
+      width: screenWidth * 0.9,
+      margin: EdgeInsets.symmetric(
+          vertical: MaximumThing * 0.02, horizontal: MaximumThing * 0.01),
+      decoration: BoxDecoration(
+          color: MyColors.DarkLighter,
+          border: Border.all(
+            color: MyColors.white,
+          ),
+          borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+            child: Text(
+              widget.name,
+              style: GoogleFonts.montserrat(
+                fontSize: MaximumThing * 0.02,
+                color: MyColors.Yellow,
+                fontWeight: FontWeight.w400,
               ),
-              Column(
+            ),
+          ),
+          Divider(),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    "Choco Nutela:",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
-                    ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      "https://shorturl.at/9nzlw",
+                      height: MaximumThing * 0.05,
+                      width: MaximumThing * 0.05,
+                      ),
                   ),
-                  SizedBox(
-                    height: 5,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.name,
+                        style: GoogleFonts.montserrat(
+                          fontSize: MaximumThing * 0.02,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "Rs, ${widget.price}",
+                        style: GoogleFonts.montserrat(
+                          fontSize: MaximumThing * 0.015,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Rs, 2000",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
+                  Container(
+                    height: screenHeight * 0.04,
+                    width: screenWidth * 0.25,
+                    decoration: BoxDecoration(
+                        color: MyColors.Dark,
+                        border: Border.all(
+                          color: MyColors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () => setState(() {
+                            widget.quantity == 1 ? null : widget.quantity--;
+                          }),
+                          child: Icon(Icons.remove,
+                              color: Colors.white, size: MaximumThing * 0.015),
+                        ),
+                        Text(
+                          widget.quantity.toString(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: MaximumThing * 0.015),
+                        ),
+                        InkWell(
+                            onTap: () => setState(() {
+                                  widget.quantity++;
+                                }),
+                            child: Icon(Icons.add,
+                                color: Colors.white,
+                                size: MaximumThing * 0.015)),
+                      ],
                     ),
                   ),
                 ],
-              ),
-
-              //  Row(
-              //   children: [
-              SizedBox(
-                width: 55,
-              ),
-              Container(
-                height: 25,
-                width: 115,
-                decoration: BoxDecoration(
-                    color: Color(0xff18191A),
-                    border: Border.all(
-                      color: Color(
-                        0xffEDF2F4,
-                      ),
-                    ),
-                    borderRadius: BorderRadius.circular(10)),
-                   child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Icon(Icons.star, color: Colors.white, size: 16), 
-          Text(
-            "2",
-            style: TextStyle(color: Colors.white, fontSize: 12),
-          ),
-          Icon(Icons.favorite, color: Colors.white, size: 16), 
-        ],
-      ),
-
               ),
             ],
           ),
         ],
       ),
-    ));
+    );
   }
 }

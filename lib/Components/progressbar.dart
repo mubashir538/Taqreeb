@@ -17,9 +17,9 @@ class ProgressBar extends StatelessWidget {
     }
 
     return Container(
-      height: screenHeight * 0.02,
+      height: screenHeight * 0.015,
       width: screenWidth * 0.9,
-      margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+      margin: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -49,7 +49,6 @@ class ProgressBar extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Container(
-              // width: screenWidth * 0.04,
               decoration: BoxDecoration(
                 color: c[2],
               ),
@@ -59,7 +58,6 @@ class ProgressBar extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Container(
-              // width: screenWidth * 0.04,
               decoration: BoxDecoration(
                 color: c[3],
               ),
@@ -69,7 +67,6 @@ class ProgressBar extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Container(
-              // width: screenWidth * 0.09,
               decoration: BoxDecoration(
                 color: c[4],
                 borderRadius: BorderRadius.only(
