@@ -73,11 +73,10 @@ class QuestionOptions(m.Model):
 
 class Freelancer(m.Model):
     id = m.AutoField(primary_key=True)
-    userId = m.ForeignKey(User,on_delete=m.CASCADE)
-    businessName = m.CharField(max_length=100)
+    userId = m.ForeignKey(User,on_delete=m.CASCADE)   
     businessUsername = m.CharField(max_length=100)
     portfolioLink = m.CharField(max_length=100)
-    description = m.CharField(max_length=1100)
+    description = m.CharField(max_length=1100) 
 
 
 class Review(m.Model):
