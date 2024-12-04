@@ -98,7 +98,12 @@ def CreateFunction(request):
     pass
 
 @api_view(['GET'])
-def EventDetails(request):
+def EventDetails(request,eventId):
+    EventDetail = md.Events.objects.get(id=eventId)
+    Funtion  = md.Functions.objects.filter(eventId = eventId)
+    Funtionserializer = s.FunctionsSerializer(Funtion, many = True)
+    serializer = s.EventsSerializer(EventDetail, many =False)
+    return Response({'status':'success','Eventdetail':serializer.data,'Funtion': Funtionserializer.data})
     pass
 
 @api_view(['GET'])
