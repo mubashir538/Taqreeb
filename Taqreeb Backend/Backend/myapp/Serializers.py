@@ -158,7 +158,7 @@ class EventTypeSerializer(s.ModelSerializer):
 
 class FunctionTypeSerializer(s.ModelSerializer):
     class Meta:
-        model = mp.FuctionType
+        model = mp.FunctionType
         fields = '__all__'
 
 
