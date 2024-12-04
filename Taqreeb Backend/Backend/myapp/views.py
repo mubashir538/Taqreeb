@@ -107,8 +107,23 @@ def EventDetails(request,eventId):
     pass
 
 @api_view(['GET'])
-def VenueViewPage(request):
+def VenueViewPage(request, venueId):
+    Listing = md.Listing.objects.get(id = venueId)
+    VenueView = md.Venue.objects.get(listingID= venueId)
+    Addons = md.AddOns.objects.filter(id = venueId)
+    Package = md.Packages.objects.filter(id = venueId)
+    Review = md.Review.objects.filter(id, venueId)
+    Reviewserializer = s.ReviewSerializer( Review, many = True)
+    Packageserializer = s.PackagesSerializer( Package, many = True)
+    Addonsserializer = s.AddOnsSerializer( Addons, many = True)
+    serializer = s.VenueSerializer( VenueView, many=False)
+    Listingserializer = s.ListingSerializer (Listing, many =False)
+    return Response({'status': 'success','VenueView': serializer.data,'Addons': Addonsserializer.data,
+                     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
+
+
+
 
 @api_view(['POST'])
 def CreateEvent(request):

@@ -146,7 +146,7 @@ class Caterers(m.Model):
     staff = m.CharField(max_length=50)
     expertise = m.CharField(max_length=100)
 
-class MenuItems(m.Model):
+class MenuItems(m.Model):                                                                                                                                                      
     id = m.AutoField(primary_key=True)
     cateringId = m.ForeignKey(Caterers,on_delete=m.CASCADE)
     name = m.CharField(max_length=100)
