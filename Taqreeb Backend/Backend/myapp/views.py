@@ -20,14 +20,16 @@ def AccountSignupPage(request):
     profilePicture = request.data.get('profilePicture')
     if contactType=='email':
         contact = request.data.get('email')
-        if md.User.objects.filter(email=contact):
-            return Response({'status':'error','message':'Email already exists!'})
+        user = md.User.objects.filter(email=contact).first()
+        if user:
+            return Response({'status':'error', 'message': 'Email Already Exists'})
         user = md.User(firstName=firstName,lastName=lastName,password=password,email=contact,city=city,gender=gender,profilePicture=profilePicture)
     else:
         contact = request.data.get('contactNumber')
-        if md.User.objects.filter(contactNumber= contact):
-            return Response({'status':'error','message':
-                             'contact number already exists!'})
+        user = md.User.objects.filter(contactNumber=contact).first()
+        if user:
+            return Response({'status':'error', 'message': 'Contact Already Exists'})
+
         user = md.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender,profilePicture=profilePicture)
     user.save()
     return Response({'status':'success'})
@@ -77,8 +79,9 @@ def AccountInfoPage(request,id):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def ListingsPage(request,id):
-    listings = md.Listing.objects.filter(BusinessOwnerID=id)
+def ListingsPage(request,businessOwnerId):
+    id = businessOwnerId
+    listings = md.Listing.objects.filter(ownerID=id)
     serializer = s.ListingSerializer(listings,many=True)
     return Response({'status':'success','listings':serializer.data})
     
@@ -121,11 +124,11 @@ def CreateFunction(request):
 @api_view(['GET'])
 def EventDetails(request,eventId):
     EventDetail = md.Events.objects.get(id=eventId)
-    Funtion  = md.Functions.objects.filter(eventId = eventId)
-    Funtionserializer = s.FunctionsSerializer(Funtion, many = True)
-    serializer = s.EventsSerializer(EventDetail, many =False)
-    return Response({'status':'success','Eventdetail':serializer.data,'Funtion': Funtionserializer.data})
-    pass
+    serializer = s.EventsSerializer(EventDetail,many=False)
+    Function = md.Functions.objects.filter(eventId=eventId)
+    serializer2 = s.FunctionsSerializer(Function,many=True)
+    return Response({'status':'success','EventDetail':serializer.data,'Functions':serializer2.data})
+
 
 @api_view(['GET'])
 def VenueViewPage(request, venueId):
