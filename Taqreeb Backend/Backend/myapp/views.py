@@ -88,7 +88,6 @@ def DecoratorDetailPage(request,id):
     decoratorDetails = md.Decorators.objects.filter(ListingID=id)
     return Response({'status':'success','listingDetails':listingDetails,'decoratorDetails':decoratorDetails})
     
-
 @api_view(['PUT'])
 def EditAccountInfoPage(request):
     pass
@@ -109,7 +108,15 @@ def FreelancerSignup(request):
 
 @api_view(['POST'])
 def CreateFunction(request):
-    pass
+    name = request.data.get('Function Name')
+    Budget = request.data.get('Budget')
+    type =request.fata.get('Event Type')
+
+    CreateFunction = md.CreateFunction(name=name, type=type, Budget=Budget)
+    CreateFunction.save()
+    return Response({'status':'success'})
+
+    
 
 @api_view(['GET'])
 def EventDetails(request,eventId):
@@ -136,12 +143,19 @@ def VenueViewPage(request, venueId):
                      'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
 
-
-
-
 @api_view(['POST'])
 def CreateEvent(request):
-    pass
+    name = request.data.get('Event Name')
+    type = request.data.get('Event Type')
+    date = request.data.get('Date')
+    location = request.data.get('Location')
+    description = request.data.get('Describe your Event')
+    themeColor = request.data.get('Theme')
+    budget = request.data.get('Budget')
+
+    CreateEvent = md.CreateEvent(name=name,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
+    CreateEvent.save()
+    return Response({'status': 'success'})
 
 @api_view(['GET'])
 def YourEvents(request: id):
@@ -237,16 +251,48 @@ def CatererViewPage(request):
     pass
 
 @api_view(['GET'])
-def VideoEditorViewPage(request):
+def VideoEditorViewPage(request, VideoEditorID):
+    Listing =md.Listing.objects.get(id = VideoEditorID)
+    VideoEditors = md.VideoEditors.objects.get(VideoEditorID = VideoEditorID)
+    Package = md.Packages.objects.filter(VideoEditorID = VideoEditorID)
+    Review = md.Review.objects.filter(VideoEditorID = VideoEditorID)
+    VideoEditorsSerializer = s.VideoEditorsSerializer(VideoEditors, many =False)
+    PackageSerializer = s.PackagesSerializer(Package, many = True)
+    ReviewSerializer = s.ReviewSerializer(Review,many=True)
+    ListingSerializer = s.ListingSerializer(Listing, many=False)
+    return Response({'status': 'success', 'VideoEditors':VideoEditorsSerializer.data, 'Listing':ListingSerializer.data, 'Package':PackageSerializer.data, 'Review':ReviewSerializer.data})
+
+@api_view(['GET'])
+def ViewFunction(request, ViewFunctionID):
+    Listing = md.Listing.objects.all()
+    Functions = md.Functions.objects.get(ViewFunctionID=ViewFunctionID)
+    Venue = md.Venue.objects.get(ViewFunctionID = ViewFunctionID)
+    Caterers = md.Caterers.objects.get(ViewFunctionID = ViewFunctionID)
+    Salons - md.Salons.objects.get(ViewFunctionID = ViewFunctionID)
+    ListingSerializer = s.ListingSerializer(Listing, many=False)
+    FunctionsSerializer = s.FunctionsSerializer(Functions, many=True)
+    VenueSerializer = s.VenueSerializer(Venue, many=True)
+    CaterersSerializer = s.CaterersSerializer(Caterers, many=True)
+    SalonsSerializer = s.SalonsSerializer(Salons, many=True)
+    return Response ({'status':'success', 'Fuctions':FunctionsSerializer.data, 'Listing':ListingSerializer.data, 'Venue':VenueSerializer.data, 'Caterers':CaterersSerializer.data, 'Salons':SalonsSerializer.data})
+
+
+@api_view(['GET'])
+def HomeCategories(request):
     pass
 
 @api_view(['GET'])
-def HomeListings(request):
-    pass
+def HomeListings(request, HomeListingsID):
+    Listing= md.Listing.objects.all()
+    ListingSerializer= s.ListingSerializer(Listing, many=True)
+    return Response({'status':'succuess', 'HomeListing':ListingSerializer.data})
 
 @api_view(['GET'])
-def SearchListings(request):
-    pass
+def SearchListings(request, SearchListingsID):
+    Listing = md.Listing.objects.all()
+    ListingSerializer= s.ListingSerializer(Listing, many=True)
+    return Response({'status':'succuess', 'SearchListing':ListingSerializer.data})
+    
 
 @api_view(['GET'])
 def SearchListingsPARA(request):
@@ -261,8 +307,13 @@ def UserLogin(request):
     pass
 
 @api_view(['GET'])
-def CartItems(request):
-    pass
+def CartItems(request, CartItemsID):
+    Listing = md.Listing.objects.get(id = CartItemsID)
+    CartItems = md.CartItems.objects.get(CartItemsID = CartItemsID)
+    ListingSerializer = s.ListingSerializer(Listing, many=True)
+    CartItemsSerializer = s.CartItemsSerializer(CartItems, many = True)
+    return Response({'Status': 'Success', 'Listing': ListingSerializer.data, 'Cartitems': CartItemsSerializer.data})
+    
 
 
 
