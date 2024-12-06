@@ -101,6 +101,7 @@ def CreateFunction(request):
     CreateFunction = md.CreateFunction(name=name, type=type, Budget=Budget)
     CreateFunction.save()
     return Response({'status':'success'})
+
     
 
 @api_view(['GET'])
