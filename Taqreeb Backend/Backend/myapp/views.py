@@ -97,12 +97,32 @@ def CreateFunction(request):
     
 
 @api_view(['GET'])
-def EventDetails(request):
+def EventDetails(request,eventId):
+    EventDetail = md.Events.objects.get(id=eventId)
+    Funtion  = md.Functions.objects.filter(eventId = eventId)
+    Funtionserializer = s.FunctionsSerializer(Funtion, many = True)
+    serializer = s.EventsSerializer(EventDetail, many =False)
+    return Response({'status':'success','Eventdetail':serializer.data,'Funtion': Funtionserializer.data})
     pass
 
 @api_view(['GET'])
-def VenueViewPage(request):
+def VenueViewPage(request, venueId):
+    Listing = md.Listing.objects.get(id = venueId)
+    VenueView = md.Venue.objects.get(listingID= venueId)
+    Addons = md.AddOns.objects.filter(id = venueId)
+    Package = md.Packages.objects.filter(id = venueId)
+    Review = md.Review.objects.filter(id, venueId)
+    Reviewserializer = s.ReviewSerializer( Review, many = True)
+    Packageserializer = s.PackagesSerializer( Package, many = True)
+    Addonsserializer = s.AddOnsSerializer( Addons, many = True)
+    serializer = s.VenueSerializer( VenueView, many=False)
+    Listingserializer = s.ListingSerializer (Listing, many =False)
+    return Response({'status': 'success','VenueView': serializer.data,'Addons': Addonsserializer.data,
+                     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
+
+
+
 
 @api_view(['POST'])
 def CreateEvent(request):
@@ -119,15 +139,42 @@ def CreateEvent(request):
     return Response({'status': 'success'})
 
 @api_view(['GET'])
-def YourEvents(request):
+def YourEvents(request: id):
+    YourEvent = md.Events.objects.filter(userID=id)
+    serializer = s.EventsSerializer (YourEvent,many=True)
+    return Response({'status':'success','Event':serializer.data})
     pass
 
 @api_view(['GET'])
-def PhotographerViewPage(request):
+def PhotographerViewPage(request, photograpgerID):
+    PhotographerView = md.Photographers.objects.get( id = photograpgerID)
+    Listing = md.Listing.objects.get(id = photograpgerID)
+    Addons = md.AddOns.objects.filter(id = photograpgerID)
+    Package = md.Packages.objects.filter(id = photograpgerID)
+    Review = md.Review.objects.filter(id, photograpgerID)
+    PhotographersSerializer = s.PhotographersSerializer(PhotographerView, many = False)
+    Reviewserializer = s.ReviewSerializer( Review, many = True)
+    Packageserializer = s.PackagesSerializer( Package, many = True)
+    Addonsserializer = s.AddOnsSerializer( Addons, many = True)
+    Listingserializer = s.ListingSerializer (Listing, many =False)
+    return Response({'status': 'success','PhotographerView': PhotographersSerializer.data,'Addons': Addonsserializer.data,
+                     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
 
 @api_view(['GET'])
-def CatererViewPage(request):
+def CatererViewPage(request,CatererID):
+    CatererView = md.Caterers.objects.get( id = CatererID)
+    Listing = md.Listing.objects.get(id = CatererID)
+    Addons = md.AddOns.objects.filter(id = CatererID)
+    Package = md.Packages.objects.filter(id = CatererID)
+    Review = md.Review.objects.filter(id, CatererID)
+    CatererSerializer = s.CaterersSerializer(CatererView, many = False)
+    Reviewserializer = s.ReviewSerializer( Review, many = True)
+    Packageserializer = s.PackagesSerializer( Package, many = True)
+    Addonsserializer = s.AddOnsSerializer( Addons, many = True)
+    Listingserializer = s.ListingSerializer (Listing, many =False)
+    return Response({'status': 'success','CatererView':CatererSerializer.data,'Addons': Addonsserializer.data,
+                     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
 
 @api_view(['GET'])
