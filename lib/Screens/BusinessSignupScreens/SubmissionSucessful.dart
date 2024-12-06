@@ -5,7 +5,7 @@ import 'package:taqreeb/components/header.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class SubmissionSucessful extends StatelessWidget {
-  const SubmissionSucessful({Key? key}) : super(key: key);
+  const SubmissionSucessful({super.key});
 
   @override
   Widget build(BuildContext context) {

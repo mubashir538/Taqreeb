@@ -39,9 +39,9 @@ class _MainScreenState extends State<MainScreen> {
             Navigator.pushNamed(context, '/CreateEvent');
           },
           backgroundColor: MyColors.Yellow,
+          shape: CircleBorder(),
           child:
               Icon(Icons.add, size: MaximumThing * 0.04, color: MyColors.Dark),
-          shape: CircleBorder(),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

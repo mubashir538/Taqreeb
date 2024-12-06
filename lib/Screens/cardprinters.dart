@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class cardprinter extends StatelessWidget {
-  cardprinter({super.key});
+  const cardprinter({super.key});
 
   @override
   Widget build(BuildContext context) {

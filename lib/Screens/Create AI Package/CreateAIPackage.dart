@@ -11,12 +11,14 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 
 class CreateAIPackage extends StatefulWidget {
+  const CreateAIPackage({super.key});
+
   @override
   _CreateAIPackageState createState() => _CreateAIPackageState();
 }
 
 class _CreateAIPackageState extends State<CreateAIPackage> {
-  double _currentBudgetValue = 100000;
+  final double _currentBudgetValue = 100000;
 
   @override
   Widget build(BuildContext context) {
