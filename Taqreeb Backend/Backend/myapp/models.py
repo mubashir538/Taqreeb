@@ -97,6 +97,8 @@ class Events(m.Model):
     description =m.CharField(max_length=1100)
     themeColor =m.CharField(max_length=100)
     budget=  m.IntegerField()
+    guestsmin = m.IntegerField(null=True)
+    guestsmax = m.IntegerField(null=True) 
 
 class Functions(m.Model):
     id = m.AutoField(primary_key=True)
@@ -105,6 +107,8 @@ class Functions(m.Model):
     budget = m.IntegerField()
     type = m.CharField(max_length=100)
     date = m.DateField(null=True)
+    guestsmin = m.IntegerField(null=True)
+    guestsmax = m.IntegerField(null=True)
 
 class GuestList(m.Model):
     id = m.AutoField(primary_key=True)
