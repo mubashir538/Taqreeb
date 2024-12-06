@@ -22,7 +22,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                 width: double.infinity,
               ),
             ),
-            Container(
+            SizedBox(
               height: 1700,
               width: 428,
               child: Column(

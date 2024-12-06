@@ -9,7 +9,7 @@ class FAQQuestion extends StatelessWidget {
   final VoidCallback onToggle;
 
 
-  FAQQuestion({
+  const FAQQuestion({super.key, 
     Key? key,
     required this.question,
     required this.answer,
