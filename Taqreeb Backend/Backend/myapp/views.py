@@ -94,6 +94,14 @@ def FreelancerSignup(request):
 
 @api_view(['POST'])
 def CreateFunction(request):
+    name = request.data.get('Function Name')
+    Budget = request.data.get('Budget')
+    type =request.fata.get('Event Type')
+
+    CreateFunction = md.CreateFunction(name=name, type=type, Budget=Budget)
+    CreateFunction.save()
+    return Response({'status':'success'})
+
     
 
 @api_view(['GET'])
@@ -120,9 +128,6 @@ def VenueViewPage(request, venueId):
     return Response({'status': 'success','VenueView': serializer.data,'Addons': Addonsserializer.data,
                      'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
-
-
-
 
 @api_view(['POST'])
 def CreateEvent(request):
