@@ -11,7 +11,7 @@ class DateQuestion extends StatefulWidget {
 }
 
 class _DateQuestionState extends State<DateQuestion> {
-  TextEditingController _dateController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

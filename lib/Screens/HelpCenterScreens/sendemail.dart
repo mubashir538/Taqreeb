@@ -4,6 +4,8 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
 class SendEmailScreen extends StatelessWidget {
+  const SendEmailScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

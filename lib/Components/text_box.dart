@@ -8,7 +8,7 @@ class MyTextBox extends StatelessWidget {
   final String Value;
   MyTextBox({super.key, required this.hint, this.Value = ''});
 
-  TextEditingController valueController = new TextEditingController();
+  TextEditingController valueController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     valueController.text = Value;

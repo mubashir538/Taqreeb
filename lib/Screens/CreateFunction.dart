@@ -14,7 +14,7 @@ class CreateFunction extends StatefulWidget {
 }
 
 class _CreateFunctionState extends State<CreateFunction> {
-  TextEditingController _dateController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
