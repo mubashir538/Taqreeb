@@ -38,6 +38,7 @@ import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.d
 import 'package:taqreeb/Screens/FunctionDetail.dart';
 import 'package:taqreeb/Screens/Login.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
+import 'package:taqreeb/Screens/Settings.dart';
 import 'package:taqreeb/Screens/SignupScreens/ProfilePictureUpload.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPVerify.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPSend.dart';
@@ -62,7 +63,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: Settings(),
       routes: {
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
