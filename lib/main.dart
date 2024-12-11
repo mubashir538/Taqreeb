@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_AddPackage.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
 import 'package:taqreeb/Screens/CategoryView_BakerySweet.dart';
 import 'package:taqreeb/Screens/CategoryView_Caterers.dart';
 import 'package:taqreeb/Screens/CategoryView_Decorator.dart';
@@ -63,7 +70,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Settings(),
+      home: AddImage(),
       routes: {
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
