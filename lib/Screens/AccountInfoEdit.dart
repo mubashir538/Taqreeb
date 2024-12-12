@@ -16,6 +16,10 @@ class AccountInfoEdit extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+
+    TextEditingController fnamecontroller = TextEditingController();
+    TextEditingController usernamecontroller = TextEditingController();
+    TextEditingController locationcontroller = TextEditingController();
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -51,9 +55,9 @@ class AccountInfoEdit extends StatelessWidget {
 
             Column(
               children: [
-                MyTextBox(hint: 'Full Name'),
-                MyTextBox(hint: 'Username'),
-                MyTextBox(hint: 'Location'),
+                MyTextBox(hint: 'Full Name',valueController: fnamecontroller),
+                MyTextBox(hint: 'Username',valueController: usernamecontroller),
+                MyTextBox(hint: 'Location',valueController: locationcontroller),
               ],
             ),
 

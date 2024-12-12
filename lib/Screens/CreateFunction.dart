@@ -23,6 +23,11 @@ class _CreateFunctionState extends State<CreateFunction> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController budgetController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
+  
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -39,9 +44,9 @@ class _CreateFunctionState extends State<CreateFunction> {
                   SizedBox(
                     height: screenHeight * 0.04,
                   ),
-                  MyTextBox(hint: 'Funtion Name'),
-                  MyTextBox(hint: 'Budget'),
-                  MyTextBox(hint: "Event Type"),
+                  MyTextBox(hint: 'Funtion Name',valueController: nameController,),
+                  MyTextBox(hint: 'Budget',valueController: budgetController,),
+                  MyTextBox(hint: "Event Type",valueController: typeController,),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
                     height: screenHeight * 0.06,

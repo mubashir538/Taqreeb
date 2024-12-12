@@ -12,6 +12,10 @@ class BusinessSignup_BasicInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    TextEditingController cnicController = TextEditingController();
+    TextEditingController cityController = TextEditingController();
+    TextEditingController categoryController = TextEditingController();
+    TextEditingController usernameController = TextEditingController();
 
     return Scaffold(
       backgroundColor: MyColors.black,
@@ -28,10 +32,10 @@ class BusinessSignup_BasicInfo extends StatelessWidget {
             SizedBox(
               height: screenHeight * 0.05,
             ),
-            MyTextBox(hint: 'CNIC'),
-            MyTextBox(hint: 'City'),
-            MyTextBox(hint: 'Category'),
-            MyTextBox(hint: 'Username'),
+            MyTextBox(hint: 'CNIC',valueController: cnicController,),
+            MyTextBox(hint: 'City',valueController: cityController,),
+            MyTextBox(hint: 'Category',valueController: categoryController,),
+            MyTextBox(hint: 'Username',valueController: usernameController,),
             SizedBox(
               height: screenHeight * 0.1,
               child: Center(child: MyDivider()),

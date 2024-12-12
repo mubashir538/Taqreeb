@@ -20,6 +20,9 @@ class Login extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+    
     return Scaffold(
         backgroundColor: MyColors.Dark,
         body: SingleChildScrollView(
@@ -37,8 +40,8 @@ class Login extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: screenHeight * 0.03),
-                      MyTextBox(hint: "Enter Email or Phone Number"),
-                      MyTextBox(hint: "Enter Password"),
+                      MyTextBox(hint: "Enter Email or Phone Number",valueController: emailController,),
+                      MyTextBox(hint: "Enter Password",valueController: passwordController,),
                       SizedBox(
                         width: screenWidth * 0.9,
                         child: Row(

@@ -66,9 +66,9 @@ class MainApp extends StatelessWidget {
       routes: {
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
-        '/Signup_ContactOTPVerify': (context) => Signup_ContactOTPVerify(),
+        '/Signup_ContactOTPVerify': (context) => SignupContactOTPVerify(),
         '/Signup_EmailOTPSend': (context) => Signup_EmailOTPSend(),
-        '/Signup_EmailOTPVerify': (context) => Signup_EmailOTPVerify(),
+        '/Signup_EmailOTPVerify': (context) => SignupEmailOTPVerify(),
         '/Signup_MoreInfo': (context) => Signup_MoreInfo(),
         '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
         '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),

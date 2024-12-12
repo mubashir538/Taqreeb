@@ -15,6 +15,9 @@ class FreelancerSignup_BasicInfo extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController fullnamecontroller = TextEditingController();
+    TextEditingController usernamecontroller = TextEditingController();
+    TextEditingController portfoliocontroller = TextEditingController();
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -28,9 +31,9 @@ class FreelancerSignup_BasicInfo extends StatelessWidget {
             SizedBox(
               height: MaximumThing * 0.05,
             ),
-            MyTextBox(hint: "Enter Full Business Name"),
-            MyTextBox(hint: "Enter Username"),
-            MyTextBox(hint: "Enter Portfolio Link"),
+            MyTextBox(hint: "Enter Full Business Name",valueController: fullnamecontroller,),
+            MyTextBox(hint: "Enter Username",valueController: usernamecontroller,),
+            MyTextBox(hint: "Enter Portfolio Link",valueController: portfoliocontroller,),
             SizedBox(
               height: screenHeight * 0.05,
               child: MyDivider(),
