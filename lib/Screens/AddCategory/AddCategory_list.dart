@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
-import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class FreelancerSignup_Description extends StatelessWidget {
-  const FreelancerSignup_Description({super.key});
+class AddcategoryList extends StatelessWidget {
+  const AddcategoryList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,22 +13,19 @@ class FreelancerSignup_Description extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             Header(
-              heading: "Create A Description",
-              para:
-                  "Your Description Creates a Great Impact on the customers and can help your get more clients ",
+              heading: 'Basic Details',
             ),
-            SizedBox(
-              height: MaximumThing * 0.05,
-            ), 
+            SizedBox(height: screenHeight * 0.03),
+            MyTextBox(hint: 'Name'),
+            SizedBox(height: screenHeight * 0.01),
             Container(
               margin: EdgeInsets.all(MaximumThing * 0.01),
-              height: screenHeight * 0.4,
+              height: screenHeight * 0.3,
               width: screenWidth * 0.9,
               padding: EdgeInsets.symmetric(
                   horizontal: MaximumThing * 0.03,
@@ -78,16 +74,10 @@ class FreelancerSignup_Description extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: screenHeight * 0.05,
-              child: MyDivider(),
-            ),
-            ColoredButton(
-              text: "Continue",
-              onPressed: () {
-                Navigator.pushNamed(context, '/ProfilePictureUpload');
-              },
-            )
+            SizedBox(height: screenHeight * 0.01),
+            MyTextBox(hint: 'Location'),
+            SizedBox(height: screenHeight * 0.01),
+            MyTextBox(hint: 'Category Type'),
           ],
         ),
       ),

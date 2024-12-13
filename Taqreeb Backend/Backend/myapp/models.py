@@ -37,7 +37,7 @@ class Listing(m.Model):
     ownerID = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
     name = m.CharField(max_length=100)
     priceMin = m.IntegerField()
-    priceMax = m.IntegerField()
+    priceMax = m.IntegerField() 
     location = m.CharField(max_length=100)
     description = m.CharField(max_length=1100)
     basicPrice = m.IntegerField()
