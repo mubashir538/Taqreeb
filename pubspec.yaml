@@ -12,7 +12,7 @@ dependencies:
   flutter_chat_ui: ^1.6.15
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
-  http: ^1.1.0
+  http: ^1.1.0zz
 
 dev_dependencies:
   flutter_test:

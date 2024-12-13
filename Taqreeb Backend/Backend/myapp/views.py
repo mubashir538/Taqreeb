@@ -110,6 +110,34 @@ def FreelancerSignup(request):
     return Response({'status': 'success'})
 
 @api_view(['POST'])
+def AddGuests(request):
+    AddGuests = request.data.get('AddGuests')
+    if AddGuests =='Add Family':
+        AddGuests = request.data.get('AddFamily')
+        GuestList = md.GuestList(FamilyName=FamilyName,member=member)
+    else:   
+        contact = request.data.get('AddPerson')
+        GuestList = md.GuestList(PersonName=PersonName,contactNumber=contact)
+
+    AddGuests.save()
+    ~return Response({'status':'success'})
+
+
+@api_view(['POST'])
+def UserLogin(request):
+    password = request.data.get('password')
+    contactType = request.data.get('contactType')
+    if contactType=='email':
+        contact = request.data.get('email')
+        UserLogin = md.UserLogin(password=password,email=contact)
+    else:   
+        contact = request.data.get('contactNumber')
+        UserLogin = md.UserLogin(password=password,contactNumber=contact)
+    
+    UserLogin.save()
+    return Response({'status':'success'})
+
+@api_view(['POST'])
 def CreateFunction(request):
     name = request.data.get('Function Name')
     Budget = request.data.get('Budget')
@@ -120,7 +148,6 @@ def CreateFunction(request):
     return Response({'status':'success'})
 
     
-
 @api_view(['GET'])
 def EventDetails(request,eventId):
     EventDetail = md.Events.objects.get(id=eventId)
@@ -301,13 +328,6 @@ def SearchListings(request, SearchListingsID):
 def SearchListingsPARA(request):
     pass
 
-@api_view(['POST'])
-def AddGuests(request):
-    pass
-
-@api_view(['POST'])
-def UserLogin(request):
-    pass
 
 @api_view(['GET'])
 def CartItems(request, CartItemsID):

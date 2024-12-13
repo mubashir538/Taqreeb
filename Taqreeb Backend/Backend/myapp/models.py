@@ -78,14 +78,6 @@ class Freelancer(m.Model):
     portfolioLink = m.CharField(max_length=100)
     description = m.CharField(max_length=1100) 
 
-
-class Review(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    userID = m.ForeignKey(User,on_delete=m.CASCADE)
-    rating = m.DecimalField(max_digits=20,decimal_places=10)
-    review = m.CharField(max_length=100)
-
 class Events(m.Model):
     id = m.AutoField(primary_key=True)
     userID=  m.IntegerField()
@@ -99,6 +91,23 @@ class Events(m.Model):
     guestsmin = m.IntegerField(null=True)
     guestsmax = m.IntegerField(null=True) 
 
+class GuestList(m.Model):
+    id = m.AutoField(primary_key=True)
+    type = m.CharField(max_length=100)
+    name = m.CharField(max_length=100)
+    members = m.IntegerField()
+    phone = m.CharField(max_length=100)
+    eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
+    functionId = m.IntegerField()
+    
+class Review(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    userID = m.ForeignKey(User,on_delete=m.CASCADE)
+    rating = m.DecimalField(max_digits=20,decimal_places=10)
+    review = m.CharField(max_length=100)
+
+
 class Functions(m.Model):
     id = m.AutoField(primary_key=True)
     eventId = m.ForeignKey(Events, on_delete=m.CASCADE)
@@ -109,14 +118,6 @@ class Functions(m.Model):
     guestsmin = m.IntegerField(null=True)
     guestsmax = m.IntegerField(null=True)
 
-class GuestList(m.Model):
-    id = m.AutoField(primary_key=True)
-    type = m.CharField(max_length=100)
-    name = m.CharField(max_length=100)
-    members = m.IntegerField()
-    phone = m.CharField(max_length=100)
-    eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
-    functionId = m.IntegerField()
 
 class CheckList(m.Model):
     id = m.AutoField(primary_key=True)
