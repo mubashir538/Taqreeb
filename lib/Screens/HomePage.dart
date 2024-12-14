@@ -36,7 +36,11 @@ class _HomePageState extends State<HomePage> {
     final token = await MyStorage.getToken('accessToken') ?? "";
     print(token);
     final fetchedCategories =
-        await MyApi.getRequest(endpoint: 'home/categories/');
+        await MyApi.getRequest(endpoint: 'home/categories/',
+        //  headers: {
+        //   'Authorization': 'Bearer $token',
+        // }
+        );
     final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
 
     // Update the state
@@ -132,7 +136,8 @@ class _HomePageState extends State<HomePage> {
                         },
                         label: categories['categories'][index]['name'],
                         imageUrl:
-                            'https://tse1.mm.bing.net/th?id=OIP.mXk6kBcrindk6DZZUj6gKgHaE0&pid=Api&P=0&h=220',
+                            // '${MyApi.baseUrl}${categories['categories'][index]['picture']}.png',
+                            'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
                       ),
                       itemCount: categories['categories'].length,
                       scrollDirection: Axis.horizontal,
@@ -168,11 +173,13 @@ class _HomePageState extends State<HomePage> {
                                   context, '/CategoryView_Venue');
                             },
                             imageUrl:
-                                'https://tse1.mm.bing.net/th?id=OIP.mXk6kBcrindk6DZZUj6gKgHaE0&pid=Api&P=0&h=220',
+                                // '${MyApi.baseUrl}${listings['HomeListing'][index]['picture']}.png',
+                                'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
                             venueName: listings['HomeListing'][index]['name'],
                             location: listings['HomeListing'][index]
                                 ['location'],
-                            type: listings['HomeListing'][index]['type'].toString(),
+                            type: listings['HomeListing'][index]['type']
+                                .toString(),
                           );
                         },
                       ),

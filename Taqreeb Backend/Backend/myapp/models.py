@@ -43,6 +43,12 @@ class Listing(m.Model):
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
 
+
+class PicturesListings(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    picturePath = m.CharField(max_length=100)
+
 class Packages(m.Model):
     id = m.AutoField(primary_key=True)
     type = m.IntegerField()

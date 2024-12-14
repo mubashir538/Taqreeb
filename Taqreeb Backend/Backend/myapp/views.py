@@ -286,7 +286,7 @@ def YourEvents(request,id):
     serializer = s.EventsSerializer (YourEvent,many=True)
     numberofFunctions = []
     for i in YourEvent:
-        functions = md.Fuctions.objects.filter(eventId=YourEvent.id)
+        functions = md.Functions.objects.filter(eventId=YourEvent.first().id)
         numberofFunctions.append(len(functions))
     return Response({'status':'success','Event':serializer.data,'nofunctions':numberofFunctions})
 
@@ -435,12 +435,17 @@ def HomeCategories(request):
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def HomeListings(request):
     Listing= md.Listing.objects.all()
     ListingSerializer= s.ListingSerializer(Listing, many=True)
-    return Response({'status':'succuess', 'HomeListing':ListingSerializer.data})
+    Pictures = []
+    for i in Listing:
+        pic = md.PicturesListings.objects.filter(listingId=i.id)
+        serializer = s.PicturesListingSerializers(pic, many=True)
+        Pictures.append(serializer.data)
+
+    return Response({'status':'succuess', 'HomeListing':ListingSerializer.data,'pictures':Pictures})
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
@@ -475,7 +480,7 @@ def UserLogin(request):
     
     if user:
         refresh = RefreshToken.for_user(user)
-        return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token)})
+        return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})
     
     return Response({'status': 'error', 'message': 'Invalid Credentials'})
 

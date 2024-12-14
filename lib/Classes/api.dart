@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class MyApi {
-  static String baseUrl = "http://192.168.0.106:8000/app/";
+  static String baseUrl = "http://192.168.92.224:8000/app/";
   static Future<dynamic> getRequest({
     required String endpoint,
     Map<String, String>? headers,

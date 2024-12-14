@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (await MyStorage.exists('accessToken')) {
         Navigator.pushNamed(context, '/HomePage');
       } else {
-        Navigator.pushNamed(context, '/basicSignup');
+        Navigator.pushNamed(context, '/Login');
       }
     });
   }
