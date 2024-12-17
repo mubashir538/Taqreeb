@@ -14,6 +14,8 @@ class CreateGuestList_AddFamily extends StatelessWidget {
     // double MaximumThing =
     //     screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController familynamecontroller = TextEditingController();
+    TextEditingController memberscontroller = TextEditingController();
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -24,8 +26,8 @@ class CreateGuestList_AddFamily extends StatelessWidget {
             SizedBox(
               height: screenHeight * 0.05,
             ),
-            MyTextBox(hint: 'Family Name'),
-            MyTextBox(hint: 'Members'),
+            MyTextBox(hint: 'Family Name',valueController: familynamecontroller,),
+            MyTextBox(hint: 'Members',valueController: memberscontroller,),
             SizedBox(
               height: screenHeight * 0.05,
             ),

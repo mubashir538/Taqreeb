@@ -1,10 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/function.dart';
+import 'package:taqreeb/theme/color.dart';
 
-class YourEvents extends StatelessWidget {
+class YourEvents extends StatefulWidget {
   const YourEvents({super.key});
+
+  @override
+  State<YourEvents> createState() => _YourEventsState();
+}
+
+class _YourEventsState extends State<YourEvents> {
+  String token = '';
+  Map<String, dynamic> events = {}; // Initialize as empty map
+
+  bool isLoading = true; // Add a loading flag
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // Fetch data in a separate method
+  }
+
+  void fetchData() async {
+    // Perform asynchronous operations
+    final token = await MyStorage.getToken('accessToken') ?? "";
+    final String id = await MyStorage.getToken('userId') ?? "";
+
+    final fetchedEvents = await MyApi.getRequest(endpoint: 'YourEvents/$id');
+
+    // Update the state
+    setState(() {
+      this.token = token;
+      this.events = fetchedEvents ?? {}; // Ensure no null data
+      isLoading = false; // Data has been fetched, so stop loading
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,33 +61,41 @@ class YourEvents extends StatelessWidget {
               child:
                   SearchBox(controller: controller, width: screenWidth * 0.9),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: 6,
-              itemBuilder: (context, index) => Function12(
-                name: "Wishfa",
-                head: 'Budget',
-                budget: '500,000',
-                headings: [
-                  'Event Type',
-                  'Functions',
-                  'Date',
-                  'Catering Cost',
-                  'Venue Cost',
-                  'Photographer Included'
-                ],
-                values: [
-                  'Wedding',
-                  '5',
-                  '24th Oct - 30 Nov',
-                  '300,000',
-                  '600,000',
-                  'Yes'
-                ],
-                type: 'Event',
-              ),
-            )
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                    ),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: events["Event"].length,
+                    itemBuilder: (context, index) => Function12(
+                      name: events["Event"][index]["name"],
+                      head: 'Budget',
+                      budget: events["Event"][index]["budget"],
+                      headings: [
+                        'Event Type',
+                        'Functions',
+                        'Date',
+                      ],
+                      values: [
+                        events["Event"][index]["type"],
+                        events["Event"][index]["date"],
+                        events["nofunctions"][index],
+                      ],
+                      type: 'Event',
+                      seePressed: () {
+                        Navigator.pushNamed(context, '/EventDetails',
+                            arguments: events["Event"][index]["id"]);
+                      },
+                      editPressed: () {
+                        Navigator.pushNamed(context, '/EditEvent',
+                            arguments: events["Event"][index]["id"]);
+                      },
+                    ),
+                  )
           ],
         ),
       ),

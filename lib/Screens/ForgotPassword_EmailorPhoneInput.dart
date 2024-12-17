@@ -14,6 +14,9 @@ class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+
+    TextEditingController contactController = TextEditingController();
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -26,7 +29,10 @@ class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              child: MyTextBox(hint: "Enter Email/Phone Number"),
+              child: MyTextBox(
+                hint: "Enter Email/Phone Number",
+                valueController: contactController,
+              ),
             ),
             SizedBox(
               height: screenHeight * 0.05,
