@@ -10,605 +10,313 @@ class CategoryView_Venue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             Header(),
-            Container(
-              child: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5DJA0WgEFo7X9kXf00EtVnpGPD3mAvh1e8A&s',
-                fit: BoxFit.cover,
+            Padding(
+              padding: EdgeInsets.only(bottom: screenHeight * 0.03), // Adjust padding dynamically
+              child: SizedBox(
                 width: double.infinity,
+                height: screenHeight * 0.3, // Adjust image height dynamically
+                child: Image.network(
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5DJA0WgEFo7X9kXf00EtVnpGPD3mAvh1e8A&s',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Container(
-              height: 1700,
-              width: 428,
-              decoration: BoxDecoration(
-                color: MyColors.Dark,
+              width: screenWidth,
+              color: MyColors.Dark,
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.02, // Reduced horizontal padding
+                vertical: 10, // Reduced vertical padding
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Qasr - e - Noor Banquet",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(width: 30),
-                      Icon(
-                        Icons.add,
-                        color: MyColors.Yellow,
-                      )
-                    ],
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust top padding dynamically
+                    child: _buildTitleRow(screenWidth),
                   ),
-                  SizedBox(
-                    height: 5,
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildLocationRow(),
                   ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Icon(
-                        Icons.star,
-                        color: MyColors.Yellow,
-                      ),
-                      Text(
-                        "4.5 (30)",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        "North Nazimabad Block M, Karachi",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      // SvgPicture.asset(MyIcons.mapMarker,
-                      // height: 20,width: 20,)
-                      // Icon(Icons.mapMarker,
-                      // color: MyColors.Yellow,),
-                    ],
+                  _buildDivider(),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildPricingSection(),
                   ),
-                  SizedBox(
-                    height: 20,
+                  _buildDivider(),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildDescriptionSection(),
                   ),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Pricing:",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 21,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(width: 40),
-                      Text(
-                        "Rs. 200,000 - 700000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 21,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
+                  _buildDivider(),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildDetailsSection(),
                   ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Basic Price: :",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 180),
-                      Text(
-                        "200,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
+                  _buildDivider(),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildAddOnsSection(),
                   ),
-                  SizedBox(
-                    height: 20,
+                  _buildDivider(),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildPackagesSection(),
                   ),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(
-                    height: 10,
+                  _buildDivider(),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02), // Adjust padding dynamically
+                    child: _buildReviewsSection(),
                   ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Description",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.03), // Adjust bottom padding dynamically
+                    child: Center(child: ColoredButton(text: 'Book Venue')),
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: Text(
-                          "Qasr-e-Noor is a premier marriage hall located in the heart of Karachi, offering an elegant and spacious venue for weddings, receptions, and other special events. The hall is designed to accommodate both large and intimate gatherings, with luxurious interiors, state-of-the-art facilities, and exceptional services to make your event unforgettable. Qasr-e-Noor prides itself on its attention to detail, professional staff, and a wide range of customizable options, including decor, catering, and event planning, ensuring a seamless and memorable experience for all guests.",
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            color: MyColors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Venue Type",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 180),
-                      Text(
-                        "Banquet",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Catering",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 130),
-                      Text(
-                        "Internal & External",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Guests",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 155),
-                      Text(
-                        "200- 500 Persons",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Staff",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 280),
-                      Text(
-                        "Male",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Add-Ons",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Decorations",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 175),
-                      Text(
-                        "Rs. 30,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Female Staff",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 175),
-                      Text(
-                        "Rs. 10,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Extra Staff",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(width: 160),
-                      Text(
-                        "Rs. 100/Person",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Packages",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 40),
-                      SizedBox(
-                          width: 346,
-                          child: PackageBox(
-                              packagedetails: '',
-                              packageprice: '',
-                              packagename: 'standard Package')),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      SizedBox(width: 40),
-                      SizedBox(
-                          width: 346,
-                          child: PackageBox(
-                              packagedetails: '',
-                              packageprice: '',
-                              packagename: 'standard Package')),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "REviews",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 260,
-                      ),
-                      Icon(Icons.arrow_right),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "30 Reviews",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Icon(
-                        Icons.star,
-                        color: MyColors.Yellow,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "4.5 ",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "5 Stars",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "21",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                      ),
-                      Text(
-                        "4 Stars",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "10",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                      ),
-                      Text(
-                        "3 Stars",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "8",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "2 Stars",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "3",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 80,
-                      ),
-                      Text(
-                        "1 Stars",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "2",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                      width: 324,
-                      child: Divider(
-                        color: MyColors.DarkLighter,
-                      )),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ColoredButton(text: 'Book Venue')
                 ],
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  // Section Widgets:
+  Widget _buildTitleRow(double screenWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+          child: Text(
+            "Qasr - e - Noor Banquet",
+            style: GoogleFonts.montserrat(
+              fontSize: 25,
+              fontWeight: FontWeight.w600,
+              color: MyColors.white,
+            ),
+          ),
+        ),
+        Icon(
+          Icons.add,
+          color: MyColors.Yellow,
+          size: 28,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationRow() {
+    return Row(
+      children: [
+        Icon(Icons.star, color: MyColors.Yellow),
+        SizedBox(width: 5),
+        Text(
+          "4.5 (30)",
+          style: GoogleFonts.montserrat(fontSize: 15, color: MyColors.white),
+        ),
+        SizedBox(width: 10),
+        Flexible(
+          child: Text(
+            "North Nazimabad Block M, Karachi",
+            style: GoogleFonts.montserrat(fontSize: 15, color: MyColors.white),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(color: MyColors.DarkLighter, thickness: 1);
+  }
+
+  Widget _buildPricingSection() {
+    return Column(
+      children: [
+        _buildInfoRow("Pricing:", "Rs. 200,000 - 700,000", fontSize: 21),
+        Padding(
+          padding: EdgeInsets.only(top: 5),
+          child: _buildInfoRow("Basic Price:", "200,000"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDescriptionSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Description",
+          style: GoogleFonts.montserrat(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: MyColors.Yellow,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20), // Adjusted space here
+          child: Text(
+            "Qasr-e-Noor is a premier marriage hall located in the heart of Karachi, offering an elegant and spacious venue for weddings, receptions, and other special events. The hall is designed to accommodate both large and intimate gatherings, with luxurious interiors, state-of-the-art facilities, and exceptional services to make your event unforgettable.",
+            style: GoogleFonts.montserrat(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: MyColors.white,
+            ),
+            textAlign: TextAlign.justify,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailsSection() {
+    return Column(
+      children: [
+        _buildInfoRow("Venue Type", "Banquet"),
+        _buildInfoRow("Catering", "Internal & External"),
+        _buildInfoRow("Guests", "200 - 500 Persons"),
+        _buildInfoRow("Staff", "Male"),
+      ],
+    );
+  }
+
+  Widget _buildAddOnsSection() {
+    return Column(
+      children: [
+        _buildInfoRow("Decorations", "Rs. 30,000"),
+        _buildInfoRow("Female Staff", "Rs. 10,000"),
+        _buildInfoRow("Extra Staff", "Rs. 100/Person"),
+      ],
+    );
+  }
+
+  Widget _buildPackagesSection() {
+    return Column(
+      children: [
+        Text(
+          "Packages",
+          style: GoogleFonts.montserrat(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: MyColors.Yellow,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: PackageBox(packagename: 'Standard Package', packageprice: '', packagedetails: ''),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: PackageBox(packagename: 'Premium Package', packageprice: '', packagedetails: ''),
+        ),
+      ],
+    );
+  }
+
+Widget _buildReviewsSection() {
+  return Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Reviews",
+            style: GoogleFonts.montserrat(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: MyColors.Yellow,
+            ),
+          ),
+          Icon(Icons.arrow_right, color: MyColors.white),
+        ],
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Row(
+          children: [
+            Icon(Icons.star, color: MyColors.Yellow),
+            SizedBox(width: 5),
+            Text(
+              "4.5 (30)",
+              style: GoogleFonts.montserrat(fontSize: 15, color: MyColors.white),
+            ),
+          ],
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 20, top: 10),
+        child: Column(
+          children: [
+            // First line: 5, 4, 3 stars
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _buildInfoRow("5 Stars", "21", fontSize: 14),
+                Padding(
+                  padding: const EdgeInsets.only(left: 50),
+                  child: _buildInfoRow("4 Stars", "10", fontSize: 14),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 50),
+                  child: _buildInfoRow("3 Stars", "8", fontSize: 14),
+                ),
+              ],
+            ),
+           
+            Padding(
+              padding: const EdgeInsets.only(top: 0.3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildInfoRow("2 Stars", "3", fontSize: 14),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50),
+                    child: _buildInfoRow("1 Star", "2", fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+
+  Widget _buildInfoRow(String title, String value, {double fontSize = 16}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.montserrat(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w400,
+              color: MyColors.Yellow,
+            ),
+          ),
+          Text(
+            value,
+            style: GoogleFonts.montserrat(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w400,
+              color: MyColors.white,
+            ),
+          ),
+        ],
       ),
     );
   }

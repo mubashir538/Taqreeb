@@ -4,6 +4,8 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/theme/icons.dart';
+import 'package:taqreeb/theme/images.dart';
 
 class CategoryView_VideoEditor extends StatelessWidget {
   const CategoryView_VideoEditor({Key? key}) : super(key: key);
@@ -19,8 +21,6 @@ class CategoryView_VideoEditor extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Header(),
-
-            // Image Section
             AspectRatio(
               aspectRatio: 16 / 9,
               child: Image.network(
@@ -72,19 +72,38 @@ class CategoryView_VideoEditor extends StatelessWidget {
                   // Portfolio Section
                   buildSectionTitle("Portfolio"),
                   AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
+  aspectRatio: 16 / 9,
+  child: Stack(
+    alignment: Alignment.center, // Center the play/pause icon
+    children: [
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          image: DecorationImage(
+            image: NetworkImage(
+              'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      // Play/Pause Icon
+      Container(
+        decoration: BoxDecoration(
+          color: MyColors.white, // Slight overlay for better visibility
+          shape: BoxShape.circle,
+        ),
+        padding: const EdgeInsets.all(10),
+        child: Icon(
+          Icons.play_arrow, // Use play_arrow or pause icon as needed
+          color: MyColors.DarkLighter,
+          size: 50,
+        ),
+      ),
+    ],
+  ),
+),
+
 
                   // Reviews Section
                   SizedBox(height: 20),
