@@ -27,7 +27,7 @@ class OTPScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 20),
-            MyTextBox(hint: 'Enter your phone number'),
+            MyTextBox(hint: 'Enter your phone number',valueController: phoneController,),
             SizedBox(height: 20),
             ColoredButton(text: 'Send OTP'),
             SizedBox(height: 10),

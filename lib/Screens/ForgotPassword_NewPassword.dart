@@ -16,6 +16,9 @@ class ForgotPassword_NewPassword extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController passwordController = TextEditingController();
+    TextEditingController confirmpasswordController = TextEditingController();
+
     return Scaffold(
       body: Container(
         child: Column(
@@ -30,8 +33,8 @@ class ForgotPassword_NewPassword extends StatelessWidget {
               margin: EdgeInsets.only(top: MaximumThing * 0.05),
               child: Column(
                 children: [
-                  MyTextBox(hint: 'New Password'),
-                  MyTextBox(hint: 'Confirm Password'),
+                  MyTextBox(hint: 'New Password',valueController: passwordController,),
+                  MyTextBox(hint: 'Confirm Password',valueController: confirmpasswordController,),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: MaximumThing*0.02),
                     width: screenWidth * 0.9,
