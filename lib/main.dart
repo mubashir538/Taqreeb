@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_AddPackage.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
+import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
 import 'package:taqreeb/Screens/CategoryView_BakerySweet.dart';
 import 'package:taqreeb/Screens/CategoryView_Caterers.dart';
 import 'package:taqreeb/Screens/CategoryView_Decorator.dart';
@@ -38,6 +45,7 @@ import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.d
 import 'package:taqreeb/Screens/FunctionDetail.dart';
 import 'package:taqreeb/Screens/Login.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
+import 'package:taqreeb/Screens/Settings.dart';
 import 'package:taqreeb/Screens/SignupScreens/ProfilePictureUpload.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPVerify.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPSend.dart';
@@ -62,7 +70,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: AddImage(),
       routes: {
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
