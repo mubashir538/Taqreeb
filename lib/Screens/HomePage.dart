@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
@@ -7,10 +9,50 @@ import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
-  HomePage({super.key});
+  String token = '';
+  Map<String, dynamic> categories = {}; // Initialize as empty map
+  Map<String, dynamic> listings = {}; // Initialize as empty map
+
+  bool isLoading = true; // Add a loading flag
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // Fetch data in a separate method
+  }
+
+  void fetchData() async {
+    // Perform asynchronous operations
+    final token = await MyStorage.getToken('accessToken') ?? "";
+    print(token);
+    final fetchedCategories =
+        await MyApi.getRequest(endpoint: 'home/categories/',
+        //  headers: {
+        //   'Authorization': 'Bearer $token',
+        // }
+        );
+    final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
+
+    // Update the state
+    setState(() {
+      this.token = token;
+      this.categories = fetchedCategories ?? {}; // Ensure no null data
+      this.listings = fetchedListings ?? {}; // Ensure no null data
+      isLoading = false; // Data has been fetched, so stop loading
+    });
+
+    print('$token - $categories - $listings');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,82 +104,87 @@ class HomePage extends StatelessWidget {
                         color: MyColors.Yellow,
                       ),
                     ),
-                    Text(
-                      'See all',
-                      style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.017,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.white,
+                    InkWell(
+                      child: Text(
+                        'See all',
+                        style: GoogleFonts.montserrat(
+                          fontSize: MaximumThing * 0.017,
+                          fontWeight: FontWeight.w400,
+                          color: MyColors.white,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(
-              height: screenHeight * 0.15,
-              child: ListView.builder(
-                itemBuilder: (context, index) => CategoryIcon(
-                  onpressed: () {
-                    Navigator.pushNamed(context, '/CategoryView_Caterers');
-                  },
-                  label: 'Caterers',
-                  imageUrl:
-                      'https://tse1.mm.bing.net/th?id=OIP.mXk6kBcrindk6DZZUj6gKgHaE0&pid=Api&P=0&h=220',
-                ),
-                itemCount: 5,
-                scrollDirection: Axis.horizontal,
-              ),
-            ),
+            // Show CircularProgressIndicator while loading
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                    ),
+                  )
+                : SizedBox(
+                    height: screenHeight * 0.17,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) => CategoryIcon(
+                        onpressed: () {
+                          Navigator.pushNamed(
+                              context, '/CategoryView_Caterers');
+                        },
+                        label: categories['categories'][index]['name'],
+                        imageUrl:
+                            // '${MyApi.baseUrl}${categories['categories'][index]['picture']}.png',
+                            'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
+                      ),
+                      itemCount: categories['categories'].length,
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
             Center(
               child: ColoredButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/CreateAIPackage');
-                  },
-                  text: 'Create Package with AI'),
-            ),
-            // GridView.builder(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //       crossAxisCount: 2,
-            //       crossAxisSpacing: screenWidth * 0.02,
-            //       mainAxisSpacing: screenHeight * 0.01,
-            //       childAspectRatio: 1 / 1.5),
-            //   itemBuilder: (context, index) {
-            //     return HomePageProducts(
-            //       onpressed: () =>
-            //           Navigator.pushNamed(context, '/CategoryView_Venue'),
-            //       image:
-            //           'https://media.istockphoto.com/id/497959594/photo/fresh-cakes.jpg?s=612x612&w=0&k=20&c=T1vp7QPbg6BY3GE-qwg-i_SqVpstyHBMIwnGakdTTek=',
-            //       name: 'Sana Sarah\'s Salon',
-            //       category: 'Salon and Spa',
-            //       price: 'Rs. 5000 - 10000',
-            //     );
-            //   },
-            //   itemCount: 10,
-            // ),
-            Center(
-              child: SizedBox(
-                width: screenWidth * 0.9,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Productcard(
-                        onpressed: () {
-                          Navigator.pushNamed(context, '/CategoryView_Venue');
-                        },
-                        imageUrl:
-                            'https://tse1.mm.bing.net/th?id=OIP.mXk6kBcrindk6DZZUj6gKgHaE0&pid=Api&P=0&h=220',
-                        venueName: "Qasr-e-Noor",
-                        location: "North Nazimabad",
-                        type: "Venue");
-                  },
-                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/CreateAIPackage');
+                },
+                text: 'Create Package with AI',
               ),
-            )
+            ),
+            // Show CircularProgressIndicator while loading listings
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                    ),
+                  )
+                : Center(
+                    child: SizedBox(
+                      width: screenWidth * 0.9,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: listings['HomeListing'].length,
+                        itemBuilder: (context, index) {
+                          return Productcard(
+                            onpressed: () {
+                              Navigator.pushNamed(
+                                  context, '/CategoryView_Venue');
+                            },
+                            imageUrl:
+                                // '${MyApi.baseUrl}${listings['HomeListing'][index]['picture']}.png',
+                                'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
+                            venueName: listings['HomeListing'][index]['name'],
+                            location: listings['HomeListing'][index]
+                                ['location'],
+                            type: listings['HomeListing'][index]['type']
+                                .toString(),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

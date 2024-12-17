@@ -34,9 +34,11 @@ class CategoryIcon extends StatelessWidget {
               ),
             ),
             Container(
+              constraints: BoxConstraints(maxWidth: MaximumThing * 0.1),
               margin: EdgeInsets.only(top: MaximumThing * 0.004),
               child: Text(
                 label,
+                textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
                   fontSize: MaximumThing * 0.015,
                   fontWeight: FontWeight.w300,

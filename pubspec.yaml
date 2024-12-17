@@ -12,7 +12,11 @@ dependencies:
   flutter_chat_ui: ^1.6.15
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
-  http: ^1.1.0zz
+
+  http: ^1.1.0
+  flutter_secure_storage: ^7.0.0
+  image_picker: ^0.8.7
+  flutter_image_compress: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,10 @@ class SendEmailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    TextEditingController nameController = TextEditingController();
+    TextEditingController messageController = TextEditingController();
+    
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
@@ -24,14 +28,17 @@ class SendEmailScreen extends StatelessWidget {
               SizedBox(height: 20),
               MyTextBox(
                 hint: "Name",
+                valueController: nameController,
               ),
               SizedBox(height: 10),
               MyTextBox(
                 hint: "Email",
+                valueController: emailController,
               ),
               SizedBox(height: 10),
               MyTextBox(
                 hint: "Message",
+                valueController: messageController,
               ),
               SizedBox(height: 10),
               ColoredButton(

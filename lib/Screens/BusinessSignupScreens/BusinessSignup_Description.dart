@@ -17,6 +17,9 @@ class BusinessSignup_Description extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController usernameController = TextEditingController();
+    TextEditingController nameController = TextEditingController();
+    
     return Scaffold(
         backgroundColor: Colors.black,
         body: SingleChildScrollView(
@@ -29,8 +32,8 @@ class BusinessSignup_Description extends StatelessWidget {
                         'customers and can help your get more clients '),
                 Column(
                   children: [
-                    MyTextBox(hint: 'Profile Username'),
-                    MyTextBox(hint: 'Profile Name'),
+                    MyTextBox(hint: 'Profile Username',valueController: usernameController,),
+                    MyTextBox(hint: 'Profile Name',valueController: nameController,),
                     Container(
                       margin: EdgeInsets.all(MaximumThing * 0.01),
                       height: screenHeight * 0.4,
