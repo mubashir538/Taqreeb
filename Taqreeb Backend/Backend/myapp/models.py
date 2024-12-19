@@ -230,6 +230,7 @@ class EventType(m.Model):
 class FunctionType(m.Model):
     id = m.AutoField(primary_key=True)
     name = m.TextField()
+    eventtypeid = m.ForeignKey(EventType,on_delete=m.CASCADE,null=True)
 
 class DesertItems(m.Model):
     id = m.AutoField(primary_key=True)

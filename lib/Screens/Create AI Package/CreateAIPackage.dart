@@ -19,6 +19,7 @@ class CreateAIPackage extends StatefulWidget {
 
 class _CreateAIPackageState extends State<CreateAIPackage> {
   final double _currentBudgetValue = 100000;
+  final TextEditingController dateController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,10 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   end: 1000,
                   div: 19,
                   currentCount: 100),
-              DateQuestion(question: "What is the date of the event?"),
+              DateQuestion(
+                question: "What is the date of the event?",
+                valuecontroller: dateController,
+              ),
             ], Heading: "Event Details"),
             QuestionGroup(questions: [
               SliderQuestion(

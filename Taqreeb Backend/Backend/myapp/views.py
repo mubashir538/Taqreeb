@@ -14,6 +14,15 @@ from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getEventType(request):
+    eventTypes = md.EventType.objects.all()
+    serializer = s.EventTypeSerializer(eventTypes,many=True)
+    return Response({'status':'success','eventTypes':serializer.data})
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resendOTPEmail(request):
@@ -121,8 +130,6 @@ def AccountSignupPage(request):
     return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def BusinessOwnerSignup(request):
     userid = request.data.get('id')
@@ -165,8 +172,6 @@ def ResetPasswordPage(request):
     return Response({'status':'success'})
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def AccountInfoPage(request,id):
     userid = id
@@ -175,8 +180,6 @@ def AccountInfoPage(request,id):
     return Response(serializer.data)
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def ListingsPage(request,id):
     listings = md.Listing.objects.filter(BusinessOwnerID=id)
@@ -184,8 +187,6 @@ def ListingsPage(request,id):
     return Response({'status':'success','listings':serializer.data})
     
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def DecoratorDetailPage(request,id):
     listingDetails = md.Listing.objects.get(id=id)
@@ -193,15 +194,11 @@ def DecoratorDetailPage(request,id):
     return Response({'status':'success','listingDetails':listingDetails,'decoratorDetails':decoratorDetails})
     
 @api_view(['PUT'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def EditAccountInfoPage(request):
     pass
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def FreelancerSignup(request):
     BusinessName = request.data.get('BusinessName')
@@ -216,20 +213,25 @@ def FreelancerSignup(request):
     Freelancer.save()
     return Response({'status': 'success'})
 
+@permission_classes([AllowAny])
 @api_view(['POST'])
-
 def AddGuests(request):
-    AddGuests = request.data.get('AddGuests')
-    if AddGuests =='Add Family':
-        AddGuests = request.data.get('AddFamily')
-        GuestList = md.GuestList(FamilyName=FamilyName,member=member)
+    guesttype = request.data.get('guesttype')
+    eid = request.data.get('eid')
+    if request.data.get('fid') != None:
+        fid = request.data.get('fid')
+    else:
+        fid = None
+    if guesttype=='Family':
+        FamilyName = request.data.get('FamilyName')
+        member = request.data.get('member')
+        GuestList = md.GuestList(FamilyName=FamilyName,member=member,type=guesttype,eventId=eid,functionId=fid)
     else:   
-        contact = request.data.get('AddPerson')
-        GuestList = md.GuestList(PersonName=PersonName,contactNumber=contact)
-
-    AddGuests.save()
+        PersonName = request.data.get('PersonName')
+        PersonContact = request.data.get('PersonContact')
+        GuestList = md.GuestList(PersonName=PersonName,contactNumber=PersonContact,type=guesttype,eventId=eid,functionId=fid)
+    GuestList.save()
     return Response({'status':'success'})
-
 
 @api_view(['POST'])
 def UserLogin(request):
@@ -246,20 +248,21 @@ def UserLogin(request):
     return Response({'status':'success'})
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def CreateFunction(request):
-    name = request.data.get('Function Name')
-    Budget = request.data.get('Budget')
-    type =request.fata.get('Event Type')
+    name= request.data.get('Function Name')
+    budget = request.data.get('Budget')
+    type = request.data.get('Type')
+    date = request.data.get('Date')
+    guestsmin = request.data.get('guest min')
+    guestsmax = request.data.get('guest max')
+    EventId = request.data.get('Event Id')
 
-    CreateFunction = md.CreateFunction(name=name, type=type, Budget=Budget)
+    CreateFunction = md.Functions(name=name, eventId = EventId, type=type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
     CreateFunction.save()
     return Response({'status':'success'})
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
 @permission_classes([AllowAny])
 def EventDetails(request,eventId):
     EventDetail = md.Events.objects.get(id=eventId)
@@ -269,8 +272,6 @@ def EventDetails(request,eventId):
     return Response({'status':'success','EventDetail':serializer.data,'Functions':serializer2.data})
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def VenueViewPage(request, venueId):
     Listing = md.Listing.objects.get(id = venueId)
@@ -288,19 +289,19 @@ def VenueViewPage(request, venueId):
     pass
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
 def CreateEvent(request):
+    userId = request.data.get('userId')
     name = request.data.get('Event Name')
     type = request.data.get('Event Type')
     date = request.data.get('Date')
     location = request.data.get('Location')
-    description = request.data.get('Describe your Event')
+    description = request.data.get('description')
     themeColor = request.data.get('Theme')
     budget = request.data.get('Budget')
-
-    CreateEvent = md.CreateEvent(name=name,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
+    guestmin= request.data.get('guestmin')
+    guestmax = request.data.get('guestmax')
+    CreateEvent = md.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
     CreateEvent.save()
     return Response({'status': 'success'})
 
@@ -435,21 +436,11 @@ def VideoEditorViewPage(request, VideoEditorID):
     return Response({'status': 'success', 'VideoEditors':VideoEditorsSerializer.data, 'Listing':ListingSerializer.data, 'Package':PackageSerializer.data, 'Review':ReviewSerializer.data})
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-
 @permission_classes([AllowAny])
-def ViewFunction(request, ViewFunctionID):
-    Listing = md.Listing.objects.all()
-    Functions = md.Functions.objects.get(ViewFunctionID=ViewFunctionID)
-    Venue = md.Venue.objects.get(ViewFunctionID = ViewFunctionID)
-    Caterers = md.Caterers.objects.get(ViewFunctionID = ViewFunctionID)
-    Salons = md.Salons.objects.get(ViewFunctionID = ViewFunctionID)
-    ListingSerializer = s.ListingSerializer(Listing, many=False)
-    FunctionsSerializer = s.FunctionsSerializer(Functions, many=True)
-    VenueSerializer = s.VenueSerializer(Venue, many=True)
-    CaterersSerializer = s.CaterersSerializer(Caterers, many=True)
-    SalonsSerializer = s.SalonsSerializer(Salons, many=True)
-    return Response ({'status':'success', 'Fuctions':FunctionsSerializer.data, 'Listing':ListingSerializer.data, 'Venue':VenueSerializer.data, 'Caterers':CaterersSerializer.data, 'Salons':SalonsSerializer.data})
+def ViewFunction(request, FunctionId):
+    Functions = md.Functions.objects.get(id = FunctionId)
+    FunctionsSerializer = s.FunctionsSerializer(Functions, many=False)
+    return Response ({'status':'success', 'Fuctions':FunctionsSerializer.data})
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])

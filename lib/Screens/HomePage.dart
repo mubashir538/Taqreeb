@@ -34,7 +34,6 @@ class _HomePageState extends State<HomePage> {
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
-    print(token);
     final fetchedCategories =
         await MyApi.getRequest(endpoint: 'home/categories/',
         //  headers: {
@@ -51,7 +50,6 @@ class _HomePageState extends State<HomePage> {
       isLoading = false; // Data has been fetched, so stop loading
     });
 
-    print('$token - $categories - $listings');
   }
 
   @override
