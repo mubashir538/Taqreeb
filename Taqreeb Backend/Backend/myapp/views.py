@@ -120,7 +120,7 @@ def AddGuests(request):
         GuestList = md.GuestList(PersonName=PersonName,contactNumber=contact)
 
     AddGuests.save()
-    ~return Response({'status':'success'})
+    return Response({'status':'success'})
 
 
 @api_view(['POST'])
