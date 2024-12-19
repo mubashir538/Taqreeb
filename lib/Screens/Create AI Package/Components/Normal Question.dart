@@ -12,6 +12,7 @@ class NormalQuestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController answerController = TextEditingController();
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: MaximumThing * 0.02,
@@ -27,7 +28,10 @@ class NormalQuestion extends StatelessWidget {
                   color: MyColors.white, fontSize: MaximumThing * 0.018),
             ),
           ),
-          MyTextBox(hint: "Type your answer here"),
+          MyTextBox(
+            hint: "Type your answer here",
+            valueController: answerController,
+          ),
         ],
       ),
     );

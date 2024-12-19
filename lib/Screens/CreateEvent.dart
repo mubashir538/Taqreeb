@@ -23,6 +23,15 @@ class _CreateEventState extends State<CreateEvent> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController eventNameController = TextEditingController();
+    TextEditingController typeController = TextEditingController();
+    TextEditingController dateController = TextEditingController();
+    TextEditingController locationController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
+    TextEditingController budgetController = TextEditingController();
+    TextEditingController nameController = TextEditingController();
+    TextEditingController contactController = TextEditingController();
+    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
@@ -39,22 +48,23 @@ class _CreateEventState extends State<CreateEvent> {
               child: Column(
                 children: [
                   QuestionGroup(questions: [
-                    MyTextBox(hint: "Event Name"),
-                    MyTextBox(hint: "Event Type"),
-                    MyTextBox(hint: "Set Date"),
-                    MyTextBox(hint: "Location"),
+                    MyTextBox(hint: "Event Name",valueController: eventNameController,),
+                    MyTextBox(hint: "Event Type",valueController: typeController,),
+                    MyTextBox(hint: "Set Date",valueController: dateController,),
+                    MyTextBox(hint: "Location",valueController: locationController,),
                   ], Heading: "Basic Info"),
                   QuestionGroup(questions: [
                     SizedBox(
                       height: screenHeight * 0.2,
                       child: MyTextBox(
                         hint: "Enter Description",
+                        valueController: descriptionController,
                       ),
                     ),
                   ], Heading: "Describe Your Event"),
                   QuestionGroup(questions: [
-                    MyTextBox(hint: "Name"),
-                    MyTextBox(hint: "Contact"),
+                    MyTextBox(hint: "Name",valueController: nameController,),
+                    MyTextBox(hint: "Contact",valueController: contactController,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -69,6 +79,7 @@ class _CreateEventState extends State<CreateEvent> {
                   QuestionGroup(questions: [
                     MyTextBox(
                       hint: "Enter Budget",
+                      valueController: budgetController,
                     ),
                   ], Heading: "Budget")
                 ],

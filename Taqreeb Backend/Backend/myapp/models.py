@@ -5,8 +5,8 @@ class User(m.Model):
     firstName = m.CharField(max_length=100)
     lastName = m.CharField(max_length=100)
     password = m.CharField(max_length=100)
-    contactNumber = m.CharField(max_length=15)
-    email = m.CharField(max_length=50)
+    contactNumber = m.CharField(max_length=15,null=True)
+    email = m.CharField(max_length=50,null=True)
     city = m.CharField(max_length=50)
     gender = m.CharField(max_length=6)
     profilePicture = m.CharField(max_length=100)
@@ -41,6 +41,13 @@ class Listing(m.Model):
     location = m.CharField(max_length=100)
     description = m.CharField(max_length=1100)
     basicPrice = m.IntegerField()
+    type = m.TextField(null=True)
+
+
+class PicturesListings(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    picturePath = m.CharField(max_length=100)
 
 class Packages(m.Model):
     id = m.AutoField(primary_key=True)

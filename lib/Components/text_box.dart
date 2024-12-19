@@ -6,12 +6,12 @@ import 'package:taqreeb/theme/color.dart';
 class MyTextBox extends StatelessWidget {
   final String hint;
   final String Value;
-  MyTextBox({super.key, required this.hint, this.Value = ''});
+  final TextEditingController valueController;
+  MyTextBox({super.key, required this.hint, this.Value = '', required this.valueController});
 
-  TextEditingController valueController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    valueController.text = Value;
+    // valueController.text = Value;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
@@ -35,7 +35,8 @@ class MyTextBox extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: TextField(
-          controller: Value != '' ? valueController : null,
+          // controller: Value != '' ? valueController : null,
+          controller:  valueController,
           style: GoogleFonts.montserrat(
             fontSize: MaximumThing * 0.018,
             fontWeight: FontWeight.w400,
