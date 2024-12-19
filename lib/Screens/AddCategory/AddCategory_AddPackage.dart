@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
-class AddcategoryAddpackage extends StatelessWidget {
+class AddcategoryAddpackage extends StatefulWidget {
   const AddcategoryAddpackage({super.key});
+
+  @override
+  State<AddcategoryAddpackage> createState() => _AddcategoryAddpackageState();
+}
+
+class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
+  TextEditingController nameController = TextEditingController();
+
+  TextEditingController detailsController = TextEditingController();
+
+  TextEditingController priceController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +30,20 @@ class AddcategoryAddpackage extends StatelessWidget {
               heading: 'Add Packages',
             ),
             SizedBox(height: screenHeight * 0.03),
-            MyTextBox(hint: 'Name'),
+            MyTextBox(
+              hint: 'Name',
+              valueController: nameController,
+            ),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Details'),
+            MyTextBox(
+              hint: 'Details',
+              valueController: detailsController,
+            ),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Price'),
+            MyTextBox(
+              hint: 'Price',
+              valueController: priceController,
+            ),
           ],
         ),
       ),

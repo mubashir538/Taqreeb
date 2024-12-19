@@ -4,8 +4,19 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class AddcategoryList extends StatelessWidget {
+class AddcategoryList extends StatefulWidget {
   const AddcategoryList({super.key});
+
+  @override
+  State<AddcategoryList> createState() => _AddcategoryListState();
+}
+
+class _AddcategoryListState extends State<AddcategoryList> {
+  TextEditingController nameController = TextEditingController();
+
+  TextEditingController locationController = TextEditingController();
+
+  TextEditingController typeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +32,10 @@ class AddcategoryList extends StatelessWidget {
               heading: 'Basic Details',
             ),
             SizedBox(height: screenHeight * 0.03),
-            MyTextBox(hint: 'Name'),
+            MyTextBox(
+              hint: 'Name',
+              valueController: nameController,
+            ),
             SizedBox(height: screenHeight * 0.01),
             Container(
               margin: EdgeInsets.all(MaximumThing * 0.01),
@@ -75,9 +89,15 @@ class AddcategoryList extends StatelessWidget {
               ),
             ),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Location'),
+            MyTextBox(
+              hint: 'Location',
+              valueController: locationController,
+            ),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Category Type'),
+            MyTextBox(
+              hint: 'Category Type',
+              valueController: typeController,
+            ),
           ],
         ),
       ),

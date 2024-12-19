@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
@@ -14,7 +18,67 @@ class CreateFunction extends StatefulWidget {
 }
 
 class _CreateFunctionState extends State<CreateFunction> {
-  final TextEditingController _dateController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController budgetController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
+  TextEditingController guestMaxController = TextEditingController();
+  TextEditingController guestMinController = TextEditingController();
+
+  String token = '';
+  Map<String, dynamic> types = {};
+  bool isLoading = true;
+  String functionId = "";
+  int EventId = 0;
+  Map<String, dynamic> Function = {};
+  bool edit = false;
+  @override
+  void initState() {
+    super.initState();
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    setState(() {
+      if (args['functionId'] != null) {
+        this.functionId = args['functionId'];
+        edit = true;
+      } else {
+        this.EventId = int.parse(args['eventId'].toString());
+      }
+    });
+    fetchData();
+  }
+
+  void fetchData() async {
+    final token = await MyStorage.getToken('accessToken') ?? "";
+    final types = await MyApi.getRequest(endpoint: 'getEventTypes/');
+
+    final FunctiontDetails;
+    if (edit) {
+      FunctiontDetails =
+          await MyApi.getRequest(endpoint: 'YourEvents/${functionId}');
+    } else {
+      FunctiontDetails = "";
+    }
+    setState(() {
+      if (edit) {
+        this.Function = FunctiontDetails ?? {};
+        if (this.Function != {}) {
+          nameController.text = this.Function['Fuctions']['name'];
+          typeController.text = this.Function['Fuctions']['type'];
+          _dateController.text = this.Function['Fuctions']['date'];
+          budgetController.text = this.Function['Fuctions']['budget'];
+          guestMaxController.text = this.Function['Fuctions']['guestsmax'];
+          guestMinController.text = this.Function['Fuctions']['guestsmin'];
+          this.EventId =
+              int.parse(this.Function['Fuctions']['eventId'].toString());
+        }
+      }
+      this.token = token;
+      this.types = types ?? {};
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +87,6 @@ class _CreateFunctionState extends State<CreateFunction> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-
-  TextEditingController nameController = TextEditingController();
-  TextEditingController budgetController = TextEditingController();
-  TextEditingController typeController = TextEditingController();
-  
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -44,9 +103,18 @@ class _CreateFunctionState extends State<CreateFunction> {
                   SizedBox(
                     height: screenHeight * 0.04,
                   ),
-                  MyTextBox(hint: 'Funtion Name',valueController: nameController,),
-                  MyTextBox(hint: 'Budget',valueController: budgetController,),
-                  MyTextBox(hint: "Event Type",valueController: typeController,),
+                  MyTextBox(
+                    hint: 'Funtion Name',
+                    valueController: nameController,
+                  ),
+                  MyTextBox(
+                    hint: 'Budget',
+                    valueController: budgetController,
+                  ),
+                  MyTextBox(
+                    hint: "Event Type",
+                    valueController: typeController,
+                  ),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
                     height: screenHeight * 0.06,
@@ -90,9 +158,41 @@ class _CreateFunctionState extends State<CreateFunction> {
                 ],
               ),
               ColoredButton(
-                text: 'Add Funtion',
-                onPressed: () {
-                  Navigator.pushNamed(context, '/FunctionDetail');
+                text: 'Add Function',
+                onPressed: () async {
+                  if (nameController.text.isEmpty ||
+                      typeController.text.isEmpty ||
+                      _dateController.text.isEmpty ||
+                      budgetController.text.isEmpty ||
+                      guestMaxController.text.isEmpty ||
+                      guestMinController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Please fill all the fields"),
+                    ));
+                    return;
+                  }
+                  final response = await MyApi.postRequest(
+                      endpoint: 'createfunction/',
+                      body: {
+                        'Function Name': nameController.text,
+                        'Date': typeController.text,
+                        'Type': _dateController.text,
+                        'Budget': budgetController.text,
+                        'guest min': guestMinController.text,
+                        'guest max': guestMaxController.text,
+                        'Event Id': this.EventId
+                      });
+                  final responseBody = await response.stream.bytesToString();
+                  final Map<String, dynamic> jsonResponse =
+                      jsonDecode(responseBody);
+                  if (jsonResponse['status'] != 'success') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Function Added Successfully')));
+                    Navigator.pushNamed(context, '/YourEvents');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error Creating Function')));
+                  }
                 },
               ),
             ],

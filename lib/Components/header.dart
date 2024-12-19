@@ -56,8 +56,13 @@ class Header extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: MyColors.white),
                 ),
-                Icon(Icons.settings,
-                    color: MyColors.white, size: MaximumThing * 0.03),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
+                  child: Icon(Icons.settings,
+                      color: MyColors.white, size: MaximumThing * 0.03),
+                ),
               ],
             ),
           ),

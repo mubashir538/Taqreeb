@@ -20,19 +20,23 @@ class EventDetails extends StatefulWidget {
 class _EventDetailsState extends State<EventDetails> {
   String token = '';
   Map<String, dynamic> events = {}; // Initialize as empty map
-  late String EventId;
+  late int EventId;
   bool isLoading = true; // Add a loading flag
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args = ModalRoute.of(context)!.settings.arguments as String;
-      setState(() {
-        EventId = args; // Set the data
-      });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final args = ModalRoute.of(context)!.settings.arguments as int;
+    setState(() {
+      EventId = args;
     });
-    fetchData(); // Fetch data in a separate method
+    fetchData();
   }
 
   void fetchData() async {
@@ -40,7 +44,7 @@ class _EventDetailsState extends State<EventDetails> {
     final token = await MyStorage.getToken('accessToken') ?? "";
 
     final Event =
-        await MyApi.getRequest(endpoint: 'YourEvents/${this.EventId}');
+        await MyApi.getRequest(endpoint: 'eventdetails/${this.EventId}');
 
     // Update the state
     setState(() {
@@ -99,7 +103,8 @@ class _EventDetailsState extends State<EventDetails> {
                               'Budget',
                               style: heading,
                             ),
-                            Text(events['EventDetail']['budget'], style: text)
+                            Text(events['EventDetail']['budget'].toString(),
+                                style: text)
                           ],
                         ),
                         SizedBox(height: screenHeight * 0.01),
@@ -116,7 +121,7 @@ class _EventDetailsState extends State<EventDetails> {
                           children: [
                             Text('Guests', style: heading),
                             Text(
-                                '${events['EventDetail']['guestsmin']} - ${events['EventDetail']['guestsmax']}',
+                                '${events['EventDetail']['guestsmin'].toString()} - ${events['EventDetail']['guestsmax'].toString()}',
                                 style: text)
                           ],
                         ),
@@ -141,7 +146,7 @@ class _EventDetailsState extends State<EventDetails> {
                           name: events[index]['name'],
                           type: events[index]['type'],
                           head: 'Budget',
-                          budget: events[index]['budget'],
+                          budget: events[index]['budget'].toString(),
                           headings: ['Date'],
                           values: [events[index]['date']],
                           editPressed: () {
@@ -154,7 +159,9 @@ class _EventDetailsState extends State<EventDetails> {
                           },
                         );
                       },
-                      itemCount: events['EventDetail']['Functions'].length,
+                      itemCount: events['EventDetail']['Functions'] != null
+                          ? events['EventDetail']['Functions'].length
+                          : 0,
                     ),
 
                     Container(

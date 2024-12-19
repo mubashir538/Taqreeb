@@ -70,8 +70,16 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: AddImage(),
+      home: CategoryView_VideoEditor(),
       routes: {
+        '/settings': (context) => Settings(),
+        '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
+        '/AddCategory_AddImage': (context) => AddImage(),
+        '/AddCategory_Addons': (context) => AddcategoryAddons(),
+        '/AddCategory_AddPackage': (context) => AddcategoryAddpackage(),
+        '/AddCategory_List': (context) => AddcategoryList(),
+        '/AddCategory_MoreDetails': (context) => AddcategoryMoredetails(),
+        '/AddCategory_Packages': (context) => AddcategoryPackages(),
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
         '/Signup_ContactOTPVerify': (context) => SignupContactOTPVerify(),
