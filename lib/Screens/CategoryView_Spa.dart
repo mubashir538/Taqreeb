@@ -23,7 +23,7 @@ class Categoryview_Spa extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 2000,
+              height: 2300,
               width: 428,
               child: Column(
                 children: [
@@ -172,6 +172,7 @@ class Categoryview_Spa extends StatelessWidget {
                         color: MyColors.DarkLighter,
                       )),
                   SizedBox(height: 10),
+
                   Row(
                     children: [
                       SizedBox(width: 20),
@@ -186,174 +187,176 @@ class Categoryview_Spa extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Hair cut & Hair color",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                  Container(
+                    height: 270,
+                    width:
+                        double.infinity, // Ensures it takes up the full width
+                    decoration: BoxDecoration(
+                      color: MyColors
+                          .DarkLighter, // Replace with your desired background color
+                      borderRadius: BorderRadius.circular(
+                          10), // Optional for rounded corners
+                    ),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10), // Adds padding for content
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Align content to the start
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceBetween, // Even spacing between rows
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Hair cut & Hair color",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "2000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 175),
-                      Text(
-                        "2000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Hair Treatments",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "1500",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Manicure & Pedicure",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "1000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Eyebrows & Lashes",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "5000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Waxing",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "800",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Skin Care",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "5000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Makeup",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "6000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Hair Treatements",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 200),
-                      Text(
-                        "1500",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Manicure & Pedicure",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 175),
-                      Text(
-                        "1000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Eyebrows & Lashes",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 185),
-                      Text(
-                        "5000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Waxing",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 273),
-                      Text(
-                        "800",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Skin Care",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 250),
-                      Text(
-                        "5000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 260),
-                      Text(
-                        "6000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
+
                   SizedBox(
                     height: 20,
                   ),
@@ -395,348 +398,300 @@ class Categoryview_Spa extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Haicut & Protien Treatement",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                  Container(
+                    width: double.infinity, // Full width
+                    decoration: BoxDecoration(
+                      color: MyColors.DarkLighter, // Background color
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded corners
+                    ),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 20), // Padding for spacing
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Align content to the start
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .spaceBetween, // Aligns text in row with space between
+                          children: [
+                            Text(
+                              "Haircut & Protein Treatment",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                            Text(
+                              "28,000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ]
-                  ),
-                   SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Jenson Facial",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Jenson Facial",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ]
-                  ),
-                   SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Eyebrows and Upperlips",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Eyebrows and Upperlips",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Full Body Wax",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Full Body Wax",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Face Wax",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Face Wax",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Manicure & Pedicure",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Manicure & Pedicure",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Neck Massage",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Neck Massage",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ]
+                      ],
+                    ),
                   ),
-                   Row(
-                    children: [
-                      SizedBox(width: 300),
-                      Text(
-                        "28,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
+
                   //grey container lgyga
 
                   SizedBox(height: 30),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Haicut & Protien Treatement",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
+                  Container(
+                    width: double.infinity,
+                    height: 300,
+                    decoration: BoxDecoration(
+                      color: MyColors.DarkLighter,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(20),
+                    child: Center(
+                      // Center content within the fixed height
+                      child: Column(
+                        mainAxisSize: MainAxisSize
+                            .min, // Content takes only the space it needs
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Haircut & Protein Treatment",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Mix Fruit Facial",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Eyebrows and Upperlips",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Full Body Wax",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Face Wax",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Manicure & Pedicure",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Neck Massage",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "22,000",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.Yellow,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ]
+                    ),
                   ),
-                   SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Mix Fruit Facial",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                   SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Eyebrows and Upperlips",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Full Body Wax",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Face Wax",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Manicure & Pedicure",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Neck Massage",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 300),
-                      Text(
-                        "22,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
+
                   //grey container lgyga
 
                   SizedBox(height: 30),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Haicut & Protien Treatement",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
+                  Container(
+                    width: double.infinity,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      color: MyColors.DarkLighter,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(20),
+                    child: Center(
+                      // Center content within the fixed height
+
+                      child: Column(
+                        children: [
+                          Row(children: [
+                            SizedBox(width: 20),
+                            Text(
+                              "Haicut & Protien Treatement",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(children: [
+                            SizedBox(width: 20),
+                            Text(
+                              "Hydra Facial",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(children: [
+                            SizedBox(width: 20),
+                            Text(
+                              "Eyebrows and Upperlips",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(children: [
+                            SizedBox(width: 20),
+                            Text(
+                              "Full Body Wax",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(children: [
+                            SizedBox(width: 20),
+                            Text(
+                              "Face Wax",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ]),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(width: 300),
+                              Text(
+                                "18,000",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: MyColors.Yellow,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ]
-                  ),
-                   SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Hydra Facial",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                   SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Eyebrows and Upperlips",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Full Body Wax",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Face Wax",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ]
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                   Row(
-                    children: [
-                      SizedBox(width: 300),
-                      Text(
-                        "18,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   //grey container lgyga
 

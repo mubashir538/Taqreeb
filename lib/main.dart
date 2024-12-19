@@ -7,6 +7,7 @@ import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
+import 'package:taqreeb/Screens/Parlors.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/Screens/Settings.dart';
 import 'package:taqreeb/Screens/CategoryView_Spa.dart';
@@ -70,7 +71,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Categoryview_Makeup(),
+      home:CategoryView_GraphicDesigner(),
       routes: {
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),

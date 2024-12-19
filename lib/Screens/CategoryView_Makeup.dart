@@ -186,101 +186,78 @@ class Categoryview_Makeup extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Party Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                  Container(
+                    width: double.infinity,
+                    height: 220, // Increased height to fit all content
+                    decoration: BoxDecoration(
+                      color: MyColors.DarkLighter,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(20), // Add padding for consistency
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start, // Align text to the left
+                      children: [
+                        Text(
+                          "Party Makeup",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "No Makeup Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "No Makeup Makeup",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 200),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Bridal Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Bridal Makeup",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Smokey Eye Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Smokey Eye Makeup",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 185),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Hollywood Retro Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
+                        SizedBox(height: 10),
+                        Text(
+                          "Hollywood Retro Makeup",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 10),
+                        Text(
+                          "Soft Glam Makeup",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+
                   SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Soft Glam Makeup",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  //grey container lgyga
                   SizedBox(
                       width: 324,
                       child: Divider(
@@ -378,90 +355,85 @@ class Categoryview_Makeup extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Row(children: [
-                    SizedBox(width: 20),
-                    Text(
-                      "Makeup as per your choice",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.white,
-                      ),
+                  Container(
+                    width: double.infinity,
+                    height: 240, // Increased height for better spacing
+                    decoration: BoxDecoration(
+                      color: MyColors.DarkLighter,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ]),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(children: [
-                    SizedBox(width: 20),
-                    Text(
-                      "Hair Styling",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.white,
-                      ),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 20), // Consistent padding
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Align content to the start
+                      children: [
+                        Text(
+                          "Makeup as per your choice",
+                          style: GoogleFonts.montserrat(
+                            fontSize:
+                                14, // Increased font size for better readability
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        SizedBox(
+                            height: 12), // Increased space between text items
+                        Text(
+                          "Hair Styling",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          "Dupatta Setting",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          "Nails",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          "VIP Lounge",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        SizedBox(height: 20), // Extra space before price
+                        Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.end, // Align price to the right
+                          children: [
+                            Text(
+                              "25,000",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16, // Slightly bigger font for price
+                                fontWeight: FontWeight
+                                    .w700, // Make the price slightly bolder
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ]),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(children: [
-                    SizedBox(width: 20),
-                    Text(
-                      "Dupatta Setting",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.white,
-                      ),
-                    ),
-                  ]),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(children: [
-                    SizedBox(width: 20),
-                    Text(
-                      "Nails",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.white,
-                      ),
-                    ),
-                  ]),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(children: [
-                    SizedBox(width: 20),
-                    Text(
-                      "Vip Lounge",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.white,
-                      ),
-                    ),
-                  ]),
-                  SizedBox(
-                    height: 10,
                   ),
 
-                  Row(
-                    children: [
-                      SizedBox(width: 300),
-                      Text(
-                        "25,000",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.Yellow,
-                        ),
-                      ),
-                    ],
-                  ),
                   //grey container lgyga
                   SizedBox(height: 20),
                   Row(
