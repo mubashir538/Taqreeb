@@ -7,17 +7,14 @@ import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
-import 'package:taqreeb/Screens/Parlors.dart';
-import 'package:taqreeb/Screens/splash%20screen.dart';
-import 'package:taqreeb/Screens/Settings.dart';
-import 'package:taqreeb/Screens/CategoryView_Spa.dart';
 import 'package:taqreeb/Screens/CategoryView_BakerySweet.dart';
 import 'package:taqreeb/Screens/CategoryView_Caterers.dart';
 import 'package:taqreeb/Screens/CategoryView_Decorator.dart';
 import 'package:taqreeb/Screens/CategoryView_GraphicDesigner.dart';
+import 'package:taqreeb/Screens/CategoryView_Parlour.dart';
 import 'package:taqreeb/Screens/CategoryView_Photographer.dart';
 import 'package:taqreeb/Screens/CategoryView_PhotographyPlace.dart';
-import 'package:taqreeb/Screens/CategoryView_Makeup.dart';
+import 'package:taqreeb/Screens/CategoryView_Saloon.dart';
 import 'package:taqreeb/Screens/CategoryView_VideoEditor.dart';
 import 'package:taqreeb/Screens/Dashboard.dart';
 import 'package:taqreeb/Screens/AccountInfoEdit.dart';
@@ -48,6 +45,7 @@ import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.d
 import 'package:taqreeb/Screens/FunctionDetail.dart';
 import 'package:taqreeb/Screens/Login.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
+import 'package:taqreeb/Screens/Settings.dart';
 import 'package:taqreeb/Screens/SignupScreens/ProfilePictureUpload.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPVerify.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPSend.dart';
@@ -60,6 +58,7 @@ import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_FunctionDetail.da
 import 'package:taqreeb/Screens/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
+import 'package:taqreeb/Screens/splash%20screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -71,8 +70,16 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home:CategoryView_GraphicDesigner(),
+      home: CategoryView_VideoEditor(),
       routes: {
+        '/settings': (context) => Settings(),
+        '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
+        '/AddCategory_AddImage': (context) => AddImage(),
+        '/AddCategory_Addons': (context) => AddcategoryAddons(),
+        '/AddCategory_AddPackage': (context) => AddcategoryAddpackage(),
+        '/AddCategory_List': (context) => AddcategoryList(),
+        '/AddCategory_MoreDetails': (context) => AddcategoryMoredetails(),
+        '/AddCategory_Packages': (context) => AddcategoryPackages(),
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
         '/Signup_ContactOTPVerify': (context) => SignupContactOTPVerify(),
@@ -116,8 +123,8 @@ class MainApp extends StatelessWidget {
         '/CreateFunction': (context) => CreateFunction(),
         '/EventDetails': (context) => EventDetails(),
         '/CategoryView_Venue': (context) => CategoryView_Venue(),
-        '/CategoryView_Makeup': (context) => Categoryview_Makeup(),
-        '/CategoryView_Spa': (context) => Categoryview_Spa(),
+        '/CategoryView_Saloon': (context) => CategoryView_Saloon(),
+        '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
         '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
         '/CategoryView_Decorator': (context) => CategoryView_Decorator(),
         '/CategoryView_PhotographyPlace': (context) =>

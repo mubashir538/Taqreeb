@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
-class AddcategoryAddaddons extends StatelessWidget {
-  const AddcategoryAddaddons({super.key});
+class AddcategoryAddaddons extends StatefulWidget {
+  AddcategoryAddaddons({super.key});
+
+  @override
+  State<AddcategoryAddaddons> createState() => _AddcategoryAddaddonsState();
+}
+
+class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
+  TextEditingController nameController = TextEditingController();
+
+  TextEditingController priceController = TextEditingController();
+
+  TextEditingController perheadController = TextEditingController();
+
+  TextEditingController headtypeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +32,19 @@ class AddcategoryAddaddons extends StatelessWidget {
               heading: 'Add AddOns',
             ),
             SizedBox(height: screenHeight * 0.03),
-            MyTextBox(hint: 'Name'),
+            MyTextBox(
+              hint: 'Name',
+              valueController: nameController,
+            ),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Price'),
+            MyTextBox(
+              hint: 'Price',
+              valueController: priceController,
+            ),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Per Head'),
+            MyTextBox(hint: 'Per Head', valueController: perheadController),
             SizedBox(height: screenHeight * 0.01),
-            MyTextBox(hint: 'Head Type'),
+            MyTextBox(hint: 'Head Type', valueController: headtypeController),
           ],
         ),
       ),

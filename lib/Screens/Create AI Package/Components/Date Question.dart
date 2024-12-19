@@ -3,16 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class DateQuestion extends StatefulWidget {
+  final TextEditingController valuecontroller;
   final String question;
-  const DateQuestion({super.key, required this.question});
+  const DateQuestion(
+      {super.key, required this.question, required this.valuecontroller});
 
   @override
   State<DateQuestion> createState() => _DateQuestionState();
 }
 
 class _DateQuestionState extends State<DateQuestion> {
-  final TextEditingController _dateController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -20,13 +20,16 @@ class _DateQuestionState extends State<DateQuestion> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.question != '' ? MaximumThing * 0.02 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.question,
-              style: GoogleFonts.montserrat(
-                  color: MyColors.white, fontSize: MaximumThing * 0.018)),
+          widget.question != ''
+              ? Text(widget.question,
+                  style: GoogleFonts.montserrat(
+                      color: MyColors.white, fontSize: MaximumThing * 0.018))
+              : Container(),
           Container(
             margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
             height: screenHeight * 0.06,
@@ -47,7 +50,7 @@ class _DateQuestionState extends State<DateQuestion> {
               child: TextField(
                 readOnly: true,
                 textAlignVertical: TextAlignVertical.center,
-                controller: _dateController,
+                controller: widget.valuecontroller,
                 style: GoogleFonts.montserrat(
                   fontSize: MaximumThing * 0.018,
                   fontWeight: FontWeight.w400,
@@ -79,7 +82,7 @@ class _DateQuestionState extends State<DateQuestion> {
         lastDate: DateTime(2100));
     if (pickedDate != null) {
       setState(() {
-        _dateController.text = pickedDate.toString().split(" ")[0];
+        widget.valuecontroller.text = pickedDate.toString().split(" ")[0];
       });
     }
   }

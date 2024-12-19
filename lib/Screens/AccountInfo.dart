@@ -30,7 +30,6 @@ class _AccountInfoState extends State<AccountInfo> {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
     final Userid = await MyStorage.getToken('userId') ?? "";
-    print("user id: " + Userid);
     final user = await MyApi.getRequest(endpoint: 'accountInfo/$Userid');
 
     // Update the state
@@ -38,7 +37,8 @@ class _AccountInfoState extends State<AccountInfo> {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
       isLoading = false; // Data has been fetched, so stop loading
-      print("${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}.png");
+      
+      print("${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
     });
   }
 
@@ -87,7 +87,7 @@ class _AccountInfoState extends State<AccountInfo> {
                               CircleAvatar(
                                 radius: screenWidth * 0.1,
                                 backgroundImage: NetworkImage(
-                                    "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}.png"),
+                                    "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}"),
                               ),
                               Container(
                                 margin:

@@ -74,7 +74,7 @@ class _YourEventsState extends State<YourEvents> {
                     itemBuilder: (context, index) => Function12(
                       name: events["Event"][index]["name"],
                       head: 'Budget',
-                      budget: events["Event"][index]["budget"],
+                      budget: events["Event"][index]["budget"].toString(),
                       headings: [
                         'Event Type',
                         'Functions',
@@ -82,8 +82,8 @@ class _YourEventsState extends State<YourEvents> {
                       ],
                       values: [
                         events["Event"][index]["type"],
+                        events["nofunctions"][index].toString(),
                         events["Event"][index]["date"],
-                        events["nofunctions"][index],
                       ],
                       type: 'Event',
                       seePressed: () {

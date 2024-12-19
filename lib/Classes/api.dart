@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:taqreeb/config/config.dart';
 
 class MyApi {
-  static String baseUrl = "http://192.168.92.224:8000/app/";
+  static String baseUrl = AppConfig.baseUrl;
   static Future<dynamic> getRequest({
     required String endpoint,
     Map<String, String>? headers,
