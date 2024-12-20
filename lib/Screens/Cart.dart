@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Cart%20Item.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class Cart extends StatelessWidget {
   const Cart({super.key});
@@ -12,6 +13,7 @@ class Cart extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Container(
           child: Column(

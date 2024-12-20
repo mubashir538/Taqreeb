@@ -77,7 +77,7 @@ class HomePageProducts extends StatelessWidget {
                   ),
                   Text(
                     price,
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: MyColors.white),
                   ),
                 ],
               ),

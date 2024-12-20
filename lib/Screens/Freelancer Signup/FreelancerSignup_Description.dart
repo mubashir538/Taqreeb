@@ -16,6 +16,7 @@ class FreelancerSignup_Description extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -26,7 +27,7 @@ class FreelancerSignup_Description extends StatelessWidget {
             ),
             SizedBox(
               height: MaximumThing * 0.05,
-            ), 
+            ),
             Container(
               margin: EdgeInsets.all(MaximumThing * 0.01),
               height: screenHeight * 0.4,

@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 
 class MyColors {
-  static const Color red = Color(0xffef233c);
-  static const Color white = Color(0xffedf2f4);
-  static const Color whiteDarker = Color(0xffd9d9d9);
-  static const Color Dark = Color(0xff18191A);
-  static const Color DarkLighter = Color(0xff242526);
-  static const Color Yellow = Color(0xffffbe0b);
-  static const Color green = Color(0xff7ae582);
+  static Color red = Color(0xffef233c);
+  static Color white = Color(0xffedf2f4);
+  static Color whiteDarker = Color(0xffd9d9d9);
+  static Color Dark = Color(0xff18191A);
+  static Color DarkLighter = Color(0xff242526);
+  static Color Yellow = Color(0xffffbe0b);
+  static Color green = Color(0xff7ae582);
+  static Color redonWhite = Color(0xffedf2f4);
 
-  static var black;
+  static void switchTheme() async {
+    final theme = await MyStorage.getToken('theme') ?? "";
+    if (theme == "Light") {
+      await MyStorage.saveToken('Dark', 'theme');
+      MyColors.white = Color(0xffedf2f4);
+      MyColors.whiteDarker = Color(0xffd9d9d9);
+      MyColors.Dark = Color(0xff18191A);
+      MyColors.DarkLighter = Color(0xff242526);
+    } else {
+      await MyStorage.saveToken('Light', 'theme');
+      MyColors.Dark = Color(0xffffffff);
+      MyColors.DarkLighter = Color(0xffd9d9d9);
+      MyColors.white = Color(0xff18191A);
+      MyColors.whiteDarker = Color(0xff242526);
+    }
+  }
 }

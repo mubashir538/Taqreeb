@@ -48,18 +48,21 @@ class SupportScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               GuideButton(
+                onpressed: (){},
                 text: 'Contact Live Chat',
                 leftIconPath: MyIcons.communicate,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
+                onpressed: (){},
                 text: 'Send Us an Email',
                 leftIconPath: MyIcons.email,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
+                onpressed: (){},
                 text: 'FAQs',
                 leftIconPath: MyIcons.faq,
                 rightIconPath: MyIcons.sortArrow,

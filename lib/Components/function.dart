@@ -9,6 +9,9 @@ class Function12 extends StatelessWidget {
   final List<String> headings;
   final List<String> values;
   final String type;
+  final Function editPressed;
+  final Function seePressed;
+
   const Function12(
       {super.key,
       required this.type,
@@ -16,7 +19,9 @@ class Function12 extends StatelessWidget {
       required this.values,
       required this.name,
       required this.head,
-      required this.budget});
+      required this.budget,
+      required this.editPressed,
+      required this.seePressed});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +55,7 @@ class Function12 extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                       fontSize: MaximumThing * 0.02,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white),
+                      color: MyColors.redonWhite),
                 ),
               ),
             ),
@@ -116,11 +121,7 @@ class Function12 extends StatelessWidget {
                           width: screenWidth * 0.38,
                           textSize: MaximumThing * 0.015,
                           onPressed: () {
-                            Navigator.pushNamed(
-                                context,
-                                type == 'Event'
-                                    ? '/CreateEvent'
-                                    : '/CreateFunction');
+                            editPressed();
                           },
                         ),
                         ColoredButton(
@@ -128,11 +129,7 @@ class Function12 extends StatelessWidget {
                           width: screenWidth * 0.38,
                           textSize: MaximumThing * 0.015,
                           onPressed: () {
-                            Navigator.pushNamed(
-                                context,
-                                type == 'Event'
-                                    ? '/EventDetails'
-                                    : '/FunctionDetail');
+                            seePressed();
                           },
                         ),
                       ],

@@ -3,6 +3,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
@@ -14,7 +15,11 @@ class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+
+    TextEditingController contactController = TextEditingController();
+
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -26,7 +31,10 @@ class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              child: MyTextBox(hint: "Enter Email/Phone Number"),
+              child: MyTextBox(
+                hint: "Enter Email/Phone Number",
+                valueController: contactController,
+              ),
             ),
             SizedBox(
               height: screenHeight * 0.05,

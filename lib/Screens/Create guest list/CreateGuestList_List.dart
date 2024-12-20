@@ -15,6 +15,7 @@ class CreateGuestList_List extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Container(
           constraints: BoxConstraints(minHeight: screenHeight),

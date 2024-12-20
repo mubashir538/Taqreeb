@@ -5,8 +5,8 @@ class User(m.Model):
     firstName = m.CharField(max_length=100)
     lastName = m.CharField(max_length=100)
     password = m.CharField(max_length=100)
-    contactNumber = m.CharField(max_length=15)
-    email = m.CharField(max_length=50)
+    contactNumber = m.CharField(max_length=15,null=True)
+    email = m.CharField(max_length=50,null=True)
     city = m.CharField(max_length=50)
     gender = m.CharField(max_length=6)
     profilePicture = m.CharField(max_length=100)
@@ -22,6 +22,7 @@ class BusinessOwner(m.Model):
     email = m.CharField(max_length=50)
     businessUsername = m.CharField(max_length=50)
     Description = m.CharField(max_length=1100)
+    status = m.TextField(null=True)
 
 class Freelancer(m.Model):
     id = m.AutoField(primary_key=True)
@@ -30,6 +31,7 @@ class Freelancer(m.Model):
     businessUsername = m.CharField(max_length=100)
     portfolioLink= m.CharField(max_length=100)
     description = m.CharField(max_length=1100)
+    status = m.TextField(null=True)
 
 
 class Listing(m.Model):
@@ -41,6 +43,13 @@ class Listing(m.Model):
     location = m.CharField(max_length=100)
     description = m.CharField(max_length=1100)
     basicPrice = m.IntegerField()
+    type = m.TextField(null=True)
+
+
+class PicturesListings(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    picturePath = m.CharField(max_length=100)
 
 class Packages(m.Model):
     id = m.AutoField(primary_key=True)
@@ -78,14 +87,6 @@ class Freelancer(m.Model):
     portfolioLink = m.CharField(max_length=100)
     description = m.CharField(max_length=1100) 
 
-
-class Review(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    userID = m.ForeignKey(User,on_delete=m.CASCADE)
-    rating = m.DecimalField(max_digits=20,decimal_places=10)
-    review = m.CharField(max_length=100)
-
 class Events(m.Model):
     id = m.AutoField(primary_key=True)
     userID=  m.IntegerField()
@@ -96,14 +97,8 @@ class Events(m.Model):
     description =m.CharField(max_length=1100)
     themeColor =m.CharField(max_length=100)
     budget=  m.IntegerField()
-
-class Functions(m.Model):
-    id = m.AutoField(primary_key=True)
-    eventId = m.ForeignKey(Events, on_delete=m.CASCADE)
-    name= m.CharField(max_length=100)
-    budget = m.IntegerField()
-    type = m.CharField(max_length=100)
-    date = m.DateField(null=True)
+    guestsmin = m.IntegerField(null=True)
+    guestsmax = m.IntegerField(null=True) 
 
 class GuestList(m.Model):
     id = m.AutoField(primary_key=True)
@@ -113,6 +108,25 @@ class GuestList(m.Model):
     phone = m.CharField(max_length=100)
     eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
     functionId = m.IntegerField()
+    
+class Review(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    userID = m.ForeignKey(User,on_delete=m.CASCADE)
+    rating = m.DecimalField(max_digits=20,decimal_places=10)
+    review = m.CharField(max_length=100)
+
+
+class Functions(m.Model):
+    id = m.AutoField(primary_key=True)
+    eventId = m.ForeignKey(Events, on_delete=m.CASCADE)
+    name= m.CharField(max_length=100)
+    budget = m.IntegerField()
+    type = m.CharField(max_length=100)
+    date = m.DateField(null=True)
+    guestsmin = m.IntegerField(null=True)
+    guestsmax = m.IntegerField(null=True)
+
 
 class CheckList(m.Model):
     id = m.AutoField(primary_key=True)
@@ -218,6 +232,7 @@ class EventType(m.Model):
 class FunctionType(m.Model):
     id = m.AutoField(primary_key=True)
     name = m.TextField()
+    eventtypeid = m.ForeignKey(EventType,on_delete=m.CASCADE,null=True)
 
 class DesertItems(m.Model):
     id = m.AutoField(primary_key=True)

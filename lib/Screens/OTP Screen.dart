@@ -11,9 +11,10 @@ class OTPScreen extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MyColors.Dark,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: Header(
@@ -27,7 +28,7 @@ class OTPScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 20),
-            MyTextBox(hint: 'Enter your phone number'),
+            MyTextBox(hint: 'Enter your phone number',valueController: phoneController,),
             SizedBox(height: 20),
             ColoredButton(text: 'Send OTP'),
             SizedBox(height: 10),

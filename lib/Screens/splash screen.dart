@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 
@@ -14,8 +15,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushNamed(context, '/basicSignup');
+    Timer(Duration(seconds: 3), () async {
+      await MyStorage.saveToken('Dark', 'theme');
+      if (await MyStorage.exists('accessToken')) {
+        Navigator.pushReplacementNamed(context, '/HomePage');
+      } else {
+        Navigator.pushReplacementNamed(context, '/Login');
+      }
     });
   }
 

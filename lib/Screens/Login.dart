@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Iconed%20Button.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
@@ -19,6 +24,9 @@ class Login extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
         backgroundColor: MyColors.Dark,
@@ -37,8 +45,14 @@ class Login extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: screenHeight * 0.03),
-                      MyTextBox(hint: "Enter Email or Phone Number"),
-                      MyTextBox(hint: "Enter Password"),
+                      MyTextBox(
+                        hint: "Enter Email or Phone Number",
+                        valueController: emailController,
+                      ),
+                      MyTextBox(
+                        hint: "Enter Password",
+                        valueController: passwordController,
+                      ),
                       SizedBox(
                         width: screenWidth * 0.9,
                         child: Row(
@@ -66,8 +80,51 @@ class Login extends StatelessWidget {
                       ),
                       ColoredButton(
                         text: "Login",
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/HomePage');
+                        onPressed: () async {
+                          if (emailController.text.contains("@")) {
+                            if (Validations.validateEmail(
+                                    emailController.text) !=
+                                "Ok") {
+                              warningDialog(
+                                      title: "Invalid Email",
+                                      message: Validations.validateEmail(
+                                          emailController.text))
+                                  .showDialogBox(context);
+                              return;
+                            }
+                          } else {
+                            if (Validations.validateContact(
+                                    emailController.text) !=
+                                "Ok") {
+                              warningDialog(
+                                      title: "Invalid Contact",
+                                      message: Validations.validateContact(
+                                          emailController.text))
+                                  .showDialogBox(context);
+                              return;
+                            }
+                          }
+                          final response = await MyApi.postRequest(
+                              endpoint: 'User/login/',
+                              body: {
+                                "contact": emailController.text,
+                                "password": passwordController.text
+                              });
+
+                          if (response['status'] == 'success') {
+                            await MyStorage.saveToken(
+                                response['refresh'], 'refresh');
+                            await MyStorage.saveToken(
+                                response['access'], 'accessToken');
+                            await MyStorage.saveToken(
+                                response['userid'], 'userId');
+                            Navigator.pushNamed(context, '/HomePage');
+                          } else {
+                            warningDialog(
+                              message: "Invalid Credentials",
+                              title: "Error",
+                            ).showDialogBox(context);
+                          }
                         },
                       ),
                       BorderButton(

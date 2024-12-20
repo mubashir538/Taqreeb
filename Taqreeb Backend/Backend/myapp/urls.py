@@ -1,13 +1,13 @@
 from django.urls import path
 from . import views
-
-# import random Normal Import
-# import random as rd Library Name change
-# from random import randint import method from library
-
-# print(randint(1,10))
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
+    path('resendOTP/phone',views.resendOTPPhone, name = 'resendOTPPhone'),
+    path('resendOTP/email',views.resendOTPEmail, name = 'resendOTPEmail'),
+    path('sendOTP/phone',views.sendOTPPhone,name='sendOTPPhone'), 
+    path('sendOTP/email',views.sendOTPEmail,name='sendOTPEmail'),  
     path('userAccountSignup/',views.AccountSignupPage,name='userAccountSignup'),
     path('businessowner/signup/',views.BusinessOwnerSignup,name='BusinessOwnerSignup'),
     path('user/forgotpassword/phoneorEmail/',views.ForgotPasswordPage,name='ForgotPasswordPage'),
@@ -18,14 +18,19 @@ urlpatterns = [
     path('editaccountinfo/<int:userid>/',views.EditAccountInfoPage,name='EditAccountInfoPage'),
     path('freelancer/signup/',views.FreelancerSignup,name='FreelancerSignup'),
     path('createfunction/',views.CreateFunction,name='CreateFunction'),
-    path('eventdetails/',views.EventDetails,name='EventDetails'),
+    path('editfunction/',views.EditFunction,name='EditFunction'),
+    path('eventdetails/<int:eventId>',views.EventDetails,name='EventDetails'),
     path('venueviewpage/<int:listingid>',views.VenueViewPage,name='VenueViewPage'),
     path('CreateEvent/',views.CreateEvent,name='CreateEvent'),
-    path('YourEvents/',views.YourEvents,name='YourEvents'),
+    path('EditEvent/',views.EditEvent,name='EditEvent'),
+    path('getEventTypes/',views.getEventType,name='getEventType'),
+    path('getFunctionTypes/<int:id>',views.getFunctionType,name='getFunctionType'),
+    path('YourEvents/<int:id>',views.YourEvents,name='YourEvents'),
     path('Photographer/viewpage/<int:listingid>',views.PhotographerViewPage,name='PhotographerViewPage'),
     path('Caterer/viewpage/<int:listingid>',views.CatererViewPage,name='CatererViewPage'),
-    path('ViewFunction/',views.CatererViewPage,name='ViewFunction'),
-    path('videoeditor/<int:listingid>',views.VideoEditorViewPage,name='VideoEditorViewPage'),
+    path('ViewFunction/<int:FunctionId>',views.ViewFunction,name='ViewFunction'),
+    path('videoeditorviewpage/<int:listingid>',views.VideoEditorViewPage,name='VideoEditorViewPage'),
+    path('saloonviewpage/<int:listingid>',views.VideoEditorViewPage,name='SaloonViewPage'),
     path('home/categories/',views.HomeCategories,name='HomeCategories'),
     path('home/listings/',views.HomeListings,name='HomeListings'),
     path('search/listings/<str:value>',views.SearchListings,name='SearchListings'),
@@ -38,3 +43,7 @@ urlpatterns = [
     path('graphic/designer/viewpage/<int:listingid>',views.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
     path('carrenter/viewpage/<int:listingid>',views.CarRenterViewPage,name='CarRenterViewPage'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

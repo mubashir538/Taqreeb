@@ -59,7 +59,7 @@ class MessageChatButton extends StatelessWidget {
                       ),
               ),
             ),
-            Container(
+            SizedBox(
               width: screenWidth * 0.7,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

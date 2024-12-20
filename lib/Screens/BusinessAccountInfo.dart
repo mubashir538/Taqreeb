@@ -24,6 +24,7 @@ class BusinessAccountInfo extends StatelessWidget {
     );
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
           child: Column(
         children: [

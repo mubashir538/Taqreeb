@@ -61,7 +61,9 @@ class Productcard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          venueName,
+                          venueName.length > 20
+                              ? "${venueName.substring(0, 20)}..."
+                              : venueName,
                           style: GoogleFonts.montserrat(
                             fontSize: MaximumThing * 0.02,
                             fontWeight: FontWeight.w600,
@@ -80,7 +82,9 @@ class Productcard extends StatelessWidget {
                     ),
                     SizedBox(height: screenHeight * 0.01),
                     Text(
-                      location,
+                      location.length > 30
+                          ? "${location.replaceAll('\n', '').replaceAll('\r', '').substring(0, 30)}..."
+                          : location.replaceAll('\n', '').replaceAll('\r', ''),
                       style: GoogleFonts.montserrat(
                         fontSize: MaximumThing * 0.015,
                         fontWeight: FontWeight.w400,

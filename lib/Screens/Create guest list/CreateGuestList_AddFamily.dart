@@ -3,6 +3,7 @@ import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class CreateGuestList_AddFamily extends StatelessWidget {
   const CreateGuestList_AddFamily({super.key});
@@ -14,7 +15,10 @@ class CreateGuestList_AddFamily extends StatelessWidget {
     // double MaximumThing =
     //     screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController familynamecontroller = TextEditingController();
+    TextEditingController memberscontroller = TextEditingController();
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -24,8 +28,14 @@ class CreateGuestList_AddFamily extends StatelessWidget {
             SizedBox(
               height: screenHeight * 0.05,
             ),
-            MyTextBox(hint: 'Family Name'),
-            MyTextBox(hint: 'Members'),
+            MyTextBox(
+              hint: 'Family Name',
+              valueController: familynamecontroller,
+            ),
+            MyTextBox(
+              hint: 'Members',
+              valueController: memberscontroller,
+            ),
             SizedBox(
               height: screenHeight * 0.05,
             ),

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class CategoryView_GraphicDesigner extends StatelessWidget {
-  const CategoryView_GraphicDesigner({super.key});
+class CategoryView_Photographer extends StatelessWidget {
+  const CategoryView_Photographer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
             Header(),
             Container(
               child: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5DJA0WgEFo7X9kXf00EtVnpGPD3mAvh1e8A&s',
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfxPedWjxkXJc2auRUiKEWahf_7ONYV_JkFQ&s',
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),
@@ -25,6 +26,9 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
             Container(
               height: 1700,
               width: 428,
+              decoration: BoxDecoration(
+                color: MyColors.Dark,
+              ),
               child: Column(
                 children: [
                   SizedBox(height: 10),
@@ -32,7 +36,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "Nabila's Salon and Salon",
+                        "Qasr - e - Noor Banquet",
                         style: GoogleFonts.montserrat(
                           fontSize: 25,
                           fontWeight: FontWeight.w600,
@@ -63,6 +67,13 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 10),
+                      Text(
+                        "North Nazimabad Block M, Karachi",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
                       // SvgPicture.asset(MyIcons.mapMarker,
                       // height: 20,width: 20,)
                       // Icon(Icons.mapMarker,
@@ -90,7 +101,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                       ),
                       SizedBox(width: 40),
                       Text(
-                        "Rs. 25,000 - 30,000",
+                        "Rs. 200,000 - 700000",
                         style: GoogleFonts.montserrat(
                           fontSize: 21,
                           fontWeight: FontWeight.w300,
@@ -112,7 +123,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                       ),
                       SizedBox(width: 180),
                       Text(
-                        "28,000",
+                        "200,000",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -152,7 +163,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Nabila’s Spa offers a luxurious retreat with rejuvenating treatments that relax both body and mind. From facials to massages, their expert therapists provide a serene and personalized experience. Step into tranquility and leave feeling completely refreshed.",
+                          "Qasr-e-Noor is a premier marriage hall located in the heart of Karachi, offering an elegant and spacious venue for weddings, receptions, and other special events. The hall is designed to accommodate both large and intimate gatherings, with luxurious interiors, state-of-the-art facilities, and exceptional services to make your event unforgettable. Qasr-e-Noor prides itself on its attention to detail, professional staff, and a wide range of customizable options, including decor, catering, and event planning, ensuring a seamless and memorable experience for all guests.",
                           textAlign: TextAlign.start,
                           style: GoogleFonts.montserrat(
                             fontSize: 18,
@@ -176,7 +187,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "Decor Type",
+                        "Venue Type",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -185,7 +196,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                       ),
                       SizedBox(width: 180),
                       Text(
-                        "Traditional",
+                        "Banquet",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -209,6 +220,29 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                       SizedBox(width: 130),
                       Text(
                         "Internal & External",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: MyColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      SizedBox(width: 20),
+                      Text(
+                        "Guests",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: MyColors.Yellow,
+                        ),
+                      ),
+                      SizedBox(width: 155),
+                      Text(
+                        "200- 500 Persons",
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -380,7 +414,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                           child: PackageBox(
                               packagedetails: '',
                               packageprice: '',
-                              packagename: 'VIP Package')),
+                              packagename: 'standard Package')),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -396,7 +430,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                     children: [
                       SizedBox(width: 20),
                       Text(
-                        "Reviews",
+                        "REviews",
                         style: GoogleFonts.montserrat(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -570,7 +604,7 @@ class CategoryView_GraphicDesigner extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  ColoredButton(text: 'Book Us')
+                  ColoredButton(text: 'Book Venue')
                 ],
               ),
             )

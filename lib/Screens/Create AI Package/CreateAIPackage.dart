@@ -11,12 +11,15 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 
 class CreateAIPackage extends StatefulWidget {
+  const CreateAIPackage({super.key});
+
   @override
   _CreateAIPackageState createState() => _CreateAIPackageState();
 }
 
 class _CreateAIPackageState extends State<CreateAIPackage> {
-  double _currentBudgetValue = 100000;
+  final double _currentBudgetValue = 100000;
+  final TextEditingController dateController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +58,10 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   end: 1000,
                   div: 19,
                   currentCount: 100),
-              DateQuestion(question: "What is the date of the event?"),
+              DateQuestion(
+                question: "What is the date of the event?",
+                valuecontroller: dateController,
+              ),
             ], Heading: "Event Details"),
             QuestionGroup(questions: [
               SliderQuestion(

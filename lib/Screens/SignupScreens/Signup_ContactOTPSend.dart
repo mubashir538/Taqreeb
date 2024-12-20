@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/validations.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my divider.dart';
@@ -7,9 +11,16 @@ import 'package:taqreeb/Components/progressbar.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class Signup_ContactOTPSend extends StatelessWidget {
+class Signup_ContactOTPSend extends StatefulWidget {
   const Signup_ContactOTPSend({super.key});
 
+  @override
+  State<Signup_ContactOTPSend> createState() => _Signup_ContactOTPSendState();
+}
+
+class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
+  TextEditingController contactController = TextEditingController();
+    
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -37,6 +48,7 @@ class Signup_ContactOTPSend extends StatelessWidget {
                   ),
                   MyTextBox(
                     hint: 'Contact Number',
+                    valueController: contactController,
                   ),
                   SizedBox(
                     height: screenHeight * 0.1,
@@ -44,7 +56,20 @@ class Signup_ContactOTPSend extends StatelessWidget {
                   ),
                   ColoredButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Signup_ContactOTPVerify');
+                      if (Validations.validateContact(contactController.text) !=
+                          "Ok") {
+                        warningDialog(
+                            title: 'Invalid Contact Number',
+                            message: Validations.validateContact(
+                                contactController.text)).showDialogBox(context);
+                      } else {
+                        late Future<dynamic> response = MyApi.postRequest(
+                            endpoint: 'sendOTP/phone',
+                            body: {'contactNumber': contactController.text});
+                        Navigator.pushNamed(
+                            context, '/Signup_ContactOTPVerify',
+                arguments: {'contactNumber': contactController.text, 'response': response});
+                      }
                     },
                     text: 'Send OTP',
                   ),
