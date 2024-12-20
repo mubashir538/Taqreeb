@@ -22,6 +22,7 @@ class BusinessOwner(m.Model):
     email = m.CharField(max_length=50)
     businessUsername = m.CharField(max_length=50)
     Description = m.CharField(max_length=1100)
+    status = m.TextField(null=True)
 
 class Freelancer(m.Model):
     id = m.AutoField(primary_key=True)
@@ -30,6 +31,7 @@ class Freelancer(m.Model):
     businessUsername = m.CharField(max_length=100)
     portfolioLink= m.CharField(max_length=100)
     description = m.CharField(max_length=1100)
+    status = m.TextField(null=True)
 
 
 class Listing(m.Model):

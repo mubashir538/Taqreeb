@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class CategoryIcon extends StatelessWidget {
   final String label;
@@ -27,10 +28,16 @@ class CategoryIcon extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              radius: MaximumThing * 0.03,
-              backgroundImage: NetworkImage(
-                imageUrl,
+            Container(
+              width: MaximumThing * 0.08,
+              height: MaximumThing * 0.08,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             Container(
@@ -42,7 +49,7 @@ class CategoryIcon extends StatelessWidget {
                 style: GoogleFonts.montserrat(
                   fontSize: MaximumThing * 0.015,
                   fontWeight: FontWeight.w300,
-                  color: Colors.white,
+                  color: MyColors.white,
                 ),
               ),
             ),

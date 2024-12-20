@@ -16,6 +16,7 @@ class ForgotPassword_VerifyCode extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

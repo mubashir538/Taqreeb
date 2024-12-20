@@ -70,7 +70,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CategoryView_VideoEditor(),
+      home: SplashScreen(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
@@ -141,23 +141,9 @@ class MainApp extends StatelessWidget {
         '/CreateEvent': (context) => CreateEvent(),
         '/YourEvents': (context) => MainScreen(index: 2),
         '/Dashboard': (context) => Dashboard(),
+        '/EditEvent': (context) => CreateEvent(),
+        '/EditFunction': (context) => CreateFunction(),
         '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
-        // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
       },
       theme: ThemeData.dark(
         useMaterial3: true,

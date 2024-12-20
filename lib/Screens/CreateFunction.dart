@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -29,15 +30,19 @@ class _CreateFunctionState extends State<CreateFunction> {
   Map<String, dynamic> types = {};
   bool isLoading = true;
   String functionId = "";
+  int eventtypeid = 0;
   int EventId = 0;
+  // Map<String, dynamic> event = {};
   Map<String, dynamic> Function = {};
+  Map<String, dynamic> args = {};
   bool edit = false;
-  @override
-  void initState() {
-    super.initState();
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    this.args = args;
     setState(() {
       if (args['functionId'] != null) {
         this.functionId = args['functionId'];
@@ -51,12 +56,21 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   void fetchData() async {
     final token = await MyStorage.getToken('accessToken') ?? "";
-    final types = await MyApi.getRequest(endpoint: 'getEventTypes/');
+    final eventtypes = await MyApi.getRequest(endpoint: 'getEventTypes/');
+
+    for (int i = 0; i < eventtypes['eventTypes'].length; i++) {
+      if (eventtypes['eventTypes'][i]['name'] == args['type']) {
+        eventtypeid = eventtypes['eventTypes'][i]['id'];
+      }
+    }
+    final types = await MyApi.getRequest(
+      endpoint: 'getFunctionTypes/$eventtypeid',
+    );
 
     final FunctiontDetails;
     if (edit) {
       FunctiontDetails =
-          await MyApi.getRequest(endpoint: 'YourEvents/${functionId}');
+          await MyApi.getRequest(endpoint: 'ViewFunction/${functionId}');
     } else {
       FunctiontDetails = "";
     }
@@ -67,9 +81,12 @@ class _CreateFunctionState extends State<CreateFunction> {
           nameController.text = this.Function['Fuctions']['name'];
           typeController.text = this.Function['Fuctions']['type'];
           _dateController.text = this.Function['Fuctions']['date'];
-          budgetController.text = this.Function['Fuctions']['budget'];
-          guestMaxController.text = this.Function['Fuctions']['guestsmax'];
-          guestMinController.text = this.Function['Fuctions']['guestsmin'];
+          budgetController.text =
+              this.Function['Fuctions']['budget'].toString();
+          guestMaxController.text =
+              this.Function['Fuctions']['guestsmax'].toString();
+          guestMinController.text =
+              this.Function['Fuctions']['guestsmin'].toString();
           this.EventId =
               int.parse(this.Function['Fuctions']['eventId'].toString());
         }
@@ -88,6 +105,7 @@ class _CreateFunctionState extends State<CreateFunction> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Container(
           constraints: BoxConstraints(minHeight: screenHeight),
@@ -111,10 +129,19 @@ class _CreateFunctionState extends State<CreateFunction> {
                     hint: 'Budget',
                     valueController: budgetController,
                   ),
-                  MyTextBox(
-                    hint: "Event Type",
-                    valueController: typeController,
-                  ),
+                  ResponsiveDropdown(
+                      items: isLoading
+                          ? []
+                          : types['functionTypes']
+                              .map((val) => val['name'].toString())
+                              .cast<String>()
+                              .toList(),
+                      labelText: 'Function Type',
+                      onChanged: (value) {
+                        setState(() {
+                          typeController.text = value;
+                        });
+                      }),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
                     height: screenHeight * 0.06,
@@ -154,7 +181,15 @@ class _CreateFunctionState extends State<CreateFunction> {
                         onTap: () => _selectDate(context),
                       ),
                     ),
-                  )
+                  ),
+                  MyTextBox(
+                    hint: 'Minimum Guests',
+                    valueController: guestMinController,
+                  ),
+                  MyTextBox(
+                    hint: 'Maximum Guests',
+                    valueController: guestMaxController,
+                  ),
                 ],
               ),
               ColoredButton(
@@ -172,26 +207,29 @@ class _CreateFunctionState extends State<CreateFunction> {
                     return;
                   }
                   final response = await MyApi.postRequest(
-                      endpoint: 'createfunction/',
+                      endpoint: edit ? 'editfunction/' : 'createfunction/',
                       body: {
                         'Function Name': nameController.text,
-                        'Date': typeController.text,
-                        'Type': _dateController.text,
+                        'Date': _dateController.text,
+                        'Type': typeController.text,
                         'Budget': budgetController.text,
                         'guest min': guestMinController.text,
                         'guest max': guestMaxController.text,
-                        'Event Id': this.EventId
+                        'Function Id': this.functionId
                       });
-                  final responseBody = await response.stream.bytesToString();
-                  final Map<String, dynamic> jsonResponse =
-                      jsonDecode(responseBody);
-                  if (jsonResponse['status'] != 'success') {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Function Added Successfully')));
-                    Navigator.pushNamed(context, '/YourEvents');
+                  if (response['status'] == 'success') {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(edit
+                            ? 'Function Updated Successfully'
+                            : 'Function Added Successfully')));
+                    edit
+                        ? Navigator.pop(context)
+                        : Navigator.pushNamed(context, '/Event');
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error Creating Function')));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(edit
+                            ? 'Error Updating Function'
+                            : 'Error Creating Function')));
                   }
                 },
               ),

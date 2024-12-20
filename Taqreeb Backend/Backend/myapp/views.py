@@ -23,6 +23,13 @@ def getEventType(request):
     return Response({'status':'success','eventTypes':serializer.data})
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getFunctionType(request,id):
+    functionTypes = md.FunctionType.objects.filter(eventtypeid=id)
+    serializer = s.FunctionTypeSerializer(functionTypes,many=True)
+    return Response({'status':'success','functionTypes':serializer.data})
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resendOTPEmail(request):
@@ -247,6 +254,31 @@ def UserLogin(request):
     UserLogin.save()
     return Response({'status':'success'})
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def EditFunction(request):
+    name= request.data.get('Function Name')
+    budget = request.data.get('Budget')
+    type = request.data.get('Type')
+    date = request.data.get('Date')
+    guestsmin = request.data.get('guest min')
+    guestsmax = request.data.get('guest max')
+    functionId = int(request.data.get('Function Id'))
+    function = md.Functions.objects.get(id=functionId)
+    try:
+        function.name = name
+        function.type = type
+        function.budget = budget
+        function.date = date
+        function.guestsmin = guestsmin
+        function.guestsmax = guestsmax
+        function.save(update_fields=['name','type','budget','date','guestsmin','guestsmax'])
+        return Response({'status':'success'})
+    except Exception as e:
+        print(e)
+        return Response({'status':'error'})
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def CreateFunction(request):
@@ -256,12 +288,15 @@ def CreateFunction(request):
     date = request.data.get('Date')
     guestsmin = request.data.get('guest min')
     guestsmax = request.data.get('guest max')
-    EventId = request.data.get('Event Id')
-
-    CreateFunction = md.Functions(name=name, eventId = EventId, type=type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
-    CreateFunction.save()
-    return Response({'status':'success'})
-
+    EventId = int(request.data.get('Event Id'))
+    event = md.Events.objects.get(id=EventId)
+    try:
+        CreateFunction = md.Functions(name=name, eventId = event, type=type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
+        CreateFunction.save()
+        return Response({'status':'success'})
+    except Exception as e:
+        print(e)
+        return Response({'status':'error'})
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def EventDetails(request,eventId):
@@ -287,6 +322,32 @@ def VenueViewPage(request, venueId):
     return Response({'status': 'success','VenueView': serializer.data,'Addons': Addonsserializer.data,
                      'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def EditEvent(request):
+    name = request.data.get('Event Name')
+    type = request.data.get('Event Type')
+    date = request.data.get('Date')
+    location = request.data.get('Location')
+    description = request.data.get('description')
+    themeColor = request.data.get('Theme')
+    budget = request.data.get('Budget')
+    guestmin= request.data.get('guestmin')
+    guestmax = request.data.get('guestmax')
+    eventId = request.data.get('EventId')
+    EditEvent = md.Events.objects.get(id=eventId)
+    EditEvent.name = name
+    EditEvent.guestsmin = guestmin
+    EditEvent.guestsmax = guestmax
+    EditEvent.type = type
+    EditEvent.date = date
+    EditEvent.location = location
+    EditEvent.description = description
+    EditEvent.themeColor = themeColor
+    EditEvent.budget = budget
+    EditEvent.save(update_fields=['name','guestsmin','guestsmax','type','date','location','description','themeColor','budget'])
+    return Response({'status': 'success'})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -521,4 +582,25 @@ def urlShortener(url):
         print(e)
         return e
 
-    
+from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def truncate_all_models(request):
+    """
+    View to truncate all models in the database.
+    Only accessible to staff members.
+    """
+    try:
+        with transaction.atomic():  # Use a transaction to ensure atomicity
+            models = ContentType.objects.all()  # Get all content types (models)
+            for content_type in models:
+                model = content_type.model_class()
+                if model:  # Ensure the model class is valid
+                    model.objects.all().delete()
+            return JsonResponse({"status": "success", "message": "All models truncated successfully."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})

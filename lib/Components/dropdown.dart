@@ -39,11 +39,11 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: MyColors.white),
+            borderSide: BorderSide(color: MyColors.white),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: MyColors.red),
+            borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
           fillColor: MyColors.DarkLighter, // Background color
@@ -55,7 +55,7 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
         ),
         value: selectedItem,
         isExpanded: true,
-        icon: const Icon(Icons.arrow_drop_down, color: MyColors.white),
+        icon: Icon(Icons.arrow_drop_down, color: MyColors.white),
         items: widget.items.map((item) {
           return DropdownMenuItem<String>(
             value: item,
@@ -63,7 +63,9 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
               children: [
                 Icon(
                   Icons.circle,
-                  color: item == selectedItem ? MyColors.red : MyColors.whiteDarker,
+                  color: item == selectedItem
+                      ? MyColors.red
+                      : MyColors.whiteDarker,
                   size: screenWidth * 0.03, // Responsive icon size
                 ),
                 SizedBox(width: screenWidth * 0.02),

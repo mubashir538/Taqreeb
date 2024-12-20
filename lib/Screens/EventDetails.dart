@@ -24,11 +24,6 @@ class _EventDetailsState extends State<EventDetails> {
   bool isLoading = true; // Add a loading flag
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -71,6 +66,7 @@ class _EventDetailsState extends State<EventDetails> {
         fontWeight: FontWeight.w400,
         color: MyColors.white);
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(children: [
           Header(
@@ -141,28 +137,59 @@ class _EventDetailsState extends State<EventDetails> {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        events = events['EventDetail']['Functions'];
+                        print(events);
                         return Function12(
-                          name: events[index]['name'],
-                          type: events[index]['type'],
+                          name: events['Functions'][index]['name'],
+                          type: events['Functions'][index]['type'],
                           head: 'Budget',
-                          budget: events[index]['budget'].toString(),
+                          budget:
+                              events['Functions'][index]['budget'].toString(),
                           headings: ['Date'],
-                          values: [events[index]['date']],
+                          values: [events['Functions'][index]['date']],
                           editPressed: () {
                             Navigator.pushNamed(context, '/EditFunction',
-                                arguments: events[index]['id']);
+                                arguments: {
+                                  'functionId': events['Functions'][index]['id']
+                                      .toString(),
+                                  'eventId': EventId,
+                                  'type': events['EventDetail']['type']
+                                });
                           },
                           seePressed: () {
-                            Navigator.pushNamed(context, '/FunctionDetails',
-                                arguments: events[index]['id']);
+                            Navigator.pushNamed(context, '/FunctionDetail',
+                                arguments: {
+                                  'event': events['EventDetail']['name'],
+                                  'fid': events['Functions'][index]['id']
+                                });
                           },
                         );
                       },
-                      itemCount: events['EventDetail']['Functions'] != null
-                          ? events['EventDetail']['Functions'].length
+                      itemCount: events['Functions'] != null
+                          ? events['Functions'].length
                           : 0,
                     ),
+                    // Container(
+                    //   margin: EdgeInsets.all(MaximumThing * 0.02),
+                    //   width: screenWidth * 0.8,
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //       InkWell(
+                    //         onTap: () {
+                    //           Navigator.pushNamed(context, '/CreateFunction',
+                    //               arguments: {
+                    //                 'eventId': EventId,
+                    //                 'type': events['EventDetail']['type']
+                    //               });
+                    //         },
+                    //         child: Image.asset(
+                    //           MyIcons.add,
+                    //           color: MyColors.white,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
 
                     Container(
                       margin: EdgeInsets.all(MaximumThing * 0.01),
@@ -238,19 +265,6 @@ class _EventDetailsState extends State<EventDetails> {
                     ),
 
                     //icon (yh call ni horha)
-                    Container(
-                      margin: EdgeInsets.all(MaximumThing * 0.02),
-                      width: screenWidth * 0.8,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            MyIcons.add,
-                            color: MyColors.white,
-                          ),
-                        ],
-                      ),
-                    ),
                     SizedBox(
                       height: screenHeight * 0.1,
                       child: Center(child: MyDivider()),
@@ -258,9 +272,13 @@ class _EventDetailsState extends State<EventDetails> {
 
                     //Colored Button
                     ColoredButton(
-                      text: 'Create Function',
+                      text: 'Create New Function',
                       onPressed: () {
-                        Navigator.pushNamed(context, '/CreateFunction');
+                        Navigator.pushNamed(context, '/CreateFunction',
+                            arguments: {
+                              'eventId': EventId,
+                              'type': events['EventDetail']['type']
+                            });
                       },
                     ),
                   ],

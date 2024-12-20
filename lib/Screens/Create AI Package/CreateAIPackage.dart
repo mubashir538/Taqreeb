@@ -29,7 +29,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

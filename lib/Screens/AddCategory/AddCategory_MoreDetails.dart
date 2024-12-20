@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
-
+import 'package:taqreeb/theme/color.dart';
 
 class AddcategoryMoredetails extends StatelessWidget {
   const AddcategoryMoredetails({super.key});
@@ -13,6 +13,7 @@ class AddcategoryMoredetails extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -20,13 +21,23 @@ class AddcategoryMoredetails extends StatelessWidget {
               heading: 'More Details',
             ),
             SizedBox(height: screenHeight * 0.04),
-            PackageBox(packagedetails: 'Venue Type', packageprice: '', packagename: ''),
+            PackageBox(
+                packagedetails: 'Venue Type',
+                packageprice: '',
+                packagename: ''),
             SizedBox(height: screenHeight * 0.03),
-            PackageBox(packagedetails: 'Category Type', packageprice: '', packagename: ''),
+            PackageBox(
+                packagedetails: 'Category Type',
+                packageprice: '',
+                packagename: ''),
             SizedBox(height: screenHeight * 0.03),
-            PackageBox(packagedetails: 'Guest Size', packageprice: '', packagename: ''),
+            PackageBox(
+                packagedetails: 'Guest Size',
+                packageprice: '',
+                packagename: ''),
             SizedBox(height: screenHeight * 0.03),
-            PackageBox(packagedetails: 'Staff', packageprice: '', packagename: '')
+            PackageBox(
+                packagedetails: 'Staff', packageprice: '', packagename: '')
           ],
         ),
       ),

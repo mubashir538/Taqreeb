@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: pages[widget.index],
       floatingActionButton: SizedBox(
         width: screenWidth * 0.15,

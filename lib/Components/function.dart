@@ -55,7 +55,7 @@ class Function12 extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                       fontSize: MaximumThing * 0.02,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white),
+                      color: MyColors.redonWhite),
                 ),
               ),
             ),

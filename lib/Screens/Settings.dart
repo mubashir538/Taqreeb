@@ -3,11 +3,18 @@ import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/checklist_items.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
+import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   const Settings({super.key});
 
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -17,11 +24,13 @@ class Settings extends StatelessWidget {
 
     TextEditingController controller = TextEditingController();
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
             Header(
               heading: 'Settings',
+              icon: Icons.logout_rounded,
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
@@ -37,39 +46,71 @@ class Settings extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GuideButton(
+                    onpressed: () {
+                      Navigator.pushNamed(context, '/BusinessSignup_BasicInfo');
+                    },
                     text: 'Signup As Business',
                     leftIcon: Icons.business_rounded,
                     rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
+                    onpressed: () {
+                      Navigator.pushNamed(
+                          context, '/FreelancerSignup_BasicInfo');
+                    },
                     text: 'Signup As Freelancer',
-                  leftIcon: Icons.work_outline_rounded,
-                  rightIcon: Icons.arrow_forward_ios_rounded,
+                    leftIcon: Icons.work_outline_rounded,
+                    rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
+                    onpressed: () {
+                      warningDialog(
+                        title: 'Switch Theme',
+                        message: 'Change the theme of the App',
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancel')),
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  MyColors.switchTheme();
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Text('Confirm')),
+                        ],
+                      ).showDialogBox(context);
+                    },
                     text: 'Apperence',
                     leftIcon: Icons.palette_rounded,
-                  rightIcon: Icons.arrow_forward_ios_rounded,
+                    rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
+                    onpressed: () {},
                     text: 'Privacy & Security',
                     leftIcon: Icons.privacy_tip_rounded,
-                  rightIcon: Icons.arrow_forward_ios_rounded,
+                    rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
+                    onpressed: () {},
                     text: 'Help & Support',
                     leftIcon: Icons.help_rounded,
-                  rightIcon: Icons.arrow_forward_ios_rounded,
+                    rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
+                    onpressed: () {},
                     text: 'About',
                     leftIcon: Icons.info_rounded,
-                  rightIcon: Icons.arrow_forward_ios_rounded,
+                    rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
+                    onpressed: () {},
                     text: 'Terms and Conditions',
                     leftIcon: Icons.privacy_tip_rounded,
-                  rightIcon: Icons.arrow_forward_ios_rounded,
+                    rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                 ],
               ),

@@ -22,11 +22,11 @@ class AIFunctions extends StatelessWidget {
     TextStyle heading = GoogleFonts.montserrat(
         fontSize: MaximumThing * 0.02,
         fontWeight: FontWeight.w500,
-        color: Colors.white);
+        color: MyColors.white);
     TextStyle body = GoogleFonts.montserrat(
         fontSize: MaximumThing * 0.02,
         fontWeight: FontWeight.w400,
-        color: Colors.white);
+        color: MyColors.white);
 
     return InkWell(
       onTap: () => onpressed(),

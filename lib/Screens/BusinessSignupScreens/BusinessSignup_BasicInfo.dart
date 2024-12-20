@@ -18,7 +18,7 @@ class BusinessSignup_BasicInfo extends StatelessWidget {
     TextEditingController usernameController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: MyColors.black,
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,10 +32,22 @@ class BusinessSignup_BasicInfo extends StatelessWidget {
             SizedBox(
               height: screenHeight * 0.05,
             ),
-            MyTextBox(hint: 'CNIC',valueController: cnicController,),
-            MyTextBox(hint: 'City',valueController: cityController,),
-            MyTextBox(hint: 'Category',valueController: categoryController,),
-            MyTextBox(hint: 'Username',valueController: usernameController,),
+            MyTextBox(
+              hint: 'CNIC',
+              valueController: cnicController,
+            ),
+            MyTextBox(
+              hint: 'City',
+              valueController: cityController,
+            ),
+            MyTextBox(
+              hint: 'Category',
+              valueController: categoryController,
+            ),
+            MyTextBox(
+              hint: 'Username',
+              valueController: usernameController,
+            ),
             SizedBox(
               height: screenHeight * 0.1,
               child: Center(child: MyDivider()),

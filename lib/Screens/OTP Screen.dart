@@ -11,9 +11,10 @@ class OTPScreen extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MyColors.Dark,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: Header(

@@ -50,6 +50,7 @@ class _YourEventsState extends State<YourEvents> {
     TextEditingController controller = TextEditingController();
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -92,7 +93,7 @@ class _YourEventsState extends State<YourEvents> {
                       },
                       editPressed: () {
                         Navigator.pushNamed(context, '/EditEvent',
-                            arguments: events["Event"][index]["id"]);
+                            arguments: events["Event"][index]["id"].toString());
                       },
                     ),
                   )

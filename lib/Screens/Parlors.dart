@@ -13,6 +13,7 @@ class Parlors extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Container(
           child: Column(children: [
@@ -52,10 +53,11 @@ class Parlors extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Image.network("https://t3.ftcdn.net/jpg/08/47/15/58/360_F_847155855_DsH51GZkt56KyrrsJpts9U2a1fwLhPlg.jpg",
-                  width: 190,
-                  height: 280,
-                 ),
+                  Image.network(
+                    "https://t3.ftcdn.net/jpg/08/47/15/58/360_F_847155855_DsH51GZkt56KyrrsJpts9U2a1fwLhPlg.jpg",
+                    width: 190,
+                    height: 280,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -98,9 +100,10 @@ class Parlors extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Image.network("https://t3.ftcdn.net/jpg/08/47/15/58/360_F_847155855_DsH51GZkt56KyrrsJpts9U2a1fwLhPlg.jpg",
-                  width: 190,
-                  height: 250,
+                  Image.network(
+                    "https://t3.ftcdn.net/jpg/08/47/15/58/360_F_847155855_DsH51GZkt56KyrrsJpts9U2a1fwLhPlg.jpg",
+                    width: 190,
+                    height: 250,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,

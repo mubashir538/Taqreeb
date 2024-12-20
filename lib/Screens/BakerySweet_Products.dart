@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Cake%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class BakerySweet_Products extends StatelessWidget {
   const BakerySweet_Products({super.key});
@@ -8,6 +9,7 @@ class BakerySweet_Products extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: Container(
         child: Column(
           children: [

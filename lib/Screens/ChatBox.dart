@@ -35,6 +35,7 @@ class _ChatBoxState extends State<ChatBox> {
       message(text: "Done Hogya!!", time: "12:03", isSent: true),
     ];
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: Column(children: [
         Header(),
         Container(

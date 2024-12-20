@@ -34,12 +34,12 @@ class _HomePageState extends State<HomePage> {
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
-    final fetchedCategories =
-        await MyApi.getRequest(endpoint: 'home/categories/',
-        //  headers: {
-        //   'Authorization': 'Bearer $token',
-        // }
-        );
+    final fetchedCategories = await MyApi.getRequest(
+      endpoint: 'home/categories/',
+      //  headers: {
+      //   'Authorization': 'Bearer $token',
+      // }
+    );
     final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
 
     // Update the state
@@ -49,7 +49,6 @@ class _HomePageState extends State<HomePage> {
       this.listings = fetchedListings ?? {}; // Ensure no null data
       isLoading = false; // Data has been fetched, so stop loading
     });
-
   }
 
   @override
@@ -60,6 +59,7 @@ class _HomePageState extends State<HomePage> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   )
                 : SizedBox(
-                    height: screenHeight * 0.17,
+                    height: screenHeight * 0.19,
                     child: ListView.builder(
                       itemBuilder: (context, index) => CategoryIcon(
                         onpressed: () {
@@ -134,8 +134,7 @@ class _HomePageState extends State<HomePage> {
                         },
                         label: categories['categories'][index]['name'],
                         imageUrl:
-                            // '${MyApi.baseUrl}${categories['categories'][index]['picture']}.png',
-                            'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
+                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
                       ),
                       itemCount: categories['categories'].length,
                       scrollDirection: Axis.horizontal,
@@ -149,7 +148,6 @@ class _HomePageState extends State<HomePage> {
                 text: 'Create Package with AI',
               ),
             ),
-            // Show CircularProgressIndicator while loading listings
             isLoading
                 ? Center(
                     child: CircularProgressIndicator(

@@ -4,12 +4,14 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class CategoryView_Photographer extends StatelessWidget {
   const CategoryView_Photographer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [

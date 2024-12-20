@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class ChatsScreen extends StatelessWidget {
   const ChatsScreen({super.key});
@@ -13,6 +14,7 @@ class ChatsScreen extends StatelessWidget {
 
     TextEditingController controller = TextEditingController();
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Header(
