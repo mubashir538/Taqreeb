@@ -18,7 +18,7 @@ class AddImage extends StatelessWidget {
         child: Column(
           children: [
             Header(
-              heading: 'Basic Details',
+              heading: 'Add Image',
             ),
             SizedBox(height: screenHeight * 0.03),
             Container(
