@@ -13,7 +13,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
   flutter_colorpicker: ^1.0.3
-
+  table_calendar: ^3.0.0
   http: ^1.1.0
   flutter_secure_storage: ^7.0.0
   image_picker: ^0.8.7

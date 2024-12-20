@@ -55,10 +55,8 @@ class AIPackage_FunctionDetail extends StatelessWidget {
                 itemCount: 5,
                 itemBuilder: (context, index) {
                   return Productcard(
-                      onpressed: () {
-                        Navigator.pushNamed(
-                            context, '/AIPackage_FunctionDetail');
-                      },
+                      listingType: '',
+                      listingid: '',
                       imageUrl:
                           "https://prestigiousvenues.com/wp-content/uploads/bb-plugin/cache/Gala-Dinner-Venue-In-London-Gibson-Hall-Prestigious-Venues-panorama-e59dc799b93c25c0dc960e904af705e0-59099a98687f6.jpg",
                       venueName: "Qasr-e-Noor",

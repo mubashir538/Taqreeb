@@ -214,10 +214,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           ),
                                           Productcard(
                                             mywidth: screenWidth * 0.85,
-                                            onpressed: () {
-                                              Navigator.pushNamed(context,
-                                                  '/CategoryView_Venue');
-                                            },
+                                            listingType: '',
+                                            listingid: '',
                                             imageUrl:
                                                 "https://i.ytimg.com/vi/Ipgwk6VsAFA/maxresdefault.jpg",
                                             venueName: "The Mansion",

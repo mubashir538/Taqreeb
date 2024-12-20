@@ -13,6 +13,9 @@ class CategoryView_VideoEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
     bool isSmallScreen = screenWidth < 600;
 
     return Scaffold(
@@ -34,7 +37,7 @@ class CategoryView_VideoEditor extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 16 : 40,
+                horizontal: isSmallScreen ? MaximumThing*0.03 : MaximumThing*0.05,
                 vertical: 20,
               ),
               color: MyColors.Dark,
@@ -73,38 +76,39 @@ class CategoryView_VideoEditor extends StatelessWidget {
                   // Portfolio Section
                   buildSectionTitle("Portfolio"),
                   AspectRatio(
-  aspectRatio: 16 / 9,
-  child: Stack(
-    alignment: Alignment.center, // Center the play/pause icon
-    children: [
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: NetworkImage(
-              'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      // Play/Pause Icon
-      Container(
-        decoration: BoxDecoration(
-          color: MyColors.white, // Slight overlay for better visibility
-          shape: BoxShape.circle,
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Icon(
-          Icons.play_arrow, // Use play_arrow or pause icon as needed
-          color: MyColors.DarkLighter,
-          size: 50,
-        ),
-      ),
-    ],
-  ),
-),
-
+                    aspectRatio: 16 / 9,
+                    child: Stack(
+                      alignment: Alignment.center, // Center the play/pause icon
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        // Play/Pause Icon
+                        Container(
+                          decoration: BoxDecoration(
+                            color: MyColors
+                                .white, // Slight overlay for better visibility
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          child: Icon(
+                            Icons
+                                .play_arrow, // Use play_arrow or pause icon as needed
+                            color: MyColors.DarkLighter,
+                            size: 50,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   // Reviews Section
                   SizedBox(height: 20),

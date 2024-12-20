@@ -164,10 +164,10 @@ class _HomePageState extends State<HomePage> {
                         itemCount: listings['HomeListing'].length,
                         itemBuilder: (context, index) {
                           return Productcard(
-                            onpressed: () {
-                              Navigator.pushNamed(
-                                  context, '/CategoryView_Venue');
-                            },
+                            listingType: listings['HomeListing'][index]['type']
+                                .toString(),
+                            listingid:
+                                listings['HomeListing'][index]['id'].toString(),
                             imageUrl:
                                 // '${MyApi.baseUrl}${listings['HomeListing'][index]['picture']}.png',
                                 'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',

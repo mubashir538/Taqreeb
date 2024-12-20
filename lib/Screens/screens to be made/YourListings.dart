@@ -35,9 +35,8 @@ class YourListings extends StatelessWidget {
               itemCount: 5,
               itemBuilder: (context, index) {
                 return Productcard(
-                    onpressed: () {
-                      Navigator.pushNamed(context, '/CategoryView_Venue');
-                    },
+                    listingType: '',
+                    listingid: '',
                     imageUrl: "",
                     venueName: "Qasr-e-Noor",
                     location: "North Nazimabad",

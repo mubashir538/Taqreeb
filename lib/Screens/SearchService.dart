@@ -43,9 +43,8 @@ class SearchService extends StatelessWidget {
                 ),
                 ListView.builder(
                     itemBuilder: (context, index) => Productcard(
-                        onpressed: () {
-                          Navigator.pushNamed(context, '/CategoryView_Venue');
-                        },
+                        listingType: '',
+                        listingid: '',
                         imageUrl:
                             'https://media-api.xogrp.com/images/2c80fca0-cd62-4404-8bab-7152674314c1~rs_768.h',
                         venueName: 'Region Banquet',

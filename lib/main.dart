@@ -123,7 +123,7 @@ class MainApp extends StatelessWidget {
         '/CreateFunction': (context) => CreateFunction(),
         '/EventDetails': (context) => EventDetails(),
         '/CategoryView_Venue': (context) => CategoryView_Venue(),
-        '/CategoryView_Saloon': (context) => CategoryView_Saloon(),
+        '/CategoryView_Salon': (context) => CategoryView_Saloon(),
         '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
         '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
         '/CategoryView_Decorator': (context) => CategoryView_Decorator(),

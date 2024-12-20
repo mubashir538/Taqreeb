@@ -135,13 +135,6 @@ class CheckList(m.Model):
     functionId = m.ForeignKey(Functions,on_delete=m.CASCADE)
     eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
 
-class Venue(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    venueType = m.CharField(max_length=100)
-    catering = m.CharField(max_length=100)
-    staff = m.CharField(max_length=100)
-    slot = m.DateTimeField()
 
 class AddOns(m.Model):
     id = m.AutoField(primary_key=True)
@@ -243,9 +236,16 @@ class DesertItems(m.Model):
     description = m.CharField(max_length=500)
     picture = m.CharField(max_length=255)
 
-
 class Categories(m.Model):
     id = m.AutoField(primary_key=True)
     name = m.CharField(max_length=255)
     picture = m.CharField(max_length=255)
+
+class Venue(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    venueType = m.CharField(max_length=100)
+    catering = m.CharField(max_length=100)
+    staff = m.CharField(max_length=100)
+    slot = m.DateTimeField()
     
