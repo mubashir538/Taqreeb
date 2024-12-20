@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
+import 'package:taqreeb/Screens/cardprinterviewpage.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddPackage.dart';
@@ -70,7 +71,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CategoryView_VideoEditor(),
+      home: cardprinterviewpage(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
