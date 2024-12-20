@@ -267,6 +267,7 @@ def EditFunction(request):
     functionId = int(request.data.get('Function Id'))
     function = md.Functions.objects.get(id=functionId)
     try:
+        print(name,' ',budget,' ',type,' ',date,' ',guestsmin,' ',guestsmax)
         function.name = name
         function.type = type
         function.budget = budget

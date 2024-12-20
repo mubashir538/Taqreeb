@@ -7,15 +7,15 @@ import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
-import 'package:taqreeb/Screens/CategoryView_BakerySweet.dart';
-import 'package:taqreeb/Screens/CategoryView_Caterers.dart';
-import 'package:taqreeb/Screens/CategoryView_Decorator.dart';
-import 'package:taqreeb/Screens/CategoryView_GraphicDesigner.dart';
-import 'package:taqreeb/Screens/CategoryView_Parlour.dart';
-import 'package:taqreeb/Screens/CategoryView_Photographer.dart';
-import 'package:taqreeb/Screens/CategoryView_PhotographyPlace.dart';
-import 'package:taqreeb/Screens/CategoryView_Saloon.dart';
-import 'package:taqreeb/Screens/CategoryView_VideoEditor.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_BakerySweet.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Caterers.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Decorator.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_GraphicDesigner.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Parlour.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Photographer.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_PhotographyPlace.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Saloon.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_VideoEditor.dart';
 import 'package:taqreeb/Screens/Dashboard.dart';
 import 'package:taqreeb/Screens/AccountInfoEdit.dart';
 import 'package:taqreeb/Screens/BusinessAccountInfo.dart';
@@ -26,7 +26,7 @@ import 'package:taqreeb/Screens/BusinessSignupScreens/SubmissionSucessful.dart';
 import 'package:taqreeb/Screens/Cart.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Venue.dart';
 import 'package:taqreeb/Screens/BakerySweet_Products.dart';
-import 'package:taqreeb/Screens/CategoryView_CarRenter.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_CarRenter.dart';
 import 'package:taqreeb/Screens/ChatBox.dart';
 import 'package:taqreeb/Screens/Create%20AI%20Package/CreateAIPackage.dart';
 import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList.dart';
@@ -70,7 +70,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: CategoryView_Venue(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),

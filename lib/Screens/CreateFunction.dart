@@ -36,7 +36,7 @@ class _CreateFunctionState extends State<CreateFunction> {
   Map<String, dynamic> Function = {};
   Map<String, dynamic> args = {};
   bool edit = false;
-
+  bool changed = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -77,7 +77,7 @@ class _CreateFunctionState extends State<CreateFunction> {
     setState(() {
       if (edit) {
         this.Function = FunctiontDetails ?? {};
-        if (this.Function != {}) {
+        if (this.Function != {} && !changed) {
           nameController.text = this.Function['Fuctions']['name'];
           typeController.text = this.Function['Fuctions']['type'];
           _dateController.text = this.Function['Fuctions']['date'];
@@ -89,6 +89,7 @@ class _CreateFunctionState extends State<CreateFunction> {
               this.Function['Fuctions']['guestsmin'].toString();
           this.EventId =
               int.parse(this.Function['Fuctions']['eventId'].toString());
+          changed = true;
         }
       }
       this.token = token;
@@ -115,7 +116,7 @@ class _CreateFunctionState extends State<CreateFunction> {
               Column(
                 children: [
                   Header(
-                    heading: 'Create Funtion',
+                    heading: edit ? 'Edit Funtion' : 'Create Funtion',
                     image: MyImages.Function,
                   ),
                   SizedBox(
@@ -193,7 +194,7 @@ class _CreateFunctionState extends State<CreateFunction> {
                 ],
               ),
               ColoredButton(
-                text: 'Add Function',
+                text: edit ? 'Edit Function' : 'Add Function',
                 onPressed: () async {
                   if (nameController.text.isEmpty ||
                       typeController.text.isEmpty ||
@@ -206,6 +207,15 @@ class _CreateFunctionState extends State<CreateFunction> {
                     ));
                     return;
                   }
+                  print({
+                    'Function Name': nameController.text,
+                    'Date': _dateController.text,
+                    'Type': typeController.text,
+                    'Budget': budgetController.text,
+                    'guest min': guestMinController.text,
+                    'guest max': guestMaxController.text,
+                    'Function Id': this.functionId
+                  });
                   final response = await MyApi.postRequest(
                       endpoint: edit ? 'editfunction/' : 'createfunction/',
                       body: {

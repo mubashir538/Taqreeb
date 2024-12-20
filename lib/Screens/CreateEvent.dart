@@ -105,7 +105,7 @@ class _CreateEventState extends State<CreateEvent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Header(
-              heading: "Create Event",
+              heading: edit ? "Edit Event" : "Create Event",
               para: "Plan your event effortlessly!",
               image: MyImages.SingupPng,
             ),
@@ -173,7 +173,7 @@ class _CreateEventState extends State<CreateEvent> {
               ),
             ),
             ColoredButton(
-              text: "Create Event",
+              text: edit ? "Edit Event" : "Create Event",
               onPressed: () async {
                 if (eventNameController.text.isEmpty ||
                     typeController.text.isEmpty ||
