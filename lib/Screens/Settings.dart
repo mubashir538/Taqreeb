@@ -89,9 +89,11 @@ class _SettingsState extends State<Settings> {
                     rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(
-                    onpressed: () {},
-                    text: 'Privacy & Security',
-                    leftIcon: Icons.privacy_tip_rounded,
+                    onpressed: () {
+                      Navigator.pushNamed(context, '/AccountInfoEdit');
+                    },
+                    text: 'Edit Account Info',
+                    leftIcon: Icons.edit_rounded,
                     rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
                   GuideButton(

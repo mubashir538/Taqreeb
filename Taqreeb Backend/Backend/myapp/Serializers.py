@@ -11,6 +11,11 @@ class BusinessOwnerSerializer(s.ModelSerializer):
         model = mp.BusinessOwner
         fields = '__all__'
 
+class BookedSlotsSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.BookedSlots
+        fields = '__all__'
+
 
 class PicturesListingSerializers(s.ModelSerializer):
     class Meta:
@@ -128,6 +133,11 @@ class CarsSerializer(s.ModelSerializer):
 class DecoratorsSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Decorators
+        fields = '__all__'
+
+class PhotographyPlacesSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.PhotographyPlaces
         fields = '__all__'
 
 class ParlorsSerializer(s.ModelSerializer):

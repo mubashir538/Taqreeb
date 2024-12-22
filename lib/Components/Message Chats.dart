@@ -9,10 +9,12 @@ class MessageChatButton extends StatelessWidget {
   final Function onpressed;
   final String image;
   final int newMessage;
+  final double mywidth;
 
   const MessageChatButton({
     this.newMessage = 0,
     this.image = '',
+    this.mywidth = 0,
     required this.name,
     required this.onpressed,
     required this.message,
@@ -33,12 +35,13 @@ class MessageChatButton extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
         padding: EdgeInsets.symmetric(
             horizontal: MaximumThing * 0.02, vertical: MaximumThing * 0.02),
-        width: screenWidth * 0.9,
+        width: mywidth == 0 ? screenWidth * 0.9 : mywidth,
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               margin: EdgeInsets.only(right: MaximumThing * 0.03),
@@ -60,7 +63,6 @@ class MessageChatButton extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: screenWidth * 0.7,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -56,6 +56,7 @@ import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
 import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_EventDetail.dart';
 import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
 import 'package:taqreeb/Screens/View%20AI%20Packages/ViewAIPackage.dart';
+import 'package:taqreeb/Screens/YourEvents.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
@@ -70,7 +71,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CategoryView_Venue(),
+      home: YourEvents(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),

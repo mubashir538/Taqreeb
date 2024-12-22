@@ -45,7 +45,6 @@ class Listing(m.Model):
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
 
-
 class PicturesListings(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
@@ -54,6 +53,7 @@ class PicturesListings(m.Model):
 class Packages(m.Model):
     id = m.AutoField(primary_key=True)
     type = m.IntegerField()
+    name = m.CharField(max_length=100,default='Basic')
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
     description = m.CharField(max_length=1100)
     price= m.IntegerField()
@@ -67,7 +67,6 @@ class Orders(m.Model):
     packageID = m.ForeignKey(Packages,on_delete=m.CASCADE)
     slot = m.DateTimeField()
     status = m.CharField(max_length=100)
-
 
 class AIEventQuestions(m.Model):
     id = m.AutoField(primary_key=True)
@@ -104,10 +103,10 @@ class GuestList(m.Model):
     id = m.AutoField(primary_key=True)
     type = m.CharField(max_length=100)
     name = m.CharField(max_length=100)
-    members = m.IntegerField()
-    phone = m.CharField(max_length=100)
+    members = m.IntegerField(null=True)
+    phone = m.CharField(max_length=100,null=True)
     eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
-    functionId = m.IntegerField()
+    functionId = m.IntegerField(null=True)
     
 class Review(m.Model):
     id = m.AutoField(primary_key=True)
@@ -154,7 +153,7 @@ class Caterers(m.Model):
 
 class MenuItems(m.Model):                                                                                                                                                      
     id = m.AutoField(primary_key=True)
-    cateringId = m.ForeignKey(Caterers,on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE,null=True)
     name = m.CharField(max_length=100)
     pricePerKg = m.IntegerField()
     picture = m.CharField(max_length=100)
@@ -194,6 +193,7 @@ class Decorators(m.Model):
     catering = m.CharField(max_length=50)
     staff = m.CharField(max_length=50)
     slot = m.DateTimeField()
+
 class Parlors(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
@@ -207,6 +207,12 @@ class Salons(m.Model):
 class BakersAndSweets(m.Model):
     id = m.AutoField(primary_key=True)
     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+
+class PhotographyPlaces(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    type = m.CharField(max_length=100)
+
 
 class VideoEditors(m.Model):
     id = m.AutoField(primary_key=True)
@@ -248,4 +254,11 @@ class Venue(m.Model):
     catering = m.CharField(max_length=100)
     staff = m.CharField(max_length=100)
     slot = m.DateTimeField()
+    guestminAllowed = m.IntegerField(default=0)
+    guestmaxAllowed = m.IntegerField(default=0)
     
+class BookedSlots(m.Model):
+    id = m.AutoField(primary_key=True)
+    slot = m.DateField()
+    venueId = m.ForeignKey(Venue,on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)

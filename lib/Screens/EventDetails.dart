@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -209,8 +210,25 @@ class _EventDetailsState extends State<EventDetails> {
                           ]),
                       width: screenWidth * 0.8,
                       child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/CreateGuestList');
+                          onTap: () async {
+                            final response = await MyApi.postRequest(
+                                endpoint: 'show/guest/',
+                                body: {
+                                  'EventId': EventId,
+                                  'FunctionID': "None"
+                                });
+                            if (response["Guests"].length == 0) {
+                              Navigator.pushNamed(context, '/CreateGuestList',
+                                  arguments: {
+                                    'eventId': EventId,
+                                  });
+                            } else {
+                              Navigator.pushNamed(
+                                  context, '/CreateGuestList_List',
+                                  arguments: {
+                                    'eventId': EventId,
+                                  });
+                            }
                           },
                           child: Text("View GuestList")),
                     ),
