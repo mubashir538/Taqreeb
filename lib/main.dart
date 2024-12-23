@@ -65,35 +65,22 @@ import 'package:taqreeb/Screens/YourEvents.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
+import 'package:taqreeb/abc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
-    await Firebase.initializeApp(
-        options: FirebaseOptions(
-      apiKey: dotenv.env['apiKey'] ?? '',
-      authDomain: dotenv.env['authDomain'] ?? '',
-      projectId: dotenv.env['projectId'] ?? '',
-      storageBucket: dotenv.env['storageBucket'] ?? '',
-      messagingSenderId: dotenv.env['messagingSenderId'] ?? '',
-      appId: dotenv.env['appId'] ?? '',
-      measurementId: dotenv.env['measurementId'] ?? '',
-    ));
+    await Firebase.initializeApp(options: abc.fb
+        // await Firebase.initializeApp(
+        // options: DefaultFirebaseOptions.currentPlatform,
+        );
   } else {
     // final env = await dotenv.load(fileName: '.env');
 
-    await Firebase.initializeApp(
-        options: FirebaseOptions(
-            apiKey: "AIzaSyAcZvZmKovuB_DH1s8IrQXspin4pAkbqyo",
-            authDomain: "taqreeb-41c2c.firebaseapp.com",
-            projectId: "taqreeb-41c2c",
-            storageBucket: "taqreeb-41c2c.firebasestorage.app",
-            messagingSenderId: "1057850592954",
-            appId: "1:1057850592954:web:fa114482bbba3f036d3c83",
-            measurementId: "G-057C6DDZJH"));
-    // await Firebase.initializeApp(
-    // options: DefaultFirebaseOptions.currentPlatform,
-    // );
+    await Firebase.initializeApp(options: abc.fb
+        // await Firebase.initializeApp(
+        // options: DefaultFirebaseOptions.currentPlatform,
+        );
   }
 
   runApp(const MainApp());
@@ -103,7 +90,6 @@ class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
-
   Widget build(BuildContext context) {
     return MaterialApp(
       home: SearchService(),
