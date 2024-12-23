@@ -59,6 +59,7 @@ import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_FunctionDetail.da
 import 'package:taqreeb/Screens/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
+import 'package:taqreeb/Screens/cardprinters.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 
 void main() {
@@ -71,7 +72,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: cardprinterviewpage(),
+      home: Cardprinters(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
