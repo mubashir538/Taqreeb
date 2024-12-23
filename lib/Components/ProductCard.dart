@@ -71,7 +71,7 @@ class _ProductcardState extends State<Productcard> {
 
         // }
         Navigator.pushNamed(context, path,
-            arguments: {"listingid": widget.listingid});
+            arguments: int.parse(widget.listingid));
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
@@ -98,12 +98,12 @@ class _ProductcardState extends State<Productcard> {
                     bottomRight: Radius.circular(15),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           widget.venueName.length > 20
@@ -115,30 +115,34 @@ class _ProductcardState extends State<Productcard> {
                             color: Colors.white,
                           ),
                         ),
+                        SizedBox(height: screenHeight * 0.01),
                         Text(
-                          widget.type,
+                          widget.location.length > 30
+                              ? "${widget.location.replaceAll('\n', '').replaceAll('\r', '').substring(0, 30)}..."
+                              : widget.location
+                                  .replaceAll('\n', '')
+                                  .replaceAll('\r', ''),
                           style: GoogleFonts.montserrat(
                             fontSize: MaximumThing * 0.015,
                             fontWeight: FontWeight.w400,
-                            color: Colors.white,
+                            color: Colors.white70,
                           ),
                         ),
+                        SizedBox(height: screenHeight * 0.01),
                       ],
                     ),
-                    SizedBox(height: screenHeight * 0.01),
-                    Text(
-                      widget.location.length > 30
-                          ? "${widget.location.replaceAll('\n', '').replaceAll('\r', '').substring(0, 30)}..."
-                          : widget.location
-                              .replaceAll('\n', '')
-                              .replaceAll('\r', ''),
-                      style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.015,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white70,
+                    Flexible(
+                      child: Text(
+                        widget.type,
+                        softWrap: true,
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.montserrat(
+                          fontSize: MaximumThing * 0.015,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.01),
                   ],
                 ),
               ),

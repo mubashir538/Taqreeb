@@ -32,16 +32,16 @@ class _SettingsState extends State<Settings> {
               heading: 'Settings',
               icon: Icons.logout_rounded,
             ),
+            // Container(
+            //   margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+            //   child:
+            //       SearchBox(controller: controller, width: screenWidth * 0.9),
+            // ),
+            // SizedBox(
+            //   height: screenHeight * 0.025,
+            // ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              child:
-                  SearchBox(controller: controller, width: screenWidth * 0.9),
-            ),
-            SizedBox(
-              height: screenHeight * 0.025,
-            ),
-            Container(
-              constraints: BoxConstraints(minHeight: screenHeight * 0.8),
+              constraints: BoxConstraints(minHeight: screenHeight * 0.5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -78,6 +78,9 @@ class _SettingsState extends State<Settings> {
                                 setState(() {
                                   MyColors.switchTheme();
                                 });
+                                setState(() {
+                                  MyColors.switchTheme();
+                                });
                                 Navigator.pop(context);
                               },
                               child: Text('Confirm')),
@@ -96,24 +99,24 @@ class _SettingsState extends State<Settings> {
                     leftIcon: Icons.edit_rounded,
                     rightIcon: Icons.arrow_forward_ios_rounded,
                   ),
-                  GuideButton(
-                    onpressed: () {},
-                    text: 'Help & Support',
-                    leftIcon: Icons.help_rounded,
-                    rightIcon: Icons.arrow_forward_ios_rounded,
-                  ),
-                  GuideButton(
-                    onpressed: () {},
-                    text: 'About',
-                    leftIcon: Icons.info_rounded,
-                    rightIcon: Icons.arrow_forward_ios_rounded,
-                  ),
-                  GuideButton(
-                    onpressed: () {},
-                    text: 'Terms and Conditions',
-                    leftIcon: Icons.privacy_tip_rounded,
-                    rightIcon: Icons.arrow_forward_ios_rounded,
-                  ),
+                  // GuideButton(
+                  //   onpressed: () {},
+                  //   text: 'Help & Support',
+                  //   leftIcon: Icons.help_rounded,
+                  //   rightIcon: Icons.arrow_forward_ios_rounded,
+                  // ),
+                  // GuideButton(
+                  //   onpressed: () {},
+                  //   text: 'About',
+                  //   leftIcon: Icons.info_rounded,
+                  //   rightIcon: Icons.arrow_forward_ios_rounded,
+                  // ),
+                  // GuideButton(
+                  //   onpressed: () {},
+                  //   text: 'Terms and Conditions',
+                  //   leftIcon: Icons.privacy_tip_rounded,
+                  //   rightIcon: Icons.arrow_forward_ios_rounded,
+                  // ),
                 ],
               ),
             )

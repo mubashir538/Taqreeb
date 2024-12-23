@@ -45,6 +45,8 @@ class _CategoryView_PhotographyPlaceState
   List<String> starsvalue = [];
 
   final List<String> _imageUrls = [];
+  DateTime? selectedDate = DateTime.now();
+  Map<String, dynamic> events = {};
 
   @override
   void didChangeDependencies() {
@@ -93,6 +95,123 @@ class _CategoryView_PhotographyPlaceState
     });
   }
 
+  void showHierarchicalOptions(
+      BuildContext context, double maxThing, double width) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MyColors.Dark,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(maxThing * 0.02),
+          decoration: BoxDecoration(
+            color: MyColors.Dark,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(bottom: maxThing * 0.02),
+                child: Text(
+                  "Choose for a Function",
+                  style: GoogleFonts.montserrat(
+                    fontSize: maxThing * 0.025,
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.white,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: events['Event']?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final event = events['Event'][index];
+                    return Container(
+                      margin: EdgeInsets.only(bottom: maxThing * 0.02),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 1,
+                          color: MyColors.red,
+                        ),
+                        color: MyColors.DarkLighter,
+                      ),
+                      child: ExpansionTile(
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: MyColors.red,
+                        collapsedBackgroundColor: MyColors.DarkLighter,
+                        title: Text(
+                          event['name'],
+                          style: GoogleFonts.montserrat(
+                            fontSize: maxThing * 0.015,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        children: [
+                          ...event['functions'].map<Widget>((function) {
+                            return ListTile(
+                              title: Text(
+                                function['name'],
+                                style: GoogleFonts.montserrat(
+                                  fontSize: maxThing * 0.015,
+                                  color: MyColors.whiteDarker,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              onTap: () async {
+                                final response = await MyApi.postRequest(
+                                    endpoint: 'add/Bookcart/',
+                                    body: {
+                                      'fid': function['id'].toString(),
+                                      'uid':
+                                          await MyStorage.getToken('userId') ??
+                                              "",
+                                      'lid': listingId.toString(),
+                                      'type': 'Venue',
+                                      'slot': selectedDate.toString(),
+                                    });
+
+                                if (response['status'] == 'success') {
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Something went wrong',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: maxThing * 0.015,
+                                          color: MyColors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.red,
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -129,7 +248,9 @@ class _CategoryView_PhotographyPlaceState
                                   },
                                   itemBuilder: (context, index) {
                                     return Image.network(
-                                      _imageUrls[index],
+                                      _imageUrls[index] == ' '
+                                          ? 'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220'
+                                          : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_imageUrls[index]}',
                                       fit: BoxFit.cover,
                                     );
                                   },
@@ -204,10 +325,16 @@ class _CategoryView_PhotographyPlaceState
                                       ),
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.add,
-                                    color: MyColors.Yellow,
-                                    size: maximumDimension * 0.05,
+                                  GestureDetector(
+                                    onTap: () {
+                                      showHierarchicalOptions(context,
+                                          maximumDimension, screenWidth);
+                                    },
+                                    child: Icon(
+                                      Icons.add,
+                                      color: MyColors.Yellow,
+                                      size: maximumDimension * 0.05,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -530,6 +657,11 @@ class _CategoryView_PhotographyPlaceState
                                   vertical: maximumDimension * 0.02,
                                   horizontal: maximumDimension * 0.01),
                               child: CalendarView(
+                                onDateSelected: (date) {
+                                  setState(() {
+                                    selectedDate = date;
+                                  });
+                                },
                                 bookedDates: listing['bookedDates']
                                     .map((date) {
                                       return DateTime.parse(date);

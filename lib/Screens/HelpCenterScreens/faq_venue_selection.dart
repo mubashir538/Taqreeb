@@ -41,7 +41,11 @@ class _FAQScreenState extends State<FAQScreen> {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: SearchBox(controller: searchController),
+                child: SearchBox(
+                  onChanged: (value) {},
+                  controller: searchController,
+                  hint: 'Search Typing to Search',
+                ),
               ),
               SizedBox(height: 20),
               Text(

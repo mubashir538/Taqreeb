@@ -20,6 +20,8 @@ class CreateAIPackage extends StatefulWidget {
 class _CreateAIPackageState extends State<CreateAIPackage> {
   final double _currentBudgetValue = 100000;
   final TextEditingController dateController = new TextEditingController();
+  final CheckBoxController checkBoxController =
+      CheckBoxController(selections: []);
 
   @override
   Widget build(BuildContext context) {
@@ -91,9 +93,11 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
             ], Heading: "Location Preferences"),
             QuestionGroup(questions: [
               CheckBoxQuestion(
-                  question: "Do you need any additional services?",
-                  options: ["Photography", "Decoration", "Music"],
-                  selections: []),
+                question: "Do you need any additional services?",
+                options: ["Photography", "Decoration", "Music"],
+                controller: checkBoxController,
+                onChanged: (selections) {},
+              ),
               NormalQuestion(
                   MaximumThing: MaximumThing,
                   question: "Describe the Theme of your event")

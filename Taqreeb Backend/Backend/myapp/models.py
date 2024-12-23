@@ -131,7 +131,7 @@ class CheckList(m.Model):
     id = m.AutoField(primary_key=True)
     description = m.CharField(max_length=1100)
     isChecked = m.BooleanField()
-    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE)
+    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
     eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
 
 
@@ -260,5 +260,18 @@ class Venue(m.Model):
 class BookedSlots(m.Model):
     id = m.AutoField(primary_key=True)
     slot = m.DateField()
-    venueId = m.ForeignKey(Venue,on_delete=m.CASCADE)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+
+
+class BookingCart(m.Model):
+    id = m.AutoField(primary_key=True)
+    userId = m.ForeignKey(User,on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
+    slot = m.DateTimeField(null=True)
+    type = m.CharField(max_length=100,null=True)
+    status = m.CharField(max_length=100)
+
+class HomePageImages(m.Model):
+    id = m.AutoField(primary_key=True)
+    image = m.CharField(max_length=255)

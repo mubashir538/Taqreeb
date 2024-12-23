@@ -59,8 +59,11 @@ class _YourEventsState extends State<YourEvents> {
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              child:
-                  SearchBox(controller: controller, width: screenWidth * 0.9),
+              child: SearchBox(
+                  onChanged: (value) {},
+                  controller: controller,
+                  hint: 'Search Typing to Search',
+                  width: screenWidth * 0.9),
             ),
             isLoading
                 ? Center(

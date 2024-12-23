@@ -8,6 +8,7 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'dart:math';
 
 class CategoryView_Venue extends StatefulWidget {
   const CategoryView_Venue({super.key});
@@ -26,9 +27,10 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
   bool isToggled = true;
   List<String> headings = ['Venue Type', 'Catering', 'Staff', 'Guests'];
   List<String> values = [];
-  List<String> addonsheadings =
-      []; 
+  List<String> addonsheadings = [];
   List<String> addonsvalues = [];
+  DateTime? selectedDate = DateTime.now();
+  Map<String, dynamic> events = {};
   List<String> stars = [
     '5 Stars',
     '4 Stars',
@@ -47,7 +49,6 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 51;
     });
     fetchData();
   }
@@ -58,13 +59,21 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     final listing =
         await MyApi.getRequest(endpoint: 'venueviewpage/${this.listingId}');
 
+    final events = await MyApi.getRequest(
+        endpoint: 'YourEvents/functions/${await MyStorage.getToken('userId')}');
     // Update the state
     setState(() {
       this.token = token;
       this.listing = listing ?? {};
+      this.events = events ?? {};
       isLoading = false;
       for (var i = 0; i < listing['pictures'].length; i++) {
-        this._imageUrls.add(listing['pictures'][i]['picturePath']);
+        if (listing['pictures'][i]['picturePath'] != " ") {
+          this._imageUrls.add(listing['pictures'][i]['picturePath']);
+        } else {
+          this._imageUrls.add(
+              "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300");
+        }
       }
       for (var i = 0; i < listing['Addons'].length; i++) {
         this.addonsheadings.add(listing['Addons'][i]['name']);
@@ -86,6 +95,123 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
       this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
     });
+  }
+
+  void showHierarchicalOptions(
+      BuildContext context, double maxThing, double width) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MyColors.Dark,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(maxThing * 0.02),
+          decoration: BoxDecoration(
+            color: MyColors.Dark,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(bottom: maxThing * 0.02),
+                child: Text(
+                  "Choose for a Function",
+                  style: GoogleFonts.montserrat(
+                    fontSize: maxThing * 0.025,
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.white,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: events['Event']?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final event = events['Event'][index];
+                    return Container(
+                      margin: EdgeInsets.only(bottom: maxThing * 0.02),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 1,
+                          color: MyColors.red,
+                        ),
+                        color: MyColors.DarkLighter,
+                      ),
+                      child: ExpansionTile(
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: MyColors.red,
+                        collapsedBackgroundColor: MyColors.DarkLighter,
+                        title: Text(
+                          event['name'],
+                          style: GoogleFonts.montserrat(
+                            fontSize: maxThing * 0.015,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        children: [
+                          ...event['functions'].map<Widget>((function) {
+                            return ListTile(
+                              title: Text(
+                                function['name'],
+                                style: GoogleFonts.montserrat(
+                                  fontSize: maxThing * 0.015,
+                                  color: MyColors.whiteDarker,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              onTap: () async {
+                                final response = await MyApi.postRequest(
+                                    endpoint: 'add/Bookcart/',
+                                    body: {
+                                      'fid': function['id'].toString(),
+                                      'uid':
+                                          await MyStorage.getToken('userId') ??
+                                              "",
+                                      'lid': listingId.toString(),
+                                      'type': 'Venue',
+                                      'slot': selectedDate.toString(),
+                                    });
+
+                                if (response['status'] == 'success') {
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Something went wrong',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: maxThing * 0.015,
+                                          color: MyColors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.red,
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -199,10 +325,16 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                       ),
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.add,
-                                    color: MyColors.Yellow,
-                                    size: maximumDimension * 0.05,
+                                  GestureDetector(
+                                    onTap: () {
+                                      showHierarchicalOptions(context,
+                                          maximumDimension, screenWidth);
+                                    },
+                                    child: Icon(
+                                      Icons.add,
+                                      color: MyColors.Yellow,
+                                      size: maximumDimension * 0.05,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -525,6 +657,11 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                   vertical: maximumDimension * 0.02,
                                   horizontal: maximumDimension * 0.01),
                               child: CalendarView(
+                                onDateSelected: (date) {
+                                  setState(() {
+                                    selectedDate = date;
+                                  });
+                                },
                                 bookedDates: listing['bookedDates']
                                     .map((date) {
                                       return DateTime.parse(date);

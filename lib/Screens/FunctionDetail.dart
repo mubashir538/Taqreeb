@@ -21,6 +21,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
   String token = '';
   Map<String, dynamic> functions = {}; // Initialize as empty map
   late int FunctionId;
+  late int EventId;
   late String eventName;
   bool isLoading = true; // Add a loading flag
 
@@ -33,6 +34,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     setState(() {
       FunctionId = args['fid'];
       eventName = args['event'];
+      this.EventId = args['eventid'];
     });
     fetchData();
   }
@@ -250,9 +252,30 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           ]),
                                       width: screenWidth * 0.8,
                                       child: InkWell(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/CreateGuestList');
+                                          onTap: () async {
+                                            final response =
+                                                await MyApi.postRequest(
+                                                    endpoint: 'show/guest/',
+                                                    body: {
+                                                  'EventId': EventId,
+                                                  'FunctionID': FunctionId
+                                                });
+                                            if (response["Guests"].length ==
+                                                0) {
+                                              Navigator.pushNamed(
+                                                  context, '/CreateGuestList',
+                                                  arguments: {
+                                                    'eventId': EventId,
+                                                    'functionid': FunctionId,
+                                                  });
+                                            } else {
+                                              Navigator.pushNamed(context,
+                                                  '/CreateGuestList_List',
+                                                  arguments: {
+                                                    'eventId': EventId,
+                                                    'functionid': FunctionId,
+                                                  });
+                                            }
                                           },
                                           child: Text("View GuestList")),
                                     ),
@@ -280,38 +303,41 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                       child: InkWell(
                                           onTap: () {
                                             Navigator.pushNamed(context,
-                                                '/CreateChecklistItems');
+                                                '/CreateChecklistItems',
+                                                arguments: {
+                                                  'eventId': EventId,
+                                                  'functionid': FunctionId,
+                                                });
                                           },
                                           child: Text("View CheckLlist")),
                                     ),
-
-                                    Container(
-                                      margin:
-                                          EdgeInsets.all(MaximumThing * 0.01),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: screenHeight * 0.01,
-                                          horizontal: screenWidth * 0.03),
-                                      decoration: BoxDecoration(
-                                          color: MyColors.DarkLighter,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              spreadRadius: 3,
-                                              blurRadius: 4,
-                                              offset: Offset(2, 2),
-                                            ),
-                                          ]),
-                                      width: screenWidth * 0.8,
-                                      child: InkWell(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/InvitationCardEdit');
-                                          },
-                                          child: Text("View Invitation Card")),
-                                    ),
+                                    // Container(
+                                    //   margin:
+                                    //       EdgeInsets.all(MaximumThing * 0.01),
+                                    //   padding: EdgeInsets.symmetric(
+                                    //       vertical: screenHeight * 0.01,
+                                    //       horizontal: screenWidth * 0.03),
+                                    //   decoration: BoxDecoration(
+                                    //       color: MyColors.DarkLighter,
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(10),
+                                    //       boxShadow: [
+                                    //         BoxShadow(
+                                    //           color:
+                                    //               Colors.black.withOpacity(0.5),
+                                    //           spreadRadius: 3,
+                                    //           blurRadius: 4,
+                                    //           offset: Offset(2, 2),
+                                    //         ),
+                                    //       ]),
+                                    //   width: screenWidth * 0.8,
+                                    //   child: InkWell(
+                                    //       onTap: () {
+                                    //         Navigator.pushNamed(
+                                    //             context, '/InvitationCardEdit');
+                                    //       },
+                                    //       child: Text("View Invitation Card")),
+                                    // ),
                                   ]),
                                 ),
                               ],

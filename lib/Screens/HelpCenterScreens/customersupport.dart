@@ -29,7 +29,11 @@ class SupportScreen extends StatelessWidget {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: SearchBox(controller: searchController),
+                child: SearchBox(
+                  onChanged: (value) {},
+                  controller: searchController,
+                  hint: 'Search Typing to Search',
+                ),
               ),
               SizedBox(height: 20),
               Image.asset(
@@ -48,21 +52,21 @@ class SupportScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               GuideButton(
-                onpressed: (){},
+                onpressed: () {},
                 text: 'Contact Live Chat',
                 leftIconPath: MyIcons.communicate,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
-                onpressed: (){},
+                onpressed: () {},
                 text: 'Send Us an Email',
                 leftIconPath: MyIcons.email,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
-                onpressed: (){},
+                onpressed: () {},
                 text: 'FAQs',
                 leftIconPath: MyIcons.faq,
                 rightIconPath: MyIcons.sortArrow,

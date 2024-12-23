@@ -5,8 +5,10 @@ import 'package:taqreeb/theme/color.dart';
 
 class CalendarView extends StatefulWidget {
   final List<DateTime> bookedDates; // List of booked dates
-
-  const CalendarView({Key? key, required this.bookedDates}) : super(key: key);
+  final Function(DateTime) onDateSelected; // Callback function
+  const CalendarView(
+      {Key? key, required this.bookedDates, required this.onDateSelected})
+      : super(key: key);
 
   @override
   _CalendarViewState createState() => _CalendarViewState();
@@ -32,6 +34,7 @@ class _CalendarViewState extends State<CalendarView> {
               _selectedDay = selectedDay;
               _focusedDay = focusedDay; // update focusedDay
             });
+            widget.onDateSelected(selectedDay);
           },
           calendarFormat: CalendarFormat.month,
           calendarStyle: CalendarStyle(

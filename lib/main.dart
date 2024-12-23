@@ -1,4 +1,8 @@
+import 'package:dotenv/dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
@@ -43,6 +47,7 @@ import 'package:taqreeb/Screens/ForgotPassword_VerifyCode.dart';
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_Description.dart';
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.dart';
 import 'package:taqreeb/Screens/FunctionDetail.dart';
+import 'package:taqreeb/Screens/HomePage.dart';
 import 'package:taqreeb/Screens/Login.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
 import 'package:taqreeb/Screens/Settings.dart';
@@ -61,7 +66,36 @@ import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart
 import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+      apiKey: dotenv.env['apiKey'] ?? '',
+      authDomain: dotenv.env['authDomain'] ?? '',
+      projectId: dotenv.env['projectId'] ?? '',
+      storageBucket: dotenv.env['storageBucket'] ?? '',
+      messagingSenderId: dotenv.env['messagingSenderId'] ?? '',
+      appId: dotenv.env['appId'] ?? '',
+      measurementId: dotenv.env['measurementId'] ?? '',
+    ));
+  } else {
+    // final env = await dotenv.load(fileName: '.env');
+
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+            apiKey: "AIzaSyAcZvZmKovuB_DH1s8IrQXspin4pAkbqyo",
+            authDomain: "taqreeb-41c2c.firebaseapp.com",
+            projectId: "taqreeb-41c2c",
+            storageBucket: "taqreeb-41c2c.firebasestorage.app",
+            messagingSenderId: "1057850592954",
+            appId: "1:1057850592954:web:fa114482bbba3f036d3c83",
+            measurementId: "G-057C6DDZJH"));
+    // await Firebase.initializeApp(
+    // options: DefaultFirebaseOptions.currentPlatform,
+    // );
+  }
+
   runApp(const MainApp());
 }
 
@@ -69,9 +103,10 @@ class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
+
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: YourEvents(),
+      home: SearchService(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),

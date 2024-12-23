@@ -13,6 +13,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from datetime import datetime
 
 
 @api_view(['GET'])
@@ -28,6 +29,79 @@ def getFunctionType(request,id):
     functionTypes = md.FunctionType.objects.filter(eventtypeid=id)
     serializer = s.FunctionTypeSerializer(functionTypes,many=True)
     return Response({'status':'success','functionTypes':serializer.data})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def ShowChecklist(request,functionId=None,eventId=None):
+    if request.GET.get('functionId'):
+        checklist = md.CheckList.objects.filter(functionId=functionId,eventId=eventId)
+    else:
+        checklist = md.CheckList.objects.filter(eventId=eventId,functionId__isnull=True)
+    serializer = s.CheckListSerializer(checklist,many=True)
+    return Response({'status':'success','checklist':serializer.data})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def AddtoBookCart(request):
+    fid = request.data.get('fid')
+    lid = request.data.get('lid')
+    uid = request.data.get('uid')
+    type = request.data.get('type')
+    slot = request.data.get('slot')
+    function = md.Functions.objects.get(id=fid)
+    listing = md.Listing.objects.get(id=lid)
+    user = md.User.objects.get(id=uid)
+    if slot:
+        if slot.find(' ') != -1:
+            slot = slot[:-1]
+            slot = datetime.strptime(slot, "%Y-%m-%d %H:%M:%S.%f").date()
+        cart = md.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart',slot=slot)
+    else:
+        cart = md.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart')
+    cart.save()
+    return Response({'status':'success'})
+ 
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def AddListItem(request):
+    if request.data.get('functionId') != 'None':
+        functionId = request.data.get('functionId')
+        function = md.Functions.objects.get(id=functionId)
+    eventId = request.data.get('eventId')
+    event = md.Events.objects.get(id=eventId)
+    item = request.data.get('item')
+    ischecked = request.data.get('ischecked')
+    if request.data.get('functionId') != 'None':
+        checklist = md.CheckList(functionId=function,eventId=event,description=item,isChecked=ischecked)
+    else:
+        checklist = md.CheckList(eventId=event,description=item,isChecked=ischecked)
+    checklist.save()
+    return Response({'status':'success'})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def UpdateListItem(request):
+    item = request.data.get('item')
+    ischecked = request.data.get('ischecked')
+    id = request.data.get('id')
+    print(ischecked)
+    checklist = md.CheckList.objects.get(id=id)
+    checklist.isChecked = ischecked
+    checklist.description = item
+    checklist.save(update_fields=['isChecked','description'])
+    return Response({'status':'success'})
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getHomeImages(request):
+    images = md.HomePageImages.objects.all()
+    serializer = s.HomePageImagesSerializer(images,many=True)
+    return Response({'status':'success','images':serializer.data})
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -383,6 +457,17 @@ def YourEvents(request,id):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def YourEventsandFunctions(request,id):
+    YourEvent = md.Events.objects.filter(userID=id)
+    serializer = s.EventsSerializer(YourEvent,many=True)
+    for event in serializer.data:
+        functions = md.Functions.objects.filter(eventId=event['id'])
+        event['functions'] = s.FunctionsSerializer(functions,many=True).data
+    return Response({'status':'success','Event':serializer.data})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def VenueViewPage(request, listingid):
     venueId = listingid
     Listing = md.Listing.objects.get(id = venueId)
@@ -651,7 +736,7 @@ def ShowGuest(request):
     event = md.Events.objects.get(id=EventId)
     if request.data.get('FunctionID') == 'None':
         functionid = None
-        Guests = md.GuestList.objects.filter(eventId=event)
+        Guests = md.GuestList.objects.filter(eventId=event,functionId_isnull=True)
     else:
         functionid= request.data.get('FunctionID')
         function = md.Functions.objects.get(id=functionid)
