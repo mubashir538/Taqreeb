@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -137,7 +138,6 @@ class _EventDetailsState extends State<EventDetails> {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        print(events);
                         return Function12(
                           name: events['Functions'][index]['name'],
                           type: events['Functions'][index]['type'],
@@ -158,6 +158,7 @@ class _EventDetailsState extends State<EventDetails> {
                           seePressed: () {
                             Navigator.pushNamed(context, '/FunctionDetail',
                                 arguments: {
+                                  'eventid': EventId,
                                   'event': events['EventDetail']['name'],
                                   'fid': events['Functions'][index]['id']
                                 });
@@ -168,29 +169,6 @@ class _EventDetailsState extends State<EventDetails> {
                           ? events['Functions'].length
                           : 0,
                     ),
-                    // Container(
-                    //   margin: EdgeInsets.all(MaximumThing * 0.02),
-                    //   width: screenWidth * 0.8,
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       InkWell(
-                    //         onTap: () {
-                    //           Navigator.pushNamed(context, '/CreateFunction',
-                    //               arguments: {
-                    //                 'eventId': EventId,
-                    //                 'type': events['EventDetail']['type']
-                    //               });
-                    //         },
-                    //         child: Image.asset(
-                    //           MyIcons.add,
-                    //           color: MyColors.white,
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-
                     Container(
                       margin: EdgeInsets.all(MaximumThing * 0.01),
                       padding: EdgeInsets.symmetric(
@@ -209,8 +187,25 @@ class _EventDetailsState extends State<EventDetails> {
                           ]),
                       width: screenWidth * 0.8,
                       child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/CreateGuestList');
+                          onTap: () async {
+                            final response = await MyApi.postRequest(
+                                endpoint: 'show/guest/',
+                                body: {
+                                  'EventId': EventId,
+                                  'FunctionID': "None"
+                                });
+                            if (response["Guests"].length == 0) {
+                              Navigator.pushNamed(context, '/CreateGuestList',
+                                  arguments: {
+                                    'eventId': EventId,
+                                  });
+                            } else {
+                              Navigator.pushNamed(
+                                  context, '/CreateGuestList_List',
+                                  arguments: {
+                                    'eventId': EventId,
+                                  });
+                            }
                           },
                           child: Text("View GuestList")),
                     ),
@@ -235,36 +230,38 @@ class _EventDetailsState extends State<EventDetails> {
                       child: InkWell(
                           onTap: () {
                             Navigator.pushNamed(
-                                context, '/CreateChecklistItems');
+                                context, '/CreateChecklistItems',
+                                arguments: {
+                                  'eventId': EventId,
+                                });
                           },
                           child: Text("View CheckLlist")),
                     ),
 
-                    Container(
-                      margin: EdgeInsets.all(MaximumThing * 0.01),
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenHeight * 0.01,
-                          horizontal: screenWidth * 0.03),
-                      decoration: BoxDecoration(
-                          color: MyColors.DarkLighter,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 4,
-                              offset: Offset(2, 2),
-                            ),
-                          ]),
-                      width: screenWidth * 0.8,
-                      child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/InvitationCardEdit');
-                          },
-                          child: Text("View Invitation Card")),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.all(MaximumThing * 0.01),
+                    //   padding: EdgeInsets.symmetric(
+                    //       vertical: screenHeight * 0.01,
+                    //       horizontal: screenWidth * 0.03),
+                    //   decoration: BoxDecoration(
+                    //       color: MyColors.DarkLighter,
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.black.withOpacity(0.5),
+                    //           spreadRadius: 5,
+                    //           blurRadius: 4,
+                    //           offset: Offset(2, 2),
+                    //         ),
+                    //       ]),
+                    //   width: screenWidth * 0.8,
+                    //   child: InkWell(
+                    //       onTap: () {
+                    //         Navigator.pushNamed(context, '/InvitationCardEdit');
+                    //       },
+                    //       child: Text("View Invitation Card")),
+                    // ),
 
-                    //icon (yh call ni horha)
                     SizedBox(
                       height: screenHeight * 0.1,
                       child: Center(child: MyDivider()),

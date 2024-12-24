@@ -6,6 +6,7 @@ import 'package:taqreeb/theme/color.dart';
 class IconedButton extends StatelessWidget {
   final String text;
   final String icon;
+
   const IconedButton({required this.text, required this.icon, super.key});
 
   @override
