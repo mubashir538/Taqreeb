@@ -44,10 +44,15 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> templistings = {}; // Initialize as empty map
 
   ScrollController _scrollController = ScrollController();
+  bool ischange = false;
+
   @override
-  void initState() {
-    super.initState();
-    fetchData(); // Fetch data in a separate method
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   void fetchData() async {
@@ -60,12 +65,6 @@ class _SearchServiceState extends State<SearchService> {
       // }
     );
 
-    final fetchedImages = await MyApi.getRequest(
-      endpoint: 'Homepage/DemoImages/',
-      //  headers: {
-      //   'Authorization
-      // }
-    );
     final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
 
     // Update the state
@@ -73,8 +72,10 @@ class _SearchServiceState extends State<SearchService> {
       this.token = token;
       this.categories = fetchedCategories ?? {}; // Ensure no null data
       this.listings = fetchedListings ?? {}; // Ensure no null data
-      this.templistings = fetchedListings ?? {}; // Ensure no null data
+      this.templistings =
+          Map.from(fetchedListings) ?? {}; // Ensure no null data
       isLoading = false; // Data has been fetched, so stop loading
+      ischange = true;
     });
   }
 
@@ -117,7 +118,16 @@ class _SearchServiceState extends State<SearchService> {
                                 width: screenWidth * 0.75,
                                 onChanged: (value) {
                                   setState(() {
-                                    searchResults = [];
+                                    searchwithFilters();
+                                    print(
+                                        'listing: ${listings['HomeListing']}');
+                                    templistings['HomeListing'] =
+                                        templistings['HomeListing']
+                                            .where((element) => element['name']
+                                                .toString()
+                                                .toLowerCase()
+                                                .contains(value.toLowerCase()))
+                                            .toList();
                                   });
                                 },
                               ),
@@ -215,7 +225,9 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void searchwithFilters() {
-    templistings['HomeListing'] = listings['HomeListing'];
+    print('listing in searchwithFilters: ${listings['HomeListing']}');
+    templistings['HomeListing'] = List.from(listings['HomeListing']);
+    print('initial list: ${templistings['HomeListing']}');
     setState(() {
       for (String i in appliedFilters) {
         if (i == "Price") {
@@ -224,6 +236,10 @@ class _SearchServiceState extends State<SearchService> {
                   element['basicPrice'] >= rangeSliderController.minValue &&
                   element['basicPrice'] <= rangeSliderController.maxValue)
               .toList();
+          print('found price');
+        } else {
+          rangeSliderController.minValue = 10000;
+          rangeSliderController.maxValue = 5000000;
         }
         // if (i == "Ratings") {
         //   templistings['HomeListing'] = templistings['HomeListing']
@@ -235,6 +251,7 @@ class _SearchServiceState extends State<SearchService> {
               .where((element) =>
                   categoryController.selections.contains(element['type']))
               .toList();
+          print('found Category');
         }
         if (i == "Location") {
           templistings['HomeListing'] = templistings['HomeListing']
@@ -249,6 +266,7 @@ class _SearchServiceState extends State<SearchService> {
         //       .toList();
         // }
       }
+      print('final list: ${templistings['HomeListing']}');
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -7,8 +8,18 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
 
-class BusinessSignup_Description extends StatelessWidget {
+class BusinessSignup_Description extends StatefulWidget {
   const BusinessSignup_Description({super.key});
+
+  @override
+  State<BusinessSignup_Description> createState() =>
+      _BusinessSignup_DescriptionState();
+}
+
+class _BusinessSignup_DescriptionState
+    extends State<BusinessSignup_Description> {
+  int charactersLeft = 1100;
+  TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +28,6 @@ class BusinessSignup_Description extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController nameController = TextEditingController();
-    
     return Scaffold(
         backgroundColor: Colors.black,
         body: SingleChildScrollView(
@@ -32,8 +40,6 @@ class BusinessSignup_Description extends StatelessWidget {
                         'customers and can help your get more clients '),
                 Column(
                   children: [
-                    MyTextBox(hint: 'Profile Username',valueController: usernameController,),
-                    MyTextBox(hint: 'Profile Name',valueController: nameController,),
                     Container(
                       margin: EdgeInsets.all(MaximumThing * 0.01),
                       height: screenHeight * 0.4,
@@ -53,6 +59,10 @@ class BusinessSignup_Description extends StatelessWidget {
                         ],
                       ),
                       child: TextField(
+                        controller: descriptionController,
+                        onChanged: (value) => setState(() {
+                          charactersLeft = 1100 - value.length;
+                        }),
                         maxLines: 10,
                         style: GoogleFonts.montserrat(
                             color: MyColors.white,
@@ -75,7 +85,7 @@ class BusinessSignup_Description extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            "1100 characters left",
+                            "${charactersLeft.toString()} characters left",
                             style: GoogleFonts.montserrat(
                               color: MyColors.white,
                               fontSize: MaximumThing * 0.018,
@@ -89,8 +99,14 @@ class BusinessSignup_Description extends StatelessWidget {
                       height: screenHeight * 0.05,
                       child: MyDivider(),
                     ),
-                    ColoredButton(text: "Signup",
-                    onPressed: () => Navigator.pushNamed(context, '/SubmissionSucessful'),)
+                    ColoredButton(
+                        text: "Continue",
+                        onPressed: () {
+                          MyStorage.saveToken(
+                              descriptionController.text, 'bsdescription');
+                          Navigator.pushNamed(context, '/ProfilePictureUpload',
+                              arguments: {'type': 'Business'});
+                        })
                   ],
                 )
               ]),

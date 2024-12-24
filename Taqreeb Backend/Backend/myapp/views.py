@@ -33,6 +33,18 @@ def getFunctionType(request,id):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def searchType(request,userid):
+    business = md.BusinessOwner.objects.filter(userID=userid)
+    response = {'status':'success','business':False,'freelancer':False}
+    if business:
+        response['business'] = True
+    freelancer = md.Freelancer.objects.filter(userId=userid)
+    if freelancer:
+        response['freelancer'] = True
+    return Response(response)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def ShowChecklist(request,functionId=None,eventId=None):
     if request.GET.get('functionId'):
         checklist = md.CheckList.objects.filter(functionId=functionId,eventId=eventId)
@@ -41,6 +53,42 @@ def ShowChecklist(request,functionId=None,eventId=None):
     serializer = s.CheckListSerializer(checklist,many=True)
     return Response({'status':'success','checklist':serializer.data})
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def showBookCart(request,id):
+    cart = md.BookingCart.objects.filter(functionId=id,status='Cart')
+    cartserializer = s.BookingCartSerializer(cart,many=True)
+    items = []
+    for i in cart:
+        listing = i.listingId
+        listingserializer = s.ListingSerializer(listing,many=False)
+        pictures = md.PicturesListings.objects.filter(listingId=listing.id)
+        pictures = s.PicturesListingSerializers(pictures,many=True).data
+        view= None
+        if i.type == 'Venue':
+            view = md.Venue.objects.get(listingID=listing.id)
+            view = s.VenueSerializer(view,many=False).data
+        elif i.type == 'Salon':
+            view = md.Salons.objects.get(listingID=listing.id)
+            view = s.SalonsSerializer(view,many=False).data
+        elif i.type == 'Parlor':
+            view = md.Parlors.objects.get(listingID=listing.id)
+            view = s.ParlorsSerializer(view,many=False).data
+        elif i.type == 'Baker':
+            view = md.BakersAndSweets.objects.get(listingID=listing.id)
+            view = s.BakersAndSweetsSerializer(view,many=False).data
+        elif i.type == 'PhotographyPlace':
+            view = md.PhotographyPlaces.objects.get(listingID=listing.id)
+            view = s.PhotographyPlacesSerializer(view,many=False).data
+        elif i.type == 'Decorator':
+            view = md.Decorators.objects.get(listingID=listing.id)
+            view = s.DecoratorsSerializer(view,many=False).data
+        elif i.type == 'Photographer':
+            view = md.Photographers.objects.get(listingID=listing.id)
+            view = s.PhotographersSerializer(view,many=False).data
+        item = {'id':i.id,'listing':listingserializer.data,'type':i.type,'view':view,'pictures':pictures}
+        items.append(item)
+    return Response({'status':'success','cart':items})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -88,7 +136,6 @@ def UpdateListItem(request):
     item = request.data.get('item')
     ischecked = request.data.get('ischecked')
     id = request.data.get('id')
-    print(ischecked)
     checklist = md.CheckList.objects.get(id=id)
     checklist.isChecked = ischecked
     checklist.description = item
@@ -172,7 +219,6 @@ def sendOTPEmail(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def AccountSignupPage(request):
-    print(request.data)
     firstName = request.data.get('firstName')
     lastName = request.data.get('lastName')
     password = request.data.get('password')
@@ -216,14 +262,13 @@ def BusinessOwnerSignup(request):
     businessName = request.data.get('businessName')
     username = request.data.get('username')
     cnic = request.data.get('cnic')
-    category = request.data.get('category')
     cnicFront = request.data.get('cnicFront')
     cnicBack = request.data.get('cnicBack')
     description = request.data.get('description')
     user = md.User.objects.get(id=userid)
     if md.BusinessOwner.objects.filter(userID=userid).exists():
         return Response({'status':'error', 'message': 'Business Owner Already Exists'}) 
-    owner = md.BusinessOwner(userID=user,CNICFront=cnicFront,CNICBack=cnicBack,businessName=businessName,businessUsername=username,Description=description,category=category,cnic=cnic)
+    owner = md.BusinessOwner(userID=user,CNICFront=cnicFront,CNICBack=cnicBack,businessName=businessName,businessUsername=username,Description=description,cnic=cnic)
     owner.save()
     return Response({'status':'success'})
 
@@ -308,7 +353,6 @@ def FreelancerSignup(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def AddGuests(request):
-    print(request.data)
     guesttype = request.data.get('guesttype')
     eid = request.data.get('eid')
     event = md.Events.objects.get(id=eid)
@@ -360,7 +404,6 @@ def EditFunction(request):
     functionId = int(request.data.get('Function Id'))
     function = md.Functions.objects.get(id=functionId)
     try:
-        print(name,' ',budget,' ',type,' ',date,' ',guestsmin,' ',guestsmax)
         function.name = name
         function.type = type
         function.budget = budget
@@ -736,11 +779,10 @@ def ShowGuest(request):
     event = md.Events.objects.get(id=EventId)
     if request.data.get('FunctionID') == 'None':
         functionid = None
-        Guests = md.GuestList.objects.filter(eventId=event,functionId_isnull=True)
+        Guests = md.GuestList.objects.filter(eventId=event,functionId__isnull=True)
     else:
         functionid= request.data.get('FunctionID')
-        function = md.Functions.objects.get(id=functionid)
-        Guests = md.GuestList.objects.filter(eventId=event,functionId=function)
+        Guests = md.GuestList.objects.filter(eventId=event,functionId=functionid)
     GuestListSerializer = s.GuestListSerializer(Guests,many=True)
     return Response({'status': 'success', 'Guests':GuestListSerializer.data})
     

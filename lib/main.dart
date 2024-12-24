@@ -86,7 +86,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SearchService(),
+      home: SplashScreen(),
       routes: {
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),

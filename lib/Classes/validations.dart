@@ -11,6 +11,19 @@ class Validations {
     return "Ok";
   }
 
+  static String validateUsername(String? value) {
+    value = value?.trim();
+
+    if (value == null || value.isEmpty) {
+      return 'Please enter a username';
+    } else if (value.contains(' ')) {
+      return 'Username cannot contain spaces';
+    } else if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Username can only contain letters, numbers and underscores';
+    }
+    return "Ok";
+  }
+
   static String validatePassword(String? value) {
     value = value?.trim();
 

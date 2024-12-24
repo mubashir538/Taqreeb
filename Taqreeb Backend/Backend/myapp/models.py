@@ -14,12 +14,10 @@ class User(m.Model):
 class BusinessOwner(m.Model):
     id = m.AutoField(primary_key=True)
     cnic = m.TextField(null=True)
-    category = m.TextField(null=True)
     userID = m.ForeignKey(User,on_delete=m.CASCADE)
     CNICFront = m.CharField(max_length=100)
     CNICBack = m.CharField(max_length=100)
     businessName = m.CharField(max_length=100)
-    email = m.CharField(max_length=50)
     businessUsername = m.CharField(max_length=50)
     Description = m.CharField(max_length=1100)
     status = m.TextField(null=True)

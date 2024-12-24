@@ -173,7 +173,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                           await MyStorage.getToken('userId') ??
                                               "",
                                       'lid': listingId.toString(),
-                                      'type': 'Venue',
+                                      'type': 'Decorator',
                                       'slot': selectedDate.toString(),
                                     });
 
