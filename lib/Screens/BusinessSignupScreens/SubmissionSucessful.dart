@@ -27,6 +27,9 @@ class SubmissionSucessful extends StatelessWidget {
           ),
           ColoredButton(
             text: 'Continue to Home',
+            onPressed: () {
+              Navigator.pushNamed(context, '/HomePage');
+            },
           ),
         ],
       ),

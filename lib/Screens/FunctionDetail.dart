@@ -9,6 +9,7 @@ import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
+import 'dart:math';
 
 class FunctionDetail extends StatefulWidget {
   const FunctionDetail({super.key});
@@ -20,10 +21,13 @@ class FunctionDetail extends StatefulWidget {
 class _FunctionDetailState extends State<FunctionDetail> {
   String token = '';
   Map<String, dynamic> functions = {}; // Initialize as empty map
+  Map<String, dynamic> bookings = {};
   late int FunctionId;
+  late int EventId;
   late String eventName;
   bool isLoading = true; // Add a loading flag
-
+  List<Map<String, dynamic>> bookinglist = [];
+  bool ischanged = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -33,8 +37,11 @@ class _FunctionDetailState extends State<FunctionDetail> {
     setState(() {
       FunctionId = args['fid'];
       eventName = args['event'];
+      this.EventId = args['eventid'];
     });
-    fetchData();
+    if (!ischanged) {
+      fetchData();
+    }
   }
 
   void fetchData() async {
@@ -45,11 +52,19 @@ class _FunctionDetailState extends State<FunctionDetail> {
     final function =
         await MyApi.getRequest(endpoint: 'ViewFunction/${this.FunctionId}');
 
+    final bookings =
+        await MyApi.getRequest(endpoint: 'show/Bookcart/${this.FunctionId}');
+
     print(function);
     // Update the state
     setState(() {
       this.token = token;
-      this.functions = function ?? {}; // Ensure no null data
+      functions = function ?? {};
+      this.bookings = bookings ?? {}; // Ensure no null data
+      for (int i = 0; i < this.bookings['cart'].length; i++) {
+        bookinglist.add(this.bookings['cart'][i]);
+      }
+      ischanged = true;
       isLoading = false; // Data has been fetched, so stop loading
     });
   }
@@ -70,7 +85,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
             '${functions['Fuctions']['guestsmin'].toString()}-${functions['Fuctions']['guestsmax'].toString()}',
             functions['Fuctions']['date']
           ];
-    List<String> bookinglist = ['Venue', 'Saloon', 'Photographer'];
     return Scaffold(
         backgroundColor: MyColors.Dark,
         body: SingleChildScrollView(
@@ -202,11 +216,11 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                       child: Center(child: MyDivider()),
                                     ),
 
-                                    for (var list in bookinglist)
+                                    for (var booking in bookinglist)
                                       Column(
                                         children: [
                                           Text(
-                                            list,
+                                            booking['type'].toString(),
                                             style: GoogleFonts.montserrat(
                                                 fontSize: MaximumThing * 0.02,
                                                 fontWeight: FontWeight.w600,
@@ -214,15 +228,22 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           ),
                                           Productcard(
                                             mywidth: screenWidth * 0.85,
-                                            onpressed: () {
-                                              Navigator.pushNamed(context,
-                                                  '/CategoryView_Venue');
-                                            },
-                                            imageUrl:
-                                                "https://i.ytimg.com/vi/Ipgwk6VsAFA/maxresdefault.jpg",
-                                            venueName: "The Mansion",
-                                            location: "Karachi",
-                                            type: 'Venue',
+                                            listingType: booking['listing']
+                                                    ['type']
+                                                .toString(),
+                                            listingid: booking['listing']['id']
+                                                .toString(),
+                                            imageUrl: booking['pictures'][0]
+                                                        ['picturePath'] ==
+                                                    " "
+                                                ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${booking['pictures'][0]['picturePath']}',
+                                            venueName: booking['listing']
+                                                ['name'],
+                                            location: booking['listing']
+                                                ['location'],
+                                            type: booking['listing']['type']
+                                                .toString(),
                                           ),
                                         ],
                                       ),
@@ -252,9 +273,32 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           ]),
                                       width: screenWidth * 0.8,
                                       child: InkWell(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/CreateGuestList');
+                                          onTap: () async {
+                                            print(
+                                                "EventId: $EventId FunctionId: $FunctionId");
+                                            final response =
+                                                await MyApi.postRequest(
+                                                    endpoint: 'show/guest/',
+                                                    body: {
+                                                  'EventId': EventId,
+                                                  'FunctionID': FunctionId
+                                                });
+                                            if (response["Guests"].length ==
+                                                0) {
+                                              Navigator.pushNamed(
+                                                  context, '/CreateGuestList',
+                                                  arguments: {
+                                                    'eventId': EventId,
+                                                    'functionid': FunctionId,
+                                                  });
+                                            } else {
+                                              Navigator.pushNamed(context,
+                                                  '/CreateGuestList_List',
+                                                  arguments: {
+                                                    'eventId': EventId,
+                                                    'functionid': FunctionId,
+                                                  });
+                                            }
                                           },
                                           child: Text("View GuestList")),
                                     ),
@@ -282,38 +326,41 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                       child: InkWell(
                                           onTap: () {
                                             Navigator.pushNamed(context,
-                                                '/CreateChecklistItems');
+                                                '/CreateChecklistItems',
+                                                arguments: {
+                                                  'eventId': EventId,
+                                                  'functionid': FunctionId,
+                                                });
                                           },
                                           child: Text("View CheckLlist")),
                                     ),
-
-                                    Container(
-                                      margin:
-                                          EdgeInsets.all(MaximumThing * 0.01),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: screenHeight * 0.01,
-                                          horizontal: screenWidth * 0.03),
-                                      decoration: BoxDecoration(
-                                          color: MyColors.DarkLighter,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              spreadRadius: 3,
-                                              blurRadius: 4,
-                                              offset: Offset(2, 2),
-                                            ),
-                                          ]),
-                                      width: screenWidth * 0.8,
-                                      child: InkWell(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/InvitationCardEdit');
-                                          },
-                                          child: Text("View Invitation Card")),
-                                    ),
+                                    // Container(
+                                    //   margin:
+                                    //       EdgeInsets.all(MaximumThing * 0.01),
+                                    //   padding: EdgeInsets.symmetric(
+                                    //       vertical: screenHeight * 0.01,
+                                    //       horizontal: screenWidth * 0.03),
+                                    //   decoration: BoxDecoration(
+                                    //       color: MyColors.DarkLighter,
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(10),
+                                    //       boxShadow: [
+                                    //         BoxShadow(
+                                    //           color:
+                                    //               Colors.black.withOpacity(0.5),
+                                    //           spreadRadius: 3,
+                                    //           blurRadius: 4,
+                                    //           offset: Offset(2, 2),
+                                    //         ),
+                                    //       ]),
+                                    //   width: screenWidth * 0.8,
+                                    //   child: InkWell(
+                                    //       onTap: () {
+                                    //         Navigator.pushNamed(
+                                    //             context, '/InvitationCardEdit');
+                                    //       },
+                                    //       child: Text("View Invitation Card")),
+                                    // ),
                                   ]),
                                 ),
                               ],

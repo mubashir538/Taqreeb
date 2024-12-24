@@ -86,7 +86,8 @@ class FreelancerSignup_Description extends StatelessWidget {
             ColoredButton(
               text: "Continue",
               onPressed: () {
-                Navigator.pushNamed(context, '/ProfilePictureUpload');
+                Navigator.pushNamed(context, '/ProfilePictureUpload',
+                              arguments: {'type': 'freelancer'});
               },
             )
           ],

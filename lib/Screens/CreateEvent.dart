@@ -35,10 +35,6 @@ class _CreateEventState extends State<CreateEvent> {
   String eventid = "";
   Map<String, dynamic> Event = {};
   bool edit = false;
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {

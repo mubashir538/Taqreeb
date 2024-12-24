@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class Header extends StatefulWidget {
@@ -75,11 +77,31 @@ class _HeaderState extends State<Header> {
                 InkWell(
                   onTap: () async {
                     if (currentRoute == '/settings') {
-                      await MyStorage.deleteToken('refresh');
-                      await MyStorage.deleteToken('accessToken');
-                      await MyStorage.deleteToken('userId');
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/Login', (Route<dynamic> route) => false);
+                      warningDialog(
+                          title: 'Logout',
+                          message: 'Are you sure you want to logout?',
+                          actions: [
+                            ColoredButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              text: 'Cancel',
+                              textSize: MaximumThing * 0.015,
+                              width: screenWidth * 0.3,
+                            ),
+                            ColoredButton(
+                              onPressed: () async {
+                                await MyStorage.deleteToken('refresh');
+                                await MyStorage.deleteToken('accessToken');
+                                await MyStorage.deleteToken('userId');
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/Login', (Route<dynamic> route) => false);
+                              },
+                              text: 'Logout',
+                              width: screenWidth * 0.3,
+                              textSize: MaximumThing * 0.015,
+                            ),
+                          ]).showDialogBox(context);
                     } else {
                       Navigator.pushNamed(context, '/settings');
                     }

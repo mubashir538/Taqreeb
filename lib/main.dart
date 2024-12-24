@@ -1,4 +1,8 @@
+import 'package:dotenv/dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
@@ -43,6 +47,7 @@ import 'package:taqreeb/Screens/ForgotPassword_VerifyCode.dart';
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_Description.dart';
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.dart';
 import 'package:taqreeb/Screens/FunctionDetail.dart';
+import 'package:taqreeb/Screens/HomePage.dart';
 import 'package:taqreeb/Screens/Login.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
 import 'package:taqreeb/Screens/Settings.dart';
@@ -56,11 +61,22 @@ import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
 import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_EventDetail.dart';
 import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
 import 'package:taqreeb/Screens/View%20AI%20Packages/ViewAIPackage.dart';
+import 'package:taqreeb/Screens/YourEvents.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
+import 'package:taqreeb/abc.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(options: abc.fb);
+  } else {
+    // final env = await dotenv.load(fileName: '.env');
+
+    await Firebase.initializeApp(options: abc.fb);
+  }
+
   runApp(const MainApp());
 }
 
@@ -70,8 +86,8 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CategoryView_Venue(),
       routes: {
+        '/': (context) => AddcategoryList(),
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
         '/AddCategory_AddImage': (context) => AddImage(),
@@ -123,7 +139,7 @@ class MainApp extends StatelessWidget {
         '/CreateFunction': (context) => CreateFunction(),
         '/EventDetails': (context) => EventDetails(),
         '/CategoryView_Venue': (context) => CategoryView_Venue(),
-        '/CategoryView_Saloon': (context) => CategoryView_Saloon(),
+        '/CategoryView_Salon': (context) => CategoryView_Saloon(),
         '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
         '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
         '/CategoryView_Decorator': (context) => CategoryView_Decorator(),

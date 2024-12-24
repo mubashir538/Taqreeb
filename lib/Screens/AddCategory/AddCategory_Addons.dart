@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
-class AddcategoryAddons extends StatelessWidget {
+class AddcategoryAddons extends StatefulWidget {
   const AddcategoryAddons({super.key});
+
+  @override
+  State<AddcategoryAddons> createState() => _AddcategoryAddonsState();
+}
+
+class _AddcategoryAddonsState extends State<AddcategoryAddons> {
+  Map<String, dynamic> args = {};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    this.args = args;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,18 +29,21 @@ class AddcategoryAddons extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Header(
-              heading: 'AddOns',
+              heading: 'Add AddOns',
+              para: 'Add AddOns for your Service',
             ),
             SizedBox(height: screenHeight * 0.03),
+            // Container for displaying Addons dynamically
             Container(
               margin: EdgeInsets.all(screenWidth * 0.01),
-              height: screenHeight * 0.2,
               width: screenWidth * 0.9,
               padding: EdgeInsets.symmetric(
                 horizontal: screenWidth * 0.03,
@@ -42,327 +61,92 @@ class AddcategoryAddons extends StatelessWidget {
                   ),
                 ],
               ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  double rowSpacing = constraints.maxWidth * 0.02;
-                  double textSizeLarge = constraints.maxWidth * 0.05;
-                  double textSizeSmall = constraints.maxWidth * 0.04;
-                  double priceAlignment = constraints.maxWidth * 0.5;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Add-Ons",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeLarge,
-                              fontWeight: FontWeight.w600,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.04),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Decorations",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 30,000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Female Staff",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 20,000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Extra Staff",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 100/Person",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Heading for AddOns (only shown once)
+                  Text(
+                    "Add-Ons",
+                    style: GoogleFonts.montserrat(
+                      fontSize: MaximumThing * 0.02,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.Yellow,
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  // Dynamically generated Add-Ons List
+                  args['addons'] != null
+                      ? Column(
+                          children: [
+                            ...args['addons'].map<Widget>((addon) {
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(width: MaximumThing * 0.02),
+                                      Text(
+                                        addon['name'],
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: MaximumThing * 0.015,
+                                          fontWeight: FontWeight.w400,
+                                          color: MyColors.Yellow,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Text(
+                                        addon['perhead'].toLowerCase() == 'yes'
+                                            ? '${addon['price']}/${addon['headtype']}'
+                                            : addon['price'],
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: MaximumThing * 0.015,
+                                          fontWeight: FontWeight.w400,
+                                          color: MyColors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: MaximumThing * 0.02),
+                                ],
+                              );
+                            }).toList(),
+                          ],
+                        )
+                      : Container()
+                ],
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
-            Container(
-              margin: EdgeInsets.all(screenWidth * 0.01),
-              height: screenHeight * 0.4,
-              width: screenWidth * 0.9,
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.03,
-                vertical: screenHeight * 0.02,
-              ),
-              decoration: BoxDecoration(
-                color: MyColors.DarkLighter,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  double rowSpacing = constraints.maxWidth * 0.02;
-                  double textSizeLarge = constraints.maxWidth * 0.05;
-                  double textSizeSmall = constraints.maxWidth * 0.04;
-                  double priceAlignment = constraints.maxWidth * 0.5;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Add-Ons",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeLarge,
-                              fontWeight: FontWeight.w600,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.04),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Hair Cut & Hair Color  ",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs.   2,000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Hair Treatments",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 1000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Manicure & Pedicure ",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 1500",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Eyesbrows & Lashes",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 5000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Waxing",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs. 800",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Skin Care",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs.  5,000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.03),
-                      Row(
-                        children: [
-                          SizedBox(width: rowSpacing),
-                          Text(
-                            "Makeup",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.Yellow,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Rs.  1,000",
-                            style: GoogleFonts.montserrat(
-                              fontSize: textSizeSmall,
-                              fontWeight: FontWeight.w400,
-                              color: MyColors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+            ColoredButton(
+                text: 'Continue',
+                width: screenWidth * 0.5,
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/AddCategory_Packages', // Replace with your target screen's route
+                    arguments: args, // Passing the args map to the next screen
                   );
-                },
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: MyColors.white,
-                  child: Image.asset(
-                    MyIcons.add,
-                    color: MyColors.DarkLighter,
-                  ),
-                ),
-              ],
-            ),
+                }),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: MyColors.Yellow,
+        onPressed: () {
+          if (args['addons'] == null) {
+            print(args);
+            args.addAll({'addons': []});
+          }
+          print(' args+${args}');
+          Navigator.pushNamed(
+            context,
+            '/AddCategory_Add_Addons', // Replace with your target screen's route
+            arguments: args, // Passing the args map to the next screen
+          );
+        },
+        child: Icon(
+          Icons.add,
+          color: MyColors.Dark,
+          size: MaximumThing * 0.04,
         ),
       ),
     );
