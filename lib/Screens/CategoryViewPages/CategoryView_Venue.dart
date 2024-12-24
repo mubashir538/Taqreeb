@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Animations/Bounceanimation.dart';
+import 'package:taqreeb/Animations/Fadeanimation.dart';
+import 'package:taqreeb/Animations/textflipanimation.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
