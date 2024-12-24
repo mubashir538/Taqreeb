@@ -14,6 +14,7 @@ class AddcategoryAddons extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -297,7 +298,7 @@ class AddcategoryAddons extends StatelessWidget {
                           ),
                         ],
                       ),
-                       SizedBox(height: constraints.maxHeight * 0.03),
+                      SizedBox(height: constraints.maxHeight * 0.03),
                       Row(
                         children: [
                           SizedBox(width: rowSpacing),
@@ -320,7 +321,7 @@ class AddcategoryAddons extends StatelessWidget {
                           ),
                         ],
                       ),
-                       SizedBox(height: constraints.maxHeight * 0.03),
+                      SizedBox(height: constraints.maxHeight * 0.03),
                       Row(
                         children: [
                           SizedBox(width: rowSpacing),

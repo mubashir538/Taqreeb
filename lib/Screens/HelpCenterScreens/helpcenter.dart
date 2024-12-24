@@ -47,18 +47,21 @@ class SupportScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               GuideButton(
+                onpressed: (){},
                 text: 'Guide',
                 leftIconPath: MyIcons.guide,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
+                onpressed: (){},
                 text: 'FAQ',
                 leftIconPath: MyIcons.faq,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
+                onpressed: (){},
                 text: 'Customer Support',
                 leftIconPath: MyIcons.people,
                 rightIconPath: MyIcons.sortArrow,

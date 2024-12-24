@@ -7,10 +7,10 @@ class GuideIcon extends StatelessWidget {
   final String text;
 
   const GuideIcon({
-    Key? key,
+    super.key,
     required this.iconPath,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

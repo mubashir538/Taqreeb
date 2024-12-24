@@ -12,6 +12,12 @@ class BusinessOwnerSerializer(s.ModelSerializer):
         fields = '__all__'
 
 
+class PicturesListingSerializers(s.ModelSerializer):
+    class Meta:
+        model = mp.PicturesListings
+        fields = '__all__'
+
+
 class FreelancerSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Freelancer

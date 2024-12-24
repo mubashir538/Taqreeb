@@ -14,6 +14,7 @@ class AddcategoryPackages extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -52,18 +53,18 @@ class AddcategoryPackages extends StatelessWidget {
                 packagename: 'Basic package'),
             SizedBox(height: screenHeight * 0.03),
             Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: MyColors.white,
-                      child: Image.asset(
-                        MyIcons.add,
-                        color: MyColors.DarkLighter,
-                      ),
-                    ),
-                  ],
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: MyColors.white,
+                  child: Image.asset(
+                    MyIcons.add,
+                    color: MyColors.DarkLighter,
+                  ),
                 ),
+              ],
+            ),
           ],
         ),
       ),

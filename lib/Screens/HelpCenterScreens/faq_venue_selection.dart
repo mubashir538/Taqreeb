@@ -5,6 +5,8 @@ import 'package:taqreeb/Components/faq_questions.dart';
 import 'package:taqreeb/Components/Search Box.dart';
 
 class FAQScreen extends StatefulWidget {
+  const FAQScreen({super.key});
+
   @override
   _FAQScreenState createState() => _FAQScreenState();
 }
@@ -12,7 +14,7 @@ class FAQScreen extends StatefulWidget {
 class _FAQScreenState extends State<FAQScreen> {
   final TextEditingController searchController = TextEditingController();
 
-  List<bool> _expandedStates = [false, false, false, false];
+  final List<bool> _expandedStates = [false, false, false, false];
 
   void _toggleExpansion(int index) {
     setState(() {

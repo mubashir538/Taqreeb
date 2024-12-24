@@ -16,7 +16,11 @@ class ForgotPassword_NewPassword extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    TextEditingController passwordController = TextEditingController();
+    TextEditingController confirmpasswordController = TextEditingController();
+
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,60 +34,67 @@ class ForgotPassword_NewPassword extends StatelessWidget {
               margin: EdgeInsets.only(top: MaximumThing * 0.05),
               child: Column(
                 children: [
-                  MyTextBox(hint: 'New Password'),
-                  MyTextBox(hint: 'Confirm Password'),
+                  MyTextBox(
+                    hint: 'New Password',
+                    valueController: passwordController,
+                  ),
+                  MyTextBox(
+                    hint: 'Confirm Password',
+                    valueController: confirmpasswordController,
+                  ),
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: MaximumThing*0.02),
-                    width: screenWidth * 0.9,
+                      margin:
+                          EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+                      width: screenWidth * 0.9,
                       child: Column(
-                    children: [
-                      Row(children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: MaximumThing * 0.01),
-                          child: Icon(Icons.check_circle_outline_rounded,
-                              size: 20, color: MyColors.white),
-                        ),
-                        Text(
-                          "At least 8 characters",
-                          style: GoogleFonts.montserrat(
-                              fontSize: MaximumThing * 0.015,
-                              fontWeight: FontWeight.w300,
-                              color: MyColors.white),
-                        ),
-                      ]),
-                      Row(children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: MaximumThing * 0.01),
-                          child: Icon(Icons.check_circle_outline_rounded,
-                              size: 20, color: MyColors.white),
-                        ),
-                        Text(
-                          "At least 1 number",
-                          style: GoogleFonts.montserrat(
-                              fontSize: MaximumThing * 0.015,
-                              fontWeight: FontWeight.w300,
-                              color: MyColors.white),
-                        ),
-                      ]),
-                      Row(children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: MaximumThing * 0.01),
-                          child: Icon(Icons.check_circle_outline_rounded,
-                              size: 20, color: MyColors.white),
-                        ),
-                        Text(
-                          "Both upper and lower case letters",
-                          style: GoogleFonts.montserrat(
-                              fontSize: MaximumThing * 0.015,
-                              fontWeight: FontWeight.w300,
-                              color: MyColors.white),
-                        ),
-                      ]),
-                    ],
-                  ))
+                        children: [
+                          Row(children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: MaximumThing * 0.01),
+                              child: Icon(Icons.check_circle_outline_rounded,
+                                  size: 20, color: MyColors.white),
+                            ),
+                            Text(
+                              "At least 8 characters",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: MaximumThing * 0.015,
+                                  fontWeight: FontWeight.w300,
+                                  color: MyColors.white),
+                            ),
+                          ]),
+                          Row(children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: MaximumThing * 0.01),
+                              child: Icon(Icons.check_circle_outline_rounded,
+                                  size: 20, color: MyColors.white),
+                            ),
+                            Text(
+                              "At least 1 number",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: MaximumThing * 0.015,
+                                  fontWeight: FontWeight.w300,
+                                  color: MyColors.white),
+                            ),
+                          ]),
+                          Row(children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: MaximumThing * 0.01),
+                              child: Icon(Icons.check_circle_outline_rounded,
+                                  size: 20, color: MyColors.white),
+                            ),
+                            Text(
+                              "Both upper and lower case letters",
+                              style: GoogleFonts.montserrat(
+                                  fontSize: MaximumThing * 0.015,
+                                  fontWeight: FontWeight.w300,
+                                  color: MyColors.white),
+                            ),
+                          ]),
+                        ],
+                      ))
                 ],
               ),
             ),

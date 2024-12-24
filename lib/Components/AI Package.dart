@@ -25,11 +25,11 @@ class AIPackage extends StatelessWidget {
     TextStyle heading = GoogleFonts.montserrat(
         fontSize: MaximumThing * 0.015,
         fontWeight: FontWeight.w400,
-        color: Colors.white);
+        color: MyColors.white);
     TextStyle body = GoogleFonts.montserrat(
         fontSize: MaximumThing * 0.015,
         fontWeight: FontWeight.w300,
-        color: Colors.white);
+        color: MyColors.white);
 
     return Container(
       width: screenWidth * 0.8,
@@ -56,12 +56,12 @@ class AIPackage extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                       fontSize: MaximumThing * 0.026,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white)),
+                      color: MyColors.white)),
               Text(price,
                   style: GoogleFonts.montserrat(
                       fontSize: MaximumThing * 0.026,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white)),
+                      color: MyColors.white)),
             ],
           ),
           SizedBox(

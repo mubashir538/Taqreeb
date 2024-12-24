@@ -7,15 +7,15 @@ import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
-import 'package:taqreeb/Screens/CategoryView_BakerySweet.dart';
-import 'package:taqreeb/Screens/CategoryView_Caterers.dart';
-import 'package:taqreeb/Screens/CategoryView_Decorator.dart';
-import 'package:taqreeb/Screens/CategoryView_GraphicDesigner.dart';
-import 'package:taqreeb/Screens/CategoryView_Parlour.dart';
-import 'package:taqreeb/Screens/CategoryView_Photographer.dart';
-import 'package:taqreeb/Screens/CategoryView_PhotographyPlace.dart';
-import 'package:taqreeb/Screens/CategoryView_Saloon.dart';
-import 'package:taqreeb/Screens/CategoryView_VideoEditor.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_BakerySweet.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Caterers.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Decorator.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_GraphicDesigner.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Parlour.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Photographer.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_PhotographyPlace.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Saloon.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_VideoEditor.dart';
 import 'package:taqreeb/Screens/Dashboard.dart';
 import 'package:taqreeb/Screens/AccountInfoEdit.dart';
 import 'package:taqreeb/Screens/BusinessAccountInfo.dart';
@@ -26,7 +26,7 @@ import 'package:taqreeb/Screens/BusinessSignupScreens/SubmissionSucessful.dart';
 import 'package:taqreeb/Screens/Cart.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Venue.dart';
 import 'package:taqreeb/Screens/BakerySweet_Products.dart';
-import 'package:taqreeb/Screens/CategoryView_CarRenter.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_CarRenter.dart';
 import 'package:taqreeb/Screens/ChatBox.dart';
 import 'package:taqreeb/Screens/Create%20AI%20Package/CreateAIPackage.dart';
 import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList.dart';
@@ -72,11 +72,19 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: CategoryView_Venue(),
       routes: {
+        '/settings': (context) => Settings(),
+        '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
+        '/AddCategory_AddImage': (context) => AddImage(),
+        '/AddCategory_Addons': (context) => AddcategoryAddons(),
+        '/AddCategory_AddPackage': (context) => AddcategoryAddpackage(),
+        '/AddCategory_List': (context) => AddcategoryList(),
+        '/AddCategory_MoreDetails': (context) => AddcategoryMoredetails(),
+        '/AddCategory_Packages': (context) => AddcategoryPackages(),
         '/basicSignup': (context) => BasicSignup(),
         '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
-        '/Signup_ContactOTPVerify': (context) => Signup_ContactOTPVerify(),
+        '/Signup_ContactOTPVerify': (context) => SignupContactOTPVerify(),
         '/Signup_EmailOTPSend': (context) => Signup_EmailOTPSend(),
-        '/Signup_EmailOTPVerify': (context) => Signup_EmailOTPVerify(),
+        '/Signup_EmailOTPVerify': (context) => SignupEmailOTPVerify(),
         '/Signup_MoreInfo': (context) => Signup_MoreInfo(),
         '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
         '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
@@ -133,23 +141,9 @@ class MainApp extends StatelessWidget {
         '/CreateEvent': (context) => CreateEvent(),
         '/YourEvents': (context) => MainScreen(index: 2),
         '/Dashboard': (context) => Dashboard(),
+        '/EditEvent': (context) => CreateEvent(),
+        '/EditFunction': (context) => CreateFunction(),
         '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
-        // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
-        //   // '/': (context) => ,
       },
       theme: ThemeData.dark(
         useMaterial3: true,

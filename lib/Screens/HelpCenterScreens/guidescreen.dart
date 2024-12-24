@@ -8,6 +8,8 @@ import 'package:taqreeb/theme/icons.dart';
 class GuideScreen extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
 
+  GuideScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     // double screenWidth = MediaQuery.of(context).size.width;

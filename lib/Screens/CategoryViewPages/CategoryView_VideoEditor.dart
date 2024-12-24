@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CategoryView_VideoEditor extends StatelessWidget {
   const CategoryView_VideoEditor({Key? key}) : super(key: key);
@@ -16,6 +16,7 @@ class CategoryView_VideoEditor extends StatelessWidget {
     bool isSmallScreen = screenWidth < 600;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

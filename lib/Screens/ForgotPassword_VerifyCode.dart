@@ -16,6 +16,7 @@ class ForgotPassword_VerifyCode extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -25,8 +26,11 @@ class ForgotPassword_VerifyCode extends StatelessWidget {
               para: 'We have send the code to abc@gmail.com',
             ),
             Container(
-              margin: EdgeInsets.only(top: MaximumThing * 0.07,bottom: MaximumThing*0.02),
-                child: OTPBoxes()),
+                margin: EdgeInsets.only(
+                    top: MaximumThing * 0.07, bottom: MaximumThing * 0.02),
+                child: OTPBoxes(
+                  onChanged: (value) {},
+                )),
             Text(
               'Send Code Again 00:59',
               style: TextStyle(

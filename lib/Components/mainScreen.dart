@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: pages[widget.index],
       floatingActionButton: SizedBox(
         width: screenWidth * 0.15,
@@ -39,9 +40,9 @@ class _MainScreenState extends State<MainScreen> {
             Navigator.pushNamed(context, '/CreateEvent');
           },
           backgroundColor: MyColors.Yellow,
+          shape: CircleBorder(),
           child:
               Icon(Icons.add, size: MaximumThing * 0.04, color: MyColors.Dark),
-          shape: CircleBorder(),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

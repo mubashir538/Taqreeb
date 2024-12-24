@@ -8,7 +8,7 @@ import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class BusinessSignup_CNICUpload extends StatelessWidget {
-  const BusinessSignup_CNICUpload({Key? key}) : super(key: key);
+  const BusinessSignup_CNICUpload({super.key});
 
   @override
   Widget build(BuildContext context) {

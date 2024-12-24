@@ -60,18 +60,21 @@ class _CreateChecklistItems extends State<CreateChecklistItems> {
                   Column(
                     children: [
                       GuideButton(
+                        onpressed: () {},
                         text: 'Venu Selection',
                         leftIconPath: MyIcons.guide,
                         rightIconPath: MyIcons.sortArrow,
                       ),
                       SizedBox(height: 10),
                       GuideButton(
+                        onpressed: () {},
                         text: 'Menu Planning',
                         leftIconPath: MyIcons.faq,
                         rightIconPath: MyIcons.sortArrow,
                       ),
                       SizedBox(height: 10),
                       GuideButton(
+                        onpressed: () {},
                         text: 'GuestList and Invitations',
                         leftIconPath: MyIcons.people,
                         rightIconPath: MyIcons.sortArrow,
@@ -80,18 +83,21 @@ class _CreateChecklistItems extends State<CreateChecklistItems> {
                         height: 10,
                       ),
                       GuideButton(
+                        onpressed: () {},
                         text: 'Budgeting',
                         leftIconPath: MyIcons.guide,
                         rightIconPath: MyIcons.sortArrow,
                       ),
                       SizedBox(height: 10),
                       GuideButton(
+                        onpressed: () {},
                         text: 'Vendor Management',
                         leftIconPath: MyIcons.people,
                         rightIconPath: MyIcons.sortArrow,
                       ),
                       SizedBox(height: 10),
                       GuideButton(
+                        onpressed: () {},
                         text: 'Decor and Themes',
                         leftIconPath: MyIcons.faq,
                         rightIconPath: MyIcons.sortArrow,

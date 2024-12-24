@@ -11,6 +11,7 @@ class CategoryView_Saloon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -22,7 +23,7 @@ class CategoryView_Saloon extends StatelessWidget {
                 width: double.infinity,
               ),
             ),
-            Container(
+            SizedBox(
               height: 1700,
               width: 428,
               child: Column(

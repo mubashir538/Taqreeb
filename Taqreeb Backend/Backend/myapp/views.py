@@ -6,29 +6,138 @@ from rest_framework.views import APIView
 from rest_framework import status
 from . import Serializers as s
 import random as rd
-from rest_framework.decorators import api_view
+from twilio.rest import Client
+from rest_framework.decorators import api_view, permission_classes
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getEventType(request):
+    eventTypes = md.EventType.objects.all()
+    serializer = s.EventTypeSerializer(eventTypes,many=True)
+    return Response({'status':'success','eventTypes':serializer.data})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getFunctionType(request,id):
+    functionTypes = md.FunctionType.objects.filter(eventtypeid=id)
+    serializer = s.FunctionTypeSerializer(functionTypes,many=True)
+    return Response({'status':'success','functionTypes':serializer.data})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
+def resendOTPEmail(request):
+    email = request.data.get('email')
+    otp = request.data.get('otp')
+    subject = 'Password Reset for Taqreeb'
+    message = f''' The Otp for your Taqreeb App is
+    YOUR OTP IS: {otp}'''
+    email_from = settings.EMAIL_HOST_USER
+    email_to = email
+    try:
+        send_mail(subject,message,email_from,[email_to])
+        return Response({'status': 200,'otp':otp,'email':email})
+    except Exception as e:
+        print(e)
+        return Response({'status': 400})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def resendOTPPhone(request):
+    contactNumber = request.data.get('phone')
+    otp = request.data.get('otp')
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    message = client.messages.create(
+        body=f"Your OTP for Taqreeb is {otp}",
+        from_=settings.TWILIO_PHONE_NUMBER,
+        to=contactNumber
+    )
+    return Response({'status':'success','otp': otp,'contact':contactNumber})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def sendOTPPhone(request):
+    contactNumber = request.data.get('contactNumber')
+    country = request.data.get('countryCode')
+    if contactNumber.find(country) == -1:
+        if contactNumber[0] == '0':
+            contactNumber = contactNumber[1:]
+        contactNumber = country + contactNumber
+
+    otp = rd.randint(100000,999999)
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    message = client.messages.create(
+        body=f"Your OTP for Taqreeb is {otp}",
+        from_=settings.TWILIO_PHONE_NUMBER,
+        to=contactNumber
+    )
+    return Response({'status':'success','otp': otp,'contact':contactNumber})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def sendOTPEmail(request):
+    email = request.data.get('email')
+    otp = rd.randint(1000,9999)
+    subject = 'Password Reset for Taqreeb'
+    message = f''' The Otp for your Taqreeb App is
+    YOUR OTP IS: {otp}'''
+    email_from = settings.EMAIL_HOST_USER
+    email_to = email
+    try:
+        send_mail(subject,message,email_from,[email_to])
+        return Response({'status': 200,'otp':otp,'email':email})
+    except Exception as e:
+        print(e)
+        return Response({'status': 400})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def AccountSignupPage(request):
+    print(request.data)
     firstName = request.data.get('firstName')
     lastName = request.data.get('lastName')
     password = request.data.get('password')
     contactType = request.data.get('contactType')
     city = request.data.get('city')
     gender = request.data.get('gender')
-    profilePicture = request.data.get('profilePicture')
+    profilePicture = request.FILES.get('profilePicture')
     if contactType=='email':
         contact = request.data.get('email')
-        user = md.User(firstName=firstName,lastName=lastName,password=password,email=contact,city=city,gender=gender,profilePicture=profilePicture)
+        user = md.User.objects.filter(email=contact).first()
+        if user:
+            return Response({'status':'error', 'message': 'Email Already Exists'})
+        user = md.User(firstName=firstName,lastName=lastName,password=password,email=contact,city=city,gender=gender)
     else:
         contact = request.data.get('contactNumber')
-        user = md.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender,profilePicture=profilePicture)
-    
+        user = md.User.objects.filter(contactNumber=contact).first()
+        if user:
+            return Response({'status':'error', 'message': 'Contact Already Exists'})
+
+        user = md.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
-    return Response({'status':'success'})
+    if contactType=='email':
+        user = md.User.objects.filter(email=contact).first()
+    else:
+        user = md.User.objects.filter(contactNumber=contact).first()
+
+    if profilePicture:
+            filestorage = FileSystemStorage()
+            filePath = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profilePicture)
+            user.profilePicture = filestorage.url(filePath)   
+            user.save(update_fields=["profilePicture"])
+            
+    refresh = RefreshToken.for_user(user)
+    id = user.id    
+    return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def BusinessOwnerSignup(request):
     userid = request.data.get('id')
     businessName = request.data.get('businessName')
@@ -38,12 +147,15 @@ def BusinessOwnerSignup(request):
     cnicFront = request.data.get('cnicFront')
     cnicBack = request.data.get('cnicBack')
     description = request.data.get('description')
-
-    owner = md.BusinessOwner(UserID=userid,CNICFormat=cnicFront,CNICBack=cnicBack,BuisnessName=businessName,BuisnerUsername=username,Description=description,category=category,cnic=cnic)
+    user = md.User.objects.get(id=userid)
+    if md.BusinessOwner.objects.filter(userID=userid).exists():
+        return Response({'status':'error', 'message': 'Business Owner Already Exists'}) 
+    owner = md.BusinessOwner(userID=user,CNICFront=cnicFront,CNICBack=cnicBack,businessName=businessName,businessUsername=username,Description=description,category=category,cnic=cnic)
     owner.save()
     return Response({'status':'success'})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def ForgotPasswordPage(request):
     contact = request.data.get('contactNumber')
     otp = rd.randint(1000,9999)
@@ -59,6 +171,7 @@ def ForgotPasswordPage(request):
         return Response({'status':'success','otp':otp,'userid':user.id})
         
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def ResetPasswordPage(request):
     password = request.data.get('password')
     id = request.data.get('id')
@@ -66,6 +179,7 @@ def ResetPasswordPage(request):
     return Response({'status':'success'})
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def AccountInfoPage(request,id):
     userid = id
     user = md.User.objects.filter(id=userid).first()
@@ -73,40 +187,128 @@ def AccountInfoPage(request,id):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def ListingsPage(request,id):
     listings = md.Listing.objects.filter(BusinessOwnerID=id)
     serializer = s.ListingSerializer(listings,many=True)
     return Response({'status':'success','listings':serializer.data})
     
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def DecoratorDetailPage(request,id):
     listingDetails = md.Listing.objects.get(id=id)
     decoratorDetails = md.Decorators.objects.filter(ListingID=id)
     return Response({'status':'success','listingDetails':listingDetails,'decoratorDetails':decoratorDetails})
     
-
 @api_view(['PUT'])
+@permission_classes([AllowAny])
 def EditAccountInfoPage(request):
     pass
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def FreelancerSignup(request):
-    pass
+    BusinessName = request.data.get('BusinessName')
+    BusinessUserName = request.data.get('BusinessUserName')
+    PortfolioLink = request.data.get('Portfoliolink')
+    Description = request.data.get('Description')
+    Picture = request.data.get('Picture')
+    UserId = request.data.get('UserId')
+    Freelancer = md.Freelancer(userId = UserId,businessName = BusinessName,
+        businessUsername = BusinessUserName,portfolioLink = PortfolioLink,description = Description)
+    user = md.User.objects.get(id= UserId).update(profilePicture=Picture)
+    Freelancer.save()
+    return Response({'status': 'success'})
+
+@permission_classes([AllowAny])
+@api_view(['POST'])
+def AddGuests(request):
+    guesttype = request.data.get('guesttype')
+    eid = request.data.get('eid')
+    if request.data.get('fid') != None:
+        fid = request.data.get('fid')
+    else:
+        fid = None
+    if guesttype=='Family':
+        FamilyName = request.data.get('FamilyName')
+        member = request.data.get('member')
+        GuestList = md.GuestList(FamilyName=FamilyName,member=member,type=guesttype,eventId=eid,functionId=fid)
+    else:   
+        PersonName = request.data.get('PersonName')
+        PersonContact = request.data.get('PersonContact')
+        GuestList = md.GuestList(PersonName=PersonName,contactNumber=PersonContact,type=guesttype,eventId=eid,functionId=fid)
+    GuestList.save()
+    return Response({'status':'success'})
 
 @api_view(['POST'])
-def CreateFunction(request):
-    pass
+def UserLogin(request):
+    password = request.data.get('password')
+    contactType = request.data.get('contactType')
+    if contactType=='email':
+        contact = request.data.get('email')
+        UserLogin = md.UserLogin(password=password,email=contact)
+    else:   
+        contact = request.data.get('contactNumber')
+        UserLogin = md.UserLogin(password=password,contactNumber=contact)
+    
+    UserLogin.save()
+    return Response({'status':'success'})
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def EditFunction(request):
+    name= request.data.get('Function Name')
+    budget = request.data.get('Budget')
+    type = request.data.get('Type')
+    date = request.data.get('Date')
+    guestsmin = request.data.get('guest min')
+    guestsmax = request.data.get('guest max')
+    functionId = int(request.data.get('Function Id'))
+    function = md.Functions.objects.get(id=functionId)
+    try:
+        print(name,' ',budget,' ',type,' ',date,' ',guestsmin,' ',guestsmax)
+        function.name = name
+        function.type = type
+        function.budget = budget
+        function.date = date
+        function.guestsmin = guestsmin
+        function.guestsmax = guestsmax
+        function.save(update_fields=['name','type','budget','date','guestsmin','guestsmax'])
+        return Response({'status':'success'})
+    except Exception as e:
+        print(e)
+        return Response({'status':'error'})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def CreateFunction(request):
+    name= request.data.get('Function Name')
+    budget = request.data.get('Budget')
+    type = request.data.get('Type')
+    date = request.data.get('Date')
+    guestsmin = request.data.get('guest min')
+    guestsmax = request.data.get('guest max')
+    EventId = int(request.data.get('Event Id'))
+    event = md.Events.objects.get(id=EventId)
+    try:
+        CreateFunction = md.Functions(name=name, eventId = event, type=type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
+        CreateFunction.save()
+        return Response({'status':'success'})
+    except Exception as e:
+        print(e)
+        return Response({'status':'error'})
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def EventDetails(request,eventId):
     EventDetail = md.Events.objects.get(id=eventId)
-    Funtion  = md.Functions.objects.filter(eventId = eventId)
-    Funtionserializer = s.FunctionsSerializer(Funtion, many = True)
-    serializer = s.EventsSerializer(EventDetail, many =False)
-    return Response({'status':'success','Eventdetail':serializer.data,'Funtion': Funtionserializer.data})
-    pass
+    serializer = s.EventsSerializer(EventDetail,many=False)
+    Function = md.Functions.objects.filter(eventId=eventId)
+    serializer2 = s.FunctionsSerializer(Function,many=True)
+    return Response({'status':'success','EventDetail':serializer.data,'Functions':serializer2.data})
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def VenueViewPage(request, venueId):
     Listing = md.Listing.objects.get(id = venueId)
     VenueView = md.Venue.objects.get(listingID= venueId)
@@ -122,27 +324,73 @@ def VenueViewPage(request, venueId):
                      'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
     pass
 
-
-
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def EditEvent(request):
+    name = request.data.get('Event Name')
+    type = request.data.get('Event Type')
+    date = request.data.get('Date')
+    location = request.data.get('Location')
+    description = request.data.get('description')
+    themeColor = request.data.get('Theme')
+    budget = request.data.get('Budget')
+    guestmin= request.data.get('guestmin')
+    guestmax = request.data.get('guestmax')
+    eventId = request.data.get('EventId')
+    EditEvent = md.Events.objects.get(id=eventId)
+    EditEvent.name = name
+    EditEvent.guestsmin = guestmin
+    EditEvent.guestsmax = guestmax
+    EditEvent.type = type
+    EditEvent.date = date
+    EditEvent.location = location
+    EditEvent.description = description
+    EditEvent.themeColor = themeColor
+    EditEvent.budget = budget
+    EditEvent.save(update_fields=['name','guestsmin','guestsmax','type','date','location','description','themeColor','budget'])
+    return Response({'status': 'success'})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def CreateEvent(request):
-    pass
+    userId = request.data.get('userId')
+    name = request.data.get('Event Name')
+    type = request.data.get('Event Type')
+    date = request.data.get('Date')
+    location = request.data.get('Location')
+    description = request.data.get('description')
+    themeColor = request.data.get('Theme')
+    budget = request.data.get('Budget')
+    guestmin= request.data.get('guestmin')
+    guestmax = request.data.get('guestmax')
+    CreateEvent = md.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
+    CreateEvent.save()
+    return Response({'status': 'success'})
 
 @api_view(['GET'])
-def YourEvents(request: id):
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def YourEvents(request,id):
     YourEvent = md.Events.objects.filter(userID=id)
     serializer = s.EventsSerializer (YourEvent,many=True)
-    return Response({'status':'success','Event':serializer.data})
-    pass
+    numberofFunctions = []
+    for i in YourEvent:
+        functions = md.Functions.objects.filter(eventId=YourEvent.first().id)
+        numberofFunctions.append(len(functions))
+    return Response({'status':'success','Event':serializer.data,'nofunctions':numberofFunctions})
 
 @api_view(['GET'])
-def PhotographerViewPage(request, photograpgerID):
-    PhotographerView = md.Photographers.objects.get( id = photograpgerID)
-    Listing = md.Listing.objects.get(id = photograpgerID)
-    Addons = md.AddOns.objects.filter(id = photograpgerID)
-    Package = md.Packages.objects.filter(id = photograpgerID)
-    Review = md.Review.objects.filter(id, photograpgerID)
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def PhotographerViewPage(request, listingID):
+    photographerID = listingID
+    PhotographerView = md.Photographers.objects.get( id = photographerID)
+    Listing = md.Listing.objects.get(id = photographerID)
+    Addons = md.AddOns.objects.filter(id = photographerID)
+    Package = md.Packages.objects.filter(id = photographerID)
+    Review = md.Review.objects.filter(id, photographerID)
     PhotographersSerializer = s.PhotographersSerializer(PhotographerView, many = False)
     Reviewserializer = s.ReviewSerializer( Review, many = True)
     Packageserializer = s.PackagesSerializer( Package, many = True)
@@ -153,6 +401,47 @@ def PhotographerViewPage(request, photograpgerID):
     pass
 
 @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def CarRenterViewPage(request, listingID):
+    CarRenterid = listingID
+    Listing = md.Listing.objects.get(id = CarRenterid)
+    CarRenters = md.CarRenters.objects.get(id = CarRenterid)
+    Cars = md.Cars.objects.filter(id = CarRenterid )
+    Addons = md.AddOns.objects.filter(id =CarRenterid)
+    Package = md.Packages.objects.filter(id = CarRenterid)
+    Review = md.Review.objects.filter(id = CarRenterid)
+    CarRentersSerializer = s.CarRentersSerializer(CarRenters, many = False)
+    Reviewserializer = s.ReviewSerializer( Review, many = True)
+    Packageserializer = s.PackagesSerializer( Package, many = True)
+    Addonsserializer = s.AddOnsSerializer( Addons, many = True)
+    Listingserializer = s.ListingSerializer (Listing, many =False)
+    CarsSerializer = s.CarRentersSerializer(Cars , many = True)
+    return Response({'status': 'success', 'CarRenters': CarRentersSerializer.data, 'Listing': Listingserializer.data, 
+                     'Package': Packageserializer.data, 'Review': Reviewserializer.data,'Addons': Addonsserializer.data, 'Cars': CarsSerializer.data })
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def GraphicDesignerViewPage(request, listingID):
+    graphicdesignerid = listingID
+    Listing = md.Listing.objects.get(id= graphicdesignerid)
+    package = md.Packages.objects.filter(id = graphicdesignerid)
+    GraphicDesigners = md.GraphicDesigners.objects.get(id = graphicdesignerid)
+    Review = md.Review.objects.filter(id = graphicdesignerid)
+    ListingSerializer = s.ListingSerializer(Listing, many= False)
+    PackageSerializer = s.PackagesSerializer(package, many = True)
+    GraphicDesignersSerializer = s.GraphicDesignersSerializer(GraphicDesigners, many = False)
+    ReviewSerializer = s.ReviewSerializer(Review, many = True)
+    return Response({'status': 'success','GraphicDesigners': GraphicDesignersSerializer.data, 'Listing':ListingSerializer.data, 
+                     'Package': PackageSerializer.data, 'Review': ReviewSerializer.data})
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
 def CatererViewPage(request,CatererID):
     CatererView = md.Caterers.objects.get( id = CatererID)
     Listing = md.Listing.objects.get(id = CatererID)
@@ -164,89 +453,127 @@ def CatererViewPage(request,CatererID):
     Packageserializer = s.PackagesSerializer( Package, many = True)
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    return Response({'status': 'success','CatererView':CatererSerializer.data,'Addons': Addonsserializer.data,
-                     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
-    pass
+    return Response({'status': 'success','CatererView':CatererSerializer.data,'Addons': Addonsserializer.data, 'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data})
 
 @api_view(['GET'])
-def CatererViewPage(request):
-    pass
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def BusinessOwnerAccountInfo(request, businessownerID):
+    BusinessOwner = md.BusinessOwner.objects.get(id=businessownerID)
+    BusinessOwnerSerializer = s.BusinessOwnerSerializer( BusinessOwner, many = False)
+    return Response({'status': 'success','BusinessOwner':BusinessOwnerSerializer.data})
 
 @api_view(['GET'])
-def VideoEditorViewPage(request):
-    pass
+# @permission_classes([IsAuthenticated])
 
+@permission_classes([AllowAny])
+def ShowGuest(request, EventID, FunctionID):
+    Guests = md.GuestList.objects.filter(eventId=EventID,functionId=FunctionID)
+    GuestListSerializer = s.GuestListSerializer(Guests,many=True)
+    return Response({'status': 'success', 'Guests':GuestListSerializer.data})
+    
 @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
 def HomeCategories(request):
-    pass
+    categories = md.Categories.objects.all()
+    CategoriesSerializer = s.CategoriesSerializer(many = True)
+    return Response({'status': 'success'})
 
 @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def VideoEditorViewPage(request, VideoEditorID):
+    Listing =md.Listing.objects.get(id = VideoEditorID)
+    VideoEditors = md.VideoEditors.objects.get(VideoEditorID = VideoEditorID)
+    Package = md.Packages.objects.filter(VideoEditorID = VideoEditorID)
+    Review = md.Review.objects.filter(VideoEditorID = VideoEditorID)
+    VideoEditorsSerializer = s.VideoEditorsSerializer(VideoEditors, many =False)
+    PackageSerializer = s.PackagesSerializer(Package, many = True)
+    ReviewSerializer = s.ReviewSerializer(Review,many=True)
+    ListingSerializer = s.ListingSerializer(Listing, many=False)
+    return Response({'status': 'success', 'VideoEditors':VideoEditorsSerializer.data, 'Listing':ListingSerializer.data, 'Package':PackageSerializer.data, 'Review':ReviewSerializer.data})
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def ViewFunction(request, FunctionId):
+    Functions = md.Functions.objects.get(id = FunctionId)
+    FunctionsSerializer = s.FunctionsSerializer(Functions, many=False)
+    return Response ({'status':'success', 'Fuctions':FunctionsSerializer.data})
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def HomeCategories(request):
+    categories = md.Categories.objects.all()
+    CategoriesSerializer = s.CategoriesSerializer(categories,many = True)
+    return Response({'status': 'success','categories': CategoriesSerializer.data})
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def HomeListings(request):
-    pass
+    Listing= md.Listing.objects.all()
+    ListingSerializer= s.ListingSerializer(Listing, many=True)
+    Pictures = []
+    for i in Listing:
+        pic = md.PicturesListings.objects.filter(listingId=i.id)
+        serializer = s.PicturesListingSerializers(pic, many=True)
+        Pictures.append(serializer.data)
+
+    return Response({'status':'succuess', 'HomeListing':ListingSerializer.data,'pictures':Pictures})
 
 @api_view(['GET'])
-def SearchListings(request):
-    pass
+# @permission_classes([IsAuthenticated])
+
+@permission_classes([AllowAny])
+def SearchListings(request, SearchListingsID):
+    Listing = md.Listing.objects.all()
+    ListingSerializer= s.ListingSerializer(Listing, many=True)
+    return Response({'status':'succuess', 'SearchListing':ListingSerializer.data})
 
 @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def SearchListingsPARA(request):
     pass
 
-@api_view(['GET'])
-def ShowGuest(request):
-    pass
-
 @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def AddGuests(request):
     pass
 
-@api_view(['GET'])
-def BusinessOwnerAccountInfo(request):
-    pass
-
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def UserLogin(request):
-    pass
+    contact = request.data.get('contact')
+    password = request.data.get('password')
+    if contact.find('@') != -1:
+        user = md.User.objects.filter(email=contact,password=password).first()
+    else:
+        user = md.User.objects.filter(contactNumber=contact,password=password).first()
+    
+    if user:
+        refresh = RefreshToken.for_user(user)
+        return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})
+    
+    return Response({'status': 'error', 'message': 'Invalid Credentials'})
 
 @api_view(['GET'])
-def CartItems(request):
-    pass
-
-@api_view(['GET'])
-def GraphicDesignerViewPage(request):
-    pass
-
-@api_view(['GET'])
-def CarRenterViewPage(request):
-    pass
-
-
-
-
-# @api_view(['GET','POST','PUT'])
-# def user(request):
-#     if request.method == 'POST':
-#         if request.data.get('type') == 'basicInfo':
-#             firstName = request.data.get('firstName')
-#             lastName = request.data.get('lastName')
-#             password = request.data.get('password')
-#             user = md.User.objects.create(firstName=firstName,lastName=lastName,password=password)
-#             user.save()
-#             id = md.User.objects.aaggregate(Max('id'))['id__max']
-#             return Response({"message":"success",'status': 200,'yourId':id})
-#         elif request.data.get('type') == 'contactNumber':
-#             contact = request.data.get('contactNumber')
-#             # userid = request.data.get('id')
-#             #user = md.User.objects.filter(id=userid).update(contact=contact)
-
-
-#     elif request.method == 'GET':
-#         pass
-#     elif request.method == 'PUT':
-#         pass
-#     # print(request)
-#     # return Response({"message":request.data})
-
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+def CartItems(request, CartItemsID):
+    Listing = md.Listing.objects.get(id = CartItemsID)
+    CartItems = md.CartItems.objects.get(CartItemsID = CartItemsID)
+    ListingSerializer = s.ListingSerializer(Listing, many=True)
+    CartItemsSerializer = s.CartItemsSerializer(CartItems, many = True)
+    return Response({'Status': 'Success', 'Listing': ListingSerializer.data, 'Cartitems': CartItemsSerializer.data})
+    
 def urlShortener(url):
     try:
         response = rq.get("http://tinyurl.com/api-create.php?url="+url)
@@ -256,4 +583,25 @@ def urlShortener(url):
         print(e)
         return e
 
-    
+from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def truncate_all_models(request):
+    """
+    View to truncate all models in the database.
+    Only accessible to staff members.
+    """
+    try:
+        with transaction.atomic():  # Use a transaction to ensure atomicity
+            models = ContentType.objects.all()  # Get all content types (models)
+            for content_type in models:
+                model = content_type.model_class()
+                if model:  # Ensure the model class is valid
+                    model.objects.all().delete()
+            return JsonResponse({"status": "success", "message": "All models truncated successfully."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})

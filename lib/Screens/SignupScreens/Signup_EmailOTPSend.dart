@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/validations.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my divider.dart';
@@ -8,7 +11,9 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class Signup_EmailOTPSend extends StatelessWidget {
-  const Signup_EmailOTPSend({super.key});
+  TextEditingController emailController = TextEditingController();
+
+  Signup_EmailOTPSend({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +42,7 @@ class Signup_EmailOTPSend extends StatelessWidget {
                   ),
                   MyTextBox(
                     hint: 'Email',
+                    valueController: emailController,
                   ),
                   SizedBox(
                     height: screenHeight * 0.1,
@@ -44,8 +50,25 @@ class Signup_EmailOTPSend extends StatelessWidget {
                   ),
                   ColoredButton(
                     text: 'Send OTP',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/Signup_EmailOTPVerify');
+                    onPressed: () async{
+                      if (Validations.validateEmail(emailController.text) !=
+                          "Ok") {
+                        warningDialog(
+                                title: 'Invalid Contact Number',
+                                message: Validations.validateEmail(
+                                    emailController.text))
+                            .showDialogBox(context);
+                      } else {
+                        dynamic response = await MyApi.postRequest(
+                            endpoint: 'sendOTP/email',
+                            body: {'email': emailController.text});
+                        print(response);
+                        Navigator.pushNamed(context, '/Signup_EmailOTPVerify',
+                            arguments: {
+                              'email': emailController.text,
+                              'response': response
+                            });
+                      }
                     },
                   ),
                   InkWell(
