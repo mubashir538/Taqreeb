@@ -70,17 +70,11 @@ import 'package:taqreeb/abc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
-    await Firebase.initializeApp(options: abc.fb
-        // await Firebase.initializeApp(
-        // options: DefaultFirebaseOptions.currentPlatform,
-        );
+    await Firebase.initializeApp(options: abc.fb);
   } else {
     // final env = await dotenv.load(fileName: '.env');
 
-    await Firebase.initializeApp(options: abc.fb
-        // await Firebase.initializeApp(
-        // options: DefaultFirebaseOptions.currentPlatform,
-        );
+    await Firebase.initializeApp(options: abc.fb);
   }
 
   runApp(const MainApp());
