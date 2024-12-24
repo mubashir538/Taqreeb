@@ -4,14 +4,18 @@ import 'package:taqreeb/theme/color.dart';
 
 // ignore: must_be_immutable
 class RadioButtonQuestion extends StatefulWidget {
-  RadioButtonQuestion(
-      {super.key,
-      required this.options,
-      required this.question,
-      required this.myValue});
+  RadioButtonQuestion({
+    super.key,
+    required this.options,
+    required this.question,
+    required this.myValue, // The selected value passed from parent
+    required this.onChanged, // Callback function to notify parent of changes
+  });
+
   final String question;
   final List<String> options;
-  String? myValue;
+  String? myValue; // The selected value
+  final Function(String?) onChanged; // Callback function
 
   @override
   State<RadioButtonQuestion> createState() => _RadioButtonQuestionState();
@@ -32,32 +36,39 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-            child: Text(widget.question,
-                style: GoogleFonts.montserrat(
-                    color: MyColors.white, fontSize: MaximumThing * 0.018)),
-          ),
+          widget.question == ''
+              ? Container()
+              : Padding(
+                  padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+                  child: Text(widget.question,
+                      style: GoogleFonts.montserrat(
+                          color: MyColors.white,
+                          fontSize: MaximumThing * 0.018)),
+                ),
           widget.options.length > 2
-              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  for (var option in widget.options)
-                    RadioListTile<String>(
-                      title: Text(option,
-                          style: GoogleFonts.montserrat(
-                            color: MyColors.whiteDarker,
-                            fontWeight: FontWeight.w300,
-                            fontSize: MaximumThing * 0.015,
-                          )),
-                      value: option,
-                      groupValue: widget.myValue,
-                      onChanged: (String? value) {
-                        setState(() {
-                          widget.myValue = value;
-                        });
-                      },
-                      activeColor: MyColors.Yellow,
-                    ),
-                ])
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var option in widget.options)
+                      RadioListTile<String>(
+                        title: Text(option,
+                            style: GoogleFonts.montserrat(
+                              color: MyColors.whiteDarker,
+                              fontWeight: FontWeight.w300,
+                              fontSize: MaximumThing * 0.015,
+                            )),
+                        value: option,
+                        groupValue: widget.myValue, // Controlled by parent
+                        onChanged: (String? value) {
+                          setState(() {
+                            widget.myValue = value;
+                          });
+                          widget.onChanged(value); // Notify parent
+                        },
+                        activeColor: MyColors.Yellow,
+                      ),
+                  ],
+                )
               : Row(
                   children: [
                     for (var option in widget.options)
@@ -70,11 +81,12 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                                 fontSize: MaximumThing * 0.015,
                               )),
                           value: option,
-                          groupValue: widget.myValue,
+                          groupValue: widget.myValue, // Controlled by parent
                           onChanged: (String? value) {
                             setState(() {
                               widget.myValue = value;
                             });
+                            widget.onChanged(value); // Notify parent
                           },
                           activeColor: MyColors.Yellow,
                         ),

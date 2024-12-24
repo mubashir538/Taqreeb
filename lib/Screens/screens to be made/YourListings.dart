@@ -4,6 +4,7 @@ import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
+import 'dart:math';
 
 class YourListings extends StatelessWidget {
   const YourListings({super.key});
@@ -37,7 +38,8 @@ class YourListings extends StatelessWidget {
                 return Productcard(
                     listingType: '',
                     listingid: '',
-                    imageUrl: "",
+                    imageUrl:
+                        "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
                     venueName: "Qasr-e-Noor",
                     location: "North Nazimabad",
                     type: "Venue");

@@ -43,6 +43,61 @@ def searchType(request,userid):
         response['freelancer'] = True
     return Response(response)
 
+
+from django.apps import apps
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from django.http import JsonResponse
+
+from django.apps import apps
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from django.apps import apps
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getListingDetails(request, type):
+    model_mapping = {
+        'Venue': 'Venue',
+        'Salon': 'Salons',
+        'Parlour': 'Parlors',
+        'Baker': 'BakersAndSweets',
+        'PhotographyPlace': 'PhotographyPlaces',
+        'Decorator': 'Decorators',
+        'Photographer': 'Photographers',
+        'Caterer':'Caterers',
+        'CarRenter':'CarRenters',
+        'BakerandSweet':'BakersAndSweets',
+        'VideoEditor':'VideoEditors',
+        'GraphicDesigner':'GraphicDesigners'
+    }
+
+    model_name = model_mapping.get(type)
+    if not model_name:
+        return Response({"error": "Invalid type provided"})
+
+    try:
+        # Get the model dynamically
+        model = apps.get_model('myapp', model_name)
+
+        # Fetch all field names and their choices if available
+        field_data = []
+        for field in model._meta.get_fields():
+            if field.name not in ['id', 'listingID','listingId']:
+                field_info = {"name": field.name}
+                if hasattr(field, 'choices') and field.choices:
+                    # Extract only keys from choices as a list
+                    field_info["choices"] = [choice[0] for choice in field.choices]
+                field_data.append(field_info)
+
+        return Response({"fields": field_data})
+    except LookupError:
+        return Response({"error": "Model not found"})
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def ShowChecklist(request,functionId=None,eventId=None):

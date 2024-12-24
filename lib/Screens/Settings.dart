@@ -136,9 +136,10 @@ class _SettingsState extends State<Settings> {
                                                 'isBusinessOwner');
                                           }
                                           Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              '/Settings',
-                                              (Route<dynamic> route) => false);
+                                            context,
+                                            '/HomePage', // Target route
+                                            (Route<dynamic> route) => false,
+                                          );
                                         });
                                       },
                                       activeColor: MyColors.white,

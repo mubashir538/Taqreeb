@@ -73,6 +73,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   div: 9,
                   currentCount: _currentBudgetValue),
               RadioButtonQuestion(
+                onChanged: (value) {},
                   options: ["Yes", "No"],
                   question: "Are you open to flexible pricing options?",
                   myValue: "Yes")
@@ -83,10 +84,12 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   question:
                       "In which city or area would you like to hold the event?"),
               RadioButtonQuestion(
+                onChanged: (value) {},
                   options: ["Indoor", "Outdoor", "Mixed"],
                   question: "What type of venue do you prefer?",
                   myValue: "Indoor"),
               RadioButtonQuestion(
+                onChanged: (value) {},
                   options: ["Casual", "Formal", "Themed"],
                   question: "What kind of ambiance are you looking for?",
                   myValue: "Casual")

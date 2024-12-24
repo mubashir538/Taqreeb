@@ -19,6 +19,7 @@ urlpatterns = [
     path('freelancer/signup/',views.FreelancerSignup,name='FreelancerSignup'),
     path('searchType/<int:userid>',views.searchType,name='searchType'),
     path('createfunction/',views.CreateFunction,name='CreateFunction'),
+    path('getListingDetails/<str:type>',views.getListingDetails,name='getListingDetails'),
     path('editfunction/',views.EditFunction,name='EditFunction'),
     path('eventdetails/<int:eventId>',views.EventDetails,name='EventDetails'),
     path('venueviewpage/<int:listingid>',views.VenueViewPage,name='VenueViewPage'),

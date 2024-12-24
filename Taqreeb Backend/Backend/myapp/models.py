@@ -31,7 +31,6 @@ class Freelancer(m.Model):
     description = m.CharField(max_length=1100)
     status = m.TextField(null=True)
 
-
 class Listing(m.Model):
     id = m.AutoField(primary_key=True)
     ownerID = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
@@ -141,13 +140,17 @@ class AddOns(m.Model):
     perType = m.CharField(max_length=50)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
-class Caterers(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    serviceType = m.TextField()
-    cateringOptions = m.CharField(max_length=50)
-    staff = m.CharField(max_length=50)
-    expertise = m.CharField(max_length=100)
+# class Caterers(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     SERVICE_TYPE = []
+#     CATERING_OPTIONS=[]
+#     STAFF=[('Male','Male'),('Female','Female')]
+#     EXPERTISE=[]
+#     serviceType = m.CharField(max_length=100,choices=SERVICE_TYPE,default='Wedding')
+#     cateringOptions = m.CharField(max_length=100,choices=CATERING_OPTIONS,default='Wedding')
+#     staff = m.CharField(max_length=100,choices=STAFF,default='Wedding')
+#     expertise = m.CharField(max_length=100,choices=EXPERTISE,default='Wedding')
 
 class MenuItems(m.Model):                                                                                                                                                      
     id = m.AutoField(primary_key=True)
@@ -168,29 +171,20 @@ class Cart(m.Model):
     ownerId = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
     quantity = m.IntegerField()
 
-class CarRenters(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    serviceType = m.CharField(max_length=100)
-    drivers = m.IntegerField()
+# class CarRenters(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     serviceType = m.CharField(max_length=100)
+#     drivers = m.IntegerField()
 
-class Cars(m.Model):
-    id = m.AutoField(primary_key=True)
-    carRenterId = m.ForeignKey(CarRenters,on_delete=m.CASCADE)
-    pricePerDay = m.IntegerField()
-    name = m.CharField(max_length=255)
-    type = m.CharField(max_length=100)
-    seats = m.IntegerField()
-    driver = m.IntegerField()
-    picture = m.CharField(max_length=255)
 
-class Decorators(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    decorType = m.CharField(max_length=50)
-    catering = m.CharField(max_length=50)
-    staff = m.CharField(max_length=50)
-    slot = m.DateTimeField()
+# class Decorators(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     decorType = m.CharField(max_length=50)
+#     catering = m.CharField(max_length=50)
+#     staff = m.CharField(max_length=50)
+#     slot = m.DateTimeField()
 
 class Parlors(m.Model):
     id = m.AutoField(primary_key=True)
@@ -206,10 +200,10 @@ class BakersAndSweets(m.Model):
     id = m.AutoField(primary_key=True)
     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
-class PhotographyPlaces(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    type = m.CharField(max_length=100)
+# class PhotographyPlaces(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     type = m.CharField(max_length=100)
 
 
 class VideoEditors(m.Model):
@@ -247,13 +241,44 @@ class Categories(m.Model):
 
 class Venue(m.Model):
     id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    venueType = m.CharField(max_length=100)
-    catering = m.CharField(max_length=100)
-    staff = m.CharField(max_length=100)
-    slot = m.DateTimeField()
+    listingID = m.ForeignKey('Listing', on_delete=m.CASCADE)
+    VENUE_TYPE_CHOICES = [
+        ('Banquet', 'Banquet'),
+        ('Hall', 'Hall'),
+        ('Lawn', 'Lawn'),
+        ('Outdoor', 'Outdoor'),
+    ]
+    venueType = m.CharField(
+        max_length=50,
+        choices=VENUE_TYPE_CHOICES,
+        default='Banquet'
+    )
+    CATERING_CHOICES = [
+        ('Internal', 'Internal'),
+        ('External', 'External'),
+        ('Internal & External', 'Internal & External'),
+    ]
+    catering = m.CharField(
+        max_length=50,
+        choices=CATERING_CHOICES,
+        default='Internal'
+    )
+
+    # Choices for staff
+    STAFF_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+    ]
+    staff = m.CharField(
+        max_length=10,
+        choices=STAFF_CHOICES,
+        default='Male'
+    )
     guestminAllowed = m.IntegerField(default=0)
     guestmaxAllowed = m.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.listingID} - {self.venueType}"
     
 class BookedSlots(m.Model):
     id = m.AutoField(primary_key=True)
@@ -273,3 +298,104 @@ class BookingCart(m.Model):
 class HomePageImages(m.Model):
     id = m.AutoField(primary_key=True)
     image = m.CharField(max_length=255)
+
+class Caterers(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingId = m.ForeignKey(Listing, on_delete=m.CASCADE)
+
+    SERVICE_TYPE_CHOICES = [
+        ('Wedding', 'Wedding'),
+        ('Corporate', 'Corporate'),
+        ('Birthday', 'Birthday'),
+        ('Anniversary', 'Anniversary'),
+        ('Other', 'Other'),
+    ]
+    CATERING_OPTIONS_CHOICES = [
+        ('Buffet', 'Buffet'),
+        ('Plated', 'Plated'),
+        ('Family Style', 'Family Style'),
+        ('Food Stations', 'Food Stations'),
+        ('Cocktail Reception', 'Cocktail Reception'),
+    ]
+    STAFF_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Mixed', 'Mixed'),
+    ]
+    EXPERTISE_CHOICES = [
+        ('Pakistani', 'Pakistani'),
+        ('Chinese', 'Chinese'),
+        ('Continental', 'Continental'),
+        ('Italian', 'Italian'),
+        ('Desserts', 'Desserts'),
+    ]
+
+    serviceType = m.CharField(max_length=100, choices=SERVICE_TYPE_CHOICES, default='Wedding')
+    cateringOptions = m.CharField(max_length=100, choices=CATERING_OPTIONS_CHOICES, default='Buffet')
+    staff = m.CharField(max_length=100, choices=STAFF_CHOICES, default='Mixed')
+    expertise = m.CharField(max_length=100, choices=EXPERTISE_CHOICES, default='Pakistani')
+
+class CarRenters(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing, on_delete=m.CASCADE)
+
+    SERVICE_TYPE_CHOICES = [
+        ('Luxury', 'Luxury'),
+        ('Economy', 'Economy'),
+        ('SUV', 'SUV'),
+        ('Convertible', 'Convertible'),
+        ('Van', 'Van'),
+    ]
+
+    serviceType = m.CharField(max_length=100, choices=SERVICE_TYPE_CHOICES, default='Economy')
+    drivers = m.IntegerField()
+
+class Decorators(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingId = m.ForeignKey(Listing, on_delete=m.CASCADE)
+
+    DECOR_TYPE_CHOICES = [
+        ('Floral', 'Floral'),
+        ('Lighting', 'Lighting'),
+        ('Drapery', 'Drapery'),
+        ('Furniture', 'Furniture'),
+        ('Themed', 'Themed'),
+    ]
+    CATERING_CHOICES = [
+        ('Provided', 'Provided'),
+        ('Not Provided', 'Not Provided'),
+    ]
+    STAFF_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Mixed', 'Mixed'),
+    ]
+
+    decorType = m.CharField(max_length=50, choices=DECOR_TYPE_CHOICES, default='Floral')
+    catering = m.CharField(max_length=50, choices=CATERING_CHOICES, default='Not Provided')
+    staff = m.CharField(max_length=50, choices=STAFF_CHOICES, default='Mixed')
+    slot = m.DateTimeField()
+
+class PhotographyPlaces(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing, on_delete=m.CASCADE)
+
+    TYPE_CHOICES = [
+        ('Studio', 'Studio'),
+        ('Outdoor', 'Outdoor'),
+        ('Indoor', 'Indoor'),
+        ('Destination', 'Destination'),
+        ('Event', 'Event'),
+    ]
+
+    type = m.CharField(max_length=100, choices=TYPE_CHOICES, default='Studio')
+
+class Cars(m.Model):
+    id = m.AutoField(primary_key=True)
+    carRenterId = m.ForeignKey(CarRenters,on_delete=m.CASCADE)
+    pricePerDay = m.IntegerField()
+    name = m.CharField(max_length=255)
+    type = m.CharField(max_length=100)
+    seats = m.IntegerField()
+    driver = m.IntegerField()
+    picture = m.CharField(max_length=255)
