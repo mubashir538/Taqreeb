@@ -30,6 +30,7 @@ class _YourEventsState extends State<YourEvents> {
     final token = await MyStorage.getToken('accessToken') ?? "";
     final String id = await MyStorage.getToken('userId') ?? "";
 
+    print(id);
     final fetchedEvents = await MyApi.getRequest(endpoint: 'YourEvents/$id');
 
     // Update the state
@@ -37,6 +38,7 @@ class _YourEventsState extends State<YourEvents> {
       this.token = token;
       this.events = fetchedEvents ?? {}; // Ensure no null data
       isLoading = false; // Data has been fetched, so stop loading
+      print('Events: $events');
     });
   }
 
@@ -50,6 +52,7 @@ class _YourEventsState extends State<YourEvents> {
     TextEditingController controller = TextEditingController();
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -58,8 +61,11 @@ class _YourEventsState extends State<YourEvents> {
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              child:
-                  SearchBox(controller: controller, width: screenWidth * 0.9),
+              child: SearchBox(
+                  onChanged: (value) {},
+                  controller: controller,
+                  hint: 'Search Typing to Search',
+                  width: screenWidth * 0.9),
             ),
             isLoading
                 ? Center(
@@ -92,7 +98,7 @@ class _YourEventsState extends State<YourEvents> {
                       },
                       editPressed: () {
                         Navigator.pushNamed(context, '/EditEvent',
-                            arguments: events["Event"][index]["id"]);
+                            arguments: events["Event"][index]["id"].toString());
                       },
                     ),
                   )

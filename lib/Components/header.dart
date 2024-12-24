@@ -1,23 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class Header extends StatelessWidget {
+class Header extends StatefulWidget {
   final String heading;
+  final IconData icon;
   final String para;
   final String image;
-  const Header({this.heading = '', this.para = '', this.image = '', super.key});
+  const Header(
+      {this.icon = Icons.settings,
+      this.heading = '',
+      this.para = '',
+      this.image = '',
+      super.key});
 
   @override
+  State<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
+  @override
   Widget build(BuildContext context) {
+    String? currentRoute = ModalRoute.of(context)?.settings.name;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    bool hasSomething =
-        heading.isNotEmpty || para.isNotEmpty || image.isNotEmpty;
+    bool hasSomething = widget.heading.isNotEmpty ||
+        widget.para.isNotEmpty ||
+        widget.image.isNotEmpty;
     bool isSvg = false;
-    if (image.isNotEmpty) {
-      isSvg = image.substring(image.length - 3) == 'svg' ? true : false;
+    if (widget.image.isNotEmpty) {
+      isSvg = widget.image.substring(widget.image.length - 3) == 'svg'
+          ? true
+          : false;
     }
     double MaximumThing;
     if (screenWidth > screenHeight) {
@@ -47,30 +65,58 @@ class Header extends StatelessWidget {
                 InkWell(
                   onTap: () => Navigator.pop(context),
                   child: Icon(Icons.chevron_left_outlined,
-                      color: MyColors.white, size: MaximumThing * 0.03),
+                      color: MyColors.redonWhite, size: MaximumThing * 0.03),
                 ),
                 Text(
                   'Taqreeb',
                   style: GoogleFonts.montserrat(
                       fontSize: MaximumThing * 0.03,
                       fontWeight: FontWeight.w500,
-                      color: MyColors.white),
+                      color: MyColors.redonWhite),
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/settings');
+                  onTap: () async {
+                    if (currentRoute == '/settings') {
+                      warningDialog(
+                          title: 'Logout',
+                          message: 'Are you sure you want to logout?',
+                          actions: [
+                            ColoredButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              text: 'Cancel',
+                              textSize: MaximumThing * 0.015,
+                              width: screenWidth * 0.3,
+                            ),
+                            ColoredButton(
+                              onPressed: () async {
+                                await MyStorage.deleteToken('refresh');
+                                await MyStorage.deleteToken('accessToken');
+                                await MyStorage.deleteToken('userId');
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/Login', (Route<dynamic> route) => false);
+                              },
+                              text: 'Logout',
+                              width: screenWidth * 0.3,
+                              textSize: MaximumThing * 0.015,
+                            ),
+                          ]).showDialogBox(context);
+                    } else {
+                      Navigator.pushNamed(context, '/settings');
+                    }
                   },
-                  child: Icon(Icons.settings,
-                      color: MyColors.white, size: MaximumThing * 0.03),
+                  child: Icon(widget.icon,
+                      color: MyColors.redonWhite, size: MaximumThing * 0.03),
                 ),
               ],
             ),
           ),
-          heading.isNotEmpty
+          widget.heading.isNotEmpty
               ? Column(children: [
                   SizedBox(height: screenHeight * 0.02),
                   Text(
-                    heading,
+                    widget.heading,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                         fontSize: MaximumThing * 0.025,
@@ -78,16 +124,16 @@ class Header extends StatelessWidget {
                         color: MyColors.Yellow),
                   ),
                   SizedBox(
-                      height: para.isNotEmpty || image.isNotEmpty
+                      height: widget.para.isNotEmpty || widget.image.isNotEmpty
                           ? screenHeight * 0.01
                           : screenHeight * 0.03),
                 ])
               : Container(),
-          para.isNotEmpty
+          widget.para.isNotEmpty
               ? Column(children: [
                   SizedBox(height: screenHeight * 0.005),
                   Text(
-                    para,
+                    widget.para,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                         fontSize: MaximumThing * 0.013,
@@ -95,19 +141,20 @@ class Header extends StatelessWidget {
                         color: MyColors.white),
                   ),
                   SizedBox(
-                      height: image.isNotEmpty
+                      height: widget.image.isNotEmpty
                           ? screenHeight * 0.01
                           : screenHeight * 0.03),
                 ])
               : Container(),
-          image.isNotEmpty
+          widget.image.isNotEmpty
               ? Column(
                   children: [
                     SizedBox(height: screenHeight * 0.01),
                     SizedBox(height: screenHeight * 0.03),
                     isSvg
-                        ? SvgPicture.asset(image, height: screenHeight * 0.2)
-                        : Image.asset(image, height: screenHeight * 0.2),
+                        ? SvgPicture.asset(widget.image,
+                            height: screenHeight * 0.2)
+                        : Image.asset(widget.image, height: screenHeight * 0.2),
                     SizedBox(height: screenHeight * 0.03),
                   ],
                 )

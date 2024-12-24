@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class AddcategoryAddpackage extends StatefulWidget {
   const AddcategoryAddpackage({super.key});
@@ -23,6 +24,7 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [

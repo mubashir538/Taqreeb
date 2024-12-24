@@ -13,11 +13,12 @@ class AddImage extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
             Header(
-              heading: 'Basic Details',
+              heading: 'Add Image',
             ),
             SizedBox(height: screenHeight * 0.03),
             Container(

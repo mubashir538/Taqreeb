@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
@@ -13,10 +18,31 @@ class AddcategoryList extends StatefulWidget {
 
 class _AddcategoryListState extends State<AddcategoryList> {
   TextEditingController nameController = TextEditingController();
-
+  int charactersleft = 1100;
   TextEditingController locationController = TextEditingController();
-
   TextEditingController typeController = TextEditingController();
+  String token = '';
+  Map<String, dynamic> categories = {}; // Initialize as empty map
+  bool isLoading = true; // Add a loading flag
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  void fetchCategories() async {
+    final token = await MyStorage.getToken('accessToken') ?? '';
+    final categories = await MyApi.getRequest(
+      endpoint: 'home/categories/',
+      //  headers: {'Authorization': 'Bearer $token'}
+    );
+    setState(() {
+      this.token = token;
+      this.categories = categories ?? {}; // Ensure no null data
+      isLoading = false; // Data has been fetched, so stop loading
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +51,18 @@ class _AddcategoryListState extends State<AddcategoryList> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
             Header(
-              heading: 'Basic Details',
+              heading: 'Add Service',
+              para: 'Add your Services or Halls in the Application',
             ),
-            SizedBox(height: screenHeight * 0.03),
             MyTextBox(
               hint: 'Name',
               valueController: nameController,
             ),
-            SizedBox(height: screenHeight * 0.01),
             Container(
               margin: EdgeInsets.all(MaximumThing * 0.01),
               height: screenHeight * 0.3,
@@ -56,16 +82,21 @@ class _AddcategoryListState extends State<AddcategoryList> {
                 ],
               ),
               child: TextField(
-                maxLines: 10,
+                onChanged: (value) {
+                  setState(() {
+                    charactersleft = 1100 - value.length;
+                  });
+                },
+                maxLines: 50,
                 style: GoogleFonts.montserrat(
                     color: MyColors.white,
-                    fontSize: MaximumThing * 0.018,
+                    fontSize: MaximumThing * 0.015,
                     fontWeight: FontWeight.w400),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintStyle: GoogleFonts.montserrat(
-                    color: MyColors.white,
-                    fontSize: MaximumThing * 0.018,
+                    color: MyColors.white.withOpacity(0.6),
+                    fontSize: MaximumThing * 0.015,
                     fontWeight: FontWeight.w300,
                   ),
                   hintText: "Enter Description",
@@ -78,25 +109,69 @@ class _AddcategoryListState extends State<AddcategoryList> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    "1100 characters left",
+                    "${charactersleft} characters left",
                     style: GoogleFonts.montserrat(
                       color: MyColors.white,
-                      fontSize: MaximumThing * 0.018,
+                      fontSize: MaximumThing * 0.015,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.01),
             MyTextBox(
               hint: 'Location',
               valueController: locationController,
             ),
-            SizedBox(height: screenHeight * 0.01),
-            MyTextBox(
-              hint: 'Category Type',
-              valueController: typeController,
+            ResponsiveDropdown(
+                items: isLoading
+                    ? []
+                    : categories['categories']
+                        .map((value) {
+                          return value['name'].toString();
+                        })
+                        .cast<String>()
+                        .toList(),
+                labelText: 'Category',
+                onChanged: (value) {
+                  typeController.text = value;
+                }),
+            SizedBox(
+              height: screenHeight * 0.1,
+              child: Center(child: MyDivider()),
+            ),
+            ColoredButton(
+              text: 'Continue',
+              onPressed: () {
+                if (nameController.text.isEmpty ||
+                    locationController.text.isEmpty ||
+                    typeController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Please fill all the fields'),
+                  ));
+                  return;
+                }
+                if (charactersleft > 1050) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Description is too Short'),
+                  ));
+                  return;
+                }
+                if (charactersleft < 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Description is too Long'),
+                  ));
+                  return;
+                }
+                Map<String, dynamic> args = {
+                  'name': nameController.text,
+                  'description': nameController.text,
+                  'location': locationController.text,
+                  'category': typeController.text
+                };
+                Navigator.pushNamed(context, '/AddCategory_MoreDetails',
+                    arguments: args);
+              },
             ),
           ],
         ),

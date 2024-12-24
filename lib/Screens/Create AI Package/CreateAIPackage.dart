@@ -20,6 +20,8 @@ class CreateAIPackage extends StatefulWidget {
 class _CreateAIPackageState extends State<CreateAIPackage> {
   final double _currentBudgetValue = 100000;
   final TextEditingController dateController = new TextEditingController();
+  final CheckBoxController checkBoxController =
+      CheckBoxController(selections: []);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +73,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   div: 9,
                   currentCount: _currentBudgetValue),
               RadioButtonQuestion(
+                onChanged: (value) {},
                   options: ["Yes", "No"],
                   question: "Are you open to flexible pricing options?",
                   myValue: "Yes")
@@ -81,19 +84,23 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   question:
                       "In which city or area would you like to hold the event?"),
               RadioButtonQuestion(
+                onChanged: (value) {},
                   options: ["Indoor", "Outdoor", "Mixed"],
                   question: "What type of venue do you prefer?",
                   myValue: "Indoor"),
               RadioButtonQuestion(
+                onChanged: (value) {},
                   options: ["Casual", "Formal", "Themed"],
                   question: "What kind of ambiance are you looking for?",
                   myValue: "Casual")
             ], Heading: "Location Preferences"),
             QuestionGroup(questions: [
               CheckBoxQuestion(
-                  question: "Do you need any additional services?",
-                  options: ["Photography", "Decoration", "Music"],
-                  selections: []),
+                question: "Do you need any additional services?",
+                options: ["Photography", "Decoration", "Music"],
+                controller: checkBoxController,
+                onChanged: (selections) {},
+              ),
               NormalQuestion(
                   MaximumThing: MaximumThing,
                   question: "Describe the Theme of your event")

@@ -25,6 +25,16 @@ class ProfilePictureUpload extends StatefulWidget {
 
 class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   File? _selectedImage;
+  String type = '';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    setState(() {
+      type = args['type'] ?? '';
+    });
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -56,33 +66,58 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
   Future<void> _uploadProfilePicture() async {
     if (_selectedImage != null) {
+      String apipath = 'userAccountSignup/';
+      if (type == 'Business') {
+        apipath = 'businessowner/signup/';
+      } else if (type == 'freelancer') {
+        apipath = 'freelancer/signup/';
+      }
       try {
         // Create a multipart request to upload the image
-        final request = http.MultipartRequest(
-            'POST', Uri.parse(MyApi.baseUrl + 'userAccountSignup/'));
+        final request =
+            http.MultipartRequest('POST', Uri.parse(MyApi.baseUrl + apipath));
 
         // Add the image file
         request.files.add(await http.MultipartFile.fromPath(
           'profilePicture',
           _selectedImage!.path,
         ));
+        if (type == 'freelancer') {
+        } else if (type == 'Business') {
+          request.files.add(await http.MultipartFile.fromPath(
+            'cnicFront',
+            await MyStorage.getToken('bsfront') ?? "",
+          ));
+          request.files.add(await http.MultipartFile.fromPath(
+            'cnicBack',
+            await MyStorage.getToken('bsback') ?? "",
+          ));
 
-        // Add additional fields
-        request.fields['firstName'] = await MyStorage.getToken('sfname') ?? "";
-        request.fields['lastName'] = await MyStorage.getToken('slname') ?? "";
-        request.fields['password'] =
-            await MyStorage.getToken('spassword') ?? "";
-        request.fields['contactType'] =
-            await MyStorage.exists('semail') ? 'email' : 'phone';
-        if (request.fields['contactType'] == 'email') {
-          request.fields['email'] = await MyStorage.getToken('semail') ?? "";
+          request.fields['id'] = await MyStorage.getToken('userId') ?? "";
+          request.fields['businessName'] =
+              await MyStorage.getToken('bsname') ?? "";
+          request.fields['username'] =
+              await MyStorage.getToken('bsusername') ?? "";
+          request.fields['cnic'] = await MyStorage.getToken('bscnic') ?? "";
+          request.fields['description'] =
+              await MyStorage.getToken('bsdescription') ?? "";
         } else {
-          request.fields['contactNumber'] =
-              await MyStorage.getToken('sphone') ?? "";
+          request.fields['firstName'] =
+              await MyStorage.getToken('sfname') ?? "";
+          request.fields['lastName'] = await MyStorage.getToken('slname') ?? "";
+          request.fields['password'] =
+              await MyStorage.getToken('spassword') ?? "";
+          request.fields['contactType'] =
+              await MyStorage.exists('semail') ? 'email' : 'phone';
+          if (request.fields['contactType'] == 'email') {
+            request.fields['email'] = await MyStorage.getToken('semail') ?? "";
+          } else {
+            request.fields['contactNumber'] =
+                await MyStorage.getToken('sphone') ?? "";
+          }
+          request.fields['city'] = await MyStorage.getToken('scity') ?? "";
+          request.fields['gender'] = await MyStorage.getToken('sgender') ?? "";
         }
-        request.fields['city'] = await MyStorage.getToken('scity') ?? "";
-        request.fields['gender'] = await MyStorage.getToken('sgender') ?? "";
-
         // Send the request
         final response = await request.send();
 
@@ -105,19 +140,31 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
             ).showDialogBox(context);
           } else {
             // Success
-            MyStorage.saveToken(
-                jsonResponse['refresh'].toString(), 'refresh');
-            MyStorage.saveToken(
-                jsonResponse['access'].toString(), 'accessToken');
-                MyStorage.saveToken(jsonResponse['userId'].toString(),'userId');
-            MyStorage.deleteToken('spassword');
-            MyStorage.deleteToken('sfname');
-            MyStorage.deleteToken('slname');
-            MyStorage.deleteToken('semail');
-            MyStorage.deleteToken('scity');
-            MyStorage.deleteToken('sgender');
-            Navigator.pushNamed(context, '/HomePage');
 
+            if (type == 'freelancer') {
+            } else if (type == 'Business') {
+              MyStorage.deleteToken('bscnic');
+              MyStorage.deleteToken('bsname');
+              MyStorage.deleteToken('bsusername');
+              MyStorage.deleteToken('bsfront');
+              MyStorage.deleteToken('bsback');
+              MyStorage.deleteToken('bsdescription');
+              Navigator.pushNamed(context, '/SubmissionSucessful');
+            } else {
+              MyStorage.saveToken(
+                  jsonResponse['refresh'].toString(), 'refresh');
+              MyStorage.saveToken(
+                  jsonResponse['access'].toString(), 'accessToken');
+              MyStorage.saveToken(jsonResponse['userId'].toString(), 'userId');
+              MyStorage.saveToken('user', 'userType');
+              MyStorage.deleteToken('spassword');
+              MyStorage.deleteToken('sfname');
+              MyStorage.deleteToken('slname');
+              MyStorage.deleteToken('semail');
+              MyStorage.deleteToken('scity');
+              MyStorage.deleteToken('sgender');
+              Navigator.pushNamed(context, '/HomePage');
+            }
           }
         } else {
           // Failure

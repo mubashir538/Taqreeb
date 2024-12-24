@@ -3,6 +3,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
@@ -18,6 +19,7 @@ class ForgotPassword_EmailorPhoneInput extends StatelessWidget {
     TextEditingController contactController = TextEditingController();
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [

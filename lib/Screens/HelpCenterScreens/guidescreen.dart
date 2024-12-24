@@ -26,7 +26,11 @@ class GuideScreen extends StatelessWidget {
                   heading: 'Guide',
                 ),
                 SizedBox(height: 10),
-                SearchBox(controller: searchController),
+                SearchBox(
+                  onChanged: (value) {},
+                  controller: searchController,
+                  hint: 'Search Typing to Search',
+                ),
                 SizedBox(height: 20),
                 Text(
                   'or browse through our options to get the help you need.',

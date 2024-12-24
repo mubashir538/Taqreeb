@@ -1,11 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
+import 'package:taqreeb/Components/guests.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
-class CreateGuestList_List extends StatelessWidget {
+class CreateGuestList_List extends StatefulWidget {
   const CreateGuestList_List({super.key});
+
+  @override
+  State<CreateGuestList_List> createState() => _CreateGuestList_ListState();
+}
+
+class _CreateGuestList_ListState extends State<CreateGuestList_List> {
+  String token = '';
+  Map<String, dynamic> guests = {}; // Initialize as empty map
+  Map<String, dynamic> args = {};
+  bool isfunction = false;
+  int functionid = 0;
+  int eventId = 0;
+  bool isLoading = true; // Add a loading flag
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    this.args = args;
+    setState(() {
+      if (args['functionid'] != null) {
+        isfunction = true;
+        functionid = args['functionid'];
+      }
+      eventId = args['eventId'];
+    });
+    fetchData(); // Fetch data in a separate method
+  }
+
+  void fetchData() async {
+    // Perform asynchronous operations
+    final token = await MyStorage.getToken('accessToken') ?? "";
+    final fetchedGuests = await MyApi.postRequest(
+      endpoint: 'show/guest/',
+      body: {
+        'EventId': eventId,
+        'FunctionID': isfunction ? functionid : "None"
+      },
+      //  headers: {
+      //   'Authorization': 'Bearer $token',
+      // }
+    );
+
+    // Update the state
+    setState(() {
+      this.token = token;
+      this.guests = fetchedGuests ?? {}; // Ensure no null data
+      isLoading = false; // Data has been fetched, so stop loading
+    });
+  }
+
+  void _showOptions(BuildContext context, double maxThing, double width) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(maxThing * 0.02),
+          decoration: BoxDecoration(
+            color: MyColors.DarkLighter,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ColoredButton(
+                      text: 'Add Person',
+                      width: width * 0.4,
+                      textSize: maxThing * 0.015,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                            context, '/CreateGuestList_AddPerson',
+                            arguments: args);
+                      }),
+                  ColoredButton(
+                      text: 'Add Family',
+                      width: width * 0.4,
+                      textSize: maxThing * 0.015,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                            context, '/CreateGuestList_AddFamily',
+                            arguments: args);
+                      }),
+                ],
+              ),
+              SizedBox(height: maxThing * 0.03), // Space below the buttons
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,87 +119,56 @@ class CreateGuestList_List extends StatelessWidget {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Container(
           constraints: BoxConstraints(minHeight: screenHeight),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Header(
-                heading: 'Guest List',
-              ),
-              SizedBox(
-                width: screenWidth * 0.9,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return MessageChatButton(
-                      onpressed: () {},
-                      name: "Haziq",
-                      message: "Assalam-u-alikum",
-                      time: '',
-                    );
-                  },
+              Column(children: [
+                Header(
+                  heading: 'Guest List',
                 ),
-              ),
-              // Container(
-              //   height: 71,
-              //   width: 272,
-              //   decoration: BoxDecoration(
-              //     color: MyColors.DarkLighter,
-              //     borderRadius: BorderRadius.only(
-              //       topLeft: Radius.circular(16),
-              //       topRight: Radius.circular(16),
-              //       bottomLeft: Radius.circular(16),
-              //     ),
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       SizedBox(
-              //         width: 10,
-              //       ),
-              //       ColoredButton(
-              //         text: "Add Person",
-              //         height: 28,
-              //         width: 115,
-              //       ),
-              //       SizedBox(
-              //         width: 20,
-              //       ),
-              //       ColoredButton(
-              //         text: "Add Family",
-              //         height: 28,
-              //         width: 115,
-              //       )
-              //     ],
-              //   ),
-              // ),
-
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(
-                    vertical: MaximumThing * 0.04,
-                    horizontal: screenWidth * 0.02),
-                width: screenWidth * 0.8,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: MyColors.red,
-                      child: Image.asset(
-                        MyIcons.add,
-                        color: MyColors.white,
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(MyColors.white),
+                        ),
+                      )
+                    : SizedBox(
+                        width: screenWidth * 0.9,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: guests['Guests'].length,
+                          itemBuilder: (context, index) {
+                            return Guests(
+                              onpressed: () {},
+                              ondelete: () {},
+                              name: guests['Guests'][index]['name'] ?? '',
+                              contact:
+                                  guests['Guests'][index]['type'] == "Family"
+                                      ? guests['Guests'][index]['members']
+                                          .toString()
+                                      : guests['Guests'][index]['phone'],
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+              ]),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: MyColors.Yellow,
+        onPressed: () => _showOptions(context, MaximumThing, screenWidth),
+        child: Icon(
+          Icons.add,
+          color: MyColors.Dark,
+          size: MaximumThing * 0.04,
         ),
       ),
     );

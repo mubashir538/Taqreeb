@@ -16,10 +16,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(Duration(seconds: 3), () async {
+      await MyStorage.saveToken('Dark', 'theme');
       if (await MyStorage.exists('accessToken')) {
-        Navigator.pushNamed(context, '/HomePage');
+        Navigator.pushReplacementNamed(context, '/HomePage');
       } else {
-        Navigator.pushNamed(context, '/Login');
+        Navigator.pushReplacementNamed(context, '/Login');
       }
     });
   }

@@ -6,8 +6,10 @@ import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/Search Box.dart';
+import 'package:taqreeb/Components/automatic%20Slider.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'dart:math';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -22,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
   Map<String, dynamic> listings = {}; // Initialize as empty map
-
+  Map<String, dynamic> demoImages = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
 
   @override
@@ -34,12 +36,19 @@ class _HomePageState extends State<HomePage> {
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
-    final fetchedCategories =
-        await MyApi.getRequest(endpoint: 'home/categories/',
-        //  headers: {
-        //   'Authorization': 'Bearer $token',
-        // }
-        );
+    final fetchedCategories = await MyApi.getRequest(
+      endpoint: 'home/categories/',
+      //  headers: {
+      //   'Authorization': 'Bearer $token',
+      // }
+    );
+
+    final fetchedImages = await MyApi.getRequest(
+      endpoint: 'Homepage/DemoImages/',
+      //  headers: {
+      //   'Authorization
+      // }
+    );
     final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
 
     // Update the state
@@ -47,9 +56,10 @@ class _HomePageState extends State<HomePage> {
       this.token = token;
       this.categories = fetchedCategories ?? {}; // Ensure no null data
       this.listings = fetchedListings ?? {}; // Ensure no null data
+      this.demoImages = fetchedImages ?? {}; // Ensure no null data
+      print(demoImages);
       isLoading = false; // Data has been fetched, so stop loading
     });
-
   }
 
   @override
@@ -60,6 +70,7 @@ class _HomePageState extends State<HomePage> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,50 +81,20 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SearchBox(controller: _searchController),
-                  IconButton(
-                    icon: Icon(Icons.tune, color: MyColors.white),
-                    onPressed: () {},
+                  SearchBox(
+                    onChanged: (value) {},
+                    hint: 'Search Typing to Search',
+                    onclick: () {
+                      Navigator.pushNamed(context, '/SearchService');
+                    },
+                    controller: _searchController,
+                    width: screenWidth * 0.9,
                   ),
+                  // IconButton(
+                  //   icon: Icon(Icons.tune, color: MyColors.white),
+                  //   onPressed: () {},
+                  // ),
                 ],
-              ),
-            ),
-            Container(
-              height: screenHeight * 0.2,
-              alignment: Alignment.center,
-              child: Image.network(
-                'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
-            ),
-            Center(
-              child: Container(
-                width: screenWidth * 0.95,
-                margin: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Browse Categories',
-                      style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.02,
-                        fontWeight: FontWeight.w600,
-                        color: MyColors.Yellow,
-                      ),
-                    ),
-                    InkWell(
-                      child: Text(
-                        'See all',
-                        style: GoogleFonts.montserrat(
-                          fontSize: MaximumThing * 0.017,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
             // Show CircularProgressIndicator while loading
@@ -124,32 +105,82 @@ class _HomePageState extends State<HomePage> {
                           AlwaysStoppedAnimation<Color>(MyColors.Yellow),
                     ),
                   )
-                : SizedBox(
-                    height: screenHeight * 0.17,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) => CategoryIcon(
-                        onpressed: () {
-                          Navigator.pushNamed(
-                              context, '/CategoryView_Caterers');
-                        },
-                        label: categories['categories'][index]['name'],
-                        imageUrl:
-                            // '${MyApi.baseUrl}${categories['categories'][index]['picture']}.png',
-                            'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
+                : Column(
+                    children: [
+                      Center(
+                        child: AutoImageSlider(
+                          imageUrls: demoImages[
+                                  'images'] // Filter items with "image"
+                              .map((value) =>
+                                  '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
+                              .cast<String>() // Extract "image" values
+                              .toList(),
+                          height: screenHeight * 0.25,
+                        ),
                       ),
-                      itemCount: categories['categories'].length,
-                      scrollDirection: Axis.horizontal,
-                    ),
+                      Center(
+                        child: Container(
+                          width: screenWidth * 0.95,
+                          margin: EdgeInsets.symmetric(
+                              vertical: screenHeight * 0.015),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Browse Categories',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: MaximumThing * 0.02,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.Yellow,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, '/SearchService');
+                                },
+                                child: Text(
+                                  'See all',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: MaximumThing * 0.017,
+                                    fontWeight: FontWeight.w400,
+                                    color: MyColors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.19,
+                        child: ListView.builder(
+                          itemBuilder: (context, index) => CategoryIcon(
+                            onpressed: () {
+                              Navigator.pushNamed(context, '/SearchService',
+                                  arguments: {
+                                    'category': categories['categories'][index]
+                                        ['name'],
+                                  });
+                            },
+                            label: categories['categories'][index]['name'],
+                            imageUrl:
+                                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                          ),
+                          itemCount: categories['categories'].length,
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      ),
+                    ],
                   ),
-            Center(
-              child: ColoredButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/CreateAIPackage');
-                },
-                text: 'Create Package with AI',
-              ),
-            ),
-            // Show CircularProgressIndicator while loading listings
+            // Center(
+            //   child: ColoredButton(
+            //     onPressed: () {
+            //       Navigator.pushNamed(context, '/CreateAIPackage');
+            //     },
+            //     text: 'Create Package with AI',
+            //   ),
+            // ),
             isLoading
                 ? Center(
                     child: CircularProgressIndicator(
@@ -166,13 +197,15 @@ class _HomePageState extends State<HomePage> {
                         itemCount: listings['HomeListing'].length,
                         itemBuilder: (context, index) {
                           return Productcard(
-                            onpressed: () {
-                              Navigator.pushNamed(
-                                  context, '/CategoryView_Venue');
-                            },
-                            imageUrl:
-                                // '${MyApi.baseUrl}${listings['HomeListing'][index]['picture']}.png',
-                                'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220',
+                            listingType: listings['HomeListing'][index]['type']
+                                .toString(),
+                            listingid:
+                                listings['HomeListing'][index]['id'].toString(),
+                            imageUrl: listings['pictures'][index][0]
+                                        ['picturePath'] ==
+                                    " "
+                                ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}',
                             venueName: listings['HomeListing'][index]['name'],
                             location: listings['HomeListing'][index]
                                 ['location'],

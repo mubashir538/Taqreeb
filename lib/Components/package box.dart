@@ -14,62 +14,90 @@ class PackageBox extends StatefulWidget {
 }
 
 class _PackageBoxState extends State<PackageBox> {
+  bool isCollapsed = true;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-    bool isCollapsed = true;
+
     void ChangeCollapse() {
       setState(() {
         isCollapsed = !isCollapsed;
       });
     }
 
-    // bool isCollapsed = false;
-    return Container(
-        width: screenWidth * 0.9,
-        height: isCollapsed ? screenHeight * 0.1 : null,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            color: MyColors.DarkLighter,
-            boxShadow: [BoxShadow(color: Colors.black, blurRadius: 5)]),
-        child: Column(children: [
-          Row(
-            children: [
-              Text(widget.packagename,
-                  style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.025,
-                      fontWeight: FontWeight.w500,
-                      color: MyColors.white)),
-              InkWell(
-                onTap: () => ChangeCollapse(),
-                child: Transform.rotate(
-                  angle: 90 * 3.14 / 180,
-                  child: Icon(
-                    isCollapsed ? Icons.chevron_left : Icons.chevron_right,
-                    color: MyColors.white,
+    return InkWell(
+      onTap: () => ChangeCollapse(),
+      child: Container(
+          margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+          width: screenWidth * 0.9,
+          height: isCollapsed ? screenHeight * 0.07 : null,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              color: MyColors.DarkLighter,
+              boxShadow: [BoxShadow(color: Colors.black, blurRadius: 5)]),
+          child: Column(
+              mainAxisAlignment: isCollapsed
+                  ? MainAxisAlignment.center
+                  : MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(widget.packagename,
+                          style: GoogleFonts.montserrat(
+                              fontSize: MaximumThing * 0.02,
+                              fontWeight: FontWeight.w500,
+                              color: MyColors.white)),
+                      InkWell(
+                        onTap: () => ChangeCollapse(),
+                        child: Transform.rotate(
+                          angle: 90 * 3.14 / 180,
+                          child: Icon(
+                            isCollapsed
+                                ? Icons.chevron_right
+                                : Icons.chevron_left,
+                            color: MyColors.white,
+                            size: MaximumThing * 0.05,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              )
-            ],
-          ),
-          Text(widget.packagedetails,
-              style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.02,
-                  fontWeight: FontWeight.w300,
-                  color: MyColors.white)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(widget.packageprice,
-                  style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.03,
-                      fontWeight: FontWeight.w600,
-                      color: MyColors.Yellow)),
-            ],
-          )
-        ]));
+                isCollapsed
+                    ? Container()
+                    : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.all(MaximumThing * 0.02),
+                            child: Text(widget.packagedetails,
+                                style: GoogleFonts.montserrat(
+                                    fontSize: MaximumThing * 0.015,
+                                    fontWeight: FontWeight.w300,
+                                    color: MyColors.white)),
+                          ),
+                          Container(
+                            margin: EdgeInsets.all(MaximumThing * 0.02),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(widget.packageprice,
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: MaximumThing * 0.02,
+                                        fontWeight: FontWeight.w600,
+                                        color: MyColors.Yellow)),
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+              ])),
+    );
   }
 }

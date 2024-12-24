@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
@@ -37,11 +35,6 @@ class _CreateEventState extends State<CreateEvent> {
   String eventid = "";
   Map<String, dynamic> Event = {};
   bool edit = false;
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
 
   @override
   void didChangeDependencies() {
@@ -55,20 +48,23 @@ class _CreateEventState extends State<CreateEvent> {
         edit = true;
       });
     }
+    fetchData();
   }
 
   void fetchData() async {
     final token = await MyStorage.getToken('accessToken') ?? "";
     final types = await MyApi.getRequest(endpoint: 'getEventTypes/');
-
     final EventDetails;
     if (edit) {
-      EventDetails = await MyApi.getRequest(endpoint: 'YourEvents/${eventid}');
+      EventDetails =
+          await MyApi.getRequest(endpoint: 'eventdetails/${eventid}');
     } else {
       EventDetails = "";
     }
+    print(EventDetails);
     setState(() {
       if (edit) {
+        print('Edit Screen');
         this.Event = EventDetails ?? {};
         if (this.Event != {}) {
           eventNameController.text = this.Event['EventDetail']['name'];
@@ -79,8 +75,10 @@ class _CreateEventState extends State<CreateEvent> {
           budgetController.text =
               this.Event['EventDetail']['budget'].toString();
           themeColor.text = this.Event['EventDetail']['themeColor'];
-          guestMaxController.text = this.Event['EventDetail']['guestsmax'];
-          guestMinController.text = this.Event['EventDetail']['guestsmin'];
+          guestMaxController.text =
+              this.Event['EventDetail']['guestsmax'].toString();
+          guestMinController.text =
+              this.Event['EventDetail']['guestsmin'].toString();
         }
       }
       this.token = token;
@@ -103,7 +101,7 @@ class _CreateEventState extends State<CreateEvent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Header(
-              heading: "Create Event",
+              heading: edit ? "Edit Event" : "Create Event",
               para: "Plan your event effortlessly!",
               image: MyImages.SingupPng,
             ),
@@ -171,7 +169,7 @@ class _CreateEventState extends State<CreateEvent> {
               ),
             ),
             ColoredButton(
-              text: "Create Event",
+              text: edit ? "Edit Event" : "Create Event",
               onPressed: () async {
                 if (eventNameController.text.isEmpty ||
                     typeController.text.isEmpty ||
@@ -185,19 +183,20 @@ class _CreateEventState extends State<CreateEvent> {
                   return;
                 }
                 final userId = await MyStorage.getToken('userId');
-                final response =
-                    await MyApi.postRequest(endpoint: 'CreateEvent/', body: {
-                  'Event Name': eventNameController.text,
-                  'Event Type': typeController.text,
-                  'Date': dateController.text,
-                  'Location': locationController.text,
-                  'description': descriptionController.text,
-                  'Theme': themeColor.text,
-                  'Budget': budgetController.text,
-                  'userId': userId,
-                  'guestmin': guestMinController.text,
-                  'guestmax':guestMaxController.text
-                });
+                final response = await MyApi.postRequest(
+                    endpoint: edit ? 'EditEvent/' : 'CreateEvent/',
+                    body: {
+                      'Event Name': eventNameController.text,
+                      'Event Type': typeController.text,
+                      'Date': dateController.text,
+                      'Location': locationController.text,
+                      'description': descriptionController.text,
+                      'Theme': themeColor.text,
+                      'Budget': budgetController.text,
+                      'EventId': eventid,
+                      'guestmin': guestMinController.text,
+                      'guestmax': guestMaxController.text
+                    });
                 if (response['status'] == 'error') {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
@@ -205,12 +204,16 @@ class _CreateEventState extends State<CreateEvent> {
                   return;
                 }
                 if (response['status'] == 'success') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Event Created Successfully')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: edit
+                          ? Text('Event Updated Successfully')
+                          : Text('Event Created Successfully')));
                   Navigator.pushNamed(context, '/YourEvents');
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error Creating Event')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(edit
+                          ? 'Error Updating Event'
+                          : 'Error Creating Event')));
                 }
               },
             ),

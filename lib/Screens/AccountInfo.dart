@@ -37,11 +37,11 @@ class _AccountInfoState extends State<AccountInfo> {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
       isLoading = false; // Data has been fetched, so stop loading
-      
-      print("${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
+
+      print(
+          "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +52,7 @@ class _AccountInfoState extends State<AccountInfo> {
 
     double size = MaximumThing * 0.03;
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
           child: Container(
         child: Column(children: [

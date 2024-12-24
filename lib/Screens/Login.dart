@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -16,18 +15,22 @@ import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({super.key});
 
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
         backgroundColor: MyColors.Dark,
@@ -82,7 +85,7 @@ class Login extends StatelessWidget {
                       ColoredButton(
                         text: "Login",
                         onPressed: () async {
-                          if (emailController.text.contains("@)")) {
+                          if (emailController.text.contains("@")) {
                             if (Validations.validateEmail(
                                     emailController.text) !=
                                 "Ok") {
@@ -105,40 +108,24 @@ class Login extends StatelessWidget {
                               return;
                             }
                           }
-                          if (Validations.validatePassword(
-                                  passwordController.text) !=
-                              "Ok") {
-                            warningDialog(
-                                    title: "Invalid Password",
-                                    message: Validations.validatePassword(
-                                        passwordController.text))
-                                .showDialogBox(context);
-                            return;
-                          }
                           final response = await MyApi.postRequest(
                               endpoint: 'User/login/',
                               body: {
                                 "contact": emailController.text,
                                 "password": passwordController.text
                               });
-                          final responseBody =
-                              await response.stream.bytesToString();
-                          final Map<String, dynamic> jsonResponse =
-                              jsonDecode(responseBody);
-                          if (response.statusCode == 200) {
-                            if (jsonResponse['status'] == 'success') {
-                              await MyStorage.saveToken(
-                                  jsonResponse['refresh'], 'refresh');
-                              await MyStorage.saveToken(
-                                  jsonResponse['access'], 'accessToken');
-                              await MyStorage.saveToken(
-                                  jsonResponse['userId'], 'userId');
-                              Navigator.pushNamed(context, '/HomePage');
-                            }
+
+                          if (response['status'] == 'success') {
+                            await MyStorage.saveToken(
+                                response['refresh'], 'refresh');
+                            await MyStorage.saveToken(
+                                response['access'], 'accessToken');
+                            await MyStorage.saveToken(
+                                response['userid'].toString(), 'userId');
+                            Navigator.pushNamed(context, '/HomePage');
                           } else {
                             warningDialog(
-                              message:
-                                  "Something Went Wrong Please Try Again Later",
+                              message: "Invalid Credentials",
                               title: "Error",
                             ).showDialogBox(context);
                           }

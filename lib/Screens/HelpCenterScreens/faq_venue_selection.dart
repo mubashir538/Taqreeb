@@ -26,76 +26,80 @@
 //   Widget build(BuildContext context) {
 //     // double screenWidth = MediaQuery.of(context).size.width;
 
-//     return Scaffold(
-//       backgroundColor: MyColors.Dark,
-//       body: SafeArea(
-//         child: SingleChildScrollView(
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: [
-//               Header(
-//                 heading: 'FAQ - Venue Selection',
-//                 para: '',
-//                 image: '',
-//               ),
-//               SizedBox(height: 10),
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-//                 child: SearchBox(controller: searchController),
-//               ),
-//               SizedBox(height: 20),
-//               Text(
-//                 'Find quick answers to common questions about wedding planning using our app..',
-//                 style: TextStyle(
-//                   color: MyColors.white,
-//                   fontSize: 15,
-//                 ),
-//                 textAlign: TextAlign.center,
-//               ),
-//               SizedBox(height: 20),
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-//                 child: Column(
-//                   children: [
-//                     FAQQuestion(
-//                       question: 'How do I find venues in my area?',
-//                       answer:
-//                           'Use the search feature in the Venue Selection section to filter venues by location, size, and style.',
-//                       isExpanded: _expandedStates[0],
-//                       onToggle: () => _toggleExpansion(0),
-//                     ),
-//                     SizedBox(height: 10),
-//                     FAQQuestion(
-//                       question: 'Can I book a venue directly through the app?',
-//                       answer:
-//                           'Yes, you can book a venue directly through our app with just a few clicks.',
-//                       isExpanded: _expandedStates[1],
-//                       onToggle: () => _toggleExpansion(1),
-//                     ),
-//                     SizedBox(height: 10),
-//                     FAQQuestion(
-//                       question: 'How do I compare venues?',
-//                       answer:
-//                           'Our app provides a comparison feature to help you make an informed decision.',
-//                       isExpanded: _expandedStates[2],
-//                       onToggle: () => _toggleExpansion(2),
-//                     ),
-//                     SizedBox(height: 10),
-//                     FAQQuestion(
-//                       question: 'What are the payment options available?',
-//                       answer:
-//                           'You can pay through credit/debit card, mobile payments, or bank transfer.',
-//                       isExpanded: _expandedStates[3],
-//                       onToggle: () => _toggleExpansion(3),
-//                     ),
-//                     SizedBox(height: 10),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+    return Scaffold(
+      backgroundColor: MyColors.Dark,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Header(
+                heading: 'FAQ - Venue Selection',
+                para: '',
+                image: '',
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: SearchBox(
+                  onChanged: (value) {},
+                  controller: searchController,
+                  hint: 'Search Typing to Search',
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Find quick answers to common questions about wedding planning using our app..',
+                style: TextStyle(
+                  color: MyColors.white,
+                  fontSize: 15,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  children: [
+                    FAQQuestion(
+                      question: 'How do I find venues in my area?',
+                      answer:
+                          'Use the search feature in the Venue Selection section to filter venues by location, size, and style.',
+                      isExpanded: _expandedStates[0],
+                      onToggle: () => _toggleExpansion(0),
+                    ),
+                    SizedBox(height: 10),
+                    FAQQuestion(
+                      question: 'Can I book a venue directly through the app?',
+                      answer:
+                          'Yes, you can book a venue directly through our app with just a few clicks.',
+                      isExpanded: _expandedStates[1],
+                      onToggle: () => _toggleExpansion(1),
+                    ),
+                    SizedBox(height: 10),
+                    FAQQuestion(
+                      question: 'How do I compare venues?',
+                      answer:
+                          'Our app provides a comparison feature to help you make an informed decision.',
+                      isExpanded: _expandedStates[2],
+                      onToggle: () => _toggleExpansion(2),
+                    ),
+                    SizedBox(height: 10),
+                    FAQQuestion(
+                      question: 'What are the payment options available?',
+                      answer:
+                          'You can pay through credit/debit card, mobile payments, or bank transfer.',
+                      isExpanded: _expandedStates[3],
+                      onToggle: () => _toggleExpansion(3),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

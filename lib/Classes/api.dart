@@ -20,7 +20,6 @@ class MyApi {
       }
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        print(jsonDecode(response.body));
         return jsonDecode(response.body);
       } else {
         return {"status": "error", "message": "Something went wrong"};

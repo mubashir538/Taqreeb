@@ -78,7 +78,8 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                       MyStorage.saveToken(city, 'scity');
                       MyStorage.saveToken(
                           gender, 'sgender');
-                      Navigator.pushNamed(context, '/ProfilePictureUpload');
+                      Navigator.pushNamed(context, '/ProfilePictureUpload',
+                              arguments: {'type': 'user'});
                     }
                   },
                 ),

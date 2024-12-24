@@ -39,7 +39,7 @@ class ColoredButton extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: textSize == 0 ? MaximumThing * 0.018 : textSize,
               fontWeight: FontWeight.w500,
-              color: MyColors.white,
+              color: MyColors.redonWhite,
             ),
           ),
         ),

@@ -5,12 +5,13 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class CategoryView_Parlour extends StatelessWidget {
-  const CategoryView_Parlour({super.key});
+class CategoryView_GraphicDesigner extends StatelessWidget {
+  const CategoryView_GraphicDesigner({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [

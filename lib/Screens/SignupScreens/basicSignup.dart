@@ -53,7 +53,8 @@ class _BasicSignupState extends State<BasicSignup> {
             text: 'Continue',
             onPressed: () async {
               if (await MyStorage.exists('scity')) {
-                Navigator.pushNamed(context, '/ProfilePictureUpload');
+                Navigator.pushNamed(context, '/ProfilePictureUpload',
+                              arguments: {'type': 'User'});
               } else if (await MyStorage.exists('sphone') ||
                   await MyStorage.exists('semail')) {
                 Navigator.pushNamed(context, '/Signup_MoreInfo');
@@ -80,7 +81,7 @@ class _BasicSignupState extends State<BasicSignup> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -103,8 +104,7 @@ class _BasicSignupState extends State<BasicSignup> {
                     passwordController.text.isEmpty ||
                     confirmPasswordController.text.isEmpty) {
                   warningDialog(
-                    message:
-                        "Please fill all the details ${firstNameController.text}",
+                    message: "Please fill all the details",
                     title: "Invalid Details",
                   ).showDialogBox(context);
                 } else if (Validations.validatePassword(

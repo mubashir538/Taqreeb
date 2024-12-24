@@ -1,4 +1,5 @@
 class MyIcons {
+  static const String Playbutton = "assets/icons/Playbutton.png";
   static const String accounts = "assets/icons/Accounting.png";
   static const String leftAlign = "assets/icons/AlignLeft.png";
   static const String add = "assets/icons/add.png";

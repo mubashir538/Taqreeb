@@ -1,21 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class CreateGuestList extends StatelessWidget {
+class CreateGuestList extends StatefulWidget {
   const CreateGuestList({super.key});
+
+  @override
+  State<CreateGuestList> createState() => _CreateGuestListState();
+}
+
+class _CreateGuestListState extends State<CreateGuestList> {
+  Map<String, dynamic> args = {};
+
+  void _showOptions(BuildContext context, double maxThing, double width) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(maxThing * 0.02),
+          decoration: BoxDecoration(
+            color: MyColors.DarkLighter,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ColoredButton(
+                      text: 'Add Person',
+                      width: width * 0.4,
+                      textSize: maxThing * 0.015,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                            context, '/CreateGuestList_AddPerson',
+                            arguments: args);
+                      }),
+                  ColoredButton(
+                      text: 'Add Family',
+                      width: width * 0.4,
+                      textSize: maxThing * 0.015,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                            context, '/CreateGuestList_AddFamily',
+                            arguments: args);
+                      }),
+                ],
+              ),
+              SizedBox(height: maxThing * 0.03), // Space below the buttons
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    this.args = args;
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
+    double maxThing = screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Scaffold(
+      backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
         child: Container(
           constraints: BoxConstraints(minHeight: screenHeight),
@@ -26,72 +91,17 @@ class CreateGuestList extends StatelessWidget {
                 heading: 'Create Guest List',
                 image: MyImages.GuestList,
               ),
-
-              // Container(
-              //   height: screenHeight*0.07,
-              //   width: screenWidth*0.9,
-              //   decoration: BoxDecoration(
-              //     color: MyColors.DarkLighter,
-              //     borderRadius: BorderRadius.only(
-              //       topLeft: Radius.circular(16),
-              //       topRight: Radius.circular(16),
-              //       bottomLeft: Radius.circular(16),
-              //     ),
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       SizedBox(
-              //         width: 10,
-              //       ),
-              //       ColoredButton(
-              //         text: "Add Person",
-              //         height: 28,
-              //         width: 115,
-              //       ),
-              //       SizedBox(
-              //         width: 20,
-              //       ),
-              //       ColoredButton(
-              //         text: "Add Family",
-              //         height: 28,
-              //         width: 115,
-              //       )
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(height: 5),
-
-              Container(
-                height: screenHeight * 0.07,
-                width: screenWidth * 0.9,
-                padding: EdgeInsets.symmetric(
-                    vertical: MaximumThing * 0.02,
-                    horizontal: MaximumThing * 0.03),
-                decoration: BoxDecoration(
-                  color: MyColors.DarkLighter,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Create guest list",
-                      style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.015,
-                        fontWeight: FontWeight.w300,
-                        color: MyColors.white,
-                      ),
-                    ),
-                    Image.asset(
-                      MyIcons.add,
-                      color: MyColors.white,
-                      height: MaximumThing * 0.06,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: MyColors.Yellow,
+        onPressed: () => _showOptions(context, maxThing, screenWidth),
+        child: Icon(
+          Icons.add,
+          color: MyColors.Dark,
+          size: maxThing * 0.04,
         ),
       ),
     );

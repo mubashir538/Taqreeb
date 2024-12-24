@@ -29,7 +29,11 @@ class SupportScreen extends StatelessWidget {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: SearchBox(controller: searchController),
+                child: SearchBox(
+                  onChanged: (value) {},
+                  controller: searchController,
+                  hint: 'Search Typing to Search',
+                ),
               ),
               SizedBox(height: 20),
               Text(
@@ -47,18 +51,21 @@ class SupportScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               GuideButton(
+                onpressed: () {},
                 text: 'Guide',
                 leftIconPath: MyIcons.guide,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
+                onpressed: () {},
                 text: 'FAQ',
                 leftIconPath: MyIcons.faq,
                 rightIconPath: MyIcons.sortArrow,
               ),
               SizedBox(height: 10),
               GuideButton(
+                onpressed: () {},
                 text: 'Customer Support',
                 leftIconPath: MyIcons.people,
                 rightIconPath: MyIcons.sortArrow,
