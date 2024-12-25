@@ -113,11 +113,21 @@ class _ChatsScreenState extends State<ChatsScreen> {
     Navigator.pushNamed(context, '/SearchUsers');
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       floatingActionButton: FloatingActionButton(
@@ -125,47 +135,55 @@ class _ChatsScreenState extends State<ChatsScreen> {
         child: Icon(Icons.add, color: MyColors.white),
         backgroundColor: MyColors.red,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: _headerHeight,
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: screenHeight * 0.03),
+                  child: SearchBox(
+                    onChanged: (value) {},
+                    hint: 'Search Typing to Search',
+                    controller: controller,
+                    width: screenWidth * 0.9,
+                  ),
+                ),
+                isCheckingContacts
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: userChats.length,
+                        itemBuilder: (context, index) {
+                          final chat = userChats[index];
+                          return MessageChatButton(
+                            onpressed: () {
+                              Navigator.pushNamed(context, '/ChatBox');
+                            },
+                            name: chat['name'],
+                            message: chat['lastMessage'] ?? '',
+                            newMessage: 0,
+                            time: '11:30 AM',
+                          );
+                        },
+                      ),
+              ],
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: "Chats",
               para:
                   "This password should be different from the previous password",
             ),
-            Container(
-              margin: EdgeInsets.only(top: screenHeight * 0.03),
-              child: SearchBox(
-                onChanged: (value){
-
-                },
-                hint: 'Search Typing to Search',
-                controller: controller,
-                width: screenWidth * 0.9,
-              ),
-            ),
-            isCheckingContacts
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: userChats.length,
-                    itemBuilder: (context, index) {
-                      final chat = userChats[index];
-                      return MessageChatButton(
-                        onpressed: () {
-                          Navigator.pushNamed(context, '/ChatBox');
-                        },
-                        name: chat['name'],
-                        message: chat['lastMessage'] ?? '',
-                        newMessage: 0,
-                        time: '11:30 AM',
-                      );
-                    },
-                  ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

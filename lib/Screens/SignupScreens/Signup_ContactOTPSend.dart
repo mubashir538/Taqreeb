@@ -20,79 +20,101 @@ class Signup_ContactOTPSend extends StatefulWidget {
 
 class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
   TextEditingController contactController = TextEditingController();
-    
+
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Header(
-                    heading: 'OTP Verification',
-                    para: 'Enter Phone number to send one time password',
-                    image: MyImages.SingupPng,
-                  ),
-                  SizedBox(
-                    height: screenHeight * 0.05,
-                  ),
-                  MyTextBox(
-                    hint: 'Contact Number',
-                    valueController: contactController,
-                  ),
-                  SizedBox(
-                    height: screenHeight * 0.1,
-                    child: Center(child: MyDivider()),
-                  ),
-                  ColoredButton(
-                    onPressed: () {
-                      if (Validations.validateContact(contactController.text) !=
-                          "Ok") {
-                        warningDialog(
-                            title: 'Invalid Contact Number',
-                            message: Validations.validateContact(
-                                contactController.text)).showDialogBox(context);
-                      } else {
-                        late Future<dynamic> response = MyApi.postRequest(
-                            endpoint: 'sendOTP/phone',
-                            body: {'contactNumber': contactController.text});
-                        Navigator.pushNamed(
-                            context, '/Signup_ContactOTPVerify',
-                arguments: {'contactNumber': contactController.text, 'response': response});
-                      }
-                    },
-                    text: 'Send OTP',
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/Signup_EmailOTPSend');
-                    },
-                    child: Text(
-                      'Verify Email Instead',
-                      style: TextStyle(
-                        color: MyColors.Yellow,
-                        fontSize: MaximumThing * 0.015,
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: (screenHeight * 0.05) + _headerHeight,
                       ),
-                    ),
+                      MyTextBox(
+                        hint: 'Contact Number',
+                        valueController: contactController,
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.1,
+                        child: Center(child: MyDivider()),
+                      ),
+                      ColoredButton(
+                        onPressed: () {
+                          if (Validations.validateContact(
+                                  contactController.text) !=
+                              "Ok") {
+                            warningDialog(
+                                    title: 'Invalid Contact Number',
+                                    message: Validations.validateContact(
+                                        contactController.text))
+                                .showDialogBox(context);
+                          } else {
+                            late Future<dynamic> response = MyApi.postRequest(
+                                endpoint: 'sendOTP/phone',
+                                body: {
+                                  'contactNumber': contactController.text
+                                });
+                            Navigator.pushNamed(
+                                context, '/Signup_ContactOTPVerify',
+                                arguments: {
+                                  'contactNumber': contactController.text,
+                                  'response': response
+                                });
+                          }
+                        },
+                        text: 'Send OTP',
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/Signup_EmailOTPSend');
+                        },
+                        child: Text(
+                          'Verify Email Instead',
+                          style: TextStyle(
+                            color: MyColors.Yellow,
+                            fontSize: MaximumThing * 0.015,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  ProgressBar(
+                    Progress: 1,
+                  )
                 ],
               ),
-              ProgressBar(
-                Progress: 1,
-              )
-            ],
+            ),
           ),
-        ),
+          Header(
+            key: _headerKey,
+            heading: 'OTP Verification',
+            para: 'Enter Phone number to send one time password',
+            image: MyImages.SingupPng,
+          ),
+        ],
       ),
     );
   }

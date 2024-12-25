@@ -73,27 +73,42 @@ class _CreateGuestListState extends State<CreateGuestList> {
     this.args = args;
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double maxThing = screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Header(
-                heading: 'Create Guest List',
-                image: MyImages.GuestList,
+      body: Row(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Header(
+                    key: _headerKey,
+                    heading: 'Create Guest List',
+                    image: MyImages.GuestList,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyColors.Yellow,

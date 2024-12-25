@@ -47,88 +47,108 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: (screenHeight * 0.05) + _headerHeight,
+                ),
+                MyTextBox(
+                  hint: 'Family Name',
+                  valueController: familyNamecontroller,
+                ),
+                MyTextBox(
+                  hint: 'No. of Members',
+                  valueController: memberscontroller,
+                ),
+                SizedBox(
+                  width: screenWidth * 0.9,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Guests(
+                        onpressed: () {},
+                        ondelete: () {
+                          removeFamily(index);
+                        },
+                        mywidth: screenWidth * 0.8,
+                        name: guestList[index]['name'] ?? '',
+                        contact: guestList[index]['members'] ?? '',
+                      );
+                    },
+                    itemCount: guestList.length,
+                  ),
+                ),
+                SizedBox(
+                  height: screenHeight * 0.05,
+                ),
+                ColoredButton(
+                  text: 'Add Family',
+                  width: screenWidth * 0.7,
+                  onPressed: () {
+                    setState(() {
+                      guestList.add({
+                        'name': familyNamecontroller.text,
+                        'members': memberscontroller.text
+                      });
+                    });
+                  },
+                ),
+                BorderButton(
+                  text: 'Done',
+                  width: screenWidth * 0.7,
+                  onPressed: () async {
+                    for (int i = 0; i < guestList.length; i++) {
+                      final response = await MyApi.postRequest(
+                          endpoint: 'add/guests/',
+                          body: {
+                            'eid': eventId,
+                            'fid': isfunction ? functionid : 'None',
+                            'guesttype': 'Family',
+                            'FamilyName': guestList[i]['name'],
+                            'member': guestList[i]['members']
+                          });
+                      if (response['status'] == 'success') {
+                        print('Family Added');
+                      } else {
+                        print('Family Not Added');
+                      }
+                    }
+                    Navigator.pushReplacementNamed(
+                        context, '/CreateGuestList_List',
+                        arguments: args);
+                  },
+                )
+              ],
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: 'Add Family',
             ),
-            SizedBox(
-              height: screenHeight * 0.05,
-            ),
-            MyTextBox(
-              hint: 'Family Name',
-              valueController: familyNamecontroller,
-            ),
-            MyTextBox(
-              hint: 'No. of Members',
-              valueController: memberscontroller,
-            ),
-            SizedBox(
-              width: screenWidth * 0.9,
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Guests(
-                    onpressed: () {},
-                    ondelete: () {
-                      removeFamily(index);
-                    },
-                    mywidth: screenWidth * 0.8,
-                    name: guestList[index]['name'] ?? '',
-                    contact: guestList[index]['members'] ?? '',
-                  );
-                },
-                itemCount: guestList.length,
-              ),
-            ),
-            SizedBox(
-              height: screenHeight * 0.05,
-            ),
-            ColoredButton(
-              text: 'Add Family',
-              width: screenWidth * 0.7,
-              onPressed: () {
-                setState(() {
-                  guestList.add({
-                    'name': familyNamecontroller.text,
-                    'members': memberscontroller.text
-                  });
-                });
-              },
-            ),
-            BorderButton(
-              text: 'Done',
-              width: screenWidth * 0.7,
-              onPressed: () async {
-                for (int i = 0; i < guestList.length; i++) {
-                  final response =
-                      await MyApi.postRequest(endpoint: 'add/guests/', body: {
-                    'eid': eventId,
-                    'fid': isfunction ? functionid : 'None',
-                    'guesttype': 'Family',
-                    'FamilyName': guestList[i]['name'],
-                    'member': guestList[i]['members']
-                  });
-                  if (response['status'] == 'success') {
-                    print('Family Added');
-                  } else {
-                    print('Family Not Added');
-                  }
-                }
-                Navigator.pushReplacementNamed(context, '/CreateGuestList_List',
-                    arguments: args);
-              },
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

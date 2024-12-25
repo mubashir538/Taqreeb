@@ -30,7 +30,8 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        final compressedFile = await _compressImage(File(pickedFile.path));
+        final compressedFile = await _compressImage(
+            image == 'f' ? File(frontImage!.path) : File(backImage!.path));
         setState(() {
           if (image == 'f') frontImage = compressedFile;
           if (image == 'b') backImage = compressedFile;
@@ -54,98 +55,117 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
     return compressedFile ?? file;
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: (screenHeight * 0.02) + _headerHeight),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                  child: Column(
+                    children: [
+                      frontImage != null
+                          ? Image.file(
+                              frontImage!,
+                              width: screenWidth * 0.5,
+                              height: screenWidth * 0.5,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              MyImages.Cnic,
+                              height: screenHeight * 0.2,
+                              fit: BoxFit.contain,
+                            ),
+                      GestureDetector(
+                        onTap: () => _pickImage('f'),
+                        child: IconedButton(
+                          icon: MyIcons.upload2,
+                          text: 'Upload Front',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+                  child: Column(
+                    children: [
+                      backImage != null
+                          ? Image.file(
+                              backImage!,
+                              width: screenWidth * 0.5,
+                              height: screenWidth * 0.5,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              MyImages.Cnic,
+                              height: screenHeight * 0.2,
+                              fit: BoxFit.contain,
+                            ),
+                      GestureDetector(
+                        onTap: () => _pickImage('b'),
+                        child: IconedButton(
+                          icon: MyIcons.upload2,
+                          text: 'Upload Back',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.03),
+                MyDivider(),
+                SizedBox(height: screenHeight * 0.02),
+                ColoredButton(
+                  onPressed: () {
+                    if (frontImage == null || backImage == null) {
+                      warningDialog(
+                        message:
+                            'Please upload both front and back of your CNIC',
+                        title: 'Invalid Details',
+                      ).showDialogBox(context);
+                    } else {
+                      MyStorage.saveToken(frontImage!.path, 'bsfront');
+                      MyStorage.saveToken(backImage!.path, 'bsback');
+                      Navigator.pushNamed(
+                          context, '/BusinessSignup_Description');
+                    }
+                  },
+                  text: 'Continue',
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: 'Upload your ID Card for Verification',
               para:
                   'Uploading your ID card ensures secure identity verification for your account.',
             ),
-            SizedBox(height: screenHeight * 0.02),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-              child: Column(
-                children: [
-                  frontImage != null
-                      ? Image.file(
-                          frontImage!,
-                          width: screenWidth * 0.5,
-                          height: screenWidth * 0.5,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(
-                          MyImages.Cnic,
-                          height: screenHeight * 0.2,
-                          fit: BoxFit.contain,
-                        ),
-                  GestureDetector(
-                    onTap: () => _pickImage('f'),
-                    child: IconedButton(
-                      icon: MyIcons.upload2,
-                      text: 'Upload Front',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-              child: Column(
-                children: [
-                  backImage != null
-                      ? Image.file(
-                          backImage!,
-                          width: screenWidth * 0.5,
-                          height: screenWidth * 0.5,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(
-                          MyImages.Cnic,
-                          height: screenHeight * 0.2,
-                          fit: BoxFit.contain,
-                        ),
-                  GestureDetector(
-                    onTap: () => _pickImage('b'),
-                    child: IconedButton(
-                      icon: MyIcons.upload2,
-                      text: 'Upload Back',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.03),
-            MyDivider(),
-            SizedBox(height: screenHeight * 0.02),
-            ColoredButton(
-              onPressed: () {
-                if (frontImage == null || backImage == null) {
-                  warningDialog(
-                    message: 'Please upload both front and back of your CNIC',
-                    title: 'Invalid Details',
-                  ).showDialogBox(context);
-                } else {
-                  MyStorage.saveToken(frontImage!.path, 'bsfront');
-                  MyStorage.saveToken(backImage!.path, 'bsback');
-                  Navigator.pushNamed(context, '/BusinessSignup_Description');
-                }
-              },
-              text: 'Continue',
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

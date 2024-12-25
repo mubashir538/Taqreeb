@@ -188,76 +188,94 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     }
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Header(
-                    heading: 'Upload Your Profile',
-                    para:
-                        'The Profile Picture or Business Logo will create the impression of your brand and will help people to visualize the Brand',
-                  ),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      margin: EdgeInsets.all(MaximumThing * 0.04),
-                      child: Stack(
-                        children: [
-                          ClipOval(
-                            child: Container(
-                              color: Colors.white,
-                              child: _selectedImage != null
-                                  ? Image.file(
-                                      _selectedImage!,
-                                      width: screenWidth * 0.5,
-                                      height: screenWidth * 0.5,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      MyImages.UploadProfile,
-                                      width: screenWidth * 0.5,
-                                      height: screenWidth * 0.5,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
+                  SizedBox(height: _headerHeight,),
+                  Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          margin: EdgeInsets.all(MaximumThing * 0.04),
+                          child: Stack(
+                            children: [
+                              ClipOval(
+                                child: Container(
+                                  color: Colors.white,
+                                  child: _selectedImage != null
+                                      ? Image.file(
+                                          _selectedImage!,
+                                          width: screenWidth * 0.5,
+                                          height: screenWidth * 0.5,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.asset(
+                                          MyImages.UploadProfile,
+                                          width: screenWidth * 0.5,
+                                          height: screenWidth * 0.5,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: screenWidth * 0.03,
+                                left: screenWidth * 0.03,
+                                child: SvgPicture.asset(
+                                  MyIcons.upload,
+                                  width: MaximumThing * 0.03,
+                                  height: MaximumThing * 0.03,
+                                ),
+                              ),
+                            ],
                           ),
-                          Positioned(
-                            bottom: screenWidth * 0.03,
-                            left: screenWidth * 0.03,
-                            child: SvgPicture.asset(
-                              MyIcons.upload,
-                              width: MaximumThing * 0.03,
-                              height: MaximumThing * 0.03,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      MyDivider(),
+                      ColoredButton(
+                        text: 'Upload Profile',
+                        onPressed: _uploadProfilePicture,
+                      ),
+                    ],
                   ),
-                  MyDivider(),
-                  ColoredButton(
-                    text: 'Upload Profile',
-                    onPressed: _uploadProfilePicture,
-                  ),
+                  ProgressBar(Progress: 4)
                 ],
               ),
-              ProgressBar(Progress: 4)
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
+              heading: 'Upload Your Profile',
+              para:
+                  'The Profile Picture or Business Logo will create the impression of your brand and will help people to visualize the Brand',
+            ),
+          ),
+        ],
       ),
     );
   }

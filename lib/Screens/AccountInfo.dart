@@ -43,6 +43,16 @@ class _AccountInfoState extends State<AccountInfo> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -51,276 +61,292 @@ class _AccountInfoState extends State<AccountInfo> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     double size = MaximumThing * 0.03;
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-          child: Container(
-        child: Column(children: [
-          Header(
-            heading: "My Profile",
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: MaximumThing * 0.02, vertical: MaximumThing * 0.03),
-            child: Text(
-                "Here is the account information for your profile,please review and ensure all details are accurate for a seamless experience.",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                    fontSize: MaximumThing * 0.015,
-                    fontWeight: FontWeight.w400,
-                    color: MyColors.white)),
-          ),
-          isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(MyColors.Yellow),
-                  ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                      //Circle Avatar
-                      SizedBox(
-                        width: screenWidth * 0.9,
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: screenWidth * 0.1,
-                                backgroundImage: NetworkImage(
-                                    "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}"),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+              child: Container(
+            child: Column(children: [
+              SizedBox(
+                height: _headerHeight,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MaximumThing * 0.02,
+                    vertical: MaximumThing * 0.03),
+                child: Text(
+                    "Here is the account information for your profile,please review and ensure all details are accurate for a seamless experience.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                        fontSize: MaximumThing * 0.015,
+                        fontWeight: FontWeight.w400,
+                        color: MyColors.white)),
+              ),
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                          //Circle Avatar
+                          SizedBox(
+                            width: screenWidth * 0.9,
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: screenWidth * 0.1,
+                                    backgroundImage: NetworkImage(
+                                        "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}"),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: MaximumThing * 0.02),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "${user['firstName']} ${user['lastName']}",
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: MaximumThing * 0.02,
+                                              fontWeight: FontWeight.w600,
+                                              color: MyColors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                          ),
+
+                          SizedBox(
+                            height: screenHeight * 0.05,
+                            child: Center(child: MyDivider()),
+                          ),
+
+                          //Gender
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MaximumThing * 0.02),
+                            child: Text(
+                              'Gender',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(
+                                fontSize: MaximumThing * 0.02,
+                                fontWeight: FontWeight.w700,
+                                color: MyColors.Yellow,
                               ),
-                              Container(
-                                margin:
-                                    EdgeInsets.only(left: MaximumThing * 0.02),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "${user['firstName']} ${user['lastName']}",
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: screenWidth * 0.8,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SvgPicture.asset(
+                                    MyIcons.profile,
+                                    width: size,
+                                    height: size,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: MaximumThing * 0.02),
+                                    child: Text(
+                                      user['gender'],
+                                      textAlign: TextAlign.start,
                                       style: GoogleFonts.montserrat(
+                                        fontSize: MaximumThing * 0.015,
+                                        fontWeight: FontWeight.w200,
+                                        color: MyColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+
+                          SizedBox(
+                            height: screenHeight * 0.05,
+                            child: Center(
+                                child: MyDivider(width: screenWidth * 0.7)),
+                          ),
+
+                          user['contactNumber'] == null
+                              ? Container()
+                              : Column(
+                                  children: [
+                                    //Phone
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: MaximumThing * 0.02),
+                                      child: Text(
+                                        'Phone',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
                                           fontSize: MaximumThing * 0.02,
-                                          fontWeight: FontWeight.w600,
-                                          color: MyColors.white),
+                                          fontWeight: FontWeight.w700,
+                                          color: MyColors.Yellow,
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(
+                                      width: screenWidth * 0.8,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.phone,
+                                              color: MyColors.white,
+                                              size: size,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: MaximumThing * 0.02),
+                                              child: Text(
+                                                user['contactNumber'],
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      MaximumThing * 0.015,
+                                                  fontWeight: FontWeight.w200,
+                                                  color: MyColors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                    ),
+
+                                    SizedBox(
+                                      height: screenHeight * 0.05,
+                                      child: Center(
+                                          child: MyDivider(
+                                              width: screenWidth * 0.7)),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ]),
-                      ),
 
-                      SizedBox(
-                        height: screenHeight * 0.05,
-                        child: Center(child: MyDivider()),
-                      ),
-
-                      //Gender
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-                        child: Text(
-                          'Gender',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
-                            fontSize: MaximumThing * 0.02,
-                            fontWeight: FontWeight.w700,
-                            color: MyColors.Yellow,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        width: screenWidth * 0.8,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(
-                                MyIcons.profile,
-                                width: size,
-                                height: size,
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: MaximumThing * 0.02),
-                                child: Text(
-                                  user['gender'],
-                                  textAlign: TextAlign.start,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.015,
-                                    fontWeight: FontWeight.w200,
-                                    color: MyColors.white,
-                                  ),
-                                ),
-                              ),
-                            ]),
-                      ),
-
-                      SizedBox(
-                        height: screenHeight * 0.05,
-                        child:
-                            Center(child: MyDivider(width: screenWidth * 0.7)),
-                      ),
-
-                      user['contactNumber'] == null
-                          ? Container()
-                          : Column(
-                              children: [
-                                //Phone
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: MaximumThing * 0.02),
-                                  child: Text(
-                                    'Phone',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: MaximumThing * 0.02,
-                                      fontWeight: FontWeight.w700,
-                                      color: MyColors.Yellow,
+                          user['email'] == null
+                              ? Container()
+                              : Column(children: [
+                                  //Email
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: MaximumThing * 0.02),
+                                    child: Text(
+                                      'Email',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: MaximumThing * 0.02,
+                                        fontWeight: FontWeight.w700,
+                                        color: MyColors.Yellow,
+                                      ),
                                     ),
                                   ),
-                                ),
 
-                                SizedBox(
-                                  width: screenWidth * 0.8,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Icon(
-                                          Icons.phone,
-                                          color: MyColors.white,
-                                          size: size,
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: MaximumThing * 0.02),
-                                          child: Text(
-                                            user['contactNumber'],
-                                            textAlign: TextAlign.start,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: MaximumThing * 0.015,
-                                              fontWeight: FontWeight.w200,
-                                              color: MyColors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                ),
-
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child:
-                                          MyDivider(width: screenWidth * 0.7)),
-                                ),
-                              ],
-                            ),
-
-                      user['email'] == null
-                          ? Container()
-                          : Column(children: [
-                              //Email
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: MaximumThing * 0.02),
-                                child: Text(
-                                  'Email',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.02,
-                                    fontWeight: FontWeight.w700,
-                                    color: MyColors.Yellow,
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(
-                                width: screenWidth * 0.8,
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset(
-                                        MyIcons.email,
-                                        width: size,
-                                        height: size,
-                                        color: MyColors.white,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: MaximumThing * 0.02),
-                                        child: Text(
-                                          user['email'],
-                                          textAlign: TextAlign.start,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: MaximumThing * 0.015,
-                                            fontWeight: FontWeight.w200,
+                                  SizedBox(
+                                    width: screenWidth * 0.8,
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Image.asset(
+                                            MyIcons.email,
+                                            width: size,
+                                            height: size,
                                             color: MyColors.white,
                                           ),
-                                        ),
-                                      ),
-                                    ]),
-                              ),
-
-                              SizedBox(
-                                height: screenHeight * 0.05,
-                                child: Center(
-                                    child: MyDivider(width: screenWidth * 0.7)),
-                              ),
-                            ]),
-                      //Location
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-                        child: Text(
-                          'Location',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
-                            fontSize: MaximumThing * 0.02,
-                            fontWeight: FontWeight.w700,
-                            color: MyColors.Yellow,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        width: screenWidth * 0.8,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: MyColors.white,
-                                size: size,
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: MaximumThing * 0.02),
-                                child: Text(
-                                  user['city'],
-                                  textAlign: TextAlign.start,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.015,
-                                    fontWeight: FontWeight.w200,
-                                    color: MyColors.white,
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: MaximumThing * 0.02),
+                                            child: Text(
+                                              user['email'],
+                                              textAlign: TextAlign.start,
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: MaximumThing * 0.015,
+                                                fontWeight: FontWeight.w200,
+                                                color: MyColors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
                                   ),
-                                ),
-                              ),
-                            ]),
-                      ),
 
-                      SizedBox(
-                        height: screenHeight * 0.05,
-                        child:
-                            Center(child: MyDivider(width: screenWidth * 0.7)),
-                      ),
-                    ])
-        ]),
-      )),
+                                  SizedBox(
+                                    height: screenHeight * 0.05,
+                                    child: Center(
+                                        child: MyDivider(
+                                            width: screenWidth * 0.7)),
+                                  ),
+                                ]),
+                          //Location
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MaximumThing * 0.02),
+                            child: Text(
+                              'Location',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(
+                                fontSize: MaximumThing * 0.02,
+                                fontWeight: FontWeight.w700,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: screenWidth * 0.8,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: MyColors.white,
+                                    size: size,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: MaximumThing * 0.02),
+                                    child: Text(
+                                      user['city'],
+                                      textAlign: TextAlign.start,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: MaximumThing * 0.015,
+                                        fontWeight: FontWeight.w200,
+                                        color: MyColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+
+                          SizedBox(
+                            height: screenHeight * 0.05,
+                            child: Center(
+                                child: MyDivider(width: screenWidth * 0.7)),
+                          ),
+                        ])
+            ]),
+          )),
+          Positioned(
+            child: Header(
+              key: _headerKey,
+              heading: "My Profile",
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

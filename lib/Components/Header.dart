@@ -23,6 +23,7 @@ class Header extends StatefulWidget {
 }
 
 class _HeaderState extends State<Header> {
+  bool nosettings = false;
   @override
   Widget build(BuildContext context) {
     String? currentRoute = ModalRoute.of(context)?.settings.name;
@@ -42,6 +43,24 @@ class _HeaderState extends State<Header> {
       MaximumThing = screenWidth;
     } else {
       MaximumThing = screenHeight;
+    }
+
+    if (currentRoute == '/Login' ||
+        currentRoute == '/basicSignup' ||
+        currentRoute == '/Signup_ContactOTPSend' ||
+        currentRoute == '/Signup_ContactOTPVerify' ||
+        currentRoute == '/Signup_EmailOTPSend' ||
+        currentRoute == '/Signup_EmailOTPVerify' ||
+        currentRoute == '/Signup_MoreInfo' ||
+        currentRoute == '/ProfilePictureUpload' ||
+        currentRoute == '/BusinessSignup_BasicInfo' ||
+        currentRoute == '/BusinessSignup_CNICUpload' ||
+        currentRoute == '/BusinessSignup_Description' ||
+        currentRoute == '/SubmissionSucessful' ||
+        currentRoute == '/ForgotPassword_EmailorPhoneInput' ||
+        currentRoute == '/ForgotPassword_VerifyCode' ||
+        currentRoute == '/ForgotPassword_NewPassword') {
+      nosettings = true;
     }
     return Container(
       height: hasSomething ? null : screenHeight * 0.1,
@@ -74,41 +93,46 @@ class _HeaderState extends State<Header> {
                       fontWeight: FontWeight.w500,
                       color: MyColors.redonWhite),
                 ),
-                InkWell(
-                  onTap: () async {
-                    if (currentRoute == '/settings') {
-                      warningDialog(
-                          title: 'Logout',
-                          message: 'Are you sure you want to logout?',
-                          actions: [
-                            ColoredButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              text: 'Cancel',
-                              textSize: MaximumThing * 0.015,
-                              width: screenWidth * 0.3,
-                            ),
-                            ColoredButton(
-                              onPressed: () async {
-                                await MyStorage.deleteToken('refresh');
-                                await MyStorage.deleteToken('accessToken');
-                                await MyStorage.deleteToken('userId');
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/Login', (Route<dynamic> route) => false);
-                              },
-                              text: 'Logout',
-                              width: screenWidth * 0.3,
-                              textSize: MaximumThing * 0.015,
-                            ),
-                          ]).showDialogBox(context);
-                    } else {
-                      Navigator.pushNamed(context, '/settings');
-                    }
-                  },
-                  child: Icon(widget.icon,
-                      color: MyColors.redonWhite, size: MaximumThing * 0.03),
-                ),
+                nosettings
+                    ? Container()
+                    : InkWell(
+                        onTap: () async {
+                          if (currentRoute == '/settings') {
+                            warningDialog(
+                                title: 'Logout',
+                                message: 'Are you sure you want to logout?',
+                                actions: [
+                                  ColoredButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    text: 'Cancel',
+                                    textSize: MaximumThing * 0.015,
+                                    width: screenWidth * 0.3,
+                                  ),
+                                  ColoredButton(
+                                    onPressed: () async {
+                                      await MyStorage.deleteToken('refresh');
+                                      await MyStorage.deleteToken(
+                                          'accessToken');
+                                      await MyStorage.deleteToken('userId');
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil('/Login',
+                                              (Route<dynamic> route) => false);
+                                    },
+                                    text: 'Logout',
+                                    width: screenWidth * 0.3,
+                                    textSize: MaximumThing * 0.015,
+                                  ),
+                                ]).showDialogBox(context);
+                          } else {
+                            Navigator.pushNamed(context, '/settings');
+                          }
+                        },
+                        child: Icon(widget.icon,
+                            color: MyColors.redonWhite,
+                            size: MaximumThing * 0.03),
+                      ),
               ],
             ),
           ),

@@ -183,120 +183,142 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     }
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              child: Column(children: [
+                SizedBox(
+                  height: _headerHeight,
+                ),
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(MyColors.white),
+                      ))
+                    : Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: MaximumThing * 0.04,
+                                horizontal: MaximumThing * 0.02),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: _selectedImage != null
+                                        ? Image.file(_selectedImage!,
+                                                fit: BoxFit.cover)
+                                            .image
+                                        : NetworkImage(image),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: MaximumThing * 0.02),
+                                    child: InkWell(
+                                      onTap: _pickImage,
+                                      child: Text(
+                                        "Change Profile Picture",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            fontSize: MaximumThing * 0.015,
+                                            fontWeight: FontWeight.w400,
+                                            color: MyColors.Yellow),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+
+                          Column(
+                            children: [
+                              MyTextBox(
+                                  hint: 'First Name',
+                                  valueController: fnamecontroller),
+                              MyTextBox(
+                                  hint: 'Last Name',
+                                  valueController: lastnameController),
+                              ResponsiveDropdown(
+                                  items: ['Male', 'Female'],
+                                  labelText: 'Gender',
+                                  onChanged: (value) {
+                                    genderController.text = value;
+                                  }),
+                              MyTextBox(
+                                  hint: 'City',
+                                  valueController: locationcontroller),
+                            ],
+                          ),
+
+                          //Divider
+                          SizedBox(
+                            height: screenHeight * 0.1,
+                            child: Center(child: MyDivider()),
+                          ),
+                          //Colored Button
+                          ColoredButton(
+                            text: 'Save',
+                            onPressed: () {
+                              warningDialog(
+                                title: 'Save Changes',
+                                message:
+                                    'Are you sure you want to save the changes?',
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Cancel')),
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        _uploadProfilePicture();
+                                        Navigator.pushNamed(
+                                            context, '/AccountInfo');
+                                      },
+                                      child: Text('Save')),
+                                ],
+                              ).showDialogBox(context);
+                            },
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      )
+              ]),
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: "Edit Your Personal Info",
             ),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-                  ))
-                : Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical: MaximumThing * 0.04,
-                            horizontal: MaximumThing * 0.02),
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundImage: _selectedImage != null
-                                    ? Image.file(_selectedImage!,
-                                            fit: BoxFit.cover)
-                                        .image
-                                    : NetworkImage(image),
-                              ),
-                              Container(
-                                margin:
-                                    EdgeInsets.only(left: MaximumThing * 0.02),
-                                child: InkWell(
-                                  onTap: _pickImage,
-                                  child: Text(
-                                    "Change Profile Picture",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.montserrat(
-                                        decoration: TextDecoration.underline,
-                                        fontSize: MaximumThing * 0.015,
-                                        fontWeight: FontWeight.w400,
-                                        color: MyColors.Yellow),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                      ),
-
-                      Column(
-                        children: [
-                          MyTextBox(
-                              hint: 'First Name',
-                              valueController: fnamecontroller),
-                          MyTextBox(
-                              hint: 'Last Name',
-                              valueController: lastnameController),
-                          ResponsiveDropdown(
-                              items: ['Male', 'Female'],
-                              labelText: 'Gender',
-                              onChanged: (value) {
-                                genderController.text = value;
-                              }),
-                          MyTextBox(
-                              hint: 'City',
-                              valueController: locationcontroller),
-                        ],
-                      ),
-
-                      //Divider
-                      SizedBox(
-                        height: screenHeight * 0.1,
-                        child: Center(child: MyDivider()),
-                      ),
-                      //Colored Button
-                      ColoredButton(
-                        text: 'Save',
-                        onPressed: () {
-                          warningDialog(
-                            title: 'Save Changes',
-                            message:
-                                'Are you sure you want to save the changes?',
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Cancel')),
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    _uploadProfilePicture();
-                                    Navigator.pushNamed(
-                                        context, '/AccountInfo');
-                                  },
-                                  child: Text('Save')),
-                            ],
-                          ).showDialogBox(context);
-                        },
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                    ],
-                  )
-          ]),
-        ),
+          ),
+        ],
       ),
     );
   }

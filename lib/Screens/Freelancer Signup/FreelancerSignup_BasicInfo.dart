@@ -6,8 +6,29 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class FreelancerSignup_BasicInfo extends StatelessWidget {
+class FreelancerSignup_BasicInfo extends StatefulWidget {
   const FreelancerSignup_BasicInfo({super.key});
+
+  @override
+  State<FreelancerSignup_BasicInfo> createState() =>
+      _FreelancerSignup_BasicInfoState();
+}
+
+class _FreelancerSignup_BasicInfoState
+    extends State<FreelancerSignup_BasicInfo> {
+  TextEditingController fullnamecontroller = TextEditingController();
+  TextEditingController usernamecontroller = TextEditingController();
+  TextEditingController portfoliocontroller = TextEditingController();
+
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,48 +36,53 @@ class FreelancerSignup_BasicInfo extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
-    TextEditingController fullnamecontroller = TextEditingController();
-    TextEditingController usernamecontroller = TextEditingController();
-    TextEditingController portfoliocontroller = TextEditingController();
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: (MaximumThing * 0.05) + _headerHeight,
+                ),
+                MyTextBox(
+                  hint: "Enter Full Business Name",
+                  valueController: fullnamecontroller,
+                ),
+                MyTextBox(
+                  hint: "Enter Username",
+                  valueController: usernamecontroller,
+                ),
+                MyTextBox(
+                  hint: "Enter Portfolio Link",
+                  valueController: portfoliocontroller,
+                ),
+                SizedBox(
+                  height: screenHeight * 0.05,
+                  child: MyDivider(),
+                ),
+                ColoredButton(
+                  text: "Continue",
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        context, '/FreelancerSignup_Description');
+                  },
+                )
+              ],
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: "Create A Freelancer Account",
               para:
                   "Earn a Soothing Income by Editing Videos or Pictures of Events",
               image: MyImages.FreelancerSignup,
             ),
-            SizedBox(
-              height: MaximumThing * 0.05,
-            ),
-            MyTextBox(
-              hint: "Enter Full Business Name",
-              valueController: fullnamecontroller,
-            ),
-            MyTextBox(
-              hint: "Enter Username",
-              valueController: usernamecontroller,
-            ),
-            MyTextBox(
-              hint: "Enter Portfolio Link",
-              valueController: portfoliocontroller,
-            ),
-            SizedBox(
-              height: screenHeight * 0.05,
-              child: MyDivider(),
-            ),
-            ColoredButton(
-              text: "Continue",
-              onPressed: () {
-                Navigator.pushNamed(context, '/FreelancerSignup_Description');
-              },
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

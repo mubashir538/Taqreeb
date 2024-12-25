@@ -70,75 +70,94 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
     }
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: (screenHeight * 0.05) + _headerHeight,
+                ),
+                MyTextBox(
+                  hint: 'CNIC',
+                  valueController: cnicController,
+                ),
+                MyTextBox(
+                  hint: 'Profile Name',
+                  valueController: profileNameController,
+                ),
+                MyTextBox(
+                  hint: 'Username',
+                  valueController: usernameController,
+                ),
+                SizedBox(
+                  height: screenHeight * 0.1,
+                  child: Center(child: MyDivider()),
+                ),
+                ColoredButton(
+                  onPressed: () {
+                    if (cnicController.text.isEmpty ||
+                        profileNameController.text.isEmpty ||
+                        usernameController.text.isEmpty) {
+                      warningDialog(
+                        message: "Please fill all the details",
+                        title: "Invalid Details",
+                      ).showDialogBox(context);
+                    } else if (Validations.validateCNIC(cnicController.text) !=
+                        'Ok') {
+                      warningDialog(
+                        message: Validations.validateCNIC(cnicController.text),
+                        title: "Invalid Details",
+                      ).showDialogBox(context);
+                    } else if (Validations.validateUsername(
+                            usernameController.text) !=
+                        'Ok') {
+                      warningDialog(
+                        message: Validations.validateUsername(
+                            usernameController.text),
+                        title: "Invalid Details",
+                      ).showDialogBox(context);
+                    } else {
+                      MyStorage.saveToken(cnicController.text, "bscnic");
+                      MyStorage.saveToken(profileNameController.text, "bsname");
+                      MyStorage.saveToken(
+                          usernameController.text, "bsusername");
+                      Navigator.pushNamed(
+                          context, '/BusinessSignup_CNICUpload');
+                    }
+                  },
+                  text: 'Continue',
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: 'Sign Up',
               para:
                   'Unlock Success with Just One Click - Join Our Community Today!',
               image: MyImages.BusinessSignup,
             ),
-            SizedBox(
-              height: screenHeight * 0.05,
-            ),
-            MyTextBox(
-              hint: 'CNIC',
-              valueController: cnicController,
-            ),
-            MyTextBox(
-              hint: 'Profile Name',
-              valueController: profileNameController,
-            ),
-            MyTextBox(
-              hint: 'Username',
-              valueController: usernameController,
-            ),
-            SizedBox(
-              height: screenHeight * 0.1,
-              child: Center(child: MyDivider()),
-            ),
-            ColoredButton(
-              onPressed: () {
-                if (cnicController.text.isEmpty ||
-                    profileNameController.text.isEmpty ||
-                    usernameController.text.isEmpty) {
-                  warningDialog(
-                    message: "Please fill all the details",
-                    title: "Invalid Details",
-                  ).showDialogBox(context);
-                } else if (Validations.validateCNIC(cnicController.text) !=
-                    'Ok') {
-                  warningDialog(
-                    message: Validations.validateCNIC(cnicController.text),
-                    title: "Invalid Details",
-                  ).showDialogBox(context);
-                } else if (Validations.validateUsername(
-                        usernameController.text) !=
-                    'Ok') {
-                  warningDialog(
-                    message:
-                        Validations.validateUsername(usernameController.text),
-                    title: "Invalid Details",
-                  ).showDialogBox(context);
-                } else {
-                  MyStorage.saveToken(cnicController.text, "bscnic");
-                  MyStorage.saveToken(profileNameController.text, "bsname");
-                  MyStorage.saveToken(usernameController.text, "bsusername");
-                  Navigator.pushNamed(context, '/BusinessSignup_CNICUpload');
-                }
-              },
-              text: 'Continue',
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

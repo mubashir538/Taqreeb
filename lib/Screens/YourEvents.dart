@@ -42,68 +42,89 @@ class _YourEventsState extends State<YourEvents> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
-    TextEditingController controller = TextEditingController();
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: _headerHeight),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+                  child: SearchBox(
+                      onChanged: (value) {},
+                      controller: controller,
+                      hint: 'Search Typing to Search',
+                      width: screenWidth * 0.9),
+                ),
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(MyColors.white),
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: events["Event"].length,
+                        itemBuilder: (context, index) => Function12(
+                          color: Color(int.parse(
+                              '0xff${events["Event"][index]["themeColor"].substring(1, events["Event"][index]["themeColor"].length)}')),
+                          name: events["Event"][index]["name"],
+                          head: 'Budget',
+                          budget: events["Event"][index]["budget"].toString(),
+                          headings: [
+                            'Event Type',
+                            'Functions',
+                            'Date',
+                          ],
+                          values: [
+                            events["Event"][index]["type"],
+                            events["nofunctions"][index].toString(),
+                            events["Event"][index]["date"],
+                          ],
+                          type: 'Event',
+                          seePressed: () {
+                            Navigator.pushNamed(context, '/EventDetails',
+                                arguments: events["Event"][index]["id"]);
+                          },
+                          editPressed: () {
+                            Navigator.pushNamed(context, '/EditEvent',
+                                arguments:
+                                    events["Event"][index]["id"].toString());
+                          },
+                        ),
+                      )
+              ],
+            ),
+          ),
+          Positioned(
+            child: Header(
+              key: _headerKey,
               heading: 'Your Events',
             ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              child: SearchBox(
-                  onChanged: (value) {},
-                  controller: controller,
-                  hint: 'Search Typing to Search',
-                  width: screenWidth * 0.9),
-            ),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: events["Event"].length,
-                    itemBuilder: (context, index) => Function12(
-                      name: events["Event"][index]["name"],
-                      head: 'Budget',
-                      budget: events["Event"][index]["budget"].toString(),
-                      headings: [
-                        'Event Type',
-                        'Functions',
-                        'Date',
-                      ],
-                      values: [
-                        events["Event"][index]["type"],
-                        events["nofunctions"][index].toString(),
-                        events["Event"][index]["date"],
-                      ],
-                      type: 'Event',
-                      seePressed: () {
-                        Navigator.pushNamed(context, '/EventDetails',
-                            arguments: events["Event"][index]["id"]);
-                      },
-                      editPressed: () {
-                        Navigator.pushNamed(context, '/EditEvent',
-                            arguments: events["Event"][index]["id"].toString());
-                      },
-                    ),
-                  )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

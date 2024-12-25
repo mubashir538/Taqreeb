@@ -111,56 +111,74 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
     );
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(children: [
-                Header(
-                  heading: 'Guest List',
-                ),
-                isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(MyColors.white),
-                        ),
-                      )
-                    : SizedBox(
-                        width: screenWidth * 0.9,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: guests['Guests'].length,
-                          itemBuilder: (context, index) {
-                            return Guests(
-                              onpressed: () {},
-                              ondelete: () {},
-                              name: guests['Guests'][index]['name'] ?? '',
-                              contact:
-                                  guests['Guests'][index]['type'] == "Family"
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(children: [
+                    SizedBox(
+                      height: _headerHeight,
+                    ),
+                    isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(MyColors.white),
+                            ),
+                          )
+                        : SizedBox(
+                            width: screenWidth * 0.9,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: guests['Guests'].length,
+                              itemBuilder: (context, index) {
+                                return Guests(
+                                  onpressed: () {},
+                                  ondelete: () {},
+                                  name: guests['Guests'][index]['name'] ?? '',
+                                  contact: guests['Guests'][index]['type'] ==
+                                          "Family"
                                       ? guests['Guests'][index]['members']
                                           .toString()
                                       : guests['Guests'][index]['phone'],
-                            );
-                          },
-                        ),
-                      ),
-              ]),
-            ],
+                                );
+                              },
+                            ),
+                          ),
+                  ]),
+                ],
+              ),
+            ),
           ),
-        ),
+          Header(
+            key: _headerKey,
+            heading: 'Guest List',
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyColors.Yellow,

@@ -23,32 +23,47 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
-        backgroundColor: MyColors.Dark,
-        body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Header(
-                  heading: "Login to Continue",
-                  para:
-                      "We believe that your event should not be delayed so let's login your Account so we can get Started",
-                  image: MyImages.Login,
-                ),
-                Container(
-                  child: Column(
+      backgroundColor: MyColors.Dark,
+      body: Stack(
+        children: [
+          if (_headerHeight > 0)
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
                     children: [
-                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: (screenHeight * 0.03) + _headerHeight),
                       MyTextBox(
                         hint: "Enter Email or Phone Number",
                         valueController: emailController,
@@ -150,10 +165,21 @@ class _LoginState extends State<Login> {
                           icon: MyIcons.facebook),
                     ],
                   ),
-                )
-              ],
+                ],
+              ),
+            ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: "Login to Continue",
+              para:
+                  "We believe that your event should not be delayed so let's login your Account so we can get Started",
+              image: MyImages.Login,
             ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 }

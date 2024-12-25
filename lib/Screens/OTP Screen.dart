@@ -5,10 +5,25 @@ import 'package:taqreeb/Components/progressbar.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class OTPScreen extends StatelessWidget {
+class OTPScreen extends StatefulWidget {
   OTPScreen({super.key});
 
+  @override
+  State<OTPScreen> createState() => _OTPScreenState();
+}
+
+class _OTPScreenState extends State<OTPScreen> {
   final TextEditingController phoneController = TextEditingController();
+
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderBox renderBox =
+        _headerKey.currentContext?.findRenderObject() as RenderBox;
+    setState(() {
+      _headerHeight = renderBox.size.height;
+    });
+  }
 
   @override
 
@@ -18,6 +33,7 @@ class OTPScreen extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: Header(
+          key: _headerKey,
           heading: 'OTP Verification',
           para: 'Enter Phone number to send one time password',
         ),
@@ -27,6 +43,7 @@ class OTPScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            
             SizedBox(height: 20),
             MyTextBox(hint: 'Enter your phone number',valueController: phoneController,),
             SizedBox(height: 20),
