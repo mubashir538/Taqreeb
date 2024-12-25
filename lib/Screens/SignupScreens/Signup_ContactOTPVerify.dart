@@ -26,6 +26,8 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+
     _startTimer();
   }
 
@@ -63,11 +65,14 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -169,6 +174,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: 'OTP Verification',

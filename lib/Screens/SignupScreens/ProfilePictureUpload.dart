@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Components/crop%20screen.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -36,22 +39,52 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   Future<void> _pickImage() async {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
+
       if (pickedFile != null) {
-        final compressedFile = await _compressImage(File(pickedFile.path));
-        setState(() {
-          _selectedImage = compressedFile;
-        });
+        final imageBytes = await File(pickedFile.path).readAsBytes();
+
+        // Show the cropping popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CropPopup(
+              imageBytes: imageBytes,
+              onCropped: (croppedBytes) async {
+                final croppedFile = await _saveCroppedImage(croppedBytes);
+                final compressedFile = await _compressImage(croppedFile);
+                setState(() {
+                  _selectedImage = compressedFile;
+                });
+              },
+            );
+          },
+        );
       }
     } catch (e) {
       warningDialog(
-              title: 'Error',
-              message: 'Failed to pick an image. Please try again.')
-          .showDialogBox(context);
+        title: 'Error',
+        message: 'Failed to pick or crop the image. Please try again.',
+      ).showDialogBox(context);
     }
+  }
+
+// Save the cropped image to a file
+  Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/cropped_image.png';
+    final croppedFile = File(path);
+    await croppedFile.writeAsBytes(croppedBytes);
+    return croppedFile;
   }
 
   Future<File> _compressImage(File file) async {
@@ -191,11 +224,14 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -215,7 +251,9 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: _headerHeight,),
+                  SizedBox(
+                    height: _headerHeight,
+                  ),
                   Column(
                     children: [
                       GestureDetector(
@@ -268,6 +306,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: 'Upload Your Profile',

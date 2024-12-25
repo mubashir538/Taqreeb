@@ -15,11 +15,20 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
   @override
@@ -36,7 +45,7 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height:( screenHeight * 0.03)+ _headerHeight),
+                SizedBox(height: (screenHeight * 0.03) + _headerHeight),
                 PackageBox(
                     packagedetails: 'Flower Decoration',
                     packageprice: '300000',
@@ -84,6 +93,7 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: 'Packages',

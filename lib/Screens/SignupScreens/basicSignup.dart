@@ -74,17 +74,21 @@ class _BasicSignupState extends State<BasicSignup> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       check(context);
+      _getHeaderHeight();
     });
   }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -106,9 +110,12 @@ class _BasicSignupState extends State<BasicSignup> {
                 MyTextBox(
                     hint: "Last Name", valueController: lastNameController),
                 MyTextBox(
-                    hint: "Password", valueController: passwordController),
+                    hint: "Password",
+                    isPassword: true,
+                    valueController: passwordController),
                 MyTextBox(
                     hint: "Confirm Password",
+                    isPassword: true,
                     valueController: confirmPasswordController),
                 ColoredButton(
                   text: "Continue",
@@ -198,6 +205,7 @@ class _BasicSignupState extends State<BasicSignup> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: "SignUP",

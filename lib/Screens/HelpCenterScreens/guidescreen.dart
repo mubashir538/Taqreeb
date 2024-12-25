@@ -6,7 +6,6 @@ import 'package:taqreeb/Components/guide_icon.dart';
 import 'package:taqreeb/theme/icons.dart';
 
 class GuideScreen extends StatefulWidget {
-
   GuideScreen({super.key});
 
   @override
@@ -19,11 +18,14 @@ class _GuideScreenState extends State<GuideScreen> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override

@@ -52,7 +52,11 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     });
     fetchData();
   }
-
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
@@ -218,11 +222,14 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
   double _headerHeight = 0.0;
 
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override

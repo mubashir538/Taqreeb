@@ -56,7 +56,11 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     });
     fetchData();
   }
-
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
@@ -211,11 +215,14 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -765,7 +772,8 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
               ],
             ),
           ),
-          Positioned(child: Header(
+          Positioned(
+              child: Header(
             key: _headerKey,
           )),
         ],

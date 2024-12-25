@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/crop%20screen.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -39,6 +43,8 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+
     fetchData();
   }
 
@@ -74,28 +80,65 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
+
       if (pickedFile != null) {
-        final compressedFile = await _compressImage(File(pickedFile.path));
-        setState(() {
-          _selectedImage = compressedFile;
-        });
+        final imageBytes = await File(pickedFile.path).readAsBytes();
+
+        // Show the cropping popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CropPopup(
+              imageBytes: imageBytes,
+              onCropped: (croppedBytes) async {
+                final croppedFile = await _saveCroppedImage(croppedBytes);
+                final compressedFile = await _compressImage(croppedFile);
+                setState(() {
+                  _selectedImage = compressedFile;
+                });
+              },
+            );
+          },
+        );
       }
     } catch (e) {
       warningDialog(
-              title: 'Error',
-              message: 'Failed to pick an image. Please try again.')
-          .showDialogBox(context);
+        title: 'Error',
+        message: 'Failed to pick or crop the image. Please try again.',
+      ).showDialogBox(context);
     }
   }
 
+// Save the cropped image to a file
+  Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    final path = '${directory.path}/cropped_image.png';
+    final croppedFile = File(path);
+    await croppedFile.writeAsBytes(croppedBytes);
+    return croppedFile;
+  }
+
   Future<File> _compressImage(File file) async {
-    final compressedPath = file.path.replaceFirst('.jpg', '_compressed.jpg');
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
+    // Ensure the file has a valid extension for compression
+    final originalPath = file.path;
+    final compressedPath =
+        originalPath.replaceFirst(RegExp(r'\.\w+$'), '_compressed.jpg');
+
+    // Compress the image using FlutterImageCompress
+    final result = await FlutterImageCompress.compressAndGetFile(
+      originalPath,
       compressedPath,
-      quality: 50,
+      quality:
+          50, // Adjust quality as needed (higher is better quality, lower is more compression)
     );
-    return compressedFile ?? file;
+
+    // Return the compressed file or the original if compression fails
+    if (result != null) {
+      return result;
+    } else {
+      throw Exception('Image compression failed.');
+    }
   }
 
   Future<void> _uploadProfilePicture() async {
@@ -186,11 +229,14 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -313,6 +359,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: "Edit Your Personal Info",

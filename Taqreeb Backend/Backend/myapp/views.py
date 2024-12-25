@@ -210,7 +210,7 @@ def getHomeImages(request):
 def resendOTPEmail(request):
     email = request.data.get('email')
     otp = request.data.get('otp')
-    subject = 'Password Reset for Taqreeb'
+    subject = 'OTP for Taqreeb'
     message = f''' The Otp for your Taqreeb App is
     YOUR OTP IS: {otp}'''
     email_from = settings.EMAIL_HOST_USER
@@ -259,7 +259,7 @@ def sendOTPPhone(request):
 def sendOTPEmail(request):
     email = request.data.get('email')
     otp = rd.randint(1000,9999)
-    subject = 'Password Reset for Taqreeb'
+    subject = 'The OTP for Taqreeb'
     message = f''' The Otp for your Taqreeb App is
     YOUR OTP IS: {otp}'''
     email_from = settings.EMAIL_HOST_USER

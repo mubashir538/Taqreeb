@@ -23,16 +23,23 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
   final CheckBoxController checkBoxController =
       CheckBoxController(selections: []);
 
-      final GlobalKey _headerKey = GlobalKey();
+  final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
-  }
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
 
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -83,7 +90,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   div: 9,
                   currentCount: _currentBudgetValue),
               RadioButtonQuestion(
-                onChanged: (value) {},
+                  onChanged: (value) {},
                   options: ["Yes", "No"],
                   question: "Are you open to flexible pricing options?",
                   myValue: "Yes")
@@ -94,12 +101,12 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
                   question:
                       "In which city or area would you like to hold the event?"),
               RadioButtonQuestion(
-                onChanged: (value) {},
+                  onChanged: (value) {},
                   options: ["Indoor", "Outdoor", "Mixed"],
                   question: "What type of venue do you prefer?",
                   myValue: "Indoor"),
               RadioButtonQuestion(
-                onChanged: (value) {},
+                  onChanged: (value) {},
                   options: ["Casual", "Formal", "Themed"],
                   question: "What kind of ambiance are you looking for?",
                   myValue: "Casual")

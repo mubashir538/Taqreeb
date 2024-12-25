@@ -36,14 +36,14 @@ class _LoginState extends State<Login> {
   }
 
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderObject =
+        _headerKey.currentContext?.findRenderObject();
+    if (renderObject is RenderBox) {
+      setState(() {
+        _headerHeight = renderObject.size.height;
+      });
+    }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
                         valueController: emailController,
                       ),
                       MyTextBox(
-                        hint: "Enter Password",
+                        hint: "Enter Password",isPassword: true,
                         valueController: passwordController,
                       ),
                       SizedBox(

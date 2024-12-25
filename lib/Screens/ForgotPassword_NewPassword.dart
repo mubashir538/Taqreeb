@@ -19,13 +19,21 @@ class _ForgotPassword_NewPasswordState
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +41,7 @@ class _ForgotPassword_NewPasswordState
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-  _getHeaderHeight();
+    _getHeaderHeight();
 
     TextEditingController passwordController = TextEditingController();
     TextEditingController confirmpasswordController = TextEditingController();
@@ -56,11 +64,13 @@ class _ForgotPassword_NewPasswordState
                 children: [
                   MyTextBox(
                     hint: 'New Password',
+                    isPassword: true,
                     valueController: passwordController,
                   ),
                   MyTextBox(
                     hint: 'Confirm Password',
                     valueController: confirmpasswordController,
+                    isPassword: true,
                   ),
                   Container(
                       margin:

@@ -45,7 +45,11 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
-
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -213,11 +217,14 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -798,7 +805,8 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
               ],
             ),
           ),
-          Positioned(child: Header(
+          Positioned(
+              child: Header(
             key: _headerKey,
           )),
         ],

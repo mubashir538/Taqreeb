@@ -35,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    
     fetchUser(); // Fetch the user type on initialization
   }
 

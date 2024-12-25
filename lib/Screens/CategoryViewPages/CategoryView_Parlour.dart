@@ -92,6 +92,12 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
     });
   }
 
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   void showHierarchicalOptions(
       BuildContext context, double maxThing, double width) {
     showModalBottomSheet(
@@ -211,11 +217,14 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -765,7 +774,8 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
               ],
             ),
           ),
-          Positioned(child: Header(
+          Positioned(
+              child: Header(
             key: _headerKey,
           )),
         ],

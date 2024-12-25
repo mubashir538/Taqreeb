@@ -15,7 +15,11 @@ class CreateGuestList extends StatefulWidget {
 
 class _CreateGuestListState extends State<CreateGuestList> {
   Map<String, dynamic> args = {};
-
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   void _showOptions(BuildContext context, double maxThing, double width) {
     showModalBottomSheet(
       context: context,
@@ -76,11 +80,14 @@ class _CreateGuestListState extends State<CreateGuestList> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override

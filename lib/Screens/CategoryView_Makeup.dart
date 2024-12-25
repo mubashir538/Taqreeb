@@ -16,11 +16,14 @@ class _Categoryview_MakeupState extends State<Categoryview_Makeup> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -668,7 +671,8 @@ class _Categoryview_MakeupState extends State<Categoryview_Makeup> {
               ],
             ),
           ),
-          Positioned(child: Header(
+          Positioned(
+              child: Header(
             key: _headerKey,
           )),
         ],

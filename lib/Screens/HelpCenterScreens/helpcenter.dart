@@ -7,7 +7,6 @@ import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class SupportScreen extends StatefulWidget {
-
   SupportScreen({super.key});
 
   @override
@@ -17,15 +16,19 @@ class SupportScreen extends StatefulWidget {
 class _SupportScreenState extends State<SupportScreen> {
   final TextEditingController searchController = TextEditingController();
 
-final GlobalKey _headerKey = GlobalKey();
+  final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

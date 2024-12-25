@@ -24,13 +24,20 @@ class _BusinessSignup_DescriptionState
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
-  }
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
 
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -125,7 +132,7 @@ class _BusinessSignup_DescriptionState
             ),
             Positioned(
               child: Header(
-                key: _headerKey,
+                  key: _headerKey,
                   heading: "Create a Description",
                   para: 'Your Description Creates a Great Impact on the\n'
                       'customers and can help your get more clients '),

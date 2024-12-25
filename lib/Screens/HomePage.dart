@@ -30,20 +30,21 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
     fetchData(); // Fetch data in a separate method
   }
 
-  void fetchData() async {
-    final GlobalKey _headerKey = GlobalKey();
-    double _headerHeight = 0.0;
-    void _getHeaderHeight() {
-      final RenderBox renderBox =
-          _headerKey.currentContext?.findRenderObject() as RenderBox;
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  // final GlobalKey _headerKey = GlobalKey();
+  // double _headerHeight = 0.0;
+  // void _getHeaderHeight() {
+  //   final RenderBox renderBox =
+  //       _headerKey.currentContext?.findRenderObject() as RenderBox;
+  //   setState(() {
+  //     _headerHeight = renderBox.size.height;
+  //   });
+  // }
 
+  void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";
     final fetchedCategories = await MyApi.getRequest(
@@ -75,11 +76,14 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override

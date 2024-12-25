@@ -42,6 +42,12 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   void removePerson(index) {
     Future.delayed(Duration.zero, () {
       setState(() {
@@ -53,11 +59,14 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -146,6 +155,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: 'Add Person',

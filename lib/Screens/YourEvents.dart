@@ -22,6 +22,8 @@ class _YourEventsState extends State<YourEvents> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+
     fetchData(); // Fetch data in a separate method
   }
 
@@ -45,11 +47,14 @@ class _YourEventsState extends State<YourEvents> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   TextEditingController controller = TextEditingController();
@@ -119,6 +124,7 @@ class _YourEventsState extends State<YourEvents> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: 'Your Events',

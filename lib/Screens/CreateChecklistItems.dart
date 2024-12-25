@@ -44,6 +44,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     fetchData();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   void fetchData() async {
     if (changedfirst) {
       return;
@@ -183,11 +189,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -208,7 +217,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height:  _headerHeight),
+                  SizedBox(height: _headerHeight),
                   Column(children: [
                     isLoading
                         ? CircularProgressIndicator(
@@ -315,6 +324,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             ),
           ),
           Positioned(
+            top: 0,
             child: Header(
               key: _headerKey,
               heading: "Create CheckList",

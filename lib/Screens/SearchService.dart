@@ -45,6 +45,11 @@ class _SearchServiceState extends State<SearchService> {
 
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
 
   @override
   void didChangeDependencies() {
@@ -82,11 +87,14 @@ class _SearchServiceState extends State<SearchService> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
-    final RenderBox renderBox =
-        _headerKey.currentContext?.findRenderObject() as RenderBox;
-    setState(() {
-      _headerHeight = renderBox.size.height;
-    });
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -239,7 +247,8 @@ class _SearchServiceState extends State<SearchService> {
               ],
             ),
           ),
-          Positioned(child: Header(
+          Positioned(
+              child: Header(
             key: _headerKey,
           )),
         ],
