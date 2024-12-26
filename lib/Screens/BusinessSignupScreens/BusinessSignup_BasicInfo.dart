@@ -100,6 +100,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                 ),
                 MyTextBox(
                   hint: 'CNIC',
+                  isNum: true,
                   valueController: cnicController,
                 ),
                 MyTextBox(

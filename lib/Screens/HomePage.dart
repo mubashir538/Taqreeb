@@ -234,11 +234,15 @@ class _HomePageState extends State<HomePage> {
                                   listingid: listings['HomeListing'][index]
                                           ['id']
                                       .toString(),
-                                  imageUrl: listings['pictures'][index][0]
-                                              ['picturePath'] ==
-                                          " "
-                                      ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}',
+                                  imageUrl: listings['pictures'][index]
+                                              .length !=
+                                          0
+                                      ? (listings['pictures'][index][0]
+                                                  ['picturePath'] ==
+                                              " "
+                                          ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                          : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}')
+                                      : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
                                   venueName: listings['HomeListing'][index]
                                       ['name'],
                                   location: listings['HomeListing'][index]

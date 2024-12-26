@@ -141,6 +141,8 @@ class _CreateFunctionState extends State<CreateFunction> {
                       ),
                       MyTextBox(
                         hint: 'Budget',
+                        isNum: true,
+                        isPrice: true,
                         valueController: budgetController,
                       ),
                       ResponsiveDropdown(
@@ -198,11 +200,11 @@ class _CreateFunctionState extends State<CreateFunction> {
                         ),
                       ),
                       MyTextBox(
-                        hint: 'Minimum Guests',
+                        hint: 'Minimum Guests',isNum: true,
                         valueController: guestMinController,
                       ),
                       MyTextBox(
-                        hint: 'Maximum Guests',
+                        hint: 'Maximum Guests',isNum: true,
                         valueController: guestMaxController,
                       ),
                     ],

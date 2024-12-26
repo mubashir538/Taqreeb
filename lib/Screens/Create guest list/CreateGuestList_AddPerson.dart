@@ -90,6 +90,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                 ),
                 MyTextBox(
                   hint: 'Contact Number',
+                  isNum:true,
                   valueController: contactcontroller,
                 ),
                 SizedBox(

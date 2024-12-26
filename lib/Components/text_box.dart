@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart'; // For input formatters
 import 'package:taqreeb/theme/color.dart';
 
 // ignore: must_be_immutable
@@ -7,10 +8,14 @@ class MyTextBox extends StatefulWidget {
   final String hint;
   final String Value;
   final bool isPassword;
+  final bool isNum;
+  final bool isPrice;
   final TextEditingController valueController;
 
   MyTextBox({
     super.key,
+    this.isPrice = false,
+    this.isNum = false,
     this.isPassword = false,
     required this.hint,
     this.Value = '',
@@ -60,6 +65,20 @@ class _MyTextBoxState extends State<MyTextBox> {
               child: TextField(
                 controller: widget.valueController,
                 obscureText: widget.isPassword ? _isObscured : false,
+                keyboardType: widget.isNum
+                    ? TextInputType.number
+                    : widget.isPrice
+                        ? TextInputType.numberWithOptions(decimal: true)
+                        : TextInputType.text,
+                inputFormatters: widget.isNum
+                    ? [FilteringTextInputFormatter.digitsOnly]
+                    : widget.isPrice
+                        ? [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}'),
+                            ),
+                          ]
+                        : null,
                 style: GoogleFonts.montserrat(
                   fontSize: MaximumThing * 0.018,
                   fontWeight: FontWeight.w400,

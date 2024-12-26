@@ -13,7 +13,8 @@ urlpatterns = [
     path('user/forgotpassword/phoneorEmail/',views.ForgotPasswordPage,name='ForgotPasswordPage'),
     path('user/forgotpassword/reset-password/',views.ResetPasswordPage,name='ResetPasswordPage'),
     path('accountInfo/<int:id>',views.AccountInfoPage,name='AccountInfoPage'),
-    path('businessowner/listings/<int:businessOwnerId>/',views.ListingsPage,name='ListingsPage'),
+    path('businessowner/listings/<int:id>/',views.ListingsPage,name='ListingsPage'),
+    path('businessowner/addListings/',views.AddListing,name='AddListing'),
     path('decorator/detail/<int:listingId>/',views.DecoratorDetailPage,name='DecoratorDetailPage'),
     path('editaccountinfo/',views.EditAccountInfoPage,name='EditAccountInfoPage'),
     path('freelancer/signup/',views.FreelancerSignup,name='FreelancerSignup'),
@@ -41,8 +42,6 @@ urlpatterns = [
     path('parlourviewpage/<int:listingid>',views.ParlourViewPage,name='parlourViewPage'),
     path('home/categories/',views.HomeCategories,name='HomeCategories'),
     path('home/listings/',views.HomeListings,name='HomeListings'),
-    path('search/listings/<str:value>',views.SearchListings,name='SearchListings'),
-    path('search/listings/<str:value>/<int:pricemin>',views.SearchListings,name='SearchListings'),
     path('show/guest/',views.ShowGuest,name='ShowGuest'),
     path('show/checklist/<int:eventId>',views.ShowChecklist,name='ShowGuest'),
     path('show/checklist/<int:eventId>/<int:functionId>',views.ShowChecklist,name='ShowGuest'),
@@ -55,6 +54,7 @@ urlpatterns = [
     path('cartItems/<int:productid>/<int:listingid>/<int:userid>',views.CartItems,name='CartItems'),
     path('graphic/designer/viewpage/<int:listingid>',views.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
     path('carrenter/viewpage/<int:listingid>',views.CarRenterViewPage,name='CarRenterViewPage'),
+    path('deleteReq/',views.deleteTable,name='deleteReq'),
 ]
 
 

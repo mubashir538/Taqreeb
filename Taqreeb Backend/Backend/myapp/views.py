@@ -10,11 +10,13 @@ from twilio.rest import Client
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.core.files.base import ContentFile
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from datetime import datetime
-
+from django.apps import apps
+import json
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -30,7 +32,6 @@ def getFunctionType(request,id):
     serializer = s.FunctionTypeSerializer(functionTypes,many=True)
     return Response({'status':'success','functionTypes':serializer.data})
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def searchType(request,userid):
@@ -42,21 +43,6 @@ def searchType(request,userid):
     if freelancer:
         response['freelancer'] = True
     return Response(response)
-
-
-from django.apps import apps
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from django.http import JsonResponse
-
-from django.apps import apps
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from django.apps import apps
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -165,8 +151,6 @@ def AddtoBookCart(request):
         cart = md.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart')
     cart.save()
     return Response({'status':'success'})
- 
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -203,7 +187,6 @@ def getHomeImages(request):
     images = md.HomePageImages.objects.all()
     serializer = s.HomePageImagesSerializer(images,many=True)
     return Response({'status':'success','images':serializer.data})
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -342,7 +325,7 @@ def ForgotPasswordPage(request):
         return Response({'status':'error', 'message': 'Enter a Valid Email or Phone Number'})
     else:
         return Response({'status':'success','otp':otp,'userid':user.id})
-        
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def ResetPasswordPage(request):
@@ -365,7 +348,71 @@ def ListingsPage(request,id):
     listings = md.Listing.objects.filter(BusinessOwnerID=id)
     serializer = s.ListingSerializer(listings,many=True)
     return Response({'status':'success','listings':serializer.data})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def AddListing(request):
+    userid = request.data.get('userid')
+    name = request.data.get('name')
+    description = request.data.get('description')
+    category = str(request.data.get('category'))
+    location = request.data.get('location')
+    pricemin = request.data.get('priceMin')
+    pricemax = request.data.get('priceMax')
+    pictures = request.FILES.getlist('pictures')
+    packages = request.data.get('packages')
+    addons = request.data.get('addons')
+    print(request.data)
+    userid = md.User.objects.get(id=userid).id
+    userid = md.BusinessOwner.objects.get(userID=userid)
+    avgprice = (int(pricemax)+int(pricemin))/2
+    listing = md.Listing(ownerID=userid,name=name,description=description,type=category,location=location,priceMin=pricemin,priceMax=pricemax,basicPrice=avgprice)
+    listingId = listing.save()
+    listingId = md.Listing.objects.filter(ownerID=userid).last().id
+    listingId = md.Listing.objects.get(id=listingId)
+    category = category.replace(' ','')
+    if category == 'Venue':
+        view = md.Venue(catering=request.data.get('catering'),guestminAllowed=request.data.get('guestminAllowed'),guestmaxAllowed=request.data.get('guestmaxAllowed'),staff=request.data.get('staff'),venueType=request.data.get('venueType'),listingID=listingId)
+    elif category == 'Salon':
+        view = md.Salons(listingId=listingId)
+    elif category == 'Parlour':
+        view = md.Parlors(listingId=listingId)
+    elif category == 'PhotographyPlace':
+        view = md.PhotographyPlaces(listingID=listingId,type=request.data.get('type'))
+    elif category == 'Decorator':
+        view = md.Decorators(listingId=listingId,decorType=request.data.get('decorType'),catering=request.data.get('catering'),staff=request.data.get('staff'))
+    elif category == 'Photographer':
+        view = md.Photographers(listingId=listingId,portfolioLink=request.data.get('portfolioLink'))
+    elif category == 'Caterer':
+        view = md.Caterers(listingId=listingId,serviceType=request.data.get('serviceType'),cateringOptions=request.data.get('cateringOptions'),staff=request.data.get('staff'),expertise=request.data.get('expertise'))
+    elif category == 'CarRenter':
+        view = md.CarRenters(listingID=listingId,serviceType=request.data.get('serviceType'))
+    elif category == 'BakerandSweet':
+        view = md.BakersAndSweets(listingID=listingId)
+    elif category == 'VideoEditor':
+        view = md.VideoEditors(listingId=listingId,portfolioLink=request.data.get('portfolioLink'))
+    elif category == 'GraphicDesigner':
+        view = md.GraphicDesigners(listingId=listingId,portfolioLink=request.data.get('portfolioLink'))
+    view.save()
     
+    print(pictures)
+    for i in pictures:
+        filestorage = FileSystemStorage()
+        filePath = filestorage.save(f'uploads/listings/{category}/{listingId}.png', i)
+        md.PicturesListings(listingId=listingId,picturePath=filestorage.url(filePath)).save()            
+    packages = json.loads(packages) if packages else []
+    print('Addons: ',packages)
+    if packages:
+        for i in packages:
+            md.Packages(listingId=listingId,name=i['name'],price=i['price'],description=i['details']).save()
+    addons = json.loads(addons) if addons else []
+    if addons:
+        for i in addons:
+            if i['perhead'] == "Yes":
+                md.AddOns(perType=i['headtype'],isPer=True,listingId=listingId,name=i['name'],price=i['price']).save()
+            else:
+                md.AddOns(isPer=False,listingId=listingId,name=i['name'],price=i['price']).save()
+    return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -489,6 +536,7 @@ def CreateFunction(request):
     except Exception as e:
         print(e)
         return Response({'status':'error'})
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def EventDetails(request,eventId):
@@ -497,7 +545,6 @@ def EventDetails(request,eventId):
     Function = md.Functions.objects.filter(eventId=eventId)
     serializer2 = s.FunctionsSerializer(Function,many=True)
     return Response({'status':'success','EventDetail':serializer.data,'Functions':serializer2.data})
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -562,7 +609,6 @@ def YourEventsandFunctions(request,id):
         functions = md.Functions.objects.filter(eventId=event['id'])
         event['functions'] = s.FunctionsSerializer(functions,many=True).data
     return Response({'status':'success','Event':serializer.data})
-
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -764,26 +810,24 @@ def CarRenterViewPage(request, listingid):
                     'cars':CarsSerializer.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
-
-    
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def GraphicDesignerViewPage(request, listingID):
     graphicdesignerid = listingID
     Listing = md.Listing.objects.get(id= graphicdesignerid)
     GraphicDesigners = md.GraphicDesigners.objects.get(id = graphicdesignerid)
-    Addons = md.AddOns.objects.filter(listingId = venueId)
-    Package = md.Packages.objects.filter(listingId = venueId)
-    Review = md.Review.objects.filter(listingID =venueId)
-    pic = md.PicturesListings.objects.filter(listingId=venueId)
+    Addons = md.AddOns.objects.filter(listingId = listingID)
+    Package = md.Packages.objects.filter(listingId = listingID)
+    Review = md.Review.objects.filter(listingID =listingID)
+    pic = md.PicturesListings.objects.filter(listingId=listingID)
     pictureSerializer = s.PicturesListingSerializers(pic, many=True)
     Reviewserializer = s.ReviewSerializer( Review, many = True)
     Packageserializer = s.PackagesSerializer( Package, many = True)
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
-    serializer = s.VenueSerializer( VenueView, many=False)
+    serializer = s.GraphicDesignersSerializer(GraphicDesigners,many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
     reviewData = CalculateReviews(Reviewserializer.data)
-    return Response({'status': 'success','GraphicDesigners': GraphicDesignersSerializer.data, 'Listing':ListingSerializer.data, 
+    return Response({'status': 'success','GraphicDesigners': serializer.data, 'Listing':Listingserializer.data, 
                      'Package': PackageSerializer.data, 'Review': ReviewSerializer.data})
 
 @api_view(['GET'])
@@ -840,7 +884,7 @@ def ShowGuest(request):
         Guests = md.GuestList.objects.filter(eventId=event,functionId=functionid)
     GuestListSerializer = s.GuestListSerializer(Guests,many=True)
     return Response({'status': 'success', 'Guests':GuestListSerializer.data})
-    
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def HomeCategories(request):
@@ -874,18 +918,6 @@ def HomeListings(request):
         Pictures.append(serializer.data)
 
     return Response({'status':'succuess', 'HomeListing':ListingSerializer.data,'pictures':Pictures})
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def SearchListings(request, SearchListingsID):
-    Listing = md.Listing.objects.all()
-    ListingSerializer= s.ListingSerializer(Listing, many=True)
-    return Response({'status':'succuess', 'SearchListing':ListingSerializer.data})
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def SearchListingsPARA(request):
-    pass
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -921,25 +953,8 @@ def urlShortener(url):
         print(e)
         return e
 
-# from django.contrib.contenttypes.models import ContentType
-# from django.http import JsonResponse
-# from django.contrib.admin.views.decorators import staff_member_required
-# from django.db import transaction
-
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def truncate_all_models(request):
-#     """
-#     View to truncate all models in the database.
-#     Only accessible to staff members.
-#     """
-#     try:
-#         with transaction.atomic():  # Use a transaction to ensure atomicity
-#             models = ContentType.objects.all()  # Get all content types (models)
-#             for content_type in models:
-#                 model = content_type.model_class()
-#                 if model:  # Ensure the model class is valid
-#                     model.objects.all().delete()
-#             return JsonResponse({"status": "success", "message": "All models truncated successfully."})
-#     except Exception as e:
-#         return JsonResponse({"status": "error", "message": str(e)})
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def deleteTable(request):
+    md.Listing.objects.all().delete()
+    return Response({'status': 'success'})

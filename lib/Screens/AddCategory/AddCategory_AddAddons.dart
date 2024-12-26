@@ -45,6 +45,17 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -67,6 +78,8 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                 ),
                 MyTextBox(
                   hint: 'Price',
+                  isNum: true,
+                  isPrice: true,
                   valueController: priceController,
                 ),
                 RadioButtonQuestion(
@@ -85,7 +98,8 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                     }),
                 isPerhead
                     ? MyTextBox(
-                        hint: 'Head Type', valueController: headtypeController)
+                        hint: 'PerHead Type',
+                        valueController: headtypeController)
                     : Container(),
                 SizedBox(
                   height: screenHeight * 0.1,
@@ -109,12 +123,14 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                         return;
                       }
                       args['addons'].add({
-                        'name': nameController.text,
-                        'price': priceController.text,
-                        'perhead': perheadController.text,
-                        'headtype': headtypeController.text
+                        'name': _capitalize(nameController.text),
+                        'price': _capitalize(priceController.text),
+                        'perhead': _capitalize(perheadController.text),
+                        'headtype': isPerhead
+                            ? _capitalize(headtypeController.text)
+                            : '',
                       });
-
+                      print(args);
                       Navigator.popAndPushNamed(context, '/AddCategory_Addons',
                           arguments: args);
                     })

@@ -115,6 +115,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           'profilePicture',
           _selectedImage!.path,
         ));
+        
         if (type == 'freelancer') {
         } else if (type == 'Business') {
           request.files.add(await http.MultipartFile.fromPath(

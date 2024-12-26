@@ -88,6 +88,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
                 ),
                 MyTextBox(
                   hint: 'No. of Members',
+                  isNum: true,
                   valueController: memberscontroller,
                 ),
                 SizedBox(

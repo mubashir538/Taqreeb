@@ -166,16 +166,18 @@ class _CreateEventState extends State<CreateEvent> {
                       QuestionGroup(questions: [
                         MyTextBox(
                           hint: "Minimum Guests",
+                          isNum: true,
                           valueController: guestMinController,
                         ),
                         MyTextBox(
                           hint: "Maximum Guests",
+                          isNum: true,
                           valueController: guestMaxController,
                         ),
                       ], Heading: "Guest Info"),
                       QuestionGroup(questions: [
                         MyTextBox(
-                          hint: "Enter Budget",
+                          hint: "Enter Budget",isNum: true,isPrice: true,
                           valueController: budgetController,
                         ),
                       ], Heading: "Budget")

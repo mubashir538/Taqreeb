@@ -153,11 +153,11 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                       fieldValues[textfields['fields'][i]['name']] =
                           controllers[i].text;
                     }
-
                     // Add the values to args map
                     args.addAll(fieldValues.map((key, value) {
                       return MapEntry(key, value.toString());
                     }).cast<String, String>());
+                    print('args: $args');
                     Navigator.pushNamed(context, '/AddCategory_Addons',
                         arguments: args);
                   },

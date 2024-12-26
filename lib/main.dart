@@ -87,7 +87,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/': (context) => AccountInfoEdit(),
+        '/': (context) => AddcategoryList(),
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
         '/AddCategory_AddImage': (context) => AddImage(),

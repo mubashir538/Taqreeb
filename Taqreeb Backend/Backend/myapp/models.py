@@ -49,7 +49,6 @@ class PicturesListings(m.Model):
 
 class Packages(m.Model):
     id = m.AutoField(primary_key=True)
-    type = m.IntegerField()
     name = m.CharField(max_length=100,default='Basic')
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
     description = m.CharField(max_length=1100)
@@ -189,13 +188,11 @@ class Cart(m.Model):
 class Parlors(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    slot = m.DateTimeField()
 
 class Salons(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    slot = m.CharField(max_length=100)
-
+    
 class BakersAndSweets(m.Model):
     id = m.AutoField(primary_key=True)
     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
@@ -285,7 +282,6 @@ class BookedSlots(m.Model):
     slot = m.DateField()
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
-
 class BookingCart(m.Model):
     id = m.AutoField(primary_key=True)
     userId = m.ForeignKey(User,on_delete=m.CASCADE)
@@ -348,7 +344,6 @@ class CarRenters(m.Model):
     ]
 
     serviceType = m.CharField(max_length=100, choices=SERVICE_TYPE_CHOICES, default='Economy')
-    drivers = m.IntegerField()
 
 class Decorators(m.Model):
     id = m.AutoField(primary_key=True)

@@ -20,6 +20,8 @@ class _AddcategoryListState extends State<AddcategoryList> {
   TextEditingController nameController = TextEditingController();
   int charactersleft = 1100;
   TextEditingController locationController = TextEditingController();
+  TextEditingController priceminController = TextEditingController();
+  TextEditingController pricemaxController = TextEditingController();
   TextEditingController typeController = TextEditingController();
   String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
@@ -150,6 +152,18 @@ class _AddcategoryListState extends State<AddcategoryList> {
                     onChanged: (value) {
                       typeController.text = value;
                     }),
+                MyTextBox(
+                  hint: 'Minimum Price',
+                  isNum: true,
+                  isPrice: true,
+                  valueController: priceminController,
+                ),
+                MyTextBox(
+                  hint: 'Maximum Price',
+                  isNum: true,
+                  isPrice: true,
+                  valueController: pricemaxController,
+                ),
                 SizedBox(
                   height: screenHeight * 0.1,
                   child: Center(child: MyDivider()),
@@ -165,12 +179,12 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       ));
                       return;
                     }
-                    if (charactersleft > 1050) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Description is too Short'),
-                      ));
-                      return;
-                    }
+                    // if (charactersleft > 1050) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //     content: Text('Description is too Short'),
+                    //   ));
+                    //   return;
+                    // }
                     if (charactersleft < 0) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('Description is too Long'),
@@ -181,10 +195,19 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       'name': nameController.text,
                       'description': nameController.text,
                       'location': locationController.text,
-                      'category': typeController.text
+                      'category': typeController.text,
+                      'pricemin': priceminController.text,
+                      'pricemax': pricemaxController.text,
                     };
-                    Navigator.pushNamed(context, '/AddCategory_MoreDetails',
-                        arguments: args);
+                    if (typeController.text == 'Salon' ||
+                        typeController.text == 'Parlour' ||
+                        typeController.text == 'Baker and Sweet') {
+                      Navigator.pushNamed(context, '/AddCategory_Addons',
+                          arguments: args);
+                    } else {
+                      Navigator.pushNamed(context, '/AddCategory_MoreDetails',
+                          arguments: args);
+                    }
                   },
                 ),
               ],

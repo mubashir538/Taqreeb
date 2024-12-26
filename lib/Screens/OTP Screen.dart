@@ -54,6 +54,7 @@ class _OTPScreenState extends State<OTPScreen> {
             SizedBox(height: 20),
             MyTextBox(
               hint: 'Enter your phone number',
+              isNum: true,
               valueController: phoneController,
             ),
             SizedBox(height: 20),

@@ -62,6 +62,7 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
                       ),
                       MyTextBox(
                         hint: 'Contact Number',
+                        isNum: true,
                         valueController: contactController,
                       ),
                       SizedBox(

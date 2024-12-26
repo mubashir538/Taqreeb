@@ -153,6 +153,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           'profilePicture',
           _selectedImage!.path,
         ));
+        print('Profile Picture: ${_selectedImage!.path}');
 
         // Add additional fields
         request.fields['userid'] = userId;

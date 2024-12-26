@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
@@ -12,10 +14,9 @@ class AddcategoryAddpackage extends StatefulWidget {
 
 class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   TextEditingController nameController = TextEditingController();
-
   TextEditingController detailsController = TextEditingController();
-
   TextEditingController priceController = TextEditingController();
+  Map<String, dynamic> args = {};
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -31,9 +32,23 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    this.args = args;
+  }
+
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
   @override
@@ -48,24 +63,43 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: (screenHeight * 0.03) + _headerHeight),
-                MyTextBox(
-                  hint: 'Name',
-                  valueController: nameController,
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                MyTextBox(
-                  hint: 'Details',
-                  valueController: detailsController,
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                MyTextBox(
-                  hint: 'Price',
-                  valueController: priceController,
-                ),
-              ],
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(height: (screenHeight * 0.03) + _headerHeight),
+                  MyTextBox(
+                    hint: 'Name',
+                    valueController: nameController,
+                  ),
+                  MyTextBox(
+                    hint: 'Details',
+                    valueController: detailsController,
+                  ),
+                  MyTextBox(
+                    hint: 'Price',
+                    isNum: true,
+                    isPrice: true,
+                    valueController: priceController,
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.1,
+                    child: Center(child: MyDivider()),
+                  ),
+                  ColoredButton(
+                      text: 'Add Package',
+                      onPressed: () {
+                        args['packages'].add({
+                          'name': _capitalize(nameController.text),
+                          'details': _capitalize(detailsController.text),
+                          'price': _capitalize(priceController.text),
+                        });
+                        print(args);
+                        Navigator.pushNamed(context, '/AddCategory_Packages',
+                            arguments: args);
+                      })
+                ],
+              ),
             ),
           ),
           Positioned(
