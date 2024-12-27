@@ -69,7 +69,8 @@ class _LoginState extends State<Login> {
                         valueController: emailController,
                       ),
                       MyTextBox(
-                        hint: "Enter Password",isPassword: true,
+                        hint: "Enter Password",
+                        isPassword: true,
                         valueController: passwordController,
                       ),
                       SizedBox(
@@ -129,18 +130,24 @@ class _LoginState extends State<Login> {
                                 "contact": emailController.text,
                                 "password": passwordController.text
                               });
-
-                          if (response['status'] == 'success') {
-                            await MyStorage.saveToken(
-                                response['refresh'], 'refresh');
-                            await MyStorage.saveToken(
-                                response['access'], 'accessToken');
-                            await MyStorage.saveToken(
-                                response['userid'].toString(), 'userId');
-                            Navigator.pushNamed(context, '/HomePage');
+                          if (response != null) {
+                            if (response['status'] == 'success') {
+                              await MyStorage.saveToken(
+                                  response['refresh'], 'refresh');
+                              await MyStorage.saveToken(
+                                  response['access'], 'accessToken');
+                              await MyStorage.saveToken(
+                                  response['userid'].toString(), 'userId');
+                              Navigator.pushNamed(context, '/HomePage');
+                            } else {
+                              warningDialog(
+                                message: "Invalid Credentials",
+                                title: "Error",
+                              ).showDialogBox(context);
+                            }
                           } else {
                             warningDialog(
-                              message: "Invalid Credentials",
+                              message: "Something Went Wrong!",
                               title: "Error",
                             ).showDialogBox(context);
                           }

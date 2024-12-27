@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -21,12 +23,62 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   TextEditingController cnicController = TextEditingController();
   TextEditingController profileNameController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
-
+  FocusNode cnicFocusNode = FocusNode();
+  FocusNode profileNameFocusNode = FocusNode();
+  FocusNode usernameFocusNode = FocusNode();
+  bool isLoading = true;
+  List<String> usernames = [];
+  String usernameValidationMessage = '';
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       check(context);
+      _getHeaderHeight();
+    });
+    fetchdata();
+    usernameController.addListener(() {
+      validateUsername();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers and focus nodes
+    cnicController.dispose();
+    profileNameController.dispose();
+    usernameController.dispose();
+    cnicFocusNode.dispose();
+    profileNameFocusNode.dispose();
+    usernameFocusNode.dispose();
+    super.dispose();
+  }
+
+  void validateUsername() {
+    final enteredUsername = usernameController.text.trim();
+    if (enteredUsername.isNotEmpty && usernames.contains(enteredUsername)) {
+      setState(() {
+        usernameValidationMessage = 'This username is already used.';
+      });
+    } else {
+      setState(() {
+        usernameValidationMessage = ''; // Clear message if valid
+      });
+    }
+  }
+
+  void fetchdata() async {
+    final fetchusernames = await MyApi.getRequest(
+      endpoint: 'getUsernames/business/',
+      //  headers: {
+      //   'Authorization': 'Bearer $token',
+      // }
+    );
+    setState(() {
+      this.usernames =
+          fetchusernames['businessUsernames'].cast<String>().toList() ??
+              []; // Ensure no null data
+      isLoading = false; // Data has been fetched, so stop loading
     });
   }
 
@@ -85,8 +137,12 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    double MaximumThing =
+        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -100,17 +156,38 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                 ),
                 MyTextBox(
                   hint: 'CNIC',
+                  focusNode: cnicFocusNode,
                   isNum: true,
                   valueController: cnicController,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(profileNameFocusNode);
+                  },
                 ),
                 MyTextBox(
                   hint: 'Profile Name',
+                  focusNode: profileNameFocusNode,
                   valueController: profileNameController,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(usernameFocusNode);
+                  },
                 ),
                 MyTextBox(
                   hint: 'Username',
+                  focusNode: usernameFocusNode,
+                  onFieldSubmitted: (_) {},
                   valueController: usernameController,
                 ),
+                if (usernameValidationMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      usernameValidationMessage,
+                      style: GoogleFonts.montserrat(
+                        color: MyColors.red,
+                        fontSize: MaximumThing * 0.015,
+                      ),
+                    ),
+                  ),
                 SizedBox(
                   height: screenHeight * 0.1,
                   child: Center(child: MyDivider()),

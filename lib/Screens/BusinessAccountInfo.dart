@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Checklist%20Items%20Adder.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
-// ignore: must_be_immutable
 class BusinessAccountInfo extends StatefulWidget {
   BusinessAccountInfo({super.key});
 
@@ -14,7 +15,33 @@ class BusinessAccountInfo extends StatefulWidget {
 }
 
 class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
-  List<String> items = ["Venue", "Catering", "Photography"];
+  String token = '';
+  Map<String, dynamic> user = {}; // Initialize as empty map
+  bool isLoading = true; // Add a loading flag
+  List<String> items = [];
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+
+    fetchData(); // Fetch data in a separate method
+  }
+
+  void fetchData() async {
+    // Perform asynchronous operations
+    final token = await MyStorage.getToken('accessToken') ?? "";
+    final Userid = await MyStorage.getToken('userId') ?? "";
+    final user =
+        await MyApi.getRequest(endpoint: 'businessowner/accountInfo/$Userid');
+
+    // Update the state
+    setState(() {
+      this.token = token;
+      this.user = user ?? {}; // Ensure no null data
+      this.items = user['categories'].cast<String>().toList() ?? [];
+      isLoading = false; // Data has been fetched, so stop loading
+    });
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -37,7 +64,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     TextStyle style = GoogleFonts.montserrat(
-      fontSize: MaximumThing * 0.018,
+      fontSize: MaximumThing * 0.015,
       fontWeight: FontWeight.w300,
       color: MyColors.white,
     );
@@ -48,109 +75,118 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
       body: Stack(
         children: [
           SingleChildScrollView(
-              child: Column(
-            children: [
-              SizedBox(
-                height: _headerHeight,
-              ),
-              SizedBox(
-                height: screenHeight * 0.04,
-              ),
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"),
-              ),
-              SizedBox(
-                height: MaximumThing * 0.02,
-              ),
-              Text(
-                "Qureshi Caterers",
-                style: GoogleFonts.montserrat(
-                    color: MyColors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: MaximumThing * 0.03),
-              ),
-              Text("Catering and Decorators", style: style),
-              MyDivider(),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-                child: Text(
-                  "Qureshi Caterers is a renowned catering service offering a diverse range of delicious and high-quality culinary options for all types of events. From weddings and corporate functions to intimate gatherings, Qureshi Caterers delivers exceptional food crafted by expert chefs, ensuring every dish reflects a perfect blend of flavor and presentation. With a strong emphasis on fresh ingredients and attention to detail, the service is known for its ability to customize menus to suit various tastes and preferences. Whether you're hosting a large banquet or a small event, Qureshi Caterers guarantees an unforgettable dining experience.",
-                  style: style,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(
-                  height: screenHeight * 0.04,
-                  child: Center(child: MyDivider())),
-              Container(
-                padding: EdgeInsets.all(MaximumThing * 0.03),
-                child: Column(
-                  children: [
-                    Row(children: [
-                      Icon(Icons.location_on_outlined),
-                      SizedBox(width: screenWidth * 0.02),
-                      Text(
-                        "Karachi, Pakistan",
-                        style: style,
-                      )
-                    ]),
-                    SizedBox(
-                      height: screenHeight * 0.015,
-                    ),
-                    Row(children: [
-                      Icon(Icons.mail, color: MyColors.white),
-                      SizedBox(width: screenWidth * 0.02),
-                      Text("qureshi@gmail.com", style: style)
-                    ]),
-                    SizedBox(
-                      height: screenHeight * 0.015,
-                    ),
-                    Row(children: [
-                      Icon(
-                        Icons.phone,
-                        color: MyColors.white,
-                      ),
-                      SizedBox(width: screenWidth * 0.02),
-                      Text("+92 323 2730519", style: style)
-                    ]),
-                  ],
-                ),
-              ),
-              SizedBox(
-                  height: screenHeight * 0.02,
-                  child: Center(child: MyDivider())),
-              Container(
-                margin: EdgeInsets.only(
-                    top: MaximumThing * 0.03, left: MaximumThing * 0.03),
-                child: Row(
-                  children: [
-                    Text(
-                      "Category",
-                      style: GoogleFonts.montserrat(
-                          color: MyColors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: MaximumThing * 0.02),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: screenHeight * 0.1,
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return ChecklistItemsAdder(text: items[index]);
-                  },
-                  scrollDirection: Axis.horizontal,
-                ),
-              ),
-              SizedBox(
-                height: screenHeight * 0.05,
-              )
-            ],
-          )),
+              child: isLoading
+                  ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                    )
+                  : Column(
+                      children: [
+                        SizedBox(
+                          height: _headerHeight,
+                        ),
+                        SizedBox(
+                          height: screenHeight * 0.04,
+                        ),
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
+                          ),
+                        ),
+                        SizedBox(
+                          height: MaximumThing * 0.02,
+                        ),
+                        Text(
+                          user['businessInfo']['businessName'],
+                          style: GoogleFonts.montserrat(
+                              color: MyColors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: MaximumThing * 0.03),
+                        ),
+                        Text(user['businessInfo']['businessUsername'],
+                            style: style),
+                        MyDivider(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.04),
+                          child: Text(
+                            user['businessInfo']['Description'],
+                            style: style,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(
+                            height: screenHeight * 0.04,
+                            child: Center(child: MyDivider())),
+                        Container(
+                          padding: EdgeInsets.all(MaximumThing * 0.03),
+                          child: Column(
+                            children: [
+                              Row(children: [
+                                Icon(Icons.location_on_outlined),
+                                SizedBox(width: screenWidth * 0.02),
+                                Text(
+                                  '${user['userinfo']['city']},Pakistan',
+                                  style: style,
+                                )
+                              ]),
+                              SizedBox(
+                                height: screenHeight * 0.015,
+                              ),
+                              Row(children: [
+                                Icon(Icons.mail, color: MyColors.white),
+                                SizedBox(width: screenWidth * 0.02),
+                                Text(user['userinfo']['email'], style: style)
+                              ]),
+                              SizedBox(
+                                height: screenHeight * 0.015,
+                              ),
+                              Row(children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: MyColors.white,
+                                ),
+                                SizedBox(width: screenWidth * 0.02),
+                                Text(user['userinfo']['contactNumber'].toString(),
+                                    style: style)
+                              ]),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                            height: screenHeight * 0.02,
+                            child: Center(child: MyDivider())),
+                        Container(
+                          margin: EdgeInsets.only(
+                              top: MaximumThing * 0.03,
+                              left: MaximumThing * 0.03),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Category",
+                                style: GoogleFonts.montserrat(
+                                    color: MyColors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: MaximumThing * 0.02),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenHeight * 0.1,
+                          child: ListView.builder(
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              return ChecklistItemsAdder(text: items[index]);
+                            },
+                            scrollDirection: Axis.horizontal,
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenHeight * 0.05,
+                        )
+                      ],
+                    )),
           Positioned(
             top: 0,
             child: Header(

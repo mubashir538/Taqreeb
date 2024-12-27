@@ -19,13 +19,27 @@ class BasicSignup extends StatefulWidget {
 
 class _BasicSignupState extends State<BasicSignup> {
   final TextEditingController firstNameController = TextEditingController();
-
   final TextEditingController lastNameController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
-
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final FocusNode passwordFocus = FocusNode();
+  final FocusNode confirmPasswordFocus = FocusNode();
+  final FocusNode firstNameFocus = FocusNode();
+  final FocusNode lastNameFocus = FocusNode();
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    passwordFocus.dispose();
+    confirmPasswordFocus.dispose();
+    firstNameFocus.dispose();
+    lastNameFocus.dispose();
+    super.dispose();
+  }
 
   void check(BuildContext context) async {
     if (await MyStorage.exists('sfname') &&
@@ -106,14 +120,32 @@ class _BasicSignupState extends State<BasicSignup> {
                   height: _headerHeight,
                 ),
                 MyTextBox(
-                    hint: "First Name", valueController: firstNameController),
+                    focusNode: firstNameFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(lastNameFocus);
+                    },
+                    hint: "First Name",
+                    valueController: firstNameController),
                 MyTextBox(
-                    hint: "Last Name", valueController: lastNameController),
+                    focusNode: lastNameFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(passwordFocus);
+                    },
+                    hint: "Last Name",
+                    valueController: lastNameController),
                 MyTextBox(
+                    focusNode: passwordFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(confirmPasswordFocus);
+                    },
                     hint: "Password",
                     isPassword: true,
                     valueController: passwordController),
                 MyTextBox(
+                    focusNode: confirmPasswordFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).unfocus();
+                    },
                     hint: "Confirm Password",
                     isPassword: true,
                     valueController: confirmPasswordController),

@@ -153,7 +153,7 @@ class _EventDetailsState extends State<EventDetails> {
                           itemBuilder: (context, index) {
                             return Function12(
                               color: Color(int.parse(
-                                  '0xff${events["EventDetail"]["themeColor"].substring(1, events["Event"][index]["themeColor"].length)}}')),
+                                  '0xff${events["EventDetail"]["themeColor"].substring(1, events["EventDetail"]["themeColor"].length)}')),
                               name: events['Functions'][index]['name'],
                               type: events['Functions'][index]['type'],
                               head: 'Budget',

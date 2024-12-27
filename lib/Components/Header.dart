@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -112,10 +113,12 @@ class _HeaderState extends State<Header> {
                                   ),
                                   ColoredButton(
                                     onPressed: () async {
-                                      await MyStorage.deleteToken('refresh');
                                       await MyStorage.deleteToken(
-                                          'accessToken');
-                                      await MyStorage.deleteToken('userId');
+                                          MyTokens.refreshToken);
+                                      await MyStorage.deleteToken(
+                                          MyTokens.accessToken);
+                                      await MyStorage.deleteToken(
+                                          MyTokens.userId);
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil('/Login',
                                               (Route<dynamic> route) => false);

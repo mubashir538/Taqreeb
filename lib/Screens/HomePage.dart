@@ -21,10 +21,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
-  String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
   Map<String, dynamic> listings = {}; // Initialize as empty map
   Map<String, dynamic> demoImages = {}; // Initialize as empty map
+  String token = '';
   bool isLoading = true; // Add a loading flag
 
   @override
@@ -34,16 +34,7 @@ class _HomePageState extends State<HomePage> {
     fetchData(); // Fetch data in a separate method
   }
 
-  // final GlobalKey _headerKey = GlobalKey();
-  // double _headerHeight = 0.0;
-  // void _getHeaderHeight() {
-  //   final RenderBox renderBox =
-  //       _headerKey.currentContext?.findRenderObject() as RenderBox;
-  //   setState(() {
-  //     _headerHeight = renderBox.size.height;
-  //   });
-  // }
-
+  
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken('accessToken') ?? "";

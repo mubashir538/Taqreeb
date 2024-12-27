@@ -1,17 +1,20 @@
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Iconed%20Button.dart';
+import 'package:taqreeb/Components/crop%20screen.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class BusinessSignup_CNICUpload extends StatefulWidget {
   const BusinessSignup_CNICUpload({super.key});
@@ -29,30 +32,68 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
+
       if (pickedFile != null) {
-        final compressedFile = await _compressImage(
-            image == 'f' ? File(frontImage!.path) : File(backImage!.path));
-        setState(() {
-          if (image == 'f') frontImage = compressedFile;
-          if (image == 'b') backImage = compressedFile;
-        });
+        final imageBytes = await File(pickedFile.path).readAsBytes();
+
+        // Show the cropping popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CropPopup(
+              imageBytes: imageBytes,
+              onCropped: (croppedBytes) async {
+                final croppedFile = await _saveCroppedImage(croppedBytes);
+                final compressedFile = await _compressImage(croppedFile);
+                setState(() {
+                  if (image == 'f') {
+                    frontImage = compressedFile;
+                  } else {
+                    backImage = compressedFile;
+                  }
+                });
+              },
+            );
+          },
+        );
       }
     } catch (e) {
       warningDialog(
-              title: 'Error',
-              message: 'Failed to pick an image. Please try again.')
-          .showDialogBox(context);
+        title: 'Error',
+        message: 'Failed to pick or crop the image. Please try again.',
+      ).showDialogBox(context);
     }
   }
 
+// Save the cropped image to a file
+  Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/cropped_image.png';
+    final croppedFile = File(path);
+    await croppedFile.writeAsBytes(croppedBytes);
+    return croppedFile;
+  }
+
   Future<File> _compressImage(File file) async {
-    final compressedPath = file.path.replaceFirst('.jpg', '_compressed.jpg');
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      compressedPath,
-      quality: 50,
-    );
-    return compressedFile ?? file;
+    try {
+      final tempDir = Directory.systemTemp;
+      final compressedPath =
+          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+
+      final compressedFile = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        compressedPath,
+        quality: 50,
+      );
+
+      if (compressedFile != null) {
+        return compressedFile;
+      } else {
+        throw Exception("Failed to compress image.");
+      }
+    } catch (e) {
+      throw Exception("Compression error: ${e.toString()}");
+    }
   }
 
   final GlobalKey _headerKey = GlobalKey();

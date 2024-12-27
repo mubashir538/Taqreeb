@@ -33,11 +33,13 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
       });
     }
   }
-@override
+
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -116,11 +118,14 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
               ),
             ),
           ),
-          Header(
-            key: _headerKey,
-            heading: 'OTP Verification',
-            para: 'Enter Phone number to send one time password',
-            image: MyImages.SingupPng,
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: 'OTP Verification',
+              para: 'Enter Phone number to send one time password',
+              image: MyImages.SingupPng,
+            ),
           ),
         ],
       ),

@@ -156,7 +156,7 @@ class _SettingsState extends State<Settings> {
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
                                                 '/HomePage', // Target route
-                                                (Route<dynamic> route) => false,
+                                                ModalRoute.withName('/'),
                                               );
                                             });
                                           },

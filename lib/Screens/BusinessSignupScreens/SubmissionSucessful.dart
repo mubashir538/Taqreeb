@@ -51,7 +51,7 @@ class _SubmissionSucessfulState extends State<SubmissionSucessful> {
           ColoredButton(
             text: 'Continue to Home',
             onPressed: () {
-              Navigator.pushNamed(context, '/HomePage');
+              Navigator.pushNamedAndRemoveUntil(context, '/HomePage', ModalRoute.withName('/'));
             },
           ),
         ],

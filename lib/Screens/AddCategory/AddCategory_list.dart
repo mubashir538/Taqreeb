@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -18,14 +19,40 @@ class AddcategoryList extends StatefulWidget {
 
 class _AddcategoryListState extends State<AddcategoryList> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   int charactersleft = 1100;
   TextEditingController locationController = TextEditingController();
   TextEditingController priceminController = TextEditingController();
   TextEditingController pricemaxController = TextEditingController();
   TextEditingController typeController = TextEditingController();
+  FocusNode typeFocus = FocusNode();
+  FocusNode nameFocus = FocusNode();
+  FocusNode descriptionFocus = FocusNode();
+  FocusNode locationFocus = FocusNode();
+  FocusNode priceminFocus = FocusNode();
+  FocusNode pricemaxFocus = FocusNode();
+
   String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    nameController.dispose();
+    descriptionController.dispose();
+    locationController.dispose();
+    priceminController.dispose();
+    pricemaxController.dispose();
+    typeController.dispose();
+    typeFocus.dispose();
+    nameFocus.dispose();
+    descriptionFocus.dispose();
+    locationFocus.dispose();
+    priceminFocus.dispose();
+    pricemaxFocus.dispose();
+  }
 
   @override
   void initState() {
@@ -76,48 +103,21 @@ class _AddcategoryListState extends State<AddcategoryList> {
               children: [
                 SizedBox(height: _headerHeight),
                 MyTextBox(
+                  focusNode: nameFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(descriptionFocus);
+                  },
                   hint: 'Name',
                   valueController: nameController,
                 ),
-                Container(
-                  margin: EdgeInsets.all(MaximumThing * 0.01),
-                  height: screenHeight * 0.3,
-                  width: screenWidth * 0.9,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MaximumThing * 0.03,
-                      vertical: MaximumThing * 0.02),
-                  decoration: BoxDecoration(
-                    color: MyColors.DarkLighter,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                          offset: Offset(2, 2))
-                    ],
-                  ),
-                  child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        charactersleft = 1100 - value.length;
-                      });
-                    },
-                    maxLines: 50,
-                    style: GoogleFonts.montserrat(
-                        color: MyColors.white,
-                        fontSize: MaximumThing * 0.015,
-                        fontWeight: FontWeight.w400),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintStyle: GoogleFonts.montserrat(
-                        color: MyColors.white.withOpacity(0.6),
-                        fontSize: MaximumThing * 0.015,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      hintText: "Enter Description",
-                    ),
-                  ),
+                DescriptionBox(
+                  focusNode: descriptionFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(locationFocus);
+                  },
+                  valueController: descriptionController,
+                  onChanged: (value) =>
+                      setState(() => charactersleft = 1100 - value.length),
                 ),
                 SizedBox(
                   width: screenWidth * 0.9,
@@ -136,6 +136,10 @@ class _AddcategoryListState extends State<AddcategoryList> {
                   ),
                 ),
                 MyTextBox(
+                  focusNode: locationFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(typeFocus);
+                  },
                   hint: 'Location',
                   valueController: locationController,
                 ),
@@ -153,12 +157,20 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       typeController.text = value;
                     }),
                 MyTextBox(
+                  focusNode: priceminFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(pricemaxFocus);
+                  },
                   hint: 'Minimum Price',
                   isNum: true,
                   isPrice: true,
                   valueController: priceminController,
                 ),
                 MyTextBox(
+                  focusNode: pricemaxFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).unfocus();
+                  },
                   hint: 'Maximum Price',
                   isNum: true,
                   isPrice: true,
@@ -193,7 +205,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
                     }
                     Map<String, dynamic> args = {
                       'name': nameController.text,
-                      'description': nameController.text,
+                      'description': descriptionController.text,
                       'location': locationController.text,
                       'category': typeController.text,
                       'pricemin': priceminController.text,

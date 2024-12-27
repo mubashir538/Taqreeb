@@ -88,13 +88,25 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   }
 
   Future<File> _compressImage(File file) async {
-    final compressedPath = file.path.replaceFirst('.jpg', '_compressed.jpg');
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      compressedPath,
-      quality: 50,
-    );
-    return compressedFile ?? file;
+    try {
+      final tempDir = Directory.systemTemp;
+      final compressedPath =
+          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+
+      final compressedFile = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        compressedPath,
+        quality: 50,
+      );
+
+      if (compressedFile != null) {
+        return compressedFile;
+      } else {
+        throw Exception("Failed to compress image.");
+      }
+    } catch (e) {
+      throw Exception("Compression error: ${e.toString()}");
+    }
   }
 
   Future<void> _uploadProfilePicture() async {
@@ -115,7 +127,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           'profilePicture',
           _selectedImage!.path,
         ));
-        
+
         if (type == 'freelancer') {
         } else if (type == 'Business') {
           request.files.add(await http.MultipartFile.fromPath(
@@ -168,7 +180,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                 ColoredButton(
                     text: 'Ok',
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Signup_EmailOTPSend');
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          '/Signup_EmailOTPSend', ModalRoute.withName('/'));
                     })
               ],
             ).showDialogBox(context);
@@ -183,7 +196,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               MyStorage.deleteToken('bsfront');
               MyStorage.deleteToken('bsback');
               MyStorage.deleteToken('bsdescription');
-              Navigator.pushNamed(context, '/SubmissionSucessful');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/SubmissionSucessful', ModalRoute.withName('/'));
             } else {
               MyStorage.saveToken(
                   jsonResponse['refresh'].toString(), 'refresh');
@@ -197,7 +211,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               MyStorage.deleteToken('semail');
               MyStorage.deleteToken('scity');
               MyStorage.deleteToken('sgender');
-              Navigator.pushNamed(context, '/HomePage');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/HomePage', ModalRoute.withName('/'));
             }
           }
         } else {
@@ -248,6 +263,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         children: [
           SingleChildScrollView(
             child: Container(
+              width: screenWidth,
               constraints: BoxConstraints(minHeight: screenHeight),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

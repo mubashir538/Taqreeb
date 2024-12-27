@@ -8,6 +8,9 @@ class MyTextBox extends StatefulWidget {
   final String hint;
   final String Value;
   final bool isPassword;
+
+  final Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
   final bool isNum;
   final bool isPrice;
   final TextEditingController valueController;
@@ -18,6 +21,8 @@ class MyTextBox extends StatefulWidget {
     this.isNum = false,
     this.isPassword = false,
     required this.hint,
+    this.onFieldSubmitted,
+    this.focusNode,
     this.Value = '',
     required this.valueController,
   });
@@ -64,6 +69,8 @@ class _MyTextBoxState extends State<MyTextBox> {
             Expanded(
               child: TextField(
                 controller: widget.valueController,
+                focusNode: widget.focusNode,
+                onSubmitted: widget.onFieldSubmitted,
                 obscureText: widget.isPassword ? _isObscured : false,
                 keyboardType: widget.isNum
                     ? TextInputType.number
@@ -91,6 +98,9 @@ class _MyTextBoxState extends State<MyTextBox> {
                     fontSize: MaximumThing * 0.015,
                   ),
                   border: InputBorder.none,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyColors.red),
+                  ),
                 ),
               ),
             ),
