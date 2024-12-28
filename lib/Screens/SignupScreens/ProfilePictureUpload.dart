@@ -155,7 +155,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           request.fields['password'] =
               await MyStorage.getToken(MyTokens.spassword) ?? "";
           request.fields['contactType'] =
-              await MyStorage.exists('semail') ? 'email' : 'phone';
+              await MyStorage.exists(MyTokens.semail) ? 'email' : 'phone';
           if (request.fields['contactType'] == 'email') {
             request.fields['email'] = await MyStorage.getToken(MyTokens.semail) ?? "";
           } else {

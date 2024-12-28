@@ -21,11 +21,12 @@ class MyColors {
       MyColors.Dark = Color(0xff18191A);
       MyColors.DarkLighter = Color(0xff242526);
     } else {
-      await MyStorage.saveToken(MyTokens.Light, MyTokens.theme                                                                                               n     );
+      await MyStorage.saveToken(MyTokens.Light, MyTokens.theme);                                                                                             n     );
       MyColors.Dark = Color(0xffffffff);
       MyColors.DarkLighter = Color(0xffd9d9d9);
       MyColors.white = Color(0xff18191A);
       MyColors.whiteDarker = Color(0xff242526);
     }
   }
+
 }

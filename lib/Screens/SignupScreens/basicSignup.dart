@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -42,9 +43,9 @@ class _BasicSignupState extends State<BasicSignup> {
   }
 
   void check(BuildContext context) async {
-    if (await MyStorage.exists('sfname') &&
-        await MyStorage.exists('slname') &&
-        await MyStorage.exists('spassword')) {
+    if (await MyStorage.exists(MyTokens.sfname) &&
+        await MyStorage.exists(MyTokens.slname) &&
+        await MyStorage.exists(MyTokens.spassword)) {
       warningDialog(
         title: 'Fresh Start',
         message:
@@ -53,12 +54,12 @@ class _BasicSignupState extends State<BasicSignup> {
           ColoredButton(
             text: 'Fresh Start',
             onPressed: () {
-              MyStorage.deleteToken('spassword');
-              MyStorage.deleteToken('sfname');
-              MyStorage.deleteToken('slname');
-              MyStorage.deleteToken('semail');
-              MyStorage.deleteToken('scity');
-              MyStorage.deleteToken('sgender');
+              MyStorage.deleteToken(MyTokens.spassword);
+              MyStorage.deleteToken(MyTokens.sfname);
+              MyStorage.deleteToken(MyTokens.slname);
+              MyStorage.deleteToken(MyTokens.semail);
+              MyStorage.deleteToken(MyTokens.scity);
+              MyStorage.deleteToken(MyTokens.sgender);
 
               Navigator.pop(context);
             },
@@ -66,11 +67,11 @@ class _BasicSignupState extends State<BasicSignup> {
           ColoredButton(
             text: 'Continue',
             onPressed: () async {
-              if (await MyStorage.exists('scity')) {
+              if (await MyStorage.exists(MyTokens.scity)) {
                 Navigator.pushNamed(context, '/ProfilePictureUpload',
                     arguments: {'type': 'User'});
-              } else if (await MyStorage.exists('sphone') ||
-                  await MyStorage.exists('semail')) {
+              } else if (await MyStorage.exists(MyTokens.sphone) ||
+                  await MyStorage.exists(MyTokens.semail)) {
                 Navigator.pushNamed(context, '/Signup_MoreInfo');
               } else {
                 Navigator.pushNamed(context, '/Signup_ContactOTPSend');
