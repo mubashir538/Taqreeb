@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -23,38 +24,54 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  void _getHeaderHeight() {
+    final RenderObject? renderObject =
+        _headerKey.currentContext?.findRenderObject();
+    if (renderObject is RenderBox) {
+      setState(() {
+        _headerHeight = renderObject.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
-        backgroundColor: MyColors.Dark,
-        body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Header(
-                  heading: "Login to Continue",
-                  para:
-                      "We believe that your event should not be delayed so let's login your Account so we can get Started",
-                  image: MyImages.Login,
-                ),
-                Container(
-                  child: Column(
+      backgroundColor: MyColors.Dark,
+      body: Stack(
+        children: [
+          if (_headerHeight > 0)
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
                     children: [
-                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: (screenHeight * 0.03) + _headerHeight),
                       MyTextBox(
                         hint: "Enter Email or Phone Number",
                         valueController: emailController,
                       ),
                       MyTextBox(
                         hint: "Enter Password",
+                        isPassword: true,
                         valueController: passwordController,
                       ),
                       SizedBox(
@@ -114,18 +131,24 @@ class _LoginState extends State<Login> {
                                 "contact": emailController.text,
                                 "password": passwordController.text
                               });
-
-                          if (response['status'] == 'success') {
-                            await MyStorage.saveToken(
-                                response['refresh'], 'refresh');
-                            await MyStorage.saveToken(
-                                response['access'], 'accessToken');
-                            await MyStorage.saveToken(
-                                response['userid'].toString(), 'userId');
-                            Navigator.pushNamed(context, '/HomePage');
+                          if (response != null) {
+                            if (response['status'] == 'success') {
+                              await MyStorage.saveToken(
+                                  response['refresh'], MyTokens.refreshToken);
+                              await MyStorage.saveToken(
+                                  response['access'], MyTokens.accessToken);
+                              await MyStorage.saveToken(
+                                  response['userid'].toString(), MyTokens.userId);
+                              Navigator.pushNamed(context, '/HomePage');
+                            } else {
+                              warningDialog(
+                                message: "Invalid Credentials",
+                                title: "Error",
+                              ).showDialogBox(context);
+                            }
                           } else {
                             warningDialog(
-                              message: "Invalid Credentials",
+                              message: "Something Went Wrong!",
                               title: "Error",
                             ).showDialogBox(context);
                           }
@@ -150,10 +173,21 @@ class _LoginState extends State<Login> {
                           icon: MyIcons.facebook),
                     ],
                   ),
-                )
-              ],
+                ],
+              ),
+            ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: "Login to Continue",
+              para:
+                  "We believe that your event should not be delayed so let's login your Account so we can get Started",
+              image: MyImages.Login,
             ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 }

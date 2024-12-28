@@ -6,6 +6,7 @@ import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/Search Box.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/automatic%20Slider.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -21,23 +22,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
-  String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
   Map<String, dynamic> listings = {}; // Initialize as empty map
   Map<String, dynamic> demoImages = {}; // Initialize as empty map
+  String token = '';
   bool isLoading = true; // Add a loading flag
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
     fetchData(); // Fetch data in a separate method
   }
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
+      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
@@ -45,11 +47,15 @@ class _HomePageState extends State<HomePage> {
 
     final fetchedImages = await MyApi.getRequest(
       endpoint: 'Homepage/DemoImages/',
+      headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization
       // }
     );
-    final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
+    final fetchedListings = await MyApi.getRequest(
+      endpoint: 'home/listings/',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {
@@ -62,162 +68,195 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Header(),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: Stack(
+        children: [
+          if (_headerHeight > 0)
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SearchBox(
-                    onChanged: (value) {},
-                    hint: 'Search Typing to Search',
-                    onclick: () {
-                      Navigator.pushNamed(context, '/SearchService');
-                    },
-                    controller: _searchController,
-                    width: screenWidth * 0.9,
+                  SizedBox(height: _headerHeight),
+
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SearchBox(
+                          onChanged: (value) {},
+                          hint: 'Search Typing to Search',
+                          onclick: () {
+                            Navigator.pushNamed(context, '/SearchService');
+                          },
+                          controller: _searchController,
+                          width: screenWidth * 0.9,
+                        ),
+                        // IconButton(
+                        //   icon: Icon(Icons.tune, color: MyColors.white),
+                        //   onPressed: () {},
+                        // ),
+                      ],
+                    ),
                   ),
-                  // IconButton(
-                  //   icon: Icon(Icons.tune, color: MyColors.white),
-                  //   onPressed: () {},
+                  // Show CircularProgressIndicator while loading
+                  isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            Center(
+                              child: AutoImageSlider(
+                                imageUrls: demoImages[
+                                        'images'] // Filter items with "image"
+                                    .map((value) =>
+                                        '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
+                                    .cast<String>() // Extract "image" values
+                                    .toList(),
+                                height: screenHeight * 0.25,
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                width: screenWidth * 0.95,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: screenHeight * 0.015),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Browse Categories',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: MaximumThing * 0.02,
+                                        fontWeight: FontWeight.w600,
+                                        color: MyColors.Yellow,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/SearchService');
+                                      },
+                                      child: Text(
+                                        'See all',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: MaximumThing * 0.017,
+                                          fontWeight: FontWeight.w400,
+                                          color: MyColors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.19,
+                              child: ListView.builder(
+                                itemBuilder: (context, index) => CategoryIcon(
+                                  onpressed: () {
+                                    Navigator.pushNamed(
+                                        context, '/SearchService',
+                                        arguments: {
+                                          'category': categories['categories']
+                                              [index]['name'],
+                                        });
+                                  },
+                                  label: categories['categories'][index]
+                                      ['name'],
+                                  imageUrl:
+                                      '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                                ),
+                                itemCount: categories['categories'].length,
+                                scrollDirection: Axis.horizontal,
+                              ),
+                            ),
+                          ],
+                        ),
+                  // Center(
+                  //   child: ColoredButton(
+                  //     onPressed: () {
+                  //       Navigator.pushNamed(context, '/CreateAIPackage');
+                  //     },
+                  //     text: 'Create Package with AI',
+                  //   ),
                   // ),
+                  isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                          ),
+                        )
+                      : Center(
+                          child: SizedBox(
+                            width: screenWidth * 0.9,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: listings['HomeListing'].length,
+                              itemBuilder: (context, index) {
+                                return Productcard(
+                                  listingType: listings['HomeListing'][index]
+                                          ['type']
+                                      .toString(),
+                                  listingid: listings['HomeListing'][index]
+                                          ['id']
+                                      .toString(),
+                                  imageUrl: listings['pictures'][index]
+                                              .length !=
+                                          0
+                                      ? (listings['pictures'][index][0]
+                                                  ['picturePath'] ==
+                                              " "
+                                          ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                          : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}')
+                                      : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+                                  venueName: listings['HomeListing'][index]
+                                      ['name'],
+                                  location: listings['HomeListing'][index]
+                                      ['location'],
+                                  type: listings['HomeListing'][index]['type']
+                                      .toString(),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),
-            // Show CircularProgressIndicator while loading
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(MyColors.Yellow),
-                    ),
-                  )
-                : Column(
-                    children: [
-                      Center(
-                        child: AutoImageSlider(
-                          imageUrls: demoImages[
-                                  'images'] // Filter items with "image"
-                              .map((value) =>
-                                  '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
-                              .cast<String>() // Extract "image" values
-                              .toList(),
-                          height: screenHeight * 0.25,
-                        ),
-                      ),
-                      Center(
-                        child: Container(
-                          width: screenWidth * 0.95,
-                          margin: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.015),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Browse Categories',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: MaximumThing * 0.02,
-                                  fontWeight: FontWeight.w600,
-                                  color: MyColors.Yellow,
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, '/SearchService');
-                                },
-                                child: Text(
-                                  'See all',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.017,
-                                    fontWeight: FontWeight.w400,
-                                    color: MyColors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight * 0.19,
-                        child: ListView.builder(
-                          itemBuilder: (context, index) => CategoryIcon(
-                            onpressed: () {
-                              Navigator.pushNamed(context, '/SearchService',
-                                  arguments: {
-                                    'category': categories['categories'][index]
-                                        ['name'],
-                                  });
-                            },
-                            label: categories['categories'][index]['name'],
-                            imageUrl:
-                                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
-                          ),
-                          itemCount: categories['categories'].length,
-                          scrollDirection: Axis.horizontal,
-                        ),
-                      ),
-                    ],
-                  ),
-            // Center(
-            //   child: ColoredButton(
-            //     onPressed: () {
-            //       Navigator.pushNamed(context, '/CreateAIPackage');
-            //     },
-            //     text: 'Create Package with AI',
-            //   ),
-            // ),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(MyColors.Yellow),
-                    ),
-                  )
-                : Center(
-                    child: SizedBox(
-                      width: screenWidth * 0.9,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: listings['HomeListing'].length,
-                        itemBuilder: (context, index) {
-                          return Productcard(
-                            listingType: listings['HomeListing'][index]['type']
-                                .toString(),
-                            listingid:
-                                listings['HomeListing'][index]['id'].toString(),
-                            imageUrl: listings['pictures'][index][0]
-                                        ['picturePath'] ==
-                                    " "
-                                ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}',
-                            venueName: listings['HomeListing'][index]['name'],
-                            location: listings['HomeListing'][index]
-                                ['location'],
-                            type: listings['HomeListing'][index]['type']
-                                .toString(),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-          ],
-        ),
+          Positioned(
+              child: Header(
+            key: _headerKey,
+          )),
+        ],
       ),
     );
   }

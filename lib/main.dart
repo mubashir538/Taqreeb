@@ -87,7 +87,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/': (context) => AddcategoryList(),
+        '/': (context) => SplashScreen(),
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
         '/AddCategory_AddImage': (context) => AddImage(),
@@ -128,10 +128,10 @@ class MainApp extends StatelessWidget {
         '/ChatsScreen': (context) => MainScreen(index: 1),
         '/ChatBox': (context) => ChatBox(),
         '/SearchService': (context) => SearchService(),
-        '/YourListings': (context) => YourListings(),
+        '/YourListings': (context) => MainScreen(index: 2),
         '/AccountInfo': (context) => MainScreen(index: 3),
         '/AccountInfoEdit': (context) => AccountInfoEdit(),
-        '/BusinessAccountInfo': (context) => BusinessAccountInfo(),
+        '/BusinessAccountInfo': (context) => MainScreen(index: 3),
         '/CreateGuestList': (context) => CreateGuestList(),
         '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
         '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),

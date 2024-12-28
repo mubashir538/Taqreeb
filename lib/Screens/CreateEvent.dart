@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/colorPicker.dart';
 import 'package:taqreeb/Components/dropdown.dart';
@@ -35,6 +36,7 @@ class _CreateEventState extends State<CreateEvent> {
   String eventid = "";
   Map<String, dynamic> Event = {};
   bool edit = false;
+  bool ischange = false;
 
   @override
   void didChangeDependencies() {
@@ -48,20 +50,26 @@ class _CreateEventState extends State<CreateEvent> {
         edit = true;
       });
     }
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   void fetchData() async {
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final types = await MyApi.getRequest(endpoint: 'getEventTypes/');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final types = await MyApi.getRequest(
+      endpoint: 'getEventTypes/',
+      headers: {'Authorization': 'Bearer $token'},
+    );
     final EventDetails;
     if (edit) {
-      EventDetails =
-          await MyApi.getRequest(endpoint: 'eventdetails/${eventid}');
+      EventDetails = await MyApi.getRequest(
+        endpoint: 'eventdetails/${eventid}',
+        headers: {'Authorization': 'Bearer $token'},
+      );
     } else {
       EventDetails = "";
     }
-    print(EventDetails);
     setState(() {
       if (edit) {
         print('Edit Screen');
@@ -84,7 +92,21 @@ class _CreateEventState extends State<CreateEvent> {
       this.token = token;
       this.types = types ?? {};
       isLoading = false;
+      ischange = true;
     });
+  }
+
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -93,132 +115,149 @@ class _CreateEventState extends State<CreateEvent> {
     double screenHeight = MediaQuery.of(context).size.height;
     // double MaximumThing =
     //     screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: _headerHeight),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                  child: Column(
+                    children: [
+                      QuestionGroup(questions: [
+                        MyTextBox(
+                          hint: "Event Name",
+                          valueController: eventNameController,
+                        ),
+                        ResponsiveDropdown(
+                            items: isLoading
+                                ? []
+                                : types['eventTypes']
+                                    .map((val) => val['name'].toString())
+                                    .cast<String>()
+                                    .toList(),
+                            labelText: 'Event Type',
+                            onChanged: (value) {
+                              setState(() {
+                                typeController.text = value;
+                              });
+                            }),
+                        DateQuestion(
+                          question: '',
+                          valuecontroller: dateController,
+                        ),
+                        MyTextBox(
+                          hint: "Location",
+                          valueController: locationController,
+                        ),
+                        ColorPickerTextBox(
+                          hint: "Theme Color",
+                          valueController: themeColor,
+                        )
+                      ], Heading: "Basic Info"),
+                      QuestionGroup(questions: [
+                        SizedBox(
+                          height: screenHeight * 0.2,
+                          child: MyTextBox(
+                            hint: "Enter Description",
+                            valueController: descriptionController,
+                          ),
+                        ),
+                      ], Heading: "Describe Your Event"),
+                      QuestionGroup(questions: [
+                        MyTextBox(
+                          hint: "Minimum Guests",
+                          isNum: true,
+                          valueController: guestMinController,
+                        ),
+                        MyTextBox(
+                          hint: "Maximum Guests",
+                          isNum: true,
+                          valueController: guestMaxController,
+                        ),
+                      ], Heading: "Guest Info"),
+                      QuestionGroup(questions: [
+                        MyTextBox(
+                          hint: "Enter Budget",
+                          isNum: true,
+                          isPrice: true,
+                          valueController: budgetController,
+                        ),
+                      ], Heading: "Budget")
+                    ],
+                  ),
+                ),
+                ColoredButton(
+                  text: edit ? "Edit Event" : "Create Event",
+                  onPressed: () async {
+                    if (eventNameController.text.isEmpty ||
+                        typeController.text.isEmpty ||
+                        dateController.text.isEmpty ||
+                        locationController.text.isEmpty ||
+                        descriptionController.text.isEmpty ||
+                        budgetController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Please fill all the fields"),
+                      ));
+                      return;
+                    }
+                    final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+                    final response = await MyApi.postRequest(
+                        endpoint: edit ? 'EditEvent/' : 'CreateEvent/',
+                        headers: {
+                          'Authorization': 'Bearer $token'
+                        },
+                        body: {
+                          'userId': userId,
+                          'Event Name': eventNameController.text,
+                          'Event Type': typeController.text,
+                          'Date': dateController.text,
+                          'Location': locationController.text,
+                          'description': descriptionController.text,
+                          'Theme': themeColor.text,
+                          'Budget': budgetController.text,
+                          'EventId': eventid,
+                          'guestmin': guestMinController.text,
+                          'guestmax': guestMaxController.text
+                        });
+                    if (response['status'] == 'error') {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "Something Went Wrong! Please Try Again Later!")));
+                      return;
+                    }
+                    if (response['status'] == 'success') {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: edit
+                              ? Text('Event Updated Successfully')
+                              : Text('Event Created Successfully')));
+                      Navigator.pushNamed(context, '/YourEvents');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(edit
+                              ? 'Error Updating Event'
+                              : 'Error Creating Event')));
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
               heading: edit ? "Edit Event" : "Create Event",
               para: "Plan your event effortlessly!",
               image: MyImages.SingupPng,
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Column(
-                children: [
-                  QuestionGroup(questions: [
-                    MyTextBox(
-                      hint: "Event Name",
-                      valueController: eventNameController,
-                    ),
-                    ResponsiveDropdown(
-                        items: isLoading
-                            ? []
-                            : types['eventTypes']
-                                .map((val) => val['name'].toString())
-                                .cast<String>()
-                                .toList(),
-                        labelText: 'Event Type',
-                        onChanged: (value) {
-                          setState(() {
-                            typeController.text = value;
-                          });
-                        }),
-                    DateQuestion(
-                      question: '',
-                      valuecontroller: dateController,
-                    ),
-                    MyTextBox(
-                      hint: "Location",
-                      valueController: locationController,
-                    ),
-                    ColorPickerTextBox(
-                      hint: "Theme Color",
-                      valueController: themeColor,
-                    )
-                  ], Heading: "Basic Info"),
-                  QuestionGroup(questions: [
-                    SizedBox(
-                      height: screenHeight * 0.2,
-                      child: MyTextBox(
-                        hint: "Enter Description",
-                        valueController: descriptionController,
-                      ),
-                    ),
-                  ], Heading: "Describe Your Event"),
-                  QuestionGroup(questions: [
-                    MyTextBox(
-                      hint: "Minimum Guests",
-                      valueController: guestMinController,
-                    ),
-                    MyTextBox(
-                      hint: "Maximum Guests",
-                      valueController: guestMaxController,
-                    ),
-                  ], Heading: "Guest Info"),
-                  QuestionGroup(questions: [
-                    MyTextBox(
-                      hint: "Enter Budget",
-                      valueController: budgetController,
-                    ),
-                  ], Heading: "Budget")
-                ],
-              ),
-            ),
-            ColoredButton(
-              text: edit ? "Edit Event" : "Create Event",
-              onPressed: () async {
-                if (eventNameController.text.isEmpty ||
-                    typeController.text.isEmpty ||
-                    dateController.text.isEmpty ||
-                    locationController.text.isEmpty ||
-                    descriptionController.text.isEmpty ||
-                    budgetController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Please fill all the fields"),
-                  ));
-                  return;
-                }
-                final userId = await MyStorage.getToken('userId');
-                final response = await MyApi.postRequest(
-                    endpoint: edit ? 'EditEvent/' : 'CreateEvent/',
-                    body: {
-                      'Event Name': eventNameController.text,
-                      'Event Type': typeController.text,
-                      'Date': dateController.text,
-                      'Location': locationController.text,
-                      'description': descriptionController.text,
-                      'Theme': themeColor.text,
-                      'Budget': budgetController.text,
-                      'EventId': eventid,
-                      'guestmin': guestMinController.text,
-                      'guestmax': guestMaxController.text
-                    });
-                if (response['status'] == 'error') {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          "Something Went Wrong! Please Try Again Later!")));
-                  return;
-                }
-                if (response['status'] == 'success') {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: edit
-                          ? Text('Event Updated Successfully')
-                          : Text('Event Created Successfully')));
-                  Navigator.pushNamed(context, '/YourEvents');
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(edit
-                          ? 'Error Updating Event'
-                          : 'Error Creating Event')));
-                }
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

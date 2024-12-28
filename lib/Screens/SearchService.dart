@@ -7,6 +7,7 @@ import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/locationtextbox.dart';
 import 'package:taqreeb/Components/rangeSlider.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/Create%20AI%20Package/Components/checkbox%20question.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -45,6 +46,11 @@ class _SearchServiceState extends State<SearchService> {
 
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
 
   @override
   void didChangeDependencies() {
@@ -57,9 +63,9 @@ class _SearchServiceState extends State<SearchService> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
+      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
@@ -79,147 +85,174 @@ class _SearchServiceState extends State<SearchService> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Header(),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-                    ),
-                  )
-                : Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: maximumDimension * 0.05,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: _headerHeight),
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(MyColors.white),
                         ),
-                        child: SizedBox(
-                          width: screenWidth * 0.9,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SearchBox(
-                                onclick: () {},
-                                hint: 'Start typing to search',
-                                controller: searchController,
-                                width: screenWidth * 0.75,
-                                onChanged: (value) {
-                                  setState(() {
-                                    searchwithFilters();
-                                    print(
-                                        'listing: ${listings['HomeListing']}');
-                                    templistings['HomeListing'] =
-                                        templistings['HomeListing']
-                                            .where((element) => element['name']
-                                                .toString()
-                                                .toLowerCase()
-                                                .contains(value.toLowerCase()))
-                                            .toList();
-                                  });
-                                },
-                              ),
-                              IconButton(
-                                onPressed: () => _showFilterPopup(context),
-                                icon: Icon(
-                                  Icons.tune,
-                                  size: maximumDimension * 0.03,
-                                  color: MyColors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (appliedFilters.isNotEmpty)
-                        Container(
-                          margin: EdgeInsets.only(top: maximumDimension * 0.02),
-                          width: screenWidth * 0.9,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: appliedFilters.map((filter) {
-                                return Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: MyColors.whiteDarker,
-                                    borderRadius: BorderRadius.circular(20),
+                      )
+                    : Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: maximumDimension * 0.05,
+                            ),
+                            child: SizedBox(
+                              width: screenWidth * 0.9,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SearchBox(
+                                    onclick: () {},
+                                    hint: 'Start typing to search',
+                                    controller: searchController,
+                                    width: screenWidth * 0.75,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchwithFilters();
+                                        print(
+                                            'listing: ${listings['HomeListing']}');
+                                        templistings['HomeListing'] =
+                                            templistings['HomeListing']
+                                                .where((element) =>
+                                                    element['name']
+                                                        .toString()
+                                                        .toLowerCase()
+                                                        .contains(value
+                                                            .toLowerCase()))
+                                                .toList();
+                                      });
+                                    },
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        filter,
-                                        style: GoogleFonts.montserrat(
-                                          color: MyColors.Dark,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            appliedFilters.remove(filter);
-                                            searchwithFilters();
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.close,
-                                          size: 16,
-                                          color: MyColors.Dark,
-                                        ),
-                                      ),
-                                    ],
+                                  IconButton(
+                                    onPressed: () => _showFilterPopup(context),
+                                    icon: Icon(
+                                      Icons.tune,
+                                      size: maximumDimension * 0.03,
+                                      color: MyColors.white,
+                                    ),
                                   ),
-                                );
-                              }).toList(),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      SizedBox(
-                        width: screenWidth * 0.9,
-                        child: ListView.builder(
-                          itemBuilder: (context, index) => Productcard(
-                            listingType: templistings['HomeListing'][index]
-                                    ['type']
-                                .toString(),
-                            listingid: templistings['HomeListing'][index]['id']
-                                .toString(),
-                            imageUrl: templistings['pictures'][index][0]
-                                        ['picturePath'] ==
-                                    " "
-                                ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${templistings['pictures'][index][0]['picturePath']}',
-                            venueName: templistings['HomeListing'][index]
-                                ['name'],
-                            location: templistings['HomeListing'][index]
-                                ['location'],
-                            type: templistings['HomeListing'][index]['type']
-                                .toString(),
+                          if (appliedFilters.isNotEmpty)
+                            Container(
+                              margin:
+                                  EdgeInsets.only(top: maximumDimension * 0.02),
+                              width: screenWidth * 0.9,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: appliedFilters.map((filter) {
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: MyColors.whiteDarker,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            filter,
+                                            style: GoogleFonts.montserrat(
+                                              color: MyColors.Dark,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                appliedFilters.remove(filter);
+                                                searchwithFilters();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 16,
+                                              color: MyColors.Dark,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          SizedBox(
+                            width: screenWidth * 0.9,
+                            child: ListView.builder(
+                              itemBuilder: (context, index) => Productcard(
+                                listingType: templistings['HomeListing'][index]
+                                        ['type']
+                                    .toString(),
+                                listingid: templistings['HomeListing'][index]
+                                        ['id']
+                                    .toString(),
+                                imageUrl: templistings['pictures'][index][0]
+                                            ['picturePath'] ==
+                                        " "
+                                    ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                    : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${templistings['pictures'][index][0]['picturePath']}',
+                                venueName: templistings['HomeListing'][index]
+                                    ['name'],
+                                location: templistings['HomeListing'][index]
+                                    ['location'],
+                                type: templistings['HomeListing'][index]['type']
+                                    .toString(),
+                              ),
+                              itemCount: templistings['HomeListing'].length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                            ),
                           ),
-                          itemCount: templistings['HomeListing'].length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-          ],
-        ),
+              ],
+            ),
+          ),
+          Positioned(
+              child: Header(
+            key: _headerKey,
+          )),
+        ],
       ),
     );
   }

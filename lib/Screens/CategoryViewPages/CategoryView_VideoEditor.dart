@@ -7,9 +7,32 @@ import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class CategoryView_VideoEditor extends StatelessWidget {
+class CategoryView_VideoEditor extends StatefulWidget {
   const CategoryView_VideoEditor({Key? key}) : super(key: key);
 
+  @override
+  State<CategoryView_VideoEditor> createState() =>
+      _CategoryView_VideoEditorState();
+}
+
+class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -17,114 +40,124 @@ class CategoryView_VideoEditor extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
     bool isSmallScreen = screenWidth < 600;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Header(),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            // Main Content Section
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? MaximumThing*0.03 : MaximumThing*0.05,
-                vertical: 20,
-              ),
-              color: MyColors.Dark,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title and Icon
-                  buildTitleRow("Masako Hawkins", isSmallScreen),
-                  buildRatingsAndLocation(),
-                  Divider(color: MyColors.DarkLighter),
-
-                  // Pricing Section
-                  buildTextRow("Pricing:", "Rs. 20,000 - 150,000"),
-                  buildTextRow("Basic Price:", "30,000"),
-                  Divider(color: MyColors.DarkLighter),
-
-                  // Description
-                  buildSectionTitle("Description"),
-                  buildDescription(),
-                  Divider(color: MyColors.DarkLighter),
-
-                  // Packages Section
-                  buildSectionTitle("Packages"),
-                  PackageBox(
-                    packagename: "Standard Package",
-                    packagedetails: "Details Here",
-                    packageprice: "30,000",
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: _headerHeight),
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.network(
+                    'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
+                    fit: BoxFit.cover,
                   ),
-                  PackageBox(
-                    packagename: "Premium Package",
-                    packagedetails: "More Details",
-                    packageprice: "50,000",
-                  ),
-                  Divider(color: MyColors.DarkLighter),
+                ),
 
-                  // Portfolio Section
-                  buildSectionTitle("Portfolio"),
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Stack(
-                      alignment: Alignment.center, // Center the play/pause icon
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
+                // Main Content Section
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen
+                        ? MaximumThing * 0.03
+                        : MaximumThing * 0.05,
+                    vertical: 20,
+                  ),
+                  color: MyColors.Dark,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title and Icon
+                      buildTitleRow("Masako Hawkins", isSmallScreen),
+                      buildRatingsAndLocation(),
+                      Divider(color: MyColors.DarkLighter),
+
+                      // Pricing Section
+                      buildTextRow("Pricing:", "Rs. 20,000 - 150,000"),
+                      buildTextRow("Basic Price:", "30,000"),
+                      Divider(color: MyColors.DarkLighter),
+
+                      // Description
+                      buildSectionTitle("Description"),
+                      buildDescription(),
+                      Divider(color: MyColors.DarkLighter),
+
+                      // Packages Section
+                      buildSectionTitle("Packages"),
+                      PackageBox(
+                        packagename: "Standard Package",
+                        packagedetails: "Details Here",
+                        packageprice: "30,000",
+                      ),
+                      PackageBox(
+                        packagename: "Premium Package",
+                        packagedetails: "More Details",
+                        packageprice: "50,000",
+                      ),
+                      Divider(color: MyColors.DarkLighter),
+
+                      // Portfolio Section
+                      buildSectionTitle("Portfolio"),
+                      AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Stack(
+                          alignment:
+                              Alignment.center, // Center the play/pause icon
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    'https://www.careergirls.org/wp-content/uploads/2018/05/Video_Editor1920x1080.jpg',
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              fit: BoxFit.cover,
                             ),
-                          ),
+                            // Play/Pause Icon
+                            Container(
+                              decoration: BoxDecoration(
+                                color: MyColors
+                                    .white, // Slight overlay for better visibility
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(
+                                Icons
+                                    .play_arrow, // Use play_arrow or pause icon as needed
+                                color: MyColors.DarkLighter,
+                                size: 50,
+                              ),
+                            ),
+                          ],
                         ),
-                        // Play/Pause Icon
-                        Container(
-                          decoration: BoxDecoration(
-                            color: MyColors
-                                .white, // Slight overlay for better visibility
-                            shape: BoxShape.circle,
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Icon(
-                            Icons
-                                .play_arrow, // Use play_arrow or pause icon as needed
-                            color: MyColors.DarkLighter,
-                            size: 50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  // Reviews Section
-                  SizedBox(height: 20),
-                  buildSectionTitle("Reviews"),
-                  buildReviewsSection(),
+                      // Reviews Section
+                      SizedBox(height: 20),
+                      buildSectionTitle("Reviews"),
+                      buildReviewsSection(),
 
-                  // Book Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: ColoredButton(text: 'Book Video Editor'),
+                      // Book Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: ColoredButton(text: 'Book Video Editor'),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Header(
+            key: _headerKey,
+          ),
+        ],
       ),
     );
   }

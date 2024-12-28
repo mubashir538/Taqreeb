@@ -23,6 +23,7 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
   @override
   void initState() {
     super.initState();
+   
     _startSliderTimer();
   }
 

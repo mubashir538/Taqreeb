@@ -3,17 +3,43 @@ import 'package:taqreeb/Components/Cake%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class BakerySweet_Products extends StatelessWidget {
+class BakerySweet_Products extends StatefulWidget {
   const BakerySweet_Products({super.key});
 
   @override
+  State<BakerySweet_Products> createState() => _BakerySweet_ProductsState();
+}
+
+class _BakerySweet_ProductsState extends State<BakerySweet_Products> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Container(
         child: Column(
           children: [
             Header(
+              key: _headerKey,
               heading: "Cakes",
             ),
             SizedBox(

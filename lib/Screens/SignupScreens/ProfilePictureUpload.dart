@@ -1,7 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/Components/crop%20screen.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -36,32 +40,74 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   Future<void> _pickImage() async {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
+
       if (pickedFile != null) {
-        final compressedFile = await _compressImage(File(pickedFile.path));
-        setState(() {
-          _selectedImage = compressedFile;
-        });
+        final imageBytes = await File(pickedFile.path).readAsBytes();
+
+        // Show the cropping popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CropPopup(
+              imageBytes: imageBytes,
+              onCropped: (croppedBytes) async {
+                final croppedFile = await _saveCroppedImage(croppedBytes);
+                final compressedFile = await _compressImage(croppedFile);
+                setState(() {
+                  _selectedImage = compressedFile;
+                });
+              },
+            );
+          },
+        );
       }
     } catch (e) {
       warningDialog(
-              title: 'Error',
-              message: 'Failed to pick an image. Please try again.')
-          .showDialogBox(context);
+        title: 'Error',
+        message: 'Failed to pick or crop the image. Please try again.',
+      ).showDialogBox(context);
     }
   }
 
+// Save the cropped image to a file
+  Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/cropped_image.png';
+    final croppedFile = File(path);
+    await croppedFile.writeAsBytes(croppedBytes);
+    return croppedFile;
+  }
+
   Future<File> _compressImage(File file) async {
-    final compressedPath = file.path.replaceFirst('.jpg', '_compressed.jpg');
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      compressedPath,
-      quality: 50,
-    );
-    return compressedFile ?? file;
+    try {
+      final tempDir = Directory.systemTemp;
+      final compressedPath =
+          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+
+      final compressedFile = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        compressedPath,
+        quality: 50,
+      );
+
+      if (compressedFile != null) {
+        return compressedFile;
+      } else {
+        throw Exception("Failed to compress image.");
+      }
+    } catch (e) {
+      throw Exception("Compression error: ${e.toString()}");
+    }
   }
 
   Future<void> _uploadProfilePicture() async {
@@ -82,6 +128,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           'profilePicture',
           _selectedImage!.path,
         ));
+
         if (type == 'freelancer') {
         } else if (type == 'Business') {
           request.files.add(await http.MultipartFile.fromPath(
@@ -134,7 +181,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                 ColoredButton(
                     text: 'Ok',
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Signup_EmailOTPSend');
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          '/Signup_EmailOTPSend', ModalRoute.withName('/'));
                     })
               ],
             ).showDialogBox(context);
@@ -149,12 +197,13 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               MyStorage.deleteToken('bsfront');
               MyStorage.deleteToken('bsback');
               MyStorage.deleteToken('bsdescription');
-              Navigator.pushNamed(context, '/SubmissionSucessful');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/SubmissionSucessful', ModalRoute.withName('/'));
             } else {
               MyStorage.saveToken(
                   jsonResponse['refresh'].toString(), 'refresh');
               MyStorage.saveToken(
-                  jsonResponse['access'].toString(), 'accessToken');
+                  jsonResponse['access'].toString(), MyTokens.accessToken);
               MyStorage.saveToken(jsonResponse['userId'].toString(), 'userId');
               MyStorage.saveToken('user', 'userType');
               MyStorage.deleteToken('spassword');
@@ -163,7 +212,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               MyStorage.deleteToken('semail');
               MyStorage.deleteToken('scity');
               MyStorage.deleteToken('sgender');
-              Navigator.pushNamed(context, '/HomePage');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/HomePage', ModalRoute.withName('/'));
             }
           }
         } else {
@@ -188,76 +238,101 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     }
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              width: screenWidth,
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Header(
-                    heading: 'Upload Your Profile',
-                    para:
-                        'The Profile Picture or Business Logo will create the impression of your brand and will help people to visualize the Brand',
+                  SizedBox(
+                    height: _headerHeight,
                   ),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      margin: EdgeInsets.all(MaximumThing * 0.04),
-                      child: Stack(
-                        children: [
-                          ClipOval(
-                            child: Container(
-                              color: Colors.white,
-                              child: _selectedImage != null
-                                  ? Image.file(
-                                      _selectedImage!,
-                                      width: screenWidth * 0.5,
-                                      height: screenWidth * 0.5,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      MyImages.UploadProfile,
-                                      width: screenWidth * 0.5,
-                                      height: screenWidth * 0.5,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
+                  Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          margin: EdgeInsets.all(MaximumThing * 0.04),
+                          child: Stack(
+                            children: [
+                              ClipOval(
+                                child: Container(
+                                  color: Colors.white,
+                                  child: _selectedImage != null
+                                      ? Image.file(
+                                          _selectedImage!,
+                                          width: screenWidth * 0.5,
+                                          height: screenWidth * 0.5,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.asset(
+                                          MyImages.UploadProfile,
+                                          width: screenWidth * 0.5,
+                                          height: screenWidth * 0.5,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: screenWidth * 0.03,
+                                left: screenWidth * 0.03,
+                                child: SvgPicture.asset(
+                                  MyIcons.upload,
+                                  width: MaximumThing * 0.03,
+                                  height: MaximumThing * 0.03,
+                                ),
+                              ),
+                            ],
                           ),
-                          Positioned(
-                            bottom: screenWidth * 0.03,
-                            left: screenWidth * 0.03,
-                            child: SvgPicture.asset(
-                              MyIcons.upload,
-                              width: MaximumThing * 0.03,
-                              height: MaximumThing * 0.03,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      MyDivider(),
+                      ColoredButton(
+                        text: 'Upload Profile',
+                        onPressed: _uploadProfilePicture,
+                      ),
+                    ],
                   ),
-                  MyDivider(),
-                  ColoredButton(
-                    text: 'Upload Profile',
-                    onPressed: _uploadProfilePicture,
-                  ),
+                  ProgressBar(Progress: 4)
                 ],
               ),
-              ProgressBar(Progress: 4)
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: 'Upload Your Profile',
+              para:
+                  'The Profile Picture or Business Logo will create the impression of your brand and will help people to visualize the Brand',
+            ),
+          ),
+        ],
       ),
     );
   }

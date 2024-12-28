@@ -1,30 +1,43 @@
-// import 'package:flutter/material.dart';
-// import 'package:taqreeb/theme/color.dart';
-// import 'package:taqreeb/Components/header.dart';
-// import 'package:taqreeb/Components/faq_questions.dart';
-// import 'package:taqreeb/Components/Search Box.dart';
+import 'package:flutter/material.dart';
+import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/faq_questions.dart';
+import 'package:taqreeb/Components/Search Box.dart';
 
-// class FAQScreen extends StatefulWidget {
-//   const FAQScreen({super.key});
+class FAQScreen extends StatefulWidget {
+  const FAQScreen({super.key});
 
-//   @override
-//   _FAQScreenState createState() => _FAQScreenState();
-// }
+  @override
+  _FAQScreenState createState() => _FAQScreenState();
+}
 
-// class _FAQScreenState extends State<FAQScreen> {
-//   final TextEditingController searchController = TextEditingController();
+class _FAQScreenState extends State<FAQScreen> {
+  final TextEditingController searchController = TextEditingController();
 
-//   final List<bool> _expandedStates = [false, false, false, false];
+  final List<bool> _expandedStates = [false, false, false, false];
 
-//   void _toggleExpansion(int index) {
-//     setState(() {
-//       _expandedStates[index] = !_expandedStates[index];
-//     });
-//   }
+  void _toggleExpansion(int index) {
+    setState(() {
+      _expandedStates[index] = !_expandedStates[index];
+    });
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     // double screenWidth = MediaQuery.of(context).size.width;
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -34,6 +47,7 @@
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Header(
+                key: _headerKey,
                 heading: 'FAQ - Venue Selection',
                 para: '',
                 image: '',

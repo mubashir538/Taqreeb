@@ -6,6 +6,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
@@ -44,16 +45,23 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     fetchData();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   void fetchData() async {
     if (changedfirst) {
       return;
     }
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedlist = await MyApi.getRequest(
       endpoint: isfunction
           ? 'show/checklist/$eventId/$functionid'
           : 'show/checklist/$eventId',
+      headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
@@ -180,131 +188,157 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     );
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(children: [
-                Header(
-                  heading: "Create CheckList",
-                  para: "From to-do to done one check at a time!",
-                  image: MyImages.CheckList,
-                ),
-                isLoading
-                    ? CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(MyColors.white),
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: checklistItems.length,
-                        itemBuilder: (context, index) {
-                          final item = checklistItems[index];
-                          return Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: MaximumThing * 0.02,
-                                vertical: MaximumThing * 0.01),
-                            padding: EdgeInsets.symmetric(
-                                vertical: MaximumThing * 0.007,
-                                horizontal: MaximumThing * 0.02),
-                            decoration: BoxDecoration(
-                              color: MyColors.DarkLighter,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: MyColors.red,
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                  value: item["isChecked"],
-                                  onChanged: (value) {
-                                    _toggleChecklistItem(index);
-                                  },
-                                  activeColor: MyColors.red,
-                                ),
-                                Text(
-                                  item["description"],
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    decoration: item["isChecked"]
-                                        ? TextDecoration.lineThrough
-                                        : TextDecoration.none,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: _headerHeight),
+                  Column(children: [
+                    isLoading
+                        ? CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(MyColors.white),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: checklistItems.length,
+                            itemBuilder: (context, index) {
+                              final item = checklistItems[index];
+                              return Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: MaximumThing * 0.02,
+                                    vertical: MaximumThing * 0.01),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: MaximumThing * 0.007,
+                                    horizontal: MaximumThing * 0.02),
+                                decoration: BoxDecoration(
+                                  color: MyColors.DarkLighter,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: MyColors.red,
+                                    width: 1,
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  children: [
+                                    Checkbox(
+                                      value: item["isChecked"],
+                                      onChanged: (value) {
+                                        _toggleChecklistItem(index);
+                                      },
+                                      activeColor: MyColors.red,
+                                    ),
+                                    Text(
+                                      item["description"],
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        decoration: item["isChecked"]
+                                            ? TextDecoration.lineThrough
+                                            : TextDecoration.none,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                    SizedBox(height: MaximumThing * 0.02),
+                  ]),
+                  Center(
+                    child: ColoredButton(
+                        text: 'Save',
+                        onPressed: () async {
+                          bool flag = false;
+                          for (var item in changedFields) {
+                            print('Item: $item');
+                            final response = await MyApi.postRequest(
+                                endpoint: 'update/checklist',
+                                headers: {
+                                  'Authorization': 'Bearer $token'
+                                },
+                                body: {
+                                  'id': item["id"],
+                                  'item': item["description"],
+                                  'ischecked': item["isChecked"],
+                                });
+                            if (response['status'] != 'success') {
+                              flag = true;
+                              break;
+                            }
+                          }
+                          for (var item in newitems) {
+                            final response = await MyApi.postRequest(
+                              endpoint: 'add/checklist',
+                              headers: {'Authorization': 'Bearer $token'},
+                              body: {
+                                'functionId': isfunction ? functionid : "None",
+                                'eventId': eventId,
+                                'item': item["description"],
+                                'ischecked': item["isChecked"],
+                              },
+                              // headers: {
+                              //   'Authorization': 'Bearer $token',
+                              // },
+                            );
+                            if (!(response['status'] == 'success')) {
+                              flag = true;
+                              break;
+                            }
+                          }
+                          SnackBar snackBar = SnackBar(
+                            content: Text(flag
+                                ? 'Failed to save checklist'
+                                : 'Checklist Saved successfully'),
+                            backgroundColor: MyColors.Dark,
+                            duration: Duration(seconds: 2),
                           );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Navigator.of(context).pop();
                         },
-                      ),
-                SizedBox(height: MaximumThing * 0.02),
-              ]),
-              Center(
-                child: ColoredButton(
-                    text: 'Save',
-                    onPressed: () async {
-                      bool flag = false;
-                      for (var item in changedFields) {
-                        print('Item: $item');
-                        final response = await MyApi.postRequest(
-                            endpoint: 'update/checklist',
-                            body: {
-                              'id': item["id"],
-                              'item': item["description"],
-                              'ischecked': item["isChecked"],
-                            });
-                        if (response['status'] != 'success') {
-                          flag = true;
-                          break;
-                        }
-                      }
-                      for (var item in newitems) {
-                        final response = await MyApi.postRequest(
-                          endpoint: 'add/checklist',
-                          body: {
-                            'functionId': isfunction ? functionid : "None",
-                            'eventId': eventId,
-                            'item': item["description"],
-                            'ischecked': item["isChecked"],
-                          },
-                          // headers: {
-                          //   'Authorization': 'Bearer $token',
-                          // },
-                        );
-                        if (!(response['status'] == 'success')) {
-                          flag = true;
-                          break;
-                        }
-                      }
-                      SnackBar snackBar = SnackBar(
-                        content: Text(flag
-                            ? 'Failed to save checklist'
-                            : 'Checklist Saved successfully'),
-                        backgroundColor: MyColors.Dark,
-                        duration: Duration(seconds: 2),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      Navigator.of(context).pop();
-                    },
-                    width: screenWidth * 0.5),
+                        width: screenWidth * 0.5),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: "Create CheckList",
+              para: "From to-do to done one check at a time!",
+              image: MyImages.CheckList,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddItemDialog,

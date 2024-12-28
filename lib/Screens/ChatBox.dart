@@ -14,13 +14,32 @@ class ChatBox extends StatefulWidget {
 }
 
 class _ChatBoxState extends State<ChatBox> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     List<message> messages = [
       message(text: "Hi Haziq, How are You???", time: "12:01", isSent: true),
       message(
@@ -37,7 +56,9 @@ class _ChatBoxState extends State<ChatBox> {
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Column(children: [
-        Header(),
+        Header(
+          key: _headerKey,
+        ),
         Container(
           padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.03),
           height: screenHeight * 0.16,

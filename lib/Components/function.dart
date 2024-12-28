@@ -11,9 +11,11 @@ class Function12 extends StatelessWidget {
   final String type;
   final Function editPressed;
   final Function seePressed;
+  final Color color;
 
   const Function12(
       {super.key,
+      required this.color,
       required this.type,
       required this.headings,
       required this.values,
@@ -47,7 +49,7 @@ class Function12 extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
-                color: MyColors.red,
+                color: color,
               ),
               child: Center(
                 child: Text(

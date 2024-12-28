@@ -4,15 +4,33 @@ import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class SendEmailScreen extends StatelessWidget {
+class SendEmailScreen extends StatefulWidget {
   const SendEmailScreen({super.key});
+
+  @override
+  State<SendEmailScreen> createState() => _SendEmailScreenState();
+}
+
+class _SendEmailScreenState extends State<SendEmailScreen> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController nameController = TextEditingController();
     TextEditingController messageController = TextEditingController();
-    
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
@@ -22,6 +40,7 @@ class SendEmailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Header(
+                key: _headerKey,
                 heading: "",
                 para: "",
                 image: "assets/contact_image.svg",

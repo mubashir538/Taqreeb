@@ -23,111 +23,160 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
     this.args = args;
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Header(
-              heading: 'Add AddOns',
-              para: 'Add AddOns for your Service',
-            ),
-            SizedBox(height: screenHeight * 0.03),
-            // Container for displaying Addons dynamically
-            Container(
-              margin: EdgeInsets.all(screenWidth * 0.01),
-              width: screenWidth * 0.9,
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.03,
-                vertical: screenHeight * 0.02,
-              ),
-              decoration: BoxDecoration(
-                color: MyColors.DarkLighter,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              width: screenWidth,
+              margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+              constraints: BoxConstraints(minHeight: screenHeight),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // Heading for AddOns (only shown once)
-                  Text(
-                    "Add-Ons",
-                    style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.02,
-                      fontWeight: FontWeight.w600,
-                      color: MyColors.Yellow,
+                  SizedBox(
+                    height: _headerHeight,
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(MaximumThing * 0.01),
+                    child: Text(
+                      "Add-Ons",
+                      style: GoogleFonts.montserrat(
+                        fontSize: MaximumThing * 0.025,
+                        fontWeight: FontWeight.w600,
+                        color: MyColors.Yellow,
+                      ),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Dynamically generated Add-Ons List
-                  args['addons'] != null
-                      ? Column(
-                          children: [
-                            ...args['addons'].map<Widget>((addon) {
-                              return Column(
+                  Container(
+                    margin: EdgeInsets.all(screenWidth * 0.01),
+                    width: screenWidth * 0.9,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.03,
+                      vertical: screenHeight * 0.02,
+                    ),
+                    decoration: BoxDecoration(
+                      color: MyColors.DarkLighter,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.4),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                          offset: Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        args['addons'] != null
+                            ? Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(width: MaximumThing * 0.02),
-                                      Text(
-                                        addon['name'],
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: MaximumThing * 0.015,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.Yellow,
+                                  ...args['addons'].map<Widget>((addon) {
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: screenWidth * 0.02,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                  height: MaximumThing * 0.01),
+                                              Text(
+                                                addon['name'],
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      MaximumThing * 0.015,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: MyColors.Yellow,
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                textAlign: TextAlign.right,
+                                                addon['perhead']
+                                                            .toLowerCase() ==
+                                                        'yes'
+                                                    ? '${addon['price']}/${addon['headtype']}'
+                                                    : addon['price'],
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      MaximumThing * 0.015,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: MyColors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        addon['perhead'].toLowerCase() == 'yes'
-                                            ? '${addon['price']}/${addon['headtype']}'
-                                            : addon['price'],
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: MaximumThing * 0.015,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: MaximumThing * 0.02),
+                                        SizedBox(height: MaximumThing * 0.01),
+                                      ],
+                                    );
+                                  }).toList(),
                                 ],
-                              );
-                            }).toList(),
-                          ],
-                        )
-                      : Container()
+                              )
+                            : Container()
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.03),
-            ColoredButton(
+          ),
+          Positioned(
+            bottom: MaximumThing * 0.02,
+            left: screenWidth * 0.25,
+            right: screenWidth * 0.25,
+            child: ColoredButton(
                 text: 'Continue',
                 width: screenWidth * 0.5,
                 onPressed: () {
+                  print('args: ${args}');
                   Navigator.pushNamed(
                     context,
                     '/AddCategory_Packages', // Replace with your target screen's route
                     arguments: args, // Passing the args map to the next screen
                   );
                 }),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: 'Add AddOns',
+              para: 'Add AddOns for your Service',
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyColors.Yellow,
@@ -136,7 +185,7 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
             print(args);
             args.addAll({'addons': []});
           }
-          print(' args+${args}');
+          print(' args: ${args}');
           Navigator.pushNamed(
             context,
             '/AddCategory_Add_Addons', // Replace with your target screen's route
