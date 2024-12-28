@@ -1,4 +1,4 @@
-class MyTokens{
+class MyTokens {
   static const String accessToken = "accessToken";
   static const String refreshToken = "refresh";
   static const String userId = "userId";
@@ -11,5 +11,14 @@ class MyTokens{
   static const String bsfront = "bsfront";
   static const String bsback = "bsback";
   static const String bsdescription = "bsdescription";
-
+  static const String sfname = "sfname";
+  static const String slname = "slname";
+  static const String spassword = "spassword";
+  static const String semail = "semail";
+  static const String scity = "scity";
+  static const String sgender = "sgender";
+  static const String sphone = "sphone";
+  static const String user = "user";
+  static const String userType = "userType";
+  static const String Light = "Light";
 }
