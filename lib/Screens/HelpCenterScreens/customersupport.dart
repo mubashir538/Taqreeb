@@ -6,11 +6,33 @@ import 'package:taqreeb/Components/checklist_items.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
-class SupportScreen extends StatelessWidget {
-  final TextEditingController searchController = TextEditingController();
-
+class SupportScreen extends StatefulWidget {
   SupportScreen({super.key});
 
+  @override
+  State<SupportScreen> createState() => _SupportScreenState();
+}
+
+class _SupportScreenState extends State<SupportScreen> {
+  final TextEditingController searchController = TextEditingController();
+
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+@override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -22,6 +44,7 @@ class SupportScreen extends StatelessWidget {
           child: Column(
             children: [
               Header(
+                key: _headerKey,
                 heading: 'Customer Support',
                 para: '',
                 image: '',

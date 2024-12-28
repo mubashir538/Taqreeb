@@ -23,7 +23,7 @@ class ColoredButton extends StatelessWidget {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    return InkWell(
+    return GestureDetector(
       onTap: onPressed,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),

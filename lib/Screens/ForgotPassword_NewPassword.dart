@@ -6,8 +6,34 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 
-class ForgotPassword_NewPassword extends StatelessWidget {
+class ForgotPassword_NewPassword extends StatefulWidget {
   const ForgotPassword_NewPassword({super.key});
+
+  @override
+  State<ForgotPassword_NewPassword> createState() =>
+      _ForgotPassword_NewPasswordState();
+}
+
+class _ForgotPassword_NewPasswordState
+    extends State<ForgotPassword_NewPassword> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +41,7 @@ class ForgotPassword_NewPassword extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+    _getHeaderHeight();
 
     TextEditingController passwordController = TextEditingController();
     TextEditingController confirmpasswordController = TextEditingController();
@@ -26,6 +53,7 @@ class ForgotPassword_NewPassword extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Header(
+              key: _headerKey,
               heading: "Create New Password",
               para:
                   "This password should br different  from the previous password",
@@ -36,11 +64,13 @@ class ForgotPassword_NewPassword extends StatelessWidget {
                 children: [
                   MyTextBox(
                     hint: 'New Password',
+                    isPassword: true,
                     valueController: passwordController,
                   ),
                   MyTextBox(
                     hint: 'Confirm Password',
                     valueController: confirmpasswordController,
+                    isPassword: true,
                   ),
                   Container(
                       margin:

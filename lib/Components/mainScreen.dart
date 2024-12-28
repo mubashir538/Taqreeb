@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/navbar.dart';
 import 'package:taqreeb/Screens/AccountInfo.dart';
 import 'package:taqreeb/Screens/BusinessAccountInfo.dart';
@@ -35,12 +36,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    
     fetchUser(); // Fetch the user type on initialization
   }
 
   // Fetch user type from storage
   void fetchUser() async {
-    final utype = await MyStorage.exists('isBusinessOwner');
+    final utype = await MyStorage.exists(MyTokens.isBusinessOwner);
     setState(() {
       isBusinessOwner = utype; // Update user type
       isLoading = false; // Loading complete

@@ -22,6 +22,19 @@ class _FAQScreenState extends State<FAQScreen> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // double screenWidth = MediaQuery.of(context).size.width;
@@ -34,6 +47,7 @@ class _FAQScreenState extends State<FAQScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Header(
+                key: _headerKey,
                 heading: 'FAQ - Venue Selection',
                 para: '',
                 image: '',

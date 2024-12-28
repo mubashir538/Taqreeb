@@ -5,10 +5,28 @@ import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Components/guide_icon.dart';
 import 'package:taqreeb/theme/icons.dart';
 
-class GuideScreen extends StatelessWidget {
+class GuideScreen extends StatefulWidget {
+  GuideScreen({super.key});
+
+  @override
+  State<GuideScreen> createState() => _GuideScreenState();
+}
+
+class _GuideScreenState extends State<GuideScreen> {
   final TextEditingController searchController = TextEditingController();
 
-  GuideScreen({super.key});
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +41,7 @@ class GuideScreen extends StatelessWidget {
             child: Column(
               children: [
                 Header(
+                  key: _headerKey,
                   heading: 'Guide',
                 ),
                 SizedBox(height: 10),

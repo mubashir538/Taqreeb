@@ -5,8 +5,32 @@ import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 //import 'package:taqreeb/Components/divider.dart';
 
-class BusinessSignup4 extends StatelessWidget {
+class BusinessSignup4 extends StatefulWidget {
   const BusinessSignup4({super.key});
+
+  @override
+  State<BusinessSignup4> createState() => _BusinessSignup4State();
+}
+
+class _BusinessSignup4State extends State<BusinessSignup4> {
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +40,7 @@ class BusinessSignup4 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Header(
+            key: _headerKey,
             heading: 'Profile Submitted Successfully',
             para: 'Your Profile Has been Submitted Successfully\n'
                 'Now our team is Reviewing your Profile\n'

@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/guests.dart';
@@ -42,6 +44,12 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   void removePerson(index) {
     Future.delayed(Duration.zero, () {
       setState(() {
@@ -50,88 +58,117 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: (screenHeight * 0.05) + _headerHeight,
+                ),
+                MyTextBox(
+                  hint: 'Person Name',
+                  valueController: personcontroller,
+                ),
+                MyTextBox(
+                  hint: 'Contact Number',
+                  isNum: true,
+                  valueController: contactcontroller,
+                ),
+                SizedBox(
+                  width: screenWidth * 0.9,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Guests(
+                        onpressed: () {},
+                        ondelete: () {
+                          removePerson(index);
+                        },
+                        mywidth: screenWidth * 0.8,
+                        name: guestList[index]['name'] ?? '',
+                        contact: guestList[index]['contact'] ?? '',
+                      );
+                    },
+                    itemCount: guestList.length,
+                  ),
+                ),
+                SizedBox(
+                  height: screenHeight * 0.05,
+                ),
+                ColoredButton(
+                  text: 'Add Person',
+                  width: screenWidth * 0.7,
+                  onPressed: () {
+                    setState(() {
+                      guestList.add({
+                        'name': personcontroller.text,
+                        'contact': contactcontroller.text
+                      });
+                    });
+                  },
+                ),
+                BorderButton(
+                  text: 'Done',
+                  width: screenWidth * 0.7,
+                  onPressed: () async {
+                    for (int i = 0; i < guestList.length; i++) {
+                      final token =
+                          await MyStorage.getToken(MyTokens.accessToken) ?? "";
+
+                      final response = await MyApi.postRequest(
+                          headers: {'Authorization': 'Bearer $token'},
+                          endpoint: 'add/guests/',
+                          body: {
+                            'eid': eventId,
+                            'fid': isfunction ? functionid : 'None',
+                            'guesttype': 'Person',
+                            'PersonName': guestList[i]['name'],
+                            'PersonContact': guestList[i]['contact']
+                          });
+                      if (response['status'] == 'success') {
+                        print('Person Added');
+                      } else {
+                        print('Person Not Added');
+                      }
+                    }
+                    Navigator.pushReplacementNamed(
+                        context, '/CreateGuestList_List',
+                        arguments: args);
+                  },
+                )
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
               heading: 'Add Person',
             ),
-            SizedBox(
-              height: screenHeight * 0.05,
-            ),
-            MyTextBox(
-              hint: 'Person Name',
-              valueController: personcontroller,
-            ),
-            MyTextBox(
-              hint: 'Contact Number',
-              valueController: contactcontroller,
-            ),
-            SizedBox(
-              width: screenWidth * 0.9,
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Guests(
-                    onpressed: () {},
-                    ondelete: () {
-                      removePerson(index);
-                    },
-                    mywidth: screenWidth * 0.8,
-                    name: guestList[index]['name'] ?? '',
-                    contact: guestList[index]['contact'] ?? '',
-                  );
-                },
-                itemCount: guestList.length,
-              ),
-            ),
-            SizedBox(
-              height: screenHeight * 0.05,
-            ),
-            ColoredButton(
-              text: 'Add Person',
-              width: screenWidth * 0.7,
-              onPressed: () {
-                setState(() {
-                  guestList.add({
-                    'name': personcontroller.text,
-                    'contact': contactcontroller.text
-                  });
-                });
-              },
-            ),
-            BorderButton(
-              text: 'Done',
-              width: screenWidth * 0.7,
-              onPressed: () async {
-                for (int i = 0; i < guestList.length; i++) {
-                  final response =
-                      await MyApi.postRequest(endpoint: 'add/guests/', body: {
-                    'eid': eventId,
-                    'fid': isfunction ? functionid : 'None',
-                    'guesttype': 'Person',
-                    'PersonName': guestList[i]['name'],
-                    'PersonContact': guestList[i]['contact']
-                  });
-                  if (response['status'] == 'success') {
-                    print('Person Added');
-                  } else {
-                    print('Person Not Added');
-                  }
-                }
-                Navigator.pushReplacementNamed(context, '/CreateGuestList_List',
-                    arguments: args);
-              },
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,12 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/crop%20screen.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -28,6 +33,11 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   TextEditingController lastnameController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController locationcontroller = TextEditingController();
+  FocusNode fnameFocus = FocusNode();
+  FocusNode lastnameFocus = FocusNode();
+  FocusNode genderFocus = FocusNode();
+  FocusNode locationFocus = FocusNode();
+
   String token = '';
   Map<String, dynamic> user = {};
   String userId = '';
@@ -37,22 +47,38 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   get http => null;
 
   @override
+  void dispose() {
+    super.dispose();
+    fnamecontroller.dispose();
+    lastnameController.dispose();
+    genderController.dispose();
+    locationcontroller.dispose();
+    fnameFocus.dispose();
+    lastnameFocus.dispose();
+    genderFocus.dispose();
+    locationFocus.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+
     fetchData();
   }
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final userid = await MyStorage.getToken('userId') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     this.userId = userid;
     final user = await MyApi.getRequest(
-      endpoint: 'accountInfo/$userid',
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
-    );
+        endpoint: 'accountInfo/$userid',
+        headers: {'Authorization': 'Bearer $token'}
+        //  headers: {
+        //   'Authorization': 'Bearer $token',
+        // }
+        );
 
     // Update the state
     setState(() {
@@ -74,28 +100,65 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
+
       if (pickedFile != null) {
-        final compressedFile = await _compressImage(File(pickedFile.path));
-        setState(() {
-          _selectedImage = compressedFile;
-        });
+        final imageBytes = await File(pickedFile.path).readAsBytes();
+
+        // Show the cropping popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CropPopup(
+              imageBytes: imageBytes,
+              onCropped: (croppedBytes) async {
+                final croppedFile = await _saveCroppedImage(croppedBytes);
+                final compressedFile = await _compressImage(croppedFile);
+                setState(() {
+                  _selectedImage = compressedFile;
+                });
+              },
+            );
+          },
+        );
       }
     } catch (e) {
       warningDialog(
-              title: 'Error',
-              message: 'Failed to pick an image. Please try again.')
-          .showDialogBox(context);
+        title: 'Error',
+        message: 'Failed to pick or crop the image. Please try again.',
+      ).showDialogBox(context);
     }
   }
 
+// Save the cropped image to a file
+  Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    final path = '${directory.path}/cropped_image.png';
+    final croppedFile = File(path);
+    await croppedFile.writeAsBytes(croppedBytes);
+    return croppedFile;
+  }
+
   Future<File> _compressImage(File file) async {
-    final compressedPath = file.path.replaceFirst('.jpg', '_compressed.jpg');
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
+    // Ensure the file has a valid extension for compression
+    final originalPath = file.path;
+    final compressedPath =
+        originalPath.replaceFirst(RegExp(r'\.\w+$'), '_compressed.jpg');
+
+    // Compress the image using FlutterImageCompress
+    final result = await FlutterImageCompress.compressAndGetFile(
+      originalPath,
       compressedPath,
-      quality: 50,
+      quality:
+          50, // Adjust quality as needed (higher is better quality, lower is more compression)
     );
-    return compressedFile ?? file;
+
+    // Return the compressed file or the original if compression fails
+    if (result != null) {
+      return result;
+    } else {
+      throw Exception('Image compression failed.');
+    }
   }
 
   Future<void> _uploadProfilePicture() async {
@@ -110,6 +173,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           'profilePicture',
           _selectedImage!.path,
         ));
+        print('Profile Picture: ${_selectedImage!.path}');
 
         // Add additional fields
         request.fields['userid'] = userId;
@@ -160,7 +224,9 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       }
     } else {
       final response2 =
-          await MyApi.postRequest(endpoint: 'editaccountinfo/', body: {
+          await MyApi.postRequest(endpoint: 'editaccountinfo/', headers: {
+        'Authorization': 'Bearer $token'
+      }, body: {
         'userid': userId,
         'firstName': fnamecontroller.text,
         'lastName': lastnameController.text,
@@ -183,120 +249,150 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     }
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              child: Column(children: [
+                SizedBox(
+                  height: _headerHeight,
+                ),
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(MyColors.white),
+                      ))
+                    : Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: MaximumThing * 0.04,
+                                horizontal: MaximumThing * 0.02),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: _selectedImage != null
+                                        ? Image.file(_selectedImage!,
+                                                fit: BoxFit.cover)
+                                            .image
+                                        : NetworkImage(image),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: MaximumThing * 0.02),
+                                    child: InkWell(
+                                      onTap: _pickImage,
+                                      child: Text(
+                                        "Change Profile Picture",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            fontSize: MaximumThing * 0.015,
+                                            fontWeight: FontWeight.w400,
+                                            color: MyColors.Yellow),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+
+                          Column(
+                            children: [
+                              MyTextBox(
+                                  focusNode: fnameFocus,
+                                  onFieldSubmitted: (_) {
+                                  
+                                  },
+                                  hint: 'First Name',
+                                  valueController: fnamecontroller),
+                              MyTextBox(
+                                  hint: 'Last Name',
+                                  valueController: lastnameController),
+                              ResponsiveDropdown(
+                                  items: ['Male', 'Female'],
+                                  labelText: 'Gender',
+                                  onChanged: (value) {
+                                    genderController.text = value;
+                                  }),
+                              MyTextBox(
+                                  hint: 'City',
+                                  valueController: locationcontroller),
+                            ],
+                          ),
+
+                          //Divider
+                          SizedBox(
+                            height: screenHeight * 0.1,
+                            child: Center(child: MyDivider()),
+                          ),
+                          //Colored Button
+                          ColoredButton(
+                            text: 'Save',
+                            onPressed: () {
+                              warningDialog(
+                                title: 'Save Changes',
+                                message:
+                                    'Are you sure you want to save the changes?',
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Cancel')),
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        _uploadProfilePicture();
+                                        Navigator.pushNamed(
+                                            context, '/AccountInfo');
+                                      },
+                                      child: Text('Save')),
+                                ],
+                              ).showDialogBox(context);
+                            },
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      )
+              ]),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
               heading: "Edit Your Personal Info",
             ),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-                  ))
-                : Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical: MaximumThing * 0.04,
-                            horizontal: MaximumThing * 0.02),
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundImage: _selectedImage != null
-                                    ? Image.file(_selectedImage!,
-                                            fit: BoxFit.cover)
-                                        .image
-                                    : NetworkImage(image),
-                              ),
-                              Container(
-                                margin:
-                                    EdgeInsets.only(left: MaximumThing * 0.02),
-                                child: InkWell(
-                                  onTap: _pickImage,
-                                  child: Text(
-                                    "Change Profile Picture",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.montserrat(
-                                        decoration: TextDecoration.underline,
-                                        fontSize: MaximumThing * 0.015,
-                                        fontWeight: FontWeight.w400,
-                                        color: MyColors.Yellow),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                      ),
-
-                      Column(
-                        children: [
-                          MyTextBox(
-                              hint: 'First Name',
-                              valueController: fnamecontroller),
-                          MyTextBox(
-                              hint: 'Last Name',
-                              valueController: lastnameController),
-                          ResponsiveDropdown(
-                              items: ['Male', 'Female'],
-                              labelText: 'Gender',
-                              onChanged: (value) {
-                                genderController.text = value;
-                              }),
-                          MyTextBox(
-                              hint: 'City',
-                              valueController: locationcontroller),
-                        ],
-                      ),
-
-                      //Divider
-                      SizedBox(
-                        height: screenHeight * 0.1,
-                        child: Center(child: MyDivider()),
-                      ),
-                      //Colored Button
-                      ColoredButton(
-                        text: 'Save',
-                        onPressed: () {
-                          warningDialog(
-                            title: 'Save Changes',
-                            message:
-                                'Are you sure you want to save the changes?',
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Cancel')),
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    _uploadProfilePicture();
-                                    Navigator.pushNamed(
-                                        context, '/AccountInfo');
-                                  },
-                                  child: Text('Save')),
-                            ],
-                          ).showDialogBox(context);
-                        },
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                    ],
-                  )
-          ]),
-        ),
+          ),
+        ],
       ),
     );
   }

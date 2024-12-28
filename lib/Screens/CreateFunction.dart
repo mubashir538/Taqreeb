@@ -9,6 +9,7 @@ import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class CreateFunction extends StatefulWidget {
@@ -55,8 +56,11 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   void fetchData() async {
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final eventtypes = await MyApi.getRequest(endpoint: 'getEventTypes/');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final eventtypes = await MyApi.getRequest(
+      endpoint: 'getEventTypes/',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     for (int i = 0; i < eventtypes['eventTypes'].length; i++) {
       if (eventtypes['eventTypes'][i]['name'] == args['type']) {
@@ -64,13 +68,15 @@ class _CreateFunctionState extends State<CreateFunction> {
       }
     }
     final types = await MyApi.getRequest(
-      endpoint: 'getFunctionTypes/$eventtypeid',
-    );
+        endpoint: 'getFunctionTypes/$eventtypeid',
+        headers: {'Authorization': 'Bearer $token'});
 
     final FunctiontDetails;
     if (edit) {
-      FunctiontDetails =
-          await MyApi.getRequest(endpoint: 'ViewFunction/${functionId}');
+      FunctiontDetails = await MyApi.getRequest(
+        endpoint: 'ViewFunction/${functionId}',
+        headers: {'Authorization': 'Bearer $token'},
+      );
     } else {
       FunctiontDetails = "";
     }
@@ -98,6 +104,19 @@ class _CreateFunctionState extends State<CreateFunction> {
     });
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -105,120 +124,114 @@ class _CreateFunctionState extends State<CreateFunction> {
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(minHeight: screenHeight),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: screenHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Header(
-                    heading: edit ? 'Edit Funtion' : 'Create Funtion',
-                    image: MyImages.Function,
-                  ),
-                  SizedBox(
-                    height: screenHeight * 0.04,
-                  ),
-                  MyTextBox(
-                    hint: 'Funtion Name',
-                    valueController: nameController,
-                  ),
-                  MyTextBox(
-                    hint: 'Budget',
-                    valueController: budgetController,
-                  ),
-                  ResponsiveDropdown(
-                      items: isLoading
-                          ? []
-                          : types['functionTypes']
-                              .map((val) => val['name'].toString())
-                              .cast<String>()
-                              .toList(),
-                      labelText: 'Function Type',
-                      onChanged: (value) {
-                        setState(() {
-                          typeController.text = value;
-                        });
-                      }),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-                    height: screenHeight * 0.06,
-                    width: screenWidth * 0.9,
-                    decoration: BoxDecoration(
-                      color: MyColors.DarkLighter,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(0.4),
-                            blurRadius: 4,
-                            spreadRadius: 1,
-                            offset: Offset(2, 2))
-                      ],
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                      child: TextField(
-                        readOnly: true,
-                        textAlignVertical: TextAlignVertical.center,
-                        controller: _dateController,
-                        style: GoogleFonts.montserrat(
-                          fontSize: MaximumThing * 0.018,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.white,
-                        ),
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.date_range_rounded),
-                          hintText: 'Select Date',
-                          hintStyle: GoogleFonts.montserrat(
-                            color: MyColors.white.withOpacity(0.6),
-                            fontSize: MaximumThing * 0.015,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                        onTap: () => _selectDate(context),
+                  SizedBox(height: _headerHeight),
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: screenHeight * 0.04,
                       ),
-                    ),
+                      MyTextBox(
+                        hint: 'Funtion Name',
+                        valueController: nameController,
+                      ),
+                      MyTextBox(
+                        hint: 'Budget',
+                        isNum: true,
+                        isPrice: true,
+                        valueController: budgetController,
+                      ),
+                      ResponsiveDropdown(
+                          items: isLoading
+                              ? []
+                              : types['functionTypes']
+                                  .map((val) => val['name'].toString())
+                                  .cast<String>()
+                                  .toList(),
+                          labelText: 'Function Type',
+                          onChanged: (value) {
+                            setState(() {
+                              typeController.text = value;
+                            });
+                          }),
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+                        height: screenHeight * 0.06,
+                        width: screenWidth * 0.9,
+                        decoration: BoxDecoration(
+                          color: MyColors.DarkLighter,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(0.4),
+                                blurRadius: 4,
+                                spreadRadius: 1,
+                                offset: Offset(2, 2))
+                          ],
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.05),
+                          child: TextField(
+                            readOnly: true,
+                            textAlignVertical: TextAlignVertical.center,
+                            controller: _dateController,
+                            style: GoogleFonts.montserrat(
+                              fontSize: MaximumThing * 0.018,
+                              fontWeight: FontWeight.w400,
+                              color: MyColors.white,
+                            ),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.date_range_rounded),
+                              hintText: 'Select Date',
+                              hintStyle: GoogleFonts.montserrat(
+                                color: MyColors.white.withOpacity(0.6),
+                                fontSize: MaximumThing * 0.015,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            onTap: () => _selectDate(context),
+                          ),
+                        ),
+                      ),
+                      MyTextBox(
+                        hint: 'Minimum Guests',
+                        isNum: true,
+                        valueController: guestMinController,
+                      ),
+                      MyTextBox(
+                        hint: 'Maximum Guests',
+                        isNum: true,
+                        valueController: guestMaxController,
+                      ),
+                    ],
                   ),
-                  MyTextBox(
-                    hint: 'Minimum Guests',
-                    valueController: guestMinController,
-                  ),
-                  MyTextBox(
-                    hint: 'Maximum Guests',
-                    valueController: guestMaxController,
-                  ),
-                ],
-              ),
-              ColoredButton(
-                text: edit ? 'Edit Function' : 'Add Function',
-                onPressed: () async {
-                  if (nameController.text.isEmpty ||
-                      typeController.text.isEmpty ||
-                      _dateController.text.isEmpty ||
-                      budgetController.text.isEmpty ||
-                      guestMaxController.text.isEmpty ||
-                      guestMinController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Please fill all the fields"),
-                    ));
-                    return;
-                  }
-                  print({
-                    'Function Name': nameController.text,
-                    'Date': _dateController.text,
-                    'Type': typeController.text,
-                    'Budget': budgetController.text,
-                    'guest min': guestMinController.text,
-                    'guest max': guestMaxController.text,
-                    'Function Id': this.functionId
-                  });
-                  final response = await MyApi.postRequest(
-                      endpoint: edit ? 'editfunction/' : 'createfunction/',
-                      body: {
+                  ColoredButton(
+                    text: edit ? 'Edit Function' : 'Add Function',
+                    onPressed: () async {
+                      if (nameController.text.isEmpty ||
+                          typeController.text.isEmpty ||
+                          _dateController.text.isEmpty ||
+                          budgetController.text.isEmpty ||
+                          guestMaxController.text.isEmpty ||
+                          guestMinController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Please fill all the fields"),
+                        ));
+                        return;
+                      }
+                      print({
                         'Function Name': nameController.text,
                         'Date': _dateController.text,
                         'Type': typeController.text,
@@ -227,25 +240,49 @@ class _CreateFunctionState extends State<CreateFunction> {
                         'guest max': guestMaxController.text,
                         'Function Id': this.functionId
                       });
-                  if (response['status'] == 'success') {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(edit
-                            ? 'Function Updated Successfully'
-                            : 'Function Added Successfully')));
-                    edit
-                        ? Navigator.pop(context)
-                        : Navigator.pushNamed(context, '/Event');
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(edit
-                            ? 'Error Updating Function'
-                            : 'Error Creating Function')));
-                  }
-                },
+                      final response = await MyApi.postRequest(
+                          endpoint: edit ? 'editfunction/' : 'createfunction/',
+                          headers: {
+                            'Authorization': 'Bearer $token'
+                          },
+                          body: {
+                            'Function Name': nameController.text,
+                            'Date': _dateController.text,
+                            'Type': typeController.text,
+                            'Budget': budgetController.text,
+                            'guest min': guestMinController.text,
+                            'guest max': guestMaxController.text,
+                            'Function Id': this.functionId
+                          });
+                      if (response['status'] == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(edit
+                                ? 'Function Updated Successfully'
+                                : 'Function Added Successfully')));
+                        edit
+                            ? Navigator.pop(context)
+                            : Navigator.pushNamed(context, '/Event');
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(edit
+                                ? 'Error Updating Function'
+                                : 'Error Creating Function')));
+                      }
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: edit ? 'Edit Funtion' : 'Create Funtion',
+              image: MyImages.Function,
+            ),
+          ),
+        ],
       ),
     );
   }

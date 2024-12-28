@@ -21,6 +21,7 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
   TextEditingController headtypeController = TextEditingController();
   bool isPerhead = false;
   Map<String, dynamic> args = {};
+
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -30,79 +31,120 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
     this.args = args;
   }
 
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
+  String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Header(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: _headerHeight,
+                ),
+                MyTextBox(
+                  hint: 'Name',
+                  valueController: nameController,
+                ),
+                MyTextBox(
+                  hint: 'Price',
+                  isNum: true,
+                  isPrice: true,
+                  valueController: priceController,
+                ),
+                RadioButtonQuestion(
+                    options: ['Yes', 'No'],
+                    question: '',
+                    myValue: perheadController.text,
+                    onChanged: (value) {
+                      setState(() {
+                        perheadController.text = value.toString();
+                        if (value == 'Yes') {
+                          isPerhead = true;
+                        } else {
+                          isPerhead = false;
+                        }
+                      });
+                    }),
+                isPerhead
+                    ? MyTextBox(
+                        hint: 'PerHead Type',
+                        valueController: headtypeController)
+                    : Container(),
+                SizedBox(
+                  height: screenHeight * 0.1,
+                  child: Center(child: MyDivider()),
+                ),
+                ColoredButton(
+                    text: 'Add',
+                    onPressed: () {
+                      if (nameController.text.isEmpty ||
+                          priceController.text.isEmpty ||
+                          perheadController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Please fill all the fields'),
+                            backgroundColor: MyColors.DarkLighter));
+                        return;
+                      }
+                      if (isPerhead && headtypeController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Please fill all the fields'),
+                            backgroundColor: MyColors.DarkLighter));
+                        return;
+                      }
+                      args['addons'].add({
+                        'name': _capitalize(nameController.text),
+                        'price': _capitalize(priceController.text),
+                        'perhead': _capitalize(perheadController.text),
+                        'headtype': isPerhead
+                            ? _capitalize(headtypeController.text)
+                            : '',
+                      });
+                      print(args);
+                      Navigator.popAndPushNamed(context, '/AddCategory_Addons',
+                          arguments: args);
+                    })
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
               heading: 'Add AddOns',
             ),
-            MyTextBox(
-              hint: 'Name',
-              valueController: nameController,
-            ),
-            MyTextBox(
-              hint: 'Price',
-              valueController: priceController,
-            ),
-            RadioButtonQuestion(
-                options: ['Yes', 'No'],
-                question: '',
-                myValue: perheadController.text,
-                onChanged: (value) {
-                  setState(() {
-                    perheadController.text = value.toString();
-                    if (value == 'Yes') {
-                      isPerhead = true;
-                    } else {
-                      isPerhead = false;
-                    }
-                  });
-                }),
-            isPerhead
-                ? MyTextBox(
-                    hint: 'Head Type', valueController: headtypeController)
-                : Container(),
-            SizedBox(
-              height: screenHeight * 0.1,
-              child: Center(child: MyDivider()),
-            ),
-            ColoredButton(
-                text: 'Add',
-                onPressed: () {
-                  if (nameController.text.isEmpty ||
-                      priceController.text.isEmpty ||
-                      perheadController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Please fill all the fields'),
-                        backgroundColor: MyColors.DarkLighter));
-                    return;
-                  }
-                  if (isPerhead && headtypeController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Please fill all the fields'),
-                        backgroundColor: MyColors.DarkLighter));
-                    return;
-                  }
-                  args['addons'].add({
-                    'name': nameController.text,
-                    'price': priceController.text,
-                    'perhead': perheadController.text,
-                    'headtype': headtypeController.text
-                  });
-
-                  Navigator.popAndPushNamed(context, '/AddCategory_Addons',
-                      arguments: args);
-                })
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
