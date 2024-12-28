@@ -4,9 +4,16 @@ import 'package:taqreeb/theme/color.dart';
 
 class DateQuestion extends StatefulWidget {
   final TextEditingController valuecontroller;
+  final Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
   final String question;
-  const DateQuestion(
-      {super.key, required this.question, required this.valuecontroller});
+  const DateQuestion({
+    super.key,
+    required this.question,
+    required this.valuecontroller,
+    this.onFieldSubmitted,
+    this.focusNode,
+  });
 
   @override
   State<DateQuestion> createState() => _DateQuestionState();
@@ -49,6 +56,8 @@ class _DateQuestionState extends State<DateQuestion> {
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
               child: TextField(
                 readOnly: true,
+                focusNode: widget.focusNode,
+                onSubmitted: widget.onFieldSubmitted,
                 textAlignVertical: TextAlignVertical.center,
                 controller: widget.valuecontroller,
                 style: GoogleFonts.montserrat(

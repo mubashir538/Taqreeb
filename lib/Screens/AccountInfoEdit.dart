@@ -326,12 +326,16 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                             children: [
                               MyTextBox(
                                   focusNode: fnameFocus,
-                                  onFieldSubmitted: (_) {
-                                  
+                                  onFieldSubmitted: (_){
+                                    FocusScope.of(context).requestFocus(lastnameFocus);
                                   },
                                   hint: 'First Name',
                                   valueController: fnamecontroller),
                               MyTextBox(
+                                focusNode: lastnameFocus,
+                                onFieldSubmitted: (_){
+                                  FocusScope.of(context).requestFocus(locationFocus);
+                                },
                                   hint: 'Last Name',
                                   valueController: lastnameController),
                               ResponsiveDropdown(
@@ -341,6 +345,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                     genderController.text = value;
                                   }),
                               MyTextBox(
+                                focusNode: locationFocus,
+                                onFieldSubmitted: (_){
+                                  FocusScope.of(context).unfocus();
+                                },
                                   hint: 'City',
                                   valueController: locationcontroller),
                             ],

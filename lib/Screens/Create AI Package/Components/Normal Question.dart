@@ -4,15 +4,18 @@ import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class NormalQuestion extends StatelessWidget {
-  const NormalQuestion(
+  NormalQuestion(
       {super.key, required this.MaximumThing, required this.question});
 
   final String question;
   final double MaximumThing;
+  
+  final TextEditingController answerController = TextEditingController();
+  FocusNode answerFocus = FocusNode();
+
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController answerController = TextEditingController();
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: MaximumThing * 0.02,

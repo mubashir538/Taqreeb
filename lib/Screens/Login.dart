@@ -29,6 +29,17 @@ class _LoginState extends State<Login> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FocusNode emailFocus = FocusNode();
+  FocusNode passwordFocus = FocusNode();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    emailFocus.dispose();
+    passwordFocus.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -66,10 +77,18 @@ class _LoginState extends State<Login> {
                     children: [
                       SizedBox(height: (screenHeight * 0.03) + _headerHeight),
                       MyTextBox(
+                        focusNode: emailFocus,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(passwordFocus);
+                        },
                         hint: "Enter Email or Phone Number",
                         valueController: emailController,
                       ),
                       MyTextBox(
+                        focusNode: passwordFocus,
+                        onFieldSubmitted: (_) {
+                          passwordFocus.unfocus();
+                        },
                         hint: "Enter Password",
                         isPassword: true,
                         valueController: passwordController,

@@ -27,6 +27,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   FocusNode cnicFocusNode = FocusNode();
   FocusNode profileNameFocusNode = FocusNode();
   FocusNode usernameFocusNode = FocusNode();
+
   bool isLoading = true;
   List<String> usernames = [];
   String usernameValidationMessage = '';
@@ -160,6 +161,8 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                   height: (screenHeight * 0.05) + _headerHeight,
                 ),
                 MyTextBox(
+                 
+                  
                   hint: 'CNIC',
                   focusNode: cnicFocusNode,
                   isNum: true,

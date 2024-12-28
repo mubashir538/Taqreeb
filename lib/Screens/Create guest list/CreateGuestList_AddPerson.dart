@@ -25,6 +25,17 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
 
   TextEditingController personcontroller = TextEditingController();
   TextEditingController contactcontroller = TextEditingController();
+  FocusNode personFocus = FocusNode();
+  FocusNode contactFocus = FocusNode();
+  @override
+  void dispose() {
+    personcontroller.dispose();
+    contactcontroller.dispose();
+    personFocus.dispose();
+    contactFocus.dispose();
+    super.dispose();
+  }
+
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;
@@ -87,10 +98,18 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                   height: (screenHeight * 0.05) + _headerHeight,
                 ),
                 MyTextBox(
+                  focusNode: personFocus,
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).requestFocus(contactFocus);
+                  },
                   hint: 'Person Name',
                   valueController: personcontroller,
                 ),
                 MyTextBox(
+                  focusNode: contactFocus,
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).unfocus();
+                  },
                   hint: 'Contact Number',
                   isNum: true,
                   valueController: contactcontroller,

@@ -30,6 +30,19 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
     TextEditingController emailController = TextEditingController();
     TextEditingController nameController = TextEditingController();
     TextEditingController messageController = TextEditingController();
+    FocusNode emailFocus = FocusNode();
+    FocusNode nameFocus = FocusNode();
+    FocusNode messageFocus = FocusNode();
+    @override
+    void dispose() {
+      emailController.dispose();
+      nameController.dispose();
+      messageController.dispose();
+      emailFocus.dispose();
+      nameFocus.dispose();
+      messageFocus.dispose();
+      super.dispose();
+    }
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -47,16 +60,28 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
               ),
               SizedBox(height: 20),
               MyTextBox(
+                focusNode: nameFocus,
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(emailFocus);
+                },
                 hint: "Name",
                 valueController: nameController,
               ),
               SizedBox(height: 10),
               MyTextBox(
+                focusNode: emailFocus,
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(messageFocus);
+                },
                 hint: "Email",
                 valueController: emailController,
               ),
               SizedBox(height: 10),
               MyTextBox(
+                focusNode: messageFocus,
+                onFieldSubmitted: (_) {
+                  messageFocus.unfocus();
+                },
                 hint: "Message",
                 valueController: messageController,
               ),

@@ -19,6 +19,19 @@ class _FreelancerSignup_BasicInfoState
   TextEditingController fullnamecontroller = TextEditingController();
   TextEditingController usernamecontroller = TextEditingController();
   TextEditingController portfoliocontroller = TextEditingController();
+  FocusNode fullnameFocus = FocusNode();
+  FocusNode usernameFocus = FocusNode();
+  FocusNode portfolioFocus = FocusNode();
+  @override
+  void dispose() {
+    fullnamecontroller.dispose();
+    usernamecontroller.dispose();
+    portfoliocontroller.dispose();
+    fullnameFocus.dispose();
+    usernameFocus.dispose();
+    portfolioFocus.dispose();
+    super.dispose();
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -57,14 +70,26 @@ class _FreelancerSignup_BasicInfoState
                   height: (MaximumThing * 0.05) + _headerHeight,
                 ),
                 MyTextBox(
+                  focusNode: fullnameFocus,
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).requestFocus(usernameFocus);
+                  },
                   hint: "Enter Full Business Name",
                   valueController: fullnamecontroller,
                 ),
                 MyTextBox(
+                  focusNode: usernameFocus,
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).requestFocus(portfolioFocus);
+                  },
                   hint: "Enter Username",
                   valueController: usernamecontroller,
                 ),
                 MyTextBox(
+                  focusNode: portfolioFocus, 
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).unfocus();
+                  },
                   hint: "Enter Portfolio Link",
                   valueController: portfoliocontroller,
                 ),

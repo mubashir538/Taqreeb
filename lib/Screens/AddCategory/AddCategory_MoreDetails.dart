@@ -23,6 +23,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
   Map<String, dynamic> args = {};
   bool isLoading = true;
   List<TextEditingController> controllers = [];
+  List<FocusNode> focusNodes = [];
   bool ischange = false;
   @override
   void didChangeDependencies() {
@@ -55,6 +56,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
     });
     for (int i = 0; i < textfields['fields'].length; i++) {
       controllers.add(TextEditingController());
+      focusNodes.add(FocusNode());
       print(i);
     }
     isLoading = false; // Data has been fetched, so stop loading
@@ -105,6 +107,14 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                           for (var field in textfields['fields'])
                             field['choices'] != null
                                 ? ResponsiveDropdown(
+                                    focusNode: focusNodes[
+                                        textfields['fields'].indexOf(field)],
+                                    onFieldSubmitted: (_) {
+                                      FocusScope.of(context).requestFocus(
+                                          focusNodes[textfields['fields']
+                                                  .indexOf(field) +
+                                              1]);
+                                    },
                                     items: field['choices']
                                         .map((e) => capitalize(e))
                                         .cast<String>()
@@ -117,6 +127,20 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                                     },
                                   )
                                 : MyTextBox(
+                                    focusNode: focusNodes[
+                                        textfields['fields'].indexOf(field)],
+                                    onFieldSubmitted: (_) {
+                                      if (textfields['fields'].indexOf(field) +
+                                              1 ==
+                                          textfields['fields'].length) {
+                                        FocusScope.of(context).unfocus();
+                                      } else {
+                                        FocusScope.of(context).requestFocus(
+                                            focusNodes[textfields['fields']
+                                                    .indexOf(field) +
+                                                1]);
+                                      }
+                                    },
                                     hint: capitalize(field['name']),
                                     valueController: controllers[
                                         textfields['fields'].indexOf(field)],

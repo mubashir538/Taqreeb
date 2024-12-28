@@ -19,6 +19,24 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
   TextEditingController priceController = TextEditingController();
   TextEditingController perheadController = TextEditingController();
   TextEditingController headtypeController = TextEditingController();
+  FocusNode nameFocus = FocusNode();
+  FocusNode priceFocus = FocusNode();
+  FocusNode perheadFocus = FocusNode();
+  FocusNode headtypeFocus = FocusNode();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    priceController.dispose();
+    perheadController.dispose();
+    headtypeController.dispose();
+    nameFocus.dispose();
+    priceFocus.dispose();
+    perheadFocus.dispose();
+    headtypeFocus.dispose();
+    super.dispose();
+  }
+
   bool isPerhead = false;
   Map<String, dynamic> args = {};
 
@@ -73,10 +91,18 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                   height: _headerHeight,
                 ),
                 MyTextBox(
+                  focusNode: nameFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(priceFocus);
+                  },
                   hint: 'Name',
                   valueController: nameController,
                 ),
                 MyTextBox(
+                  focusNode: priceFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(perheadFocus);
+                  },
                   hint: 'Price',
                   isNum: true,
                   isPrice: true,
@@ -98,6 +124,10 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                     }),
                 isPerhead
                     ? MyTextBox(
+                        focusNode: headtypeFocus,
+                        onFieldSubmitted: (_) {
+                          headtypeFocus.unfocus();
+                        },
                         hint: 'PerHead Type',
                         valueController: headtypeController)
                     : Container(),

@@ -265,6 +265,12 @@ class _AddImageState extends State<AddImage> {
                   request.fields['description'] = args['description'];
                   request.fields['category'] = args['category'];
                   request.fields['location'] = args['location'];
+                  final token =
+                      await MyStorage.getToken(MyTokens.accessToken) ?? "";
+                  request.headers.addAll({
+                    'Authorization': 'Bearer $token', // Example header
+                  });
+
                   request.fields['priceMin'] = args['pricemin'];
                   request.fields['priceMax'] = args['pricemax'];
                   if (args['packages'] != null) {
@@ -312,9 +318,11 @@ class _AddImageState extends State<AddImage> {
                         ),
                       );
                     }
-                    Navigator.pushNamed(
+                    Navigator.pushNamedAndRemoveUntil(
                       context,
-                      '/HomePage', // Replace with your target screen's route
+                      '/HomePage',
+                      ModalRoute.withName('/'),
+                      // Replace with your target screen's route
                       // Passing the args map to the next screen
                     );
                   } else {

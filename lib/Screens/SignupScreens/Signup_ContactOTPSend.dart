@@ -20,6 +20,13 @@ class Signup_ContactOTPSend extends StatefulWidget {
 
 class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
   TextEditingController contactController = TextEditingController();
+  FocusNode contactFocus = FocusNode();
+  @override
+  void dispose() {
+    contactController.dispose();
+    contactFocus.dispose();
+    super.dispose();
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -63,6 +70,10 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
                         height: (screenHeight * 0.05) + _headerHeight,
                       ),
                       MyTextBox(
+                        focusNode: contactFocus,
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context).unfocus();
+                        },
                         hint: 'Contact Number',
                         isNum: true,
                         valueController: contactController,

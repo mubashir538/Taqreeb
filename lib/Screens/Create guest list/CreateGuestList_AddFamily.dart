@@ -22,6 +22,16 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
 
   TextEditingController familyNamecontroller = TextEditingController();
   TextEditingController memberscontroller = TextEditingController();
+  FocusNode familyNameFocus = FocusNode();
+  FocusNode membersFocus = FocusNode();
+  @override
+  void dispose() {
+    familyNamecontroller.dispose();
+    memberscontroller.dispose();
+    familyNameFocus.dispose();
+    membersFocus.dispose();
+    super.dispose();
+  }
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;
@@ -85,10 +95,18 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
                   height: (screenHeight * 0.05) + _headerHeight,
                 ),
                 MyTextBox(
+                  focusNode: familyNameFocus,
+                  onFieldSubmitted: (_){
+                    FocusScope.of(context).requestFocus(membersFocus);
+                  },
                   hint: 'Family Name',
                   valueController: familyNamecontroller,
                 ),
                 MyTextBox(
+                  focusNode: membersFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).unfocus();
+                  },
                   hint: 'No. of Members',
                   isNum: true,
                   valueController: memberscontroller,

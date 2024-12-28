@@ -29,6 +29,38 @@ class _CreateEventState extends State<CreateEvent> {
   TextEditingController budgetController = TextEditingController();
   TextEditingController guestMinController = TextEditingController();
   TextEditingController guestMaxController = TextEditingController();
+  FocusNode themeColorFocus = FocusNode();
+  FocusNode eventNameFocus = FocusNode();
+  FocusNode typeFocus = FocusNode();
+  FocusNode dateFocus = FocusNode();
+  FocusNode locationFocus = FocusNode();
+  FocusNode descriptionFocus = FocusNode();
+  FocusNode budgetFocus = FocusNode();
+  FocusNode guestMinFocus = FocusNode();
+  FocusNode guestMaxFocus = FocusNode();
+
+  @override
+  void dispose() {
+    themeColor.dispose();
+    eventNameController.dispose();
+    typeController.dispose();
+    dateController.dispose();
+    locationController.dispose();
+    descriptionController.dispose();
+    budgetController.dispose();
+    guestMinController.dispose();
+    guestMaxController.dispose();
+    themeColorFocus.dispose();
+    eventNameFocus.dispose();
+    typeFocus.dispose();
+    dateFocus.dispose();
+    locationFocus.dispose();
+    descriptionFocus.dispose();
+    budgetFocus.dispose();
+    guestMinFocus.dispose();
+    guestMaxFocus.dispose();
+    super.dispose();
+  }
 
   String token = '';
   Map<String, dynamic> types = {};
@@ -131,10 +163,18 @@ class _CreateEventState extends State<CreateEvent> {
                     children: [
                       QuestionGroup(questions: [
                         MyTextBox(
+                          focusNode: eventNameFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(typeFocus);
+                          },
                           hint: "Event Name",
                           valueController: eventNameController,
                         ),
                         ResponsiveDropdown(
+                            focusNode: typeFocus,
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context).requestFocus(dateFocus);
+                            },
                             items: isLoading
                                 ? []
                                 : types['eventTypes']
@@ -148,14 +188,28 @@ class _CreateEventState extends State<CreateEvent> {
                               });
                             }),
                         DateQuestion(
+                          focusNode: dateFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(locationFocus);
+                          },
                           question: '',
                           valuecontroller: dateController,
                         ),
                         MyTextBox(
+                          focusNode: locationFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(themeColorFocus);
+                          },
                           hint: "Location",
                           valueController: locationController,
                         ),
                         ColorPickerTextBox(
+                          focusNode: themeColorFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(descriptionFocus);
+                          },
                           hint: "Theme Color",
                           valueController: themeColor,
                         )
@@ -164,6 +218,11 @@ class _CreateEventState extends State<CreateEvent> {
                         SizedBox(
                           height: screenHeight * 0.2,
                           child: MyTextBox(
+                            focusNode: descriptionFocus,
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context)
+                                  .requestFocus(guestMinFocus);
+                            },
                             hint: "Enter Description",
                             valueController: descriptionController,
                           ),
@@ -171,11 +230,19 @@ class _CreateEventState extends State<CreateEvent> {
                       ], Heading: "Describe Your Event"),
                       QuestionGroup(questions: [
                         MyTextBox(
+                          focusNode: guestMinFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(guestMaxFocus);
+                          },
                           hint: "Minimum Guests",
                           isNum: true,
                           valueController: guestMinController,
                         ),
                         MyTextBox(
+                          focusNode: guestMaxFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(budgetFocus);
+                          },
                           hint: "Maximum Guests",
                           isNum: true,
                           valueController: guestMaxController,
@@ -183,6 +250,10 @@ class _CreateEventState extends State<CreateEvent> {
                       ], Heading: "Guest Info"),
                       QuestionGroup(questions: [
                         MyTextBox(
+                          focusNode: budgetFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).unfocus();
+                          },
                           hint: "Enter Budget",
                           isNum: true,
                           isPrice: true,
@@ -206,7 +277,8 @@ class _CreateEventState extends State<CreateEvent> {
                       ));
                       return;
                     }
-                    final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+                    final userId =
+                        await MyStorage.getToken(MyTokens.userId) ?? "";
                     final response = await MyApi.postRequest(
                         endpoint: edit ? 'EditEvent/' : 'CreateEvent/',
                         headers: {
@@ -236,7 +308,8 @@ class _CreateEventState extends State<CreateEvent> {
                           content: edit
                               ? Text('Event Updated Successfully')
                               : Text('Event Created Successfully')));
-                      Navigator.pushNamed(context, '/YourEvents');
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/YourEvents', ModalRoute.withName('/'));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(edit

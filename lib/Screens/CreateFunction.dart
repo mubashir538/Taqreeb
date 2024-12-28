@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,6 +27,29 @@ class _CreateFunctionState extends State<CreateFunction> {
   TextEditingController typeController = TextEditingController();
   TextEditingController guestMaxController = TextEditingController();
   TextEditingController guestMinController = TextEditingController();
+  FocusNode datafocus = FocusNode();
+  FocusNode namefocus = FocusNode();
+  FocusNode typefocus = FocusNode();
+  FocusNode budgetfocus = FocusNode();
+  FocusNode guestmaxfocus = FocusNode();
+  FocusNode guestminfocus = FocusNode();
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    nameController.dispose();
+    budgetController.dispose();
+    typeController.dispose();
+    guestMaxController.dispose();
+    guestMinController.dispose();
+    datafocus.dispose();
+    nameController.dispose();
+    typefocus.dispose();
+    budgetfocus.dispose();
+    guestmaxfocus.dispose();
+    guestminfocus.dispose();
+    super.dispose();
+  }
 
   String token = '';
   Map<String, dynamic> types = {};
@@ -131,6 +155,7 @@ class _CreateFunctionState extends State<CreateFunction> {
         children: [
           SingleChildScrollView(
             child: Container(
+              width: screenWidth,
               constraints: BoxConstraints(minHeight: screenHeight),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,16 +167,28 @@ class _CreateFunctionState extends State<CreateFunction> {
                         height: screenHeight * 0.04,
                       ),
                       MyTextBox(
+                        focusNode: namefocus,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(budgetfocus);
+                        },
                         hint: 'Funtion Name',
                         valueController: nameController,
                       ),
                       MyTextBox(
+                        focusNode: budgetfocus,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(typefocus);
+                        },
                         hint: 'Budget',
                         isNum: true,
                         isPrice: true,
                         valueController: budgetController,
                       ),
                       ResponsiveDropdown(
+                          focusNode: typefocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(guestminfocus);
+                          },
                           items: isLoading
                               ? []
                               : types['functionTypes']
@@ -206,11 +243,19 @@ class _CreateFunctionState extends State<CreateFunction> {
                         ),
                       ),
                       MyTextBox(
+                        focusNode: guestminfocus,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(guestmaxfocus);
+                        },
                         hint: 'Minimum Guests',
                         isNum: true,
                         valueController: guestMinController,
                       ),
                       MyTextBox(
+                        focusNode: guestmaxfocus,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).unfocus();
+                        },
                         hint: 'Maximum Guests',
                         isNum: true,
                         valueController: guestMaxController,
@@ -231,15 +276,6 @@ class _CreateFunctionState extends State<CreateFunction> {
                         ));
                         return;
                       }
-                      print({
-                        'Function Name': nameController.text,
-                        'Date': _dateController.text,
-                        'Type': typeController.text,
-                        'Budget': budgetController.text,
-                        'guest min': guestMinController.text,
-                        'guest max': guestMaxController.text,
-                        'Function Id': this.functionId
-                      });
                       final response = await MyApi.postRequest(
                           endpoint: edit ? 'editfunction/' : 'createfunction/',
                           headers: {
@@ -252,7 +288,8 @@ class _CreateFunctionState extends State<CreateFunction> {
                             'Budget': budgetController.text,
                             'guest min': guestMinController.text,
                             'guest max': guestMaxController.text,
-                            'Function Id': this.functionId
+                            'Function Id': this.functionId,
+                            'Event Id': this.EventId
                           });
                       if (response['status'] == 'success') {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -261,7 +298,7 @@ class _CreateFunctionState extends State<CreateFunction> {
                                 : 'Function Added Successfully')));
                         edit
                             ? Navigator.pop(context)
-                            : Navigator.pushNamed(context, '/Event');
+                            : Navigator.pushNamed(context, '/YourEvents');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(edit

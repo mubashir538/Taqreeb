@@ -79,7 +79,7 @@ class _YourListingsState extends State<YourListings> {
                               listingid: listings['YourListings'][index]['id']
                                   .toString(),
                               imageUrl: listings['pictures'][index][0]
-                                          ['picturePath'] !=
+                                          ['picturePath'] ==
                                       ' '
                                   ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
                                   : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}',

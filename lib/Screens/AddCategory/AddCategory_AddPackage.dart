@@ -16,6 +16,19 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController detailsController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  FocusNode nameFocus = FocusNode();
+  FocusNode detailsFocus = FocusNode();
+  FocusNode priceFocus = FocusNode();
+  @override
+  void dispose() {
+    nameController.dispose();
+    detailsController.dispose();
+    priceController.dispose();
+    nameFocus.dispose();
+    detailsFocus.dispose();
+    priceFocus.dispose();
+    super.dispose();
+  }
   Map<String, dynamic> args = {};
 
   final GlobalKey _headerKey = GlobalKey();
@@ -69,14 +82,26 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
                 children: [
                   SizedBox(height: (screenHeight * 0.03) + _headerHeight),
                   MyTextBox(
+                    focusNode: nameFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(detailsFocus);
+                    },
                     hint: 'Name',
                     valueController: nameController,
                   ),
                   MyTextBox(
+                    focusNode: detailsFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(priceFocus);
+                    },
                     hint: 'Details',
                     valueController: detailsController,
                   ),
                   MyTextBox(
+                    focusNode: priceFocus,
+                    onFieldSubmitted: (_) {
+                      priceFocus.unfocus();
+                    },
                     hint: 'Price',
                     isNum: true,
                     isPrice: true,
