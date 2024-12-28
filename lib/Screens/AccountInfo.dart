@@ -32,7 +32,7 @@ class _AccountInfoState extends State<AccountInfo> {
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await MyStorage.getToken('userId') ?? "";
+    final Userid = await  (MyTokens.userId) ?? "";
     final user = await MyApi.getRequest(
         endpoint: 'accountInfo/$Userid',
         headers: {'Authorization': 'Bearer $token'});
