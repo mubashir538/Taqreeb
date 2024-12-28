@@ -9,6 +9,7 @@ import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class CreateFunction extends StatefulWidget {
@@ -55,8 +56,11 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   void fetchData() async {
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final eventtypes = await MyApi.getRequest(endpoint: 'getEventTypes/');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final eventtypes = await MyApi.getRequest(
+      endpoint: 'getEventTypes/',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     for (int i = 0; i < eventtypes['eventTypes'].length; i++) {
       if (eventtypes['eventTypes'][i]['name'] == args['type']) {
@@ -64,13 +68,15 @@ class _CreateFunctionState extends State<CreateFunction> {
       }
     }
     final types = await MyApi.getRequest(
-      endpoint: 'getFunctionTypes/$eventtypeid',
-    );
+        endpoint: 'getFunctionTypes/$eventtypeid',
+        headers: {'Authorization': 'Bearer $token'});
 
     final FunctiontDetails;
     if (edit) {
-      FunctiontDetails =
-          await MyApi.getRequest(endpoint: 'ViewFunction/${functionId}');
+      FunctiontDetails = await MyApi.getRequest(
+        endpoint: 'ViewFunction/${functionId}',
+        headers: {'Authorization': 'Bearer $token'},
+      );
     } else {
       FunctiontDetails = "";
     }
@@ -200,11 +206,13 @@ class _CreateFunctionState extends State<CreateFunction> {
                         ),
                       ),
                       MyTextBox(
-                        hint: 'Minimum Guests',isNum: true,
+                        hint: 'Minimum Guests',
+                        isNum: true,
                         valueController: guestMinController,
                       ),
                       MyTextBox(
-                        hint: 'Maximum Guests',isNum: true,
+                        hint: 'Maximum Guests',
+                        isNum: true,
                         valueController: guestMaxController,
                       ),
                     ],
@@ -234,6 +242,9 @@ class _CreateFunctionState extends State<CreateFunction> {
                       });
                       final response = await MyApi.postRequest(
                           endpoint: edit ? 'editfunction/' : 'createfunction/',
+                          headers: {
+                            'Authorization': 'Bearer $token'
+                          },
                           body: {
                             'Function Name': nameController.text,
                             'Date': _dateController.text,

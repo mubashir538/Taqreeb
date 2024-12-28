@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/calendar.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -52,19 +53,23 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     });
     fetchData();
   }
-@override
+
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final listing =
-        await MyApi.getRequest(endpoint: 'venueviewpage/${this.listingId}');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final listing = await MyApi.getRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'venueviewpage/${this.listingId}');
 
     final events = await MyApi.getRequest(
-        endpoint: 'YourEvents/functions/${await MyStorage.getToken('userId')}');
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'YourEvents/functions/${await MyStorage.getToken(MyTokens.userId)}');
     // Update the state
     setState(() {
       this.token = token;
@@ -174,11 +179,12 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                               ),
                               onTap: () async {
                                 final response = await MyApi.postRequest(
+                                    headers: {'Authorization': 'Bearer $token'},
                                     endpoint: 'add/Bookcart/',
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':
-                                          await MyStorage.getToken('userId') ??
+                                          await MyStorage.getToken(MyTokens.userId) ??
                                               "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',

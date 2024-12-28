@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
@@ -27,10 +28,12 @@ class _YourListingsState extends State<YourListings> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final String id = await MyStorage.getToken('userId') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    final fetchedListings = await MyApi.getRequest(endpoint: 'YourListing/$id');
+    final fetchedListings = await MyApi.getRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'YourListing/$id');
 
     // Update the state
     setState(() {

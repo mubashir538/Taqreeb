@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -42,6 +43,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
     });
   }
 
+
   @override
   void dispose() {
     // Dispose controllers and focus nodes
@@ -68,8 +70,11 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   }
 
   void fetchdata() async {
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+
     final fetchusernames = await MyApi.getRequest(
       endpoint: 'getUsernames/business/',
+      headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
@@ -83,9 +88,9 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   }
 
   void check(BuildContext context) async {
-    if (await MyStorage.exists('bscnic') &&
-        await MyStorage.exists('bsusername') &&
-        await MyStorage.exists('bsname')) {
+    if (await MyStorage.exists(MyTokens.bscnic) &&
+        await MyStorage.exists(MyTokens.bsusername) &&
+        await MyStorage.exists(MyTokens.bsname)) {
       warningDialog(
         title: 'Fresh Start',
         message:
@@ -94,12 +99,12 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
           ColoredButton(
             text: 'Fresh Start',
             onPressed: () {
-              MyStorage.deleteToken('bscnic');
-              MyStorage.deleteToken('bsname');
-              MyStorage.deleteToken('bsusername');
-              MyStorage.deleteToken('bsfront');
-              MyStorage.deleteToken('bsback');
-              MyStorage.deleteToken('bsdescription');
+              MyStorage.deleteToken(MyTokens.bscnic);
+              MyStorage.deleteToken(MyTokens.bsname);
+              MyStorage.deleteToken(MyTokens.bsusername);
+              MyStorage.deleteToken(MyTokens.bsfront);
+              MyStorage.deleteToken(MyTokens.bsback);
+              MyStorage.deleteToken(MyTokens.bsdescription);
 
               Navigator.pop(context);
             },
@@ -107,10 +112,10 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
           ColoredButton(
             text: 'Continue',
             onPressed: () async {
-              if (await MyStorage.exists('bsdescription')) {
+              if (await MyStorage.exists(MyTokens.bsdescription)) {
                 Navigator.pushNamed(context, '/ProfilePictureUpload',
                     arguments: {'type': 'Business'});
-              } else if (await MyStorage.exists('bsfront')) {
+              } else if (await MyStorage.exists(MyTokens.bsfront)) {
                 Navigator.pushNamed(context, '/BusinessSignup_Description');
               } else {
                 Navigator.pushNamed(context, '/BusinessSignup_CNICUpload');
@@ -216,10 +221,10 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                         title: "Invalid Details",
                       ).showDialogBox(context);
                     } else {
-                      MyStorage.saveToken(cnicController.text, "bscnic");
-                      MyStorage.saveToken(profileNameController.text, "bsname");
+                      MyStorage.saveToken(cnicController.text, MyTokens.bscnic);
+                      MyStorage.saveToken(profileNameController.text, MyTokens.bsname);
                       MyStorage.saveToken(
-                          usernameController.text, "bsusername");
+                          usernameController.text, MyTokens.bsusername);
                       Navigator.pushNamed(
                           context, '/BusinessSignup_CNICUpload');
                     }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/crop%20screen.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -202,7 +203,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               MyStorage.saveToken(
                   jsonResponse['refresh'].toString(), 'refresh');
               MyStorage.saveToken(
-                  jsonResponse['access'].toString(), 'accessToken');
+                  jsonResponse['access'].toString(), MyTokens.accessToken);
               MyStorage.saveToken(jsonResponse['userId'].toString(), 'userId');
               MyStorage.saveToken('user', 'userType');
               MyStorage.deleteToken('spassword');

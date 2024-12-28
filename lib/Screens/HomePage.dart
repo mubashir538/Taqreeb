@@ -6,6 +6,7 @@ import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/Search Box.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/automatic%20Slider.dart';
 import 'package:taqreeb/Components/category_icon.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -34,12 +35,11 @@ class _HomePageState extends State<HomePage> {
     fetchData(); // Fetch data in a separate method
   }
 
-  
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
+      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
@@ -47,11 +47,15 @@ class _HomePageState extends State<HomePage> {
 
     final fetchedImages = await MyApi.getRequest(
       endpoint: 'Homepage/DemoImages/',
+      headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization
       // }
     );
-    final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
+    final fetchedListings = await MyApi.getRequest(
+      endpoint: 'home/listings/',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {

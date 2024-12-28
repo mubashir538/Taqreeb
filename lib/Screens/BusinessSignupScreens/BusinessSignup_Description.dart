@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/description.dart';
 
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -94,7 +95,7 @@ class _BusinessSignup_DescriptionState
                               text: "Continue",
                               onPressed: () {
                                 MyStorage.saveToken(descriptionController.text,
-                                    'bsdescription');
+                                    MyTokens.bsdescription);
                                 Navigator.pushNamed(
                                     context, '/ProfilePictureUpload',
                                     arguments: {'type': 'Business'});

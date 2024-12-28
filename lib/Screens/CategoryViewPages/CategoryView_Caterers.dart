@@ -1,3 +1,5 @@
+
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -44,11 +46,12 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
-@override
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -63,9 +66,11 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final listing =
-        await MyApi.getRequest(endpoint: 'Caterer/viewpage/${this.listingId}');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final listing = await MyApi.getRequest(
+      endpoint: 'Caterer/viewpage/${this.listingId}',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {
@@ -170,10 +175,13 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                               onTap: () async {
                                 final response = await MyApi.postRequest(
                                     endpoint: 'add/Bookcart/',
+                                    headers: {
+                                      'Authorization': 'Bearer $token'
+                                    },
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':
-                                          await MyStorage.getToken('userId') ??
+                                          await MyStorage.getToken(MyTokens.userId) ??
                                               "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',

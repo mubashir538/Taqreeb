@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -43,11 +44,12 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
-@override
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -62,9 +64,11 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final listing =
-        await MyApi.getRequest(endpoint: 'Bakers/viewpage/${this.listingId}');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final listing = await MyApi.getRequest(
+      endpoint: 'Bakers/viewpage/${this.listingId}',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {
@@ -156,10 +160,13 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
                               onTap: () async {
                                 final response = await MyApi.postRequest(
                                     endpoint: 'add/Bookcart/',
+                                    headers: {
+                                      'Authorization': 'Bearer $token'
+                                    },
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':
-                                          await MyStorage.getToken('userId') ??
+                                          await MyStorage.getToken(MyTokens.userId) ??
                                               "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',

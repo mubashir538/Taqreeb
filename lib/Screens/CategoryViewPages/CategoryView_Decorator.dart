@@ -1,3 +1,5 @@
+
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -45,11 +47,12 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
-@override
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -64,9 +67,11 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final listing =
-        await MyApi.getRequest(endpoint: 'decorator/detail/${this.listingId}');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final listing = await MyApi.getRequest(
+      endpoint: 'decorator/detail/${this.listingId}',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {
@@ -170,11 +175,12 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                               ),
                               onTap: () async {
                                 final response = await MyApi.postRequest(
+                                    headers: {'Authorization': 'Bearer $token'},
                                     endpoint: 'add/Bookcart/',
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':
-                                          await MyStorage.getToken('userId') ??
+                                          await MyStorage.getToken(MyTokens.userId) ??
                                               "",
                                       'lid': listingId.toString(),
                                       'type': 'Decorator',

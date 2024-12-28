@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/guests.dart';
@@ -90,7 +92,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                 ),
                 MyTextBox(
                   hint: 'Contact Number',
-                  isNum:true,
+                  isNum: true,
                   valueController: contactcontroller,
                 ),
                 SizedBox(
@@ -132,7 +134,11 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                   width: screenWidth * 0.7,
                   onPressed: () async {
                     for (int i = 0; i < guestList.length; i++) {
+                      final token =
+                          await MyStorage.getToken(MyTokens.accessToken) ?? "";
+
                       final response = await MyApi.postRequest(
+                          headers: {'Authorization': 'Bearer $token'},
                           endpoint: 'add/guests/',
                           body: {
                             'eid': eventId,

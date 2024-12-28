@@ -5,6 +5,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
@@ -259,7 +260,7 @@ class _AddImageState extends State<AddImage> {
                   }
 
                   request.fields['userid'] =
-                      await MyStorage.getToken('userId') ?? "";
+                      await MyStorage.getToken(MyTokens.userId) ?? "";
                   request.fields['name'] = args['name'];
                   request.fields['description'] = args['description'];
                   request.fields['category'] = args['category'];

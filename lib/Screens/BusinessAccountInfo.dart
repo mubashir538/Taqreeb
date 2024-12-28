@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Checklist%20Items%20Adder.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -29,10 +30,12 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final Userid = await MyStorage.getToken('userId') ?? "";
-    final user =
-        await MyApi.getRequest(endpoint: 'businessowner/accountInfo/$Userid');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    final user = await MyApi.getRequest(
+      endpoint: 'businessowner/accountInfo/$Userid',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {
@@ -147,7 +150,9 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                   color: MyColors.white,
                                 ),
                                 SizedBox(width: screenWidth * 0.02),
-                                Text(user['userinfo']['contactNumber'].toString(),
+                                Text(
+                                    user['userinfo']['contactNumber']
+                                        .toString(),
                                     style: style)
                               ]),
                             ],

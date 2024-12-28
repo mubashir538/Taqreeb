@@ -6,6 +6,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
@@ -55,11 +56,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       return;
     }
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedlist = await MyApi.getRequest(
       endpoint: isfunction
           ? 'show/checklist/$eventId/$functionid'
           : 'show/checklist/$eventId',
+      headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
@@ -279,6 +281,9 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                             print('Item: $item');
                             final response = await MyApi.postRequest(
                                 endpoint: 'update/checklist',
+                                headers: {
+                                  'Authorization': 'Bearer $token'
+                                },
                                 body: {
                                   'id': item["id"],
                                   'item': item["description"],
@@ -292,6 +297,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                           for (var item in newitems) {
                             final response = await MyApi.postRequest(
                               endpoint: 'add/checklist',
+                              headers: {'Authorization': 'Bearer $token'},
                               body: {
                                 'functionId': isfunction ? functionid : "None",
                                 'eventId': eventId,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
@@ -62,9 +63,9 @@ class _AddcategoryListState extends State<AddcategoryList> {
   }
 
   void fetchCategories() async {
-    final token = await MyStorage.getToken('accessToken') ?? '';
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
     final categories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
+      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
       //  headers: {'Authorization': 'Bearer $token'}
     );
     setState(() {

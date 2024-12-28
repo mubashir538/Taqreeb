@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -133,11 +134,11 @@ class _LoginState extends State<Login> {
                           if (response != null) {
                             if (response['status'] == 'success') {
                               await MyStorage.saveToken(
-                                  response['refresh'], 'refresh');
+                                  response['refresh'], MyTokens.refreshToken);
                               await MyStorage.saveToken(
-                                  response['access'], 'accessToken');
+                                  response['access'], MyTokens.accessToken);
                               await MyStorage.saveToken(
-                                  response['userid'].toString(), 'userId');
+                                  response['userid'].toString(), MyTokens.userId);
                               Navigator.pushNamed(context, '/HomePage');
                             } else {
                               warningDialog(

@@ -3,6 +3,7 @@ import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/function.dart';
 import 'package:taqreeb/theme/color.dart';
 
@@ -30,11 +31,14 @@ class _YourEventsState extends State<YourEvents> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final String id = await MyStorage.getToken('userId') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
 
     print(id);
-    final fetchedEvents = await MyApi.getRequest(endpoint: 'YourEvents/$id');
+    final fetchedEvents = await MyApi.getRequest(
+      endpoint: 'YourEvents/$id',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {

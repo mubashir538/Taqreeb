@@ -5,6 +5,7 @@ import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/checklist_items.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -37,15 +38,16 @@ class _SettingsState extends State<Settings> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final userid = await MyStorage.getToken('userId') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     final fetchedtype = await MyApi.getRequest(
       endpoint: 'searchType/$userid',
+      headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }
     );
-    final isbusinessToken = await MyStorage.exists('isBusinessOwner') ?? "";
+    final isbusinessToken = await MyStorage.exists(MyTokens.isBusinessOwner) ?? "";
     // Update the state
     setState(() {
       this.token = token;
@@ -147,11 +149,11 @@ class _SettingsState extends State<Settings> {
                                               if (businessOwnerSwitch) {
                                                 MyStorage.saveToken(
                                                   value.toString(),
-                                                  'isBusinessOwner',
+                                                  MyTokens.isBusinessOwner,
                                                 );
                                               } else {
                                                 MyStorage.deleteToken(
-                                                    'isBusinessOwner');
+                                                    MyTokens.isBusinessOwner);
                                               }
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -41,10 +42,11 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
   }
 
   void fetchdata() async {
-    final token = await MyStorage.getToken('accessToken') ?? '';
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
     final fields = await MyApi.getRequest(
       endpoint:
           'getListingDetails/${args['category'].toString().replaceAll(RegExp(r'\s+'), '')}',
+      headers: {'Authorization': 'Bearer $token'},
       // headers: {'Authorization': 'Bearer $token'}
     );
     setState(() {

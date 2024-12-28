@@ -5,6 +5,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Iconed%20Button.dart';
 import 'package:taqreeb/Components/crop%20screen.dart';
@@ -196,8 +197,8 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                         title: 'Invalid Details',
                       ).showDialogBox(context);
                     } else {
-                      MyStorage.saveToken(frontImage!.path, 'bsfront');
-                      MyStorage.saveToken(backImage!.path, 'bsback');
+                      MyStorage.saveToken(frontImage!.path, MyTokens.bsfront);
+                      MyStorage.saveToken(backImage!.path, MyTokens.bsback);
                       Navigator.pushNamed(
                           context, '/BusinessSignup_Description');
                     }

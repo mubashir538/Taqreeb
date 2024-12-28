@@ -111,8 +111,7 @@ class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
                             ? () async {
                                 final result =
                                     await response; // Await the response
-                                print(result);
-                                MyApi.postRequest(
+                                await MyApi.postRequest(
                                     endpoint: 'resendOTP/email',
                                     body: {
                                       'email': result['email'],

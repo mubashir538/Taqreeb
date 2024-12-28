@@ -6,6 +6,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class CategoryView_Saloon extends StatefulWidget {
@@ -44,11 +45,12 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
-@override
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -62,9 +64,10 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final listing =
-        await MyApi.getRequest(endpoint: 'saloonviewpage/${this.listingId}');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final listing = await MyApi.getRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'saloonviewpage/${this.listingId}');
 
     // Update the state
     setState(() {
@@ -164,11 +167,12 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                               ),
                               onTap: () async {
                                 final response = await MyApi.postRequest(
+                                    headers: {'Authorization': 'Bearer $token'},
                                     endpoint: 'add/Bookcart/',
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':
-                                          await MyStorage.getToken('userId') ??
+                                          await MyStorage.getToken(MyTokens.userId) ??
                                               "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',

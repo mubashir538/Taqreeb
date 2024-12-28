@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -46,14 +47,18 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
 
     print(this.FunctionId);
-    final function =
-        await MyApi.getRequest(endpoint: 'ViewFunction/${this.FunctionId}');
+    final function = await MyApi.getRequest(
+      endpoint: 'ViewFunction/${this.FunctionId}',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
-    final bookings =
-        await MyApi.getRequest(endpoint: 'show/Bookcart/${this.FunctionId}');
+    final bookings = await MyApi.getRequest(
+      endpoint: 'show/Bookcart/${this.FunctionId}',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     print(function);
     // Update the state
@@ -301,6 +306,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                 final response =
                                                     await MyApi.postRequest(
                                                         endpoint: 'show/guest/',
+                                                        headers: {
+                                                      'Authorization':
+                                                          'Bearer $token'
+                                                    },
                                                         body: {
                                                       'EventId': EventId,
                                                       'FunctionID': FunctionId

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/colorPicker.dart';
 import 'package:taqreeb/Components/dropdown.dart';
@@ -55,12 +56,17 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   void fetchData() async {
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final types = await MyApi.getRequest(endpoint: 'getEventTypes/');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final types = await MyApi.getRequest(
+      endpoint: 'getEventTypes/',
+      headers: {'Authorization': 'Bearer $token'},
+    );
     final EventDetails;
     if (edit) {
-      EventDetails =
-          await MyApi.getRequest(endpoint: 'eventdetails/${eventid}');
+      EventDetails = await MyApi.getRequest(
+        endpoint: 'eventdetails/${eventid}',
+        headers: {'Authorization': 'Bearer $token'},
+      );
     } else {
       EventDetails = "";
     }
@@ -177,7 +183,9 @@ class _CreateEventState extends State<CreateEvent> {
                       ], Heading: "Guest Info"),
                       QuestionGroup(questions: [
                         MyTextBox(
-                          hint: "Enter Budget",isNum: true,isPrice: true,
+                          hint: "Enter Budget",
+                          isNum: true,
+                          isPrice: true,
                           valueController: budgetController,
                         ),
                       ], Heading: "Budget")
@@ -198,9 +206,12 @@ class _CreateEventState extends State<CreateEvent> {
                       ));
                       return;
                     }
-                    final userId = await MyStorage.getToken('userId') ?? "";
+                    final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
                     final response = await MyApi.postRequest(
                         endpoint: edit ? 'EditEvent/' : 'CreateEvent/',
+                        headers: {
+                          'Authorization': 'Bearer $token'
+                        },
                         body: {
                           'userId': userId,
                           'Event Name': eventNameController.text,

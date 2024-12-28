@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -56,16 +57,20 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     });
     fetchData();
   }
-@override
+
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
+
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
-        endpoint: 'carrenter/viewpage/${this.listingId}');
+      endpoint: 'carrenter/viewpage/${this.listingId}',
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     // Update the state
     setState(() {
@@ -170,6 +175,9 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                               onTap: () async {
                                 final response = await MyApi.postRequest(
                                     endpoint: 'add/Bookcart/',
+                                    headers: {
+                                      'Authorization': 'Bearer $token'
+                                    },
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':

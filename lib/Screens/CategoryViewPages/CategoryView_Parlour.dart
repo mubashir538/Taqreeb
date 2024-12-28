@@ -7,6 +7,7 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 
 class CategoryView_Parlour extends StatefulWidget {
   const CategoryView_Parlour({super.key});
@@ -59,9 +60,10 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final listing =
-        await MyApi.getRequest(endpoint: 'parlourviewpage/${this.listingId}');
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final listing = await MyApi.getRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'parlourviewpage/${this.listingId}');
 
     // Update the state
     setState(() {
@@ -92,10 +94,10 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
     });
   }
 
-@override
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
   void showHierarchicalOptions(
@@ -171,11 +173,12 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                               ),
                               onTap: () async {
                                 final response = await MyApi.postRequest(
+                                    headers: {'Authorization': 'Bearer $token'},
                                     endpoint: 'add/Bookcart/',
                                     body: {
                                       'fid': function['id'].toString(),
                                       'uid':
-                                          await MyStorage.getToken('userId') ??
+                                          await MyStorage.getToken(MyTokens.userId) ??
                                               "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',

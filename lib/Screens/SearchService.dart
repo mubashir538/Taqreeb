@@ -7,6 +7,7 @@ import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/locationtextbox.dart';
 import 'package:taqreeb/Components/rangeSlider.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/Create%20AI%20Package/Components/checkbox%20question.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -62,9 +63,9 @@ class _SearchServiceState extends State<SearchService> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
+      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
       //  headers: {
       //   'Authorization': 'Bearer $token',
       // }

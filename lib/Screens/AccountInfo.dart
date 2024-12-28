@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
@@ -30,15 +31,17 @@ class _AccountInfoState extends State<AccountInfo> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final Userid = await MyStorage.getToken('userId') ?? "";
-    final user = await MyApi.getRequest(endpoint: 'accountInfo/$Userid');
+    final user = await MyApi.getRequest(
+        endpoint: 'accountInfo/$Userid',
+        headers: {'Authorization': 'Bearer $token'});
 
     // Update the state
     setState(() {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      isLoading = false;
 
       print(
           "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");

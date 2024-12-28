@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:crop_your_image/crop_your_image.dart';
@@ -32,6 +33,11 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   TextEditingController lastnameController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController locationcontroller = TextEditingController();
+  FocusNode fnameFocus = FocusNode();
+  FocusNode lastnameFocus = FocusNode();
+  FocusNode genderFocus = FocusNode();
+  FocusNode locationFocus = FocusNode();
+
   String token = '';
   Map<String, dynamic> user = {};
   String userId = '';
@@ -39,6 +45,19 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   String image = '';
 
   get http => null;
+
+  @override
+  void dispose() {
+    super.dispose();
+    fnamecontroller.dispose();
+    lastnameController.dispose();
+    genderController.dispose();
+    locationcontroller.dispose();
+    fnameFocus.dispose();
+    lastnameFocus.dispose();
+    genderFocus.dispose();
+    locationFocus.dispose();
+  }
 
   @override
   void initState() {
@@ -50,15 +69,16 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
 
   void fetchData() async {
     // Perform asynchronous operations
-    final token = await MyStorage.getToken('accessToken') ?? "";
-    final userid = await MyStorage.getToken('userId') ?? "";
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     this.userId = userid;
     final user = await MyApi.getRequest(
-      endpoint: 'accountInfo/$userid',
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
-    );
+        endpoint: 'accountInfo/$userid',
+        headers: {'Authorization': 'Bearer $token'}
+        //  headers: {
+        //   'Authorization': 'Bearer $token',
+        // }
+        );
 
     // Update the state
     setState(() {
@@ -204,7 +224,9 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       }
     } else {
       final response2 =
-          await MyApi.postRequest(endpoint: 'editaccountinfo/', body: {
+          await MyApi.postRequest(endpoint: 'editaccountinfo/', headers: {
+        'Authorization': 'Bearer $token'
+      }, body: {
         'userid': userId,
         'firstName': fnamecontroller.text,
         'lastName': lastnameController.text,
@@ -303,6 +325,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                           Column(
                             children: [
                               MyTextBox(
+                                  focusNode: fnameFocus,
+                                  onFieldSubmitted: (_) {
+                                  
+                                  },
                                   hint: 'First Name',
                                   valueController: fnamecontroller),
                               MyTextBox(

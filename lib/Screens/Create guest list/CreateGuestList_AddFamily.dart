@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/guests.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -129,8 +131,11 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
                   text: 'Done',
                   width: screenWidth * 0.7,
                   onPressed: () async {
+                    final token =
+                        await MyStorage.getToken(MyTokens.accessToken) ?? "";
                     for (int i = 0; i < guestList.length; i++) {
                       final response = await MyApi.postRequest(
+                          headers: {'Authorization': 'Bearer $token'},
                           endpoint: 'add/guests/',
                           body: {
                             'eid': eventId,
