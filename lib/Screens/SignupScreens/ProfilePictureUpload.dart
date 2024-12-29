@@ -138,37 +138,37 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
           request.files.add(await http.MultipartFile.fromPath(
             'cnicFront',
-            await MyStorage.getToken('bsfront') ?? "",
+            await MyStorage.getToken(MyTokens.bsfront) ?? "",
           ));
           request.files.add(await http.MultipartFile.fromPath(
             'cnicBack',
-            await MyStorage.getToken('bsback') ?? "",
+            await MyStorage.getToken(MyTokens.bsback) ?? "",
           ));
 
-          request.fields['id'] = await MyStorage.getToken('userId') ?? "";
+          request.fields['id'] = await MyStorage.getToken(MyTokens.userId) ?? "";
           request.fields['businessName'] =
-              await MyStorage.getToken('bsname') ?? "";
+              await MyStorage.getToken(MyTokens.bsname) ?? "";
           request.fields['username'] =
-              await MyStorage.getToken('bsusername') ?? "";
-          request.fields['cnic'] = await MyStorage.getToken('bscnic') ?? "";
+              await MyStorage.getToken(MyTokens.bsusername) ?? "";
+          request.fields['cnic'] = await MyStorage.getToken(MyTokens.bscnic) ?? "";
           request.fields['description'] =
-              await MyStorage.getToken('bsdescription') ?? "";
+              await MyStorage.getToken(MyTokens.bsdescription) ?? "";
         } else {
           request.fields['firstName'] =
-              await MyStorage.getToken('sfname') ?? "";
-          request.fields['lastName'] = await MyStorage.getToken('slname') ?? "";
+              await MyStorage.getToken(MyTokens.sfname) ?? "";
+          request.fields['lastName'] = await MyStorage.getToken(MyTokens.slname) ?? "";
           request.fields['password'] =
-              await MyStorage.getToken('spassword') ?? "";
+              await MyStorage.getToken(MyTokens.spassword) ?? "";
           request.fields['contactType'] =
-              await MyStorage.exists('semail') ? 'email' : 'phone';
+              await MyStorage.exists(MyTokens.semail) ? 'email' : 'phone';
           if (request.fields['contactType'] == 'email') {
-            request.fields['email'] = await MyStorage.getToken('semail') ?? "";
+            request.fields['email'] = await MyStorage.getToken(MyTokens.semail) ?? "";
           } else {
             request.fields['contactNumber'] =
-                await MyStorage.getToken('sphone') ?? "";
+                await MyStorage.getToken(MyTokens.sphone) ?? "";
           }
-          request.fields['city'] = await MyStorage.getToken('scity') ?? "";
-          request.fields['gender'] = await MyStorage.getToken('sgender') ?? "";
+          request.fields['city'] = await MyStorage.getToken(MyTokens.scity) ?? "";
+          request.fields['gender'] = await MyStorage.getToken(MyTokens.sgender) ?? "";
         }
         // Send the request
         final response = await request.send();
@@ -210,7 +210,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               MyStorage.saveToken(
                   jsonResponse['access'].toString(), MyTokens.accessToken);
               MyStorage.saveToken(jsonResponse['userId'].toString(), 'userId');
-              MyStorage.saveToken('user', 'userType');
+              MyStorage.saveToken(MyTokens.user, MyTokens.userType);
               MyStorage.deleteToken('spassword');
               MyStorage.deleteToken('sfname');
               MyStorage.deleteToken('slname');
