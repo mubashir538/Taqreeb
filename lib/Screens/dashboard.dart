@@ -51,7 +51,20 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (user == null || user['status'] == 'error') {
+        print('$user');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
     });
   }
 
@@ -146,7 +159,7 @@ class _DashboardState extends State<Dashboard> {
                               () {
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     '/ChatsScreen', ModalRoute.withName('/'));
-                            },
+                              },
                             ),
                             _buildOptionCard(
                               context,

@@ -44,19 +44,6 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
     });
   }
 
-
-  @override
-  void dispose() {
-    // Dispose controllers and focus nodes
-    cnicController.dispose();
-    profileNameController.dispose();
-    usernameController.dispose();
-    cnicFocusNode.dispose();
-    profileNameFocusNode.dispose();
-    usernameFocusNode.dispose();
-    super.dispose();
-  }
-
   void validateUsername() {
     final enteredUsername = usernameController.text.trim();
     if (enteredUsername.isNotEmpty && usernames.contains(enteredUsername)) {
@@ -81,10 +68,23 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
       // }
     );
     setState(() {
-      this.usernames =
-          fetchusernames['businessUsernames'].cast<String>().toList() ??
-              []; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (fetchusernames == null || fetchusernames['status'] == 'error') {
+        print('$fetchusernames');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        this.usernames =
+            fetchusernames['businessUsernames'].cast<String>().toList() ??
+                []; // Ensure no null data
+        isLoading = false; // Data has been fetched, so stop loading
+      }
     });
   }
 
@@ -161,8 +161,6 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                   height: (screenHeight * 0.05) + _headerHeight,
                 ),
                 MyTextBox(
-                 
-                  
                   hint: 'CNIC',
                   focusNode: cnicFocusNode,
                   isNum: true,
@@ -225,7 +223,8 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                       ).showDialogBox(context);
                     } else {
                       MyStorage.saveToken(cnicController.text, MyTokens.bscnic);
-                      MyStorage.saveToken(profileNameController.text, MyTokens.bsname);
+                      MyStorage.saveToken(
+                          profileNameController.text, MyTokens.bsname);
                       MyStorage.saveToken(
                           usernameController.text, MyTokens.bsusername);
                       Navigator.pushNamed(

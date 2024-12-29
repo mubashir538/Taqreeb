@@ -39,7 +39,20 @@ class _YourListingsState extends State<YourListings> {
     setState(() {
       this.token = token;
       this.listings = fetchedListings ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (listings == null || listings['status'] == 'error') {
+        print('$listings');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
     });
   }
 

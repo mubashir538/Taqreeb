@@ -47,14 +47,27 @@ class _SettingsState extends State<Settings> {
       //   'Authorization': 'Bearer $token',
       // }
     );
-    final isbusinessToken = await MyStorage.exists(MyTokens.isBusinessOwner) ?? "";
+    final isbusinessToken =
+        await MyStorage.exists(MyTokens.isBusinessOwner) ?? "";
     // Update the state
     setState(() {
       this.token = token;
       types = fetchedtype ?? {}; // Ensure no null data
-
-      businessOwnerSwitch = bool.parse(isbusinessToken.toString());
-      isLoading = false;
+      if (types == null || types['status'] == 'error') {
+        print('$types');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        businessOwnerSwitch = bool.parse(isbusinessToken.toString());
+        isLoading = false;
+      }
     });
   }
 

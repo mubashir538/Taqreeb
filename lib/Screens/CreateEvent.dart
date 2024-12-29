@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
@@ -38,28 +39,6 @@ class _CreateEventState extends State<CreateEvent> {
   FocusNode budgetFocus = FocusNode();
   FocusNode guestMinFocus = FocusNode();
   FocusNode guestMaxFocus = FocusNode();
-
-  @override
-  void dispose() {
-    themeColor.dispose();
-    eventNameController.dispose();
-    typeController.dispose();
-    dateController.dispose();
-    locationController.dispose();
-    descriptionController.dispose();
-    budgetController.dispose();
-    guestMinController.dispose();
-    guestMaxController.dispose();
-    themeColorFocus.dispose();
-    typeFocus.dispose();
-    dateFocus.dispose();
-    locationFocus.dispose();
-    descriptionFocus.dispose();
-    budgetFocus.dispose();
-    guestMinFocus.dispose();
-    guestMaxFocus.dispose();
-    super.dispose();
-  }
 
   String token = '';
   Map<String, dynamic> types = {};
@@ -105,7 +84,9 @@ class _CreateEventState extends State<CreateEvent> {
       if (edit) {
         print('Edit Screen');
         this.Event = EventDetails ?? {};
-        if (this.Event != {}) {
+        if (this.Event != {} ||
+            this.Event != null ||
+            this.Event['status'] != 'error') {
           eventNameController.text = this.Event['EventDetail']['name'];
           typeController.text = this.Event['EventDetail']['type'];
           dateController.text = this.Event['EventDetail']['date'];
@@ -120,10 +101,36 @@ class _CreateEventState extends State<CreateEvent> {
               this.Event['EventDetail']['guestsmin'].toString();
         }
       }
-      this.token = token;
-      this.types = types ?? {};
-      isLoading = false;
-      ischange = true;
+      if (Event == null || Event['status'] == 'error') {
+        print('$Event');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        this.token = token;
+        this.types = types ?? {};
+        if (types == null || types['status'] == 'error') {
+          print('$types');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Something Went Wrong!',
+                style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: MyColors.white,
+                    fontWeight: FontWeight.w400)),
+            backgroundColor: MyColors.red,
+          ));
+          return;
+        } else {
+          isLoading = false;
+          ischange = true;
+        }
+      }
     });
   }
 

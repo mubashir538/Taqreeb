@@ -26,7 +26,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
   bool isToggled = true;
   List<String> headings = [
     'Service Type',
-   ];
+  ];
   List<String> values = [];
   List<String> addonsheadings = [];
   List<String> addonsvalues = [];
@@ -72,25 +72,38 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     setState(() {
       this.token = token;
       this.listing = listing ?? {};
-      isLoading = false;
-      for (var i = 0; i < listing['pictures'].length; i++) {
-        this._imageUrls.add(listing['pictures'][i]['picturePath']);
-      }
-      for (var i = 0; i < listing['Addons'].length; i++) {
-        this.addonsheadings.add(listing['Addons'][i]['name']);
-        if (listing['Addons'][i]['isPer']) {
-          this.addonsvalues.add(
-              '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
-        } else {
-          this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+      if (listing == null || listing['status'] == 'error') {
+        print('$listing');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+        for (var i = 0; i < listing['pictures'].length; i++) {
+          this._imageUrls.add(listing['pictures'][i]['picturePath']);
         }
+        for (var i = 0; i < listing['Addons'].length; i++) {
+          this.addonsheadings.add(listing['Addons'][i]['name']);
+          if (listing['Addons'][i]['isPer']) {
+            this.addonsvalues.add(
+                '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
+          } else {
+            this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+          }
+        }
+        this.values.add(listing['View']['serviceType']);
+        this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
       }
-      this.values.add(listing['View']['serviceType']);
-      this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
     });
   }
 
@@ -173,9 +186,9 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                     },
                                     body: {
                                       'fid': function['id'].toString(),
-                                      'uid':
-                                          await MyStorage.getToken(MyTokens.userId) ??
-                                              "",
+                                      'uid': await MyStorage.getToken(
+                                              MyTokens.userId) ??
+                                          "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',
                                     });
@@ -774,6 +787,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
             ),
           ),
           Positioned(
+            top: 0,
               child: Header(
             key: _headerKey,
           )),

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
@@ -17,6 +20,7 @@ class YourEvents extends StatefulWidget {
 class _YourEventsState extends State<YourEvents> {
   String token = '';
   Map<String, dynamic> events = {}; // Initialize as empty map
+  Timer? _timer;
 
   bool isLoading = true; // Add a loading flag
   bool fetched = true;
@@ -40,20 +44,35 @@ class _YourEventsState extends State<YourEvents> {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
-        fetched = false;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!'),
-          backgroundColor: MyColors.red,
-        ));
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      // Update the state
+      if (mounted) {
+        setState(() {
+          if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
+            fetched = false;
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                'Something Went Wrong!',
+                style: GoogleFonts.montserrat(
+                  color: MyColors.white,
+                  fontSize: 15,
+                ),
+              ),
+              backgroundColor: MyColors.red,
+            ));
+          }
+          this.token = token;
+          this.events = fetchedEvents ?? {}; // Ensure no null data
+          isLoading = false; // Data has been fetched, so stop loading
+        });
       }
-      this.token = token;
-      this.events = fetchedEvents ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
-      print('Events: $events');
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();

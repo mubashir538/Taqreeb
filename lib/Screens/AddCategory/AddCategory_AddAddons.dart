@@ -24,19 +24,6 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
   FocusNode perheadFocus = FocusNode();
   FocusNode headtypeFocus = FocusNode();
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    priceController.dispose();
-    perheadController.dispose();
-    headtypeController.dispose();
-    nameFocus.dispose();
-    priceFocus.dispose();
-    perheadFocus.dispose();
-    headtypeFocus.dispose();
-    super.dispose();
-  }
-
   bool isPerhead = false;
   Map<String, dynamic> args = {};
 

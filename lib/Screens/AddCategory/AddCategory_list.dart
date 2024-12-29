@@ -38,24 +38,6 @@ class _AddcategoryListState extends State<AddcategoryList> {
   bool isLoading = true; // Add a loading flag
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    nameController.dispose();
-    descriptionController.dispose();
-    locationController.dispose();
-    priceminController.dispose();
-    pricemaxController.dispose();
-    typeController.dispose();
-    typeFocus.dispose();
-    nameFocus.dispose();
-    descriptionFocus.dispose();
-    locationFocus.dispose();
-    priceminFocus.dispose();
-    pricemaxFocus.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
@@ -71,7 +53,20 @@ class _AddcategoryListState extends State<AddcategoryList> {
     setState(() {
       this.token = token;
       this.categories = categories ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (categories == null || categories['status'] == 'error') {
+        print('$categories');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
     });
   }
 

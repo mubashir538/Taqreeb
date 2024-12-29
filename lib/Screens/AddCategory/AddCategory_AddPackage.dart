@@ -20,18 +20,7 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   FocusNode nameFocus = FocusNode();
   FocusNode detailsFocus = FocusNode();
   FocusNode priceFocus = FocusNode();
-  @override
-  void dispose() {
-    nameController.dispose();
-    detailsController.dispose();
-    priceController.dispose();
-    nameFocus.dispose();
-    detailsFocus.dispose();
-    priceFocus.dispose();
-    super.dispose();
-  }
-
-  Map<String, dynamic> args = {};
+   Map<String, dynamic> args = {};
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;

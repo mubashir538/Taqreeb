@@ -31,13 +31,7 @@ class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
     _startTimer();
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  void _startTimer() {
+ void _startTimer() {
     setState(() {
       _isResendEnabled = false;
       _remainingTime = 120; // Reset timer to 2 minutes

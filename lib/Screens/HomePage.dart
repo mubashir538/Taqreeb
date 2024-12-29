@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> demoImages = {}; // Initialize as empty map
   String token = '';
   bool isLoading = true; // Add a loading flag
+  List<String> myImages = [];
 
   @override
   void initState() {
@@ -63,9 +64,37 @@ class _HomePageState extends State<HomePage> {
       this.categories = fetchedCategories ?? {}; // Ensure no null data
       this.listings = fetchedListings ?? {}; // Ensure no null data
       this.demoImages = fetchedImages ?? {}; // Ensure no null data
-      print(demoImages);
-      isLoading = false; // Data has been fetched, so stop loading
+      if (fetchedCategories == null ||
+          fetchedCategories['status'] == 'error' ||
+          fetchedListings == null ||
+          fetchedListings['status'] == 'error' ||
+          fetchedImages == null ||
+          fetchedImages['status'] == 'error') {
+        print('$fetchedCategories');
+        print('$fetchedListings');
+        print('$fetchedImages');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        loadimages();
+        isLoading = false;
+      }
     });
+  }
+
+  void loadimages() async {
+    this.myImages = await demoImages['images'] // Filter items with "image"
+        .map((value) =>
+            '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
+        .cast<String>() // Extract "image" values
+        .toList();
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -124,138 +153,133 @@ class _HomePageState extends State<HomePage> {
                   isLoading
                       ? Center(
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                            valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
                           ),
                         )
                       : Column(
                           children: [
-                            Center(
-                              child: AutoImageSlider(
-                                imageUrls: demoImages[
-                                        'images'] // Filter items with "image"
-                                    .map((value) =>
-                                        '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
-                                    .cast<String>() // Extract "image" values
-                                    .toList(),
-                                height: screenHeight * 0.25,
-                              ),
-                            ),
-                            Center(
-                              child: Container(
-                                width: screenWidth * 0.95,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: screenHeight * 0.015),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Browse Categories',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.02,
-                                        fontWeight: FontWeight.w600,
-                                        color: MyColors.Yellow,
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, '/SearchService');
-                                      },
-                                      child: Text(
-                                        'See all',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: MaximumThing * 0.017,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.white,
+                            Column(
+                              children: [
+                                Center(
+                                  child: AutoImageSlider(
+                                    imageUrls: this.myImages,
+                                    height: screenHeight * 0.25,
+                                  ),
+                                ),
+                                Center(
+                                  child: Container(
+                                    width: screenWidth * 0.95,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: screenHeight * 0.015),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Browse Categories',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: MaximumThing * 0.02,
+                                            fontWeight: FontWeight.w600,
+                                            color: MyColors.Yellow,
+                                          ),
                                         ),
-                                      ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context, '/SearchService');
+                                          },
+                                          child: Text(
+                                            'See all',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: MaximumThing * 0.017,
+                                              fontWeight: FontWeight.w400,
+                                              color: MyColors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  height: screenHeight * 0.19,
+                                  child: ListView.builder(
+                                    itemBuilder: (context, index) =>
+                                        CategoryIcon(
+                                      onpressed: () {
+                                        Navigator.pushNamed(
+                                            context, '/SearchService',
+                                            arguments: {
+                                              'category':
+                                                  categories['categories']
+                                                      [index]['name'],
+                                            });
+                                      },
+                                      label: categories['categories'][index]
+                                          ['name'],
+                                      imageUrl:
+                                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                                    ),
+                                    itemCount: categories['categories'].length,
+                                    scrollDirection: Axis.horizontal,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.19,
-                              child: ListView.builder(
-                                itemBuilder: (context, index) => CategoryIcon(
-                                  onpressed: () {
-                                    Navigator.pushNamed(
-                                        context, '/SearchService',
-                                        arguments: {
-                                          'category': categories['categories']
-                                              [index]['name'],
-                                        });
+                            // Center(
+                            //   child: ColoredButton(
+                            //     onPressed: () {
+                            //       Navigator.pushNamed(context, '/CreateAIPackage');
+                            //     },
+                            //     text: 'Create Package with AI',
+                            //   ),
+                            // ),
+                            Center(
+                              child: SizedBox(
+                                width: screenWidth * 0.9,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: listings['HomeListing'].length,
+                                  itemBuilder: (context, index) {
+                                    return Productcard(
+                                      listingType: listings['HomeListing']
+                                              [index]['type']
+                                          .toString(),
+                                      listingid: listings['HomeListing'][index]
+                                              ['id']
+                                          .toString(),
+                                      imageUrl: listings['pictures'][index]
+                                                  .length !=
+                                              0
+                                          ? (listings['pictures'][index][0]
+                                                      ['picturePath'] ==
+                                                  " "
+                                              ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                              : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}')
+                                          : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+                                      venueName: listings['HomeListing'][index]
+                                          ['name'],
+                                      location: listings['HomeListing'][index]
+                                          ['location'],
+                                      type: listings['HomeListing'][index]
+                                              ['type']
+                                          .toString(),
+                                    );
                                   },
-                                  label: categories['categories'][index]
-                                      ['name'],
-                                  imageUrl:
-                                      '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
                                 ),
-                                itemCount: categories['categories'].length,
-                                scrollDirection: Axis.horizontal,
                               ),
                             ),
                           ],
-                        ),
-                  // Center(
-                  //   child: ColoredButton(
-                  //     onPressed: () {
-                  //       Navigator.pushNamed(context, '/CreateAIPackage');
-                  //     },
-                  //     text: 'Create Package with AI',
-                  //   ),
-                  // ),
-                  isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(MyColors.Yellow),
-                          ),
-                        )
-                      : Center(
-                          child: SizedBox(
-                            width: screenWidth * 0.9,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: listings['HomeListing'].length,
-                              itemBuilder: (context, index) {
-                                return Productcard(
-                                  listingType: listings['HomeListing'][index]
-                                          ['type']
-                                      .toString(),
-                                  listingid: listings['HomeListing'][index]
-                                          ['id']
-                                      .toString(),
-                                  imageUrl: listings['pictures'][index]
-                                              .length !=
-                                          0
-                                      ? (listings['pictures'][index][0]
-                                                  ['picturePath'] ==
-                                              " "
-                                          ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                          : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}')
-                                      : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
-                                  venueName: listings['HomeListing'][index]
-                                      ['name'],
-                                  location: listings['HomeListing'][index]
-                                      ['location'],
-                                  type: listings['HomeListing'][index]['type']
-                                      .toString(),
-                                );
-                              },
-                            ),
-                          ),
                         ),
                 ],
               ),
             ),
           Positioned(
+              top: 0,
               child: Header(
-            key: _headerKey,
-          )),
+                key: _headerKey,
+              )),
         ],
       ),
     );

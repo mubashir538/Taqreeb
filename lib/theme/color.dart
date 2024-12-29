@@ -20,8 +20,9 @@ class MyColors {
       MyColors.whiteDarker = Color(0xffd9d9d9);
       MyColors.Dark = Color(0xff18191A);
       MyColors.DarkLighter = Color(0xff242526);
-    } else {
-      await MyStorage.saveToken(MyTokens.Light, MyTokens.theme);                                                                                             n     );
+    } 
+    else {
+      await MyStorage.saveToken(MyTokens.Light, MyTokens.theme);
       MyColors.Dark = Color(0xffffffff);
       MyColors.DarkLighter = Color(0xffd9d9d9);
       MyColors.white = Color(0xff18191A);

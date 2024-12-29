@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -67,7 +68,20 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
     setState(() {
       this.token = token;
       this.guests = fetchedGuests ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (guests == null || guests['status'] == 'error') {
+        print('$guests');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
     });
   }
 

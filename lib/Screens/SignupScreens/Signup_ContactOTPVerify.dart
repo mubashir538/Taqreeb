@@ -31,12 +31,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
     _startTimer();
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
+  
   void _startTimer() {
     setState(() {
       _isResendEnabled = false;

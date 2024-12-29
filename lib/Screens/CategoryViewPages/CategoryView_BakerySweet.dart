@@ -74,15 +74,28 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
     setState(() {
       this.token = token;
       this.listing = listing ?? {};
-      isLoading = false;
-      for (var i = 0; i < listing['pictures'].length; i++) {
-        this._imageUrls.add(listing['pictures'][i]['picturePath']);
+      if (listing == null || listing['status'] == 'error') {
+        print('$listing');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+        for (var i = 0; i < listing['pictures'].length; i++) {
+          this._imageUrls.add(listing['pictures'][i]['picturePath']);
+        }
+        this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
       }
-      this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
     });
   }
 
@@ -165,9 +178,9 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
                                     },
                                     body: {
                                       'fid': function['id'].toString(),
-                                      'uid':
-                                          await MyStorage.getToken(MyTokens.userId) ??
-                                              "",
+                                      'uid': await MyStorage.getToken(
+                                              MyTokens.userId) ??
+                                          "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',
                                     });
@@ -710,6 +723,7 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
             ),
           ),
           Positioned(
+            top: 0,
               child: Header(
             key: _headerKey,
           )),

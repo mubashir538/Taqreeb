@@ -159,7 +159,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   ),
                 ),
                 isCheckingContacts
-                    ? Center(child: CircularProgressIndicator())
+                    ?Center(child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(MyColors.white),
+                      ),)
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),

@@ -74,7 +74,18 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     setState(() {
       this.token = token;
       this.listing = listing ?? {};
-      if (listing != null) {
+      if (listing == null || listing['status'] == 'error') {
+        print('$listing');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
         this.events = listing['View'];
         isLoading = false;
         for (var i = 0; i < listing['pictures'].length; i++) {
@@ -782,6 +793,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
             ),
           ),
           Positioned(
+            top: 0,
               child: Header(
             key: _headerKey,
           )),

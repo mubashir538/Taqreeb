@@ -22,16 +22,7 @@ class _FreelancerSignup_BasicInfoState
   FocusNode fullnameFocus = FocusNode();
   FocusNode usernameFocus = FocusNode();
   FocusNode portfolioFocus = FocusNode();
-  @override
-  void dispose() {
-    fullnamecontroller.dispose();
-    usernamecontroller.dispose();
-    portfoliocontroller.dispose();
-    fullnameFocus.dispose();
-    usernameFocus.dispose();
-    portfolioFocus.dispose();
-    super.dispose();
-  }
+ 
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;

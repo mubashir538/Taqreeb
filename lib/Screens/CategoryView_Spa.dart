@@ -910,6 +910,7 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
             ),
           ),
           Positioned(
+            top: 0,
               child: Header(
             key: _headerKey,
           )),
