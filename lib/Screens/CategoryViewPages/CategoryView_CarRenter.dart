@@ -26,10 +26,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
   bool isToggled = true;
   List<String> headings = [
     'Service Type',
-    'Catering Options',
-    'Staff',
-    'Expertise'
-  ];
+   ];
   List<String> values = [];
   List<String> addonsheadings = [];
   List<String> addonsvalues = [];
@@ -53,7 +50,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 1;
     });
     fetchData();
   }
@@ -90,9 +86,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
         }
       }
       this.values.add(listing['View']['serviceType']);
-      this.values.add(listing['View']['cateringOptions']);
-      this.values.add(listing['View']['staff']);
-      this.values.add(listing['View']['expertise']);
       this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');

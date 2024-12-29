@@ -110,6 +110,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
           children: [
             SingleChildScrollView(
               child: Container(
+                width: screenWidth,
                 child: Column(
                   children: [
                     SizedBox(height: _headerHeight),
@@ -418,6 +419,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
               ),
             ),
             Positioned(
+              top: 0,
               child: Header(
                 key: _headerKey,
                 heading: "Your Function Details",

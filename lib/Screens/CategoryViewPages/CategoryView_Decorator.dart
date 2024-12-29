@@ -1,4 +1,3 @@
-
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,10 +26,9 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   int _currentIndex = 0;
   bool isToggled = true;
   List<String> headings = [
-    'Service Type',
-    'Catering Options',
+    'Decor Type',
+    'Catering',
     'Staff',
-    'Expertise'
   ];
   List<String> values = [];
   List<String> addonsheadings = [];
@@ -60,7 +58,6 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 31;
     });
     fetchData();
   }
@@ -90,10 +87,9 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
           this.addonsvalues.add(listing['Addons'][i]['price'].toString());
         }
       }
-      this.values.add(listing['View']['serviceType']);
-      this.values.add(listing['View']['cateringOptions']);
+      this.values.add(listing['View']['decorType']);
+      this.values.add(listing['View']['catering']);
       this.values.add(listing['View']['staff']);
-      this.values.add(listing['View']['expertise']);
       this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
@@ -179,9 +175,9 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                     endpoint: 'add/Bookcart/',
                                     body: {
                                       'fid': function['id'].toString(),
-                                      'uid':
-                                          await MyStorage.getToken(MyTokens.userId) ??
-                                              "",
+                                      'uid': await MyStorage.getToken(
+                                              MyTokens.userId) ??
+                                          "",
                                       'lid': listingId.toString(),
                                       'type': 'Decorator',
                                       'slot': selectedDate.toString(),

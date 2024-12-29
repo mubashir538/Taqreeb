@@ -28,7 +28,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   @override
   void dispose() {
     _textController.dispose();
-    _textFocus.dispose();
     super.dispose();
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -59,7 +58,6 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 1;
     });
     fetchData();
   }
@@ -76,28 +74,31 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     setState(() {
       this.token = token;
       this.listing = listing ?? {};
-      isLoading = false;
-      for (var i = 0; i < listing['pictures'].length; i++) {
-        this._imageUrls.add(listing['pictures'][i]['picturePath']);
-      }
-      for (var i = 0; i < listing['Addons'].length; i++) {
-        this.addonsheadings.add(listing['Addons'][i]['name']);
-        if (listing['Addons'][i]['isPer']) {
-          this.addonsvalues.add(
-              '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
-        } else {
-          this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+      if (listing != null) {
+        this.events = listing['View'];
+        isLoading = false;
+        for (var i = 0; i < listing['pictures'].length; i++) {
+          this._imageUrls.add(listing['pictures'][i]['picturePath']);
         }
+        for (var i = 0; i < listing['Addons'].length; i++) {
+          this.addonsheadings.add(listing['Addons'][i]['name']);
+          if (listing['Addons'][i]['isPer']) {
+            this.addonsvalues.add(
+                '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
+          } else {
+            this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+          }
+        }
+        this.values.add(listing['View']['serviceType']);
+        this.values.add(listing['View']['cateringOptions']);
+        this.values.add(listing['View']['staff']);
+        this.values.add(listing['View']['expertise']);
+        this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
+        this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
       }
-      this.values.add(listing['View']['serviceType']);
-      this.values.add(listing['View']['cateringOptions']);
-      this.values.add(listing['View']['staff']);
-      this.values.add(listing['View']['expertise']);
-      this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-      this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
     });
   }
 
@@ -180,9 +181,9 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                                     },
                                     body: {
                                       'fid': function['id'].toString(),
-                                      'uid':
-                                          await MyStorage.getToken(MyTokens.userId) ??
-                                              "",
+                                      'uid': await MyStorage.getToken(
+                                              MyTokens.userId) ??
+                                          "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',
                                     });

@@ -51,7 +51,6 @@ class _CreateEventState extends State<CreateEvent> {
     guestMinController.dispose();
     guestMaxController.dispose();
     themeColorFocus.dispose();
-    eventNameFocus.dispose();
     typeFocus.dispose();
     dateFocus.dispose();
     locationFocus.dispose();

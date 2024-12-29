@@ -31,7 +31,6 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   void dispose() {
     personcontroller.dispose();
     contactcontroller.dispose();
-    personFocus.dispose();
     contactFocus.dispose();
     super.dispose();
   }

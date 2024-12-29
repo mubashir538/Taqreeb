@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
@@ -29,6 +30,7 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
     priceFocus.dispose();
     super.dispose();
   }
+
   Map<String, dynamic> args = {};
 
   final GlobalKey _headerKey = GlobalKey();
@@ -89,13 +91,12 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
                     hint: 'Name',
                     valueController: nameController,
                   ),
-                  MyTextBox(
+                  DescriptionBox(
+                    valueController: detailsController,
                     focusNode: detailsFocus,
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(priceFocus);
                     },
-                    hint: 'Details',
-                    valueController: detailsController,
                   ),
                   MyTextBox(
                     focusNode: priceFocus,
