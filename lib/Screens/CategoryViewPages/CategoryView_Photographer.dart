@@ -27,10 +27,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
   int _currentIndex = 0;
   bool isToggled = true;
   List<String> headings = [
-    'Service Type',
-    'Catering Options',
-    'Staff',
-    'Expertise'
+    'portfolio Link',
   ];
   List<String> values = [];
   List<String> addonsheadings = [];
@@ -60,7 +57,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 1;
     });
     fetchData();
   }
@@ -70,13 +66,14 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'PhotographyPlaces/${this.listingId}');
+        endpoint: 'Photographer/viewpage/${this.listingId}');
 
     // Update the state
     setState(() {
       this.token = token;
       this.listing = listing ?? {};
       isLoading = false;
+      
       for (var i = 0; i < listing['pictures'].length; i++) {
         this._imageUrls.add(listing['pictures'][i]['picturePath']);
       }
@@ -89,10 +86,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
           this.addonsvalues.add(listing['Addons'][i]['price'].toString());
         }
       }
-      this.values.add(listing['View']['serviceType']);
-      this.values.add(listing['View']['cateringOptions']);
-      this.values.add(listing['View']['staff']);
-      this.values.add(listing['View']['expertise']);
+      this.values.add(listing['View']['portfolioLink']);
       this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
       this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');

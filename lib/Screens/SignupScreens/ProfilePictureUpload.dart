@@ -131,6 +131,11 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
         if (type == 'freelancer') {
         } else if (type == 'Business') {
+          final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+          request.headers.addAll({
+            'Authorization': 'Bearer $token', // Example header
+          });
+
           request.files.add(await http.MultipartFile.fromPath(
             'cnicFront',
             await MyStorage.getToken(MyTokens.bsfront) ?? "",
@@ -171,8 +176,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         final responseBody = await response.stream.bytesToString();
         final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
 
-        if (response.statusCode == 200) {
           print('Your Response: $jsonResponse');
+        if (response.statusCode == 200) {
           if (jsonResponse['status'] == 'error') {
             warningDialog(
               title: 'Error',

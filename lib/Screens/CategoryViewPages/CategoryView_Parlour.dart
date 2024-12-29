@@ -53,7 +53,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 1;
+  
     });
     fetchData();
   }

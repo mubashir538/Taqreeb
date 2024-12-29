@@ -144,8 +144,9 @@ class _DashboardState extends State<Dashboard> {
                               Icons.message,
                               MyColors.red,
                               () {
-                                Navigator.pushNamed(context, '/ChatsScreen');
-                              },
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    '/ChatsScreen', ModalRoute.withName('/'));
+                            },
                             ),
                             _buildOptionCard(
                               context,

@@ -33,33 +33,55 @@ class MyTextBox extends StatefulWidget {
 
 class _MyTextBoxState extends State<MyTextBox> {
   bool _isObscured = true;
+  late FocusNode _focusNode;
+  bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
     _isObscured = widget.isPassword; // Initialize based on isPassword
+    _focusNode =
+        widget.focusNode ?? FocusNode(); // Use provided focusNode or create one
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose(); // Dispose of the focusNode if it's created locally
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
+    double maximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+      margin: EdgeInsets.symmetric(vertical: maximumThing * 0.01),
       height: screenHeight * 0.06,
       width: screenWidth * 0.9,
       decoration: BoxDecoration(
         color: MyColors.DarkLighter,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: _isFocused
+              ? MyColors.red
+              : Colors.transparent, // Dynamic border color
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.4),
-              blurRadius: 4,
-              spreadRadius: 1,
-              offset: Offset(2, 2)),
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 4,
+            spreadRadius: 1,
+            offset: Offset(2, 2),
+          ),
         ],
       ),
       child: Padding(
@@ -69,7 +91,7 @@ class _MyTextBoxState extends State<MyTextBox> {
             Expanded(
               child: TextField(
                 controller: widget.valueController,
-                focusNode: widget.focusNode,
+                focusNode: _focusNode,
                 onSubmitted: widget.onFieldSubmitted,
                 obscureText: widget.isPassword ? _isObscured : false,
                 keyboardType: widget.isNum
@@ -87,7 +109,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                           ]
                         : null,
                 style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.018,
+                  fontSize: maximumThing * 0.018,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
                 ),
@@ -95,12 +117,9 @@ class _MyTextBoxState extends State<MyTextBox> {
                   hintText: widget.hint,
                   hintStyle: GoogleFonts.montserrat(
                     color: MyColors.white.withOpacity(0.6),
-                    fontSize: MaximumThing * 0.015,
+                    fontSize: maximumThing * 0.015,
                   ),
-                  border: InputBorder.none,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyColors.red),
-                  ),
+                  border: InputBorder.none, // Remove internal border
                 ),
               ),
             ),

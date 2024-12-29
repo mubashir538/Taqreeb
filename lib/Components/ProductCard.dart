@@ -40,23 +40,23 @@ class _ProductcardState extends State<Productcard> {
         String path = '';
         if (widget.listingType == "Venue") {
           path = '/CategoryView_Venue';
-        } else if (widget.listingType == "Graphic Designers") {
+        } else if (widget.listingType == "Graphic Designer") {
           path = '/CategoryView_GraphicDesigner';
-        } else if (widget.listingType == "Video Editors") {
+        } else if (widget.listingType == "Video Editor") {
           path = '/CategoryView_VideoEditor';
         } else if (widget.listingType == "Bakers And Sweets") {
           path = '/CategoryView_BakerySweet';
-        } else if (widget.listingType == "Salons") {
+        } else if (widget.listingType == "Salon") {
           path = '/CategoryView_Salon';
-        } else if (widget.listingType == "Parlors") {
+        } else if (widget.listingType == "Parlor") {
           path = '/CategoryView_Parlour';
-        } else if (widget.listingType == "Decorators") {
+        } else if (widget.listingType == "Decorator") {
           path = '/CategoryView_Decorator';
-        } else if (widget.listingType == "Car Renters") {
+        } else if (widget.listingType == "Car Renter") {
           path = '/CategoryView_CarRenter';
-        } else if (widget.listingType == "Photographers") {
+        } else if (widget.listingType == "Photographer") {
           path = '/CategoryView_Photographer';
-        } else if (widget.listingType == "Caterers") {
+        } else if (widget.listingType == "Caterer") {
           path = '/CategoryView_Caterers';
         }
         // else if (widget.listingType == "Function") {

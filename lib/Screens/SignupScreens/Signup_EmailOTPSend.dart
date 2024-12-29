@@ -19,6 +19,13 @@ class Signup_EmailOTPSend extends StatefulWidget {
 
 class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
   TextEditingController emailController = TextEditingController();
+  FocusNode emailFocus = FocusNode();
+  @override
+  void dispose() {
+    emailController.dispose();
+    emailFocus.dispose();
+    super.dispose();
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -65,6 +72,10 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
                         height: screenHeight * 0.05,
                       ),
                       MyTextBox(
+                        focusNode: emailFocus,
+                        onFieldSubmitted: (value) {
+                          emailFocus.unfocus();
+                        },
                         hint: 'Email',
                         valueController: emailController,
                       ),

@@ -14,6 +14,13 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final TextEditingController phoneController = TextEditingController();
+  FocusNode phoneFocus = FocusNode();
+  @override
+  void dispose() {
+    phoneController.dispose();
+    phoneFocus.dispose();
+    super.dispose();
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -53,6 +60,10 @@ class _OTPScreenState extends State<OTPScreen> {
           children: [
             SizedBox(height: 20),
             MyTextBox(
+              focusNode: phoneFocus,
+              onFieldSubmitted: (_){
+                phoneFocus.unfocus();
+              },
               hint: 'Enter your phone number',
               isNum: true,
               valueController: phoneController,

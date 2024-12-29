@@ -6,9 +6,13 @@ class ResponsiveDropdown extends StatefulWidget {
   final List<String> items;
   final String labelText;
   final Function(String) onChanged;
+  final Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
 
   const ResponsiveDropdown({
     Key? key,
+    this.onFieldSubmitted,
+    this.focusNode,
     required this.items,
     required this.labelText,
     required this.onChanged,
@@ -31,6 +35,8 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
       width: screenWidth * 0.9, // Make the dropdown responsive
       padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
       child: DropdownButtonFormField<String>(
+        focusNode: widget.focusNode,
+        onSaved: (value) => widget.onFieldSubmitted,
         decoration: InputDecoration(
           labelText: widget.labelText,
           labelStyle: GoogleFonts.montserrat(

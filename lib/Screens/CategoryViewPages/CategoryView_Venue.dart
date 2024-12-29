@@ -72,7 +72,8 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
 
     final events = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'YourEvents/functions/${await MyStorage.getToken(MyTokens.userId)}');
+        endpoint:
+            'YourEvents/functions/${await MyStorage.getToken(MyTokens.userId)}');
     // Update the state
     setState(() {
       this.token = token;
@@ -186,9 +187,9 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                     endpoint: 'add/Bookcart/',
                                     body: {
                                       'fid': function['id'].toString(),
-                                      'uid':
-                                          await MyStorage.getToken(MyTokens.userId) ??
-                                              "",
+                                      'uid': await MyStorage.getToken(
+                                              MyTokens.userId) ??
+                                          "",
                                       'lid': listingId.toString(),
                                       'type': 'Venue',
                                       'slot': selectedDate.toString(),
@@ -280,7 +281,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                       },
                                       itemBuilder: (context, index) {
                                         return Image.network(
-                                          _imageUrls[index],
+                                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_imageUrls[index]}',
                                           fit: BoxFit.cover,
                                         );
                                       },

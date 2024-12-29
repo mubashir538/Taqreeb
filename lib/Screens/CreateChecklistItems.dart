@@ -23,6 +23,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   List<Map<String, dynamic>> changedFields = [];
   String token = '';
   final TextEditingController _textController = TextEditingController();
+  FocusNode _textFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;
@@ -154,7 +162,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           ),
         ),
         content: MyTextBox(
-            hint: 'Enter Checklist Item', valueController: _textController),
+            focusNode: _textFocus,
+            onFieldSubmitted: (_) {
+              FocusScope.of(context).unfocus();
+            },
+            hint: 'Enter Checklist Item',
+            valueController: _textController),
         actions: [
           TextButton(
             onPressed: () {

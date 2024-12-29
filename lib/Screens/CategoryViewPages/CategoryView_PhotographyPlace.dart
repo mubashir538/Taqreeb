@@ -61,7 +61,6 @@ class _CategoryView_PhotographyPlaceState
     final args = ModalRoute.of(context)!.settings.arguments as int?;
     setState(() {
       listingId = args;
-      listingId = 1;
     });
     fetchData();
   }
@@ -71,7 +70,7 @@ class _CategoryView_PhotographyPlaceState
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'PhotographyPlaces/${this.listingId}');
+        endpoint: 'PhotographyPlaces/viewpage/${this.listingId}');
 
     // Update the state
     setState(() {

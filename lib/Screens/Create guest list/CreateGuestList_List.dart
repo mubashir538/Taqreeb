@@ -185,9 +185,12 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
               ),
             ),
           ),
-          Header(
-            key: _headerKey,
-            heading: 'Guest List',
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: 'Guest List',
+            ),
           ),
         ],
       ),
