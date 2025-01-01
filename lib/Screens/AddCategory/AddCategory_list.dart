@@ -36,25 +36,8 @@ class _AddcategoryListState extends State<AddcategoryList> {
   String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    nameController.dispose();
-    descriptionController.dispose();
-    locationController.dispose();
-    priceminController.dispose();
-    pricemaxController.dispose();
-    typeController.dispose();
-    typeFocus.dispose();
-    nameFocus.dispose();
-    descriptionFocus.dispose();
-    locationFocus.dispose();
-    priceminFocus.dispose();
-    pricemaxFocus.dispose();
-  }
-
+  String type = "";
+  
   @override
   void initState() {
     super.initState();
@@ -64,14 +47,28 @@ class _AddcategoryListState extends State<AddcategoryList> {
 
   void fetchCategories() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
+    type = await MyTokens.getBusinessType();
     final categories = await MyApi.getRequest(
-      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
+      endpoint: 'business/categories/$type', headers: {'Authorization': 'Bearer $token'},
       //  headers: {'Authorization': 'Bearer $token'}
     );
     setState(() {
       this.token = token;
       this.categories = categories ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (categories == null || categories['status'] == 'error') {
+        print('$categories');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
     });
   }
 
@@ -192,12 +189,12 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       ));
                       return;
                     }
-                    // if (charactersleft > 1050) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    //     content: Text('Description is too Short'),
-                    //   ));
-                    //   return;
-                    // }
+                    if (charactersleft > 1050) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Description is too Short'),
+                      ));
+                      return;
+                    }
                     if (charactersleft < 0) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('Description is too Long'),

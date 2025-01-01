@@ -23,6 +23,26 @@ class DescriptionBox extends StatefulWidget {
 }
 
 class _DescriptionStateBox extends State<DescriptionBox> {
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose(); // Dispose of the focusNode if it's created locally
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -39,6 +59,12 @@ class _DescriptionStateBox extends State<DescriptionBox> {
           vertical: maximumDimension * 0.02),
       decoration: BoxDecoration(
         color: MyColors.DarkLighter,
+        border: Border.all(
+          color: _isFocused
+              ? MyColors.red
+              : Colors.transparent, // Dynamic border color
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -50,7 +76,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         ],
       ),
       child: TextField(
-        focusNode: widget.focusNode,
+        focusNode: _focusNode,
         onSubmitted: widget.onFieldSubmitted,
         controller: widget.valueController, // Bind controller
         onChanged: (value) => widget.onChanged!(value),
@@ -66,9 +92,6 @@ class _DescriptionStateBox extends State<DescriptionBox> {
             color: MyColors.white.withOpacity(0.6),
             fontSize: maximumDimension * 0.015,
             fontWeight: FontWeight.w300,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: MyColors.red),
           ),
           hintText: "Enter Description",
         ),

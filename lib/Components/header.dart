@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
@@ -83,7 +86,14 @@ class _HeaderState extends State<Header> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    try {
+                      Navigator.pop(context);
+                    } catch (e) {
+                      SystemNavigator.pop();
+                      exit(0);
+                    }
+                  },
                   child: Icon(Icons.chevron_left_outlined,
                       color: MyColors.redonWhite, size: MaximumThing * 0.03),
                 ),
@@ -119,6 +129,10 @@ class _HeaderState extends State<Header> {
                                           MyTokens.accessToken);
                                       await MyStorage.deleteToken(
                                           MyTokens.userId);
+                                      await MyStorage.deleteToken(
+                                          MyTokens.userType);
+                                      await MyStorage.deleteToken(
+                                          MyTokens.isBusinessOwner);
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil('/Login',
                                               (Route<dynamic> route) => false);

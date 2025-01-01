@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
 
@@ -17,21 +21,11 @@ class FreelancerSignup_BasicInfo extends StatefulWidget {
 class _FreelancerSignup_BasicInfoState
     extends State<FreelancerSignup_BasicInfo> {
   TextEditingController fullnamecontroller = TextEditingController();
-  TextEditingController usernamecontroller = TextEditingController();
+  TextEditingController cniccontroller = TextEditingController();
   TextEditingController portfoliocontroller = TextEditingController();
   FocusNode fullnameFocus = FocusNode();
-  FocusNode usernameFocus = FocusNode();
+  FocusNode cnicFocus = FocusNode();
   FocusNode portfolioFocus = FocusNode();
-  @override
-  void dispose() {
-    fullnamecontroller.dispose();
-    usernamecontroller.dispose();
-    portfoliocontroller.dispose();
-    fullnameFocus.dispose();
-    usernameFocus.dispose();
-    portfolioFocus.dispose();
-    super.dispose();
-  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -49,7 +43,46 @@ class _FreelancerSignup_BasicInfoState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getHeaderHeight();
+
+      check(context);
+    });
+  }
+
+  void check(BuildContext context) async {
+    if (await MyStorage.exists(MyTokens.bscnic) &&
+        await MyStorage.exists(MyTokens.bsusername) &&
+        await MyStorage.exists(MyTokens.bsname)) {
+      warningDialog(
+        title: 'Fresh Start',
+        message:
+            'We noticed that you had lately attempted to do Freelancer Signup in the app Do you want to continue where you left or want a Fresh Start?',
+        actions: [
+          ColoredButton(
+            text: 'Fresh Start',
+            onPressed: () {
+              MyStorage.deleteToken(MyTokens.fscnic);
+              MyStorage.deleteToken(MyTokens.fsname);
+              MyStorage.deleteToken(MyTokens.fsdescription);
+
+              Navigator.pop(context);
+            },
+          ),
+          ColoredButton(
+            text: 'Continue',
+            onPressed: () async {
+              if (await MyStorage.exists(MyTokens.fsdescription)) {
+                Navigator.pushNamed(context, '/ProfilePictureUpload',
+                    arguments: {'type': 'Freelancer'});
+              } else {
+                Navigator.pushNamed(context, '/FreelancerSignup_Description');
+              }
+            },
+          )
+        ],
+      ).showDialogBox(context);
+    }
   }
 
   @override
@@ -64,47 +97,74 @@ class _FreelancerSignup_BasicInfoState
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: (MaximumThing * 0.05) + _headerHeight,
-                ),
-                MyTextBox(
-                  focusNode: fullnameFocus,
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(context).requestFocus(usernameFocus);
-                  },
-                  hint: "Enter Full Business Name",
-                  valueController: fullnamecontroller,
-                ),
-                MyTextBox(
-                  focusNode: usernameFocus,
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(context).requestFocus(portfolioFocus);
-                  },
-                  hint: "Enter Username",
-                  valueController: usernamecontroller,
-                ),
-                MyTextBox(
-                  focusNode: portfolioFocus, 
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(context).unfocus();
-                  },
-                  hint: "Enter Portfolio Link",
-                  valueController: portfoliocontroller,
-                ),
-                SizedBox(
-                  height: screenHeight * 0.05,
-                  child: MyDivider(),
-                ),
-                ColoredButton(
-                  text: "Continue",
-                  onPressed: () {
-                    Navigator.pushNamed(
-                        context, '/FreelancerSignup_Description');
-                  },
-                )
-              ],
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: (MaximumThing * 0.05) + _headerHeight,
+                  ),
+                  MyTextBox(
+                    focusNode: fullnameFocus,
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(cnicFocus);
+                    },
+                    hint: "Enter Business Name",
+                    valueController: fullnamecontroller,
+                  ),
+                  MyTextBox(
+                    focusNode: cnicFocus,
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(portfolioFocus);
+                    },
+                    hint: "Enter CNIC Number",
+                    valueController: cniccontroller,
+                  ),
+                  MyTextBox(
+                    focusNode: portfolioFocus,
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).unfocus();
+                    },
+                    hint: "Enter Portfolio Link",
+                    valueController: portfoliocontroller,
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                    child: MyDivider(),
+                  ),
+                  ColoredButton(
+                    text: "Continue",
+                    onPressed: () {
+                      if (cniccontroller.text.isEmpty ||
+                          fullnamecontroller.text.isEmpty ||
+                          portfoliocontroller.text.isEmpty) {
+                        warningDialog(
+                          message: "Please fill all the details",
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else if (Validations.validateCNIC(
+                              cniccontroller.text) !=
+                          'Ok') {
+                        warningDialog(
+                          message:
+                              Validations.validateCNIC(cniccontroller.text),
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else {
+                        MyStorage.saveToken(
+                            cniccontroller.text, MyTokens.fscnic);
+                        MyStorage.saveToken(
+                            fullnamecontroller.text, MyTokens.fsname);
+                        MyStorage.saveToken(
+                            portfoliocontroller.text, MyTokens.fsportfolio);
+
+                        Navigator.pushNamed(
+                            context, '/FreelancerSignup_Description');
+                      }
+                    },
+                  )
+                ],
+              ),
             ),
           ),
           Positioned(

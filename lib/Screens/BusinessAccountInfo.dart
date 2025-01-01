@@ -20,7 +20,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   Map<String, dynamic> user = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
   List<String> items = [];
-
+  String type = "";
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
@@ -32,8 +32,9 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    type = await MyTokens.getBusinessType();
     final user = await MyApi.getRequest(
-      endpoint: 'businessowner/accountInfo/$Userid',
+      endpoint: 'businessowner/accountInfo/$Userid/$type',
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -41,8 +42,21 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     setState(() {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
-      this.items = user['categories'].cast<String>().toList() ?? [];
-      isLoading = false; // Data has been fetched, so stop loading
+      if (user == null || user['status'] == 'error') {
+        print('$user');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        this.items = user['categories'].cast<String>().toList() ?? [];
+        isLoading = false;
+      }
     });
   }
 
@@ -93,7 +107,9 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                         CircleAvatar(
                           radius: 50,
                           backgroundImage: NetworkImage(
-                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
+                            type == 'freelancer'
+                                ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilePic']}'
+                                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
                           ),
                         ),
                         SizedBox(
@@ -106,14 +122,14 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                               fontWeight: FontWeight.w500,
                               fontSize: MaximumThing * 0.03),
                         ),
-                        Text(user['businessInfo']['businessUsername'],
-                            style: style),
                         MyDivider(),
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: screenWidth * 0.04),
                           child: Text(
-                            user['businessInfo']['Description'],
+                            type == 'freelancer'
+                                ? user['businessInfo']['description']
+                                : user['businessInfo']['Description'],
                             style: style,
                             textAlign: TextAlign.center,
                           ),
@@ -133,28 +149,42 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                   style: style,
                                 )
                               ]),
-                              SizedBox(
-                                height: screenHeight * 0.015,
-                              ),
-                              Row(children: [
-                                Icon(Icons.mail, color: MyColors.white),
-                                SizedBox(width: screenWidth * 0.02),
-                                Text(user['userinfo']['email'], style: style)
-                              ]),
-                              SizedBox(
-                                height: screenHeight * 0.015,
-                              ),
-                              Row(children: [
-                                Icon(
-                                  Icons.phone,
-                                  color: MyColors.white,
-                                ),
-                                SizedBox(width: screenWidth * 0.02),
-                                Text(
-                                    user['userinfo']['contactNumber']
-                                        .toString(),
-                                    style: style)
-                              ]),
+                              user['userinfo']['email'] == null
+                                  ? Container()
+                                  : Column(
+                                      children: [
+                                        SizedBox(
+                                          height: screenHeight * 0.015,
+                                        ),
+                                        Row(children: [
+                                          Icon(Icons.mail,
+                                              color: MyColors.white),
+                                          SizedBox(width: screenWidth * 0.02),
+                                          Text(user['userinfo']['email'],
+                                              style: style)
+                                        ]),
+                                      ],
+                                    ),
+                              user['userinfo']['contactNumber'] == null
+                                  ? Container()
+                                  : Column(
+                                      children: [
+                                        SizedBox(
+                                          height: screenHeight * 0.015,
+                                        ),
+                                        Row(children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: MyColors.white,
+                                          ),
+                                          SizedBox(width: screenWidth * 0.02),
+                                          Text(
+                                              user['userinfo']['contactNumber']
+                                                  .toString(),
+                                              style: style)
+                                        ]),
+                                      ],
+                                    ),
                             ],
                           ),
                         ),

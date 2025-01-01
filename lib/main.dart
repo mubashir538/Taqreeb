@@ -20,6 +20,7 @@ import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Photographer.dart
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_PhotographyPlace.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Saloon.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_VideoEditor.dart';
+import 'package:taqreeb/Screens/CreateGroup.dart';
 import 'package:taqreeb/Screens/Dashboard.dart';
 import 'package:taqreeb/Screens/AccountInfoEdit.dart';
 import 'package:taqreeb/Screens/BusinessAccountInfo.dart';
@@ -32,7 +33,7 @@ import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Venue.dart';
 import 'package:taqreeb/Screens/BakerySweet_Products.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_CarRenter.dart';
 import 'package:taqreeb/Screens/ChatBox.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/CreateAIPackage.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/CreateAIPackage.dart';
 import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList.dart';
 import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_AddFamily.dart';
 import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_List.dart';
@@ -58,24 +59,26 @@ import 'package:taqreeb/Screens/SignupScreens/Signup_EmailOTPVerify.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_EmailOTPSend.dart';
 import 'package:taqreeb/Screens/SignupScreens/Signup_MoreInfo.dart';
 import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
-import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_EventDetail.dart';
-import 'package:taqreeb/Screens/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
-import 'package:taqreeb/Screens/View%20AI%20Packages/ViewAIPackage.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventDetail.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/YourEvents.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
-import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
+import 'package:taqreeb/Screens/YourListings.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/abc.dart';
+import 'package:taqreeb/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {
-    await Firebase.initializeApp(options: abc.fb);
-  } else {
-    // final env = await dotenv.load(fileName: '.env');
+  // if (kIsWeb) {
+  //   await Firebase.initializeApp(options: abc.fb);
+  // } else {
+  //   // final env = await dotenv.load(fileName: '.env');
 
-    await Firebase.initializeApp(options: abc.fb);
-  }
+  //   await Firebase.initializeApp(options: abc.fb);
+  // }
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MainApp());
 }
@@ -116,6 +119,7 @@ class MainApp extends StatelessWidget {
             FreelancerSignup_BasicInfo(),
         '/FreelancerSignup_Description': (context) =>
             FreelancerSignup_Description(),
+        '/CreateGroup': (context) => CreateGroupScreen(),
         '/ForgotPassword_EmailorPhoneInput': (context) =>
             ForgotPassword_EmailorPhoneInput(),
         '/ForgotPassword_VerifyCode': (context) => ForgotPassword_VerifyCode(),

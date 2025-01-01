@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -15,7 +18,9 @@ class FreelancerSignup_Description extends StatefulWidget {
 
 class _FreelancerSignup_DescriptionState
     extends State<FreelancerSignup_Description> {
+  int charactersLeft = 1100;
   final GlobalKey _headerKey = GlobalKey();
+  TextEditingController descriptionController = TextEditingController();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
     final RenderObject? renderBox =
@@ -46,74 +51,67 @@ class _FreelancerSignup_DescriptionState
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MaximumThing * 0.05,
-                ),
-                Container(
-                  margin: EdgeInsets.all(MaximumThing * 0.01),
-                  height: screenHeight * 0.4,
-                  width: screenWidth * 0.9,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MaximumThing * 0.03,
-                      vertical: MaximumThing * 0.02),
-                  decoration: BoxDecoration(
-                    color: MyColors.DarkLighter,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                          offset: Offset(2, 2))
-                    ],
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: (MaximumThing * 0.05) + _headerHeight,
                   ),
-                  child: TextField(
-                    maxLines: 10,
-                    style: GoogleFonts.montserrat(
-                        color: MyColors.white,
-                        fontSize: MaximumThing * 0.018,
-                        fontWeight: FontWeight.w400),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintStyle: GoogleFonts.montserrat(
-                        color: MyColors.white,
-                        fontSize: MaximumThing * 0.018,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      hintText: "Enter Description",
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: screenWidth * 0.9,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                  DescriptionBox(
+                      valueController: descriptionController,
+                      onChanged: (value) {
+                        setState(() {
+                          charactersLeft = 1100 - value.length;
+                        });
+                      }),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child:
+                        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                       Text(
-                        "1100 characters left",
+                        "${charactersLeft.toString()} characters left",
                         style: GoogleFonts.montserrat(
                           color: MyColors.white,
                           fontSize: MaximumThing * 0.018,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                    ],
+                    ]),
                   ),
-                ),
-                SizedBox(
-                  height: screenHeight * 0.05,
-                  child: MyDivider(),
-                ),
-                ColoredButton(
-                  text: "Continue",
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/ProfilePictureUpload',
-                        arguments: {'type': 'freelancer'});
-                  },
-                )
-              ],
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                    child: MyDivider(),
+                  ),
+                  ColoredButton(
+                    text: "Continue",
+                    onPressed: () {
+                      if (descriptionController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Please Enter a Description")));
+                        return;
+                      }
+                      if (descriptionController.text.length > 1100) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Description should be less than 1100 characters")));
+                        return;
+                      }
+                      if (descriptionController.text.length < 50) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Description should be more than 50 characters")));
+                        return;
+                      }
+                      MyStorage.saveToken(
+                          descriptionController.text, MyTokens.fsdescription);
+              
+                      Navigator.pushNamed(context, '/ProfilePictureUpload',
+                          arguments: {'type': 'Freelancer'});
+                    },
+                  )
+                ],
+              ),
             ),
           ),
           Positioned(

@@ -115,7 +115,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
       String apipath = 'userAccountSignup/';
       if (type == 'Business') {
         apipath = 'businessowner/signup/';
-      } else if (type == 'freelancer') {
+      } else if (type == 'Freelancer') {
         apipath = 'freelancer/signup/';
       }
       try {
@@ -129,7 +129,22 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           _selectedImage!.path,
         ));
 
-        if (type == 'freelancer') {
+        if (type == 'Freelancer') {
+          final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+          request.headers.addAll({
+            'Authorization': 'Bearer $token', // Example header
+          });
+          final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+          print('${userId}');
+          request.fields['UserId'] = userId;
+          request.fields['BusinessName'] =
+              await MyStorage.getToken(MyTokens.fsname) ?? "";
+          request.fields['Portfoliolink'] =
+              await MyStorage.getToken(MyTokens.fsportfolio) ?? "";
+          request.fields['cnic'] =
+              await MyStorage.getToken(MyTokens.fscnic) ?? "";
+          request.fields['Description'] =
+              await MyStorage.getToken(MyTokens.fsdescription) ?? "";
         } else if (type == 'Business') {
           final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
           request.headers.addAll({
@@ -145,30 +160,34 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
             await MyStorage.getToken(MyTokens.bsback) ?? "",
           ));
 
-          request.fields['id'] = await MyStorage.getToken(MyTokens.userId) ?? "";
+          request.fields['id'] =
+              await MyStorage.getToken(MyTokens.userId) ?? "";
           request.fields['businessName'] =
               await MyStorage.getToken(MyTokens.bsname) ?? "";
-          request.fields['username'] =
-              await MyStorage.getToken(MyTokens.bsusername) ?? "";
-          request.fields['cnic'] = await MyStorage.getToken(MyTokens.bscnic) ?? "";
+          request.fields['cnic'] =
+              await MyStorage.getToken(MyTokens.bscnic) ?? "";
           request.fields['description'] =
               await MyStorage.getToken(MyTokens.bsdescription) ?? "";
         } else {
           request.fields['firstName'] =
               await MyStorage.getToken(MyTokens.sfname) ?? "";
-          request.fields['lastName'] = await MyStorage.getToken(MyTokens.slname) ?? "";
+          request.fields['lastName'] =
+              await MyStorage.getToken(MyTokens.slname) ?? "";
           request.fields['password'] =
               await MyStorage.getToken(MyTokens.spassword) ?? "";
           request.fields['contactType'] =
               await MyStorage.exists(MyTokens.semail) ? 'email' : 'phone';
           if (request.fields['contactType'] == 'email') {
-            request.fields['email'] = await MyStorage.getToken(MyTokens.semail) ?? "";
+            request.fields['email'] =
+                await MyStorage.getToken(MyTokens.semail) ?? "";
           } else {
             request.fields['contactNumber'] =
                 await MyStorage.getToken(MyTokens.sphone) ?? "";
           }
-          request.fields['city'] = await MyStorage.getToken(MyTokens.scity) ?? "";
-          request.fields['gender'] = await MyStorage.getToken(MyTokens.sgender) ?? "";
+          request.fields['city'] =
+              await MyStorage.getToken(MyTokens.scity) ?? "";
+          request.fields['gender'] =
+              await MyStorage.getToken(MyTokens.sgender) ?? "";
         }
         // Send the request
         final response = await request.send();
@@ -176,7 +195,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         final responseBody = await response.stream.bytesToString();
         final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
 
-          print('Your Response: $jsonResponse');
+        print('Your Response: $jsonResponse');
         if (response.statusCode == 200) {
           if (jsonResponse['status'] == 'error') {
             warningDialog(
@@ -194,7 +213,13 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           } else {
             // Success
 
-            if (type == 'freelancer') {
+            if (type == 'Freelancer') {
+              MyStorage.deleteToken(MyTokens.fscnic);
+              MyStorage.deleteToken(MyTokens.fsname);
+              MyStorage.deleteToken(MyTokens.fsportfolio);
+              MyStorage.deleteToken(MyTokens.fsdescription);
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/SubmissionSucessful', ModalRoute.withName('/'));
             } else if (type == 'Business') {
               MyStorage.deleteToken('bscnic');
               MyStorage.deleteToken('bsname');

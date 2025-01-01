@@ -24,14 +24,6 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
   TextEditingController memberscontroller = TextEditingController();
   FocusNode familyNameFocus = FocusNode();
   FocusNode membersFocus = FocusNode();
-  @override
-  void dispose() {
-    familyNamecontroller.dispose();
-    memberscontroller.dispose();
-    familyNameFocus.dispose();
-    membersFocus.dispose();
-    super.dispose();
-  }
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;

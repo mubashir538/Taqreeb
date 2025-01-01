@@ -33,17 +33,7 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
     FocusNode emailFocus = FocusNode();
     FocusNode nameFocus = FocusNode();
     FocusNode messageFocus = FocusNode();
-    @override
-    void dispose() {
-      emailController.dispose();
-      nameController.dispose();
-      messageController.dispose();
-      emailFocus.dispose();
-      nameFocus.dispose();
-      messageFocus.dispose();
-      super.dispose();
-    }
-
+    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(

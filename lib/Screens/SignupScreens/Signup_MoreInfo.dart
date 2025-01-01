@@ -20,6 +20,7 @@ class Signup_MoreInfo extends StatefulWidget {
 class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
   String city = "";
   String gender = "";
+  final TextEditingController ageController = TextEditingController();
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -75,6 +76,10 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                             gender = value.toString();
                           });
                         }),
+                    MyTextBox(
+                        hint: 'Enter Your Age',
+                        valueController: ageController,
+                        isNum: true),
                     SizedBox(
                       height: screenHeight * 0.1,
                       child: Center(child: MyDivider()),
@@ -82,10 +87,18 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                     ColoredButton(
                       text: 'Continue',
                       onPressed: () {
-                        if (gender.isEmpty || city.isEmpty) {
+                        if (gender.isEmpty ||
+                            city.isEmpty ||
+                            ageController.text.isEmpty) {
                           warningDialog(
                                   title: 'Details Missing',
                                   message: 'Please fill all the fields')
+                              .showDialogBox(context);
+                        } else if (int.parse(ageController.text) < 18) {
+                          warningDialog(
+                                  title: 'Invalid Age',
+                                  message:
+                                      'User should be atleast 18 years old')
                               .showDialogBox(context);
                         } else {
                           MyStorage.saveToken(city, 'scity');

@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/OTP%20Boxes.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class ForgotPassword_VerifyCode extends StatefulWidget {
@@ -16,10 +21,45 @@ class ForgotPassword_VerifyCode extends StatefulWidget {
 class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
+  int _remainingTime = 120; // 2 minutes in seconds
+  late Timer _timer;
+  bool _isResendEnabled = false;
+  String _enteredOTP = ""; // To store the user's entered OTP
+
+  void _startTimer() {
+    setState(() {
+      _isResendEnabled = false;
+      _remainingTime = 120; // Reset timer to 2 minutes
+    });
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remainingTime > 0 && mounted) {
+        setState(() {
+          _remainingTime--;
+        });
+      } else {
+        _timer.cancel();
+        if (mounted) {
+          setState(() {
+            _isResendEnabled = true;
+          });
+        }
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getHeaderHeight();
+      _startTimer();
+    });
   }
 
   void _getHeaderHeight() {
@@ -39,7 +79,10 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-    _getHeaderHeight();
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final email = arguments['email'];
+    final Map<String, dynamic> response = arguments['response'];
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -53,14 +96,35 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                     margin: EdgeInsets.only(
                         top: MaximumThing * 0.07, bottom: MaximumThing * 0.02),
                     child: OTPBoxes(
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          _enteredOTP = value;
+                        });
+                      },
                     )),
-                Text(
-                  'Send Code Again 00:59',
-                  style: TextStyle(
-                    color: MyColors.white,
-                    fontSize: MaximumThing * 0.015,
-                    decoration: TextDecoration.underline,
+                TextButton(
+                  onPressed: _isResendEnabled
+                      ? () async {
+                          final result = await response; // Await the response
+                          await MyApi.postRequest(
+                              endpoint: 'resendOTP/email',
+                              body: {
+                                'email': result['email'],
+                                'otp': result['otp']
+                              });
+                          _startTimer(); // Restart the timer
+                        }
+                      : null,
+                  child: Text(
+                    _isResendEnabled
+                        ? 'Send Code Again'
+                        : 'Send Code Again in ${_formatTime(_remainingTime)}',
+                    style: TextStyle(
+                      color: MyColors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      decoration:
+                          _isResendEnabled ? TextDecoration.underline : null,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -68,9 +132,37 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                   child: Center(child: MyDivider()),
                 ),
                 ColoredButton(
-                  text: 'Verification',
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/ForgotPassword_NewPassword');
+                  text: 'Verify Code',
+                  onPressed: () async {
+                    try {
+                      final result = await response;
+                      final receivedOTP = result['otp'];
+                      print('Received OTP: $receivedOTP');
+                      print('Entered OTP: $_enteredOTP');
+                      if (int.parse(_enteredOTP) == receivedOTP) {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/ForgotPassword_NewPassword',
+                            arguments: {
+                              'email': email,
+                            },
+                            ModalRoute.withName('/'));
+                      } else {
+                        // OTP doesn't match, show an alert dialog
+                        warningDialog(
+                                title: 'Invalid OTP',
+                                message: 'The entered OTP is incorrect.')
+                            .showDialogBox(context);
+                      }
+                    } catch (e) {
+                      // Handle any errors in fetching the response
+                      print('Error: $e');
+                      warningDialog(
+                              title: 'Error',
+                              message:
+                                  'Failed to verify OTP. Please try again.')
+                          .showDialogBox(context);
+                    }
                   },
                 ),
               ],
@@ -81,7 +173,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
             child: Header(
               key: _headerKey,
               heading: 'Verify Code',
-              para: 'We have send the code to abc@gmail.com',
+              para: 'We have send the code to $email',
             ),
           ),
         ],

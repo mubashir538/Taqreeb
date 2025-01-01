@@ -17,6 +17,7 @@ class _DashboardState extends State<Dashboard> {
   Map<String, dynamic> user = {}; // Initialize as empty map
   String token = '';
   bool isLoading = true; // Add a loading flag
+  String type = '';
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -42,8 +43,9 @@ class _DashboardState extends State<Dashboard> {
     // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    type = await MyTokens.getBusinessType();
     final user = await MyApi.getRequest(
-      endpoint: 'businessowner/accountInfo/$Userid',
+      endpoint: 'businessowner/accountInfo/$Userid/$type',
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -51,7 +53,20 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (user == null || user['status'] == 'error') {
+        print('$user');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
     });
   }
 
@@ -102,7 +117,9 @@ class _DashboardState extends State<Dashboard> {
                                 backgroundColor: MyColors.red,
                                 radius: screenHeight * 0.05,
                                 backgroundImage: NetworkImage(
-                                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
+                                  type == 'freelancer'
+                                      ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilePic']}'
+                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
                                 ),
                               ),
                               SizedBox(width: screenWidth * 0.05),
@@ -146,7 +163,7 @@ class _DashboardState extends State<Dashboard> {
                               () {
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     '/ChatsScreen', ModalRoute.withName('/'));
-                            },
+                              },
                             ),
                             _buildOptionCard(
                               context,

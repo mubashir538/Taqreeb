@@ -8,8 +8,8 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/locationtextbox.dart';
 import 'package:taqreeb/Components/rangeSlider.dart';
 import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/checkbox%20question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
@@ -43,7 +43,7 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> listings = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
   Map<String, dynamic> templistings = {}; // Initialize as empty map
-
+  Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
   @override
@@ -54,9 +54,12 @@ class _SearchServiceState extends State<SearchService> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    final args = ModalRoute.of(context)!.settings.arguments;
     if (!ischange) {
+      if (args != null) {
+        this.args = args as Map<String, dynamic>;
+      }
       fetchData();
     }
   }
@@ -71,7 +74,9 @@ class _SearchServiceState extends State<SearchService> {
       // }
     );
 
-    final fetchedListings = await MyApi.getRequest(endpoint: 'home/listings/');
+    final fetchedListings = await MyApi.getRequest(
+        endpoint: 'home/listings/',
+        headers: {'Authorization': 'Bearer $token'});
 
     // Update the state
     setState(() {
@@ -80,7 +85,29 @@ class _SearchServiceState extends State<SearchService> {
       this.listings = fetchedListings ?? {}; // Ensure no null data
       this.templistings =
           Map.from(fetchedListings) ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (this.listings == null ||
+          this.listings['status'] == 'error' ||
+          this.categories == null ||
+          this.categories['status'] == 'error') {
+        print('$listings');
+        print('$categories');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+      } else {
+        if (this.args.isNotEmpty) {
+          appliedFilters.add('Category');
+          categoryController.selections.add(this.args['category']);
+          searchwithFilters();
+        }
+
+        isLoading = false; // Data has been fetched, so stop loading
+      }
       ischange = true;
     });
   }
@@ -111,156 +138,161 @@ class _SearchServiceState extends State<SearchService> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: _headerHeight),
-                isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(MyColors.white),
-                        ),
-                      )
-                    : Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(
-                              top: maximumDimension * 0.05,
-                            ),
-                            child: SizedBox(
-                              width: screenWidth * 0.9,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SearchBox(
-                                    onclick: () {},
-                                    hint: 'Start typing to search',
-                                    controller: searchController,
-                                    width: screenWidth * 0.75,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        searchwithFilters();
-                                        print(
-                                            'listing: ${listings['HomeListing']}');
-                                        templistings['HomeListing'] =
-                                            templistings['HomeListing']
-                                                .where((element) =>
-                                                    element['name']
-                                                        .toString()
-                                                        .toLowerCase()
-                                                        .contains(value
-                                                            .toLowerCase()))
-                                                .toList();
-                                      });
-                                    },
-                                  ),
-                                  IconButton(
-                                    onPressed: () => _showFilterPopup(context),
-                                    icon: Icon(
-                                      Icons.tune,
-                                      size: maximumDimension * 0.03,
-                                      color: MyColors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: _headerHeight),
+                  isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(MyColors.white),
                           ),
-                          if (appliedFilters.isNotEmpty)
+                        )
+                      : Column(
+                          children: [
                             Container(
-                              margin:
-                                  EdgeInsets.only(top: maximumDimension * 0.02),
-                              width: screenWidth * 0.9,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
+                              margin: EdgeInsets.only(
+                                top: maximumDimension * 0.05,
+                              ),
+                              child: SizedBox(
+                                width: screenWidth * 0.9,
                                 child: Row(
-                                  children: appliedFilters.map((filter) {
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      decoration: BoxDecoration(
-                                        color: MyColors.whiteDarker,
-                                        borderRadius: BorderRadius.circular(20),
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SearchBox(
+                                      onclick: () {},
+                                      hint: 'Start typing to search',
+                                      controller: searchController,
+                                      width: screenWidth * 0.75,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchwithFilters();
+                                          print(
+                                              'listing: ${listings['HomeListing']}');
+                                          templistings['HomeListing'] =
+                                              templistings['HomeListing']
+                                                  .where((element) =>
+                                                      element['name']
+                                                          .toString()
+                                                          .toLowerCase()
+                                                          .contains(value
+                                                              .toLowerCase()))
+                                                  .toList();
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      onPressed: () =>
+                                          _showFilterPopup(context),
+                                      icon: Icon(
+                                        Icons.tune,
+                                        size: maximumDimension * 0.03,
+                                        color: MyColors.white,
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            filter,
-                                            style: GoogleFonts.montserrat(
-                                              color: MyColors.Dark,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 5),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                appliedFilters.remove(filter);
-                                                searchwithFilters();
-                                              });
-                                            },
-                                            child: Icon(
-                                              Icons.close,
-                                              size: 16,
-                                              color: MyColors.Dark,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          SizedBox(
-                            width: screenWidth * 0.9,
-                            child: ListView.builder(
-                              itemBuilder: (context, index) => Productcard(
-                                listingType: templistings['HomeListing'][index]
-                                        ['type']
-                                    .toString(),
-                                listingid: templistings['HomeListing'][index]
-                                        ['id']
-                                    .toString(),
-                                imageUrl: templistings['pictures'][index][0]
-                                            ['picturePath'] ==
-                                        " "
-                                    ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                    : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${templistings['pictures'][index][0]['picturePath']}',
-                                venueName: templistings['HomeListing'][index]
-                                    ['name'],
-                                location: templistings['HomeListing'][index]
-                                    ['location'],
-                                type: templistings['HomeListing'][index]['type']
-                                    .toString(),
+                            if (appliedFilters.isNotEmpty)
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: maximumDimension * 0.02),
+                                width: screenWidth * 0.9,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: appliedFilters.map((filter) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        decoration: BoxDecoration(
+                                          color: MyColors.whiteDarker,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              filter,
+                                              style: GoogleFonts.montserrat(
+                                                color: MyColors.Dark,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  appliedFilters.remove(filter);
+                                                  searchwithFilters();
+                                                });
+                                              },
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 16,
+                                                color: MyColors.Dark,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
                               ),
-                              itemCount: templistings['HomeListing'].length,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
+                            SizedBox(
+                              width: screenWidth * 0.9,
+                              child: ListView.builder(
+                                itemBuilder: (context, index) => Productcard(
+                                  listingType: templistings['HomeListing']
+                                          [index]['type']
+                                      .toString(),
+                                  listingid: templistings['HomeListing'][index]
+                                          ['id']
+                                      .toString(),
+                                  imageUrl: templistings['pictures'][index][0]
+                                              ['picturePath'] ==
+                                          " "
+                                      ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${templistings['pictures'][index][0]['picturePath']}',
+                                  venueName: templistings['HomeListing'][index]
+                                      ['name'],
+                                  location: templistings['HomeListing'][index]
+                                      ['location'],
+                                  type: templistings['HomeListing'][index]
+                                          ['type']
+                                      .toString(),
+                                ),
+                                itemCount: templistings['HomeListing'].length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-              ],
+                          ],
+                        ),
+                ],
+              ),
             ),
           ),
           Positioned(
+              top: 0,
               child: Header(
-            key: _headerKey,
-          )),
+                key: _headerKey,
+              )),
         ],
       ),
     );
   }
 
   void searchwithFilters() {
-    print('listing in searchwithFilters: ${listings['HomeListing']}');
     templistings['HomeListing'] = List.from(listings['HomeListing']);
-    print('initial list: ${templistings['HomeListing']}');
     setState(() {
       for (String i in appliedFilters) {
         if (i == "Price") {
@@ -274,11 +306,12 @@ class _SearchServiceState extends State<SearchService> {
           rangeSliderController.minValue = 10000;
           rangeSliderController.maxValue = 5000000;
         }
-        // if (i == "Ratings") {
-        //   templistings['HomeListing'] = templistings['HomeListing']
-        //       .where((element) => ratingController.selections.contains(element['rating']))
-        //       .toList();
-        // }
+        if (i == "Ratings") {
+          templistings['HomeListing'] = templistings['HomeListing']
+              .where((element) =>
+                  ratingController.selections.contains(element['rating']))
+              .toList();
+        }
         if (i == "Category") {
           templistings['HomeListing'] = templistings['HomeListing']
               .where((element) =>
@@ -317,7 +350,7 @@ class _SearchServiceState extends State<SearchService> {
         return LayoutBuilder(builder: (builder, constraints) {
           double keyboard = MediaQuery.of(context).viewInsets.bottom;
           bool isKeyboardVisible = keyboard > 0;
-          if (isKeyboardVisible) {
+          if (isKeyboardVisible && _scrollController.hasClients) {
             _scrollController
                 .jumpTo(_scrollController.position.maxScrollExtent);
           }
