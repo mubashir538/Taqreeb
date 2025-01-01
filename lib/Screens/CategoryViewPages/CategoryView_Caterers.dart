@@ -45,6 +45,9 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
+  bool type = false;
+  bool ischange = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,11 +58,16 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args = ModalRoute.of(context)!.settings.arguments as int?;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     setState(() {
-      listingId = args;
+      listingId = args['id'];
+      type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   void fetchData() async {
@@ -793,10 +801,10 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
             ),
           ),
           Positioned(
-            top: 0,
+              top: 0,
               child: Header(
-            key: _headerKey,
-          )),
+                key: _headerKey,
+              )),
         ],
       ),
     );

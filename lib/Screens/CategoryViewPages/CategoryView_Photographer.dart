@@ -50,15 +50,23 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
+  bool type = false;
+  bool ischange = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args = ModalRoute.of(context)!.settings.arguments as int?;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     setState(() {
-      listingId = args;
+      listingId = args['id'];
+      type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   void fetchData() async {

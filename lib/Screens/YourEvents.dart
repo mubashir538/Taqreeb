@@ -38,7 +38,6 @@ class _YourEventsState extends State<YourEvents> {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    print(id);
     final fetchedEvents = await MyApi.getRequest(
       endpoint: 'YourEvents/$id',
       headers: {'Authorization': 'Bearer $token'},
@@ -126,6 +125,45 @@ class _YourEventsState extends State<YourEvents> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: events["Event"].length,
                               itemBuilder: (context, index) => Function12(
+                                delete: () async {
+                                  final response = await MyApi.postRequest(
+                                      endpoint: 'DeleteEvent/',
+                                      headers: {
+                                        'Authorization': 'Bearer $token'
+                                      },
+                                      body: {
+                                        'EventId': events["Event"][index]["id"]
+                                            .toString(),
+                                      });
+                                  if (response['status'] == 'success') {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                        'Event Deleted Successfully',
+                                        style: GoogleFonts.montserrat(
+                                          color: MyColors.white,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.green,
+                                    ));
+                                    setState(() {
+                                      events["Event"].removeAt(index);
+                                    });
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                        'Something Went Wrong!',
+                                        style: GoogleFonts.montserrat(
+                                          color: MyColors.white,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.red,
+                                    ));
+                                  }
+                                },
                                 color: Color(int.parse(
                                     '0xff${events["Event"][index]["themeColor"].substring(1, events["Event"][index]["themeColor"].length)}')),
                                 name: events["Event"][index]["name"],

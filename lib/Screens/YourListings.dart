@@ -6,7 +6,6 @@ import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
 import 'dart:math';
 
 class YourListings extends StatefulWidget {
@@ -19,6 +18,7 @@ class YourListings extends StatefulWidget {
 class _YourListingsState extends State<YourListings> {
   Map<String, dynamic> listings = {}; // Initialize as empty map
   String token = '';
+  String type = "";
   bool isLoading = true; // Add a loading flag
   @override
   void initState() {
@@ -30,16 +30,16 @@ class _YourListingsState extends State<YourListings> {
     // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
-
+    type = await MyTokens.getBusinessType();
     final fetchedListings = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'YourListing/$id');
+        endpoint: 'YourListing/$id/$type');
 
     // Update the state
     setState(() {
       this.token = token;
       this.listings = fetchedListings ?? {}; // Ensure no null data
-      if (listings == null || listings['status'] == 'error') {
+      if (listings == {} || listings['status'] == 'error') {
         print('$listings');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Something Went Wrong!',

@@ -42,16 +42,23 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
+  bool type = false;
+  bool ischange = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args = ModalRoute.of(context)!.settings.arguments as int?;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     setState(() {
-      listingId = args;
+      listingId = args['id'];
+      type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   @override
@@ -787,10 +794,10 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
             ),
           ),
           Positioned(
-            top: 0,
+              top: 0,
               child: Header(
-            key: _headerKey,
-          )),
+                key: _headerKey,
+              )),
         ],
       ),
     );

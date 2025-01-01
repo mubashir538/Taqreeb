@@ -44,6 +44,8 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
 
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
+  bool type = false;
+  bool ischange = false;
   Map<String, dynamic> events = {};
   @override
   void initState() {
@@ -55,11 +57,16 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args = ModalRoute.of(context)!.settings.arguments as int?;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     setState(() {
-      listingId = args;
+      listingId = args['id'];
+      type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   void fetchData() async {

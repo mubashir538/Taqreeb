@@ -45,16 +45,21 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
   List<String> starsvalue = [];
 
   final List<String> _imageUrls = [];
-
+  bool type = false;
+  bool ischange = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args = ModalRoute.of(context)!.settings.arguments as int?;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     setState(() {
-      listingId = args;
+      listingId = args['id'];
+      type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   @override
@@ -64,6 +69,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
   }
 
   void fetchData() async {
+    ischange = true;
     // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
@@ -374,17 +380,21 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                           ),
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showHierarchicalOptions(context,
-                                              maximumDimension, screenWidth);
-                                        },
-                                        child: Icon(
-                                          Icons.add,
-                                          color: MyColors.Yellow,
-                                          size: maximumDimension * 0.05,
-                                        ),
-                                      ),
+                                      type
+                                          ? Container()
+                                          : GestureDetector(
+                                              onTap: () {
+                                                showHierarchicalOptions(
+                                                    context,
+                                                    maximumDimension,
+                                                    screenWidth);
+                                              },
+                                              child: Icon(
+                                                Icons.add,
+                                                color: MyColors.Yellow,
+                                                size: maximumDimension * 0.05,
+                                              ),
+                                            ),
                                     ],
                                   ),
                                 ),

@@ -139,6 +139,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
             children: [
               Expanded(
                 child: TextField(
+                  onTap: _showColorPicker,
                   focusNode: widget.focusNode,
                   onSubmitted: widget.onFieldSubmitted,
                   controller: widget.valueController,

@@ -2,42 +2,87 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
-class ColoredButton extends StatelessWidget {
+class ColoredButton extends StatefulWidget {
   final String text;
   final double height;
   final double width;
   final VoidCallback? onPressed;
   final double textSize;
-  const ColoredButton(
-      {required this.text,
-      super.key,
-      this.textSize = 0,
-      this.height = 0,
-      this.width = 0,
-      this.onPressed});
+
+  const ColoredButton({
+    required this.text,
+    super.key,
+    this.textSize = 0,
+    this.height = 0,
+    this.width = 0,
+    this.onPressed,
+  });
+
+  @override
+  _ColoredButtonState createState() => _ColoredButtonState();
+}
+
+class _ColoredButtonState extends State<ColoredButton> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+    if (widget.onPressed != null) {
+      widget.onPressed!();
+    }
+  }
+
+  void _handleTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
+    double maximumThing = screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-        height: height != 0 ? height : screenHeight * 0.06,
-        width: width != 0 ? width : screenWidth * 0.9,
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        margin: EdgeInsets.symmetric(vertical: maximumThing * 0.01),
+        height: (widget.height != 0 ? widget.height : screenHeight * 0.06) *
+            (_isPressed ? 0.95 : 1.0),
+        width: (widget.width != 0 ? widget.width : screenWidth * 0.9) *
+            (_isPressed ? 0.95 : 1.0),
         decoration: BoxDecoration(
-            color: MyColors.red,
-            // color: Colors.transparent,
-            borderRadius: BorderRadius.circular(10)),
+          color: _isPressed ? MyColors.red.withOpacity(0.8) : MyColors.red,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: _isPressed
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+        ),
         child: Center(
           child: Text(
-            text,
+            widget.text,
             style: GoogleFonts.montserrat(
-              fontSize: textSize == 0 ? MaximumThing * 0.018 : textSize,
+              fontSize: widget.textSize == 0
+                  ? maximumThing * 0.018
+                  : widget.textSize,
               fontWeight: FontWeight.w500,
               color: MyColors.redonWhite,
             ),

@@ -51,15 +51,21 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
+  bool type = false;
+  bool ischange = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    final args = ModalRoute.of(context)!.settings.arguments as int?;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     setState(() {
-      listingId = args;
+      listingId = args['id'];
+      type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   void fetchData() async {
@@ -821,10 +827,10 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
             ),
           ),
           Positioned(
-            top: 0,
+              top: 0,
               child: Header(
-            key: _headerKey,
-          )),
+                key: _headerKey,
+              )),
         ],
       ),
     );

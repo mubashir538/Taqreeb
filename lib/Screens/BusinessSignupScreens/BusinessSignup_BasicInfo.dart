@@ -23,68 +23,15 @@ class BusinessSignup_BasicInfo extends StatefulWidget {
 class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   TextEditingController cnicController = TextEditingController();
   TextEditingController profileNameController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
   FocusNode cnicFocusNode = FocusNode();
   FocusNode profileNameFocusNode = FocusNode();
-  FocusNode usernameFocusNode = FocusNode();
 
-  bool isLoading = true;
-  List<String> usernames = [];
-  String usernameValidationMessage = '';
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       check(context);
       _getHeaderHeight();
-    });
-    fetchdata();
-    usernameController.addListener(() {
-      validateUsername();
-    });
-  }
-
-  void validateUsername() {
-    final enteredUsername = usernameController.text.trim();
-    if (enteredUsername.isNotEmpty && usernames.contains(enteredUsername)) {
-      setState(() {
-        usernameValidationMessage = 'This username is already used.';
-      });
-    } else {
-      setState(() {
-        usernameValidationMessage = ''; // Clear message if valid
-      });
-    }
-  }
-
-  void fetchdata() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-
-    final fetchusernames = await MyApi.getRequest(
-      endpoint: 'getUsernames/business/',
-      headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
-    );
-    setState(() {
-      if (fetchusernames == null || fetchusernames['status'] == 'error') {
-        print('$fetchusernames');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        this.usernames =
-            fetchusernames['businessUsernames'].cast<String>().toList() ??
-                []; // Ensure no null data
-        isLoading = false; // Data has been fetched, so stop loading
-      }
     });
   }
 
@@ -174,35 +121,13 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                   focusNode: profileNameFocusNode,
                   valueController: profileNameController,
                   onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(usernameFocusNode);
+                    FocusScope.of(context).unfocus();
                   },
-                ),
-                MyTextBox(
-                  hint: 'Username',
-                  focusNode: usernameFocusNode,
-                  onFieldSubmitted: (_) {},
-                  valueController: usernameController,
-                ),
-                if (usernameValidationMessage.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      usernameValidationMessage,
-                      style: GoogleFonts.montserrat(
-                        color: MyColors.red,
-                        fontSize: MaximumThing * 0.015,
-                      ),
-                    ),
-                  ),
-                SizedBox(
-                  height: screenHeight * 0.1,
-                  child: Center(child: MyDivider()),
                 ),
                 ColoredButton(
                   onPressed: () {
                     if (cnicController.text.isEmpty ||
-                        profileNameController.text.isEmpty ||
-                        usernameController.text.isEmpty) {
+                        profileNameController.text.isEmpty) {
                       warningDialog(
                         message: "Please fill all the details",
                         title: "Invalid Details",
@@ -213,20 +138,10 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                         message: Validations.validateCNIC(cnicController.text),
                         title: "Invalid Details",
                       ).showDialogBox(context);
-                    } else if (Validations.validateUsername(
-                            usernameController.text) !=
-                        'Ok') {
-                      warningDialog(
-                        message: Validations.validateUsername(
-                            usernameController.text),
-                        title: "Invalid Details",
-                      ).showDialogBox(context);
                     } else {
                       MyStorage.saveToken(cnicController.text, MyTokens.bscnic);
                       MyStorage.saveToken(
                           profileNameController.text, MyTokens.bsname);
-                      MyStorage.saveToken(
-                          usernameController.text, MyTokens.bsusername);
                       Navigator.pushNamed(
                           context, '/BusinessSignup_CNICUpload');
                     }

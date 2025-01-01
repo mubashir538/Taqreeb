@@ -174,6 +174,7 @@ class _AccountInfoState extends State<AccountInfo> {
                                     MyIcons.profile,
                                     width: size,
                                     height: size,
+                                    color: MyColors.white,
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(

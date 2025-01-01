@@ -36,7 +36,8 @@ class _AddcategoryListState extends State<AddcategoryList> {
   String token = '';
   Map<String, dynamic> categories = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
-
+  String type = "";
+  
   @override
   void initState() {
     super.initState();
@@ -46,8 +47,9 @@ class _AddcategoryListState extends State<AddcategoryList> {
 
   void fetchCategories() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
+    type = await MyTokens.getBusinessType();
     final categories = await MyApi.getRequest(
-      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
+      endpoint: 'business/categories/$type', headers: {'Authorization': 'Bearer $token'},
       //  headers: {'Authorization': 'Bearer $token'}
     );
     setState(() {
@@ -187,12 +189,12 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       ));
                       return;
                     }
-                    // if (charactersleft > 1050) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    //     content: Text('Description is too Short'),
-                    //   ));
-                    //   return;
-                    // }
+                    if (charactersleft > 1050) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Description is too Short'),
+                      ));
+                      return;
+                    }
                     if (charactersleft < 0) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('Description is too Long'),

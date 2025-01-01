@@ -12,9 +12,11 @@ class Function12 extends StatelessWidget {
   final Function editPressed;
   final Function seePressed;
   final Color color;
+  final VoidCallback? delete;
 
   const Function12(
       {super.key,
+      required this.delete,
       required this.color,
       required this.type,
       required this.headings,
@@ -24,6 +26,12 @@ class Function12 extends StatelessWidget {
       required this.budget,
       required this.editPressed,
       required this.seePressed});
+
+  bool isColorDark(Color color) {
+    double luminance =
+        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+    return luminance < 0.5; // Dark color if luminance is less than 0.5
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +59,30 @@ class Function12 extends StatelessWidget {
                     topRight: Radius.circular(20)),
                 color: color,
               ),
-              child: Center(
-                child: Text(
-                  name,
-                  style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.02,
-                      fontWeight: FontWeight.w600,
-                      color: MyColors.redonWhite),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: MaximumThing * 0.03,
+                  ),
+                  Center(
+                    child: Text(
+                      name,
+                      style: GoogleFonts.montserrat(
+                          fontSize: MaximumThing * 0.02,
+                          fontWeight: FontWeight.w600,
+                          color: isColorDark(color)? Color(0xffedf2f4): Color(0xff18191A)),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      size: MaximumThing * 0.03,
+                      color: isColorDark(color)? Color(0xffedf2f4): Color(0xff18191A),
+                    ),
+                    onPressed: delete,
+                  )
+                ],
               ),
             ),
             Container(

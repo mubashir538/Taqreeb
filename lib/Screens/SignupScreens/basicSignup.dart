@@ -182,7 +182,7 @@ class _BasicSignupState extends State<BasicSignup> {
                     },
                     child: Text(
                       "Already a Member? Login",
-                      style: TextStyle(color: MyColors.Yellow),
+                      style: TextStyle(color: MyColors.yellowonDark),
                     ),
                   ),
                 ),

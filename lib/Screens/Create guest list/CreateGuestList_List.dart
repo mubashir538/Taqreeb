@@ -183,7 +183,30 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                               itemBuilder: (context, index) {
                                 return Guests(
                                   onpressed: () {},
-                                  ondelete: () {},
+                                  ondelete: () async{
+                                    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+                                    final response = await MyApi.postRequest(
+                                      headers: {'Authorization': 'Bearer $token'},
+                                      endpoint: 'Delete/guest/',
+                                      body: {
+                                        'guestId': guests['Guests'][index]['id'].toString(),
+                                      },
+                                    );
+                                    if (response['status'] == 'error') {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text('Something Went Wrong!',
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 14,
+                                                color: MyColors.white,
+                                                fontWeight: FontWeight.w400)),
+                                        backgroundColor: MyColors.red,
+                                      ));
+                                      return;
+                                    }
+                                    setState(() {
+                                      guests['Guests'].removeAt(index);
+                                    });
+                                    },
                                   name: guests['Guests'][index]['name'] ?? '',
                                   contact: guests['Guests'][index]['type'] ==
                                           "Family"

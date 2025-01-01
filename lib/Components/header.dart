@@ -129,6 +129,10 @@ class _HeaderState extends State<Header> {
                                           MyTokens.accessToken);
                                       await MyStorage.deleteToken(
                                           MyTokens.userId);
+                                      await MyStorage.deleteToken(
+                                          MyTokens.userType);
+                                      await MyStorage.deleteToken(
+                                          MyTokens.isBusinessOwner);
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil('/Login',
                                               (Route<dynamic> route) => false);

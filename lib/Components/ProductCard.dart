@@ -5,6 +5,7 @@ class Productcard extends StatefulWidget {
   final String imageUrl;
   final String venueName;
   final String location;
+  final bool isBusiness;
   // final Function onpressed;
   final String type;
   final double mywidth;
@@ -12,6 +13,7 @@ class Productcard extends StatefulWidget {
   final String listingType;
   Productcard({
     this.mywidth = 0,
+    this.isBusiness = false,
     // this.onpressed = () {
     // },
     required this.listingid,
@@ -71,7 +73,7 @@ class _ProductcardState extends State<Productcard> {
 
         // }
         Navigator.pushNamed(context, path,
-            arguments: int.parse(widget.listingid));
+            arguments: {'id': int.parse(widget.listingid),'isBusiness':widget.isBusiness});
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),

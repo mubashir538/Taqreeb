@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   // State variables
   bool isLoading = true; // Track loading state
   bool isBusinessOwner = false; // Track user type
-
+  bool isFreelancer = false;
   @override
   void initState() {
     super.initState();
@@ -44,8 +44,10 @@ class _MainScreenState extends State<MainScreen> {
   // Fetch user type from storage
   void fetchUser() async {
     final utype = await MyStorage.exists(MyTokens.isBusinessOwner);
+    final ftype = await MyStorage.exists(MyTokens.isFreelancer);
     setState(() {
-      isBusinessOwner = utype; // Update user type
+      isBusinessOwner = utype;
+      isFreelancer = ftype;
       isLoading = false; // Loading complete
     });
   }
@@ -64,8 +66,11 @@ class _MainScreenState extends State<MainScreen> {
     double maximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    double keyboard = MediaQuery.of(context).viewInsets.bottom;
+    bool isKeyboardVisible = keyboard > 0;
     // Determine the page list based on the user type
-    List<Widget> currentPageList = isBusinessOwner ? businessPages : pages;
+    List<Widget> currentPageList =
+        isBusinessOwner || isFreelancer ? businessPages : pages;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -74,14 +79,15 @@ class _MainScreenState extends State<MainScreen> {
               child: CircularProgressIndicator(), // Show loading spinner
             )
           : currentPageList[widget.index], // Display the selected page
-      floatingActionButton: SizedBox(
+      
+      floatingActionButton:isKeyboardVisible? null: SizedBox(
         width: screenWidth * 0.15,
         height: screenWidth * 0.15,
         child: FloatingActionButton(
           onPressed: () {
             Navigator.pushNamed(
                 context,
-                isBusinessOwner
+                isBusinessOwner || isFreelancer
                     ? '/AddCategory_List'
                     : '/CreateEvent'); // Navigate based on user type
           },

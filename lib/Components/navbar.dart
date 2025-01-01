@@ -29,7 +29,8 @@ class _NavbarState extends State<Navbar> {
     double maximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    double size = maximumThing * 0.025;
+    double iconSize = maximumThing * 0.025;
+    double tapAreaSize = iconSize + 20; // Increase tappable area
 
     return Container(
       decoration: BoxDecoration(
@@ -42,52 +43,54 @@ class _NavbarState extends State<Navbar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            InkWell(
-              child: SvgPicture.asset(MyIcons.home,
-                  width: size,
-                  height: size,
-                  color:
-                      widget.selectedIndex == 0 ? Colors.yellow : Colors.white),
-              onTap: () {
-                _onItemTapped(0);
-                // Navigator.pushNamed(context, '/HomePage');
-              },
+            _buildNavItem(
+              icon: MyIcons.home,
+              index: 0,
+              size: iconSize,
+              tapAreaSize: tapAreaSize,
             ),
-            InkWell(
-              onTap: () {
-                _onItemTapped(1);
-                // Navigator.pushNamed(context, '/ChatsScreen');
-              },
-              child: SvgPicture.asset(MyIcons.chats,
-                  width: size,
-                  height: size,
-                  color:
-                      widget.selectedIndex == 1 ? Colors.yellow : Colors.white),
+            _buildNavItem(
+              icon: MyIcons.chats,
+              index: 1,
+              size: iconSize,
+              tapAreaSize: tapAreaSize,
             ),
-            SizedBox(width: screenWidth * 0.05),
-            InkWell(
-              child: SvgPicture.asset(MyIcons.events,
-                  width: size,
-                  height: size,
-                  color:
-                      widget.selectedIndex == 2 ? Colors.yellow : Colors.white),
-              onTap: () {
-                _onItemTapped(2);
-                // Navigator.pushNamed(context, '/YourEvents');
-              },
+            SizedBox(width: screenWidth * 0.05), // Spacer
+            _buildNavItem(
+              icon: MyIcons.events,
+              index: 2,
+              size: iconSize,
+              tapAreaSize: tapAreaSize,
             ),
-            InkWell(
-                child: SvgPicture.asset(MyIcons.profile,
-                    width: size,
-                    height: size,
-                    color: widget.selectedIndex == 3
-                        ? Colors.yellow
-                        : Colors.white),
-                onTap: () {
-                  _onItemTapped(3);
-                  // Navigator.pushNamed(context, '/AccountInfo');
-                }),
+            _buildNavItem(
+              icon: MyIcons.profile,
+              index: 3,
+              size: iconSize,
+              tapAreaSize: tapAreaSize,
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required String icon,
+    required int index,
+    required double size,
+    required double tapAreaSize,
+  }) {
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: Container(
+        width: tapAreaSize,
+        height: tapAreaSize,
+        alignment: Alignment.center,
+        child: SvgPicture.asset(
+          icon,
+          width: size,
+          height: size,
+          color: widget.selectedIndex == index ? Colors.yellow : Colors.white,
         ),
       ),
     );

@@ -4,9 +4,10 @@ import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/colorPicker.dart';
+import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/question%20group.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
@@ -221,18 +222,27 @@ class _CreateEventState extends State<CreateEvent> {
                         )
                       ], Heading: "Basic Info"),
                       QuestionGroup(questions: [
-                        SizedBox(
-                          height: screenHeight * 0.2,
-                          child: MyTextBox(
-                            focusNode: descriptionFocus,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(guestMinFocus);
-                            },
-                            hint: "Enter Description",
-                            valueController: descriptionController,
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: screenHeight * 0.2,
+                        //   child: MyTextBox(
+                        //     focusNode: descriptionFocus,
+                        //     onFieldSubmitted: (_) {
+                        //       FocusScope.of(context)
+                        //           .requestFocus(guestMinFocus);
+                        //     },
+                        //     hint: "Enter Description",
+                        //     valueController: descriptionController,
+                        //   ),
+                        // ),
+
+                        DescriptionBox(
+                          focusNode: descriptionFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(guestMinFocus);
+                          },
+                          valueController: descriptionController,
+                          onChanged: (value) {},
+                        )
                       ], Heading: "Describe Your Event"),
                       QuestionGroup(questions: [
                         MyTextBox(

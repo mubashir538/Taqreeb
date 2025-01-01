@@ -8,8 +8,8 @@ import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/locationtextbox.dart';
 import 'package:taqreeb/Components/rangeSlider.dart';
 import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/checkbox%20question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
@@ -43,7 +43,7 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> listings = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
   Map<String, dynamic> templistings = {}; // Initialize as empty map
-
+  Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
   @override
@@ -54,9 +54,12 @@ class _SearchServiceState extends State<SearchService> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    final args = ModalRoute.of(context)!.settings.arguments;
     if (!ischange) {
+      if (args != null) {
+        this.args = args as Map<String, dynamic>;
+      }
       fetchData();
     }
   }
@@ -97,6 +100,12 @@ class _SearchServiceState extends State<SearchService> {
           backgroundColor: MyColors.red,
         ));
       } else {
+        if (this.args.isNotEmpty) {
+          appliedFilters.add('Category');
+          categoryController.selections.add(this.args['category']);
+          searchwithFilters();
+        }
+
         isLoading = false; // Data has been fetched, so stop loading
       }
       ischange = true;
@@ -177,7 +186,8 @@ class _SearchServiceState extends State<SearchService> {
                                       },
                                     ),
                                     IconButton(
-                                      onPressed: () => _showFilterPopup(context),
+                                      onPressed: () =>
+                                          _showFilterPopup(context),
                                       icon: Icon(
                                         Icons.tune,
                                         size: maximumDimension * 0.03,
@@ -190,8 +200,8 @@ class _SearchServiceState extends State<SearchService> {
                             ),
                             if (appliedFilters.isNotEmpty)
                               Container(
-                                margin:
-                                    EdgeInsets.only(top: maximumDimension * 0.02),
+                                margin: EdgeInsets.only(
+                                    top: maximumDimension * 0.02),
                                 width: screenWidth * 0.9,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
@@ -204,7 +214,8 @@ class _SearchServiceState extends State<SearchService> {
                                             horizontal: 10, vertical: 5),
                                         decoration: BoxDecoration(
                                           color: MyColors.whiteDarker,
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
                                         child: Row(
                                           children: [
@@ -240,8 +251,8 @@ class _SearchServiceState extends State<SearchService> {
                               width: screenWidth * 0.9,
                               child: ListView.builder(
                                 itemBuilder: (context, index) => Productcard(
-                                  listingType: templistings['HomeListing'][index]
-                                          ['type']
+                                  listingType: templistings['HomeListing']
+                                          [index]['type']
                                       .toString(),
                                   listingid: templistings['HomeListing'][index]
                                           ['id']
@@ -255,7 +266,8 @@ class _SearchServiceState extends State<SearchService> {
                                       ['name'],
                                   location: templistings['HomeListing'][index]
                                       ['location'],
-                                  type: templistings['HomeListing'][index]['type']
+                                  type: templistings['HomeListing'][index]
+                                          ['type']
                                       .toString(),
                                 ),
                                 itemCount: templistings['HomeListing'].length,
@@ -280,9 +292,7 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void searchwithFilters() {
-    print('listing in searchwithFilters: ${listings['HomeListing']}');
     templistings['HomeListing'] = List.from(listings['HomeListing']);
-    print('initial list: ${templistings['HomeListing']}');
     setState(() {
       for (String i in appliedFilters) {
         if (i == "Price") {
@@ -296,11 +306,12 @@ class _SearchServiceState extends State<SearchService> {
           rangeSliderController.minValue = 10000;
           rangeSliderController.maxValue = 5000000;
         }
-        // if (i == "Ratings") {
-        //   templistings['HomeListing'] = templistings['HomeListing']
-        //       .where((element) => ratingController.selections.contains(element['rating']))
-        //       .toList();
-        // }
+        if (i == "Ratings") {
+          templistings['HomeListing'] = templistings['HomeListing']
+              .where((element) =>
+                  ratingController.selections.contains(element['rating']))
+              .toList();
+        }
         if (i == "Category") {
           templistings['HomeListing'] = templistings['HomeListing']
               .where((element) =>
@@ -339,7 +350,7 @@ class _SearchServiceState extends State<SearchService> {
         return LayoutBuilder(builder: (builder, constraints) {
           double keyboard = MediaQuery.of(context).viewInsets.bottom;
           bool isKeyboardVisible = keyboard > 0;
-          if (isKeyboardVisible) {
+          if (isKeyboardVisible && _scrollController.hasClients) {
             _scrollController
                 .jumpTo(_scrollController.position.maxScrollExtent);
           }

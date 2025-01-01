@@ -94,6 +94,27 @@ class _BusinessSignup_DescriptionState
                           ColoredButton(
                               text: "Continue",
                               onPressed: () {
+                                if (descriptionController.text.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Please Enter a Description")));
+                                  return;
+                                }
+                                if (descriptionController.text.length > 1100) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Description should be less than 1100 characters")));
+                                  return;
+                                }
+                                if (descriptionController.text.length < 50) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Description should be more than 50 characters")));
+                                  return;
+                                }
                                 MyStorage.saveToken(descriptionController.text,
                                     MyTokens.bsdescription);
                                 Navigator.pushNamed(

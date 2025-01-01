@@ -24,6 +24,7 @@ class _SettingsState extends State<Settings> {
   Map<String, dynamic> types = {}; // Initialize as empty map
   bool isLoading = true; // Add a loading flag
   bool businessOwnerSwitch = false;
+  bool freelancerSwitch = false;
 
   @override
   void initState() {
@@ -49,6 +50,8 @@ class _SettingsState extends State<Settings> {
     );
     final isbusinessToken =
         await MyStorage.exists(MyTokens.isBusinessOwner) ?? "";
+    final isFreelancerToken =
+        await MyStorage.exists(MyTokens.isFreelancer) ?? "";
     // Update the state
     setState(() {
       this.token = token;
@@ -65,7 +68,9 @@ class _SettingsState extends State<Settings> {
         ));
         return;
       } else {
+        print('$types');
         businessOwnerSwitch = bool.parse(isbusinessToken.toString());
+        freelancerSwitch = bool.parse(isFreelancerToken.toString());
         isLoading = false;
       }
     });
@@ -164,6 +169,12 @@ class _SettingsState extends State<Settings> {
                                                   value.toString(),
                                                   MyTokens.isBusinessOwner,
                                                 );
+                                                MyStorage.deleteToken(
+                                                  MyTokens.isFreelancer,
+                                                );
+                                                setState(() {
+                                                  freelancerSwitch = false;
+                                                });
                                               } else {
                                                 MyStorage.deleteToken(
                                                     MyTokens.isBusinessOwner);
@@ -192,15 +203,86 @@ class _SettingsState extends State<Settings> {
                                     leftIcon: Icons.business_rounded,
                                     rightIcon: Icons.arrow_forward_ios_rounded,
                                   ),
-                            GuideButton(
-                              onpressed: () {
-                                Navigator.pushNamed(
-                                    context, '/FreelancerSignup_BasicInfo');
-                              },
-                              text: 'Signup As Freelancer',
-                              leftIcon: Icons.work_outline_rounded,
-                              rightIcon: Icons.arrow_forward_ios_rounded,
-                            ),
+                            this.types['freelancer']
+                                ? Container(
+                                    height: (MaximumThing * 0.08)
+                                        .clamp(60, 80.0), // Min: 50, Max: 80
+
+                                    width: screenWidth * 0.9,
+                                    decoration: BoxDecoration(
+                                      color: MyColors.DarkLighter,
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(
+                                          color: MyColors.DarkLighter),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Icon(
+                                          Icons.business_rounded,
+                                          color: MyColors.white,
+                                          size: MaximumThing * 0.02,
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Text(
+                                              "Freelancer Mode",
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: MaximumThing * 0.015,
+                                                fontWeight: FontWeight.w500,
+                                                color: MyColors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Switch(
+                                          value: freelancerSwitch,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              freelancerSwitch = value;
+                                              if (freelancerSwitch) {
+                                                MyStorage.saveToken(
+                                                  value.toString(),
+                                                  MyTokens.isFreelancer,
+                                                );
+                                                MyStorage.deleteToken(
+                                                  MyTokens.isBusinessOwner,
+                                                );
+                                                setState(() {
+                                                  businessOwnerSwitch = false;
+                                                });
+                                              } else {
+                                                MyStorage.deleteToken(
+                                                    MyTokens.isFreelancer);
+                                              }
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                '/HomePage', // Target route
+                                                ModalRoute.withName('/'),
+                                              );
+                                            });
+                                          },
+                                          activeColor: MyColors.white,
+                                          activeTrackColor: MyColors.green,
+                                          inactiveThumbColor: MyColors.white,
+                                          inactiveTrackColor: MyColors.red,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : GuideButton(
+                                    onpressed: () {
+                                      Navigator.pushNamed(context,
+                                          '/FreelancerSignup_BasicInfo');
+                                    },
+                                    text: 'Signup As Freelancer',
+                                    leftIcon: Icons.work_outline_rounded,
+                                    rightIcon: Icons.arrow_forward_ios_rounded,
+                                  ),
                             GuideButton(
                               onpressed: () {
                                 warningDialog(
@@ -214,13 +296,12 @@ class _SettingsState extends State<Settings> {
                                         child: Text('Cancel')),
                                     TextButton(
                                         onPressed: () {
-                                          setState(() {
-                                            MyColors.switchTheme();
-                                          });
-                                          setState(() {
-                                            MyColors.switchTheme();
-                                          });
-                                          Navigator.pop(context);
+                                          MyColors.switchTheme();
+                                          Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            '/HomePage', // Target route
+                                            ModalRoute.withName('/'),
+                                          );
                                         },
                                         child: Text('Confirm')),
                                   ],

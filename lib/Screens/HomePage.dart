@@ -142,10 +142,6 @@ class _HomePageState extends State<HomePage> {
                           controller: _searchController,
                           width: screenWidth * 0.9,
                         ),
-                        // IconButton(
-                        //   icon: Icon(Icons.tune, color: MyColors.white),
-                        //   onPressed: () {},
-                        // ),
                       ],
                     ),
                   ),
@@ -197,6 +193,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                         ),
+                                    
                                       ],
                                     ),
                                   ),
