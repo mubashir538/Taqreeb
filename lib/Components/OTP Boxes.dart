@@ -17,7 +17,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
   @override
   void initState() {
     super.initState();
-    
+
     _controllers = List.generate(4, (_) => TextEditingController());
     _focusNodes = List.generate(4, (_) => FocusNode());
   }

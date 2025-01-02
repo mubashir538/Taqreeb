@@ -579,7 +579,7 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: MyColors.white,
+                                  color: MyColors.white,  
                                 ),
                               ),
                               SizedBox(height: 10),
