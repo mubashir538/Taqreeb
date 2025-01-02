@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class OTPBoxes extends StatefulWidget {
-  final Function(String) onChanged; // Callback to return the complete OTP
+  final Function(String) onChanged; 
   const OTPBoxes({super.key, required this.onChanged});
 
   @override
@@ -35,14 +35,11 @@ class _OTPBoxesState extends State<OTPBoxes> {
 
   void _onTextChanged(int index, String value) {
     if (value.isNotEmpty && index < 3) {
-      // Move to the next box when a digit is entered
       _focusNodes[index + 1].requestFocus();
     } else if (value.isEmpty && index > 0) {
-      // Move to the previous box if the current box is cleared
       _focusNodes[index - 1].requestFocus();
     }
 
-    // Concatenate all values and pass to the callback
     final otp = _controllers.map((controller) => controller.text).join();
     widget.onChanged(otp);
   }
@@ -70,7 +67,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
               child: TextField(
                 controller: _controllers[index],
                 focusNode: _focusNodes[index],
-                maxLength: 1, // Only one character
+                maxLength: 1, 
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 style: GoogleFonts.montserrat(
@@ -78,7 +75,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
                   fontWeight: FontWeight.w400,
                 ),
                 decoration: InputDecoration(
-                  counterText: '', // Hides the counter
+                  counterText: '', 
                   border: InputBorder.none,
                 ),
                 onChanged: (value) => _onTextChanged(index, value),

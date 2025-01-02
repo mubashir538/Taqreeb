@@ -29,7 +29,6 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

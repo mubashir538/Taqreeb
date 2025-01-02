@@ -34,9 +34,8 @@ class _AddcategoryListState extends State<AddcategoryList> {
   FocusNode pricemaxFocus = FocusNode();
 
   String token = '';
-  Map<String, dynamic> categories = {}; // Initialize as empty map
-  bool isLoading = true; // Add a loading flag
-  String type = "";
+  Map<String, dynamic> categories = {}; 
+  bool isLoading = true;   String type = "";
   
   @override
   void initState() {
@@ -50,11 +49,10 @@ class _AddcategoryListState extends State<AddcategoryList> {
     type = await MyTokens.getBusinessType();
     final categories = await MyApi.getRequest(
       endpoint: 'business/categories/$type', headers: {'Authorization': 'Bearer $token'},
-      //  headers: {'Authorization': 'Bearer $token'}
     );
     setState(() {
       this.token = token;
-      this.categories = categories ?? {}; // Ensure no null data
+      this.categories = categories ?? {};
       if (categories == null || categories['status'] == 'error') {
         print('$categories');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

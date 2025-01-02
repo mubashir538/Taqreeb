@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/header.dart';
-import 'package:taqreeb/theme/color.dart'; // Adjust the path to your MyColors class
+import 'package:taqreeb/theme/color.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -14,9 +16,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  Map<String, dynamic> user = {}; // Initialize as empty map
+  Map<String, dynamic> user = {}; 
   String token = '';
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true;
   String type = '';
 
   final GlobalKey _headerKey = GlobalKey();
@@ -36,11 +38,11 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-    fetchData(); // Fetch data in a separate method
+    fetchData(); 
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
@@ -49,25 +51,34 @@ class _DashboardState extends State<Dashboard> {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.user = user ?? {}; // Ensure no null data
-      if (user == null || user['status'] == 'error') {
-        print('$user');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.user = user ?? {}; 
+          if (user == null || user['status'] == 'error') {
+            print('$user');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            isLoading = false;
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -94,7 +105,6 @@ class _DashboardState extends State<Dashboard> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: (screenHeight * 0.02) + _headerHeight),
-                        // Profile Info Section
                         Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: maximumDimension * 0.03,
@@ -148,7 +158,6 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                         SizedBox(height: screenHeight * 0.01),
-                        // Dashboard Options
                         ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),

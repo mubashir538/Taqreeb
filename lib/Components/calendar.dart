@@ -4,8 +4,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class CalendarView extends StatefulWidget {
-  final List<DateTime> bookedDates; // List of booked dates
-  final Function(DateTime) onDateSelected; // Callback function
+  final List<DateTime> bookedDates; 
+  final Function(DateTime) onDateSelected; 
   const CalendarView(
       {Key? key, required this.bookedDates, required this.onDateSelected})
       : super(key: key);
@@ -24,15 +24,15 @@ class _CalendarViewState extends State<CalendarView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TableCalendar(
-          firstDay: DateTime.now(), // Start from today's date
+          firstDay: DateTime.now(), 
           lastDay:
-              DateTime.now().add(const Duration(days: 365)), // One year ahead
+              DateTime.now().add(const Duration(days: 365)), 
           focusedDay: _focusedDay,
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               _selectedDay = selectedDay;
-              _focusedDay = focusedDay; // update focusedDay
+              _focusedDay = focusedDay; 
             });
             widget.onDateSelected(selectedDay);
           },

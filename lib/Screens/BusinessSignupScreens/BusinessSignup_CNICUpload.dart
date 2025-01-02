@@ -37,7 +37,6 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
       if (pickedFile != null) {
         final imageBytes = await File(pickedFile.path).readAsBytes();
 
-        // Show the cropping popup
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -66,7 +65,6 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
     }
   }
 
-// Save the cropped image to a file
   Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/cropped_image.png';

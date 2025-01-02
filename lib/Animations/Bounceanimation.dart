@@ -1,4 +1,3 @@
-// bounce_animation.dart
 import 'package:flutter/material.dart';
 
 class BounceAnimation extends StatefulWidget {
@@ -20,15 +19,15 @@ class _BounceAnimationState extends State<BounceAnimation>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800), // Faster animation
+      duration: Duration(milliseconds: 800), 
     )..repeat(reverse: true);
     _bounceAnimation = Tween<double>(
-      begin: 0.95, // Slight shrink
-      end: 1.05,  // Slight expand
+      begin: 0.95, 
+      end: 1.05,  
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeInOut, // Smoother transition
+        curve: Curves.easeInOut, 
       ),
     );
   }

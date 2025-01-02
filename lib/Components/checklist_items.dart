@@ -23,16 +23,13 @@ class GuideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Screen dimensions
     final screenWidth = MediaQuery.of(context).size.width;
     final maxDimension = MediaQuery.of(context).size.shortestSide;
 
-    // Dynamic sizes
-    final containerHeight = maxDimension * 0.08; // 8% of the shortest side
-    final iconSize = maxDimension * 0.05; // 5% of the shortest side
-    final fontSize = maxDimension * 0.015; // 4.5% of the shortest side
+    final containerHeight = maxDimension * 0.08;
+    final iconSize = maxDimension * 0.05;
+    final fontSize = maxDimension * 0.015;
 
-    // Determine if the icon is SVG
     final isLeftSvg = leftIconPath.isNotEmpty && leftIconPath.endsWith('svg');
     final isRightSvg =
         rightIconPath.isNotEmpty && rightIconPath.endsWith('svg');
@@ -41,8 +38,8 @@ class GuideButton extends StatelessWidget {
       onTap: () => onpressed(),
       child: Center(
         child: Container(
-          height: containerHeight.clamp(60, 80.0), // Min: 50, Max: 80
-          width: screenWidth * 0.9, // 90% of screen width
+          height: containerHeight.clamp(60, 80.0), 
+          width: screenWidth * 0.9, 
           decoration: BoxDecoration(
             color: MyColors.DarkLighter,
             borderRadius: BorderRadius.circular(12),
@@ -50,7 +47,6 @@ class GuideButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Left Icon
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: leftIconPath.isNotEmpty
@@ -58,7 +54,7 @@ class GuideButton extends StatelessWidget {
                         ? SvgPicture.asset(
                             leftIconPath,
                             width:
-                                iconSize.clamp(20.0, 40.0), // Min: 20, Max: 40
+                                iconSize.clamp(20.0, 40.0), 
                             height: iconSize.clamp(20.0, 40.0),
                           )
                         : Image.asset(
@@ -73,20 +69,18 @@ class GuideButton extends StatelessWidget {
                       ),
               ),
 
-              // Text
               Expanded(
                 child: Text(
                   text,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                    fontSize: fontSize.clamp(14.0, 22.0), // Min: 14, Max: 22
+                    fontSize: fontSize.clamp(14.0, 22.0), 
                     fontWeight: FontWeight.w500,
                     color: MyColors.white,
                   ),
                 ),
               ),
 
-              // Right Icon
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: rightIconPath.isNotEmpty

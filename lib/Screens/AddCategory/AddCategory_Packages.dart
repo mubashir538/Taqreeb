@@ -89,7 +89,6 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
             ),
           ),
           Positioned(
-            // top: screenHeight - (screenHeight * 0.02),
             bottom: screenHeight * 0.02,
             left: screenWidth * 0.25,
             right: screenWidth * 0.25,
@@ -100,8 +99,8 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
                   print(' args: ${args}');
                   Navigator.pushNamed(
                     context,
-                    '/AddCategory_AddImage', // Replace with your target screen's route
-                    arguments: args, // Passing the args map to the next screen
+                    '/AddCategory_AddImage', 
+                    arguments: args,
                   );
                 }),
           ),
@@ -125,8 +124,8 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
           print(' args: ${args}');
           Navigator.pushNamed(
             context,
-            '/AddCategory_AddPackage', // Replace with your target screen's route
-            arguments: args, // Passing the args map to the next screen
+            '/AddCategory_AddPackage', 
+            arguments: args,
           );
         },
         child: Icon(

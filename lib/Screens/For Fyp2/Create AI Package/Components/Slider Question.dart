@@ -27,14 +27,12 @@ class _SliderQuestionState extends State<SliderQuestion> {
     setState(() {
       widget.currentCount += delta;
 
-      // Ensure the value stays within bounds
       if (widget.currentCount < widget.start) {
         widget.currentCount = widget.start;
       } else if (widget.currentCount > widget.end) {
         widget.currentCount = widget.end;
       }
 
-      // Snap to the nearest multiple of 10
       widget.currentCount = (widget.currentCount / 10).round() * 10.toDouble();
     });
   }
@@ -51,7 +49,6 @@ class _SliderQuestionState extends State<SliderQuestion> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Question Text
           Padding(
             padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
             child: Text(
@@ -63,17 +60,14 @@ class _SliderQuestionState extends State<SliderQuestion> {
             ),
           ),
 
-          // Slider with controls
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Minus Icon
               IconButton(
                 onPressed: () => _updateValue(-50000),
                 icon: Icon(Icons.remove, color: MyColors.red),
               ),
 
-              // Slider
               Expanded(
                 child: Slider(
                   value: widget.currentCount,
@@ -83,7 +77,6 @@ class _SliderQuestionState extends State<SliderQuestion> {
                   label: widget.currentCount.round().toString(),
                   onChanged: (double newValue) {
                     setState(() {
-                      // Snap to the nearest multiple of 10
                       widget.currentCount =
                           (newValue / 10).round() * 10.toDouble();
                     });
@@ -93,7 +86,6 @@ class _SliderQuestionState extends State<SliderQuestion> {
                 ),
               ),
 
-              // Add Icon
               IconButton(
                 onPressed: () => _updateValue(50000),
                 icon: Icon(Icons.add, color: MyColors.red),
@@ -101,7 +93,6 @@ class _SliderQuestionState extends State<SliderQuestion> {
             ],
           ),
 
-          // Range Labels
           Padding(
             padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
             child: Row(

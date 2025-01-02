@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
@@ -21,9 +23,9 @@ class EventDetails extends StatefulWidget {
 
 class _EventDetailsState extends State<EventDetails> {
   String token = '';
-  Map<String, dynamic> events = {}; // Initialize as empty map
+  Map<String, dynamic> events = {}; 
   late int EventId;
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true;
 
   @override
   void didChangeDependencies() {
@@ -36,8 +38,8 @@ class _EventDetailsState extends State<EventDetails> {
     fetchData();
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
 
     final Event = await MyApi.getRequest(
@@ -45,25 +47,34 @@ class _EventDetailsState extends State<EventDetails> {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.events = Event ?? {}; // Ensure no null data
-        if (Event == null || Event['status'] == 'error') {
-        print('$Event');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.events = Event ?? {}; 
+          if (Event == null || Event['status'] == 'error') {
+            print('$Event');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            isLoading = false;
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -169,45 +180,45 @@ class _EventDetailsState extends State<EventDetails> {
                           itemBuilder: (context, index) {
                             return Function12(
                               delete: () async {
-                                  final response = await MyApi.postRequest(
-                                      endpoint: 'DeleteFunction/',
-                                      headers: {
-                                        'Authorization': 'Bearer $token'
-                                      },
-                                      body: {
-                                        'FunctionId': events['Functions'][index]['id']
-                                            .toString(),
-                                      });
-                                  if (response['status'] == 'success') {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(
-                                        'Function Deleted Successfully',
-                                        style: GoogleFonts.montserrat(
-                                          color: MyColors.white,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      backgroundColor: MyColors.green,
-                                    ));
-                                    setState(() {
-                                      events["Functions"].removeAt(index);
+                                final response = await MyApi.postRequest(
+                                    endpoint: 'DeleteFunction/',
+                                    headers: {
+                                      'Authorization': 'Bearer $token'
+                                    },
+                                    body: {
+                                      'FunctionId': events['Functions'][index]
+                                              ['id']
+                                          .toString(),
                                     });
-                                  } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(
-                                        'Something Went Wrong!',
-                                        style: GoogleFonts.montserrat(
-                                          color: MyColors.white,
-                                          fontSize: 15,
-                                        ),
+                                if (response['status'] == 'success') {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                      'Function Deleted Successfully',
+                                      style: GoogleFonts.montserrat(
+                                        color: MyColors.white,
+                                        fontSize: 15,
                                       ),
-                                      backgroundColor: MyColors.red,
-                                    ));
-                                  }
-                                },
-                                
+                                    ),
+                                    backgroundColor: MyColors.green,
+                                  ));
+                                  setState(() {
+                                    events["Functions"].removeAt(index);
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                      'Something Went Wrong!',
+                                      style: GoogleFonts.montserrat(
+                                        color: MyColors.white,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    backgroundColor: MyColors.red,
+                                  ));
+                                }
+                              },
                               color: Color(int.parse(
                                   '0xff${events["EventDetail"]["themeColor"].substring(1, events["EventDetail"]["themeColor"].length)}')),
                               name: events['Functions'][index]['name'],
@@ -343,7 +354,6 @@ class _EventDetailsState extends State<EventDetails> {
                           child: Center(child: MyDivider()),
                         ),
 
-                        //Colored Button
                         ColoredButton(
                           text: 'Create New Function',
                           onPressed: () {

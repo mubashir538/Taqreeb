@@ -49,7 +49,6 @@ class _ParlorsState extends State<Parlors> {
                   height: 30,
                 ),
 
-                //Text
                 Text(
                   "Elevate your bridal experience with top artists in Karachi that\n"
                   "fit your budget on Taqreeb. Explore comprehensive details\n"
@@ -65,7 +64,6 @@ class _ParlorsState extends State<Parlors> {
                   height: 30,
                 ),
 
-                //Spa and Services
                 Container(
                   height: 170,
                   width: 380,
@@ -112,7 +110,6 @@ class _ParlorsState extends State<Parlors> {
                   height: 40,
                 ),
 
-                //Makeup
                 Container(
                   height: 170,
                   width: 380,
@@ -161,11 +158,9 @@ class _ParlorsState extends State<Parlors> {
                   height: 40,
                 ),
 
-                //Divider
                 MyDivider(width: screenWidth * 0.6),
                 const SizedBox(height: 20),
 
-                //Colored Button
                 ColoredButton(text: 'Continue'),
                 SizedBox(
                   height: 20,

@@ -9,7 +9,6 @@ class RangeSliderController {
 
   RangeSliderController({required this.minValue, required this.maxValue});
 
-  // Method to update values
   void updateValues(double min, double max) {
     minValue = min;
     maxValue = max;
@@ -57,7 +56,6 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Range Slider
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: MyColors.red,
@@ -80,23 +78,19 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               ),
               onChanged: (RangeValues newRange) {
                 setState(() {
-                  // Snap to multiples of 10,000
                   currentRange = RangeValues(
                     (newRange.start / 10000).round() * 10000.toDouble(),
                     (newRange.end / 10000).round() * 10000.toDouble(),
                   );
 
-                  // Update controller values
                   widget.controller.updateValues(currentRange.start, currentRange.end);
 
-                  // Trigger the callback
                   widget.onChanged(currentRange.start, currentRange.end);
                 });
               },
             ),
           ),
 
-          // Min and Max Values
           Padding(
             padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
             child: Row(

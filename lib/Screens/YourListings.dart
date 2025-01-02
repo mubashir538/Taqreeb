@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -16,18 +18,18 @@ class YourListings extends StatefulWidget {
 }
 
 class _YourListingsState extends State<YourListings> {
-  Map<String, dynamic> listings = {}; // Initialize as empty map
+  Map<String, dynamic> listings = {};
   String token = '';
   String type = "";
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true; 
   @override
   void initState() {
     super.initState();
-    fetchData(); // Fetch data in a separate method
+    fetchData(); 
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
@@ -35,25 +37,34 @@ class _YourListingsState extends State<YourListings> {
         headers: {'Authorization': 'Bearer $token'},
         endpoint: 'YourListing/$id/$type');
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.listings = fetchedListings ?? {}; // Ensure no null data
-      if (listings == {} || listings['status'] == 'error') {
-        print('$listings');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.listings = fetchedListings ?? {};
+          if (listings == {} || listings['status'] == 'error') {
+            print('$listings');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            isLoading = false;
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override

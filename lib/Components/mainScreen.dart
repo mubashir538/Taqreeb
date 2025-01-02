@@ -21,7 +21,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // Define separate page lists for regular and business users
   List<Widget> pages = [HomePage(), ChatsScreen(), YourEvents(), AccountInfo()];
   List<Widget> businessPages = [
     Dashboard(),
@@ -30,29 +29,26 @@ class _MainScreenState extends State<MainScreen> {
     BusinessAccountInfo()
   ];
 
-  // State variables
-  bool isLoading = true; // Track loading state
-  bool isBusinessOwner = false; // Track user type
+  bool isLoading = true; 
+  bool isBusinessOwner = false; 
   bool isFreelancer = false;
   @override
   void initState() {
     super.initState();
 
-    fetchUser(); // Fetch the user type on initialization
+    fetchUser(); 
   }
 
-  // Fetch user type from storage
   void fetchUser() async {
     final utype = await MyStorage.exists(MyTokens.isBusinessOwner);
     final ftype = await MyStorage.exists(MyTokens.isFreelancer);
     setState(() {
       isBusinessOwner = utype;
       isFreelancer = ftype;
-      isLoading = false; // Loading complete
+      isLoading = false; 
     });
   }
 
-  // Update selected index for the navbar
   void updateValue(int newValue) {
     setState(() {
       widget.index = newValue;
@@ -68,7 +64,6 @@ class _MainScreenState extends State<MainScreen> {
 
     double keyboard = MediaQuery.of(context).viewInsets.bottom;
     bool isKeyboardVisible = keyboard > 0;
-    // Determine the page list based on the user type
     List<Widget> currentPageList =
         isBusinessOwner || isFreelancer ? businessPages : pages;
 
@@ -76,9 +71,9 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: MyColors.Dark,
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(), // Show loading spinner
+              child: CircularProgressIndicator(), 
             )
-          : currentPageList[widget.index], // Display the selected page
+          : currentPageList[widget.index], 
       
       floatingActionButton:isKeyboardVisible? null: SizedBox(
         width: screenWidth * 0.15,
@@ -89,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
                 context,
                 isBusinessOwner || isFreelancer
                     ? '/AddCategory_List'
-                    : '/CreateEvent'); // Navigate based on user type
+                    : '/CreateEvent'); 
           },
           backgroundColor: MyColors.Yellow,
           shape: const CircleBorder(),
@@ -103,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Navbar(
         selectedIndex: widget.index,
-        onValueChanged: updateValue, // Handle navbar value change
+        onValueChanged: updateValue, 
       ),
     );
   }

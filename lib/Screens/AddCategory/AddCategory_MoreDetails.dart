@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -43,6 +45,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
+  Timer? timer;
   void fetchdata() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
     final fields = await MyApi.getRequest(
@@ -51,30 +54,40 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
       headers: {'Authorization': 'Bearer $token'},
       // headers: {'Authorization': 'Bearer $token'}
     );
-    setState(() {
-      this.token = token;
-      textfields = fields ?? {}; // Ensure no null data
-      if (textfields == null || textfields['status'] == 'error') {
-        print('$textfields');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        for (int i = 0; i < textfields['fields'].length; i++) {
-          controllers.add(TextEditingController());
-          focusNodes.add(FocusNode());
-          print(i);
-        }
-        isLoading = false; // Data has been fetched, so stop loading
-        ischange = true;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          textfields = fields ?? {}; 
+          if (textfields == null || textfields['status'] == 'error') {
+            print('$textfields');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            for (int i = 0; i < textfields['fields'].length; i++) {
+              controllers.add(TextEditingController());
+              focusNodes.add(FocusNode());
+              print(i);
+            }
+            isLoading = false; 
+            ischange = true;
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   String capitalize(String str) {
@@ -168,7 +181,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                 ColoredButton(
                   text: 'Continue',
                   onPressed: () {
-                    // Validate if all fields are filled
                     bool allFieldsFilled = true;
                     for (var controller in controllers) {
                       print(controller.text);
@@ -187,13 +199,11 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                       return;
                     }
 
-                    // Collect all values from fields
                     Map<String, dynamic> fieldValues = {};
                     for (int i = 0; i < textfields['fields'].length; i++) {
                       fieldValues[textfields['fields'][i]['name']] =
                           controllers[i].text;
                     }
-                    // Add the values to args map
                     args.addAll(fieldValues.map((key, value) {
                       return MapEntry(key, value.toString());
                     }).cast<String, String>());

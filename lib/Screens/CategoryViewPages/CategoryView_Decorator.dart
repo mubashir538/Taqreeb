@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,9 +21,9 @@ class CategoryView_Decorator extends StatefulWidget {
 
 class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   String token = '';
-  Map<String, dynamic> listing = {}; // Initialize as empty map
+  Map<String, dynamic> listing = {}; 
   late int? listingId;
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true; 
 
   int _currentIndex = 0;
   bool isToggled = true;
@@ -68,53 +70,62 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     }
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
       endpoint: 'decorator/detail/${this.listingId}',
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.listing = listing ?? {};
-      if (listing == null || listing['status'] == 'error') {
-        print('$listing');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
-        for (var i = 0; i < listing['pictures'].length; i++) {
-          this._imageUrls.add(listing['pictures'][i]['picturePath']);
-        }
-        for (var i = 0; i < listing['Addons'].length; i++) {
-          this.addonsheadings.add(listing['Addons'][i]['name']);
-          if (listing['Addons'][i]['isPer']) {
-            this.addonsvalues.add(
-                '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.listing = listing ?? {};
+          if (listing == null || listing['status'] == 'error') {
+            print('$listing');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
           } else {
-            this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+            isLoading = false;
+            for (var i = 0; i < listing['pictures'].length; i++) {
+              this._imageUrls.add(listing['pictures'][i]['picturePath']);
+            }
+            for (var i = 0; i < listing['Addons'].length; i++) {
+              this.addonsheadings.add(listing['Addons'][i]['name']);
+              if (listing['Addons'][i]['isPer']) {
+                this.addonsvalues.add(
+                    '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
+              } else {
+                this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+              }
+            }
+            this.values.add(listing['View']['decorType']);
+            this.values.add(listing['View']['catering']);
+            this.values.add(listing['View']['staff']);
+            this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
           }
-        }
-        this.values.add(listing['View']['decorType']);
-        this.values.add(listing['View']['catering']);
-        this.values.add(listing['View']['staff']);
-        this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void showHierarchicalOptions(

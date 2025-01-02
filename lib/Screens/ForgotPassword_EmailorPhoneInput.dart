@@ -70,16 +70,13 @@ class _ForgotPassword_EmailorPhoneInputState
       type = 'phone';
     }
     try {
-      // Prepare API request payload
       final Map<String, dynamic> data = {type: contact};
 
-      // Send POST request
       final response = await MyApi.postRequest(
         endpoint: 'user/forgotpassword/phoneorEmail/',
         body: data,
       );
 
-      // Handle response
       if (response['status'] == 'success') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Verification code sent successfully.'),

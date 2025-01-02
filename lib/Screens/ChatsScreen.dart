@@ -34,7 +34,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
     });
 
     try {
-      // Fetch user chats
       final userChatsSnapshot = await usersCollection.get();
       final chats = userChatsSnapshot.docs.map((doc) {
         return {
@@ -44,7 +43,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
         };
       }).toList();
 
-      // Fetch groups
       final groupsSnapshot = await groupsCollection.get();
       final fetchedGroups = groupsSnapshot.docs.map((doc) {
         return {
@@ -108,7 +106,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                         child: ListView(
                           children: [
                             ...userChats.map((chat) => MessageChatButton(
-                                  onpressed: () => {}, // Navigate to chat
+                                  onpressed: () => {}, 
                                   name: chat['name'],
                                   message: chat['lastMessage'],
                                   newMessage: 0,
@@ -116,7 +114,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                 )),
                             Divider(color: MyColors.white),
                             ...groups.map((group) => MessageChatButton(
-                                  onpressed: () => {}, // Navigate to group chat
+                                  onpressed: () => {}, 
                                   name: group['name'],
                                   message: 'Group Chat',
                                   newMessage: 0,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -22,22 +24,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
-  Map<String, dynamic> categories = {}; // Initialize as empty map
-  Map<String, dynamic> listings = {}; // Initialize as empty map
-  Map<String, dynamic> demoImages = {}; // Initialize as empty map
+  Map<String, dynamic> categories = {}; 
+  Map<String, dynamic> listings = {}; 
+  Map<String, dynamic> demoImages = {}; 
   String token = '';
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true; 
   List<String> myImages = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-    fetchData(); // Fetch data in a separate method
+    fetchData();
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
       endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
@@ -58,42 +60,51 @@ class _HomePageState extends State<HomePage> {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.categories = fetchedCategories ?? {}; // Ensure no null data
-      this.listings = fetchedListings ?? {}; // Ensure no null data
-      this.demoImages = fetchedImages ?? {}; // Ensure no null data
-      if (fetchedCategories == null ||
-          fetchedCategories['status'] == 'error' ||
-          fetchedListings == null ||
-          fetchedListings['status'] == 'error' ||
-          fetchedImages == null ||
-          fetchedImages['status'] == 'error') {
-        print('$fetchedCategories');
-        print('$fetchedListings');
-        print('$fetchedImages');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        loadimages();
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.categories = fetchedCategories ?? {}; 
+          this.listings = fetchedListings ?? {}; 
+          this.demoImages = fetchedImages ?? {}; 
+          if (fetchedCategories == null ||
+              fetchedCategories['status'] == 'error' ||
+              fetchedListings == null ||
+              fetchedListings['status'] == 'error' ||
+              fetchedImages == null ||
+              fetchedImages['status'] == 'error') {
+            print('$fetchedCategories');
+            print('$fetchedListings');
+            print('$fetchedImages');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            loadimages();
+            isLoading = false;
+          }
+        });
       }
     });
   }
 
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
   void loadimages() async {
-    this.myImages = await demoImages['images'] // Filter items with "image"
+    this.myImages = await demoImages['images'] 
         .map((value) =>
             '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
-        .cast<String>() // Extract "image" values
+        .cast<String>() 
         .toList();
   }
 
@@ -145,11 +156,11 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  // Show CircularProgressIndicator while loading
                   isLoading
                       ? Center(
                           child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(MyColors.white),
                           ),
                         )
                       : Column(
@@ -193,7 +204,6 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                         ),
-                                    
                                       ],
                                     ),
                                   ),

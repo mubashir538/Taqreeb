@@ -54,7 +54,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
       if (pickedFile != null) {
         final imageBytes = await File(pickedFile.path).readAsBytes();
 
-        // Show the cropping popup
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -79,7 +78,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     }
   }
 
-// Save the cropped image to a file
   Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/cropped_image.png';
@@ -119,11 +117,9 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         apipath = 'freelancer/signup/';
       }
       try {
-        // Create a multipart request to upload the image
         final request =
             http.MultipartRequest('POST', Uri.parse(MyApi.baseUrl + apipath));
 
-        // Add the image file
         request.files.add(await http.MultipartFile.fromPath(
           'profilePicture',
           _selectedImage!.path,
@@ -132,7 +128,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         if (type == 'Freelancer') {
           final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
           request.headers.addAll({
-            'Authorization': 'Bearer $token', // Example header
+            'Authorization': 'Bearer $token', 
           });
           final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
           print('${userId}');
@@ -148,7 +144,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         } else if (type == 'Business') {
           final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
           request.headers.addAll({
-            'Authorization': 'Bearer $token', // Example header
+            'Authorization': 'Bearer $token', 
           });
 
           request.files.add(await http.MultipartFile.fromPath(
@@ -189,7 +185,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           request.fields['gender'] =
               await MyStorage.getToken(MyTokens.sgender) ?? "";
         }
-        // Send the request
         final response = await request.send();
 
         final responseBody = await response.stream.bytesToString();
@@ -211,7 +206,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               ],
             ).showDialogBox(context);
           } else {
-            // Success
 
             if (type == 'Freelancer') {
               MyStorage.deleteToken(MyTokens.fscnic);
@@ -247,7 +241,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
             }
           }
         } else {
-          // Failure
           warningDialog(
                   title: 'Error',
                   message:

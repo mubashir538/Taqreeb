@@ -21,7 +21,7 @@ class GuestListButton extends StatelessWidget {
         ),
         
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10), // name aur number se phle ki jagaj
+          padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10), 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, 
             children: [

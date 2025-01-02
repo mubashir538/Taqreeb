@@ -27,12 +27,11 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
-      width: screenWidth * 0.9, // Make the dropdown responsive
+      width: screenWidth * 0.9, 
       padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
       child: DropdownButtonFormField<String>(
         focusNode: widget.focusNode,
@@ -41,7 +40,7 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
           labelText: widget.labelText,
           labelStyle: GoogleFonts.montserrat(
             color: Colors.white,
-            fontSize: screenWidth * 0.03, // Responsive font size
+            fontSize: screenWidth * 0.03, 
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -52,12 +51,12 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
             borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
-          fillColor: MyColors.DarkLighter, // Background color
+          fillColor: MyColors.DarkLighter, 
         ),
-        dropdownColor: MyColors.DarkLighter, // Dropdown background color
+        dropdownColor: MyColors.DarkLighter, 
         style: GoogleFonts.montserrat(
           color: MyColors.white,
-          fontSize: screenWidth * 0.035, // Responsive font size
+          fontSize: screenWidth * 0.035, 
         ),
         value: selectedItem,
         isExpanded: true,
@@ -72,7 +71,7 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
                   color: item == selectedItem
                       ? MyColors.red
                       : MyColors.whiteDarker,
-                  size: screenWidth * 0.03, // Responsive icon size
+                  size: screenWidth * 0.03, 
                 ),
                 SizedBox(width: screenWidth * 0.02),
                 Text(item),

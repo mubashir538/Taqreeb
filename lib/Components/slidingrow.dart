@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class SlidingRow extends StatelessWidget {
-  final String title; // Title of the row
-  final List<String> images; // List of image URLs
+  final String title; 
+  final List<String> images; 
 
   const SlidingRow({required this.title, required this.images, super.key});
 
@@ -17,7 +17,6 @@ class SlidingRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title and "See All" row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -41,26 +40,25 @@ class SlidingRow extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Scrollable Row with Scrollbar
           SizedBox(
-            height: screenWidth * 0.4, // Height for the sliding row
+            height: screenWidth * 0.4, 
             child: Scrollbar(
-              thumbVisibility: true, // Always show the scrollbar thumb
-              radius: const Radius.circular(8.0), // Rounded scrollbar
+              thumbVisibility: true, 
+              radius: const Radius.circular(8.0), 
               child: ListView.builder(
-                scrollDirection: Axis.horizontal, // Horizontal scrolling
+                scrollDirection: Axis.horizontal, 
                 itemCount: images.length,
                 itemBuilder: (context, index) {
                   return Container(
                     margin: const EdgeInsets.only(right: 8.0),
                     child: ClipRRect(
                       borderRadius:
-                          BorderRadius.circular(12), // Rounded corners
+                          BorderRadius.circular(12), 
                       child: Image.network(
                         images[index],
-                        width: screenWidth * 0.3, // Width of each image
-                        height: screenWidth * 0.4, // Height of each image
-                        fit: BoxFit.cover, // Scale the image
+                        width: screenWidth * 0.3, 
+                        height: screenWidth * 0.4,
+                        fit: BoxFit.cover, 
                       ),
                     ),
                   );

@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
-// ignore: must_be_immutable
 class RadioButtonQuestion extends StatefulWidget {
   RadioButtonQuestion({
     super.key,
     required this.options,
     required this.question,
-    required this.myValue, // The selected value passed from parent
-    required this.onChanged, // Callback function to notify parent of changes
+    required this.myValue, 
+    required this.onChanged, 
   });
 
   final String question;
   final List<String> options;
-  String? myValue; // The selected value
-  final Function(String?) onChanged; // Callback function
+  String? myValue; 
+  final Function(String?) onChanged; 
 
   @override
   State<RadioButtonQuestion> createState() => _RadioButtonQuestionState();
@@ -58,12 +57,12 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                               fontSize: MaximumThing * 0.015,
                             )),
                         value: option,
-                        groupValue: widget.myValue, // Controlled by parent
+                        groupValue: widget.myValue,
                         onChanged: (String? value) {
                           setState(() {
                             widget.myValue = value;
                           });
-                          widget.onChanged(value); // Notify parent
+                          widget.onChanged(value);
                         },
                         activeColor: MyColors.Yellow,
                       ),
@@ -81,12 +80,12 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                                 fontSize: MaximumThing * 0.015,
                               )),
                           value: option,
-                          groupValue: widget.myValue, // Controlled by parent
+                          groupValue: widget.myValue,
                           onChanged: (String? value) {
                             setState(() {
                               widget.myValue = value;
                             });
-                            widget.onChanged(value); // Notify parent
+                            widget.onChanged(value); 
                           },
                           activeColor: MyColors.Yellow,
                         ),

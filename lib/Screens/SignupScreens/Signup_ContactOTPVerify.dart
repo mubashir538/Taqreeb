@@ -18,10 +18,10 @@ class SignupContactOTPVerify extends StatefulWidget {
 }
 
 class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
-  int _remainingTime = 120; // 2 minutes in seconds
+  int _remainingTime = 120; 
   late Timer _timer;
   bool _isResendEnabled = false;
-  String _enteredOTP = ""; // To store the user's entered OTP
+  String _enteredOTP = ""; 
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
   void _startTimer() {
     setState(() {
       _isResendEnabled = false;
-      _remainingTime = 120; // Reset timer to 2 minutes
+      _remainingTime = 120; 
     });
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
@@ -96,7 +96,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
                       ),
                       OTPBoxes(
                         onChanged: (otp) {
-                          _enteredOTP = otp; // Update OTP on user input
+                          _enteredOTP = otp;
                         },
                       ),
                       SizedBox(
@@ -105,7 +105,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
                         onPressed: _isResendEnabled
                             ? () async {
                                 final result =
-                                    await response; // Await the response
+                                    await response; 
 
                                 MyApi.postRequest(
                                     endpoint: 'resendOTP/phone',
@@ -113,7 +113,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
                                       'phone': result['contact'],
                                       'otp': result['otp']
                                     });
-                                _startTimer(); // Restart the timer
+                                _startTimer(); 
                               }
                             : null,
                         child: Text(
@@ -137,11 +137,10 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
                         text: 'Verify OTP',
                         onPressed: () async {
                           try {
-                            final result = await response; // Await the response
+                            final result = await response; 
                             final receivedOTP =
-                                result['otp']; // Extract the OTP
+                                result['otp']; 
                             if (_enteredOTP == receivedOTP) {
-                              // OTP matches, navigate to the next screen
                               MyStorage.saveToken(result['contact'], 'sphone');
                               Navigator.pushNamed(context, '/Signup_MoreInfo');
                             } else {

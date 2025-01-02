@@ -17,7 +17,7 @@ class FadeAnimation extends StatefulWidget {
 
 class _FadeAnimationState extends State<FadeAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool _isVisible = false; // Track visibility status
+  bool _isVisible = false; 
 
   @override
   void initState() {
@@ -34,7 +34,6 @@ class _FadeAnimationState extends State<FadeAnimation> with SingleTickerProvider
     super.dispose();
   }
 
-  // This method triggers the fade-in animation
   void _triggerFadeIn() {
     if (!_controller.isAnimating) {
       _controller.forward(from: 0.0);
@@ -45,16 +44,13 @@ class _FadeAnimationState extends State<FadeAnimation> with SingleTickerProvider
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) {
-        _triggerFadeIn(); // Trigger fade-in when the mouse enters the widget
+        _triggerFadeIn(); 
       },
       onExit: (_) {
-        // Optionally, reverse the fade-out if you want it to disappear when the mouse exits
-        // _controller.reverse();
       },
       child: VisibilityDetector(
         key: Key('fade-animation-key'),
         onVisibilityChanged: (visibilityInfo) {
-          // Trigger fade-in when the widget comes into view
           if (visibilityInfo.visibleFraction > 0.1 && !_isVisible) {
             _isVisible = true;
             _triggerFadeIn();

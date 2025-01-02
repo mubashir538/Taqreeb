@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -17,19 +19,19 @@ class BusinessAccountInfo extends StatefulWidget {
 
 class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   String token = '';
-  Map<String, dynamic> user = {}; // Initialize as empty map
-  bool isLoading = true; // Add a loading flag
+  Map<String, dynamic> user = {}; 
+  bool isLoading = true; 
   List<String> items = [];
   String type = "";
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
 
-    fetchData(); // Fetch data in a separate method
+    fetchData();
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
@@ -38,27 +40,36 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.user = user ?? {}; // Ensure no null data
-      if (user == null || user['status'] == 'error') {
-        print('$user');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        this.items = user['categories'].cast<String>().toList() ?? [];
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.user = user ?? {}; 
+          if (user == null || user['status'] == 'error') {
+            print('$user');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            this.items = user['categories'].cast<String>().toList() ?? [];
+            isLoading = false;
+          }
+        });
       }
     });
   }
+  
+@override
+void dispose(){
+timer?.cancel();
+super.dispose();
+}
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;

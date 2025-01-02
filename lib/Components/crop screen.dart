@@ -27,13 +27,11 @@ class CropPopup extends StatelessWidget {
                 image: imageBytes,
                 controller: _cropController,
                 onCropped: (CropResult result) {
-                  // Extract the cropped image bytes
                   Uint8List croppedBytes = (result as CropSuccess).croppedImage;
-                  // Close the dialog and pass the cropped image back
                   Navigator.of(context).pop();
                   onCropped(croppedBytes);
                 },
-                withCircleUi: false, // Set true if circular cropping is needed
+                withCircleUi: false, 
               ),
             ),
             const SizedBox(height: 16),
@@ -42,7 +40,7 @@ class CropPopup extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close without cropping
+                    Navigator.of(context).pop(); 
                   },
                   child: Text(
                     'Cancel',
@@ -51,7 +49,7 @@ class CropPopup extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Trigger the crop action
+                   
                     _cropController.crop();
                   },
                   child: const Text('Crop'),

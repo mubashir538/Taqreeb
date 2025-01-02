@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -21,14 +23,13 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   TextEditingController controller = TextEditingController();
   String token = '';
-  Map<String, dynamic> types = {}; // Initialize as empty map
-  bool isLoading = true; // Add a loading flag
+  Map<String, dynamic> types = {};
+  bool isLoading = true; 
   bool businessOwnerSwitch = false;
   bool freelancerSwitch = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,8 +38,8 @@ class _SettingsState extends State<Settings> {
     fetchData();
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     final fetchedtype = await MyApi.getRequest(
@@ -52,28 +53,37 @@ class _SettingsState extends State<Settings> {
         await MyStorage.exists(MyTokens.isBusinessOwner) ?? "";
     final isFreelancerToken =
         await MyStorage.exists(MyTokens.isFreelancer) ?? "";
-    // Update the state
-    setState(() {
-      this.token = token;
-      types = fetchedtype ?? {}; // Ensure no null data
-      if (types == null || types['status'] == 'error') {
-        print('$types');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        print('$types');
-        businessOwnerSwitch = bool.parse(isbusinessToken.toString());
-        freelancerSwitch = bool.parse(isFreelancerToken.toString());
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          types = fetchedtype ?? {}; 
+          if (types == null || types['status'] == 'error') {
+            print('$types');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            print('$types');
+            businessOwnerSwitch = bool.parse(isbusinessToken.toString());
+            freelancerSwitch = bool.parse(isFreelancerToken.toString());
+            isLoading = false;
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -126,7 +136,7 @@ class _SettingsState extends State<Settings> {
                             this.types['business']
                                 ? Container(
                                     height: (MaximumThing * 0.08)
-                                        .clamp(60, 80.0), // Min: 50, Max: 80
+                                        .clamp(60, 80.0), 
 
                                     width: screenWidth * 0.9,
                                     decoration: BoxDecoration(
@@ -181,7 +191,7 @@ class _SettingsState extends State<Settings> {
                                               }
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                '/HomePage', // Target route
+                                                '/HomePage', 
                                                 ModalRoute.withName('/'),
                                               );
                                             });
@@ -206,7 +216,7 @@ class _SettingsState extends State<Settings> {
                             this.types['freelancer']
                                 ? Container(
                                     height: (MaximumThing * 0.08)
-                                        .clamp(60, 80.0), // Min: 50, Max: 80
+                                        .clamp(60, 80.0), 
 
                                     width: screenWidth * 0.9,
                                     decoration: BoxDecoration(
@@ -261,7 +271,7 @@ class _SettingsState extends State<Settings> {
                                               }
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                '/HomePage', // Target route
+                                                '/HomePage', 
                                                 ModalRoute.withName('/'),
                                               );
                                             });
@@ -299,7 +309,7 @@ class _SettingsState extends State<Settings> {
                                           MyColors.switchTheme();
                                           Navigator.pushNamedAndRemoveUntil(
                                             context,
-                                            '/HomePage', // Target route
+                                            '/HomePage', 
                                             ModalRoute.withName('/'),
                                           );
                                         },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -21,12 +23,12 @@ class FunctionDetail extends StatefulWidget {
 
 class _FunctionDetailState extends State<FunctionDetail> {
   String token = '';
-  Map<String, dynamic> functions = {}; // Initialize as empty map
+  Map<String, dynamic> functions = {};
   Map<String, dynamic> bookings = {};
   late int FunctionId;
   late int EventId;
   late String eventName;
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true; 
   List<Map<String, dynamic>> bookinglist = [];
   bool ischanged = false;
   @override
@@ -45,8 +47,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
     }
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
 
     print(this.FunctionId);
@@ -61,30 +63,39 @@ class _FunctionDetailState extends State<FunctionDetail> {
     );
 
     print(function);
-    // Update the state
-    setState(() {
-      this.token = token;
-      functions = function ?? {};
-      this.bookings = bookings ?? {}; // Ensure no null data
-      if (bookings == null || bookings['status'] == 'error') {
-        print('$bookings');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        for (int i = 0; i < this.bookings['cart'].length; i++) {
-          bookinglist.add(this.bookings['cart'][i]);
-        }
-        ischanged = true;
-        isLoading = false; // Data has been fetched, so stop loading
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          functions = function ?? {};
+          this.bookings = bookings ?? {}; 
+          if (bookings == null || bookings['status'] == 'error') {
+            print('$bookings');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            for (int i = 0; i < this.bookings['cart'].length; i++) {
+              bookinglist.add(this.bookings['cart'][i]);
+            }
+            ischanged = true;
+            isLoading = false; 
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -289,7 +300,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                             ],
                                           ),
 
-                                        //divider
                                         MyDivider(width: screenWidth * 0.6),
                                         const SizedBox(height: 20),
 
@@ -436,7 +446,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
               child: Header(
                 key: _headerKey,
                 heading: "Your Function Details",
-                image: MyImages.CheckList, //image folder mn mojood ni hai
+                image: MyImages.CheckList, 
               ),
             ),
           ],

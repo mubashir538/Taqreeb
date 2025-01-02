@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Animations/Bounceanimation.dart';
@@ -23,9 +25,9 @@ class CategoryView_Venue extends StatefulWidget {
 
 class _CategoryView_VenueState extends State<CategoryView_Venue> {
   String token = '';
-  Map<String, dynamic> listing = {}; // Initialize as empty map
+  Map<String, dynamic> listing = {}; 
   late int? listingId;
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true; 
 
   int _currentIndex = 0;
   bool isToggled = true;
@@ -68,9 +70,9 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
+  Timer? timer;
   void fetchData() async {
     ischange = true;
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
@@ -80,56 +82,65 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
         headers: {'Authorization': 'Bearer $token'},
         endpoint:
             'YourEvents/functions/${await MyStorage.getToken(MyTokens.userId)}');
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.listing = listing ?? {};
-      this.events = events ?? {};
-      if (listing == null ||
-          listing['status'] == 'error' ||
-          events == null ||
-          events['status'] == 'error') {
-        print('$events');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
-        for (var i = 0; i < listing['pictures'].length; i++) {
-          if (listing['pictures'][i]['picturePath'] != " ") {
-            this._imageUrls.add(listing['pictures'][i]['picturePath']);
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.listing = listing ?? {};
+          this.events = events ?? {};
+          if (listing == null ||
+              listing['status'] == 'error' ||
+              events == null ||
+              events['status'] == 'error') {
+            print('$events');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
           } else {
-            this._imageUrls.add(
-                "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300");
+            isLoading = false;
+            for (var i = 0; i < listing['pictures'].length; i++) {
+              if (listing['pictures'][i]['picturePath'] != " ") {
+                this._imageUrls.add(listing['pictures'][i]['picturePath']);
+              } else {
+                this._imageUrls.add(
+                    "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300");
+              }
+            }
+            for (var i = 0; i < listing['Addons'].length; i++) {
+              this.addonsheadings.add(listing['Addons'][i]['name']);
+              if (listing['Addons'][i]['isPer']) {
+                this.addonsvalues.add(
+                    '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
+              } else {
+                this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+              }
+            }
+            this.values.add(listing['VenueView']['venueType']);
+            this.values.add(listing['VenueView']['catering']);
+            this.values.add(listing['VenueView']['staff']);
+            this.values.add(
+                '${listing['VenueView']['guestminAllowed'].toString()}-${listing['VenueView']['guestmaxAllowed'].toString()}');
+            this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
+            this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
           }
-        }
-        for (var i = 0; i < listing['Addons'].length; i++) {
-          this.addonsheadings.add(listing['Addons'][i]['name']);
-          if (listing['Addons'][i]['isPer']) {
-            this.addonsvalues.add(
-                '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
-          } else {
-            this.addonsvalues.add(listing['Addons'][i]['price'].toString());
-          }
-        }
-        this.values.add(listing['VenueView']['venueType']);
-        this.values.add(listing['VenueView']['catering']);
-        this.values.add(listing['VenueView']['staff']);
-        this.values.add(
-            '${listing['VenueView']['guestminAllowed'].toString()}-${listing['VenueView']['guestmaxAllowed'].toString()}');
-        this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-        this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void showHierarchicalOptions(

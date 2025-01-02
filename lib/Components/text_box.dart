@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart'; // For input formatters
+import 'package:flutter/services.dart'; 
 import 'package:taqreeb/theme/color.dart';
 
-// ignore: must_be_immutable
 class MyTextBox extends StatefulWidget {
   final String hint;
   final String Value;
@@ -39,9 +38,9 @@ class _MyTextBoxState extends State<MyTextBox> {
   @override
   void initState() {
     super.initState();
-    _isObscured = widget.isPassword; // Initialize based on isPassword
+    _isObscured = widget.isPassword; 
     _focusNode =
-        widget.focusNode ?? FocusNode(); // Use provided focusNode or create one
+        widget.focusNode ?? FocusNode(); 
     _focusNode.addListener(() {
       setState(() {
         _isFocused = _focusNode.hasFocus;
@@ -51,7 +50,7 @@ class _MyTextBoxState extends State<MyTextBox> {
 
   @override
   void dispose() {
-    _focusNode.dispose(); // Dispose of the focusNode if it's created locally
+    _focusNode.dispose(); 
     super.dispose();
   }
 
@@ -72,7 +71,7 @@ class _MyTextBoxState extends State<MyTextBox> {
         border: Border.all(
           color: _isFocused
               ? MyColors.red
-              : Colors.transparent, // Dynamic border color
+              : Colors.transparent, 
           width: 2,
         ),
         boxShadow: [
@@ -119,7 +118,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                     color: MyColors.white.withOpacity(0.6),
                     fontSize: maximumThing * 0.015,
                   ),
-                  border: InputBorder.none, // Remove internal border
+                  border: InputBorder.none, 
                 ),
               ),
             ),

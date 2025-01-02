@@ -209,21 +209,21 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                       Container(
                         height: 270,
                         width: double
-                            .infinity, // Ensures it takes up the full width
+                            .infinity,
                         decoration: BoxDecoration(
                           color: MyColors
-                              .DarkLighter, // Replace with your desired background color
+                              .DarkLighter, 
                           borderRadius: BorderRadius.circular(
-                              10), // Optional for rounded corners
+                              10), 
                         ),
                         padding: EdgeInsets.symmetric(
                             horizontal: 20,
-                            vertical: 10), // Adds padding for content
+                            vertical: 10), 
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment
-                              .start, // Align content to the start
+                              .start, 
                           mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, // Even spacing between rows
+                              .spaceBetween, 
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -379,7 +379,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                       SizedBox(
                         height: 20,
                       ),
-                      //grey container lgyga
 
                       SizedBox(
                           width: 324,
@@ -418,22 +417,22 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                       ),
                       SizedBox(height: 20),
                       Container(
-                        width: double.infinity, // Full width
+                        width: double.infinity, 
                         decoration: BoxDecoration(
-                          color: MyColors.DarkLighter, // Background color
+                          color: MyColors.DarkLighter, 
                           borderRadius:
-                              BorderRadius.circular(10), // Rounded corners
+                              BorderRadius.circular(10), 
                         ),
                         padding: EdgeInsets.symmetric(
                             vertical: 20,
-                            horizontal: 20), // Padding for spacing
+                            horizontal: 20), 
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment
-                              .start, // Align content to the start
+                              .start, 
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment
-                                  .spaceBetween, // Aligns text in row with space between
+                                  .spaceBetween, 
                               children: [
                                 Text(
                                   "Haircut & Protein Treatment",
@@ -511,7 +510,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                         ),
                       ),
 
-                      //grey container lgyga
 
                       SizedBox(height: 30),
                       Container(
@@ -523,10 +521,9 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                         ),
                         padding: EdgeInsets.all(20),
                         child: Center(
-                          // Center content within the fixed height
                           child: Column(
                             mainAxisSize: MainAxisSize
-                                .min, // Content takes only the space it needs
+                                .min, 
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -610,7 +607,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                         ),
                       ),
 
-                      //grey container lgyga
 
                       SizedBox(height: 30),
                       Container(
@@ -622,7 +618,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                         ),
                         padding: EdgeInsets.all(20),
                         child: Center(
-                          // Center content within the fixed height
 
                           child: Column(
                             children: [
@@ -713,7 +708,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                           ),
                         ),
                       ),
-                      //grey container lgyga
 
                       SizedBox(height: 20),
                       SizedBox(
