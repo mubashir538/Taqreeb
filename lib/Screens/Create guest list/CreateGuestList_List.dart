@@ -81,6 +81,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
             isLoading = false;
           }
         });
+        timer.cancel();
       }
     });
   }
@@ -204,6 +205,9 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                                             .toString(),
                                       },
                                     );
+                                    setState(() {
+                                      guests['Guests'].removeAt(index);
+                                    });
                                     if (response['status'] == 'error') {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
@@ -216,9 +220,6 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                                       ));
                                       return;
                                     }
-                                    setState(() {
-                                      guests['Guests'].removeAt(index);
-                                    });
                                   },
                                   name: guests['Guests'][index]['name'] ?? '',
                                   contact: guests['Guests'][index]['type'] ==

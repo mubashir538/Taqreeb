@@ -6,6 +6,7 @@ import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
+import 'package:taqreeb/Components/headerSecondary.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -47,12 +48,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     if (!changedfirst) {
       fetchData();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
   Timer? timer;
@@ -200,26 +195,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     );
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -231,14 +212,18 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: _headerHeight),
                   Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Headersecondary(
+                      heading: "Create CheckList",
+                      para: "From to-do to done one check at a time!",
+                      image: MyImages.CheckList,
+                    ),
                     isLoading
                         ? CircularProgressIndicator(
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(MyColors.white),
                           )
-                        : ListView.builder( 
+                        : ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: checklistItems.length,
@@ -339,12 +324,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           ),
           Positioned(
             top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: "Create CheckList",
-              para: "From to-do to done one check at a time!",
-              image: MyImages.CheckList,
-            ),
+            child: Header(),
           ),
         ],
       ),

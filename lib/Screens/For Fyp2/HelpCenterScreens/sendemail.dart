@@ -12,19 +12,6 @@ class SendEmailScreen extends StatefulWidget {
 }
 
 class _SendEmailScreenState extends State<SendEmailScreen> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
@@ -33,7 +20,7 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
     FocusNode emailFocus = FocusNode();
     FocusNode nameFocus = FocusNode();
     FocusNode messageFocus = FocusNode();
-    
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
@@ -43,7 +30,6 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Header(
-                key: _headerKey,
                 heading: "",
                 para: "",
                 image: "assets/contact_image.svg",

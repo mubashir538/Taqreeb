@@ -7,6 +7,7 @@ import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/function.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/headerSecondary.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
@@ -20,7 +21,7 @@ class EventDetails extends StatefulWidget {
 
 class _EventDetailsState extends State<EventDetails> {
   String token = '';
-  Map<String, dynamic> events = {}; 
+  Map<String, dynamic> events = {};
   late int EventId;
   bool isLoading = true;
 
@@ -48,7 +49,7 @@ class _EventDetailsState extends State<EventDetails> {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.events = Event ?? {}; 
+          this.events = Event ?? {};
           if (Event == null || Event['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
@@ -73,19 +74,6 @@ class _EventDetailsState extends State<EventDetails> {
     super.dispose();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -102,14 +90,16 @@ class _EventDetailsState extends State<EventDetails> {
         fontSize: MaximumThing * 0.017,
         fontWeight: FontWeight.w400,
         color: MyColors.white);
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Column(children: [
-              SizedBox(height: _headerHeight),
+              Headersecondary(
+                heading: "Your Event Details",
+                image: MyImages.EventDetails,
+              ),
               SizedBox(height: screenHeight * 0.03),
               isLoading
                   ? Center(
@@ -366,11 +356,7 @@ class _EventDetailsState extends State<EventDetails> {
           ),
           Positioned(
             top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: "Your Event Details",
-              image: MyImages.EventDetails,
-            ),
+            child: Header(),
           ),
         ],
       ),

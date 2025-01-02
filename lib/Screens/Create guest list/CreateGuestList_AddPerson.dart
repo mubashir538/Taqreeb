@@ -24,7 +24,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   TextEditingController contactcontroller = TextEditingController();
   FocusNode personFocus = FocusNode();
   FocusNode contactFocus = FocusNode();
-  
+
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;
@@ -81,96 +81,104 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: (screenHeight * 0.05) + _headerHeight,
-                ),
-                MyTextBox(
-                  focusNode: personFocus,
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(context).requestFocus(contactFocus);
-                  },
-                  hint: 'Person Name',
-                  valueController: personcontroller,
-                ),
-                MyTextBox(
-                  focusNode: contactFocus,
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(context).unfocus();
-                  },
-                  hint: 'Contact Number',
-                  isNum: true,
-                  valueController: contactcontroller,
-                ),
-                SizedBox(
-                  width: screenWidth * 0.9,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return Guests(
-                        onpressed: () {},
-                        ondelete: () {
-                          removePerson(index);
-                        },
-                        mywidth: screenWidth * 0.8,
-                        name: guestList[index]['name'] ?? '',
-                        contact: guestList[index]['contact'] ?? '',
-                      );
-                    },
-                    itemCount: guestList.length,
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: (screenHeight * 0.05) + _headerHeight,
                   ),
-                ),
-                SizedBox(
-                  height: screenHeight * 0.05,
-                ),
-                ColoredButton(
-                  text: 'Add Person',
-                  width: screenWidth * 0.7,
-                  onPressed: () {
-                    setState(() {
-                      guestList.add({
-                        'name': personcontroller.text,
-                        'contact': contactcontroller.text
+                  MyTextBox(
+                    focusNode: personFocus,
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(contactFocus);
+                    },
+                    hint: 'Person Name',
+                    valueController: personcontroller,
+                  ),
+                  MyTextBox(
+                    focusNode: contactFocus,
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).unfocus();
+                    },
+                    hint: 'Contact Number',
+                    isNum: true,
+                    valueController: contactcontroller,
+                  ),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Guests(
+                          onpressed: () {},
+                          ondelete: () {
+                            removePerson(index);
+                          },
+                          mywidth: screenWidth * 0.8,
+                          name: guestList[index]['name'] ?? '',
+                          contact: guestList[index]['contact'] ?? '',
+                        );
+                      },
+                      itemCount: guestList.length,
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                  ),
+                  ColoredButton(
+                    text: 'Add Person',
+                    width: screenWidth * 0.7,
+                    onPressed: () {
+                      setState(() {
+                        guestList.add({
+                          'name': personcontroller.text,
+                          'contact': contactcontroller.text
+                        });
                       });
-                    });
-                  },
-                ),
-                BorderButton(
-                  text: 'Done',
-                  width: screenWidth * 0.7,
-                  onPressed: () async {
-                    for (int i = 0; i < guestList.length; i++) {
-                      final token =
-                          await MyStorage.getToken(MyTokens.accessToken) ?? "";
+                    },
+                  ),
+                  BorderButton(
+                    text: 'Done',
+                    width: screenWidth * 0.7,
+                    onPressed: () async {
+                      for (int i = 0; i < guestList.length; i++) {
+                        final token =
+                            await MyStorage.getToken(MyTokens.accessToken) ??
+                                "";
 
-                      final response = await MyApi.postRequest(
-                          headers: {'Authorization': 'Bearer $token'},
-                          endpoint: 'add/guests/',
-                          body: {
-                            'eid': eventId,
-                            'fid': isfunction ? functionid : 'None',
-                            'guesttype': 'Person',
-                            'PersonName': guestList[i]['name'],
-                            'PersonContact': guestList[i]['contact']
-                          });
-                      if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Person Added'),
-                        ));
+                        final response = await MyApi.postRequest(
+                            headers: {'Authorization': 'Bearer $token'},
+                            endpoint: 'add/guests/',
+                            body: {
+                              'eid': eventId,
+                              'fid': isfunction ? functionid : 'None',
+                              'guesttype': 'Person',
+                              'PersonName': guestList[i]['name'],
+                              'PersonContact': guestList[i]['contact']
+                            });
+                        if (response['status'] == 'success') {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Person Added'),
+                          ));
                         } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Person Not Added', style: TextStyle(color: Colors.red),),
-                        ));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                              'Person Not Added',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ));
+                        }
                       }
-                    }
-                    Navigator.pushReplacementNamed(
-                        context, '/CreateGuestList_List',
-                        arguments: args);
-                  },
-                )
-              ],
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/CreateGuestList_List',
+                          ModalRoute.withName('//EventDetails'),
+                          arguments: args);
+                    },
+                  )
+                ],
+              ),
             ),
           ),
           Positioned(

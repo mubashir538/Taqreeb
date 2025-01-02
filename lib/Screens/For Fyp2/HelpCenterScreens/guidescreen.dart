@@ -15,19 +15,6 @@ class GuideScreen extends StatefulWidget {
 class _GuideScreenState extends State<GuideScreen> {
   final TextEditingController searchController = TextEditingController();
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -40,7 +27,6 @@ class _GuideScreenState extends State<GuideScreen> {
             child: Column(
               children: [
                 Header(
-                  key: _headerKey,
                   heading: 'Guide',
                 ),
                 SizedBox(height: 10),

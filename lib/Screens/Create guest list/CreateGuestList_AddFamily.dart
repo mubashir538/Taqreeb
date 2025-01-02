@@ -81,105 +81,110 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: (screenHeight * 0.05) + _headerHeight,
-                ),
-                MyTextBox(
-                  focusNode: familyNameFocus,
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(membersFocus);
-                  },
-                  hint: 'Family Name',
-                  valueController: familyNamecontroller,
-                ),
-                MyTextBox(
-                  focusNode: membersFocus,
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).unfocus();
-                  },
-                  hint: 'No. of Members',
-                  isNum: true,
-                  valueController: memberscontroller,
-                ),
-                SizedBox(
-                  width: screenWidth * 0.9,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return Guests(
-                        onpressed: () {},
-                        ondelete: () {
-                          removeFamily(index);
-                        },
-                        mywidth: screenWidth * 0.8,
-                        name: guestList[index]['name'] ?? '',
-                        contact: guestList[index]['members'] ?? '',
-                      );
-                    },
-                    itemCount: guestList.length,
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: (screenHeight * 0.05) + _headerHeight,
                   ),
-                ),
-                SizedBox(
-                  height: screenHeight * 0.05,
-                ),
-                ColoredButton(
-                  text: 'Add Family',
-                  width: screenWidth * 0.7,
-                  onPressed: () {
-                    setState(() {
-                      guestList.add({
-                        'name': familyNamecontroller.text,
-                        'members': memberscontroller.text
+                  MyTextBox(
+                    focusNode: familyNameFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(membersFocus);
+                    },
+                    hint: 'Family Name',
+                    valueController: familyNamecontroller,
+                  ),
+                  MyTextBox(
+                    focusNode: membersFocus,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).unfocus();
+                    },
+                    hint: 'No. of Members',
+                    isNum: true,
+                    valueController: memberscontroller,
+                  ),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Guests(
+                          onpressed: () {},
+                          ondelete: () {
+                            removeFamily(index);
+                          },
+                          mywidth: screenWidth * 0.8,
+                          name: guestList[index]['name'] ?? '',
+                          contact: guestList[index]['members'] ?? '',
+                        );
+                      },
+                      itemCount: guestList.length,
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                  ),
+                  ColoredButton(
+                    text: 'Add Family',
+                    width: screenWidth * 0.7,
+                    onPressed: () {
+                      setState(() {
+                        guestList.add({
+                          'name': familyNamecontroller.text,
+                          'members': memberscontroller.text
+                        });
                       });
-                    });
-                  },
-                ),
-                BorderButton(
-                  text: 'Done',
-                  width: screenWidth * 0.7,
-                  onPressed: () async {
-                    final token =
-                        await MyStorage.getToken(MyTokens.accessToken) ?? "";
-                    for (int i = 0; i < guestList.length; i++) {
-                      final response = await MyApi.postRequest(
-                          headers: {'Authorization': 'Bearer $token'},
-                          endpoint: 'add/guests/',
-                          body: {
-                            'eid': eventId,
-                            'fid': isfunction ? functionid : 'None',
-                            'guesttype': 'Family',
-                            'FamilyName': guestList[i]['name'],
-                            'member': guestList[i]['members']
-                          });
-                      if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Family Added',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: MyColors.white,
-                                  fontWeight: FontWeight.w400)),
-                          backgroundColor: MyColors.green,
-                        ));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Family not Added',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: MyColors.white,
-                                  fontWeight: FontWeight.w400)),
-                          backgroundColor: MyColors.green,
-                        ));
+                    },
+                  ),
+                  BorderButton(
+                    text: 'Done',
+                    width: screenWidth * 0.7,
+                    onPressed: () async {
+                      final token =
+                          await MyStorage.getToken(MyTokens.accessToken) ?? "";
+                      for (int i = 0; i < guestList.length; i++) {
+                        final response = await MyApi.postRequest(
+                            headers: {'Authorization': 'Bearer $token'},
+                            endpoint: 'add/guests/',
+                            body: {
+                              'eid': eventId,
+                              'fid': isfunction ? functionid : 'None',
+                              'guesttype': 'Family',
+                              'FamilyName': guestList[i]['name'],
+                              'member': guestList[i]['members']
+                            });
+                        if (response['status'] == 'success') {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Family Added',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: MyColors.white,
+                                    fontWeight: FontWeight.w400)),
+                            backgroundColor: MyColors.green,
+                          ));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Family not Added',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: MyColors.white,
+                                    fontWeight: FontWeight.w400)),
+                            backgroundColor: MyColors.green,
+                          ));
+                        }
                       }
-                    }
-                    Navigator.pushReplacementNamed(
-                        context, '/CreateGuestList_List',
-                        arguments: args);
-                  },
-                )
-              ],
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/CreateGuestList_List',
+                          ModalRoute.withName('//EventDetails'),
+                          arguments: args);
+                    },
+                  )
+                ],
+              ),
             ),
           ),
           Positioned(

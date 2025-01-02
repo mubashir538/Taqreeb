@@ -7,6 +7,7 @@ import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/colorPicker.dart';
 import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
+import 'package:taqreeb/Components/headerSecondary.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -146,23 +147,9 @@ class _CreateEventState extends State<CreateEvent> {
     super.dispose();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -171,7 +158,11 @@ class _CreateEventState extends State<CreateEvent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: _headerHeight),
+                Headersecondary(
+                  heading: edit ? "Edit Event" : "Create Event",
+                  para: "Plan your event effortlessly!",
+                  image: MyImages.SingupPng,
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                   child: Column(
@@ -230,19 +221,6 @@ class _CreateEventState extends State<CreateEvent> {
                         )
                       ], Heading: "Basic Info"),
                       QuestionGroup(questions: [
-                        // SizedBox(
-                        //   height: screenHeight * 0.2,
-                        //   child: MyTextBox(
-                        //     focusNode: descriptionFocus,
-                        //     onFieldSubmitted: (_) {
-                        //       FocusScope.of(context)
-                        //           .requestFocus(guestMinFocus);
-                        //     },
-                        //     hint: "Enter Description",
-                        //     valueController: descriptionController,
-                        //   ),
-                        // ),
-
                         DescriptionBox(
                           focusNode: descriptionFocus,
                           onFieldSubmitted: (_) {
@@ -347,12 +325,7 @@ class _CreateEventState extends State<CreateEvent> {
           ),
           Positioned(
             top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: edit ? "Edit Event" : "Create Event",
-              para: "Plan your event effortlessly!",
-              image: MyImages.SingupPng,
-            ),
+            child: Header(),
           ),
         ],
       ),
