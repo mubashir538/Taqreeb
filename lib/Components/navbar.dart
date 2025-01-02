@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
-// ignore: must_be_immutable
 class Navbar extends StatefulWidget {
   Navbar(
       {super.key, required this.selectedIndex, required this.onValueChanged});
@@ -30,7 +29,7 @@ class _NavbarState extends State<Navbar> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     double iconSize = maximumThing * 0.025;
-    double tapAreaSize = iconSize + 20; // Increase tappable area
+    double tapAreaSize = iconSize + 20; 
 
     return Container(
       decoration: BoxDecoration(
@@ -55,7 +54,7 @@ class _NavbarState extends State<Navbar> {
               size: iconSize,
               tapAreaSize: tapAreaSize,
             ),
-            SizedBox(width: screenWidth * 0.05), // Spacer
+            SizedBox(width: screenWidth * 0.05),
             _buildNavItem(
               icon: MyIcons.events,
               index: 2,

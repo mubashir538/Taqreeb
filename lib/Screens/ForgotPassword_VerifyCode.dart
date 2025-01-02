@@ -21,15 +21,15 @@ class ForgotPassword_VerifyCode extends StatefulWidget {
 class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
-  int _remainingTime = 120; // 2 minutes in seconds
+  int _remainingTime = 120;
   late Timer _timer;
   bool _isResendEnabled = false;
-  String _enteredOTP = ""; // To store the user's entered OTP
+  String _enteredOTP = ""; 
 
   void _startTimer() {
     setState(() {
       _isResendEnabled = false;
-      _remainingTime = 120; // Reset timer to 2 minutes
+      _remainingTime = 120; 
     });
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingTime > 0 && mounted) {
@@ -105,14 +105,14 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                 TextButton(
                   onPressed: _isResendEnabled
                       ? () async {
-                          final result = await response; // Await the response
-                          await MyApi.postRequest(
+                          final result = await response; 
+                                                    await MyApi.postRequest(
                               endpoint: 'resendOTP/email',
                               body: {
                                 'email': result['email'],
                                 'otp': result['otp']
                               });
-                          _startTimer(); // Restart the timer
+                          _startTimer(); 
                         }
                       : null,
                   child: Text(
@@ -148,14 +148,12 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                             },
                             ModalRoute.withName('/'));
                       } else {
-                        // OTP doesn't match, show an alert dialog
                         warningDialog(
                                 title: 'Invalid OTP',
                                 message: 'The entered OTP is incorrect.')
                             .showDialogBox(context);
                       }
                     } catch (e) {
-                      // Handle any errors in fetching the response
                       print('Error: $e');
                       warningDialog(
                               title: 'Error',

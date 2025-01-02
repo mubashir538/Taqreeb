@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -53,11 +55,11 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
+  Timer? timer;
   void fetchData() async {
     if (changedfirst) {
       return;
     }
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedlist = await MyApi.getRequest(
       endpoint: isfunction
@@ -69,34 +71,41 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       // }
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.list = fetchedlist ?? {};
-      if (list == null || list['status'] == 'error') {
-        print('$list');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        if (list['checklist'] != null) {
-          checklistItems = (list['checklist'] as List)
-              .map((e) => e as Map<String, dynamic>)
-              .toList();
-          //  list['checklist'];
-        }
-        isLoading = false; // Data has been fetched, so stop loading
-        changedfirst = true;
-      }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.list = fetchedlist ?? {};
+          if (list == null || list['status'] == 'error') {
+            print('$list');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            if (list['checklist'] != null) {
+              checklistItems = (list['checklist'] as List)
+                  .map((e) => e as Map<String, dynamic>)
+                  .toList();
+            }
+            isLoading = false; 
+            changedfirst = true;
+          }
 
-      // Ensure no null data
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void _addChecklistItem(String text) {
@@ -111,15 +120,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   void _toggleChecklistItem(int index) {
     setState(() {
-      // Toggle the `isChecked` field in `checklistItems`
       checklistItems[index]["isChecked"] = !checklistItems[index]["isChecked"];
 
-      // Check if the item is already in `newitems`
       bool isNewItem = newitems.any((item) =>
           item["description"] == checklistItems[index]["description"]);
 
       if (!isNewItem) {
-        // Add to `changedFields` if not already noted
         bool isAlreadyChanged = changedFields.any((item) =>
             item["description"] == checklistItems[index]["description"]);
 
@@ -130,7 +136,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             "isChecked": checklistItems[index]["isChecked"],
           });
         } else {
-          // Update the value if it was already noted
           changedFields = changedFields.map((item) {
             if (item["description"] == checklistItems[index]["description"]) {
               return {
@@ -142,7 +147,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           }).toList();
         }
       } else {
-        // If part of `newitems`, update there
         int newIndex = newitems.indexWhere((item) =>
             item["description"] == checklistItems[index]["description"]);
         newitems[newIndex]["isChecked"] = checklistItems[index]["isChecked"];
@@ -326,9 +330,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                                 'item': item["description"],
                                 'ischecked': item["isChecked"],
                               },
-                              // headers: {
-                              //   'Authorization': 'Bearer $token',
-                              // },
                             );
                             if (!(response['status'] == 'success')) {
                               flag = true;

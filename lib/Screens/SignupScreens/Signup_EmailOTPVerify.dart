@@ -18,10 +18,10 @@ class SignupEmailOTPVerify extends StatefulWidget {
 }
 
 class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
-  int _remainingTime = 120; // 2 minutes in seconds
+  int _remainingTime = 120; 
   late Timer _timer;
   bool _isResendEnabled = false;
-  String _enteredOTP = ""; // To store the user's entered OTP
+  String _enteredOTP = ""; 
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
  void _startTimer() {
     setState(() {
       _isResendEnabled = false;
-      _remainingTime = 120; // Reset timer to 2 minutes
+      _remainingTime = 120;
     });
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
@@ -95,7 +95,7 @@ class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
                       ),
                       OTPBoxes(
                         onChanged: (otp) {
-                          _enteredOTP = otp; // Update OTP on user input
+                          _enteredOTP = otp;
                         },
                       ),
                       SizedBox(
@@ -104,14 +104,14 @@ class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
                         onPressed: _isResendEnabled
                             ? () async {
                                 final result =
-                                    await response; // Await the response
+                                    await response; 
                                 await MyApi.postRequest(
                                     endpoint: 'resendOTP/email',
                                     body: {
                                       'email': result['email'],
                                       'otp': result['otp']
                                     });
-                                _startTimer(); // Restart the timer
+                                _startTimer(); 
                               }
                             : null,
                         child: Text(
@@ -135,21 +135,18 @@ class _SignupEmailOTPVerifyState extends State<SignupEmailOTPVerify> {
                         text: 'Verify OTP',
                         onPressed: () async {
                           try {
-                            final result = await response; // Await the response
+                            final result = await response;
                             final receivedOTP = result['otp'];
-                            // Extract the OTP
                             if (int.parse(_enteredOTP) == receivedOTP) {
                               MyStorage.saveToken(result['email'], 'semail');
                               Navigator.pushNamed(context, '/Signup_MoreInfo');
                             } else {
-                              // OTP doesn't match, show an alert dialog
                               warningDialog(
                                       title: 'Invalid OTP',
                                       message: 'The entered OTP is incorrect.')
                                   .showDialogBox(context);
                             }
                           } catch (e) {
-                            // Handle any errors in fetching the response
                             warningDialog(
                                     title: 'Error',
                                     message:

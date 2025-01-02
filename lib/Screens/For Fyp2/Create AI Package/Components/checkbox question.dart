@@ -7,13 +7,11 @@ class CheckBoxController {
 
   CheckBoxController({required this.selections});
 
-  // Method to update selections
   void updateSelections(List<String> newSelections) {
     selections = newSelections;
   }
 }
 
-// ignore: must_be_immutable
 class CheckBoxQuestion extends StatefulWidget {
   CheckBoxQuestion({
     super.key,
@@ -74,7 +72,6 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
                     } else {
                       widget.controller.selections.remove(option);
                     }
-                    // Trigger the callback
                     widget.onChanged(widget.controller.selections);
                   });
                 },

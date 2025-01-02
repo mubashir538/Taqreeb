@@ -6,7 +6,6 @@ class Productcard extends StatefulWidget {
   final String venueName;
   final String location;
   final bool isBusiness;
-  // final Function onpressed;
   final String type;
   final double mywidth;
   final String listingid;
@@ -14,8 +13,7 @@ class Productcard extends StatefulWidget {
   Productcard({
     this.mywidth = 0,
     this.isBusiness = false,
-    // this.onpressed = () {
-    // },
+   
     required this.listingid,
     required this.listingType,
     required this.imageUrl,

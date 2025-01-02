@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 
@@ -41,7 +42,6 @@ class _CreateFunctionState extends State<CreateFunction> {
   String functionId = "";
   int eventtypeid = 0;
   int EventId = 0;
-  // Map<String, dynamic> event = {};
   Map<String, dynamic> Function = {};
   Map<String, dynamic> args = {};
   bool edit = false;
@@ -63,6 +63,7 @@ class _CreateFunctionState extends State<CreateFunction> {
     fetchData();
   }
 
+  Timer? timer;
   void fetchData() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final eventtypes = await MyApi.getRequest(
@@ -88,54 +89,64 @@ class _CreateFunctionState extends State<CreateFunction> {
     } else {
       FunctiontDetails = "";
     }
-    setState(() {
-      if (edit) {
-        this.Function = FunctiontDetails ?? {};
-        if ((this.Function != {} && !changed)) {
-          nameController.text = this.Function['Fuctions']['name'];
-          typeController.text = this.Function['Fuctions']['type'];
-          _dateController.text = this.Function['Fuctions']['date'];
-          budgetController.text =
-              this.Function['Fuctions']['budget'].toString();
-          guestMaxController.text =
-              this.Function['Fuctions']['guestsmax'].toString();
-          guestMinController.text =
-              this.Function['Fuctions']['guestsmin'].toString();
-          this.EventId =
-              int.parse(this.Function['Fuctions']['eventId'].toString());
-          changed = true;
-        }
-      }
-      if (Function == null || Function['status'] == 'error') {
-        print('$Function');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        this.token = token;
-        this.types = types ?? {};
-        if (this.types == null || this.types['status'] == 'error') {
-          print('${this.types}');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Something Went Wrong!',
-                style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    color: MyColors.white,
-                    fontWeight: FontWeight.w400)),
-            backgroundColor: MyColors.red,
-          ));
-          return;
-        } else {
-          isLoading = false;
-        }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (edit) {
+            this.Function = FunctiontDetails ?? {};
+            if ((this.Function != {} && !changed)) {
+              nameController.text = this.Function['Fuctions']['name'];
+              typeController.text = this.Function['Fuctions']['type'];
+              _dateController.text = this.Function['Fuctions']['date'];
+              budgetController.text =
+                  this.Function['Fuctions']['budget'].toString();
+              guestMaxController.text =
+                  this.Function['Fuctions']['guestsmax'].toString();
+              guestMinController.text =
+                  this.Function['Fuctions']['guestsmin'].toString();
+              this.EventId =
+                  int.parse(this.Function['Fuctions']['eventId'].toString());
+              changed = true;
+            }
+          }
+          if (Function == null || Function['status'] == 'error') {
+            print('$Function');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            this.token = token;
+            this.types = types ?? {};
+            if (this.types == null || this.types['status'] == 'error') {
+              print('${this.types}');
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Something Went Wrong!',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        color: MyColors.white,
+                        fontWeight: FontWeight.w400)),
+                backgroundColor: MyColors.red,
+              ));
+              return;
+            } else {
+              isLoading = false;
+            }
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();

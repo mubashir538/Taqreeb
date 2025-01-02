@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
-import 'package:taqreeb/theme/color.dart'; // Replace with your color theme
+import 'package:taqreeb/theme/color.dart';
 
 class LocationInputWidget extends StatefulWidget {
   final TextEditingController locationController;
@@ -22,7 +22,6 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
   List<String> _suggestedLocations = [];
   String _currentLocation = "Unknown Location";
 
-  // Mock data for location suggestions (In a real app, use Google Places API)
   final List<String> _allLocations = [
     "New York, USA",
     "Los Angeles, USA",
@@ -33,19 +32,16 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
     "Sydney, Australia"
   ];
 
-  // Method to fetch current location using Geolocator
   Future<void> _getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     setState(() {
       _currentLocation = "${position.latitude}, ${position.longitude}";
       widget.locationController.text = _currentLocation;
-      widget.onLocationChanged(
-          _currentLocation); // Notify parent with current location
+      widget.onLocationChanged(_currentLocation);
     });
   }
 
-  // Method to handle location suggestions based on text entered
   void _onSearchChanged(String query) {
     setState(() {
       _suggestedLocations = _allLocations
@@ -68,7 +64,6 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
         children: [
           Row(
             children: [
-              // Location TextField
               Expanded(
                 child: TypeAheadField<String>(
                   // textFieldConfiguration: TextFieldConfiguration(
@@ -92,14 +87,14 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
                     setState(() {
                       widget.locationController.text = suggestion;
                       widget.onLocationChanged(
-                          suggestion); // Notify parent when suggestion is selected
+                          suggestion); 
                     });
                   },
                 ),
               ),
               IconButton(
                 icon: Icon(Icons.location_on),
-                onPressed: _getCurrentLocation, // Get current location on click
+                onPressed: _getCurrentLocation, 
               ),
             ],
           ),

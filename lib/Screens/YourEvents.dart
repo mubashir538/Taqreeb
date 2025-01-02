@@ -19,22 +19,19 @@ class YourEvents extends StatefulWidget {
 
 class _YourEventsState extends State<YourEvents> {
   String token = '';
-  Map<String, dynamic> events = {}; // Initialize as empty map
+  Map<String, dynamic> events = {};
   Timer? _timer;
-
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true;
   bool fetched = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-
-    fetchData(); // Fetch data in a separate method
+    fetchData();
   }
 
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
 
@@ -44,7 +41,6 @@ class _YourEventsState extends State<YourEvents> {
     );
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      // Update the state
       if (mounted) {
         setState(() {
           if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
@@ -61,8 +57,8 @@ class _YourEventsState extends State<YourEvents> {
             ));
           }
           this.token = token;
-          this.events = fetchedEvents ?? {}; // Ensure no null data
-          isLoading = false; // Data has been fetched, so stop loading
+          this.events = fetchedEvents ?? {};
+          isLoading = false;
         });
       }
     });
@@ -76,6 +72,7 @@ class _YourEventsState extends State<YourEvents> {
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
+
   void _getHeaderHeight() {
     final RenderObject? renderBox =
         _headerKey.currentContext?.findRenderObject();
@@ -88,6 +85,7 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   TextEditingController controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

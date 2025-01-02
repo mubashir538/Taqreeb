@@ -30,7 +30,6 @@ class _GuideScreenState extends State<GuideScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,

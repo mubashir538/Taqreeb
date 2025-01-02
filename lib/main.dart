@@ -71,14 +71,8 @@ import 'package:taqreeb/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // if (kIsWeb) {
-  //   await Firebase.initializeApp(options: abc.fb);
-  // } else {
-  //   // final env = await dotenv.load(fileName: '.env');
-
-  //   await Firebase.initializeApp(options: abc.fb);
-  // }
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  await Firebase.initializeApp(options: DefaultFireb aseOptions.currentPlatform);
 
   runApp(const MainApp());
 }
@@ -114,7 +108,6 @@ class MainApp extends StatelessWidget {
         '/HomePage': (context) => MainScreen(index: 0),
         '/Login': (context) => Login(),
         '/CreateChecklistItems': (context) => CreateChecklistItems(),
-        // '/HelpCenter': (context) => ,
         '/FreelancerSignup_BasicInfo': (context) =>
             FreelancerSignup_BasicInfo(),
         '/FreelancerSignup_Description': (context) =>

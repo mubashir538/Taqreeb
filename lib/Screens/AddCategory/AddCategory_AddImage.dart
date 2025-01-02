@@ -25,7 +25,7 @@ class _AddImageState extends State<AddImage> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
 
-  final List<String> _images = []; // List to store image URLs dynamically
+  final List<String> _images = []; 
   Map<String, dynamic> args = {};
   bool ischanged = true;
 
@@ -66,10 +66,8 @@ class _AddImageState extends State<AddImage> {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        // Compress the selected image
         final compressedFile = await _compressImage(File(pickedFile.path));
         setState(() {
-          // Add the compressed image file path to the _images list
           _images.add(compressedFile.path);
         });
       }
@@ -83,7 +81,6 @@ class _AddImageState extends State<AddImage> {
 
   Future<File> _compressImage(File file) async {
     try {
-      // Generate a temporary path for the compressed file
       final tempDir = Directory.systemTemp;
       final compressedPath =
           '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
@@ -106,7 +103,7 @@ class _AddImageState extends State<AddImage> {
 
   void _deleteImage(int index) {
     setState(() {
-      _images.removeAt(index); // Remove the image from the list
+      _images.removeAt(index); 
     });
   }
 
@@ -131,7 +128,6 @@ class _AddImageState extends State<AddImage> {
           ),
           Column(
             children: [
-              // Add Image Card
               SizedBox(height: _headerHeight),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -149,7 +145,7 @@ class _AddImageState extends State<AddImage> {
                   ],
                 ),
                 child: InkWell(
-                  onTap: _pickImage, // Trigger image addition
+                  onTap: _pickImage, 
                   child: Center(
                     child: CircleAvatar(
                       radius: 30,
@@ -163,7 +159,6 @@ class _AddImageState extends State<AddImage> {
                 ),
               ),
               const SizedBox(height: 10),
-              // Dynamic GridView
               Expanded(
                 child: GridView.builder(
                   padding: EdgeInsets.all(screenWidth * 0.03),
@@ -177,7 +172,6 @@ class _AddImageState extends State<AddImage> {
                   itemBuilder: (context, index) {
                     return Stack(
                       children: [
-                        // Blurred Image
                         Container(
                           decoration: BoxDecoration(
                             color: MyColors.DarkLighter,
@@ -209,7 +203,6 @@ class _AddImageState extends State<AddImage> {
                             ),
                           ),
                         ),
-                        // Delete Icon
                         Center(
                           child: IconButton(
                             icon: Icon(
@@ -253,8 +246,8 @@ class _AddImageState extends State<AddImage> {
                   for (int i = 0; i < _images.length; i++) {
                     request.files.add(
                       await http.MultipartFile.fromPath(
-                        'pictures', // The key for the files in the backend
-                        _images[i], // Path to the image
+                        'pictures', 
+                        _images[i], 
                       ),
                     );
                   }
@@ -269,7 +262,7 @@ class _AddImageState extends State<AddImage> {
                   final token =
                       await MyStorage.getToken(MyTokens.accessToken) ?? "";
                   request.headers.addAll({
-                    'Authorization': 'Bearer $token', // Example header
+                    'Authorization': 'Bearer $token', 
                   });
 
                   request.fields['priceMin'] = args['pricemin'];
@@ -323,8 +316,6 @@ class _AddImageState extends State<AddImage> {
                       context,
                       '/HomePage',
                       ModalRoute.withName('/'),
-                      // Replace with your target screen's route
-                      // Passing the args map to the next screen
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,48 +20,56 @@ class AccountInfo extends StatefulWidget {
 
 class _AccountInfoState extends State<AccountInfo> {
   String token = '';
-  Map<String, dynamic> user = {}; // Initialize as empty map
-  bool isLoading = true; // Add a loading flag
+  Map<String, dynamic> user = {}; 
+  bool isLoading = true; 
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
 
-    fetchData(); // Fetch data in a separate method
+    fetchData(); 
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     final user = await MyApi.getRequest(
         endpoint: 'accountInfo/$Userid',
         headers: {'Authorization': 'Bearer $token'});
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.user = user ?? {}; // Ensure no null data
-      if (user == null || user['status'] == 'error') {
-        print('$user');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
-      }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.user = user ?? {}; 
+          if (user == null || user['status'] == 'error') {
+            print('$user');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            isLoading = false;
+          }
 
-      print(
-          "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
+          print(
+              "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
+        });
+      }
     });
   }
+  @override
+void dispose(){
+timer?.cancel();
+super.dispose();
+}
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -115,7 +125,6 @@ class _AccountInfoState extends State<AccountInfo> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                          //Circle Avatar
                           SizedBox(
                             width: screenWidth * 0.9,
                             child: Row(
@@ -149,7 +158,6 @@ class _AccountInfoState extends State<AccountInfo> {
                             child: Center(child: MyDivider()),
                           ),
 
-                          //Gender
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: MaximumThing * 0.02),
@@ -202,7 +210,6 @@ class _AccountInfoState extends State<AccountInfo> {
                               ? Container()
                               : Column(
                                   children: [
-                                    //Phone
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           vertical: MaximumThing * 0.02),
@@ -259,7 +266,6 @@ class _AccountInfoState extends State<AccountInfo> {
                           user['email'] == null
                               ? Container()
                               : Column(children: [
-                                  //Email
                                   Padding(
                                     padding: EdgeInsets.symmetric(
                                         vertical: MaximumThing * 0.02),
@@ -311,7 +317,6 @@ class _AccountInfoState extends State<AccountInfo> {
                                             width: screenWidth * 0.7)),
                                   ),
                                 ]),
-                          //Location
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: MaximumThing * 0.02),

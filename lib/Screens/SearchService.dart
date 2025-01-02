@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
@@ -39,10 +41,10 @@ class _SearchServiceState extends State<SearchService> {
   TextEditingController locationcontroller = TextEditingController();
   TextEditingController dateController = TextEditingController();
   String token = '';
-  Map<String, dynamic> categories = {}; // Initialize as empty map
-  Map<String, dynamic> listings = {}; // Initialize as empty map
-  bool isLoading = true; // Add a loading flag
-  Map<String, dynamic> templistings = {}; // Initialize as empty map
+  Map<String, dynamic> categories = {}; 
+  Map<String, dynamic> listings = {}; 
+  bool isLoading = true; 
+  Map<String, dynamic> templistings = {}; 
   Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
@@ -64,8 +66,8 @@ class _SearchServiceState extends State<SearchService> {
     }
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
       endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
@@ -78,38 +80,47 @@ class _SearchServiceState extends State<SearchService> {
         endpoint: 'home/listings/',
         headers: {'Authorization': 'Bearer $token'});
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.categories = fetchedCategories ?? {}; // Ensure no null data
-      this.listings = fetchedListings ?? {}; // Ensure no null data
-      this.templistings =
-          Map.from(fetchedListings) ?? {}; // Ensure no null data
-      if (this.listings == null ||
-          this.listings['status'] == 'error' ||
-          this.categories == null ||
-          this.categories['status'] == 'error') {
-        print('$listings');
-        print('$categories');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-      } else {
-        if (this.args.isNotEmpty) {
-          appliedFilters.add('Category');
-          categoryController.selections.add(this.args['category']);
-          searchwithFilters();
-        }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.categories = fetchedCategories ?? {}; 
+          this.listings = fetchedListings ?? {}; 
+          this.templistings =
+              Map.from(fetchedListings) ?? {}; 
+          if (this.listings == null ||
+              this.listings['status'] == 'error' ||
+              this.categories == null ||
+              this.categories['status'] == 'error') {
+            print('$listings');
+            print('$categories');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+          } else {
+            if (this.args.isNotEmpty) {
+              appliedFilters.add('Category');
+              categoryController.selections.add(this.args['category']);
+              searchwithFilters();
+            }
 
-        isLoading = false; // Data has been fetched, so stop loading
+            isLoading = false; 
+          }
+          ischange = true;
+        });
       }
-      ischange = true;
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();

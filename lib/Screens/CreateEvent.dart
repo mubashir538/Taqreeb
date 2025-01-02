@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -66,6 +68,7 @@ class _CreateEventState extends State<CreateEvent> {
     }
   }
 
+  Timer? timer;
   void fetchData() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final types = await MyApi.getRequest(
@@ -81,58 +84,70 @@ class _CreateEventState extends State<CreateEvent> {
     } else {
       EventDetails = "";
     }
-    setState(() {
-      if (edit) {
-        print('Edit Screen');
-        this.Event = EventDetails ?? {};
-        if (this.Event != {} ||
-            this.Event != null ||
-            this.Event['status'] != 'error') {
-          eventNameController.text = this.Event['EventDetail']['name'];
-          typeController.text = this.Event['EventDetail']['type'];
-          dateController.text = this.Event['EventDetail']['date'];
-          locationController.text = this.Event['EventDetail']['location'];
-          descriptionController.text = this.Event['EventDetail']['description'];
-          budgetController.text =
-              this.Event['EventDetail']['budget'].toString();
-          themeColor.text = this.Event['EventDetail']['themeColor'];
-          guestMaxController.text =
-              this.Event['EventDetail']['guestsmax'].toString();
-          guestMinController.text =
-              this.Event['EventDetail']['guestsmin'].toString();
-        }
-      }
-      if (Event == null || Event['status'] == 'error') {
-        print('$Event');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        this.token = token;
-        this.types = types ?? {};
-        if (types == null || types['status'] == 'error') {
-          print('$types');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Something Went Wrong!',
-                style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    color: MyColors.white,
-                    fontWeight: FontWeight.w400)),
-            backgroundColor: MyColors.red,
-          ));
-          return;
-        } else {
-          isLoading = false;
-          ischange = true;
-        }
+
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          if (edit) {
+            print('Edit Screen');
+            this.Event = EventDetails ?? {};
+            if (this.Event != {} ||
+                this.Event != null ||
+                this.Event['status'] != 'error') {
+              eventNameController.text = this.Event['EventDetail']['name'];
+              typeController.text = this.Event['EventDetail']['type'];
+              dateController.text = this.Event['EventDetail']['date'];
+              locationController.text = this.Event['EventDetail']['location'];
+              descriptionController.text =
+                  this.Event['EventDetail']['description'];
+              budgetController.text =
+                  this.Event['EventDetail']['budget'].toString();
+              themeColor.text = this.Event['EventDetail']['themeColor'];
+              guestMaxController.text =
+                  this.Event['EventDetail']['guestsmax'].toString();
+              guestMinController.text =
+                  this.Event['EventDetail']['guestsmin'].toString();
+            }
+          }
+          if (Event == null || Event['status'] == 'error') {
+            print('$Event');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            this.token = token;
+            this.types = types ?? {};
+            if (types == null || types['status'] == 'error') {
+              print('$types');
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Something Went Wrong!',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        color: MyColors.white,
+                        fontWeight: FontWeight.w400)),
+                backgroundColor: MyColors.red,
+              ));
+              return;
+            } else {
+              isLoading = false;
+              ischange = true;
+            }
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -152,8 +167,6 @@ class _CreateEventState extends State<CreateEvent> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    // double MaximumThing =
-    //     screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,

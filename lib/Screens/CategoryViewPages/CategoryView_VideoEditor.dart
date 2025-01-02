@@ -58,7 +58,6 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                   ),
                 ),
 
-                // Main Content Section
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(
@@ -71,22 +70,18 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title and Icon
                       buildTitleRow("Masako Hawkins", isSmallScreen),
                       buildRatingsAndLocation(),
                       Divider(color: MyColors.DarkLighter),
 
-                      // Pricing Section
                       buildTextRow("Pricing:", "Rs. 20,000 - 150,000"),
                       buildTextRow("Basic Price:", "30,000"),
                       Divider(color: MyColors.DarkLighter),
 
-                      // Description
                       buildSectionTitle("Description"),
                       buildDescription(),
                       Divider(color: MyColors.DarkLighter),
 
-                      // Packages Section
                       buildSectionTitle("Packages"),
                       PackageBox(
                         packagename: "Standard Package",
@@ -100,13 +95,12 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                       ),
                       Divider(color: MyColors.DarkLighter),
 
-                      // Portfolio Section
                       buildSectionTitle("Portfolio"),
                       AspectRatio(
                         aspectRatio: 16 / 9,
                         child: Stack(
                           alignment:
-                              Alignment.center, // Center the play/pause icon
+                              Alignment.center, 
                           children: [
                             Container(
                               decoration: BoxDecoration(
@@ -119,17 +113,16 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                                 ),
                               ),
                             ),
-                            // Play/Pause Icon
                             Container(
                               decoration: BoxDecoration(
                                 color: MyColors
-                                    .white, // Slight overlay for better visibility
+                                    .white, 
                                 shape: BoxShape.circle,
                               ),
                               padding: const EdgeInsets.all(10),
                               child: Icon(
                                 Icons
-                                    .play_arrow, // Use play_arrow or pause icon as needed
+                                    .play_arrow,
                                 color: MyColors.DarkLighter,
                                 size: 50,
                               ),
@@ -138,12 +131,10 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                         ),
                       ),
 
-                      // Reviews Section
                       SizedBox(height: 20),
                       buildSectionTitle("Reviews"),
                       buildReviewsSection(),
 
-                      // Book Button
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: ColoredButton(text: 'Book Video Editor'),
@@ -162,7 +153,6 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
     );
   }
 
-  // Helper methods
   Widget buildTitleRow(String title, bool isSmallScreen) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),

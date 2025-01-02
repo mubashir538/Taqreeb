@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -54,47 +55,54 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     fetchData();
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     this.userId = userid;
     final user = await MyApi.getRequest(
         endpoint: 'accountInfo/$userid',
         headers: {'Authorization': 'Bearer $token'}
-        //  headers: {
-        //   'Authorization': 'Bearer $token',
-        // }
+        
         );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.user = user ?? {}; // Ensure no null data
-      if (user == null || user['status'] == 'error') {
-        print('$user');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
-      }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.user = user ?? {}; 
+          if (user == null || user['status'] == 'error') {
+            print('$user');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            isLoading = false;
+          }
 
-      fnamecontroller.text = user['firstName'];
-      lastnameController.text = user['lastName'];
-      genderController.text = user['gender'];
-      locationcontroller.text = user['city'];
-      genderController.text = user['gender'];
-      image =
-          "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
+          fnamecontroller.text = user['firstName'];
+          lastnameController.text = user['lastName'];
+          genderController.text = user['gender'];
+          locationcontroller.text = user['city'];
+          genderController.text = user['gender'];
+          image =
+              "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
+        });
+      }
     });
   }
+  
+@override
+void dispose(){
+timer?.cancel();
+super.dispose();
+}
 
   Future<void> _pickImage() async {
     try {
@@ -104,7 +112,6 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       if (pickedFile != null) {
         final imageBytes = await File(pickedFile.path).readAsBytes();
 
-        // Show the cropping popup
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -129,7 +136,6 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     }
   }
 
-// Save the cropped image to a file
   Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
     final directory = await getApplicationDocumentsDirectory();
 
@@ -140,20 +146,17 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   }
 
   Future<File> _compressImage(File file) async {
-    // Ensure the file has a valid extension for compression
     final originalPath = file.path;
     final compressedPath =
         originalPath.replaceFirst(RegExp(r'\.\w+$'), '_compressed.jpg');
 
-    // Compress the image using FlutterImageCompress
     final result = await FlutterImageCompress.compressAndGetFile(
       originalPath,
       compressedPath,
       quality:
-          50, // Adjust quality as needed (higher is better quality, lower is more compression)
+          50, 
     );
 
-    // Return the compressed file or the original if compression fails
     if (result != null) {
       return result;
     } else {
@@ -164,25 +167,21 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   Future<void> _uploadProfilePicture() async {
     if (_selectedImage != null) {
       try {
-        // Create a multipart request to upload the image
         final request = https.MultipartRequest(
             'POST', Uri.parse(MyApi.baseUrl + 'editaccountinfo/'));
 
-        // Add the image file
         request.files.add(await https.MultipartFile.fromPath(
           'profilePicture',
           _selectedImage!.path,
         ));
         print('Profile Picture: ${_selectedImage!.path}');
 
-        // Add additional fields
         request.fields['userid'] = userId;
         request.fields['firstName'] = fnamecontroller.text;
         request.fields['lastName'] = lastnameController.text;
         request.fields['city'] = locationcontroller.text;
         request.fields['gender'] = genderController.text;
 
-        // Send the request
         final response = await request.send();
 
         final responseBody = await response.stream.bytesToString();
@@ -209,7 +208,6 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
             Navigator.pushNamed(context, '/AccountInfo');
           }
         } else {
-          // Failure
           warningDialog(
                   title: 'Error',
                   message:
@@ -356,12 +354,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                             ],
                           ),
 
-                          //Divider
                           SizedBox(
                             height: screenHeight * 0.1,
                             child: Center(child: MyDivider()),
                           ),
-                          //Colored Button
                           ColoredButton(
                             text: 'Save',
                             onPressed: () {

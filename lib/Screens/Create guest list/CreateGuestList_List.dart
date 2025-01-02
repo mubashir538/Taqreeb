@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -19,12 +21,12 @@ class CreateGuestList_List extends StatefulWidget {
 
 class _CreateGuestList_ListState extends State<CreateGuestList_List> {
   String token = '';
-  Map<String, dynamic> guests = {}; // Initialize as empty map
+  Map<String, dynamic> guests = {}; 
   Map<String, dynamic> args = {};
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
@@ -33,7 +35,6 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -45,11 +46,11 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
       }
       eventId = args['eventId'];
     });
-    fetchData(); // Fetch data in a separate method
+    fetchData(); 
   }
 
+  Timer? timer;
   void fetchData() async {
-    // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedGuests = await MyApi.postRequest(
       headers: {'Authorization': 'Bearer $token'},
@@ -64,25 +65,34 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
       // }
     );
 
-    // Update the state
-    setState(() {
-      this.token = token;
-      this.guests = fetchedGuests ?? {}; // Ensure no null data
-      if (guests == null || guests['status'] == 'error') {
-        print('$guests');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
-        return;
-      } else {
-        isLoading = false;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          this.token = token;
+          this.guests = fetchedGuests ?? {};
+          if (guests == null || guests['status'] == 'error') {
+            print('$guests');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Something Went Wrong!',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w400)),
+              backgroundColor: MyColors.red,
+            ));
+            return;
+          } else {
+            isLoading = false;
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void _showOptions(BuildContext context, double maxThing, double width) {
@@ -125,7 +135,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                       }),
                 ],
               ),
-              SizedBox(height: maxThing * 0.03), // Space below the buttons
+              SizedBox(height: maxThing * 0.03),
             ],
           ),
         );
@@ -183,17 +193,23 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                               itemBuilder: (context, index) {
                                 return Guests(
                                   onpressed: () {},
-                                  ondelete: () async{
-                                    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+                                  ondelete: () async {
+                                    final token = await MyStorage.getToken(
+                                            MyTokens.accessToken) ??
+                                        "";
                                     final response = await MyApi.postRequest(
-                                      headers: {'Authorization': 'Bearer $token'},
+                                      headers: {
+                                        'Authorization': 'Bearer $token'
+                                      },
                                       endpoint: 'Delete/guest/',
                                       body: {
-                                        'guestId': guests['Guests'][index]['id'].toString(),
+                                        'guestId': guests['Guests'][index]['id']
+                                            .toString(),
                                       },
                                     );
                                     if (response['status'] == 'error') {
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
                                         content: Text('Something Went Wrong!',
                                             style: GoogleFonts.montserrat(
                                                 fontSize: 14,
@@ -206,7 +222,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                                     setState(() {
                                       guests['Guests'].removeAt(index);
                                     });
-                                    },
+                                  },
                                   name: guests['Guests'][index]['name'] ?? '',
                                   contact: guests['Guests'][index]['type'] ==
                                           "Family"

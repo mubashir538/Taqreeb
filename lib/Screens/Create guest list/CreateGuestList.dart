@@ -60,7 +60,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                       }),
                 ],
               ),
-              SizedBox(height: maxThing * 0.03), // Space below the buttons
+              SizedBox(height: maxThing * 0.03),
             ],
           ),
         );
@@ -70,7 +70,6 @@ class _CreateGuestListState extends State<CreateGuestList> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

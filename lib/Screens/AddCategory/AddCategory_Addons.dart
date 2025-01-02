@@ -163,8 +163,8 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
                   print('args: ${args}');
                   Navigator.pushNamed(
                     context,
-                    '/AddCategory_Packages', // Replace with your target screen's route
-                    arguments: args, // Passing the args map to the next screen
+                    '/AddCategory_Packages', 
+                    arguments: args, 
                   );
                 }),
           ),
@@ -188,8 +188,8 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
           print(' args: ${args}');
           Navigator.pushNamed(
             context,
-            '/AddCategory_Add_Addons', // Replace with your target screen's route
-            arguments: args, // Passing the args map to the next screen
+            '/AddCategory_Add_Addons', 
+            arguments: args, 
           );
         },
         child: Icon(

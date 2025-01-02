@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
-// ignore: must_be_immutable
 class CartItems extends StatefulWidget {
   CartItems(
       {super.key, required this.name, required this.price, this.quantity = 1});

@@ -3,7 +3,6 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/images.dart';
-//import 'package:taqreeb/Components/divider.dart';
 
 class BusinessSignup4 extends StatefulWidget {
   const BusinessSignup4({super.key});
@@ -56,7 +55,7 @@ class _BusinessSignup4State extends State<BusinessSignup4> {
           //endIndent: screenWidth * 0.1,
           //),
 
-          SizedBox(height: 40), // Spacer between header and button
+          SizedBox(height: 40),
           ColoredButton(
             text: 'Continue to Home',
           ),

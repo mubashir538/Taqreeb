@@ -43,7 +43,6 @@ class _cardprinterState extends State<cardprinter> {
           children: [
             const Header(heading: "Taqreeb", para: ""),
 
-            // Main Heading
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
@@ -57,7 +56,6 @@ class _cardprinterState extends State<cardprinter> {
               ),
             ),
 
-            // Featured Images
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -78,7 +76,6 @@ class _cardprinterState extends State<cardprinter> {
 
             const SizedBox(height: 24),
 
-            // Sliding Rows
             SlidingRow(
               title: "Wedding Invitations",
               images: [
