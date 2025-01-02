@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -53,14 +54,27 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
     setState(() {
       this.token = token;
       textfields = fields ?? {}; // Ensure no null data
+      if (textfields == null || textfields['status'] == 'error') {
+        print('$textfields');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        for (int i = 0; i < textfields['fields'].length; i++) {
+          controllers.add(TextEditingController());
+          focusNodes.add(FocusNode());
+          print(i);
+        }
+        isLoading = false; // Data has been fetched, so stop loading
+        ischange = true;
+      }
     });
-    for (int i = 0; i < textfields['fields'].length; i++) {
-      controllers.add(TextEditingController());
-      focusNodes.add(FocusNode());
-      print(i);
-    }
-    isLoading = false; // Data has been fetched, so stop loading
-    ischange = true;
   }
 
   String capitalize(String str) {

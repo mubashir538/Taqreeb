@@ -25,12 +25,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   final TextEditingController _textController = TextEditingController();
   FocusNode _textFocus = FocusNode();
 
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
   bool isfunction = false;
   int functionid = 0;
   int eventId = 0;
@@ -78,15 +72,30 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     // Update the state
     setState(() {
       this.token = token;
-      this.list = fetchedlist ?? {}; // Ensure no null data
-      if (list['checklist'] != null) {
-        checklistItems = (list['checklist'] as List)
-            .map((e) => e as Map<String, dynamic>)
-            .toList();
-        //  list['checklist'];
+      this.list = fetchedlist ?? {};
+      if (list == null || list['status'] == 'error') {
+        print('$list');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        if (list['checklist'] != null) {
+          checklistItems = (list['checklist'] as List)
+              .map((e) => e as Map<String, dynamic>)
+              .toList();
+          //  list['checklist'];
+        }
+        isLoading = false; // Data has been fetched, so stop loading
+        changedfirst = true;
       }
-      isLoading = false; // Data has been fetched, so stop loading
-      changedfirst = true;
+
+      // Ensure no null data
     });
   }
 

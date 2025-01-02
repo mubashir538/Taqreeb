@@ -15,12 +15,7 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   final TextEditingController phoneController = TextEditingController();
   FocusNode phoneFocus = FocusNode();
-  @override
-  void dispose() {
-    phoneController.dispose();
-    phoneFocus.dispose();
-    super.dispose();
-  }
+ 
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;

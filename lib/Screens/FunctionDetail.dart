@@ -66,11 +66,24 @@ class _FunctionDetailState extends State<FunctionDetail> {
       this.token = token;
       functions = function ?? {};
       this.bookings = bookings ?? {}; // Ensure no null data
-      for (int i = 0; i < this.bookings['cart'].length; i++) {
-        bookinglist.add(this.bookings['cart'][i]);
+      if (bookings == null || bookings['status'] == 'error') {
+        print('$bookings');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        for (int i = 0; i < this.bookings['cart'].length; i++) {
+          bookinglist.add(this.bookings['cart'][i]);
+        }
+        ischanged = true;
+        isLoading = false; // Data has been fetched, so stop loading
       }
-      ischanged = true;
-      isLoading = false; // Data has been fetched, so stop loading
     });
   }
 

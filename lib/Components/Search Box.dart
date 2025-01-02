@@ -6,10 +6,12 @@ class SearchBox extends StatelessWidget {
   final TextEditingController controller;
   final double width;
   final VoidCallback? onclick;
+  final bool isHome;
   final String hint;
   final Function(String) onChanged;
   const SearchBox(
       {super.key,
+      this.isHome = false,
       required this.onChanged,
       required this.hint,
       required this.controller,
@@ -45,6 +47,8 @@ class SearchBox extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onclick,
                   child: TextField(
+                    readOnly: isHome? true:false,
+                    onTap: onclick,
                     controller: controller,
                     onChanged: onChanged,
                     style: GoogleFonts.montserrat(

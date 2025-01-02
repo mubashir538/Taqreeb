@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    MyColors.getTheme();
     Timer(Duration(seconds: 3), () async {
       await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
       if (await MyStorage.exists(MyTokens.accessToken)) {
@@ -24,19 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacementNamed(context, '/Login');
       }
     });
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
   }
 
   @override

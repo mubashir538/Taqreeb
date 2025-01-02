@@ -672,6 +672,7 @@ class _Categoryview_MakeupState extends State<Categoryview_Makeup> {
             ),
           ),
           Positioned(
+            top: 0,
               child: Header(
             key: _headerKey,
           )),

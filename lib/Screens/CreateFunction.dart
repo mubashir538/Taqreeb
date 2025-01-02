@@ -9,7 +9,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/images.dart';
@@ -34,23 +34,6 @@ class _CreateFunctionState extends State<CreateFunction> {
   FocusNode budgetfocus = FocusNode();
   FocusNode guestmaxfocus = FocusNode();
   FocusNode guestminfocus = FocusNode();
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    nameController.dispose();
-    budgetController.dispose();
-    typeController.dispose();
-    guestMaxController.dispose();
-    guestMinController.dispose();
-    datafocus.dispose();
-    nameController.dispose();
-    typefocus.dispose();
-    budgetfocus.dispose();
-    guestmaxfocus.dispose();
-    guestminfocus.dispose();
-    super.dispose();
-  }
 
   String token = '';
   Map<String, dynamic> types = {};
@@ -108,7 +91,7 @@ class _CreateFunctionState extends State<CreateFunction> {
     setState(() {
       if (edit) {
         this.Function = FunctiontDetails ?? {};
-        if (this.Function != {} && !changed) {
+        if ((this.Function != {} && !changed)) {
           nameController.text = this.Function['Fuctions']['name'];
           typeController.text = this.Function['Fuctions']['type'];
           _dateController.text = this.Function['Fuctions']['date'];
@@ -123,9 +106,35 @@ class _CreateFunctionState extends State<CreateFunction> {
           changed = true;
         }
       }
-      this.token = token;
-      this.types = types ?? {};
-      isLoading = false;
+      if (Function == null || Function['status'] == 'error') {
+        print('$Function');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        this.token = token;
+        this.types = types ?? {};
+        if (this.types == null || this.types['status'] == 'error') {
+          print('${this.types}');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Something Went Wrong!',
+                style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: MyColors.white,
+                    fontWeight: FontWeight.w400)),
+            backgroundColor: MyColors.red,
+          ));
+          return;
+        } else {
+          isLoading = false;
+        }
+      }
     });
   }
 

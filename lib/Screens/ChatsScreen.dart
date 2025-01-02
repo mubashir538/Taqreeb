@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -16,179 +14,135 @@ class ChatsScreen extends StatefulWidget {
 
 class _ChatsScreenState extends State<ChatsScreen> {
   final TextEditingController controller = TextEditingController();
-  final DatabaseReference database = FirebaseDatabase.instance.ref();
-  List<Map<String, dynamic>> userChats = []; // User's chat list
-  bool isCheckingContacts = false;
+  final CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+  final CollectionReference groupsCollection =
+      FirebaseFirestore.instance.collection('groups');
+  List<Map<String, dynamic>> userChats = [];
+  List<Map<String, dynamic>> groups = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-
-    _fetchUserChats();
+    _fetchChatsAndGroups();
   }
 
-  // Fetch user's chat list from Firebase
-  Future<void> _fetchUserChats() async {
+  Future<void> _fetchChatsAndGroups() async {
     setState(() {
-      isCheckingContacts = true;
+      isLoading = true;
     });
 
     try {
-      final userId = 'currentUserId'; // Replace with actual user ID
-      final snapshot = await database.child('users/$userId/chats').get();
+      // Fetch user chats
+      final userChatsSnapshot = await usersCollection.get();
+      final chats = userChatsSnapshot.docs.map((doc) {
+        return {
+          'userId': doc.id,
+          'name': "${doc['firstName']} ${doc['lastName']}",
+          'lastMessage': '${doc['firstName']} is also using Taqreeb',
+        };
+      }).toList();
 
-      if (snapshot.exists) {
-        setState(() {
-          userChats = List<Map<String, dynamic>>.from(snapshot.value as List);
-        });
-      }
-    } catch (e) {
-      print("Error fetching user chats: $e");
-    }
+      // Fetch groups
+      final groupsSnapshot = await groupsCollection.get();
+      final fetchedGroups = groupsSnapshot.docs.map((doc) {
+        return {
+          'groupId': doc.id,
+          'name': doc['groupName'],
+          'participants': doc['participants'],
+        };
+      }).toList();
 
-    setState(() {
-      isCheckingContacts = false;
-    });
-  }
-
-  // Check phone contacts and add matching users to chats
-  Future<void> _checkPhoneContacts() async {
-    final status = await Permission.contacts.request();
-    if (status != PermissionStatus.granted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Permission to access contacts denied")),
-      );
-      return;
-    }
-
-    setState(() {
-      isCheckingContacts = true;
-    });
-
-    try {
-      final contacts = await ContactsService.getContacts();
-      final List<String> phoneNumbers = contacts
-          .where((contact) => contact.phones != null)
-          .expand(
-              (contact) => contact.phones!.map((phone) => phone.value ?? ''))
-          .toList();
-
-      final snapshot = await database.child('users').get();
-      if (snapshot.exists) {
-        final Map<String, dynamic> users =
-            Map<String, dynamic>.from(snapshot.value as Map);
-
-        for (var user in users.entries) {
-          final userPhone = user.value['phone'] as String;
-          if (phoneNumbers.contains(userPhone)) {
-            final chatData = {
-              'userId': user.key,
-              'name': user.value['name'],
-              'lastMessage': '',
-              'timestamp': DateTime.now().millisecondsSinceEpoch,
-            };
-
-            setState(() {
-              userChats.add(chatData);
-            });
-
-            await database
-                .child(
-                    'users/currentUserId/chats') // Replace with current user ID
-                .push()
-                .set(chatData);
-          }
-        }
-      }
-    } catch (e) {
-      print("Error checking contacts: $e");
-    }
-
-    setState(() {
-      isCheckingContacts = false;
-    });
-  }
-
-  // Navigate to new user search screen
-  void _navigateToSearchUsers() {
-    Navigator.pushNamed(context, '/SearchUsers');
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
       setState(() {
-        _headerHeight = renderBox.size.height;
+        userChats = chats;
+        groups = fetchedGroups;
       });
+    } catch (e) {
+      print("Error fetching chats or groups: $e");
     }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void _navigateToCreateGroup() {
+    Navigator.pushNamed(context, '/CreateGroup',
+        arguments: {'chats': userChats});
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    _getHeaderHeight();
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToSearchUsers,
-        child: Icon(Icons.add, color: MyColors.white),
-        backgroundColor: MyColors.red,
-      ),
       body: Stack(
         children: [
-          SingleChildScrollView(
+          Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: _headerHeight,
+                Header(
+                  heading: "Chats",
+                  para: "View your chats and groups below.",
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: screenHeight * 0.03),
-                  child: SearchBox(
-                    onChanged: (value) {},
-                    hint: 'Search Typing to Search',
-                    controller: controller,
-                    width: screenWidth * 0.9,
-                  ),
+                SearchBox(
+                  onChanged: (query) {
+                    setState(() {
+                      userChats = userChats
+                          .where((chat) => chat['name']
+                              .toLowerCase()
+                              .contains(query.toLowerCase()))
+                          .toList();
+                    });
+                  },
+                  hint: 'Search by name',
+                  controller: controller,
                 ),
-                isCheckingContacts
-                    ? Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: userChats.length,
-                        itemBuilder: (context, index) {
-                          final chat = userChats[index];
-                          return MessageChatButton(
-                            onpressed: () {
-                              Navigator.pushNamed(context, '/ChatBox');
-                            },
-                            name: chat['name'],
-                            message: chat['lastMessage'] ?? '',
-                            newMessage: 0,
-                            time: '11:30 AM',
-                          );
-                        },
+                isLoading
+                    ? CircularProgressIndicator()
+                    : Expanded(
+                        child: ListView(
+                          children: [
+                            ...userChats.map((chat) => MessageChatButton(
+                                  onpressed: () => {}, // Navigate to chat
+                                  name: chat['name'],
+                                  message: chat['lastMessage'],
+                                  newMessage: 0,
+                                  time: '11:30 AM',
+                                )),
+                            Divider(color: MyColors.white),
+                            ...groups.map((group) => MessageChatButton(
+                                  onpressed: () => {}, // Navigate to group chat
+                                  name: group['name'],
+                                  message: 'Group Chat',
+                                  newMessage: 0,
+                                  time: '',
+                                )),
+                          ],
+                        ),
                       ),
               ],
             ),
           ),
           Positioned(
-            top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: "Chats",
-              para:
-                  "This password should be different from the previous password",
+            bottom: screenHeight * 0.03,
+            right: screenHeight * 0.03,
+            child: InkWell(
+              onTap: _navigateToCreateGroup,
+              child: Container(
+                padding: EdgeInsets.all(screenWidth * 0.05),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: MyColors.red,
+                ),
+                child: Icon(Icons.add, color: MyColors.white),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

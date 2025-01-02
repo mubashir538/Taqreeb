@@ -47,19 +47,6 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   get http => null;
 
   @override
-  void dispose() {
-    super.dispose();
-    fnamecontroller.dispose();
-    lastnameController.dispose();
-    genderController.dispose();
-    locationcontroller.dispose();
-    fnameFocus.dispose();
-    lastnameFocus.dispose();
-    genderFocus.dispose();
-    locationFocus.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
@@ -84,7 +71,20 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     setState(() {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
+      if (user == null || user['status'] == 'error') {
+        print('$user');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
 
       fnamecontroller.text = user['firstName'];
       lastnameController.text = user['lastName'];
@@ -326,16 +326,18 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                             children: [
                               MyTextBox(
                                   focusNode: fnameFocus,
-                                  onFieldSubmitted: (_){
-                                    FocusScope.of(context).requestFocus(lastnameFocus);
+                                  onFieldSubmitted: (_) {
+                                    FocusScope.of(context)
+                                        .requestFocus(lastnameFocus);
                                   },
                                   hint: 'First Name',
                                   valueController: fnamecontroller),
                               MyTextBox(
-                                focusNode: lastnameFocus,
-                                onFieldSubmitted: (_){
-                                  FocusScope.of(context).requestFocus(locationFocus);
-                                },
+                                  focusNode: lastnameFocus,
+                                  onFieldSubmitted: (_) {
+                                    FocusScope.of(context)
+                                        .requestFocus(locationFocus);
+                                  },
                                   hint: 'Last Name',
                                   valueController: lastnameController),
                               ResponsiveDropdown(
@@ -345,10 +347,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                     genderController.text = value;
                                   }),
                               MyTextBox(
-                                focusNode: locationFocus,
-                                onFieldSubmitted: (_){
-                                  FocusScope.of(context).unfocus();
-                                },
+                                  focusNode: locationFocus,
+                                  onFieldSubmitted: (_) {
+                                    FocusScope.of(context).unfocus();
+                                  },
                                   hint: 'City',
                                   valueController: locationcontroller),
                             ],

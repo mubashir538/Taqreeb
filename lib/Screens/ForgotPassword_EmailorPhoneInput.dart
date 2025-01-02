@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
@@ -18,6 +20,8 @@ class _ForgotPassword_EmailorPhoneInputState
     extends State<ForgotPassword_EmailorPhoneInput> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
+  bool isLoading = false;
+  TextEditingController contactController = TextEditingController();
 
   @override
   void initState() {
@@ -36,7 +40,68 @@ class _ForgotPassword_EmailorPhoneInputState
     }
   }
 
-  TextEditingController contactController = TextEditingController();
+  Future<void> _sendCode() async {
+    setState(() {
+      isLoading = true;
+    });
+    String contact = contactController.text.trim();
+    String type = '';
+    if (contact.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please enter your email/phone number'),
+      ));
+      return;
+    }
+    if (contactController.text.contains('@')) {
+      if (Validations.validateEmail(contact) != "Ok") {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(Validations.validateEmail(contact)),
+        ));
+        return;
+      }
+      type = 'email';
+    } else {
+      if (Validations.validateContact(contact) != "Ok") {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(Validations.validateContact(contact)),
+        ));
+        return;
+      }
+      type = 'phone';
+    }
+    try {
+      // Prepare API request payload
+      final Map<String, dynamic> data = {type: contact};
+
+      // Send POST request
+      final response = await MyApi.postRequest(
+        endpoint: 'user/forgotpassword/phoneorEmail/',
+        body: data,
+      );
+
+      // Handle response
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Verification code sent successfully.'),
+        ));
+        Navigator.pushNamed(context, '/ForgotPassword_VerifyCode',
+            arguments: {'email': contactController.text, 'response': response});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(response['message'] ?? 'Something went wrong.'),
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: $e'),
+      ));
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -47,44 +112,49 @@ class _ForgotPassword_EmailorPhoneInputState
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+              ),
+            )
+          : Stack(
               children: [
-                SizedBox(height: _headerHeight),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-                  child: MyTextBox(
-                    hint: "Enter Email/Phone Number",
-                    valueController: contactController,
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: _headerHeight),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+                        child: MyTextBox(
+                          hint: "Enter Email/Phone Number",
+                          valueController: contactController,
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenHeight * 0.05,
+                        child: Center(child: MyDivider()),
+                      ),
+                      ColoredButton(
+                        text: "Send Code",
+                        onPressed: _sendCode,
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(
-                  height: screenHeight * 0.05,
-                  child: Center(child: MyDivider()),
+                Positioned(
+                  top: 0,
+                  child: Header(
+                    key: _headerKey,
+                    heading: 'Forgot Password',
+                    para:
+                        'Enter the email address with your account  and we\'ll send an email with confirmation to reset your password',
+                    image: MyImages.ForgotPassword,
+                  ),
                 ),
-                ColoredButton(
-                  text: "Send Code",
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/ForgotPassword_VerifyCode');
-                  },
-                )
               ],
             ),
-          ),
-          Positioned(
-            top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: 'Forgot Password',
-              para:
-                  'Enter the email address with your account  and we’ll send an email with confirmation to restetyour password',
-              image: MyImages.ForgotPassword,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

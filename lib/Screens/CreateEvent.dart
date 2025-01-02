@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/colorPicker.dart';
+import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Create%20AI%20Package/Components/question%20group.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
+import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
@@ -38,28 +40,6 @@ class _CreateEventState extends State<CreateEvent> {
   FocusNode budgetFocus = FocusNode();
   FocusNode guestMinFocus = FocusNode();
   FocusNode guestMaxFocus = FocusNode();
-
-  @override
-  void dispose() {
-    themeColor.dispose();
-    eventNameController.dispose();
-    typeController.dispose();
-    dateController.dispose();
-    locationController.dispose();
-    descriptionController.dispose();
-    budgetController.dispose();
-    guestMinController.dispose();
-    guestMaxController.dispose();
-    themeColorFocus.dispose();
-    typeFocus.dispose();
-    dateFocus.dispose();
-    locationFocus.dispose();
-    descriptionFocus.dispose();
-    budgetFocus.dispose();
-    guestMinFocus.dispose();
-    guestMaxFocus.dispose();
-    super.dispose();
-  }
 
   String token = '';
   Map<String, dynamic> types = {};
@@ -105,7 +85,9 @@ class _CreateEventState extends State<CreateEvent> {
       if (edit) {
         print('Edit Screen');
         this.Event = EventDetails ?? {};
-        if (this.Event != {}) {
+        if (this.Event != {} ||
+            this.Event != null ||
+            this.Event['status'] != 'error') {
           eventNameController.text = this.Event['EventDetail']['name'];
           typeController.text = this.Event['EventDetail']['type'];
           dateController.text = this.Event['EventDetail']['date'];
@@ -120,10 +102,36 @@ class _CreateEventState extends State<CreateEvent> {
               this.Event['EventDetail']['guestsmin'].toString();
         }
       }
-      this.token = token;
-      this.types = types ?? {};
-      isLoading = false;
-      ischange = true;
+      if (Event == null || Event['status'] == 'error') {
+        print('$Event');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        this.token = token;
+        this.types = types ?? {};
+        if (types == null || types['status'] == 'error') {
+          print('$types');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Something Went Wrong!',
+                style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: MyColors.white,
+                    fontWeight: FontWeight.w400)),
+            backgroundColor: MyColors.red,
+          ));
+          return;
+        } else {
+          isLoading = false;
+          ischange = true;
+        }
+      }
     });
   }
 
@@ -214,18 +222,27 @@ class _CreateEventState extends State<CreateEvent> {
                         )
                       ], Heading: "Basic Info"),
                       QuestionGroup(questions: [
-                        SizedBox(
-                          height: screenHeight * 0.2,
-                          child: MyTextBox(
-                            focusNode: descriptionFocus,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(guestMinFocus);
-                            },
-                            hint: "Enter Description",
-                            valueController: descriptionController,
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: screenHeight * 0.2,
+                        //   child: MyTextBox(
+                        //     focusNode: descriptionFocus,
+                        //     onFieldSubmitted: (_) {
+                        //       FocusScope.of(context)
+                        //           .requestFocus(guestMinFocus);
+                        //     },
+                        //     hint: "Enter Description",
+                        //     valueController: descriptionController,
+                        //   ),
+                        // ),
+
+                        DescriptionBox(
+                          focusNode: descriptionFocus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(guestMinFocus);
+                          },
+                          valueController: descriptionController,
+                          onChanged: (value) {},
+                        )
                       ], Heading: "Describe Your Event"),
                       QuestionGroup(questions: [
                         MyTextBox(

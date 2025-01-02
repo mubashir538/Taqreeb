@@ -29,19 +29,6 @@ class _BasicSignupState extends State<BasicSignup> {
   final FocusNode firstNameFocus = FocusNode();
   final FocusNode lastNameFocus = FocusNode();
 
-  @override
-  void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    passwordFocus.dispose();
-    confirmPasswordFocus.dispose();
-    firstNameFocus.dispose();
-    lastNameFocus.dispose();
-    super.dispose();
-  }
-
   void check(BuildContext context) async {
     if (await MyStorage.exists(MyTokens.sfname) &&
         await MyStorage.exists(MyTokens.slname) &&
@@ -195,7 +182,7 @@ class _BasicSignupState extends State<BasicSignup> {
                     },
                     child: Text(
                       "Already a Member? Login",
-                      style: TextStyle(color: MyColors.Yellow),
+                      style: TextStyle(color: MyColors.yellowonDark),
                     ),
                   ),
                 ),

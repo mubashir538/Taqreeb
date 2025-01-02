@@ -32,14 +32,7 @@ class _LoginState extends State<Login> {
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    passwordFocus.dispose();
-    super.dispose();
-  }
-
+ 
   @override
   void initState() {
     super.initState();

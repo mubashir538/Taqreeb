@@ -608,6 +608,7 @@ class _CategoryView_GraphicDesignerState
             ),
           ),
           Positioned(
+            top: 0,
               child: Header(
             key: _headerKey,
           )),

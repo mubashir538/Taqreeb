@@ -32,7 +32,7 @@ class _AccountInfoState extends State<AccountInfo> {
   void fetchData() async {
     // Perform asynchronous operations
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await  (MyTokens.userId) ?? "";
+    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     final user = await MyApi.getRequest(
         endpoint: 'accountInfo/$Userid',
         headers: {'Authorization': 'Bearer $token'});
@@ -41,7 +41,20 @@ class _AccountInfoState extends State<AccountInfo> {
     setState(() {
       this.token = token;
       this.user = user ?? {}; // Ensure no null data
-      isLoading = false;
+      if (user == null || user['status'] == 'error') {
+        print('$user');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: MyColors.white,
+                  fontWeight: FontWeight.w400)),
+          backgroundColor: MyColors.red,
+        ));
+        return;
+      } else {
+        isLoading = false;
+      }
 
       print(
           "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
@@ -96,7 +109,7 @@ class _AccountInfoState extends State<AccountInfo> {
                   ? Center(
                       child: CircularProgressIndicator(
                         valueColor:
-                            AlwaysStoppedAnimation<Color>(MyColors.Yellow),
+                            AlwaysStoppedAnimation<Color>(MyColors.white),
                       ),
                     )
                   : Column(
@@ -161,6 +174,7 @@ class _AccountInfoState extends State<AccountInfo> {
                                     MyIcons.profile,
                                     width: size,
                                     height: size,
+                                    color: MyColors.white,
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(

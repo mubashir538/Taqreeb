@@ -1,93 +1,67 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/theme/color.dart';
 
 class AutoImageSlider extends StatefulWidget {
   final List<String> imageUrls;
   final double height;
 
-  const AutoImageSlider({
-    Key? key,
-    required this.imageUrls,
-    this.height = 200.0,
-  }) : super(key: key);
+  AutoImageSlider({required this.imageUrls, required this.height});
 
   @override
   _AutoImageSliderState createState() => _AutoImageSliderState();
 }
 
 class _AutoImageSliderState extends State<AutoImageSlider> {
+  late PageController _pageController;
   int _currentIndex = 0;
-  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-   
-    _startSliderTimer();
-  }
-
-  void _startSliderTimer() {
-    _timer = Timer.periodic(Duration(seconds: 4), (timer) {
-      setState(() {
-        _currentIndex = widget.imageUrls.length == 0
-            ? 0
-            : (_currentIndex + 1) % widget.imageUrls.length;
-      });
-    });
+    _pageController = PageController(initialPage: 0);
+    _startAutoSlide();
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  void _startAutoSlide() {
+    Future.delayed(Duration(seconds: 3)).then((_) {
+      if (_pageController.hasClients) {
+        setState(() {
+          _currentIndex = (_currentIndex + 1) % widget.imageUrls.length;
+        });
+        _pageController.animateToPage(
+          _currentIndex,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        _startAutoSlide();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.height,
-      width: double.infinity,
-      child: Stack(
-        children: [
-          PageView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: widget.imageUrls.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return Image.network(
-                widget.imageUrls[_currentIndex],
-                fit: BoxFit.cover,
-                width: double.infinity,
-              );
-            },
-          ),
-          Positioned(
-            bottom: 10,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(widget.imageUrls.length, (index) {
-                return AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentIndex == index ? 12 : 8,
-                  height: _currentIndex == index ? 12 : 8,
-                  decoration: BoxDecoration(
-                    color:
-                        _currentIndex == index ? MyColors.red : MyColors.white,
-                    shape: BoxShape.circle,
-                  ),
-                );
-              }),
-            ),
-          ),
-        ],
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.imageUrls.length,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        itemBuilder: (context, index) {
+          return Image.network(
+            widget.imageUrls[index],
+            fit: BoxFit.cover,
+            width: double.infinity,
+          );
+        },
       ),
     );
   }

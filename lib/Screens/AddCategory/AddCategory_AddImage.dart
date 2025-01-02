@@ -262,6 +262,7 @@ class _AddImageState extends State<AddImage> {
                   request.fields['userid'] =
                       await MyStorage.getToken(MyTokens.userId) ?? "";
                   request.fields['name'] = args['name'];
+                  request.fields['type'] = await MyTokens.getBusinessType();
                   request.fields['description'] = args['description'];
                   request.fields['category'] = args['category'];
                   request.fields['location'] = args['location'];

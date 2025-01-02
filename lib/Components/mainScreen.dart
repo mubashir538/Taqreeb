@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/navbar.dart';
@@ -8,7 +9,7 @@ import 'package:taqreeb/Screens/ChatsScreen.dart';
 import 'package:taqreeb/Screens/Dashboard.dart';
 import 'package:taqreeb/Screens/HomePage.dart';
 import 'package:taqreeb/Screens/YourEvents.dart';
-import 'package:taqreeb/Screens/screens%20to%20be%20made/YourListings.dart';
+import 'package:taqreeb/Screens/YourListings.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,19 +33,21 @@ class _MainScreenState extends State<MainScreen> {
   // State variables
   bool isLoading = true; // Track loading state
   bool isBusinessOwner = false; // Track user type
-
+  bool isFreelancer = false;
   @override
   void initState() {
     super.initState();
-    
+
     fetchUser(); // Fetch the user type on initialization
   }
 
   // Fetch user type from storage
   void fetchUser() async {
     final utype = await MyStorage.exists(MyTokens.isBusinessOwner);
+    final ftype = await MyStorage.exists(MyTokens.isFreelancer);
     setState(() {
-      isBusinessOwner = utype; // Update user type
+      isBusinessOwner = utype;
+      isFreelancer = ftype;
       isLoading = false; // Loading complete
     });
   }
@@ -63,8 +66,11 @@ class _MainScreenState extends State<MainScreen> {
     double maximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
+    double keyboard = MediaQuery.of(context).viewInsets.bottom;
+    bool isKeyboardVisible = keyboard > 0;
     // Determine the page list based on the user type
-    List<Widget> currentPageList = isBusinessOwner ? businessPages : pages;
+    List<Widget> currentPageList =
+        isBusinessOwner || isFreelancer ? businessPages : pages;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -73,14 +79,15 @@ class _MainScreenState extends State<MainScreen> {
               child: CircularProgressIndicator(), // Show loading spinner
             )
           : currentPageList[widget.index], // Display the selected page
-      floatingActionButton: SizedBox(
+      
+      floatingActionButton:isKeyboardVisible? null: SizedBox(
         width: screenWidth * 0.15,
         height: screenWidth * 0.15,
         child: FloatingActionButton(
           onPressed: () {
             Navigator.pushNamed(
                 context,
-                isBusinessOwner
+                isBusinessOwner || isFreelancer
                     ? '/AddCategory_List'
                     : '/CreateEvent'); // Navigate based on user type
           },

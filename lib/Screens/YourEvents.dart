@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
@@ -17,6 +20,7 @@ class YourEvents extends StatefulWidget {
 class _YourEventsState extends State<YourEvents> {
   String token = '';
   Map<String, dynamic> events = {}; // Initialize as empty map
+  Timer? _timer;
 
   bool isLoading = true; // Add a loading flag
   bool fetched = true;
@@ -34,26 +38,40 @@ class _YourEventsState extends State<YourEvents> {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    print(id);
     final fetchedEvents = await MyApi.getRequest(
       endpoint: 'YourEvents/$id',
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    // Update the state
-    setState(() {
-      if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
-        fetched = false;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!'),
-          backgroundColor: MyColors.red,
-        ));
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      // Update the state
+      if (mounted) {
+        setState(() {
+          if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
+            fetched = false;
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                'Something Went Wrong!',
+                style: GoogleFonts.montserrat(
+                  color: MyColors.white,
+                  fontSize: 15,
+                ),
+              ),
+              backgroundColor: MyColors.red,
+            ));
+          }
+          this.token = token;
+          this.events = fetchedEvents ?? {}; // Ensure no null data
+          isLoading = false; // Data has been fetched, so stop loading
+        });
       }
-      this.token = token;
-      this.events = fetchedEvents ?? {}; // Ensure no null data
-      isLoading = false; // Data has been fetched, so stop loading
-      print('Events: $events');
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -107,6 +125,45 @@ class _YourEventsState extends State<YourEvents> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: events["Event"].length,
                               itemBuilder: (context, index) => Function12(
+                                delete: () async {
+                                  final response = await MyApi.postRequest(
+                                      endpoint: 'DeleteEvent/',
+                                      headers: {
+                                        'Authorization': 'Bearer $token'
+                                      },
+                                      body: {
+                                        'EventId': events["Event"][index]["id"]
+                                            .toString(),
+                                      });
+                                  if (response['status'] == 'success') {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                        'Event Deleted Successfully',
+                                        style: GoogleFonts.montserrat(
+                                          color: MyColors.white,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.green,
+                                    ));
+                                    setState(() {
+                                      events["Event"].removeAt(index);
+                                    });
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                        'Something Went Wrong!',
+                                        style: GoogleFonts.montserrat(
+                                          color: MyColors.white,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.red,
+                                    ));
+                                  }
+                                },
                                 color: Color(int.parse(
                                     '0xff${events["Event"][index]["themeColor"].substring(1, events["Event"][index]["themeColor"].length)}')),
                                 name: events["Event"][index]["name"],
