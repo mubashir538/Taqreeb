@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -23,9 +22,9 @@ class CategoryView_PhotographyPlace extends StatefulWidget {
 class _CategoryView_PhotographyPlaceState
     extends State<CategoryView_PhotographyPlace> {
   String token = '';
-  Map<String, dynamic> listing = {}; 
+  Map<String, dynamic> listing = {};
   late int? listingId;
-  bool isLoading = true; 
+  bool isLoading = true;
 
   int _currentIndex = 0;
   bool isToggled = true;
@@ -49,6 +48,7 @@ class _CategoryView_PhotographyPlaceState
 
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
+  bool ischange = false;
   Map<String, dynamic> events = {};
   @override
   void initState() {
@@ -64,7 +64,9 @@ class _CategoryView_PhotographyPlaceState
     setState(() {
       listingId = args;
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   Timer? timer;
@@ -74,14 +76,12 @@ class _CategoryView_PhotographyPlaceState
         headers: {'Authorization': 'Bearer $token'},
         endpoint: 'PhotographyPlaces/viewpage/${this.listingId}');
 
-
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           this.token = token;
           this.listing = listing ?? {};
           if (listing == null || listing['status'] == 'error') {
-            print('$listing');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -93,6 +93,7 @@ class _CategoryView_PhotographyPlaceState
             return;
           } else {
             isLoading = false;
+            ischange = true;
             for (var i = 0; i < listing['pictures'].length; i++) {
               this._imageUrls.add(listing['pictures'][i]['picturePath']);
             }
@@ -114,6 +115,7 @@ class _CategoryView_PhotographyPlaceState
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+            timer.cancel();
           }
         });
       }

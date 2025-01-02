@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/guests.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
@@ -159,9 +156,13 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                             'PersonContact': guestList[i]['contact']
                           });
                       if (response['status'] == 'success') {
-                        print('Person Added');
-                      } else {
-                        print('Person Not Added');
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Person Added'),
+                        ));
+                        } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Person Not Added', style: TextStyle(color: Colors.red),),
+                        ));
                       }
                     }
                     Navigator.pushReplacementNamed(

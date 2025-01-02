@@ -84,7 +84,6 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
           this.token = token;
           this.listing = listing ?? {};
           if (listing == null || listing['status'] == 'error') {
-            print('$listing');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(

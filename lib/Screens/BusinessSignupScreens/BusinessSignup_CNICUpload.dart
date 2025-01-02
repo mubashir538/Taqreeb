@@ -15,7 +15,6 @@ import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class BusinessSignup_CNICUpload extends StatefulWidget {
   const BusinessSignup_CNICUpload({super.key});
@@ -118,8 +117,6 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,

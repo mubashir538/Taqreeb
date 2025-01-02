@@ -13,19 +13,6 @@ class Categoryview_Spa extends StatefulWidget {
 }
 
 class _Categoryview_SpaState extends State<Categoryview_Spa> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +178,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                             color: MyColors.DarkLighter,
                           )),
                       SizedBox(height: 10),
-
                       Row(
                         children: [
                           SizedBox(width: 20),
@@ -208,22 +194,16 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                       SizedBox(height: 10),
                       Container(
                         height: 270,
-                        width: double
-                            .infinity,
+                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: MyColors
-                              .DarkLighter, 
-                          borderRadius: BorderRadius.circular(
-                              10), 
+                          color: MyColors.DarkLighter,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10), 
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, 
-                          mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, 
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -375,11 +355,9 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                           ],
                         ),
                       ),
-
                       SizedBox(
                         height: 20,
                       ),
-
                       SizedBox(
                           width: 324,
                           child: Divider(
@@ -417,22 +395,18 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                       ),
                       SizedBox(height: 20),
                       Container(
-                        width: double.infinity, 
+                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: MyColors.DarkLighter, 
-                          borderRadius:
-                              BorderRadius.circular(10), 
+                          color: MyColors.DarkLighter,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 20), 
+                        padding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, 
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceBetween, 
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "Haircut & Protein Treatment",
@@ -509,8 +483,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                           ],
                         ),
                       ),
-
-
                       SizedBox(height: 30),
                       Container(
                         width: double.infinity,
@@ -522,8 +494,7 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                         padding: EdgeInsets.all(20),
                         child: Center(
                           child: Column(
-                            mainAxisSize: MainAxisSize
-                                .min, 
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -576,7 +547,7 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: MyColors.white,  
+                                  color: MyColors.white,
                                 ),
                               ),
                               SizedBox(height: 10),
@@ -606,8 +577,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                           ),
                         ),
                       ),
-
-
                       SizedBox(height: 30),
                       Container(
                         width: double.infinity,
@@ -618,7 +587,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                         ),
                         padding: EdgeInsets.all(20),
                         child: Center(
-
                           child: Column(
                             children: [
                               Row(children: [
@@ -708,7 +676,6 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
                           ),
                         ),
                       ),
-
                       SizedBox(height: 20),
                       SizedBox(
                           width: 324,
@@ -903,11 +870,7 @@ class _Categoryview_SpaState extends State<Categoryview_Spa> {
               ],
             ),
           ),
-          Positioned(
-            top: 0,
-              child: Header(
-            key: _headerKey,
-          )),
+          Positioned(top: 0, child: Header()),
         ],
       ),
     );

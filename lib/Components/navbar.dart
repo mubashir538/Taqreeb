@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 
+// ignore: must_be_immutable
 class Navbar extends StatefulWidget {
   Navbar(
       {super.key, required this.selectedIndex, required this.onValueChanged});

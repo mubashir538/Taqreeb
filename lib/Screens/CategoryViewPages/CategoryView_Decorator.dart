@@ -21,9 +21,9 @@ class CategoryView_Decorator extends StatefulWidget {
 
 class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   String token = '';
-  Map<String, dynamic> listing = {}; 
+  Map<String, dynamic> listing = {};
   late int? listingId;
-  bool isLoading = true; 
+  bool isLoading = true;
 
   int _currentIndex = 0;
   bool isToggled = true;
@@ -84,7 +84,6 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
           this.token = token;
           this.listing = listing ?? {};
           if (listing == null || listing['status'] == 'error') {
-            print('$listing');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -116,6 +115,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+            timer.cancel();
           }
         });
       }

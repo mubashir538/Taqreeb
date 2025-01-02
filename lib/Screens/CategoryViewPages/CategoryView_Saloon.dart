@@ -20,10 +20,10 @@ class CategoryView_Saloon extends StatefulWidget {
 
 class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   String token = '';
-  Map<String, dynamic> listing = {}; 
+  Map<String, dynamic> listing = {};
   late int? listingId;
-  bool isLoading = true; 
-
+  bool isLoading = true;
+  bool ischange = false;
   int _currentIndex = 0;
   bool isToggled = true;
   List<String> headings = [
@@ -47,7 +47,6 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   bool type = false;
-  bool ischange = false;
   Map<String, dynamic> events = {};
   @override
   void initState() {
@@ -84,7 +83,6 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
           this.token = token;
           this.listing = listing ?? {};
           if (listing == null || listing['status'] == 'error') {
-            print('$listing');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -96,6 +94,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
             return;
           } else {
             isLoading = false;
+            ischange = true;
             for (var i = 0; i < listing['pictures'].length; i++) {
               this._imageUrls.add(listing['pictures'][i]['picturePath']);
             }
@@ -113,6 +112,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+            timer.cancel();
           }
         });
       }

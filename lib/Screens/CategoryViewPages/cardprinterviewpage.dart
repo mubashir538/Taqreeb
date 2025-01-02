@@ -12,24 +12,8 @@ class cardprinterviewpage extends StatefulWidget {
 }
 
 class _cardprinterviewpageState extends State<cardprinterviewpage> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-@override
-  void initState() {
-    super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
-  @override
+  
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.Dark,

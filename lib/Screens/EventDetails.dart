@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -11,7 +9,6 @@ import 'package:taqreeb/Components/function.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class EventDetails extends StatefulWidget {
@@ -53,7 +50,6 @@ class _EventDetailsState extends State<EventDetails> {
           this.token = token;
           this.events = Event ?? {}; 
           if (Event == null || Event['status'] == 'error') {
-            print('$Event');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -294,7 +290,7 @@ class _EventDetailsState extends State<EventDetails> {
                                       });
                                 }
                               },
-                              child: Text("View GuestList")),
+                              child: Text("Event GuestList")),
                         ),
 
                         Container(
@@ -322,7 +318,7 @@ class _EventDetailsState extends State<EventDetails> {
                                       'eventId': EventId,
                                     });
                               },
-                              child: Text("View CheckLlist")),
+                              child: Text("Event CheckLlist")),
                         ),
 
                         // Container(

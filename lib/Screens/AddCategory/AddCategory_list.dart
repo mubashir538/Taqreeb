@@ -54,7 +54,6 @@ class _AddcategoryListState extends State<AddcategoryList> {
       this.token = token;
       this.categories = categories ?? {};
       if (categories == null || categories['status'] == 'error') {
-        print('$categories');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Something Went Wrong!',
               style: GoogleFonts.montserrat(

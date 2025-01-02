@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:crop_your_image/crop_your_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -44,15 +43,16 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   String userId = '';
   bool isLoading = true;
   String image = '';
-
+  bool ishchanged = false;
   get http => null;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-
-    fetchData();
+    if (!ishchanged) {
+      fetchData();
+    }
   }
 
   Timer? timer;
@@ -62,17 +62,14 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     this.userId = userid;
     final user = await MyApi.getRequest(
         endpoint: 'accountInfo/$userid',
-        headers: {'Authorization': 'Bearer $token'}
-        
-        );
+        headers: {'Authorization': 'Bearer $token'});
 
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.user = user ?? {}; 
+          this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            print('$user');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -84,6 +81,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
             return;
           } else {
             isLoading = false;
+            ishchanged = true;
           }
 
           fnamecontroller.text = user['firstName'];
@@ -97,12 +95,12 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       }
     });
   }
-  
-@override
-void dispose(){
-timer?.cancel();
-super.dispose();
-}
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -153,8 +151,7 @@ super.dispose();
     final result = await FlutterImageCompress.compressAndGetFile(
       originalPath,
       compressedPath,
-      quality:
-          50, 
+      quality: 50,
     );
 
     if (result != null) {
@@ -174,7 +171,10 @@ super.dispose();
           'profilePicture',
           _selectedImage!.path,
         ));
-        print('Profile Picture: ${_selectedImage!.path}');
+        final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+        request.headers.addAll({
+          'Authorization': 'Bearer $token',
+        });
 
         request.fields['userid'] = userId;
         request.fields['firstName'] = fnamecontroller.text;
@@ -319,7 +319,6 @@ super.dispose();
                                   ),
                                 ]),
                           ),
-
                           Column(
                             children: [
                               MyTextBox(
@@ -353,7 +352,6 @@ super.dispose();
                                   valueController: locationcontroller),
                             ],
                           ),
-
                           SizedBox(
                             height: screenHeight * 0.1,
                             child: Center(child: MyDivider()),

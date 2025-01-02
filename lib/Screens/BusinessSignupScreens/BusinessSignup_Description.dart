@@ -3,12 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/description.dart';
-
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/Colored Button.dart';
-import 'package:taqreeb/Components/text_box.dart';
 
 class BusinessSignup_Description extends StatefulWidget {
   const BusinessSignup_Description({super.key});

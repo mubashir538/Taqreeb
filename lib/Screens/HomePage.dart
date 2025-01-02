@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
-import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -43,18 +41,12 @@ class _HomePageState extends State<HomePage> {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
       endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
     );
 
     final fetchedImages = await MyApi.getRequest(
       endpoint: 'Homepage/DemoImages/',
       headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization
-      // }
-    );
+      );
     final fetchedListings = await MyApi.getRequest(
       endpoint: 'home/listings/',
       headers: {'Authorization': 'Bearer $token'},
@@ -73,9 +65,6 @@ class _HomePageState extends State<HomePage> {
               fetchedListings['status'] == 'error' ||
               fetchedImages == null ||
               fetchedImages['status'] == 'error') {
-            print('$fetchedCategories');
-            print('$fetchedListings');
-            print('$fetchedImages');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -146,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         SearchBox(
                           onChanged: (value) {},
-                          hint: 'Search Typing to Search',
+                          hint: 'Start Typing to Search',
                           onclick: () {
                             Navigator.pushNamed(context, '/SearchService');
                           },

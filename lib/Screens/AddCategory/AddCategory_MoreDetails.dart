@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -9,7 +8,6 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
-import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
@@ -59,8 +57,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
         setState(() {
           this.token = token;
           textfields = fields ?? {}; 
-          if (textfields == null || textfields['status'] == 'error') {
-            print('$textfields');
+          if (textfields == {} || textfields['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -74,7 +71,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
             for (int i = 0; i < textfields['fields'].length; i++) {
               controllers.add(TextEditingController());
               focusNodes.add(FocusNode());
-              print(i);
             }
             isLoading = false; 
             ischange = true;
@@ -110,10 +106,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -183,7 +176,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                   onPressed: () {
                     bool allFieldsFilled = true;
                     for (var controller in controllers) {
-                      print(controller.text);
                       if (controller.text.isEmpty) {
                         allFieldsFilled = false;
                         break;
@@ -207,7 +199,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                     args.addAll(fieldValues.map((key, value) {
                       return MapEntry(key, value.toString());
                     }).cast<String, String>());
-                    print('args: $args');
                     Navigator.pushNamed(context, '/AddCategory_Addons',
                         arguments: args);
                   },

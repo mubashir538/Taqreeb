@@ -3,7 +3,6 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
 
 class AddcategoryAddons extends StatefulWidget {
   const AddcategoryAddons({super.key});
@@ -160,7 +159,6 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
                 text: 'Continue',
                 width: screenWidth * 0.5,
                 onPressed: () {
-                  print('args: ${args}');
                   Navigator.pushNamed(
                     context,
                     '/AddCategory_Packages', 
@@ -182,10 +180,8 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
         backgroundColor: MyColors.Yellow,
         onPressed: () {
           if (args['addons'] == null) {
-            print(args);
             args.addAll({'addons': []});
           }
-          print(' args: ${args}');
           Navigator.pushNamed(
             context,
             '/AddCategory_Add_Addons', 

@@ -1,10 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Animations/Bounceanimation.dart';
-import 'package:taqreeb/Animations/Fadeanimation.dart';
-import 'package:taqreeb/Animations/textflipanimation.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -92,7 +88,6 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
               listing['status'] == 'error' ||
               events == null ||
               events['status'] == 'error') {
-            print('$events');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -104,6 +99,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
             return;
           } else {
             isLoading = false;
+            ischange = true;
             for (var i = 0; i < listing['pictures'].length; i++) {
               if (listing['pictures'][i]['picturePath'] != " ") {
                 this._imageUrls.add(listing['pictures'][i]['picturePath']);
@@ -131,6 +127,8 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+          
+          timer.cancel();
           }
         });
       }

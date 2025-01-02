@@ -88,7 +88,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
                 ),
                 MyTextBox(
                   focusNode: familyNameFocus,
-                  onFieldSubmitted: (_){
+                  onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(membersFocus);
                   },
                   hint: 'Family Name',
@@ -155,9 +155,23 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
                             'member': guestList[i]['members']
                           });
                       if (response['status'] == 'success') {
-                        print('Family Added');
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Family Added',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: MyColors.white,
+                                  fontWeight: FontWeight.w400)),
+                          backgroundColor: MyColors.green,
+                        ));
                       } else {
-                        print('Family Not Added');
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Family not Added',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: MyColors.white,
+                                  fontWeight: FontWeight.w400)),
+                          backgroundColor: MyColors.green,
+                        ));
                       }
                     }
                     Navigator.pushReplacementNamed(

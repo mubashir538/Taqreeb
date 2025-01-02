@@ -8,9 +8,6 @@ class GuestListButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 0.8;
-    print(width);
-
     return Center(
       child: Container(
         height: 80, 

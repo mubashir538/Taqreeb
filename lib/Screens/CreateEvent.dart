@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -89,10 +88,9 @@ class _CreateEventState extends State<CreateEvent> {
       if (mounted) {
         setState(() {
           if (edit) {
-            print('Edit Screen');
             this.Event = EventDetails ?? {};
             if (this.Event != {} ||
-                this.Event != null ||
+                this.Event != {} ||
                 this.Event['status'] != 'error') {
               eventNameController.text = this.Event['EventDetail']['name'];
               typeController.text = this.Event['EventDetail']['type'];
@@ -109,8 +107,7 @@ class _CreateEventState extends State<CreateEvent> {
                   this.Event['EventDetail']['guestsmin'].toString();
             }
           }
-          if (Event == null || Event['status'] == 'error') {
-            print('$Event');
+          if (Event == {} || Event['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -124,7 +121,6 @@ class _CreateEventState extends State<CreateEvent> {
             this.token = token;
             this.types = types ?? {};
             if (types == null || types['status'] == 'error') {
-              print('$types');
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('Something Went Wrong!',
                     style: GoogleFonts.montserrat(
@@ -166,7 +162,6 @@ class _CreateEventState extends State<CreateEvent> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,

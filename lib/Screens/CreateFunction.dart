@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -109,8 +106,7 @@ class _CreateFunctionState extends State<CreateFunction> {
               changed = true;
             }
           }
-          if (Function == null || Function['status'] == 'error') {
-            print('$Function');
+          if (Function == {} || Function['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -123,8 +119,7 @@ class _CreateFunctionState extends State<CreateFunction> {
           } else {
             this.token = token;
             this.types = types ?? {};
-            if (this.types == null || this.types['status'] == 'error') {
-              print('${this.types}');
+            if (this.types == {} || this.types['status'] == 'error') {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('Something Went Wrong!',
                     style: GoogleFonts.montserrat(
@@ -166,9 +161,6 @@ class _CreateFunctionState extends State<CreateFunction> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,

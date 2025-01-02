@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -32,7 +31,6 @@ class _LoginState extends State<Login> {
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
 
- 
   @override
   void initState() {
     super.initState();
@@ -149,8 +147,10 @@ class _LoginState extends State<Login> {
                               await MyStorage.saveToken(
                                   response['access'], MyTokens.accessToken);
                               await MyStorage.saveToken(
-                                  response['userid'].toString(), MyTokens.userId);
-                              Navigator.pushNamed(context, '/HomePage');
+                                  response['userid'].toString(),
+                                  MyTokens.userId);
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  '/HomePage', ModalRoute.withName('/'));
                             } else {
                               warningDialog(
                                 message: "Invalid Credentials",

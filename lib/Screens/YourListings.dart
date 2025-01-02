@@ -43,7 +43,6 @@ class _YourListingsState extends State<YourListings> {
           this.token = token;
           this.listings = fetchedListings ?? {};
           if (listings == {} || listings['status'] == 'error') {
-            print('$listings');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(

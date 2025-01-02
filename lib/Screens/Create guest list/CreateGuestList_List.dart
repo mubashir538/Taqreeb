@@ -1,16 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/guests.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/theme/icons.dart';
 
 class CreateGuestList_List extends StatefulWidget {
   const CreateGuestList_List({super.key});
@@ -21,7 +18,7 @@ class CreateGuestList_List extends StatefulWidget {
 
 class _CreateGuestList_ListState extends State<CreateGuestList_List> {
   String token = '';
-  Map<String, dynamic> guests = {}; 
+  Map<String, dynamic> guests = {};
   Map<String, dynamic> args = {};
   bool isfunction = false;
   int functionid = 0;
@@ -46,7 +43,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
       }
       eventId = args['eventId'];
     });
-    fetchData(); 
+    fetchData();
   }
 
   Timer? timer;
@@ -70,8 +67,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
         setState(() {
           this.token = token;
           this.guests = fetchedGuests ?? {};
-          if (guests == null || guests['status'] == 'error') {
-            print('$guests');
+          if (guests == {} || guests['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -169,6 +165,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
         children: [
           SingleChildScrollView(
             child: Container(
+              width: screenWidth,
               constraints: BoxConstraints(minHeight: screenHeight),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

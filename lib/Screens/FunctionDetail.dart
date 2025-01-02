@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -10,7 +9,6 @@ import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 import 'dart:math';
 
@@ -51,7 +49,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
   void fetchData() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
 
-    print(this.FunctionId);
     final function = await MyApi.getRequest(
       endpoint: 'ViewFunction/${this.FunctionId}',
       headers: {'Authorization': 'Bearer $token'},
@@ -62,7 +59,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    print(function);
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
@@ -70,7 +66,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
           functions = function ?? {};
           this.bookings = bookings ?? {}; 
           if (bookings == null || bookings['status'] == 'error') {
-            print('$bookings');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -325,8 +320,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           width: screenWidth * 0.8,
                                           child: InkWell(
                                               onTap: () async {
-                                                print(
-                                                    "EventId: $EventId FunctionId: $FunctionId");
                                                 final response =
                                                     await MyApi.postRequest(
                                                         endpoint: 'show/guest/',
