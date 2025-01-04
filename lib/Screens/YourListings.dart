@@ -97,6 +97,7 @@ class _YourListingsState extends State<YourListings> {
                         itemCount: listings['YourListings'].length,
                         itemBuilder: (context, index) {
                           return Productcard(
+                            isBusiness: true,
                               listingType: listings['YourListings'][index]
                                   ['type'],
                               listingid: listings['YourListings'][index]['id']

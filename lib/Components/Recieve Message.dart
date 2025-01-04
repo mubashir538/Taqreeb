@@ -5,7 +5,16 @@ import 'package:taqreeb/theme/color.dart';
 class RecieveMessage extends StatelessWidget {
   final String text;
   final String time;
-  const RecieveMessage({super.key, required this.text, required this.time});
+  final String? imageUrl;
+  final String? audioUrl;
+
+  const RecieveMessage({
+    super.key,
+    required this.text,
+    required this.time,
+    this.imageUrl,
+    this.audioUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,27 +42,57 @@ class RecieveMessage extends StatelessWidget {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: Text(
-              text,
-              softWrap: true,
-              textAlign: TextAlign.start,
-              style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.015,
-                fontWeight: FontWeight.w400,
-                color: MyColors.white,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Display image if imageUrl is provided
+                if (imageUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      width: screenWidth * 0.6,
+                    ),
+                  ),
+                // Display text if available
+                if (text.isNotEmpty)
+                  Text(
+                    text,
+                    softWrap: true,
+                    textAlign: TextAlign.start,
+                    style: GoogleFonts.montserrat(
+                      fontSize: MaximumThing * 0.015,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white,
+                    ),
+                  ),
+                // Add placeholder for audio playback if audioUrl is provided
+                if (audioUrl != null)
+                  Row(
+                    children: [
+                      Icon(Icons.audiotrack, color: MyColors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        "Voice Note",
+                        style: GoogleFonts.montserrat(
+                          color: MyColors.white,
+                          fontSize: MaximumThing * 0.015,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
           ),
-          SizedBox(
-            width: 15,
-          ),
+          SizedBox(width: 15),
           Text(
             time,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w300,
               fontSize: MaximumThing * 0.013,
             ),
-          )
+          ),
         ],
       ),
     );

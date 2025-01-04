@@ -9,6 +9,7 @@ import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class AddcategoryList extends StatefulWidget {
@@ -34,21 +35,58 @@ class _AddcategoryListState extends State<AddcategoryList> {
   FocusNode pricemaxFocus = FocusNode();
 
   String token = '';
-  Map<String, dynamic> categories = {}; 
-  bool isLoading = true;   String type = "";
-  
+  Map<String, dynamic> categories = {};
+  bool isLoading = true;
+  String type = "";
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getHeaderHeight();
+      // check(context);
+    });
     fetchCategories();
+  }
+
+  void check(BuildContext context) async {
+    if (await MyStorage.exists(MyTokens.acname)) {
+      warningDialog(
+        title: 'Fresh Start',
+        message:
+            'We noticed that you had lately attempted to Add a Listing Before Do you want to continue where you left or want a Fresh Start?',
+        actions: [
+          ColoredButton(
+            text: 'Fresh Start',
+            onPressed: () {
+              MyStorage.deleteToken(MyTokens.acname);
+              Navigator.pop(context);
+            },
+          ),
+          ColoredButton(
+            text: 'Continue',
+            onPressed: () async {
+              if (await MyStorage.exists(MyTokens.packages)) {
+                Navigator.pushNamed(context, '/AddCategory_MoreDetails',
+                    arguments: {'type': 'Business'});
+              } else if (await MyStorage.exists(MyTokens.bsfront)) {
+                Navigator.pushNamed(context, '/BusinessSignup_Description');
+              } else {
+                Navigator.pushNamed(context, '/AddCategory_MoreDetails');
+              }
+            },
+          )
+        ],
+      ).showDialogBox(context);
+    }
   }
 
   void fetchCategories() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
     type = await MyTokens.getBusinessType();
     final categories = await MyApi.getRequest(
-      endpoint: 'business/categories/$type', headers: {'Authorization': 'Bearer $token'},
+      endpoint: 'business/categories/$type',
+      headers: {'Authorization': 'Bearer $token'},
     );
     setState(() {
       this.token = token;

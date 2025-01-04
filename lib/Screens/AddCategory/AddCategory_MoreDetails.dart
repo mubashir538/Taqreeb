@@ -43,6 +43,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
 
+
   Timer? timer;
   void fetchdata() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
@@ -50,13 +51,12 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
       endpoint:
           'getListingDetails/${args['category'].toString().replaceAll(RegExp(r'\s+'), '')}',
       headers: {'Authorization': 'Bearer $token'},
-      // headers: {'Authorization': 'Bearer $token'}
     );
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           this.token = token;
-          textfields = fields ?? {}; 
+          textfields = fields ?? {};
           if (textfields == {} || textfields['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
@@ -70,10 +70,12 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
           } else {
             for (int i = 0; i < textfields['fields'].length; i++) {
               controllers.add(TextEditingController());
+              print(i);
               focusNodes.add(FocusNode());
             }
-            isLoading = false; 
+            isLoading = false;
             ischange = true;
+            timer.cancel();
           }
         });
       }
@@ -176,6 +178,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                   onPressed: () {
                     bool allFieldsFilled = true;
                     for (var controller in controllers) {
+                      print(controller.text);
                       if (controller.text.isEmpty) {
                         allFieldsFilled = false;
                         break;

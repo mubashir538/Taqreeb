@@ -30,11 +30,19 @@ dependencies:
   flutter_typeahead: ^5.2.0
   crop_your_image: ^2.0.0
   path_provider: ^2.1.5
+  firebase_storage: ^12.3.7
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.2
   flutter_lints: ^5.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "/assets/images/logo.png"
 
 flutter:
   uses-material-design: true

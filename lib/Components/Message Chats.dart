@@ -46,20 +46,8 @@ class MessageChatButton extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(right: MaximumThing * 0.03),
               child: CircleAvatar(
+                backgroundImage: NetworkImage(image),
                 radius: MaximumThing * 0.03,
-                backgroundColor: MyColors.red,
-                child: image.isNotEmpty
-                    ? Image.network(
-                        image,
-                        width: MaximumThing * 0.03,
-                        height: MaximumThing * 0.03,
-                        fit: BoxFit.cover,
-                      )
-                    : Icon(
-                        Icons.person,
-                        size: MaximumThing * 0.03,
-                        color: Colors.white,
-                      ),
               ),
             ),
             SizedBox(
@@ -73,12 +61,16 @@ class MessageChatButton extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          name,
-                          style: GoogleFonts.montserrat(
-                            fontSize: MaximumThing * 0.02,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                        Container(
+                          width: screenWidth * 0.5,
+                          child: Text(
+                            name,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.montserrat(
+                              fontSize: MaximumThing * 0.02,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         newMessage > 0
@@ -97,12 +89,16 @@ class MessageChatButton extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        message,
-                        style: GoogleFonts.montserrat(
-                          fontSize: MaximumThing * 0.015,
-                          fontWeight: FontWeight.w400,
-                          color: MyColors.whiteDarker,
+                      Container(
+                        width: screenWidth * 0.6,
+                        child: Text(
+                          message,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            fontSize: MaximumThing * 0.015,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.whiteDarker,
+                          ),
                         ),
                       ),
                       newMessage > 0

@@ -90,6 +90,7 @@ class _HeaderState extends State<Header> {
                     try {
                       Navigator.pop(context);
                     } catch (e) {
+                      print('error: $e');
                       SystemNavigator.pop();
                       exit(0);
                     }

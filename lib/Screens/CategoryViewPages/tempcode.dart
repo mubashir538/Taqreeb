@@ -1,24 +1,25 @@
 import 'dart:async';
-import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/calendar.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'dart:math';
 
-class CategoryView_Decorator extends StatefulWidget {
-  const CategoryView_Decorator({super.key});
+class CategoryView_Venue extends StatefulWidget {
+  const CategoryView_Venue({super.key});
 
   @override
-  State<CategoryView_Decorator> createState() => _CategoryView_DecoratorState();
+  State<CategoryView_Venue> createState() => _CategoryView_VenueState();
 }
 
-class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
+class _CategoryView_VenueState extends State<CategoryView_Venue> {
   String token = '';
   Map<String, dynamic> listing = {};
   late int? listingId;
@@ -26,38 +27,29 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
 
   int _currentIndex = 0;
   bool isToggled = true;
-  List<String> headings = [
-    'Decor Type',
-    'Catering',
-    'Staff',
-  ];
+  List<String> headings = ['Venue Type', 'Catering', 'Staff', 'Guests'];
   List<String> values = [];
   List<String> addonsheadings = [];
   List<String> addonsvalues = [];
+  DateTime? selectedDate = DateTime.now();
+  Map<String, dynamic> events = {};
   List<String> stars = [
     '5 Stars',
     '4 Stars',
     '3 Stars',
     '2 Stars',
+
     '1 Stars',
   ];
   List<String> starsvalue = [];
 
   final List<String> _imageUrls = [];
-  DateTime? selectedDate = DateTime.now();
-  Map<String, dynamic> events = {};
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
-
   bool type = false;
   bool ischange = false;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     setState(() {
@@ -69,20 +61,34 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+  }
+
   Timer? timer;
   void fetchData() async {
+    ischange = true;
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
-      endpoint: 'decorator/detail/${this.listingId}',
-      headers: {'Authorization': 'Bearer $token'},
-    );
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'venueviewpage/${this.listingId}');
 
+    final events = await MyApi.getRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint:
+            'YourEvents/functions/${await MyStorage.getToken(MyTokens.userId)}');
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           this.token = token;
           this.listing = listing ?? {};
-          if (listing == null || listing['status'] == 'error') {
+          this.events = events ?? {};
+          if (listing == null ||
+              listing['status'] == 'error' ||
+              events == null ||
+              events['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -94,8 +100,14 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
             return;
           } else {
             isLoading = false;
+            ischange = true;
             for (var i = 0; i < listing['pictures'].length; i++) {
-              this._imageUrls.add(listing['pictures'][i]['picturePath']);
+              if (listing['pictures'][i]['picturePath'] != " ") {
+                this._imageUrls.add(listing['pictures'][i]['picturePath']);
+              } else {
+                this._imageUrls.add(
+                    "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300");
+              }
             }
             for (var i = 0; i < listing['Addons'].length; i++) {
               this.addonsheadings.add(listing['Addons'][i]['name']);
@@ -106,14 +118,17 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                 this.addonsvalues.add(listing['Addons'][i]['price'].toString());
               }
             }
-            this.values.add(listing['View']['decorType']);
-            this.values.add(listing['View']['catering']);
-            this.values.add(listing['View']['staff']);
+            this.values.add(listing['VenueView']['venueType']);
+            this.values.add(listing['VenueView']['catering']);
+            this.values.add(listing['VenueView']['staff']);
+            this.values.add(
+                '${listing['VenueView']['guestminAllowed'].toString()}-${listing['VenueView']['guestmaxAllowed'].toString()}');
             this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+
             timer.cancel();
           }
         });
@@ -208,7 +223,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                               MyTokens.userId) ??
                                           "",
                                       'lid': listingId.toString(),
-                                      'type': 'Decorator',
+                                      'type': 'Venue',
                                       'slot': selectedDate.toString(),
                                     });
 
@@ -247,6 +262,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
+
   void _getHeaderHeight() {
     final RenderObject? renderBox =
         _headerKey.currentContext?.findRenderObject();
@@ -297,9 +313,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                       },
                                       itemBuilder: (context, index) {
                                         return Image.network(
-                                          _imageUrls[index] == ' '
-                                              ? 'https://tse2.mm.bing.net/th?id=OIP.dZWWg5LlJhlUFNNdNuLsIQHaEL&pid=Api&P=0&h=220'
-                                              : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_imageUrls[index]}',
+                                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_imageUrls[index]}',
                                           fit: BoxFit.cover,
                                         );
                                       },
@@ -376,17 +390,21 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                           ),
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showHierarchicalOptions(context,
-                                              maximumDimension, screenWidth);
-                                        },
-                                        child: Icon(
-                                          Icons.add,
-                                          color: MyColors.Yellow,
-                                          size: maximumDimension * 0.05,
-                                        ),
-                                      ),
+                                       GestureDetector(
+                                              onTap:  type?(){
+                                                
+                                              }:() {
+                                                showHierarchicalOptions(
+                                                    context,
+                                                    maximumDimension,
+                                                    screenWidth);
+                                              },
+                                              child: Icon(
+                                                type ? Icons.delete : Icons.add,
+                                                color: MyColors.Yellow,
+                                                size: type? maximumDimension * 0.03:maximumDimension * 0.05,
+                                              ),
+                                            ),
                                     ],
                                   ),
                                 ),
@@ -397,7 +415,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
                                         margin: EdgeInsets.symmetric(
@@ -419,12 +437,10 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                           ],
                                         ),
                                       ),
-                                      Expanded(
+                                      Flexible(
                                         child: Text(
                                           listing['Listing']['location'],
                                           softWrap: true,
-                                          textAlign: TextAlign.start,
-
                                           style: GoogleFonts.montserrat(
                                               fontSize:
                                                   maximumDimension * 0.015,
@@ -839,10 +855,11 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
             ),
           ),
           Positioned(
-              top: 0,
-              child: Header(
-                key: _headerKey,
-              )),
+            top: 0,
+            child: Header(
+              key: _headerKey,
+            ),
+          ),
         ],
       ),
     );

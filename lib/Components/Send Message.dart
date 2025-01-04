@@ -5,34 +5,44 @@ import 'package:taqreeb/theme/color.dart';
 class SendMessage extends StatelessWidget {
   final String text;
   final String time;
-  const SendMessage({super.key, required this.text, required this.time});
+  final String? imageUrl;
+  final String? audioUrl;
+
+  const SendMessage({
+    super.key,
+    required this.text,
+    required this.time,
+    this.imageUrl,
+    this.audioUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
+    double maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
-      margin: EdgeInsets.only(bottom: MaximumThing * 0.02),
+      padding: EdgeInsets.symmetric(horizontal: maximumDimension * 0.02),
+      margin: EdgeInsets.only(bottom: maximumDimension * 0.02),
       width: screenWidth * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          // Display time
           Text(
             time,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w300,
-              fontSize: MaximumThing * 0.013,
+              fontSize: maximumDimension * 0.013,
             ),
           ),
-          SizedBox(
-            width: 15,),
+          SizedBox(width: 15),
+          // Message container
           Container(
             constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
-            padding: EdgeInsets.all(MaximumThing * 0.02),
+            padding: EdgeInsets.all(maximumDimension * 0.02),
             decoration: BoxDecoration(
               color: MyColors.red,
               borderRadius: BorderRadius.only(
@@ -42,15 +52,48 @@ class SendMessage extends StatelessWidget {
                 bottomRight: Radius.circular(0),
               ),
             ),
-            child: Text(
-              text,
-              softWrap: true,
-              textAlign: TextAlign.end,
-              style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.015,
-                fontWeight: FontWeight.w400,
-                color: MyColors.white,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Show image if imageUrl is provided
+                if (imageUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      width: screenWidth * 0.6,
+                    ),
+                  ),
+                // Show text if available
+                if (text.isNotEmpty)
+                  Text(
+                    text,
+                    softWrap: true,
+                    textAlign: TextAlign.end,
+                    style: GoogleFonts.montserrat(
+                      fontSize: maximumDimension * 0.015,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white,
+                    ),
+                  ),
+                // Show audio placeholder if audioUrl is provided
+                if (audioUrl != null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(Icons.audiotrack, color: MyColors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        "Voice Note",
+                        style: GoogleFonts.montserrat(
+                          color: MyColors.white,
+                          fontSize: maximumDimension * 0.015,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
           ),
         ],
