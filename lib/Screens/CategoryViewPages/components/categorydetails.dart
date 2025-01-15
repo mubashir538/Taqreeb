@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class CategoryDetails extends StatefulWidget {
@@ -105,11 +106,17 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   ],
                 ),
               ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
+            ),
           ],
         ),
       );
     } else {
-      // Static layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(
@@ -129,11 +136,12 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                       ),
                     ),
                     Container(
-                      width: maximumDimension * 0.5,
+                      width: screenWidth * 0.5,
                       child: Text(
                         widget.values[i],
                         maxLines: 3,
                         softWrap: true,
+                        textAlign: TextAlign.right,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(
                           fontSize: maximumDimension * 0.015,
@@ -145,6 +153,13 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   ],
                 ),
               ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
+            ),
           ],
         ),
       );

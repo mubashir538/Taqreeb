@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
 
@@ -180,10 +181,10 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Package Name, Details, and Price
-                        Column(crossAxisAlignment: CrossAxisAlignment.end,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Row(
-
                               children: [
                                 IconButton(
                                   icon:
@@ -216,6 +217,13 @@ class _CategoryPackagesState extends State<CategoryPackages> {
               icon: Icon(Icons.add_circle_outline, color: MyColors.Yellow),
               onPressed: () => showPackagePopup(),
             ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
+            ),
           ],
         ),
       );
@@ -245,6 +253,13 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                   );
                 }).toList(),
               ),
+            ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
             ),
           ],
         ),

@@ -201,53 +201,18 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                   )),
                                 ),
                                 PricingSection(listing: listing),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 DescriptionCategory(listing: listing),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 CategoryDetails(
                                     headings: headings, values: values),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
                                         addonsheadings: addonsheadings,
                                         addonsvalues: addonsvalues,
                                       )
                                     : Container(),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 listing['Package'].length != 0
                                     ? CategoryPackages(listing: listing)
                                     : Container(),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {
@@ -296,4 +261,5 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
       ),
     );
   }
+
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class PricingSection extends StatefulWidget {
@@ -113,6 +114,13 @@ class _PricingSectionState extends State<PricingSection> {
               () => saveField('basicPrice', basicPriceController.text),
               maximumDimension,
             ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
+            ),
           ],
         ),
       );
@@ -164,6 +172,13 @@ class _PricingSectionState extends State<PricingSection> {
                   ),
                 ),
               ],
+            ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
             ),
           ],
         ),

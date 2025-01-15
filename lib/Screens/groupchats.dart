@@ -8,6 +8,7 @@ import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Screens/Group_membersScreen.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:taqreeb/theme/color.dart';
@@ -84,14 +85,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     File imageFile = File(pickedFile.path);
 
     try {
-      String apiUrl = "${MyApi.baseUrl}saveChatImage/";
+      String apiUrl = "${MyApi.baseUrl}saveGroupImage/";
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         imageFile.path,
       ));
-
+      request.fields['userid'] =
+          await MyStorage.getToken(MyTokens.userId) ?? "";
       request.headers.addAll({
         'Authorization':
             'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
@@ -136,7 +138,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
     bool isSentByMe = senderId == _currentUserId;
     String messageText = doc['message'];
-    Timestamp timestamp = doc['timestamp'];
+    Timestamp? timestamp = doc['timestamp'];
 
     return FutureBuilder<DocumentSnapshot>(
       future: _firestore.collection('users').doc(senderId).get(),
@@ -144,8 +146,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         if (!snapshot.hasData) return SizedBox.shrink();
 
         var senderData = snapshot.data!;
-        String senderName = senderData['name'];
-        String senderImage = senderData['profilePicture'];
+        String senderName = senderData['firstName'];
+        String senderImage =
+            MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+                senderData['profilePicture'];
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +169,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   Text(
                     senderName,
                     style: GoogleFonts.montserrat(
-                        color: MyColors.Yellow,
+                        color: MyColors.red,
                         fontWeight: FontWeight.w500,
                         fontSize: 14),
                   ),
@@ -174,8 +178,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       margin: EdgeInsets.symmetric(vertical: 5),
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color:
-                            isSentByMe ? MyColors.Yellow : MyColors.DarkLighter,
+                        color: isSentByMe ? MyColors.red : MyColors.DarkLighter,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -185,12 +188,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     ),
                   if (messageType == 'image')
                     Image.network(
-                      messageText,
+                      MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+                          messageText,
                       height: 150,
                       fit: BoxFit.cover,
                     ),
                   Text(
-                    _formatTimestamp(timestamp),
+                    timestamp != null
+                        ? _formatTimestamp(timestamp)
+                        : 'Sending...', // Placeholder for timestamp
                     style: GoogleFonts.montserrat(
                         color: MyColors.DarkLighter, fontSize: 12),
                   ),
@@ -216,19 +222,36 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   color: MyColors.red,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}{groupImage!}'),
-                        radius: 30,
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupImage!}'),
+                            radius: 30,
+                          ),
+                          SizedBox(width: 15),
+                          Text(
+                            groupName!,
+                            style: GoogleFonts.montserrat(
+                                color: MyColors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 15),
-                      Text(
-                        groupName!,
-                        style: GoogleFonts.montserrat(
-                            color: MyColors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500),
+                      IconButton(
+                        icon: Icon(Icons.people, color: MyColors.white),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MembersScreen(groupId: groupId),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

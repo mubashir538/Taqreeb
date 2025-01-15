@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class CategoryAddons extends StatefulWidget {
   final List<String> addonsheadings;
   final List<String> addonsvalues;
-  final bool type; 
+  final bool type;
 
   const CategoryAddons({
     super.key,
@@ -34,8 +35,10 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     valueControllers = widget.addonsvalues
         .map((value) => TextEditingController(text: value))
         .toList();
-    isEditingHeading = List<bool>.generate(widget.addonsheadings.length, (_) => false);
-    isEditingValue = List<bool>.generate(widget.addonsvalues.length, (_) => false);
+    isEditingHeading =
+        List<bool>.generate(widget.addonsheadings.length, (_) => false);
+    isEditingValue =
+        List<bool>.generate(widget.addonsvalues.length, (_) => false);
   }
 
   void saveAddon(int index) {
@@ -157,12 +160,14 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ColoredButton(
-                                text: isEditingHeading[i] ? 'Save' : 'Edit Name',
+                                text:
+                                    isEditingHeading[i] ? 'Save' : 'Edit Name',
                                 width: screenWidth * 0.25,
                                 textSize: maximumDimension * 0.015,
                                 onPressed: isEditingHeading[i]
                                     ? () => saveAddon(i)
-                                    : () => setState(() => isEditingHeading[i] = true),
+                                    : () => setState(
+                                        () => isEditingHeading[i] = true),
                               ),
                               SizedBox(width: maximumDimension * 0.02),
                               ColoredButton(
@@ -171,7 +176,8 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                                 text: isEditingValue[i] ? 'Save' : 'Edit Price',
                                 onPressed: isEditingValue[i]
                                     ? () => saveAddon(i)
-                                    : () => setState(() => isEditingValue[i] = true),
+                                    : () => setState(
+                                        () => isEditingValue[i] = true),
                               ),
                               SizedBox(width: maximumDimension * 0.02),
                               ColoredButton(
@@ -191,6 +197,13 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
             ),
           ],
         ),
@@ -241,6 +254,13 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                     ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
             ),
           ],
         ),

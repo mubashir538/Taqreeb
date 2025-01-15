@@ -111,7 +111,7 @@ class MessageChatButton extends StatelessWidget {
                               height: MaximumThing * 0.03,
                               child: Center(
                                 child: Text(
-                                  "5",
+                                  newMessage.toString(),
                                   style: GoogleFonts.montserrat(
                                     fontSize: MaximumThing * 0.015,
                                     fontWeight: FontWeight.w400,

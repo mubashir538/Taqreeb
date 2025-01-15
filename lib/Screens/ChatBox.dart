@@ -84,19 +84,36 @@ class _ChatBoxState extends State<ChatBox> {
 
   Future<void> _sendMessage(String text) async {
     if (_currentUserId == null || text.isEmpty) return;
-    // Send a text message to Firestore with a valid timestamp
+
+    // Prepare the message data
+    var messageData = {
+      'senderId': _currentUserId,
+      'receiverId': chatUserId,
+      'message': text,
+      'timestamp': FieldValue.serverTimestamp(),
+      'type': 'text',
+    };
+
+    // Send the text message to the chat's messages collection
     await _firestore
         .collection('chats')
         .doc(_getChatId())
         .collection('messages')
-        .add({
-      'senderId': _currentUserId,
-      'receiverId': chatUserId,
-      'message': text,
-      'timestamp': await FieldValue
-          .serverTimestamp(), // Ensure timestamp is set properly
-      'type': 'text',
-    });
+        .add(messageData);
+
+    // Update the last message and new message count in the chat document
+    await _firestore.collection('chats').doc(_getChatId()).set({
+      'chatId': _getChatId(),
+      'lastMessage': text,
+      'lastMessageTime': FieldValue.serverTimestamp(),
+      'newMessage': FieldValue.increment(1), // Increment unread message count
+      'unreadMessages': {
+        _currentUserId:
+            FieldValue.increment(0), // Keep the sender's count unchanged
+        chatUserId:
+            FieldValue.increment(1), // Increase the receiver's unread count
+      },
+    }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
 
     print('Message sent: $text');
     _messageController.clear();
@@ -113,30 +130,22 @@ class _ChatBoxState extends State<ChatBox> {
     File imageFile = File(pickedFile.path);
 
     try {
-      // Define your API endpoint and headers
       String apiUrl = "${MyApi.baseUrl}saveChatImage/";
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      request.files
+          .add(await http.MultipartFile.fromPath('image', imageFile.path));
 
-      // Add the image file to the request
-      request.files.add(await http.MultipartFile.fromPath(
-        'image',
-        imageFile.path,
-      ));
-
-      // Add headers if necessary
       request.headers.addAll({
         'Authorization':
             'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
       });
 
-      // Send the request
       var response = await request.send();
 
       if (response.statusCode == 200) {
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
 
-        // Assume the server returns a JSON object with the URL
         String imageUrl = jsonResponse['path'];
 
         // Store the image message in Firestore
@@ -152,6 +161,19 @@ class _ChatBoxState extends State<ChatBox> {
           'type': 'image',
         });
 
+        // Update the last message and new message count
+        await _firestore.collection('chats').doc(_getChatId()).set({
+          'chatId': _getChatId(),
+          'lastMessage': 'Image sent',
+          'lastMessageTime': FieldValue.serverTimestamp(),
+          'unreadMessages': {
+            _currentUserId:
+                FieldValue.increment(0), // Keep the sender's count unchanged
+            chatUserId:
+                FieldValue.increment(1), // Increase the receiver's unread count
+          },
+        }, SetOptions(merge: true));
+
         print('Image uploaded and message sent: $imageUrl');
       } else {
         print('Failed to upload image: ${response.statusCode}');
@@ -159,6 +181,15 @@ class _ChatBoxState extends State<ChatBox> {
     } catch (e) {
       print('Error uploading image: $e');
     }
+  }
+
+  Future<void> _resetNewMessages() async {
+    if (_currentUserId == null) return;
+
+    await _firestore.collection('chats').doc(_getChatId()).update({
+      'unreadMessages.$_currentUserId':
+          0, // Reset the sender's unread message count
+    });
   }
 
   String _getChatId() {

@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/calendar.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
-import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
@@ -34,7 +32,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
   late int? listingId;
   bool isLoading = true;
 
-  int _currentIndex = 0;
   bool isToggled = true;
   List<String> headings = [
     'portfolio Link',
@@ -270,8 +267,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -316,53 +311,18 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                                   )),
                                 ),
                                 PricingSection(listing: listing),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 DescriptionCategory(listing: listing),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 CategoryDetails(
                                     headings: headings, values: values),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
                                         addonsheadings: addonsheadings,
                                         addonsvalues: addonsvalues,
                                       )
                                     : Container(),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 listing['Package'].length != 0
                                     ? CategoryPackages(listing: listing)
                                     : Container(),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {
@@ -402,10 +362,11 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
             ),
           ),
           Positioned(
-              top: 0,
-              child: Header(
-                key: _headerKey,
-              )),
+            top: 0,
+            child: Header(
+              key: _headerKey,
+            ),
+          ),
         ],
       ),
     );

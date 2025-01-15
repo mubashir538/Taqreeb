@@ -38,6 +38,125 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     locationController.text = widget.listing['Listing']['location'] ?? '';
   }
 
+  void showHierarchicalOptions(
+      BuildContext context, double maxThing, double width) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MyColors.Dark,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(maxThing * 0.02),
+          decoration: BoxDecoration(
+            color: MyColors.Dark,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(bottom: maxThing * 0.02),
+                child: Text(
+                  "Choose for a Function",
+                  style: GoogleFonts.montserrat(
+                    fontSize: maxThing * 0.025,
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.white,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.events['Event']?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final event = widget.events['Event'][index];
+                    return Container(
+                      margin: EdgeInsets.only(bottom: maxThing * 0.02),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 1,
+                          color: MyColors.red,
+                        ),
+                        color: MyColors.DarkLighter,
+                      ),
+                      child: ExpansionTile(
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: MyColors.red,
+                        collapsedBackgroundColor: MyColors.DarkLighter,
+                        title: Text(
+                          event['name'],
+                          style: GoogleFonts.montserrat(
+                            fontSize: maxThing * 0.015,
+                            fontWeight: FontWeight.w400,
+                            color: MyColors.white,
+                          ),
+                        ),
+                        children: [
+                          ...event['functions'].map<Widget>((function) {
+                            return ListTile(
+                              title: Text(
+                                function['name'],
+                                style: GoogleFonts.montserrat(
+                                  fontSize: maxThing * 0.015,
+                                  color: MyColors.whiteDarker,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              onTap: () async {
+                                final token = await MyStorage.getToken(
+                                    MyTokens.accessToken);
+                                final response = await MyApi.postRequest(
+                                    headers: {'Authorization': 'Bearer $token'},
+                                    endpoint: 'add/Bookcart/',
+                                    body: {
+                                      'fid': function['id'].toString(),
+                                      'uid': await MyStorage.getToken(
+                                              MyTokens.userId) ??
+                                          "",
+                                      'lid': widget.listingId.toString(),
+                                      'type': 'Venue',
+                                    });
+
+                                if (response['status'] == 'success') {
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Something went wrong',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: maxThing * 0.015,
+                                          color: MyColors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: MyColors.red,
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> saveField(String field, String value) async {
     if (widget.type) return;
 
@@ -133,7 +252,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                               if (!widget.type)
                                 GestureDetector(
                                   onTap: () {
-                                    // Custom behavior for the add button
+                                    showHierarchicalOptions(
+                                        context, maximumDimension, screenWidth);
                                   },
                                   child: Icon(
                                     Icons.add,

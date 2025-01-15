@@ -34,9 +34,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    addUser();
+  }
 
+  void addUser() async {
     selectedUsers
-        .add({'userId': MyStorage.getToken(MyTokens.userId).toString()});
+        .add({'userId': await MyStorage.getToken(MyTokens.userId) ?? ""});
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -113,8 +116,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       _groupImage!.path,
     ));
 
-    request.fields['userId'] =
-        await MyStorage.getToken(MyTokens.userId).toString();
+    request.fields['userid'] = await MyStorage.getToken(MyTokens.userId) ?? "";
 
     request.headers.addAll({
       'Authorization':

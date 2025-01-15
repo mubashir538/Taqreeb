@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class DescriptionCategory extends StatefulWidget {
   final Map listing;
-  final bool type; 
+  final bool type;
 
-  const DescriptionCategory({super.key, required this.listing, this.type = false});
+  const DescriptionCategory(
+      {super.key, required this.listing, this.type = false});
 
   @override
   State<DescriptionCategory> createState() => _DescriptionCategoryState();
@@ -30,12 +32,12 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
 
     try {
       final response = await MyApi.postRequest(
-        endpoint: '/update-description', 
+        endpoint: '/update-description',
         headers: {
           'Content-Type': 'application/json',
         },
         body: {
-          'id': widget.listing['Listing']['id'], 
+          'id': widget.listing['Listing']['id'],
           'description': newDescription,
         },
       );
@@ -139,11 +141,17 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                 text: 'Edit',
                 onPressed: () => setState(() => isEditing = true),
               ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
+            ),
           ],
         ),
       );
     } else {
-      // Static layout (no edit option)
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(
@@ -184,6 +192,13 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                   ],
                 ),
               ),
+            ),
+            SizedBox(
+              height: screenHeight * 0.05,
+              child: Center(
+                  child: MyDivider(
+                width: screenWidth * 0.85,
+              )),
             ),
           ],
         ),

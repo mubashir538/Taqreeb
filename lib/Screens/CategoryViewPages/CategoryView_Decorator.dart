@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/calendar.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
@@ -272,7 +271,9 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: _headerHeight),
+                SizedBox(
+                  height: _headerHeight,
+                ),
                 isLoading
                     ? Center(
                         child: CircularProgressIndicator(
@@ -397,7 +398,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
                                         margin: EdgeInsets.symmetric(
@@ -419,12 +420,10 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                           ],
                                         ),
                                       ),
-                                      Expanded(
+                                      Flexible(
                                         child: Text(
                                           listing['Listing']['location'],
                                           softWrap: true,
-                                          textAlign: TextAlign.start,
-
                                           style: GoogleFonts.montserrat(
                                               fontSize:
                                                   maximumDimension * 0.015,
@@ -699,39 +698,6 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                               packagename: package['name']);
                                         })
                                         .cast<Widget>()
-                                        .toList(),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
-                                Text(
-                                  'Available Slots',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.025,
-                                    fontWeight: FontWeight.w600,
-                                    color: MyColors.Yellow,
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: maximumDimension * 0.02,
-                                      horizontal: maximumDimension * 0.01),
-                                  child: CalendarView(
-                                    onDateSelected: (date) {
-                                      setState(() {
-                                        selectedDate = date;
-                                      });
-                                    },
-                                    bookedDates: listing['bookedDates']
-                                        .map((date) {
-                                          return DateTime.parse(date);
-                                        })
-                                        .cast<DateTime>()
                                         .toList(),
                                   ),
                                 ),

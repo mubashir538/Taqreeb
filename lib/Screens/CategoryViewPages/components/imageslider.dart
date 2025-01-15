@@ -4,7 +4,7 @@ import 'package:taqreeb/theme/color.dart';
 
 class ImageSliderCategory extends StatefulWidget {
   final List<String> imageUrls;
-  const ImageSliderCategory({super.key,required this.imageUrls});
+  const ImageSliderCategory({super.key, required this.imageUrls});
 
   @override
   State<ImageSliderCategory> createState() => _ImageSliderCategoryState();
@@ -49,7 +49,9 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
                 width: screenWidth,
                 decoration: BoxDecoration(
                   color: MyColors.Dark,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
                 ),
                 margin: EdgeInsets.only(top: maximumDimension * 0.01),
                 child: Row(
