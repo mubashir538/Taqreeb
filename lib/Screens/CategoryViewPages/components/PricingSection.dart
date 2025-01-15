@@ -15,7 +15,7 @@ class _PricingSectionState extends State<PricingSection> {
   bool isEditingPriceMin = false;
   bool isEditingPriceMax = false;
   bool isEditingBasicPrice = false;
-  final bool type = true; // Toggle between layouts
+  final bool type = false;
   final TextEditingController priceMinController = TextEditingController();
   final TextEditingController priceMaxController = TextEditingController();
   final TextEditingController basicPriceController = TextEditingController();

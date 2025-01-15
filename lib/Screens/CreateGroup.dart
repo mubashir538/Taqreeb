@@ -1,8 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
@@ -15,16 +24,24 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController groupNameController = TextEditingController();
   List<Map<String, dynamic>> selectedUsers = [];
   List<Map<String, dynamic>> availableUsers = [];
+  File? _groupImage;
+  String? _groupImageUrl;
   bool isChanged = false;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+
+    selectedUsers
+        .add({'userId': MyStorage.getToken(MyTokens.userId).toString()});
   }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
+
   void _getHeaderHeight() {
     final RenderObject? renderBox =
         _headerKey.currentContext?.findRenderObject();
@@ -36,6 +53,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }
   }
 
+  bool _isPicking = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -56,6 +74,72 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     });
   }
 
+  Future<void> _pickGroupImage() async {
+    if (_isPicking) return;
+
+    setState(() {
+      _isPicking = true; // Set the picker as active
+    });
+
+    final XFile? pickedImage = await _picker.pickImage(
+        source: ImageSource.gallery, maxHeight: 600, maxWidth: 600);
+    if (pickedImage != null) {
+      setState(() {
+        _groupImage = File(pickedImage.path);
+      });
+    }
+
+    setState(() {
+      _isPicking = false; // Reset the picker status
+    });
+  }
+
+  Future<void> _uploadGroupImage() async {
+    if (_groupImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Please select a Group Image to upload.',
+          style: TextStyle(color: MyColors.white),
+        ),
+        backgroundColor: MyColors.red,
+      ));
+    }
+    ;
+
+    final request = http.MultipartRequest(
+        'POST', Uri.parse('${MyApi.baseUrl}saveGroupProfileImage/'));
+    request.files.add(await http.MultipartFile.fromPath(
+      'image',
+      _groupImage!.path,
+    ));
+
+    request.fields['userId'] =
+        await MyStorage.getToken(MyTokens.userId).toString();
+
+    request.headers.addAll({
+      'Authorization':
+          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
+    });
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final resBody = await response.stream.bytesToString();
+      var jsonResponse = jsonDecode(resBody);
+      setState(() {
+        _groupImageUrl = jsonResponse['path'];
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Failed to upload image.',
+          style: TextStyle(color: MyColors.white),
+        ),
+        backgroundColor: MyColors.red,
+      ));
+    }
+  }
+
   Future<void> _createGroup() async {
     if (groupNameController.text.isEmpty || selectedUsers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -68,14 +152,17 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       return;
     }
 
-    final groupData = {
-      'groupName': groupNameController.text,
-      'participants': selectedUsers.map((u) => u['userId']).toList(),
-    };
+    if (_groupImage != null) {
+      await _uploadGroupImage();
+      final groupData = {
+        'groupName': groupNameController.text,
+        'participants': selectedUsers.map((u) => u['userId']).toList(),
+        'groupImageUrl': _groupImageUrl ?? '',
+      };
 
-    await FirebaseFirestore.instance.collection('groups').add(groupData);
-
-    Navigator.pop(context);
+      await FirebaseFirestore.instance.collection('groups').add(groupData);
+      Navigator.pushReplacementNamed(context, '/ChatsScreen');
+    }
   }
 
   @override
@@ -94,6 +181,20 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: _headerHeight),
+              SizedBox(height: MaximumThing * 0.03),
+              GestureDetector(
+                onTap: _pickGroupImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      _groupImage != null ? FileImage(_groupImage!) : null,
+                  backgroundColor: MyColors.DarkLighter,
+                  child: _groupImage == null
+                      ? Icon(Icons.add_photo_alternate,
+                          color: MyColors.white, size: 30)
+                      : null,
+                ),
+              ),
               SizedBox(height: MaximumThing * 0.03),
               MyTextBox(
                   hint: 'Enter Group Name',
@@ -138,24 +239,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: screenWidth * 0.04),
-                child: ElevatedButton(
-                  onPressed: _createGroup,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.red,
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenWidth * 0.03,
-                        horizontal: screenWidth * 0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Create Group',
-                    style: TextStyle(color: MyColors.white, fontSize: 16),
-                  ),
-                ),
+              ColoredButton(
+                text: 'Create Group',
+                onPressed: _createGroup,
               ),
             ],
           ),
@@ -164,7 +250,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               child: Header(
                 key: _headerKey,
                 heading: "Create Group",
-                para: "Add participants and name your group.",
+                para: "Add participants, name your group, and upload an image.",
               )),
         ],
       ),

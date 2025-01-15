@@ -8,7 +8,7 @@ class DescriptionCategory extends StatefulWidget {
   final Map listing;
   final bool type; 
 
-  const DescriptionCategory({super.key, required this.listing, this.type = true});
+  const DescriptionCategory({super.key, required this.listing, this.type = false});
 
   @override
   State<DescriptionCategory> createState() => _DescriptionCategoryState();

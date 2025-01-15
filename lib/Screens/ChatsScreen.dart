@@ -51,9 +51,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
           .map((doc) {
         return {
           'userId': doc.id,
-          'chatimage': '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${doc['profilePicture']}',
-          'name': "${_capitalize(doc['firstName'])} ${_capitalize(doc['lastName'])}",
-          'lastMessage': '${_capitalize(doc['firstName'])} is also using Taqreeb',
+          'chatimage':
+              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${doc['profilePicture']}',
+          'name':
+              "${_capitalize(doc['firstName'])} ${_capitalize(doc['lastName'])}",
+          'lastMessage':
+              '${_capitalize(doc['firstName'])} is also using Taqreeb',
           'newMessages': 0
           // doc['newMessages'] ?? 0, // Example field for new messages
         };
@@ -64,6 +67,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
       final fetchedGroups = groupsSnapshot.docs.map((doc) {
         return {
           'groupId': doc.id,
+          'groupImageUrl': doc['groupImageUrl'],
           'name': doc['groupName'],
           'participants': doc['participants'],
         };
@@ -132,7 +136,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       child: ListView(
                         children: [
                           ...userChats.map((chat) => MessageChatButton(
-                            image: chat['chatimage'],
+                                image: chat['chatimage'],
                                 onpressed: () =>
                                     _navigateToChatbox(chat['userId']),
                                 name: chat['name'],
@@ -143,8 +147,15 @@ class _ChatsScreenState extends State<ChatsScreen> {
                               )),
                           Divider(color: MyColors.white),
                           ...groups.map((group) => MessageChatButton(
-                                onpressed:
-                                    () {}, // Handle group chat navigation
+                                image:
+                                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
+                                onpressed: () {
+                                  Navigator.pushNamed(context, '/GroupChatBox',
+                                      arguments: {
+                                        'groupId': group['groupId'],
+                                        'participants': group['participants'],
+                                      });
+                                }, // Handle group chat navigation
                                 name: group['name'],
                                 message: 'Group Chat',
                                 newMessage: 0,
@@ -163,6 +174,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
               child: Container(
                 padding: EdgeInsets.all(screenWidth * 0.05),
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: MyColors.Dark.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
                   shape: BoxShape.circle,
                   color: MyColors.red,
                 ),

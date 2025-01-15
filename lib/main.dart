@@ -57,6 +57,7 @@ import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventDetail.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
+import 'package:taqreeb/Screens/groupchats.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/firebase_options.dart';
@@ -116,6 +117,7 @@ class MainApp extends StatelessWidget {
         '/AIPackage_EventDetail': (context) => AIPackage_EventDetail(),
         '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
         '/ChatsScreen': (context) => MainScreen(index: 1),
+        '/GroupChatBox': (context) => GroupChatScreen(),
         '/ChatBox': (context) => ChatBox(),
         '/SearchService': (context) => SearchService(),
         '/YourListings': (context) => MainScreen(index: 2),

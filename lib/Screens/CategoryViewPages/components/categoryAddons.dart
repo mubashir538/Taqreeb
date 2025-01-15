@@ -6,13 +6,13 @@ import 'package:taqreeb/theme/color.dart';
 class CategoryAddons extends StatefulWidget {
   final List<String> addonsheadings;
   final List<String> addonsvalues;
-  final bool type; // Toggle between editable and static layout
+  final bool type; 
 
   const CategoryAddons({
     super.key,
     required this.addonsheadings,
     required this.addonsvalues,
-    this.type = true,
+    this.type = false,
   });
 
   @override
@@ -38,7 +38,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     isEditingValue = List<bool>.generate(widget.addonsvalues.length, (_) => false);
   }
 
-  // Method to save the edited heading and value
   void saveAddon(int index) {
     setState(() {
       widget.addonsheadings[index] = headingControllers[index].text;
@@ -48,7 +47,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     });
   }
 
-  // Method to add a new add-on
   void addAddon() {
     setState(() {
       widget.addonsheadings.add('New Addon');
@@ -60,7 +58,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     });
   }
 
-  // Method to delete an add-on
   void deleteAddon(int index) {
     setState(() {
       widget.addonsheadings.removeAt(index);
@@ -80,7 +77,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     if (widget.type) {
-      // Editable layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(
@@ -113,7 +109,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                               color: MyColors.Yellow,
                             ),
                           ),
-                          // Heading Field
                           if (isEditingHeading[i])
                             TextField(
                               controller: headingControllers[i],
@@ -136,7 +131,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                                 color: MyColors.white,
                               ),
                             ),
-                          // Value Field
                           if (isEditingValue[i])
                             TextField(
                               controller: valueControllers[i],
@@ -159,7 +153,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                                 color: MyColors.white,
                               ),
                             ),
-                          // Edit and Save Buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -192,7 +185,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                         ],
                       ),
                     ),
-                  // Button to add new add-on
                   ColoredButton(
                     text: 'Add New Add-On',
                     onPressed: addAddon,
@@ -204,7 +196,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
         ),
       );
     } else {
-      // Static layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(

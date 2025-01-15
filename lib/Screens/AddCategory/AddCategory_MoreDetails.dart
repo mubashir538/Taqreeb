@@ -38,11 +38,22 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
   }
 
   @override
+  void dispose() {
+    timer?.cancel();
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    for (var focusNode in focusNodes) {
+      focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
   }
-
 
   Timer? timer;
   void fetchdata() async {
@@ -80,12 +91,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
         });
       }
     });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
   }
 
   String capitalize(String str) {
@@ -177,9 +182,8 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                   text: 'Continue',
                   onPressed: () {
                     bool allFieldsFilled = true;
-                    for (var controller in controllers) {
-                      print(controller.text);
-                      if (controller.text.isEmpty) {
+                    for (int i = 0; i < textfields['fields'].length; i++) {
+                      if (controllers[i].text.isEmpty) {
                         allFieldsFilled = false;
                         break;
                       }

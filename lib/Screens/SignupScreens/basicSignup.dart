@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
@@ -91,6 +93,56 @@ class _BasicSignupState extends State<BasicSignup> {
         _headerHeight = renderBox.size.height;
       });
     }
+  }
+
+  Future<void> signUpWithGoogle() async {
+    try {
+      // Trigger the Google Authentication flow
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser != null) {
+        // Obtain the Google Sign-In authentication details
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+
+        // Create a new credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in to Firebase with the Google credential
+        final UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+
+        final User? user = userCredential.user;
+
+
+      //   if (user != null) {
+      //     // Check if the user already exists in the database
+      //     final userRef =
+      //         FirebaseFirestore.instance.collection('users').doc(user.uid);
+      //     final doc = await userRef.get();
+
+      //     if (!doc.exists) {
+      //       // If the user does not exist, add them to the database
+      //       await userRef.set({
+      //         'uid': user.uid,
+      //         'name': user.displayName ?? '',
+      //         'email': user.email ?? '',
+      //         'photoUrl': user.photoURL ?? '',
+      //         'createdAt': FieldValue.serverTimestamp(),
+      //       });
+      //     }
+
+      //     return user;
+      //   }
+      }
+    } catch (e) {
+      print('Error signing in with Google: $e');
+    }
+    return null;
   }
 
   @override

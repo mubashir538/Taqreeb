@@ -15,7 +15,7 @@ class UpperHeadings extends StatefulWidget {
   const UpperHeadings(
       {super.key,
       required this.listing,
-      required this.type,
+      this.type = false,
       required this.listingId,
       required this.selectedDate,
       required this.events});
@@ -38,128 +38,9 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     locationController.text = widget.listing['Listing']['location'] ?? '';
   }
 
-  void showHierarchicalOptions(
-      BuildContext context, double maxThing, double width) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: MyColors.Dark,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(maxThing * 0.02),
-          decoration: BoxDecoration(
-            color: MyColors.Dark,
-            borderRadius:
-                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: maxThing * 0.02),
-                child: Text(
-                  "Choose for a Function",
-                  style: GoogleFonts.montserrat(
-                    fontSize: maxThing * 0.025,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.white,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.events['Event']?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final event = widget.events['Event'][index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: maxThing * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          width: 1,
-                          color: MyColors.red,
-                        ),
-                        color: MyColors.DarkLighter,
-                      ),
-                      child: ExpansionTile(
-                        collapsedShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        backgroundColor: MyColors.red,
-                        collapsedBackgroundColor: MyColors.DarkLighter,
-                        title: Text(
-                          event['name'],
-                          style: GoogleFonts.montserrat(
-                            fontSize: maxThing * 0.015,
-                            fontWeight: FontWeight.w400,
-                            color: MyColors.white,
-                          ),
-                        ),
-                        children: [
-                          ...event['functions'].map<Widget>((function) {
-                            return ListTile(
-                              title: Text(
-                                function['name'],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: maxThing * 0.015,
-                                  color: MyColors.whiteDarker,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              onTap: () async {
-                                final response = await MyApi.postRequest(
-                                    headers: {
-                                      'Authorization':
-                                          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-                                    },
-                                    endpoint: 'add/Bookcart/',
-                                    body: {
-                                      'fid': function['id'].toString(),
-                                      'uid': await MyStorage.getToken(
-                                              MyTokens.userId) ??
-                                          "",
-                                      'lid': widget.listingId.toString(),
-                                      'widget.type': 'Venue',
-                                      'slot': widget.selectedDate.toString(),
-                                    });
-
-                                if (response['status'] == 'success') {
-                                  Navigator.pop(context);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Something went wrong',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: maxThing * 0.015,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      backgroundColor: MyColors.red,
-                                    ),
-                                  );
-                                  Navigator.pop(context);
-                                }
-                              },
-                            );
-                          }).toList(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> saveField(String field, String value) async {
+    if (widget.type) return;
+
     try {
       final response = await MyApi.postRequest(
         headers: {
@@ -207,7 +88,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isEditingName
+              isEditingName && !widget.type
                   ? Flexible(
                       child: Column(
                         children: [
@@ -249,29 +130,27 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                   color: MyColors.white,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: widget.type
-                                    ? () {}
-                                    : () {
-                                        showHierarchicalOptions(context,
-                                            maximumDimension, screenWidth);
-                                      },
-                                child: Icon(
-                                  widget.type ? Icons.delete : Icons.add,
-                                  color: MyColors.Yellow,
-                                  size: widget.type
-                                      ? maximumDimension * 0.03
-                                      : maximumDimension * 0.05,
+                              if (!widget.type)
+                                GestureDetector(
+                                  onTap: () {
+                                    // Custom behavior for the add button
+                                  },
+                                  child: Icon(
+                                    Icons.add,
+                                    color: MyColors.Yellow,
+                                    size: maximumDimension * 0.05,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
-                          ColoredButton(
-                            text: 'Edit',
-                            onPressed: () => setState(() {
-                              isEditingName = true;
-                            }),
-                          ),
+                          !widget.type
+                              ? Container()
+                              : ColoredButton(
+                                  text: 'Edit',
+                                  onPressed: () => setState(() {
+                                    isEditingName = true;
+                                  }),
+                                ),
                         ],
                       ),
                     ),
@@ -285,9 +164,9 @@ class _UpperHeadingsState extends State<UpperHeadings> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isEditingLocation
+              isEditingLocation && !widget.type
                   ? Flexible(
-                    child: Column(
+                      child: Column(
                         children: [
                           TextField(
                             controller: locationController,
@@ -311,74 +190,50 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           ),
                         ],
                       ),
-                  )
+                    )
                   : SizedBox(
-                    width: screenWidth * 0.9,
-                    child: Column(
-                      
+                      width: screenWidth * 0.9,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: maximumDimension * 0.01),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(Icons.star, color: MyColors.Yellow),
-                                    Text(
-                                      "${widget.listing['reveiewData']['average'].toString()} (${widget.listing['reveiewData']['count'].toString()})",
-                                      style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
-                                          color: MyColors.white),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              Icon(Icons.star, color: MyColors.Yellow),
                               Text(
-                                widget.listing['Listing']['location'],
-                                softWrap: true,
                                 textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: true,
+                                maxLines: 3,
+                                "${widget.listing['reveiewData']['average']} (${widget.listing['reveiewData']['count']})",
                                 style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.015,
-                                    color: MyColors.white),
-                              ),
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: maximumDimension * 0.01),
-                                child: Icon(
-                                  Icons.location_on,
+                                  fontSize: maximumDimension * 0.015,
                                   color: MyColors.white,
-                                  size: maximumDimension * 0.04,
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                          // Row(
-                          //   children: [
-                          //     Text(
-                          //       widget.listing['Listing']['location'],
-                          //       softWrap: true,
-                          //       textAlign: TextAlign.start,
-                          //       style: GoogleFonts.montserrat(
-                          //         fontSize: maximumDimension * 0.015,
-                          //         color: MyColors.white,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                        
-                          ColoredButton(
-                            text: 'Edit',
-                            onPressed: () => setState(() {
-                              isEditingLocation = true;
-                            }),
+                          Container(
+                            width: screenWidth * 0.6,
+                            child: Text(
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                              widget.listing['Listing']['location'],
+                              softWrap: true,
+                              style: GoogleFonts.montserrat(
+                                fontSize: maximumDimension * 0.015,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.location_on,
+                            color: MyColors.white,
+                            size: maximumDimension * 0.04,
                           ),
                         ],
                       ),
-                  ),
+                    ),
             ],
           ),
         ),

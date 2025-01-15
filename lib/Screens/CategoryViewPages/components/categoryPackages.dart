@@ -7,7 +7,7 @@ class CategoryPackages extends StatefulWidget {
   final Map listing;
   final bool type; // Toggle between editable and static layout
 
-  const CategoryPackages({super.key, required this.listing, this.type = true});
+  const CategoryPackages({super.key, required this.listing, this.type = false});
 
   @override
   State<CategoryPackages> createState() => _CategoryPackagesState();
