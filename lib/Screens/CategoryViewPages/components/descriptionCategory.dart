@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -25,6 +27,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
   void initState() {
     super.initState();
     descriptionController.text = widget.listing['Listing']['description'] ?? '';
+    SetType();
   }
 
   Future<void> saveDescription() async {
@@ -32,17 +35,18 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
 
     try {
       final response = await MyApi.postRequest(
-        endpoint: '/update-description',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
         },
+        endpoint: 'businessowner/updateListings/',
         body: {
-          'id': widget.listing['Listing']['id'],
+          'id': widget.listing['Listing']['id'].toString(),
           'description': newDescription,
         },
       );
 
-      if (response['success']) {
+      if (response['status'] == 'success') {
         setState(() {
           isEditing = false;
           widget.listing['Listing']['description'] = newDescription;
@@ -60,6 +64,15 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
     }
   }
 
+  bool type = false;
+  Future<void> SetType() async {
+    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    setState(() {
+      type = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -67,7 +80,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
     double maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    if (widget.type) {
+    if (type) {
       // Editable layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),

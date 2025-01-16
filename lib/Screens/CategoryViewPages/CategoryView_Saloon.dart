@@ -179,7 +179,6 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                               children: [
                                 UpperHeadings(
                                     listing: listing,
-                                    type: type,
                                     listingId: listingId,
                                     selectedDate: selectedDate,
                                     events: events),
@@ -193,7 +192,9 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                                 PricingSection(listing: listing),
                                 DescriptionCategory(listing: listing),
                                 CategoryDetails(
-                                    headings: headings, values: values),
+                                    listing: listing,
+                                    headings: headings,
+                                    values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
                                         addonsheadings: addonsheadings,

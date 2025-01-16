@@ -300,7 +300,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                               children: [
                                 UpperHeadings(
                                     listing: listing,
-                                    type: type,
                                     listingId: listingId,
                                     selectedDate: selectedDate,
                                     events: events),
@@ -314,6 +313,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                 PricingSection(listing: listing),
                                 DescriptionCategory(listing: listing),
                                 CategoryDetails(
+                                  listing: listing,
                                     headings: headings, values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(

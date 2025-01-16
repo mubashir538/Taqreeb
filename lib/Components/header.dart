@@ -85,17 +85,21 @@ class _HeaderState extends State<Header> {
               children: [
                 InkWell(
                   onTap: () {
+                    print('Clicked');
                     try {
                       if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
+                        print('popping');
+                        Navigator.of(context).pop();
                       } else {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/HomePage', ModalRoute.withName('/'));
+                        print('going to new screen');
+                        Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
+                            (Route<dynamic> route) => false);
                       }
                     } catch (e) {
+                      print('going to new screen');
                       print('Exceptions: $e');
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/HomePage', ModalRoute.withName('/'));
+                      Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
+                          (Route<dynamic> route) => false);
                     }
                   },
                   child: Icon(Icons.chevron_left_outlined,

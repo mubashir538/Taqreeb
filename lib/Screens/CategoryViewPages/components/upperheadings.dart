@@ -5,17 +5,17 @@ import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/Components/Border%20Button.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
 
 class UpperHeadings extends StatefulWidget {
   final Map listing;
-  final bool type;
   final int? listingId;
   final Map events;
   final DateTime? selectedDate;
   const UpperHeadings(
       {super.key,
       required this.listing,
-      this.type = false,
       required this.listingId,
       required this.selectedDate,
       required this.events});
@@ -27,7 +27,6 @@ class UpperHeadings extends StatefulWidget {
 class _UpperHeadingsState extends State<UpperHeadings> {
   bool isEditingName = false;
   bool isEditingLocation = false;
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
 
@@ -36,6 +35,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     super.initState();
     nameController.text = widget.listing['Listing']['name'] ?? '';
     locationController.text = widget.listing['Listing']['location'] ?? '';
+    SetType();
   }
 
   void showHierarchicalOptions(
@@ -158,15 +158,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Future<void> saveField(String field, String value) async {
-    if (widget.type) return;
-
     try {
       final response = await MyApi.postRequest(
         headers: {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
         },
-        endpoint: '/update-listing', // Replace with your actual endpoint
+        endpoint:
+            'businessowner/updateListings/', 
         body: {
           'id': widget.listingId.toString(),
           field: value,
@@ -193,6 +192,15 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     }
   }
 
+  bool type = false;
+  Future<void> SetType() async {
+    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    setState(() {
+      type = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -207,7 +215,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isEditingName && !widget.type
+              isEditingName && type
                   ? Flexible(
                       child: Column(
                         children: [
@@ -249,21 +257,111 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                   color: MyColors.white,
                                 ),
                               ),
-                              if (!widget.type)
-                                GestureDetector(
-                                  onTap: () {
-                                    showHierarchicalOptions(
-                                        context, maximumDimension, screenWidth);
-                                  },
-                                  child: Icon(
-                                    Icons.add,
-                                    color: MyColors.Yellow,
-                                    size: maximumDimension * 0.05,
-                                  ),
-                                ),
+                              !type
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        showHierarchicalOptions(context,
+                                            maximumDimension, screenWidth);
+                                      },
+                                      child: Icon(
+                                        Icons.add,
+                                        color: MyColors.Yellow,
+                                        size: maximumDimension * 0.05,
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        warningDialog(
+                                          title: 'Delete',
+                                          message:
+                                              'Are yo sure You want to delete this Listing?',
+                                          actions: [
+                                            BorderButton(
+                                              text: 'Cancel',
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              width: screenWidth * 0.3,
+                                              textSize:
+                                                  maximumDimension * 0.015,
+                                            ),
+                                            ColoredButton(
+                                              text: 'Delete',
+                                              onPressed: () async {
+                                                final token =
+                                                    await MyStorage.getToken(
+                                                        MyTokens.accessToken);
+                                                print(token);
+                                                final response =
+                                                    await MyApi.postRequest(
+                                                        endpoint:
+                                                            'businessowner/DeleteListings/',
+                                                        body: {
+                                                      'id': widget.listingId
+                                                    },
+                                                        headers: {
+                                                      'Authorization':
+                                                          'Bearer $token'
+                                                    });
+                                                String message;
+                                                if (response['status'] ==
+                                                    'success') {
+                                                  message =
+                                                      'Listing Deleted Successfully!';
+                                                  Navigator
+                                                      .pushNamedAndRemoveUntil(
+                                                          context,
+                                                          '/YourListings',
+                                                          ModalRoute.withName(
+                                                              '/HomePage'));
+                                                } else {
+                                                  message =
+                                                      'Something went Wrong!';
+                                                  Navigator.of(context).pop();
+                                                }
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  backgroundColor: MyColors.red,
+                                                  content: Text(message,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        fontSize:
+                                                            maximumDimension *
+                                                                0.015,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: MyColors.white,
+                                                      )),
+                                                ));
+                                              },
+                                              width: screenWidth * 0.3,
+                                              textSize:
+                                                  maximumDimension * 0.015,
+                                            ),
+                                          ],
+                                        ).showDialogBox(context);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(boxShadow: [
+                                          BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.3),
+                                              spreadRadius: 0.5,
+                                              blurRadius: 3,
+                                              blurStyle: BlurStyle.inner),
+                                        ]),
+                                        margin: EdgeInsets.all(
+                                            maximumDimension * 0.02),
+                                        child: Icon(
+                                          Icons.delete,
+                                          size: maximumDimension * 0.03,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
                             ],
                           ),
-                          !widget.type
+                          !type
                               ? Container()
                               : ColoredButton(
                                   text: 'Edit',
@@ -284,7 +382,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isEditingLocation && !widget.type
+              isEditingLocation && type
                   ? Flexible(
                       child: Column(
                         children: [
@@ -333,18 +431,32 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                               ),
                             ],
                           ),
-                          Container(
-                            width: screenWidth * 0.6,
-                            child: Text(
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                              widget.listing['Listing']['location'],
-                              softWrap: true,
-                              style: GoogleFonts.montserrat(
-                                fontSize: maximumDimension * 0.015,
-                                color: MyColors.white,
+                          Column(
+                            children: [
+                              Container(
+                                width: screenWidth * 0.6,
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  widget.listing['Listing']['location'],
+                                  softWrap: true,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: maximumDimension * 0.015,
+                                    color: MyColors.white,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (type)
+                                ColoredButton(
+                                    text: 'Edit',
+                                    width: screenWidth * 0.5,
+                                    textSize: maximumDimension * 0.015,
+                                    onPressed: () {
+                                      setState(() {
+                                        isEditingLocation = true;
+                                      });
+                                    }),
+                            ],
                           ),
                           Icon(
                             Icons.location_on,

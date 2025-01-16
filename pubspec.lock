@@ -334,6 +334,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.1"
+  flutter_google_places_sdk:
+    dependency: "direct main"
+    description:
+      name: flutter_google_places_sdk
+      sha256: "9f806d35877db0b381023607d0f4be07d9fae7cb621dd07ef00486b53fe05ff0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2+1"
+  flutter_google_places_sdk_android:
+    dependency: transitive
+    description:
+      name: flutter_google_places_sdk_android
+      sha256: "32eb25e17319809035dea9b743f4a8fe9848b6795e2c54dbc0b417fc52efeddb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.9"
+  flutter_google_places_sdk_ios:
+    dependency: transitive
+    description:
+      name: flutter_google_places_sdk_ios
+      sha256: c1c4729323af40d6cc5e613ed93ea7ad6b07dbc42f0ba132d32dc25beaff28d9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.5"
+  flutter_google_places_sdk_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_google_places_sdk_platform_interface
+      sha256: a72c2dbb882b8a614a9ae9a1c8921869902c93630e11f4536a09bb3e9b5a1d19
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.7"
+  flutter_google_places_sdk_web:
+    dependency: transitive
+    description:
+      name: flutter_google_places_sdk_web
+      sha256: "466c8bcf578652bf34cbf0ac1cf5d6b4aa61ad3fecda7e5aa49b217d1e20eefb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   flutter_image_compress:
     dependency: "direct main"
     description:
@@ -512,6 +552,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.4"
   geolocator:
     dependency: "direct main"
     description:
@@ -984,6 +1032,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.15.0"
+  place_picker_google:
+    dependency: "direct main"
+    description:
+      name: place_picker_google
+      sha256: "42e6a43f231db0809126e325e96fa8709ed02fb52372024a68302c4d7628ba7b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.14"
   platform:
     dependency: transitive
     description:

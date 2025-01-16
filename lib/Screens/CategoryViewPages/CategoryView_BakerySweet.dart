@@ -169,7 +169,6 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
                               children: [
                                 UpperHeadings(
                                     listing: listing,
-                                    type: type,
                                     listingId: listingId,
                                     selectedDate: selectedDate,
                                     events: events),
@@ -183,7 +182,9 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
                                 PricingSection(listing: listing),
                                 DescriptionCategory(listing: listing),
                                 CategoryDetails(
-                                    headings: headings, values: values),
+                                    listing: listing,
+                                    headings: headings,
+                                    values: values),
                                 listing['Package'].length != 0
                                     ? CategoryPackages(listing: listing)
                                     : Container(),

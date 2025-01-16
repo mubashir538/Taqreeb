@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -7,13 +9,11 @@ import 'package:taqreeb/theme/color.dart';
 class CategoryAddons extends StatefulWidget {
   final List<String> addonsheadings;
   final List<String> addonsvalues;
-  final bool type;
 
   const CategoryAddons({
     super.key,
     required this.addonsheadings,
     required this.addonsvalues,
-    this.type = false,
   });
 
   @override
@@ -25,11 +25,19 @@ class _CategoryAddonsState extends State<CategoryAddons> {
   late List<TextEditingController> valueControllers;
   late List<bool> isEditingHeading;
   late List<bool> isEditingValue;
+  bool type = false;
+   Future<void> SetType() async {
+    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    setState(() {
+      type = value;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    headingControllers = widget.addonsheadings
+      headingControllers = widget.addonsheadings
         .map((heading) => TextEditingController(text: heading))
         .toList();
     valueControllers = widget.addonsvalues
@@ -39,19 +47,21 @@ class _CategoryAddonsState extends State<CategoryAddons> {
         List<bool>.generate(widget.addonsheadings.length, (_) => false);
     isEditingValue =
         List<bool>.generate(widget.addonsvalues.length, (_) => false);
+        SetType();
   }
 
   void saveAddon(int index) {
     setState(() {
       widget.addonsheadings[index] = headingControllers[index].text;
       widget.addonsvalues[index] = valueControllers[index].text;
-      isEditingHeading[index] = false;
+       isEditingHeading[index] = false;
       isEditingValue[index] = false;
     });
   }
 
   void addAddon() {
     setState(() {
+
       widget.addonsheadings.add('New Addon');
       widget.addonsvalues.add('0');
       headingControllers.add(TextEditingController(text: 'New Addon'));
@@ -79,7 +89,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     double maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    if (widget.type) {
+    if (type) {
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(
@@ -148,7 +158,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                               ),
                             )
                           else
-                            Text(
+                             Text(
                               widget.addonsvalues[i],
                               style: GoogleFonts.montserrat(
                                 fontSize: maximumDimension * 0.015,

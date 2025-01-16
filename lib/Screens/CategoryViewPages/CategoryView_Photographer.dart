@@ -71,13 +71,16 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
       listingId = args['id'];
       type = args['isBusiness'];
     });
+    print((!ischange).toString());
     if (!ischange) {
+      print('fetched!');
       fetchData();
     }
   }
 
   Timer? timer;
   void fetchData() async {
+    ischange = true;
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
@@ -299,7 +302,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                               children: [
                                 UpperHeadings(
                                     listing: listing,
-                                    type: type,
                                     listingId: listingId,
                                     selectedDate: selectedDate,
                                     events: events),
@@ -313,7 +315,9 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                                 PricingSection(listing: listing),
                                 DescriptionCategory(listing: listing),
                                 CategoryDetails(
-                                    headings: headings, values: values),
+                                    listing: listing,
+                                    headings: headings,
+                                    values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
                                         addonsheadings: addonsheadings,

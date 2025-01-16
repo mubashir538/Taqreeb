@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -29,6 +31,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     nameController = TextEditingController();
     detailsController = TextEditingController();
     priceController = TextEditingController();
+    SetType();
   }
 
   // Method to show the popup for adding or editing a package
@@ -147,6 +150,15 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     });
   }
 
+  bool type = false;
+   Future<void> SetType() async {
+    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    setState(() {
+      type = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -154,7 +166,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     double maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
-    if (widget.type) {
+    if (type) {
       // Editable layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),

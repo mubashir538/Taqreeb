@@ -80,8 +80,9 @@ class _MainScreenState extends State<MainScreen> {
               width: screenWidth * 0.15,
               height: screenWidth * 0.15,
               child: FloatingActionButton(
+                heroTag: 'abc',
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.pushReplacementNamed(
                       context,
                       isBusinessOwner || isFreelancer
                           ? '/AddCategory_List'

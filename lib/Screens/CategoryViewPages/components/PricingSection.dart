@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -15,39 +18,64 @@ class PricingSection extends StatefulWidget {
 class _PricingSectionState extends State<PricingSection> {
   bool isEditingPriceMin = false;
   bool isEditingPriceMax = false;
-  bool isEditingBasicPrice = false;
-  final bool type = false;
   final TextEditingController priceMinController = TextEditingController();
   final TextEditingController priceMaxController = TextEditingController();
-  final TextEditingController basicPriceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     priceMinController.text = widget.listing['Listing']['priceMin'].toString();
     priceMaxController.text = widget.listing['Listing']['priceMax'].toString();
-    basicPriceController.text =
-        widget.listing['Listing']['basicPrice'].toString();
+    SetType();
   }
 
   Future<void> saveField(String field, String value) async {
     try {
-      setState(() {
-        widget.listing['Listing'][field] = value;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$field updated successfully!')),
+      final response = await MyApi.postRequest(
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+        endpoint: 'businessowner/updateListings/',
+        body: {
+          'id': widget.listing['Listing']['id'].toString(),
+          field: value,
+        },
       );
+      if (response['status'] == 'success') {
+        setState(() {
+          widget.listing['Listing'][field] = value;
+          widget.listing['Listing']['basicPrice'] = ((int.parse(
+                          widget.listing['Listing']['priceMin'].toString()) +
+                      int.parse(
+                          widget.listing['Listing']['priceMax'].toString())) /
+                  2)
+              .round();
+          if (field == 'priceMin') isEditingPriceMin = false;
+          if (field == 'priceMax') isEditingPriceMax = false;
+        });
 
-      if (field == 'priceMin') isEditingPriceMin = false;
-      if (field == 'priceMax') isEditingPriceMax = false;
-      if (field == 'basicPrice') isEditingBasicPrice = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$field updated successfully!')),
+        );
+      } else {
+        throw Exception(response['message'] ?? 'Failed to update $field.');
+      }
     } catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update $field: $e')),
       );
     }
+  }
+
+  bool type = false;
+  Future<void> SetType() async {
+    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    setState(() {
+      type = value;
+    });
   }
 
   @override
@@ -105,13 +133,9 @@ class _PricingSectionState extends State<PricingSection> {
               maximumDimension,
             ),
             SizedBox(height: maximumDimension * 0.02),
-            _buildEditableRow(
+            _buildNonEditableRow(
               "Basic Price:",
-              "basicPrice",
-              isEditingBasicPrice,
-              basicPriceController,
-              () => setState(() => isEditingBasicPrice = true),
-              () => saveField('basicPrice', basicPriceController.text),
+              widget.listing['Listing']['basicPrice'].toString(),
               maximumDimension,
             ),
             SizedBox(
@@ -209,6 +233,7 @@ class _PricingSectionState extends State<PricingSection> {
         if (isEditing)
           TextField(
             controller: controller,
+            keyboardType: TextInputType.number,
             style: GoogleFonts.montserrat(
               fontSize: maximumDimension * 0.015,
               color: MyColors.white,
@@ -233,6 +258,34 @@ class _PricingSectionState extends State<PricingSection> {
           child: ColoredButton(
             text: isEditing ? "Save" : "Edit",
             onPressed: isEditing ? onSave : onEdit,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNonEditableRow(
+    String label,
+    String value,
+    double maximumDimension,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: maximumDimension * 0.015,
+            fontWeight: FontWeight.w500,
+            color: MyColors.Yellow,
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.montserrat(
+            fontSize: maximumDimension * 0.015,
+            fontWeight: FontWeight.w400,
+            color: MyColors.white,
           ),
         ),
       ],
