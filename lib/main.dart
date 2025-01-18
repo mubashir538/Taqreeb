@@ -1,8 +1,5 @@
-import 'package:dotenv/dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
@@ -23,7 +20,6 @@ import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_VideoEditor.dart'
 import 'package:taqreeb/Screens/CreateGroup.dart';
 import 'package:taqreeb/Screens/Dashboard.dart';
 import 'package:taqreeb/Screens/AccountInfoEdit.dart';
-import 'package:taqreeb/Screens/BusinessAccountInfo.dart';
 import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_BasicInfo.dart';
 import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_CNICUpload.dart';
 import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_Description.dart';
@@ -48,7 +44,6 @@ import 'package:taqreeb/Screens/ForgotPassword_VerifyCode.dart';
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_Description.dart';
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.dart';
 import 'package:taqreeb/Screens/FunctionDetail.dart';
-import 'package:taqreeb/Screens/HomePage.dart';
 import 'package:taqreeb/Screens/Login.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
 import 'package:taqreeb/Screens/Settings.dart';
@@ -62,17 +57,15 @@ import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventDetail.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
-import 'package:taqreeb/Screens/YourEvents.dart';
+import 'package:taqreeb/Screens/groupchats.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
-import 'package:taqreeb/Screens/YourListings.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
-import 'package:taqreeb/abc.dart';
 import 'package:taqreeb/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await Firebase.initializeApp(options: DefaultFireb aseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MainApp());
 }
@@ -83,6 +76,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => SplashScreen(),
         '/settings': (context) => Settings(),
@@ -123,6 +117,7 @@ class MainApp extends StatelessWidget {
         '/AIPackage_EventDetail': (context) => AIPackage_EventDetail(),
         '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
         '/ChatsScreen': (context) => MainScreen(index: 1),
+        '/GroupChatBox': (context) => GroupChatScreen(),
         '/ChatBox': (context) => ChatBox(),
         '/SearchService': (context) => SearchService(),
         '/YourListings': (context) => MainScreen(index: 2),

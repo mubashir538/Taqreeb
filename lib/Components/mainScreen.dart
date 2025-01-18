@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/navbar.dart';
@@ -12,6 +11,7 @@ import 'package:taqreeb/Screens/YourEvents.dart';
 import 'package:taqreeb/Screens/YourListings.dart';
 import 'package:taqreeb/theme/color.dart';
 
+// ignore: must_be_immutable
 class MainScreen extends StatefulWidget {
   MainScreen({super.key, this.index = 0});
   int index;
@@ -29,14 +29,14 @@ class _MainScreenState extends State<MainScreen> {
     BusinessAccountInfo()
   ];
 
-  bool isLoading = true; 
-  bool isBusinessOwner = false; 
+  bool isLoading = true;
+  bool isBusinessOwner = false;
   bool isFreelancer = false;
   @override
   void initState() {
     super.initState();
 
-    fetchUser(); 
+    fetchUser();
   }
 
   void fetchUser() async {
@@ -45,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       isBusinessOwner = utype;
       isFreelancer = ftype;
-      isLoading = false; 
+      isLoading = false;
     });
   }
 
@@ -71,34 +71,36 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: MyColors.Dark,
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(), 
+              child: CircularProgressIndicator(),
             )
-          : currentPageList[widget.index], 
-      
-      floatingActionButton:isKeyboardVisible? null: SizedBox(
-        width: screenWidth * 0.15,
-        height: screenWidth * 0.15,
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(
-                context,
-                isBusinessOwner || isFreelancer
-                    ? '/AddCategory_List'
-                    : '/CreateEvent'); 
-          },
-          backgroundColor: MyColors.Yellow,
-          shape: const CircleBorder(),
-          child: Icon(
-            Icons.add,
-            size: maximumThing * 0.04,
-            color: MyColors.Dark,
-          ),
-        ),
-      ),
+          : currentPageList[widget.index],
+      floatingActionButton: isKeyboardVisible
+          ? null
+          : SizedBox(
+              width: screenWidth * 0.15,
+              height: screenWidth * 0.15,
+              child: FloatingActionButton(
+                heroTag: null,
+                onPressed: () {
+                  Navigator.pushReplacementNamed(
+                      context,
+                      isBusinessOwner || isFreelancer
+                          ? '/AddCategory_List'
+                          : '/CreateEvent');
+                },
+                backgroundColor: MyColors.Yellow,
+                shape: const CircleBorder(),
+                child: Icon(
+                  Icons.add,
+                  size: maximumThing * 0.04,
+                  color: MyColors.Dark,
+                ),
+              ),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Navbar(
         selectedIndex: widget.index,
-        onValueChanged: updateValue, 
+        onValueChanged: updateValue,
       ),
     );
   }

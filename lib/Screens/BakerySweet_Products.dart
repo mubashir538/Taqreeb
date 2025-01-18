@@ -11,35 +11,14 @@ class BakerySweet_Products extends StatefulWidget {
 }
 
 class _BakerySweet_ProductsState extends State<BakerySweet_Products> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
-
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Container(
         child: Column(
           children: [
             Header(
-              key: _headerKey,
               heading: "Cakes",
             ),
             SizedBox(

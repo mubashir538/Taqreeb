@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -87,11 +85,21 @@ class _HeaderState extends State<Header> {
               children: [
                 InkWell(
                   onTap: () {
+                    print('Clicked');
                     try {
-                      Navigator.pop(context);
+                      if (Navigator.canPop(context)) {
+                        print('popping');
+                        Navigator.of(context).pop();
+                      } else {
+                        print('going to new screen');
+                        Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
+                            (Route<dynamic> route) => false);
+                      }
                     } catch (e) {
-                      SystemNavigator.pop();
-                      exit(0);
+                      print('going to new screen');
+                      print('Exceptions: $e');
+                      Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
+                          (Route<dynamic> route) => false);
                     }
                   },
                   child: Icon(Icons.chevron_left_outlined,

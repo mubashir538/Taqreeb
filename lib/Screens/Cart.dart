@@ -12,31 +12,11 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -67,7 +47,6 @@ class _CartState extends State<Cart> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
               heading: 'Cart Items',
             ),
           ),

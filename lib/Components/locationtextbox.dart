@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:intl/intl.dart';
-import 'package:taqreeb/theme/color.dart';
 
 class LocationInputWidget extends StatefulWidget {
   final TextEditingController locationController;
@@ -53,11 +51,6 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -86,15 +79,14 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
                   onSelected: (String suggestion) {
                     setState(() {
                       widget.locationController.text = suggestion;
-                      widget.onLocationChanged(
-                          suggestion); 
+                      widget.onLocationChanged(suggestion);
                     });
                   },
                 ),
               ),
               IconButton(
                 icon: Icon(Icons.location_on),
-                onPressed: _getCurrentLocation, 
+                onPressed: _getCurrentLocation,
               ),
             ],
           ),

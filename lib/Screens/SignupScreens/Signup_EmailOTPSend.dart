@@ -91,7 +91,6 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
                             dynamic response = await MyApi.postRequest(
                                 endpoint: 'sendOTP/email',
                                 body: {'email': emailController.text});
-                            print(response);
                             Navigator.pushNamed(
                                 context, '/Signup_EmailOTPVerify', arguments: {
                               'email': emailController.text,
@@ -126,7 +125,7 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: 'OTP Verification',
+              heading: 'Email Verification',
               para: 'Enter Email to send one time password',
               image: MyImages.SingupPng,
             ),

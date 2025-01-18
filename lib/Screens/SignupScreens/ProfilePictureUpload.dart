@@ -131,7 +131,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
             'Authorization': 'Bearer $token', 
           });
           final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
-          print('${userId}');
           request.fields['UserId'] = userId;
           request.fields['BusinessName'] =
               await MyStorage.getToken(MyTokens.fsname) ?? "";
@@ -190,7 +189,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         final responseBody = await response.stream.bytesToString();
         final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
 
-        print('Your Response: $jsonResponse');
         if (response.statusCode == 200) {
           if (jsonResponse['status'] == 'error') {
             warningDialog(

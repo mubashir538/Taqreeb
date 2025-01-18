@@ -28,6 +28,17 @@ class MyTokens {
   static const String user = "user";
   static const String userType = "userType";
   static const String Light = "Light";
+  static const String acname = "acname";
+  static const String acdesc = "acdesc";
+  static const String aclocation = "aclocation";
+  static const String accategory = "accategory";
+  static const String acminprice = "acminprice";
+  static const String acmaxprice = "acmaxprice";
+  static const String moredetails = "moredetails";
+  static const String addons = "addons";
+  static const String packages = "packages";
+
+
 
   static Future<String> getBusinessType() async {
     String type;

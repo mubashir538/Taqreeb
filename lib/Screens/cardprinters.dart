@@ -12,25 +12,6 @@ class cardprinter extends StatefulWidget {
 }
 
 class _cardprinterState extends State<cardprinter> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
-
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -42,7 +23,6 @@ class _cardprinterState extends State<cardprinter> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Header(heading: "Taqreeb", para: ""),
-
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
@@ -55,7 +35,6 @@ class _cardprinterState extends State<cardprinter> {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -73,9 +52,7 @@ class _cardprinterState extends State<cardprinter> {
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
             SlidingRow(
               title: "Wedding Invitations",
               images: [

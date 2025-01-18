@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
-import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -21,7 +20,7 @@ class Signup_ContactOTPSend extends StatefulWidget {
 class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
   TextEditingController contactController = TextEditingController();
   FocusNode contactFocus = FocusNode();
- 
+
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
@@ -127,7 +126,7 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: 'OTP Verification',
+              heading: 'Contact Verification',
               para: 'Enter Phone number to send one time password',
               image: MyImages.SingupPng,
             ),

@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Header.dart';
-import 'package:taqreeb/Components/Colored Button.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/Search Box.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -24,11 +22,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
-  Map<String, dynamic> categories = {}; 
-  Map<String, dynamic> listings = {}; 
-  Map<String, dynamic> demoImages = {}; 
+  Map<String, dynamic> categories = {};
+  Map<String, dynamic> listings = {};
+  Map<String, dynamic> demoImages = {};
   String token = '';
-  bool isLoading = true; 
+  bool isLoading = true;
   List<String> myImages = [];
 
   @override
@@ -42,18 +40,13 @@ class _HomePageState extends State<HomePage> {
   void fetchData() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
+      endpoint: 'home/categories/',
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     final fetchedImages = await MyApi.getRequest(
       endpoint: 'Homepage/DemoImages/',
       headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization
-      // }
     );
     final fetchedListings = await MyApi.getRequest(
       endpoint: 'home/listings/',
@@ -64,18 +57,18 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.categories = fetchedCategories ?? {}; 
-          this.listings = fetchedListings ?? {}; 
-          this.demoImages = fetchedImages ?? {}; 
+          this.categories = fetchedCategories ?? {};
+          this.listings = fetchedListings ?? {};
+          this.demoImages = fetchedImages ?? {};
           if (fetchedCategories == null ||
               fetchedCategories['status'] == 'error' ||
               fetchedListings == null ||
               fetchedListings['status'] == 'error' ||
               fetchedImages == null ||
               fetchedImages['status'] == 'error') {
-            print('$fetchedCategories');
-            print('$fetchedListings');
-            print('$fetchedImages');
+            print('fetch image: ${fetchedImages}');
+            print('fetch listings: ${fetchedListings}');
+            print('fetch categories: ${fetchedCategories}');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -90,6 +83,7 @@ class _HomePageState extends State<HomePage> {
             isLoading = false;
           }
         });
+        timer.cancel();
       }
     });
   }
@@ -101,10 +95,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void loadimages() async {
-    this.myImages = await demoImages['images'] 
+    this.myImages = await demoImages['images']
         .map((value) =>
             '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
-        .cast<String>() 
+        .cast<String>()
         .toList();
   }
 
@@ -138,7 +132,6 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: _headerHeight),
-
                   Container(
                     margin: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
                     child: Row(
@@ -146,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         SearchBox(
                           onChanged: (value) {},
-                          hint: 'Search Typing to Search',
+                          hint: 'Start Typing to Search',
                           onclick: () {
                             Navigator.pushNamed(context, '/SearchService');
                           },

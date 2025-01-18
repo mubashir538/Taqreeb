@@ -1,17 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
-import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/checklist_items.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -24,7 +20,7 @@ class _SettingsState extends State<Settings> {
   TextEditingController controller = TextEditingController();
   String token = '';
   Map<String, dynamic> types = {};
-  bool isLoading = true; 
+  bool isLoading = true;
   bool businessOwnerSwitch = false;
   bool freelancerSwitch = false;
 
@@ -45,21 +41,15 @@ class _SettingsState extends State<Settings> {
     final fetchedtype = await MyApi.getRequest(
       endpoint: 'searchType/$userid',
       headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
     );
-    final isbusinessToken =
-        await MyStorage.exists(MyTokens.isBusinessOwner) ?? "";
-    final isFreelancerToken =
-        await MyStorage.exists(MyTokens.isFreelancer) ?? "";
+    final isbusinessToken = await MyStorage.exists(MyTokens.isBusinessOwner);
+    final isFreelancerToken = await MyStorage.exists(MyTokens.isFreelancer);
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           this.token = token;
-          types = fetchedtype ?? {}; 
-          if (types == null || types['status'] == 'error') {
-            print('$types');
+          types = fetchedtype ?? {};
+          if (types == {} || types['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -70,7 +60,6 @@ class _SettingsState extends State<Settings> {
             ));
             return;
           } else {
-            print('$types');
             businessOwnerSwitch = bool.parse(isbusinessToken.toString());
             freelancerSwitch = bool.parse(isFreelancerToken.toString());
             isLoading = false;
@@ -135,9 +124,8 @@ class _SettingsState extends State<Settings> {
                           children: [
                             this.types['business']
                                 ? Container(
-                                    height: (MaximumThing * 0.08)
-                                        .clamp(60, 80.0), 
-
+                                    height:
+                                        (MaximumThing * 0.08).clamp(60, 80.0),
                                     width: screenWidth * 0.9,
                                     decoration: BoxDecoration(
                                       color: MyColors.DarkLighter,
@@ -191,7 +179,7 @@ class _SettingsState extends State<Settings> {
                                               }
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                '/HomePage', 
+                                                '/HomePage',
                                                 ModalRoute.withName('/'),
                                               );
                                             });
@@ -215,9 +203,8 @@ class _SettingsState extends State<Settings> {
                                   ),
                             this.types['freelancer']
                                 ? Container(
-                                    height: (MaximumThing * 0.08)
-                                        .clamp(60, 80.0), 
-
+                                    height:
+                                        (MaximumThing * 0.08).clamp(60, 80.0),
                                     width: screenWidth * 0.9,
                                     decoration: BoxDecoration(
                                       color: MyColors.DarkLighter,
@@ -271,7 +258,7 @@ class _SettingsState extends State<Settings> {
                                               }
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                '/HomePage', 
+                                                '/HomePage',
                                                 ModalRoute.withName('/'),
                                               );
                                             });
@@ -309,7 +296,7 @@ class _SettingsState extends State<Settings> {
                                           MyColors.switchTheme();
                                           Navigator.pushNamedAndRemoveUntil(
                                             context,
-                                            '/HomePage', 
+                                            '/HomePage',
                                             ModalRoute.withName('/'),
                                           );
                                         },

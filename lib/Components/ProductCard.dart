@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/Components/Border%20Button.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/warningDialog.dart';
+import 'package:taqreeb/theme/color.dart';
 
 class Productcard extends StatefulWidget {
   final String imageUrl;
@@ -13,7 +20,6 @@ class Productcard extends StatefulWidget {
   Productcard({
     this.mywidth = 0,
     this.isBusiness = false,
-   
     required this.listingid,
     required this.listingType,
     required this.imageUrl,
@@ -59,19 +65,10 @@ class _ProductcardState extends State<Productcard> {
         } else if (widget.listingType == "Caterer") {
           path = '/CategoryView_Caterers';
         }
-        // else if (widget.listingType == "Function") {
-        //   path = '/CategoryView_PhotographyPlace';
-        // }
-        //else if(widget.listingType == "Event"){
-
-        // }
-        // else if(widget.listingType == "Function"){
-
-        // }else if(widget.listingType == "Event"){
-
-        // }
-        Navigator.pushNamed(context, path,
-            arguments: {'id': int.parse(widget.listingid),'isBusiness':widget.isBusiness});
+        Navigator.pushNamed(context, path, arguments: {
+          'id': int.parse(widget.listingid),
+          'isBusiness': widget.isBusiness
+        });
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
@@ -86,6 +83,10 @@ class _ProductcardState extends State<Productcard> {
         ),
         child: Stack(
           children: [
+            // widget.isBusiness
+            //     ? Align(
+            //         alignment: Alignment.topRight,
+            //         child: : Container(),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
@@ -41,10 +40,10 @@ class _SearchServiceState extends State<SearchService> {
   TextEditingController locationcontroller = TextEditingController();
   TextEditingController dateController = TextEditingController();
   String token = '';
-  Map<String, dynamic> categories = {}; 
-  Map<String, dynamic> listings = {}; 
-  bool isLoading = true; 
-  Map<String, dynamic> templistings = {}; 
+  Map<String, dynamic> categories = {};
+  Map<String, dynamic> listings = {};
+  bool isLoading = true;
+  Map<String, dynamic> templistings = {};
   Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
@@ -62,7 +61,7 @@ class _SearchServiceState extends State<SearchService> {
       if (args != null) {
         this.args = args as Map<String, dynamic>;
       }
-      fetchData();
+        fetchData();
     }
   }
 
@@ -70,10 +69,8 @@ class _SearchServiceState extends State<SearchService> {
   void fetchData() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/', headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
+      endpoint: 'home/categories/',
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     final fetchedListings = await MyApi.getRequest(
@@ -84,16 +81,13 @@ class _SearchServiceState extends State<SearchService> {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.categories = fetchedCategories ?? {}; 
-          this.listings = fetchedListings ?? {}; 
-          this.templistings =
-              Map.from(fetchedListings) ?? {}; 
-          if (this.listings == null ||
+          this.categories = fetchedCategories ?? {};
+          this.listings = fetchedListings ?? {};
+          this.templistings = Map.from(fetchedListings);
+          if (this.listings == {} ||
               this.listings['status'] == 'error' ||
-              this.categories == null ||
+              this.categories == {} ||
               this.categories['status'] == 'error') {
-            print('$listings');
-            print('$categories');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -109,12 +103,13 @@ class _SearchServiceState extends State<SearchService> {
               searchwithFilters();
             }
 
-            isLoading = false; 
+            isLoading = false;
           }
-          ischange = true;
         });
+        timer.cancel();
       }
     });
+    ischange = true;
   }
 
   @override
@@ -182,8 +177,6 @@ class _SearchServiceState extends State<SearchService> {
                                       onChanged: (value) {
                                         setState(() {
                                           searchwithFilters();
-                                          print(
-                                              'listing: ${listings['HomeListing']}');
                                           templistings['HomeListing'] =
                                               templistings['HomeListing']
                                                   .where((element) =>
@@ -312,7 +305,6 @@ class _SearchServiceState extends State<SearchService> {
                   element['basicPrice'] >= rangeSliderController.minValue &&
                   element['basicPrice'] <= rangeSliderController.maxValue)
               .toList();
-          print('found price');
         } else {
           rangeSliderController.minValue = 10000;
           rangeSliderController.maxValue = 5000000;
@@ -328,7 +320,6 @@ class _SearchServiceState extends State<SearchService> {
               .where((element) =>
                   categoryController.selections.contains(element['type']))
               .toList();
-          print('found Category');
         }
         if (i == "Location") {
           templistings['HomeListing'] = templistings['HomeListing']
@@ -343,7 +334,6 @@ class _SearchServiceState extends State<SearchService> {
         //       .toList();
         // }
       }
-      print('final list: ${templistings['HomeListing']}');
     });
   }
 
@@ -475,7 +465,6 @@ class _SearchServiceState extends State<SearchService> {
                     text: 'Apply Filters',
                     onPressed: () {
                       setState(() {
-                        print(FiltertoApply);
                         if (dateController.text.isNotEmpty) {
                           appliedFilters.add("Date");
                         }

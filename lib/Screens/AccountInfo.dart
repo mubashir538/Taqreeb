@@ -20,15 +20,15 @@ class AccountInfo extends StatefulWidget {
 
 class _AccountInfoState extends State<AccountInfo> {
   String token = '';
-  Map<String, dynamic> user = {}; 
-  bool isLoading = true; 
+  Map<String, dynamic> user = {};
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
 
-    fetchData(); 
+    fetchData();
   }
 
   Timer? timer;
@@ -43,9 +43,8 @@ class _AccountInfoState extends State<AccountInfo> {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.user = user ?? {}; 
+          this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            print('$user');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -59,17 +58,16 @@ class _AccountInfoState extends State<AccountInfo> {
             isLoading = false;
           }
 
-          print(
-              "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}");
-        });
+          });
       }
     });
   }
+
   @override
-void dispose(){
-timer?.cancel();
-super.dispose();
-}
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -136,28 +134,25 @@ super.dispose();
                                         "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}"),
                                   ),
                                   Container(
+                                    width: screenWidth * 0.5,
                                     margin: EdgeInsets.only(
                                         left: MaximumThing * 0.02),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          "${user['firstName']} ${user['lastName']}",
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: MaximumThing * 0.02,
-                                              fontWeight: FontWeight.w600,
-                                              color: MyColors.white),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      "${user['firstName']} ${user['lastName']}",
+                                      softWrap: true,
+                                      maxLines: 3,
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: MaximumThing * 0.02,
+                                          fontWeight: FontWeight.w600,
+                                          color: MyColors.white),
                                     ),
                                   ),
                                 ]),
                           ),
-
                           SizedBox(
                             height: screenHeight * 0.05,
                             child: Center(child: MyDivider()),
                           ),
-
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: MaximumThing * 0.02),
@@ -171,7 +166,6 @@ super.dispose();
                               ),
                             ),
                           ),
-
                           SizedBox(
                             width: screenWidth * 0.8,
                             child: Row(
@@ -199,13 +193,11 @@ super.dispose();
                                   ),
                                 ]),
                           ),
-
                           SizedBox(
                             height: screenHeight * 0.05,
                             child: Center(
                                 child: MyDivider(width: screenWidth * 0.7)),
                           ),
-
                           user['contactNumber'] == null
                               ? Container()
                               : Column(
@@ -223,7 +215,6 @@ super.dispose();
                                         ),
                                       ),
                                     ),
-
                                     SizedBox(
                                       width: screenWidth * 0.8,
                                       child: Row(
@@ -253,7 +244,6 @@ super.dispose();
                                             ),
                                           ]),
                                     ),
-
                                     SizedBox(
                                       height: screenHeight * 0.05,
                                       child: Center(
@@ -262,7 +252,6 @@ super.dispose();
                                     ),
                                   ],
                                 ),
-
                           user['email'] == null
                               ? Container()
                               : Column(children: [
@@ -279,7 +268,6 @@ super.dispose();
                                       ),
                                     ),
                                   ),
-
                                   SizedBox(
                                     width: screenWidth * 0.8,
                                     child: Row(
@@ -309,7 +297,6 @@ super.dispose();
                                           ),
                                         ]),
                                   ),
-
                                   SizedBox(
                                     height: screenHeight * 0.05,
                                     child: Center(
@@ -330,7 +317,6 @@ super.dispose();
                               ),
                             ),
                           ),
-
                           SizedBox(
                             width: screenWidth * 0.8,
                             child: Row(
@@ -357,7 +343,6 @@ super.dispose();
                                   ),
                                 ]),
                           ),
-
                           SizedBox(
                             height: screenHeight * 0.05,
                             child: Center(

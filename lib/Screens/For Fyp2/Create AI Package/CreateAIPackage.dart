@@ -23,23 +23,7 @@ class _CreateAIPackageState extends State<CreateAIPackage> {
   final CheckBoxController checkBoxController =
       CheckBoxController(selections: []);
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-@override
-  void initState() {
-    super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
+ 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

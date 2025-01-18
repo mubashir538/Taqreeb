@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Classes/api.dart';
-import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/OTP%20Boxes.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -137,8 +136,6 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                     try {
                       final result = await response;
                       final receivedOTP = result['otp'];
-                      print('Received OTP: $receivedOTP');
-                      print('Entered OTP: $_enteredOTP');
                       if (int.parse(_enteredOTP) == receivedOTP) {
                         Navigator.pushNamedAndRemoveUntil(
                             context,

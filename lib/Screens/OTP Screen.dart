@@ -15,26 +15,6 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   final TextEditingController phoneController = TextEditingController();
   FocusNode phoneFocus = FocusNode();
- 
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +23,6 @@ class _OTPScreenState extends State<OTPScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: Header(
-          key: _headerKey,
           heading: 'OTP Verification',
           para: 'Enter Phone number to send one time password',
         ),
@@ -56,7 +35,7 @@ class _OTPScreenState extends State<OTPScreen> {
             SizedBox(height: 20),
             MyTextBox(
               focusNode: phoneFocus,
-              onFieldSubmitted: (_){
+              onFieldSubmitted: (_) {
                 phoneFocus.unfocus();
               },
               hint: 'Enter your phone number',

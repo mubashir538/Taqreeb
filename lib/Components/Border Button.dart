@@ -7,9 +7,11 @@ class BorderButton extends StatelessWidget {
   final Function()? onPressed;
   final double height;
   final double width;
+  final double textSize;
   const BorderButton({
     super.key,
     required this.text,
+    this.textSize = 0,
     this.onPressed,
     this.height = 0,
     this.width = 0,
@@ -37,8 +39,8 @@ class BorderButton extends StatelessWidget {
           child: Text(
             text,
             style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.018,
-                fontWeight: FontWeight.w400,
+                fontSize: textSize != 0 ? textSize : MaximumThing * 0.018,
+                fontWeight: FontWeight.w600,
                 color: MyColors.red),
           ),
         ),

@@ -18,8 +18,10 @@ class Signup_MoreInfo extends StatefulWidget {
 }
 
 class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
-  String city = "";
-  String gender = "";
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  // String city = "";
+  // String gender = "";
   final TextEditingController ageController = TextEditingController();
 
   final GlobalKey _headerKey = GlobalKey();
@@ -43,10 +45,7 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -65,7 +64,7 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                         labelText: "City",
                         onChanged: (value) {
                           setState(() {
-                            city = value.toString();
+                            cityController.text = value.toString();
                           });
                         }),
                     ResponsiveDropdown(
@@ -73,7 +72,7 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                         labelText: "Gender",
                         onChanged: (value) {
                           setState(() {
-                            gender = value.toString();
+                            genderController.text = value.toString();
                           });
                         }),
                     MyTextBox(
@@ -87,8 +86,8 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                     ColoredButton(
                       text: 'Continue',
                       onPressed: () {
-                        if (gender.isEmpty ||
-                            city.isEmpty ||
+                        if (genderController.text.isEmpty ||
+                            cityController.text.isEmpty ||
                             ageController.text.isEmpty) {
                           warningDialog(
                                   title: 'Details Missing',
@@ -101,8 +100,8 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                                       'User should be atleast 18 years old')
                               .showDialogBox(context);
                         } else {
-                          MyStorage.saveToken(city, 'scity');
-                          MyStorage.saveToken(gender, 'sgender');
+                          MyStorage.saveToken(cityController.text, 'scity');
+                          MyStorage.saveToken(genderController.text, 'sgender');
                           Navigator.pushNamed(context, '/ProfilePictureUpload',
                               arguments: {'type': 'user'});
                         }

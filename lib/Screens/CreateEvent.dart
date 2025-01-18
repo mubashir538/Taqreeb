@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -8,6 +7,7 @@ import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/colorPicker.dart';
 import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
+import 'package:taqreeb/Components/headerSecondary.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/theme/color.dart';
@@ -89,10 +89,9 @@ class _CreateEventState extends State<CreateEvent> {
       if (mounted) {
         setState(() {
           if (edit) {
-            print('Edit Screen');
             this.Event = EventDetails ?? {};
             if (this.Event != {} ||
-                this.Event != null ||
+                this.Event != {} ||
                 this.Event['status'] != 'error') {
               eventNameController.text = this.Event['EventDetail']['name'];
               typeController.text = this.Event['EventDetail']['type'];
@@ -109,8 +108,7 @@ class _CreateEventState extends State<CreateEvent> {
                   this.Event['EventDetail']['guestsmin'].toString();
             }
           }
-          if (Event == null || Event['status'] == 'error') {
-            print('$Event');
+          if (Event == {} || Event['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -124,7 +122,6 @@ class _CreateEventState extends State<CreateEvent> {
             this.token = token;
             this.types = types ?? {};
             if (types == null || types['status'] == 'error') {
-              print('$types');
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('Something Went Wrong!',
                     style: GoogleFonts.montserrat(
@@ -150,24 +147,9 @@ class _CreateEventState extends State<CreateEvent> {
     super.dispose();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -176,7 +158,11 @@ class _CreateEventState extends State<CreateEvent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: _headerHeight),
+                Headersecondary(
+                  heading: edit ? "Edit Event" : "Create Event",
+                  para: "Plan your event effortlessly!",
+                  image: MyImages.SingupPng,
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                   child: Column(
@@ -235,19 +221,6 @@ class _CreateEventState extends State<CreateEvent> {
                         )
                       ], Heading: "Basic Info"),
                       QuestionGroup(questions: [
-                        // SizedBox(
-                        //   height: screenHeight * 0.2,
-                        //   child: MyTextBox(
-                        //     focusNode: descriptionFocus,
-                        //     onFieldSubmitted: (_) {
-                        //       FocusScope.of(context)
-                        //           .requestFocus(guestMinFocus);
-                        //     },
-                        //     hint: "Enter Description",
-                        //     valueController: descriptionController,
-                        //   ),
-                        // ),
-
                         DescriptionBox(
                           focusNode: descriptionFocus,
                           onFieldSubmitted: (_) {
@@ -352,12 +325,7 @@ class _CreateEventState extends State<CreateEvent> {
           ),
           Positioned(
             top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: edit ? "Edit Event" : "Create Event",
-              para: "Plan your event effortlessly!",
-              image: MyImages.SingupPng,
-            ),
+            child: Header(),
           ),
         ],
       ),

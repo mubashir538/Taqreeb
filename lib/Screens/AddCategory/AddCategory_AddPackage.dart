@@ -58,8 +58,6 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -108,7 +106,6 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
                           'details': _capitalize(detailsController.text),
                           'price': _capitalize(priceController.text),
                         });
-                        print(args);
                         Navigator.pushNamed(context, '/AddCategory_Packages',
                             arguments: args);
                       })

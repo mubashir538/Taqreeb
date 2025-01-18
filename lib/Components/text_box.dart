@@ -48,11 +48,6 @@ class _MyTextBoxState extends State<MyTextBox> {
     });
   }
 
-  @override
-  void dispose() {
-    _focusNode.dispose(); 
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

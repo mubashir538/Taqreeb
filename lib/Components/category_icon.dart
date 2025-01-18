@@ -29,7 +29,7 @@ class CategoryIcon extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: MaximumThing * 0.08,
+              width: MaximumThing * 0.1,
               height: MaximumThing * 0.08,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -41,7 +41,7 @@ class CategoryIcon extends StatelessWidget {
               ),
             ),
             Container(
-              constraints: BoxConstraints(maxWidth: MaximumThing * 0.1),
+              constraints: BoxConstraints(maxWidth: MaximumThing * 0.12),
               margin: EdgeInsets.only(top: MaximumThing * 0.004),
               child: Text(
                 label,
@@ -49,7 +49,7 @@ class CategoryIcon extends StatelessWidget {
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.015,
+                  fontSize: MaximumThing * 0.013,
                   fontWeight: FontWeight.w300,
                   color: MyColors.white,
                 ),

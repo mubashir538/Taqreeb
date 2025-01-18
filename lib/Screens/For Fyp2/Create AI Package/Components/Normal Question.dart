@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
+// ignore: must_be_immutable
 class NormalQuestion extends StatelessWidget {
   NormalQuestion(
       {super.key, required this.MaximumThing, required this.question});

@@ -16,7 +16,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  Map<String, dynamic> user = {}; 
+  Map<String, dynamic> user = {};
   String token = '';
   bool isLoading = true;
   String type = '';
@@ -38,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-    fetchData(); 
+    fetchData();
   }
 
   Timer? timer;
@@ -55,9 +55,8 @@ class _DashboardState extends State<Dashboard> {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.user = user ?? {}; 
+          this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            print('$user');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -90,123 +89,129 @@ class _DashboardState extends State<Dashboard> {
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: Stack(
-        children: [
-          isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: MyColors.white,
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(maximumDimension * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: (screenHeight * 0.02) + _headerHeight),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: maximumDimension * 0.03,
-                              vertical: maximumDimension * 0.02),
-                          decoration: BoxDecoration(
-                            color: MyColors.DarkLighter,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.4),
-                                blurRadius: 4,
-                                spreadRadius: 1,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: MyColors.red,
-                                radius: screenHeight * 0.05,
-                                backgroundImage: NetworkImage(
-                                  type == 'freelancer'
-                                      ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilePic']}'
-                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: Stack(
+          children: [
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: MyColors.white,
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.all(maximumDimension * 0.02),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: (screenHeight * 0.02) + _headerHeight),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: maximumDimension * 0.03,
+                                vertical: maximumDimension * 0.02),
+                            decoration: BoxDecoration(
+                              color: MyColors.DarkLighter,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.4),
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                  offset: Offset(2, 2),
                                 ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: MyColors.red,
+                                  radius: screenHeight * 0.05,
+                                  backgroundImage: NetworkImage(
+                                    type == 'freelancer'
+                                        ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilePic']}'
+                                        : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
+                                  ),
+                                ),
+                                SizedBox(width: screenWidth * 0.05),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user['businessInfo']['businessName'],
+                                      style: GoogleFonts.montserrat(
+                                        color: MyColors.Yellow,
+                                        fontSize: maximumDimension * 0.02,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    SizedBox(height: screenHeight * 0.01),
+                                    Text(
+                                      "${user['listingCount']} Active Listings",
+                                      style: GoogleFonts.montserrat(
+                                        color: MyColors.white.withOpacity(0.7),
+                                        fontSize: maximumDimension * 0.015,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.01),
+                          ListView(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              _buildOptionCard(context, "My Bookings",
+                                  Icons.calendar_today, MyColors.red, () {}),
+                              _buildOptionCard(
+                                context,
+                                "My Messages",
+                                Icons.message,
+                                MyColors.red,
+                                () {
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      '/ChatsScreen', ModalRoute.withName('/'));
+                                },
                               ),
-                              SizedBox(width: screenWidth * 0.05),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    user['businessInfo']['businessName'],
-                                    style: GoogleFonts.montserrat(
-                                      color: MyColors.Yellow,
-                                      fontSize: maximumDimension * 0.02,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  SizedBox(height: screenHeight * 0.01),
-                                  Text(
-                                    "${user['listingCount']} Active Listings",
-                                    style: GoogleFonts.montserrat(
-                                      color: MyColors.white.withOpacity(0.7),
-                                      fontSize: maximumDimension * 0.015,
-                                    ),
-                                  ),
-                                ],
+                              _buildOptionCard(
+                                context,
+                                "Manage Listings",
+                                Icons.business,
+                                MyColors.red,
+                                () {
+                                  Navigator.pushNamed(context, '/YourListings');
+                                },
+                              ),
+                              _buildOptionCard(
+                                context,
+                                "Profile Settings",
+                                Icons.settings,
+                                MyColors.red,
+                                () {
+                                  Navigator.pushNamed(
+                                      context, '/BusinessAccountInfo');
+                                },
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(height: screenHeight * 0.01),
-                        ListView(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            _buildOptionCard(context, "My Bookings",
-                                Icons.calendar_today, MyColors.red, () {}),
-                            _buildOptionCard(
-                              context,
-                              "My Messages",
-                              Icons.message,
-                              MyColors.red,
-                              () {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    '/ChatsScreen', ModalRoute.withName('/'));
-                              },
-                            ),
-                            _buildOptionCard(
-                              context,
-                              "Manage Listings",
-                              Icons.business,
-                              MyColors.red,
-                              () {
-                                Navigator.pushNamed(context, '/YourListings');
-                              },
-                            ),
-                            _buildOptionCard(
-                              context,
-                              "Profile Settings",
-                              Icons.settings,
-                              MyColors.red,
-                              () {
-                                Navigator.pushNamed(
-                                    context, '/BusinessAccountInfo');
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-          Positioned(
-            top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: "Business Dashboard",
+            Positioned(
+              top: 0,
+              child: Header(
+                key: _headerKey,
+                heading: "Business Dashboard",
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

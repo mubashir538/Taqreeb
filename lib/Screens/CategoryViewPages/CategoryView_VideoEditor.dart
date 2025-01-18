@@ -3,8 +3,6 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/package%20box.dart';
 import 'package:taqreeb/theme/color.dart';
-import 'package:taqreeb/theme/icons.dart';
-import 'package:taqreeb/theme/images.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CategoryView_VideoEditor extends StatefulWidget {

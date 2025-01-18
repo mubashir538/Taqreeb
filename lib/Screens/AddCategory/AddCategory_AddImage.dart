@@ -12,7 +12,6 @@ import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/theme/icons.dart';
 import 'package:http/http.dart' as http;
-import 'dart:math';
 
 class AddImage extends StatefulWidget {
   const AddImage({super.key});
@@ -25,7 +24,7 @@ class _AddImageState extends State<AddImage> {
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
 
-  final List<String> _images = []; 
+  final List<String> _images = [];
   Map<String, dynamic> args = {};
   bool ischanged = true;
 
@@ -38,7 +37,6 @@ class _AddImageState extends State<AddImage> {
     //   this.args = args;
     // }
     if (ischanged) {
-      print('args: $args');
       this.args = args;
       ischanged = false;
     }
@@ -103,7 +101,7 @@ class _AddImageState extends State<AddImage> {
 
   void _deleteImage(int index) {
     setState(() {
-      _images.removeAt(index); 
+      _images.removeAt(index);
     });
   }
 
@@ -145,7 +143,7 @@ class _AddImageState extends State<AddImage> {
                   ],
                 ),
                 child: InkWell(
-                  onTap: _pickImage, 
+                  onTap: _pickImage,
                   child: Center(
                     child: CircleAvatar(
                       radius: 30,
@@ -228,10 +226,6 @@ class _AddImageState extends State<AddImage> {
                 text: 'Add Service',
                 width: screenWidth * 0.5,
                 onPressed: () async {
-                  print('running');
-                  print('args: $args');
-                  print('pictures: $_images');
-
                   final request = http.MultipartRequest('POST',
                       Uri.parse(MyApi.baseUrl + 'businessowner/addListings/'));
 
@@ -246,8 +240,8 @@ class _AddImageState extends State<AddImage> {
                   for (int i = 0; i < _images.length; i++) {
                     request.files.add(
                       await http.MultipartFile.fromPath(
-                        'pictures', 
-                        _images[i], 
+                        'pictures',
+                        _images[i],
                       ),
                     );
                   }
@@ -262,7 +256,7 @@ class _AddImageState extends State<AddImage> {
                   final token =
                       await MyStorage.getToken(MyTokens.accessToken) ?? "";
                   request.headers.addAll({
-                    'Authorization': 'Bearer $token', 
+                    'Authorization': 'Bearer $token',
                   });
 
                   request.fields['priceMin'] = args['pricemin'];
@@ -303,7 +297,6 @@ class _AddImageState extends State<AddImage> {
                   if (response.statusCode == 200) {
                     final Map<String, dynamic> jsonResponse =
                         jsonDecode(responseBody);
-                    print('Your Response: $jsonResponse');
                     if (jsonResponse['status'] == 'error') {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

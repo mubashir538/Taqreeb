@@ -9,7 +9,7 @@ class DescriptionBox extends StatefulWidget {
     this.focusNode,
     this.onFieldSubmitted,
     required this.valueController,
-    this.onChanged, 
+    this.onChanged,
   });
 
   final FocusNode? focusNode;
@@ -39,7 +39,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
 
   @override
   void dispose() {
-    _focusNode.dispose(); 
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -60,9 +60,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
       decoration: BoxDecoration(
         color: MyColors.DarkLighter,
         border: Border.all(
-          color: _isFocused
-              ? MyColors.red
-              : Colors.transparent, 
+          color: _isFocused ? MyColors.red : Colors.transparent,
           width: 2,
         ),
         borderRadius: BorderRadius.circular(20),
@@ -78,8 +76,8 @@ class _DescriptionStateBox extends State<DescriptionBox> {
       child: TextField(
         focusNode: _focusNode,
         onSubmitted: widget.onFieldSubmitted,
-        controller: widget.valueController, 
-                onChanged: (value) => widget.onChanged!(value),
+        controller: widget.valueController,
+        onChanged: (value) => widget.onChanged!(value),
         maxLines: 50,
         style: GoogleFonts.montserrat(
           color: MyColors.white,

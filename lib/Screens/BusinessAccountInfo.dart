@@ -46,7 +46,6 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
           this.token = token;
           this.user = user ?? {}; 
           if (user == null || user['status'] == 'error') {
-            print('$user');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(

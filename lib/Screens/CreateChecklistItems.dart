@@ -6,10 +6,10 @@ import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
+import 'package:taqreeb/Components/headerSecondary.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class CreateChecklistItems extends StatefulWidget {
@@ -25,7 +25,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   List<Map<String, dynamic>> changedFields = [];
   String token = '';
   final TextEditingController _textController = TextEditingController();
-  FocusNode _textFocus = FocusNode();
 
   bool isfunction = false;
   int functionid = 0;
@@ -46,60 +45,49 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       }
       eventId = args['eventId'];
     });
-    fetchData();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    if (!changedfirst) {
+      fetchData();
+    }
   }
 
   Timer? timer;
+
   void fetchData() async {
-    if (changedfirst) {
-      return;
-    }
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final fetchedlist = await MyApi.getRequest(
       endpoint: isfunction
           ? 'show/checklist/$eventId/$functionid'
           : 'show/checklist/$eventId',
       headers: {'Authorization': 'Bearer $token'},
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
     );
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          this.token = token;
-          this.list = fetchedlist ?? {};
-          if (list == null || list['status'] == 'error') {
-            print('$list');
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
-            return;
-          } else {
-            if (list['checklist'] != null) {
-              checklistItems = (list['checklist'] as List)
-                  .map((e) => e as Map<String, dynamic>)
-                  .toList();
-            }
-            isLoading = false; 
-            changedfirst = true;
-          }
-
-        });
-      }
-    });
+    if (mounted) {
+      setState(() {
+        this.token = token;
+        this.list = fetchedlist ?? {};
+        if (list.isEmpty || list['status'] == 'error') {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              'Something Went Wrong!',
+              style: GoogleFonts.montserrat(
+                fontSize: 14,
+                color: MyColors.white,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            backgroundColor: MyColors.red,
+          ));
+          return;
+        }
+        if (list['checklist'] != null) {
+          checklistItems = (list['checklist'] as List)
+              .map((e) => e as Map<String, dynamic>)
+              .toList();
+        }
+        isLoading = false;
+      });
+    }
+    changedfirst = true;
   }
 
   @override
@@ -111,10 +99,8 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   void _addChecklistItem(String text) {
     setState(() {
       checklistItems.add({"description": text, "isChecked": false});
+      newitems.add({"description": text, "isChecked": false});
     });
-    newitems.add({"description": text, "isChecked": false});
-    print('New Items: $newitems');
-    print('Checklist Items: $checklistItems');
     _textController.clear();
   }
 
@@ -175,12 +161,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           ),
         ),
         content: MyTextBox(
-            focusNode: _textFocus,
-            onFieldSubmitted: (_) {
-              FocusScope.of(context).unfocus();
-            },
-            hint: 'Enter Checklist Item',
-            valueController: _textController),
+            hint: 'Enter Checklist Item', valueController: _textController),
         actions: [
           TextButton(
             onPressed: () {
@@ -214,26 +195,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     );
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double MaximumThing =
         screenWidth > screenHeight ? screenWidth : screenHeight;
-    _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -245,8 +212,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: _headerHeight),
-                  Column(children: [
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Headersecondary(
+                      heading: "Create CheckList",
+                      para: "From to-do to done one check at a time!",
+                      image: MyImages.CheckList,
+                    ),
                     isLoading
                         ? CircularProgressIndicator(
                             valueColor:
@@ -304,7 +275,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                         onPressed: () async {
                           bool flag = false;
                           for (var item in changedFields) {
-                            print('Item: $item');
                             final response = await MyApi.postRequest(
                                 endpoint: 'update/checklist',
                                 headers: {
@@ -354,12 +324,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           ),
           Positioned(
             top: 0,
-            child: Header(
-              key: _headerKey,
-              heading: "Create CheckList",
-              para: "From to-do to done one check at a time!",
-              image: MyImages.CheckList,
-            ),
+            child: Header(),
           ),
         ],
       ),
