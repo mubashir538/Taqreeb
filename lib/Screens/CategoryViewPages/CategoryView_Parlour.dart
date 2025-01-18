@@ -316,8 +316,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                     values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
-                                        addonsheadings: addonsheadings,
-                                        addonsvalues: addonsvalues,
+                                        listing: listing,
                                       )
                                     : Container(),
                                 listing['Package'].length != 0

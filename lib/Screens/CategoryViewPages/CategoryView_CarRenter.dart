@@ -313,12 +313,12 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                 PricingSection(listing: listing),
                                 DescriptionCategory(listing: listing),
                                 CategoryDetails(
-                                  listing: listing,
-                                    headings: headings, values: values),
+                                    listing: listing,
+                                    headings: headings,
+                                    values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
-                                        addonsheadings: addonsheadings,
-                                        addonsvalues: addonsvalues,
+                                        listing: listing,
                                       )
                                     : Container(),
                                 listing['Package'].length != 0

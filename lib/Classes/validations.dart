@@ -1,3 +1,5 @@
+import 'package:url_launcher/url_launcher.dart';
+
 class Validations {
   static String validateEmail(String? value) {
     value = value!.trim();
@@ -20,6 +22,17 @@ class Validations {
       return 'Username cannot contain spaces';
     } else if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
       return 'Username can only contain letters, numbers and underscores';
+    }
+    return "Ok";
+  }
+
+  static Future<String> validateLink(String? value) async {
+    value = value?.trim();
+
+    if (value == null || value.isEmpty) {
+      return 'Please enter a link';
+    } else if (!(await canLaunchUrl(Uri.parse(value)))) {
+      return "Invalid Link";
     }
     return "Ok";
   }

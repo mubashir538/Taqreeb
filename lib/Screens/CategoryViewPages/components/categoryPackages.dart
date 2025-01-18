@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/Components/Border%20Button.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/package%20box.dart';
+import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/theme/color.dart';
 
 class CategoryPackages extends StatefulWidget {
@@ -31,11 +36,15 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     nameController = TextEditingController();
     detailsController = TextEditingController();
     priceController = TextEditingController();
+    print(widget.listing);
     SetType();
   }
 
   // Method to show the popup for adding or editing a package
-  void showPackagePopup({int? index}) {
+  void showPackagePopup(double screenWidth, double maximum, {int? index}) {
+    FocusNode nameFocus = new FocusNode();
+    FocusNode detailsFocus = new FocusNode();
+    FocusNode priceFocus = new FocusNode();
     if (index != null) {
       // If index is provided, we are editing an existing package
       var package = widget.listing['Package'][index];
@@ -53,90 +62,175 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          scrollable: true,
           backgroundColor: MyColors.Dark,
           title: Text(
-            index != null ? 'Edit Package' : 'Add New Package',
+            'Add Package',
             style: GoogleFonts.montserrat(
-              color: MyColors.Yellow,
+              fontSize: maximum * 0.02,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              color: MyColors.Yellow,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Name TextField
-              TextField(
-                controller: nameController,
-                style: GoogleFonts.montserrat(color: MyColors.white),
-                decoration: InputDecoration(
-                  labelText: 'Package Name',
-                  labelStyle: TextStyle(color: MyColors.white),
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter Package Name',
-                  hintStyle: TextStyle(color: Colors.grey),
+          content: Container(
+            width: screenWidth,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MyTextBox(
+                  focusNode: nameFocus,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(detailsFocus);
+                  },
+                  hint: 'Name',
+                  valueController: nameController,
                 ),
-              ),
-              SizedBox(height: 16),
-              // Details TextField
-              TextField(
-                controller: detailsController,
-                style: GoogleFonts.montserrat(color: MyColors.white),
-                decoration: InputDecoration(
-                  labelText: 'Package Details',
-                  labelStyle: TextStyle(color: MyColors.white),
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter Package Details',
-                  hintStyle: TextStyle(color: Colors.grey),
+                DescriptionBox(
+                  valueController: detailsController,
+                  focusNode: detailsFocus,
+                  onChanged: (value) {},
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(priceFocus);
+                  },
                 ),
-              ),
-              SizedBox(height: 16),
-              // Price TextField
-              TextField(
-                controller: priceController,
-                style: GoogleFonts.montserrat(color: MyColors.white),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Package Price',
-                  labelStyle: TextStyle(color: MyColors.white),
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter Package Price',
-                  hintStyle: TextStyle(color: Colors.grey),
+                MyTextBox(
+                  focusNode: priceFocus,
+                  onFieldSubmitted: (_) {
+                    priceFocus.unfocus();
+                  },
+                  hint: 'Price',
+                  isNum: true,
+                  isPrice: true,
+                  valueController: priceController,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
-            // Save Button
-            TextButton(
+            BorderButton(
+              text: 'Cancel',
+              width: screenWidth * 0.3,
+              textSize: maximum * 0.015,
               onPressed: () {
-                setState(() {
-                  if (index != null) {
-                    // Update the package at the index
-                    widget.listing['Package'][index] = {
-                      'name': nameController.text,
-                      'description': detailsController.text,
-                      'price': double.parse(priceController.text),
-                    };
-                  } else {
-                    // Add new package
-                    widget.listing['Package'].add({
-                      'name': nameController.text,
-                      'description': detailsController.text,
-                      'price': double.parse(priceController.text),
-                    });
-                  }
-                });
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
-              child: Text(
-                'Save',
-                style: GoogleFonts.montserrat(
-                  color: MyColors.Yellow,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
             ),
+            ColoredButton(
+                text: 'Add',
+                width: screenWidth * 0.3,
+                textSize: maximum * 0.015,
+                onPressed: () async {
+                  if (index == null) {
+                    final response = await MyApi.postRequest(
+                      headers: {
+                        'Authorization':
+                            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                      },
+                      endpoint: 'businessowner/updateListings/',
+                      body: {
+                        'id': widget.listing['Listing']['id'].toString(),
+                        'operation': 'add',
+                        'value': 'package',
+                        'namev': nameController.text,
+                        'pricev': priceController.text,
+                        'descv': detailsController.text,
+                      },
+                    );
+
+                    if (response['status'] == 'success') {
+                      setState(() {
+                        (widget.listing['Package'] as List).add({
+                          'id': response['id'],
+                          'name': nameController.text,
+                          'description': detailsController.text,
+                          'price': priceController.text,
+                        });
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Package Added Successfully!',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                color: MyColors.white,
+                                fontWeight: FontWeight.w400)),
+                        backgroundColor: MyColors.red,
+                      ));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Something Went Wrong!',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                color: MyColors.white,
+                                fontWeight: FontWeight.w400)),
+                        backgroundColor: MyColors.red,
+                      ));
+                    }
+                  } else {
+                    print(widget.listing['Package'][index]);
+                    final response = await MyApi.postRequest(
+                      headers: {
+                        'Authorization':
+                            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                      },
+                      endpoint: 'businessowner/updateListings/',
+                      body: {
+                        'id': widget.listing['Listing']['id'].toString(),
+                        'operation': 'edit',
+                        'value': 'package',
+                        'idv': widget.listing['Package'][index]['id'],
+                        'namev': nameController.text,
+                        'pricev': priceController.text,
+                        'descv': detailsController.text,
+                      },
+                    );
+
+                    if (response['status'] == 'success') {
+                      setState(() {
+                        widget.listing['Package'][index] = {
+                          'name': nameController.text,
+                          'description': detailsController.text,
+                          'price': priceController.text,
+                        };
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Package Updated Successfully!',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                color: MyColors.white,
+                                fontWeight: FontWeight.w400)),
+                        backgroundColor: MyColors.red,
+                      ));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Something Went Wrong!',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                color: MyColors.white,
+                                fontWeight: FontWeight.w400)),
+                        backgroundColor: MyColors.red,
+                      ));
+                    }
+                  }
+
+                  setState(() {
+                    if (index != null) {
+                      widget.listing['Package'][index] = {
+                        'name': nameController.text,
+                        'description': detailsController.text,
+                        'price': priceController.text,
+                      };
+                    } else {
+                      // Add new package
+                      widget.listing['Package'].add({
+                        'name': nameController.text,
+                        'description': detailsController.text,
+                        'price': priceController.text,
+                      });
+                    }
+                  });
+                  Navigator.pop(context);
+                })
+
+            // Save Button
           ],
         );
       },
@@ -144,14 +238,46 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   }
 
   // Method to delete a package
-  void deletePackage(int index) {
-    setState(() {
-      widget.listing['Package'].removeAt(index);
-    });
+  void deletePackage(int index) async {
+    final response = await MyApi.postRequest(
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+      endpoint: 'businessowner/updateListings/',
+      body: {
+        'id': widget.listing['Listing']['id'].toString(),
+        'operation': 'delete',
+        'value': 'package',
+        'idv': widget.listing['Package'][index]['id']
+      },
+    );
+    if (response['status'] == 'success') {
+      setState(() {
+        widget.listing['Package'].removeAt(index);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Package Deleted Successfully!',
+            style: GoogleFonts.montserrat(
+                fontSize: 14,
+                color: MyColors.white,
+                fontWeight: FontWeight.w400)),
+        backgroundColor: MyColors.red,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Something Went Wrong!',
+            style: GoogleFonts.montserrat(
+                fontSize: 14,
+                color: MyColors.white,
+                fontWeight: FontWeight.w400)),
+        backgroundColor: MyColors.red,
+      ));
+    }
   }
 
   bool type = false;
-   Future<void> SetType() async {
+  Future<void> SetType() async {
     final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
         await MyStorage.exists(MyTokens.isFreelancer);
     setState(() {
@@ -201,8 +327,10 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                                 IconButton(
                                   icon:
                                       Icon(Icons.edit, color: MyColors.Yellow),
-                                  onPressed: () =>
-                                      showPackagePopup(index: index),
+                                  onPressed: () => showPackagePopup(
+                                      index: index,
+                                      screenWidth,
+                                      maximumDimension),
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.delete, color: MyColors.red),
@@ -227,7 +355,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
             // Add New Package Icon
             IconButton(
               icon: Icon(Icons.add_circle_outline, color: MyColors.Yellow),
-              onPressed: () => showPackagePopup(),
+              onPressed: () => showPackagePopup(screenWidth, maximumDimension),
             ),
             SizedBox(
               height: screenHeight * 0.05,
@@ -241,41 +369,44 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       );
     } else {
       // Static layout
-      return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Packages',
-              style: GoogleFonts.montserrat(
-                fontSize: maximumDimension * 0.025,
-                fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
-              ),
-            ),
-            Padding(
+      return widget.listing['Package'].length != 0
+          ? Padding(
               padding: EdgeInsets.only(top: screenHeight * 0.02),
               child: Column(
-                children: widget.listing['Package'].map<Widget>((package) {
-                  return PackageBox(
-                    packagedetails: package['description'],
-                    packageprice: package['price'].toString(),
-                    packagename: package['name'],
-                  );
-                }).toList(),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Packages',
+                    style: GoogleFonts.montserrat(
+                      fontSize: maximumDimension * 0.025,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.Yellow,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.02),
+                    child: Column(
+                      children:
+                          widget.listing['Package'].map<Widget>((package) {
+                        return PackageBox(
+                          packagedetails: package['description'],
+                          packageprice: package['price'].toString(),
+                          packagename: package['name'],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                    child: Center(
+                        child: MyDivider(
+                      width: screenWidth * 0.85,
+                    )),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(
-              height: screenHeight * 0.05,
-              child: Center(
-                  child: MyDivider(
-                width: screenWidth * 0.85,
-              )),
-            ),
-          ],
-        ),
-      );
+            )
+          : Container();
     }
   }
 }

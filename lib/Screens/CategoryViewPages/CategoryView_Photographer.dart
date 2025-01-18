@@ -320,8 +320,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                                     values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
-                                        addonsheadings: addonsheadings,
-                                        addonsvalues: addonsvalues,
+                                        listing: listing,
                                       )
                                     : Container(),
                                 listing['Package'].length != 0

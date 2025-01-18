@@ -197,8 +197,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                                     values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
-                                        addonsheadings: addonsheadings,
-                                        addonsvalues: addonsvalues,
+                                        listing: listing,
                                       )
                                     : Container(),
                                 listing['Package'].length != 0

@@ -318,8 +318,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                     values: values),
                                 addonsheadings.length != 0
                                     ? CategoryAddons(
-                                        addonsheadings: addonsheadings,
-                                        addonsvalues: addonsvalues,
+                                        listing: listing,
                                       )
                                     : Container(),
                                 listing['Package'].length != 0

@@ -205,15 +205,10 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        addonsheadings: addonsheadings,
-                                        addonsvalues: addonsvalues,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {
