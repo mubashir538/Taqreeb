@@ -32,12 +32,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   bool isLoading = true;
 
   bool isToggled = true;
-  List<String> headings = [
-    'Service Type',
-    'Catering Options',
-    'Staff',
-    'Expertise'
-  ];
+  List<String> headings = [];
   List<String> values = [];
   List<String> addonsheadings = [];
   List<String> addonsvalues = [];
@@ -54,6 +49,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
   bool type = false;
+  bool ischange = false;
 
   @override
   void didChangeDependencies() {
@@ -65,11 +61,14 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
       listingId = args['id'];
       type = args['isBusiness'];
     });
-    fetchData();
+    if (!ischange) {
+      fetchData();
+    }
   }
 
   Timer? timer;
   void fetchData() async {
+    ischange = true;
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
         headers: {'Authorization': 'Bearer $token'},
@@ -104,10 +103,6 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                 this.addonsvalues.add(listing['Addons'][i]['price'].toString());
               }
             }
-            this.values.add(listing['View']['serviceType']);
-            this.values.add(listing['View']['cateringOptions']);
-            this.values.add(listing['View']['staff']);
-            this.values.add(listing['View']['expertise']);
             this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
@@ -314,14 +309,10 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {

@@ -12,7 +12,6 @@ import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryReview.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/components/categorySlots.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categorydetails.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/descriptionCategory.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/imageslider.dart';
@@ -32,12 +31,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   bool isLoading = true;
   bool ischange = false;
   bool isToggled = true;
-  List<String> headings = [
-    'Service Type',
-    'Catering Options',
-    'Staff',
-    'Expertise'
-  ];
+  List<String> headings = [];
   List<String> values = [];
   List<String> addonsheadings = [];
   List<String> addonsvalues = [];
@@ -195,29 +189,10 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
-                                CategorySlots(
+                                CategoryAddons(
                                   listing: listing,
-                                  onDateSelected: (date) {
-                                    setState(() {
-                                      selectedDate = date;
-                                    });
-                                  },
                                 ),
-                                SizedBox(
-                                  height: screenHeight * 0.05,
-                                  child: Center(
-                                      child: MyDivider(
-                                    width: screenWidth * 0.85,
-                                  )),
-                                ),
+                                CategoryPackages(listing: listing),
                                 CategoryReview(
                                     listing: listing, starsvalue: starsvalue),
                                 SizedBox(

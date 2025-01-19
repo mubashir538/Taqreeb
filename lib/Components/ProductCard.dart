@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Classes/api.dart';
-import 'package:taqreeb/Classes/flutterStorage.dart';
-import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/Components/Border%20Button.dart';
-import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/warningDialog.dart';
-import 'package:taqreeb/theme/color.dart';
 
 class Productcard extends StatefulWidget {
   final String imageUrl;
@@ -33,6 +26,10 @@ class Productcard extends StatefulWidget {
   State<Productcard> createState() => _ProductcardState();
 }
 
+String toLowerCaseNoSpaces(String input) {
+  return input.toLowerCase().replaceAll(' ', '');
+}
+
 class _ProductcardState extends State<Productcard> {
   @override
   Widget build(BuildContext context) {
@@ -44,25 +41,26 @@ class _ProductcardState extends State<Productcard> {
     return InkWell(
       onTap: () {
         String path = '';
-        if (widget.listingType == "Venue") {
+        final listingType = toLowerCaseNoSpaces(widget.listingType);
+        if (listingType == toLowerCaseNoSpaces("venue")) {
           path = '/CategoryView_Venue';
-        } else if (widget.listingType == "Graphic Designer") {
+        } else if (listingType == toLowerCaseNoSpaces("graphicdesigner")) {
           path = '/CategoryView_GraphicDesigner';
-        } else if (widget.listingType == "Video Editor") {
+        } else if (listingType == toLowerCaseNoSpaces("Video Editor")) {
           path = '/CategoryView_VideoEditor';
-        } else if (widget.listingType == "Bakers And Sweets") {
+        } else if (listingType == toLowerCaseNoSpaces("Baker And Sweet")) {
           path = '/CategoryView_BakerySweet';
-        } else if (widget.listingType == "Salon") {
+        } else if (listingType == toLowerCaseNoSpaces("Salon")) {
           path = '/CategoryView_Salon';
-        } else if (widget.listingType == "Parlor") {
+        } else if (listingType == toLowerCaseNoSpaces("Parlour")) {
           path = '/CategoryView_Parlour';
-        } else if (widget.listingType == "Decorator") {
+        } else if (listingType == toLowerCaseNoSpaces("Decorator")) {
           path = '/CategoryView_Decorator';
-        } else if (widget.listingType == "Car Renter") {
+        } else if (listingType == toLowerCaseNoSpaces("Car Renter")) {
           path = '/CategoryView_CarRenter';
-        } else if (widget.listingType == "Photographer") {
+        } else if (listingType == toLowerCaseNoSpaces("Photographer")) {
           path = '/CategoryView_Photographer';
-        } else if (widget.listingType == "Caterer") {
+        } else if (listingType == toLowerCaseNoSpaces("Caterer")) {
           path = '/CategoryView_Caterers';
         }
         Navigator.pushNamed(context, path, arguments: {
@@ -83,10 +81,6 @@ class _ProductcardState extends State<Productcard> {
         ),
         child: Stack(
           children: [
-            // widget.isBusiness
-            //     ? Align(
-            //         alignment: Alignment.topRight,
-            //         child: : Container(),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(

@@ -509,13 +509,14 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                         ],
                       ),
                     ),
-                  SizedBox(
-                    height: screenHeight * 0.05,
-                    child: Center(
-                        child: MyDivider(
-                      width: screenWidth * 0.85,
-                    )),
-                  ),
+                  if (widget.headings.length != 0)
+                    SizedBox(
+                      height: screenHeight * 0.05,
+                      child: Center(
+                          child: MyDivider(
+                        width: screenWidth * 0.85,
+                      )),
+                    ),
                 ],
               ),
             );
@@ -541,15 +542,16 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                     widget.headings[i] == 'portfolio Link'
                         ? InkWell(
                             onTap: () async {
-                              if(await canLaunchUrl(Uri.parse(widget.values[i]))){
-
-                              await launchUrl(
-                                Uri.parse(widget.values[i]),
-                                mode: LaunchMode
-                                    .externalApplication,
-                              );
-                              }else{
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Can not Open Link')));
+                              if (await canLaunchUrl(
+                                  Uri.parse(widget.values[i]))) {
+                                await launchUrl(
+                                  Uri.parse(widget.values[i]),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text('Can not Open Link')));
                               }
                             },
                             child: Icon(
@@ -576,13 +578,14 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   ],
                 ),
               ),
-            SizedBox(
-              height: screenHeight * 0.05,
-              child: Center(
-                  child: MyDivider(
-                width: screenWidth * 0.85,
-              )),
-            ),
+            if (widget.headings.length != 0)
+              SizedBox(
+                height: screenHeight * 0.05,
+                child: Center(
+                    child: MyDivider(
+                  width: screenWidth * 0.85,
+                )),
+              ),
           ],
         ),
       );

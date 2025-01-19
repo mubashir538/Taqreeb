@@ -316,14 +316,10 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {

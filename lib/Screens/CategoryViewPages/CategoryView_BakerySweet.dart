@@ -32,12 +32,7 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
   bool isLoading = true;
 
   bool isToggled = true;
-  List<String> headings = [
-    'Service Type',
-    'Catering Options',
-    'Staff',
-    'Expertise'
-  ];
+  List<String> headings = [];
   List<String> values = [];
   List<String> stars = [
     '5 Stars',
@@ -77,6 +72,7 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
 
   Timer? timer;
   void fetchData() async {
+    ischange = true;
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
       endpoint: 'Bakers/viewpage/${this.listingId}',
@@ -185,9 +181,7 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryPackages(listing: listing),
                                 CategoryReview(
                                     listing: listing, starsvalue: starsvalue),
                                 SizedBox(

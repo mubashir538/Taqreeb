@@ -318,14 +318,10 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {

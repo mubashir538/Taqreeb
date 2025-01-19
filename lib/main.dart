@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
@@ -61,22 +65,50 @@ import 'package:taqreeb/Screens/groupchats.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/firebase_options.dart';
+import 'package:taqreeb/theme/color.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+  // FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+    // initialize();
+  }
+
+  bool ishome = false;
+
+  void initialize() async {
+    MyColors.getTheme();
+
+    Timer(Duration(seconds: 3), () async {
+      await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
+      if (await MyStorage.exists(MyTokens.accessToken)) {
+        ishome = true;
+      }
+    });
+    FlutterNativeSplash.remove();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: ishome ? MainScreen(index: 0) : Login(),
       routes: {
         '/': (context) => SplashScreen(),
         '/settings': (context) => Settings(),

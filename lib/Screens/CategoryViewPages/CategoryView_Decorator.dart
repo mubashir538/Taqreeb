@@ -77,6 +77,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
 
   Timer? timer;
   void fetchData() async {
+    ischange = true;
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
       endpoint: 'decorator/detail/${this.listingId}',
@@ -316,14 +317,10 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {

@@ -248,13 +248,18 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                widget.listing['Listing']['name'],
-                                softWrap: true,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: maximumDimension * 0.025,
-                                  fontWeight: FontWeight.w600,
-                                  color: MyColors.white,
+                              Container(
+                                width: screenWidth*0.8,
+                                child: Text(
+                                  widget.listing['Listing']['name'],
+                                  softWrap: true,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: maximumDimension * 0.025,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.white,
+                                  ),
                                 ),
                               ),
                               !type

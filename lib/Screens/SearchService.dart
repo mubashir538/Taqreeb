@@ -61,7 +61,7 @@ class _SearchServiceState extends State<SearchService> {
       if (args != null) {
         this.args = args as Map<String, dynamic>;
       }
-        fetchData();
+      fetchData();
     }
   }
 
@@ -129,6 +129,15 @@ class _SearchServiceState extends State<SearchService> {
         _headerHeight = renderBox.size.height;
       });
     }
+  }
+
+  String searchListingPicture(int listingid, Map<String, dynamic> listing) {
+    for (int i = 0; i < listing['pictures'].length; i++) {
+      if (listing['pictures'][i][0]['listingId'] == listingid) {
+        return listing['pictures'][i][0]['picturePath'];
+      }
+    }
+    return '';
   }
 
   @override
@@ -261,11 +270,13 @@ class _SearchServiceState extends State<SearchService> {
                                   listingid: templistings['HomeListing'][index]
                                           ['id']
                                       .toString(),
-                                  imageUrl: templistings['pictures'][index][0]
-                                              ['picturePath'] ==
-                                          " "
+                                  imageUrl: searchListingPicture(
+                                              templistings['HomeListing'][index]
+                                                  ['id'],
+                                              templistings) ==
+                                          ""
                                       ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${templistings['pictures'][index][0]['picturePath']}',
+                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${searchListingPicture(templistings['HomeListing'][index]['id'], templistings)}',
                                   venueName: templistings['HomeListing'][index]
                                       ['name'],
                                   location: templistings['HomeListing'][index]

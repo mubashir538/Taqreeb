@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/theme/color.dart';
 
-import '../../../Components/calendar.dart';
+// import '../../../Components/calendar.dart';
 
 class CategorySlots extends StatefulWidget {
   final Function(DateTime) onDateSelected;
@@ -35,15 +35,15 @@ class _CategorySlotsState extends State<CategorySlots> {
           margin: EdgeInsets.symmetric(
               vertical: maximumDimension * 0.02,
               horizontal: maximumDimension * 0.01),
-          child: CalendarView(
-            onDateSelected: widget.onDateSelected,
-            bookedDates: widget.listing['bookedDates']
-                .map((date) {
-                  return DateTime.parse(date);
-                })
-                .cast<DateTime>()
-                .toList(),
-          ),
+          // child: CalendarView(
+          //   onDateSelected: widget.onDateSelected,
+          //   bookedDates: widget.listing['bookedDates']
+          //       .map((date) {
+          //         return DateTime.parse(date);
+          //       })
+          //       .cast<DateTime>()
+          //       .toList(),
+          // ),
         ),
       ],
     );
