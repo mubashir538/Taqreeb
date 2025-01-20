@@ -27,9 +27,9 @@ class _ChatBoxState extends State<ChatBox> {
   final ImagePicker _imagePicker = ImagePicker();
   String? _currentUserId;
   String chatUserId = "";
-  String? chatUserName; // User's name fetched from Firestore
-  String? chatName; // User's name fetched from Firestore
-  String? chatUserImage; // User's profile image fetched from Firestore
+  String? chatUserName;
+  String? chatName;
+  String? chatUserImage;
   bool isLoading = true;
   bool isMessageSent = true;
   bool isChanged = false;
@@ -49,8 +49,7 @@ class _ChatBoxState extends State<ChatBox> {
 
   void fetchdata() async {
     _currentUserId = await MyStorage.getToken(MyTokens.userId);
-    await _initializeUserId();
-    await _fetchChatUserDetails(); // Fetch user's details using Firestore
+    await _fetchChatUserDetails();
     isChanged = true;
     isLoading = false;
   }
@@ -60,12 +59,7 @@ class _ChatBoxState extends State<ChatBox> {
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
-  Future<void> _initializeUserId() async {
-    // Initialize the current user ID from storage
-  }
-
   Future<void> _fetchChatUserDetails() async {
-    // Fetch chat user details from Firestore
     try {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(chatUserId).get();
@@ -85,7 +79,6 @@ class _ChatBoxState extends State<ChatBox> {
   Future<void> _sendMessage(String text) async {
     if (_currentUserId == null || text.isEmpty) return;
 
-    // Prepare the message data
     var messageData = {
       'senderId': _currentUserId,
       'receiverId': chatUserId,
@@ -94,28 +87,23 @@ class _ChatBoxState extends State<ChatBox> {
       'type': 'text',
     };
 
-    // Send the text message to the chat's messages collection
     await _firestore
         .collection('chats')
         .doc(_getChatId())
         .collection('messages')
         .add(messageData);
 
-    // Update the last message and new message count in the chat document
     await _firestore.collection('chats').doc(_getChatId()).set({
       'chatId': _getChatId(),
       'lastMessage': text,
       'lastMessageTime': FieldValue.serverTimestamp(),
-      'newMessage': FieldValue.increment(1), // Increment unread message count
+      'newMessage': FieldValue.increment(1),
       'unreadMessages': {
-        _currentUserId:
-            FieldValue.increment(0), // Keep the sender's count unchanged
-        chatUserId:
-            FieldValue.increment(1), // Increase the receiver's unread count
+        _currentUserId: FieldValue.increment(0),
+        chatUserId: FieldValue.increment(1),
       },
-    }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
+    }, SetOptions(merge: true));
 
-    print('Message sent: $text');
     _messageController.clear();
     setState(() {
       isMessageSent = true;
@@ -148,7 +136,6 @@ class _ChatBoxState extends State<ChatBox> {
 
         String imageUrl = jsonResponse['path'];
 
-        // Store the image message in Firestore
         await _firestore
             .collection('chats')
             .doc(_getChatId())
@@ -161,20 +148,16 @@ class _ChatBoxState extends State<ChatBox> {
           'type': 'image',
         });
 
-        // Update the last message and new message count
         await _firestore.collection('chats').doc(_getChatId()).set({
           'chatId': _getChatId(),
           'lastMessage': 'Image sent',
           'lastMessageTime': FieldValue.serverTimestamp(),
           'unreadMessages': {
-            _currentUserId:
-                FieldValue.increment(0), // Keep the sender's count unchanged
-            chatUserId:
-                FieldValue.increment(1), // Increase the receiver's unread count
+            _currentUserId: FieldValue.increment(0),
+            chatUserId: FieldValue.increment(1),
           },
         }, SetOptions(merge: true));
 
-        print('Image uploaded and message sent: $imageUrl');
       } else {
         print('Failed to upload image: ${response.statusCode}');
       }
@@ -187,13 +170,11 @@ class _ChatBoxState extends State<ChatBox> {
     if (_currentUserId == null) return;
 
     await _firestore.collection('chats').doc(_getChatId()).update({
-      'unreadMessages.$_currentUserId':
-          0, // Reset the sender's unread message count
+      'unreadMessages.$_currentUserId': 0,
     });
   }
 
   String _getChatId() {
-    // Generate a unique chat ID using the sender and receiver IDs
     return _currentUserId!.compareTo(chatUserId) > 0
         ? '$_currentUserId-${chatUserId}'
         : '${chatUserId}-$_currentUserId';
@@ -201,7 +182,7 @@ class _ChatBoxState extends State<ChatBox> {
 
   String _formatTimestamp(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate();
-    var format = DateFormat('h:mm a'); // 12-hour format
+    var format = DateFormat('h:mm a');
     return format.format(dateTime);
   }
 
@@ -225,9 +206,8 @@ class _ChatBoxState extends State<ChatBox> {
     bool isSentByMe = doc['senderId'] == _currentUserId;
     String messageType = doc['type'];
 
-    DateTime timestamp = doc['timestamp'] != null
-        ? doc['timestamp'].toDate()
-        : DateTime.now(); // Fallback for null timestamp
+    DateTime timestamp =
+        doc['timestamp'] != null ? doc['timestamp'].toDate() : DateTime.now();
 
     if (messageType == 'text') {
       return isSentByMe
@@ -332,7 +312,6 @@ class _ChatBoxState extends State<ChatBox> {
                                   .orderBy('timestamp', descending: true)
                                   .snapshots(),
                               builder: (context, snapshot) {
-                                print('Running!');
                                 if (!snapshot.hasData) {
                                   return Center(
                                       child: CircularProgressIndicator());
@@ -342,12 +321,10 @@ class _ChatBoxState extends State<ChatBox> {
                                 DateTime? lastMessageDate;
 
                                 for (var message in messages) {
-                                  print('message: ${message.data()}');
-                                  DateTime messageDate = message['timestamp'] !=
-                                          null
-                                      ? message['timestamp'].toDate()
-                                      : DateTime
-                                          .now(); // Fallback for null timestamp
+                                  DateTime messageDate =
+                                      message['timestamp'] != null
+                                          ? message['timestamp'].toDate()
+                                          : DateTime.now();
 
                                   if (lastMessageDate == null ||
                                       _formatDate(lastMessageDate) !=

@@ -27,14 +27,6 @@ class _BusinessSignup4State extends State<BusinessSignup4> {
             image: MyImages.BusinessSignup4,
           ),
 
-          //Divider code ni h
-          // Divider(
-          //color: Colors.grey,
-          //thickness: 1,
-          //indent: screenWidth * 0.1,
-          //endIndent: screenWidth * 0.1,
-          //),
-
           SizedBox(height: 40),
           ColoredButton(
             text: 'Continue to Home',

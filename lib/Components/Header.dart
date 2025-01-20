@@ -85,18 +85,14 @@ class _HeaderState extends State<Header> {
               children: [
                 InkWell(
                   onTap: () {
-                    print('Clicked');
                     try {
                       if (Navigator.canPop(context)) {
-                        print('popping');
                         Navigator.of(context).pop();
                       } else {
-                        print('going to new screen');
                         Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
                             (Route<dynamic> route) => false);
                       }
                     } catch (e) {
-                      print('going to new screen');
                       print('Exceptions: $e');
                       Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
                           (Route<dynamic> route) => false);
@@ -150,7 +146,10 @@ class _HeaderState extends State<Header> {
                                     textSize: MaximumThing * 0.015,
                                   ),
                                 ]).showDialogBox(context);
-                          } else {
+                          } else if(currentRoute == '/InvitationCardEdit'){
+                            
+                          } 
+                          else {
                             Navigator.pushNamed(context, '/settings');
                           }
                         },

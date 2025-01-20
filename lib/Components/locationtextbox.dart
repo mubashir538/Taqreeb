@@ -59,15 +59,6 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
             children: [
               Expanded(
                 child: TypeAheadField<String>(
-                  // textFieldConfiguration: TextFieldConfiguration(
-                  //   controller: widget.locationController,
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Enter Location',
-                  //     hintText: 'Search for a location',
-                  //     border: OutlineInputBorder(),
-                  //     filled: true,
-                  //   ),
-                  // ),
                   suggestionsCallback: (pattern) {
                     return _suggestedLocations;
                   },

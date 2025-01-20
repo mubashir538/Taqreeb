@@ -33,9 +33,6 @@ class _AddImageState extends State<AddImage> {
     super.didChangeDependencies();
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    // if (this.args == {}) {
-    //   this.args = args;
-    // }
     if (ischanged) {
       this.args = args;
       ischanged = false;
@@ -229,14 +226,6 @@ class _AddImageState extends State<AddImage> {
                   final request = http.MultipartRequest('POST',
                       Uri.parse(MyApi.baseUrl + 'businessowner/addListings/'));
 
-                  // for (String imagePath in _images) {
-                  //   request.files.add(
-                  //     await http.MultipartFile.fromPath(
-                  //       'pictures', // The key for the files in the backend
-                  //       imagePath, // Path to the image
-                  //     ),
-                  //   );
-                  // }
                   for (int i = 0; i < _images.length; i++) {
                     request.files.add(
                       await http.MultipartFile.fromPath(

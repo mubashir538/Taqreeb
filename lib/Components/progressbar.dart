@@ -26,7 +26,6 @@ class ProgressBar extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Container(
-              // width: screenWidth * 0.04,
               decoration: BoxDecoration(
                   color: c[0],
                   borderRadius: BorderRadius.only(
@@ -39,7 +38,6 @@ class ProgressBar extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Container(
-              // width: screenWidth * 0.04,
               decoration: BoxDecoration(
                 color: c[1],
               ),

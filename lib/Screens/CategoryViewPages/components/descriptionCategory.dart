@@ -81,7 +81,6 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     if (type) {
-      // Editable layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(

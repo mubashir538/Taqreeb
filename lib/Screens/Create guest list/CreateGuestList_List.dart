@@ -57,9 +57,6 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
         'EventId': eventId,
         'FunctionID': isfunction ? functionid : "None"
       },
-      //  headers: {
-      //   'Authorization': 'Bearer $token',
-      // }
     );
 
     timer = Timer.periodic(Duration(seconds: 1), (timer) {

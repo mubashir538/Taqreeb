@@ -24,7 +24,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
       FirebaseFirestore.instance.collection('groups');
   List<Map<String, dynamic>> userChats = [];
   List<Map<String, dynamic>> groups = [];
-  List<Map<String, dynamic>> searchedUsers = []; // List for searched users
+  List<Map<String, dynamic>> searchedUsers = []; 
   bool isLoading = true;
   String loggedInUserId = "";
 
@@ -50,53 +50,45 @@ class _ChatsScreenState extends State<ChatsScreen> {
     });
 
     try {
-      // Initialize Firebase references
       final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-      // Fetch all chats
       QuerySnapshot chatsSnapshot = await _firestore.collection('chats').get();
 
-      // Filter chats by checking if they have messages in the subcollection
       final filteredChats =
           await Future.wait(chatsSnapshot.docs.map((chatDoc) async {
-        // Check if 'messages' subcollection exists and has data
         final messagesSnapshot = await _firestore
             .collection('chats')
             .doc(chatDoc.id)
             .collection('messages')
-            .limit(1) // Only fetch the most recent message
+            .limit(1) 
             .get();
 
         if (messagesSnapshot.docs.isNotEmpty) {
-          // print();
           final user = await usersCollection
               .doc(messagesSnapshot.docs.first['receiverId'])
               .get();
-          // Parse chat details for display
           return {
-            'userId': user.id, // Chat ID (could represent the other user ID)
+            'userId': user.id, 
             'chatimage':
                 '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture'] ?? ''}',
-            'name': user['firstName'] ?? 'Unknown', // Replace 'name' if needed
+            'name': user['firstName'] ?? 'Unknown', 
             'lastMessage': chatDoc['lastMessage'] ?? '',
             'newMessages': chatDoc['unreadMessages'][loggedInUserId] ?? 0,
             'time': chatDoc['lastMessageTime'] ?? ''
           };
         }
 
-        return null; // Skip chats without messages
+        return null; 
       }).toList());
 
-      // Filter null values from the list (if no messages were found)
       final chats = filteredChats.where((chat) => chat != null).toList();
 
-      // Fetch groups where logged-in user is a participant
       final groupsSnapshot = await _firestore.collection('groups').get();
 
       final filteredGroups = groupsSnapshot.docs.where((groupDoc) {
         final participants = groupDoc['participants'] as List<dynamic>;
         return participants
-            .contains(loggedInUserId); // Check if user is a participant
+            .contains(loggedInUserId); 
       }).map((groupDoc) {
         return {
           'groupId': groupDoc.id,
@@ -106,7 +98,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
         };
       }).toList();
 
-      // Update state with fetched chats and groups
       setState(() {
         userChats.addAll(chats.cast<Map<String, dynamic>>());
         groups = filteredGroups;
@@ -122,18 +113,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   Future<void> _searchUsers(String query) async {
     if (query.isEmpty) {
-      // If the search query is empty, reset the user chats to show all users
       setState(() {
         searchedUsers = [];
       });
     } else {
       try {
-        // Query Firestore users by username
         QuerySnapshot userSnapshot = await usersCollection
             .where('username', isGreaterThanOrEqualTo: query)
             .where('username',
                 isLessThanOrEqualTo:
-                    query + '\uf8ff') // For case-insensitive search
+                    query + '\uf8ff') 
             .get();
 
         setState(() {
@@ -163,7 +152,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   String _formatTimestamp(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate();
-    var format = DateFormat('h:mm a'); // 12-hour format
+    var format = DateFormat('h:mm a'); 
     return format.format(dateTime);
   }
 
@@ -186,7 +175,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
               SizedBox(height: screenHeight * 0.02),
               SearchBox(
                 onChanged: (query) {
-                  _searchUsers(query); // Search users by username
+                  _searchUsers(query); 
                 },
                 hint: 'Search Users',
                 controller: controller,
@@ -196,18 +185,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   : Expanded(
                       child: ListView(
                         children: [
-                          // Display searched users if search query is not empty
                           ...searchedUsers.map((user) => MessageChatButton(
                                 image: user['chatimage'],
                                 onpressed: () =>
                                     _navigateToChatbox(user['userId']),
                                 name: user['name'],
                                 message: 'Start a conversation',
-                                newMessage: 0, // Assuming no new messages
+                                newMessage: 0,
                                 time: '',
                               )),
 
-                          // Display user chats
                           ...userChats.map((chat) => MessageChatButton(
                                 image: chat['chatimage'],
                                 onpressed: () =>
@@ -218,7 +205,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                 time: _formatTimestamp(chat['time']),
                               )),
 
-                          // Display groups
                           ...groups.map((group) => MessageChatButton(
                                 image:
                                     '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
@@ -228,7 +214,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                         'groupId': group['groupId'],
                                         'participants': group['participants'],
                                       });
-                                }, // Handle group chat navigation
+                                }, 
                                 name: group['name'],
                                 message: 'Group Chat',
                                 newMessage: 0,

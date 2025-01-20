@@ -44,7 +44,6 @@ class _AddcategoryListState extends State<AddcategoryList> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getHeaderHeight();
-      // check(context);
     });
     fetchCategories();
   }

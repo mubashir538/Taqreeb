@@ -20,8 +20,6 @@ class Signup_MoreInfo extends StatefulWidget {
 class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
   final TextEditingController cityController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
-  // String city = "";
-  // String gender = "";
   final TextEditingController ageController = TextEditingController();
 
   final GlobalKey _headerKey = GlobalKey();

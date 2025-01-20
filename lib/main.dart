@@ -12,6 +12,7 @@ import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
+import 'package:taqreeb/Screens/BusinessInfoEdit.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_BakerySweet.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Caterers.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Decorator.dart';
@@ -155,6 +156,7 @@ class _MainAppState extends State<MainApp> {
         '/YourListings': (context) => MainScreen(index: 2),
         '/AccountInfo': (context) => MainScreen(index: 3),
         '/AccountInfoEdit': (context) => AccountInfoEdit(),
+        '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
         '/BusinessAccountInfo': (context) => MainScreen(index: 3),
         '/CreateGuestList': (context) => CreateGuestList(),
         '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),

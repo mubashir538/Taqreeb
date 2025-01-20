@@ -320,14 +320,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                   listing: listing,
                                 ),
                                 CategoryPackages(listing: listing),
-                                CategorySlots(
-                                  listing: listing,
-                                  onDateSelected: (date) {
-                                    setState(() {
-                                      selectedDate = date;
-                                    });
-                                  },
-                                ),
                                 SizedBox(
                                   height: screenHeight * 0.05,
                                   child: Center(

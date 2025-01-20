@@ -47,6 +47,9 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
+  Map<String, dynamic> additionalFilters = {}; // Stores dynamic filters
+  Map<String, dynamic> additionalSelections = {}; // Stores user selections
+
   @override
   void initState() {
     super.initState();
@@ -110,6 +113,38 @@ class _SearchServiceState extends State<SearchService> {
       }
     });
     ischange = true;
+  }
+
+  void fetchAdditionalFilters(String categoryType) async {
+    setState(() {
+      isLoading = true;
+    });
+    final response = await MyApi.getRequest(
+      endpoint: 'getListingDetails/$categoryType',
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response != null && response['fields'] != null) {
+      setState(() {
+        additionalFilters = {
+          for (var field in response['fields'])
+            if (field['choices'] != null && field['choices'].isNotEmpty)
+              field['name']: field['choices'],
+        };
+        additionalSelections = {
+          for (var field in additionalFilters.keys) field: []
+        };
+        isLoading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to fetch additional filters!'),
+        backgroundColor: MyColors.red,
+      ));
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -207,6 +242,42 @@ class _SearchServiceState extends State<SearchService> {
                                         color: MyColors.white,
                                       ),
                                     ),
+                                    if (appliedFilters.contains("Category") &&
+                                        additionalFilters.isNotEmpty)
+                                      ...additionalFilters.entries.map((entry) {
+                                        String fieldName = entry.key;
+                                        List<String> choices = entry.value;
+
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              fieldName,
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: MyColors.Yellow,
+                                              ),
+                                            ),
+                                            CheckBoxQuestion(
+                                              question: '',
+                                              options: choices,
+                                              controller: CheckBoxController(
+                                                selections:
+                                                    additionalSelections[
+                                                        fieldName],
+                                              ),
+                                              onChanged: (selections) {
+                                                setState(() {
+                                                  additionalSelections[
+                                                      fieldName] = selections;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
                                   ],
                                 ),
                               ),

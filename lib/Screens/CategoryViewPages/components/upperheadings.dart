@@ -126,6 +126,13 @@ class _UpperHeadingsState extends State<UpperHeadings> {
 
                                 if (response['status'] == 'success') {
                                   Navigator.pop(context);
+                                } else if (response['status'] ==
+                                    'BudgetError') {
+                                  warningDialog(
+                                    message: 'Event Budget is Exceeding',
+                                    title: 'Budget Exceed',
+                                    actions: [ColoredButton(text: 'Ok')],
+                                  ).showDialogBox(context);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -164,8 +171,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
         },
-        endpoint:
-            'businessowner/updateListings/', 
+        endpoint: 'businessowner/updateListings/',
         body: {
           'id': widget.listingId.toString(),
           field: value,
@@ -249,7 +255,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                width: screenWidth*0.8,
+                                width: screenWidth * 0.75,
                                 child: Text(
                                   widget.listing['Listing']['name'],
                                   softWrap: true,
@@ -296,7 +302,6 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                                 final token =
                                                     await MyStorage.getToken(
                                                         MyTokens.accessToken);
-                                                print(token);
                                                 final response =
                                                     await MyApi.postRequest(
                                                         endpoint:

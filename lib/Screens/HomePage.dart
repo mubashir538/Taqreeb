@@ -66,9 +66,6 @@ class _HomePageState extends State<HomePage> {
               fetchedListings['status'] == 'error' ||
               fetchedImages == null ||
               fetchedImages['status'] == 'error') {
-            print('fetch image: ${fetchedImages}');
-            print('fetch listings: ${fetchedListings}');
-            print('fetch categories: ${fetchedCategories}');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(

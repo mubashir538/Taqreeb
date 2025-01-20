@@ -71,9 +71,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
       listingId = args['id'];
       type = args['isBusiness'];
     });
-    print((!ischange).toString());
     if (!ischange) {
-      print('fetched!');
       fetchData();
     }
   }

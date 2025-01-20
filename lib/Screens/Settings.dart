@@ -103,14 +103,6 @@ class _SettingsState extends State<Settings> {
             child: Column(
               children: [
                 SizedBox(height: _headerHeight),
-                // Container(
-                //   margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-                //   child:
-                //       SearchBox(controller: controller, width: screenWidth * 0.9),
-                // ),
-                // SizedBox(
-                //   height: screenHeight * 0.025,
-                // ),
                 isLoading
                     ? CircularProgressIndicator(
                         valueColor:
@@ -311,7 +303,10 @@ class _SettingsState extends State<Settings> {
                             GuideButton(
                               onpressed: () {
                                 Navigator.pushNamed(
-                                    context, '/AccountInfoEdit');
+                                    context,
+                                    businessOwnerSwitch || freelancerSwitch?'/BusinessInfoEdit': 
+                                    '/AccountInfoEdit'
+                                    );
                               },
                               text: 'Edit Account Info',
                               leftIcon: Icons.edit_rounded,

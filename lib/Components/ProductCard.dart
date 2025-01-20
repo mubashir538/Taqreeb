@@ -60,6 +60,8 @@ class _ProductcardState extends State<Productcard> {
           path = '/CategoryView_CarRenter';
         } else if (listingType == toLowerCaseNoSpaces("Photographer")) {
           path = '/CategoryView_Photographer';
+        } else if (listingType == toLowerCaseNoSpaces("Photography place")) {
+          path = '/CategoryView_PhotographyPlace';
         } else if (listingType == toLowerCaseNoSpaces("Caterer")) {
           path = '/CategoryView_Caterers';
         }

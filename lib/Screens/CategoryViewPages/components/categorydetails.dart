@@ -40,8 +40,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
         final parts = value.split('-');
         mincontrol = parts[1].trim();
         guest = true;
-        return TextEditingController(
-            text: parts[0].trim()); // Placeholder, won't be used
+        return TextEditingController(text: parts[0].trim());
       } else {
         return TextEditingController(text: value);
       }
@@ -69,19 +68,16 @@ class _CategoryDetailsState extends State<CategoryDetails> {
         isEditing = [];
 
         for (var field in response['fields']) {
-          choices.add(field['choices']?.isEmpty ?? true
-              ? ''
-              : ''); // Use blank if no value is available
+          choices.add(field['choices']?.isEmpty ?? true ? '' : '');
           dropdownChoices.add(field['choices']?.cast<String>() ?? []);
           isEditing.add(false);
         }
-        isLoading = false; // Stop loading once data is fetched
+        isLoading = false;
       });
     } else {
       setState(() {
         isLoading = false;
       });
-      // Handle error - Show a message or take action
     }
   }
 
@@ -380,8 +376,6 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                               : () => setState(() {
                                                     isEditing[i] = true;
                                                     isEditGuestMin = true;
-                                                    print(
-                                                        '${isEditing[i]} $isEditGuestMax $isEditGuestMin');
                                                   }),
                                         ),
                                       ),
@@ -417,8 +411,6 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                               : () => setState(() {
                                                     isEditing[i] = true;
                                                     isEditGuestMax = true;
-                                                    print(
-                                                        '${isEditing[i]} $isEditGuestMax $isEditGuestMin');
                                                   }),
                                         ),
                                       ),
