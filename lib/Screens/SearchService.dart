@@ -119,6 +119,7 @@ class _SearchServiceState extends State<SearchService> {
     setState(() {
       isLoading = true;
     });
+    print('Fetching additional filters for $categoryType');
     final response = await MyApi.getRequest(
       endpoint: 'getListingDetails/$categoryType',
       headers: {'Authorization': 'Bearer $token'},
@@ -131,6 +132,7 @@ class _SearchServiceState extends State<SearchService> {
             if (field['choices'] != null && field['choices'].isNotEmpty)
               field['name']: field['choices'],
         };
+        print(additionalFilters);
         additionalSelections = {
           for (var field in additionalFilters.keys) field: []
         };
@@ -181,7 +183,9 @@ class _SearchServiceState extends State<SearchService> {
     final screenHeight = MediaQuery.of(context).size.height;
     final maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+
     _getHeaderHeight();
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       resizeToAvoidBottomInset: true,
@@ -197,8 +201,9 @@ class _SearchServiceState extends State<SearchService> {
                   isLoading
                       ? Center(
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(MyColors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              MyColors.white,
+                            ),
                           ),
                         )
                       : Column(
@@ -233,51 +238,31 @@ class _SearchServiceState extends State<SearchService> {
                                         });
                                       },
                                     ),
-                                    IconButton(
-                                      onPressed: () =>
-                                          _showFilterPopup(context),
-                                      icon: Icon(
-                                        Icons.tune,
-                                        size: maximumDimension * 0.03,
-                                        color: MyColors.white,
-                                      ),
+                                    Column(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () =>
+                                              _showFilterPopup(context),
+                                          icon: Icon(
+                                            Icons.tune,
+                                            size: maximumDimension * 0.03,
+                                            color: MyColors.white,
+                                          ),
+                                        ),
+                                        // Additional Filters Icon
+                                        if (appliedFilters.contains("Category"))
+                                          IconButton(
+                                            onPressed: () =>
+                                                _showAdditionalFilterPopup(
+                                                    context),
+                                            icon: Icon(
+                                              Icons.filter_alt,
+                                              size: maximumDimension * 0.03,
+                                              color: MyColors.white,
+                                            ),
+                                          ),
+                                      ],
                                     ),
-                                    if (appliedFilters.contains("Category") &&
-                                        additionalFilters.isNotEmpty)
-                                      ...additionalFilters.entries.map((entry) {
-                                        String fieldName = entry.key;
-                                        List<String> choices = entry.value;
-
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              fieldName,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: MyColors.Yellow,
-                                              ),
-                                            ),
-                                            CheckBoxQuestion(
-                                              question: '',
-                                              options: choices,
-                                              controller: CheckBoxController(
-                                                selections:
-                                                    additionalSelections[
-                                                        fieldName],
-                                              ),
-                                              onChanged: (selections) {
-                                                setState(() {
-                                                  additionalSelections[
-                                                      fieldName] = selections;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      }).toList(),
                                   ],
                                 ),
                               ),
@@ -368,10 +353,11 @@ class _SearchServiceState extends State<SearchService> {
             ),
           ),
           Positioned(
-              top: 0,
-              child: Header(
-                key: _headerKey,
-              )),
+            top: 0,
+            child: Header(
+              key: _headerKey,
+            ),
+          ),
         ],
       ),
     );
@@ -398,6 +384,7 @@ class _SearchServiceState extends State<SearchService> {
               .toList();
         }
         if (i == "Category") {
+          fetchAdditionalFilters(categoryController.selections[0]);
           templistings['HomeListing'] = templistings['HomeListing']
               .where((element) =>
                   categoryController.selections.contains(element['type']))
@@ -564,6 +551,84 @@ class _SearchServiceState extends State<SearchService> {
             ),
           );
         });
+      },
+    );
+  }
+
+// Method to Show Additional Filters Popup
+  void _showAdditionalFilterPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MyColors.Dark,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Additional Filters',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.Yellow,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Expanded(
+                    child: ListView(
+                      children: additionalFilters.entries.map((entry) {
+                        String fieldName = entry.key;
+                        List<String> choices = entry.value.cast<String>().toList();
+                        print(entry);
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              fieldName,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                            CheckBoxQuestion(
+                              question: '',
+                              options: choices,
+                              controller: CheckBoxController(
+                                selections: additionalSelections[fieldName].cast<String>().toList(),
+                              ),
+                              onChanged: (selections) {
+                                setState(() {
+                                  additionalSelections[fieldName] = selections;
+                                });
+                              },
+                            ),
+                            Divider(color: MyColors.whiteDarker),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  ColoredButton(
+                    text: 'Apply Filters',
+                    onPressed: () {
+                      setState(() {
+                        searchwithFilters();
+                      });
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }

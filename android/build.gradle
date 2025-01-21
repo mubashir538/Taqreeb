@@ -3,22 +3,17 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://artifactory.img.ly/artifactory/imgly" }
     }
 }
 buildscript{
     repositories{
         google()
         jcenter()
-        maven { url "https://artifactory.img.ly/artifactory/imgly" }
         mavenCentral()
     }
 
 dependencies{ 
     classpath 'com.google.gms:google-services:4.4.2'
-      classpath 'com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.7.21-1.0.8' // Depending on your `kotlin_version` version.
-      classpath 'ly.img.android.sdk:plugin:10.9.0'
-      
 }
 }
 

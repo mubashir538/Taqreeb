@@ -166,13 +166,6 @@ class _ChatBoxState extends State<ChatBox> {
     }
   }
 
-  Future<void> _resetNewMessages() async {
-    if (_currentUserId == null) return;
-
-    await _firestore.collection('chats').doc(_getChatId()).update({
-      'unreadMessages.$_currentUserId': 0,
-    });
-  }
 
   String _getChatId() {
     return _currentUserId!.compareTo(chatUserId) > 0

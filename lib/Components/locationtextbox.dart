@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:taqreeb/Components/text_box.dart';
 
 class LocationInputWidget extends StatefulWidget {
   final TextEditingController locationController;
@@ -17,36 +21,50 @@ class LocationInputWidget extends StatefulWidget {
 }
 
 class _LocationInputWidgetState extends State<LocationInputWidget> {
-  List<String> _suggestedLocations = [];
   String _currentLocation = "Unknown Location";
 
-  final List<String> _allLocations = [
-    "New York, USA",
-    "Los Angeles, USA",
-    "London, UK",
-    "Paris, France",
-    "Dubai, UAE",
-    "Tokyo, Japan",
-    "Sydney, Australia"
-  ];
+  Future<List<String>> _fetchSuggestions(String query) async {
+    print('Running');
+    if (query.isEmpty) return [];
 
-  Future<void> _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      _currentLocation = "${position.latitude}, ${position.longitude}";
-      widget.locationController.text = _currentLocation;
-      widget.onLocationChanged(_currentLocation);
-    });
+    try {
+      // Replace `YOUR_API_KEY` with your GoMaps Pro API key
+      final response = await http.get(
+        Uri.parse(
+            'https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=$query&key=AlzaSy3NTbKIdIUJGedW-k7yw_9oeQcVTeQgO-T&components=country:pk'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Parse suggestions from the API response
+        List<String> suggestions = (data['predictions'] as List)
+            .map((prediction) => prediction['description'] as String)
+            .toList();
+
+        return suggestions;
+      } else {
+        throw Exception('Failed to fetch suggestions');
+      }
+    } catch (error) {
+      print("Error fetching suggestions: $error");
+      return [];
+    }
   }
 
-  void _onSearchChanged(String query) {
-    setState(() {
-      _suggestedLocations = _allLocations
-          .where((location) =>
-              location.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      setState(() {
+        _currentLocation = "${position.latitude}, ${position.longitude}";
+        widget.locationController.text = _currentLocation;
+        widget.onLocationChanged(_currentLocation);
+      });
+    } catch (e) {
+      print("Error fetching current location: $e");
+    }
   }
 
   @override
@@ -59,16 +77,27 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
             children: [
               Expanded(
                 child: TypeAheadField<String>(
-                  suggestionsCallback: (pattern) {
-                    return _suggestedLocations;
+                  builder: (context, controller, focusNode) {
+                    if (widget.locationController.text.isNotEmpty) {
+                      controller.text = widget.locationController.text;
+                    }
+                    return MyTextBox(
+                        hint: 'Location',
+                        valueController: controller,
+                        focusNode: focusNode);
                   },
-                  itemBuilder: (context, String suggestion) {
+                  suggestionsCallback: (value) async {
+                    return await _fetchSuggestions(value);
+                  },
+                  itemBuilder: (context, suggestion) {
                     return ListTile(
+                      leading: Icon(Icons.location_on),
                       title: Text(suggestion),
                     );
                   },
-                  onSelected: (String suggestion) {
+                  onSelected: (suggestion) {
                     setState(() {
+                      // Update the controller's text
                       widget.locationController.text = suggestion;
                       widget.onLocationChanged(suggestion);
                     });
@@ -80,11 +109,6 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
                 onPressed: _getCurrentLocation,
               ),
             ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Current Location: $_currentLocation',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ],
       ),

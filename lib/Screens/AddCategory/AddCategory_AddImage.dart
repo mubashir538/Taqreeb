@@ -278,6 +278,9 @@ class _AddImageState extends State<AddImage> {
                   } else if (args['category'] == 'Car Renter') {
                     request.fields['serviceType'] = args['serviceType'];
                   }
+                  else if (args['category'] == 'Graphic Designer' || args['category'] == 'Video Editor') {
+                    request.fields['portfolioLink'] = args['portfolioLink'];
+                  }
 
                   final response = await request.send();
 

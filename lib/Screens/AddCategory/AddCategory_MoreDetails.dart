@@ -205,6 +205,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                     args.addAll(fieldValues.map((key, value) {
                       return MapEntry(key, value.toString());
                     }).cast<String, String>());
+                    print(args);
                     Navigator.pushNamed(context, '/AddCategory_Addons',
                         arguments: args);
                   },

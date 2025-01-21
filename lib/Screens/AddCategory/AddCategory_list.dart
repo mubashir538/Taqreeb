@@ -7,6 +7,7 @@ import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/description.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Components/locationtextbox.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
@@ -175,14 +176,19 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       ],
                     ),
                   ),
-                  MyTextBox(
-                    focusNode: locationFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(typeFocus);
-                    },
-                    hint: 'Location',
-                    valueController: locationController,
-                  ),
+                  // MyTextBox(
+                  //   focusNode: locationFocus,
+                  //   onFieldSubmitted: (_) {
+                  //     FocusScope.of(context).requestFocus(typeFocus);
+                  //   },
+                  //   hint: 'Location',
+                  //   valueController: locationController,
+                  // ),
+                  LocationInputWidget(
+                      locationController: locationController,
+                      onLocationChanged: (value) {
+                        locationController.text = value;
+                      }),
                   ResponsiveDropdown(
                       items: isLoading
                           ? []

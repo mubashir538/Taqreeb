@@ -3,7 +3,6 @@ import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryReview.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/components/categorySlots.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categorydetails.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/descriptionCategory.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/imageslider.dart';

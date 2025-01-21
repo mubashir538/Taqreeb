@@ -14,6 +14,7 @@ import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class CreateFunction extends StatefulWidget {
+  
   const CreateFunction({super.key});
 
   @override
@@ -314,16 +315,5 @@ class _CreateFunctionState extends State<CreateFunction> {
     );
   }
 
-  Future<void> _selectDate(context) async {
-    DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100));
-    if (pickedDate != null) {
-      setState(() {
-        _dateController.text = pickedDate.toString().split(" ")[0];
-      });
-    }
-  }
+  
 }
