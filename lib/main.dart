@@ -63,6 +63,7 @@ import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventD
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/groupchats.dart';
+import 'package:taqreeb/Screens/newUserSearch.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/firebase_options.dart';
@@ -70,7 +71,6 @@ import 'package:taqreeb/theme/color.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -88,7 +88,6 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    // initialize();
   }
 
   bool ishome = false;
@@ -109,7 +108,6 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: ishome ? MainScreen(index: 0) : Login(),
       routes: {
         '/': (context) => SplashScreen(),
         '/settings': (context) => Settings(),
@@ -186,6 +184,7 @@ class _MainAppState extends State<MainApp> {
         '/EditEvent': (context) => CreateEvent(),
         '/EditFunction': (context) => CreateFunction(),
         '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
+        '/search_new_user': (context) => NewUserSearch(),
       },
       theme: ThemeData.dark(
         useMaterial3: true,

@@ -47,13 +47,14 @@ class CropPopup extends StatelessWidget {
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
+                _cropController != null?
                 ElevatedButton(
                   onPressed: () {
                    
                     _cropController.crop();
                   },
                   child: const Text('Crop'),
-                ),
+                ):Container(),
               ],
             ),
           ],

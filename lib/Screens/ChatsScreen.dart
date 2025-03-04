@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
+import 'package:taqreeb/Components/Iconed%20Button.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/theme/icons.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
@@ -24,9 +28,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
       FirebaseFirestore.instance.collection('groups');
   List<Map<String, dynamic>> userChats = [];
   List<Map<String, dynamic>> groups = [];
-  List<Map<String, dynamic>> searchedUsers = []; 
+  List<Map<String, dynamic>> searchedUsers = [];
   bool isLoading = true;
   String loggedInUserId = "";
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -60,7 +65,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             .collection('chats')
             .doc(chatDoc.id)
             .collection('messages')
-            .limit(1) 
+            .limit(1)
             .get();
 
         if (messagesSnapshot.docs.isNotEmpty) {
@@ -68,17 +73,17 @@ class _ChatsScreenState extends State<ChatsScreen> {
               .doc(messagesSnapshot.docs.first['receiverId'])
               .get();
           return {
-            'userId': user.id, 
+            'userId': user.id,
             'chatimage':
                 '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture'] ?? ''}',
-            'name': user['firstName'] ?? 'Unknown', 
+            'name': user['firstName'] ?? 'Unknown',
             'lastMessage': chatDoc['lastMessage'] ?? '',
             'newMessages': chatDoc['unreadMessages'][loggedInUserId] ?? 0,
             'time': chatDoc['lastMessageTime'] ?? ''
           };
         }
 
-        return null; 
+        return null;
       }).toList());
 
       final chats = filteredChats.where((chat) => chat != null).toList();
@@ -87,8 +92,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
       final filteredGroups = groupsSnapshot.docs.where((groupDoc) {
         final participants = groupDoc['participants'] as List<dynamic>;
-        return participants
-            .contains(loggedInUserId); 
+        return participants.contains(loggedInUserId);
       }).map((groupDoc) {
         return {
           'groupId': groupDoc.id,
@@ -111,33 +115,20 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }
   }
 
-  Future<void> _searchUsers(String query) async {
+  void _searchUsers(String query) {
     if (query.isEmpty) {
       setState(() {
+        isSearching = false;
         searchedUsers = [];
       });
     } else {
-      try {
-        QuerySnapshot userSnapshot = await usersCollection
-            .where('username', isGreaterThanOrEqualTo: query)
-            .where('username',
-                isLessThanOrEqualTo:
-                    query + '\uf8ff') 
-            .get();
-
-        setState(() {
-          searchedUsers = userSnapshot.docs.map((userDoc) {
-            return {
-              'userId': userDoc.id,
-              'chatimage':
-                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture'] ?? ''}',
-              'name': '${userDoc['firstName']} ${userDoc['lastName']}',
-            };
-          }).toList();
-        });
-      } catch (e) {
-        print("Error searching users: $e");
-      }
+      setState(() {
+        isSearching = true;
+        searchedUsers = userChats
+            .where((chat) =>
+                chat['name'].toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
     }
   }
 
@@ -152,7 +143,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   String _formatTimestamp(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate();
-    var format = DateFormat('h:mm a'); 
+    var format = DateFormat('h:mm a');
     return format.format(dateTime);
   }
 
@@ -160,7 +151,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
+    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -173,60 +164,85 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 para: "View your chats and groups below.",
               ),
               SizedBox(height: screenHeight * 0.02),
-              SearchBox(
-                onChanged: (query) {
-                  _searchUsers(query); 
-                },
-                hint: 'Search Users',
-                controller: controller,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SearchBox(
+                    onChanged: (query) {
+                      _searchUsers(query);
+                    },
+                    hint: 'Search Users',
+                    controller: controller,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/search_new_user');
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(max * 0.015),
+                      decoration: BoxDecoration(
+                        color: MyColors.red,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        color: MyColors.white,
+                      ),
+                    ),
+                  )
+                ],
               ),
               isLoading
                   ? CircularProgressIndicator()
                   : Expanded(
                       child: ListView(
-                        children: [
-                          ...searchedUsers.map((user) => MessageChatButton(
-                                image: user['chatimage'],
-                                onpressed: () =>
-                                    _navigateToChatbox(user['userId']),
-                                name: user['name'],
-                                message: 'Start a conversation',
-                                newMessage: 0,
-                                time: '',
-                              )),
-
-                          ...userChats.map((chat) => MessageChatButton(
-                                image: chat['chatimage'],
-                                onpressed: () =>
-                                    _navigateToChatbox(chat['userId']),
-                                name: chat['name'],
-                                message: chat['lastMessage'],
-                                newMessage: chat['newMessages'],
-                                time: _formatTimestamp(chat['time']),
-                              )),
-
-                          ...groups.map((group) => MessageChatButton(
-                                image:
-                                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
-                                onpressed: () {
-                                  Navigator.pushNamed(context, '/GroupChatBox',
-                                      arguments: {
-                                        'groupId': group['groupId'],
-                                        'participants': group['participants'],
-                                      });
-                                }, 
-                                name: group['name'],
-                                message: 'Group Chat',
-                                newMessage: 0,
-                                time: '',
-                              )),
-                        ],
+                        children: isSearching
+                            ? [
+                                ...searchedUsers.map((user) =>
+                                    MessageChatButton(
+                                      image: user['chatimage'],
+                                      onpressed: () =>
+                                          _navigateToChatbox(user['userId']),
+                                      name: user['name'],
+                                      message: 'Start a conversation',
+                                      newMessage: 0,
+                                      time: '',
+                                    ))
+                              ]
+                            : [
+                                ...userChats.map((chat) => MessageChatButton(
+                                      image: chat['chatimage'],
+                                      onpressed: () =>
+                                          _navigateToChatbox(chat['userId']),
+                                      name: chat['name'],
+                                      message: chat['lastMessage'],
+                                      newMessage: chat['newMessages'],
+                                      time: _formatTimestamp(chat['time']),
+                                    )),
+                                ...groups.map((group) => MessageChatButton(
+                                      image:
+                                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
+                                      onpressed: () {
+                                        Navigator.pushNamed(
+                                            context, '/GroupChatBox',
+                                            arguments: {
+                                              'groupId': group['groupId'],
+                                              'participants':
+                                                  group['participants'],
+                                            });
+                                      },
+                                      name: group['name'],
+                                      message: 'Group Chat',
+                                      newMessage: 0,
+                                      time: '',
+                                    )),
+                              ],
                       ),
                     ),
             ],
           ),
           Positioned(
-            bottom: screenHeight * 0.03,
+            bottom: screenHeight * 0.05,
             right: screenHeight * 0.03,
             child: InkWell(
               onTap: _navigateToCreateGroup,
@@ -240,10 +256,29 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       offset: Offset(0, 5),
                     ),
                   ],
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(max * 0.05),
+                    topRight: Radius.circular(max * 0.05),
+                    bottomLeft: Radius.circular(max * 0.05),
+                  ),
                   color: MyColors.red,
                 ),
-                child: Icon(Icons.add, color: MyColors.white),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: screenWidth * 0.01),
+                    Text(
+                      'Create Group',
+                      style: GoogleFonts.montserrat(
+                          color: MyColors.white,
+                          fontSize: max * 0.015,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
