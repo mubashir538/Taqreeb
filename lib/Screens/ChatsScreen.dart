@@ -3,15 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:taqreeb/Classes/api.dart';
-import 'package:taqreeb/Components/Colored%20Button.dart';
-import 'package:taqreeb/Components/Iconed%20Button.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/theme/color.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/theme/icons.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});

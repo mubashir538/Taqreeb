@@ -7,10 +7,12 @@ import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Border%20Button.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
+import 'package:taqreeb/Components/Iconed%20Button.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
 import 'package:taqreeb/Components/text_box.dart';
 import 'package:taqreeb/Components/warningDialog.dart';
 import 'package:taqreeb/theme/color.dart';
+import 'package:taqreeb/theme/icons.dart';
 import 'package:taqreeb/theme/images.dart';
 
 class Login extends StatefulWidget {
@@ -175,13 +177,13 @@ class _LoginState extends State<Login> {
                           height: screenHeight * 0.05,
                           child: MyDivider(),
                         ),
-                        // IconedButton(
-                        //   text: "Continue with Google",
-                        //   icon: MyIcons.google,
-                        // ),
-                        // IconedButton(
-                        //     text: "Continue with Facebook",
-                        //     icon: MyIcons.facebook),
+                        IconedButton(
+                          text: "Continue with Google",
+                          icon: MyIcons.google,
+                        ),
+                        IconedButton(
+                            text: "Continue with Facebook",
+                            icon: MyIcons.facebook),
                       ],
                     ),
                   ],

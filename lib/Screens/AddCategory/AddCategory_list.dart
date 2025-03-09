@@ -176,14 +176,6 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       ],
                     ),
                   ),
-                  // MyTextBox(
-                  //   focusNode: locationFocus,
-                  //   onFieldSubmitted: (_) {
-                  //     FocusScope.of(context).requestFocus(typeFocus);
-                  //   },
-                  //   hint: 'Location',
-                  //   valueController: locationController,
-                  // ),
                   LocationInputWidget(
                       locationController: locationController,
                       onLocationChanged: (value) {

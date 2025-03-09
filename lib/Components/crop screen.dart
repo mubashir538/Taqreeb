@@ -31,7 +31,7 @@ class CropPopup extends StatelessWidget {
                   Navigator.of(context).pop();
                   onCropped(croppedBytes);
                 },
-                withCircleUi: false, 
+                withCircleUi: false,
               ),
             ),
             const SizedBox(height: 16),
@@ -40,21 +40,19 @@ class CropPopup extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); 
+                    Navigator.of(context).pop();
                   },
                   child: Text(
                     'Cancel',
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
-                _cropController != null?
                 ElevatedButton(
                   onPressed: () {
-                   
                     _cropController.crop();
                   },
                   child: const Text('Crop'),
-                ):Container(),
+                ),
               ],
             ),
           ],

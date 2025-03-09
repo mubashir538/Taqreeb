@@ -1,0 +1,88 @@
+from django.urls import path
+from . import views
+from .apis import Account_Management as am
+from .apis import View_Pages as vp
+from .apis import chats as c
+from .apis import Event_Management as em
+from .apis import Listing_Management as lm
+from django.conf.urls.static import static
+from django.conf import settings
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from .Serializers import CustomTokenObtainPairSerializer
+
+urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    path('api/token/', TokenObtainPairView.as_view(serializer_class=CustomTokenObtainPairSerializer), name='token_obtain_pair'),
+    path('resendOTP/phone',am.resendOTPPhone, name = 'resendOTPPhone'),
+    path('resendOTP/email',am.resendOTPEmail, name = 'resendOTPEmail'),
+    path('resendOTP/forgot',am.resendOTP, name = 'resendOTP'),
+    path('sendOTP/phone',am.sendOTPPhone,name='sendOTPPhone'), 
+    path('sendOTP/email',am.sendOTPEmail,name='sendOTPEmail'),  
+    path('userAccountSignup/',am.AccountSignupPage,name='userAccountSignup'),
+    path('businessowner/signup/',am.BusinessOwnerSignup,name='BusinessOwnerSignup'),
+    path('saveChatImage/',c.saveChatImage,name='saveChatImage'),
+    path('saveGroupImage/',c.saveGroupImage,name='saveGroupImage'),
+    path('saveGroupProfileImage/',c.saveGroupProfile,name='saveGroupProfile'),
+    path('user/forgotpassword/phoneorEmail/',am.ForgotPasswordPage,name='ForgotPasswordPage'),
+    path('user/forgotpassword/reset-password/',am.ResetPasswordPage,name='ResetPasswordPage'),
+    path('accountInfo/<int:id>',am.AccountInfoPage,name='AccountInfoPage'),
+    path('userChatInfo/<int:id>',c.getUserInfoChat,name='userChatInfo'),
+    path('businessowner/listings/<int:id>/',lm.ListingsPage,name='ListingsPage'),
+    path('businessowner/addListings/',lm.AddListing,name='AddListing'),
+    path('businessowner/updateListings/',lm.updateListing,name='updateListings'),
+    path('businessowner/DeleteListings/',lm.deleteListing,name='DeleteListings'),
+    path('decorator/detail/<int:listingId>/',vp.DecoratorDetailPage,name='DecoratorDetailPage'),
+    path('editaccountinfo/',am.EditAccountInfoPage,name='EditAccountInfoPage'),
+    path('editBusinessInfo/',am.editBusinessInfo,name='editBusinessInfo'),
+    path('freelancer/signup/',am.FreelancerSignup,name='FreelancerSignup'),
+    path('searchType/<int:userid>',views.searchType,name='searchType'),
+    path('createfunction/',views.CreateFunction,name='CreateFunction'),
+    path('getListingDetails/<str:type>',lm.getListingDetails,name='getListingDetails'),
+    path('editfunction/',views.EditFunction,name='EditFunction'),
+    path('eventdetails/<int:eventId>',em.EventDetails,name='EventDetails'),
+    path('venueviewpage/<int:listingid>',vp.VenueViewPage,name='VenueViewPage'),
+    path('CreateEvent/',em.CreateEvent,name='CreateEvent'),
+    path('EditEvent/',em.EditEvent,name='EditEvent'),
+    path('getEventTypes/',em.getEventType,name='getEventType'),
+    path('getFunctionTypes/<int:id>',views.getFunctionType,name='getFunctionType'),
+    path('YourEvents/<int:id>',em.YourEvents,name='YourEvents'),
+    path('DeleteEvent/',em.DeleteEvent,name='DeleteEvent'),
+    path('DeleteFunction/',views.DeleteFunction,name='DeleteFunction'),
+    path('YourListing/<int:id>/<str:type>',lm.YourListings,name='YourListings'),
+    path('YourEvents/functions/<int:id>',views.YourEventsandFunctions,name='YourEventsfunctions'),    
+    path('Photographer/viewpage/<int:listingid>',vp.PhotographerViewPage,name='PhotographerViewPage'),
+    path('PhotographyPlaces/viewpage/<int:listingid>',vp.PhotographyPlacesViewPage,name='PhotographyPlacesViewPage'),
+    path('Caterer/viewpage/<int:listingid>',vp.CatererViewPage,name='CatererViewPage'),
+    path('Bakers/viewpage/<int:listingid>',vp.BakersViewPage,name='BakersViewPage'),
+    path('ViewFunction/<int:FunctionId>',views.ViewFunction,name='ViewFunction'),
+    path('videoeditorviewpage/<int:listingid>',vp.VideoEditorViewPage,name='VideoEditorViewPage'),
+    path('add/Bookcart/',views.AddtoBookCart,name='AddtoBookCart'),
+    path('show/Bookcart/<int:id>',views.showBookCart,name='showBookCart'),
+    path('saloonviewpage/<int:listingid>',vp.SalonViewPage,name='SaloonViewPage'),
+    path('parlourviewpage/<int:listingid>',vp.ParlourViewPage,name='parlourViewPage'),
+    path('home/categories/',views.HomeCategories,name='HomeCategories'),
+    path('business/categories/<str:type>',views.BusinessCategories,name='BusinessCategories'),
+    path('home/listings/',lm.HomeListings,name='HomeListings'),
+    path('show/guest/',views.ShowGuest,name='ShowGuest'),
+    path('Delete/guest/',views.DeleteGuest,name='DeleteGuest'),
+    path('show/checklist/<int:eventId>',views.ShowChecklist,name='ShowGuest'),
+    path('show/checklist/<int:eventId>/<int:functionId>',views.ShowChecklist,name='ShowGuest'),
+    path('add/checklist',lm.AddListItem,name='AddChecklist'),
+    path('update/checklist',lm.UpdateListItem,name='UpdateChecklist'),
+    path('add/guests/',views.AddGuests,name='AddGuests'),
+    path('businessowner/accountInfo/<int:id>/<str:type>',am.BusinessAccountInfoPage,name='BusinessOwnerAccountInfo'),
+    path('User/login/',am.UserLogin,name='UserLogin'),
+    path('getUsernames/business/',views.get_business_usernames,name='get_business_usernames'),
+    path('Homepage/DemoImages/',views.getHomeImages,name='HomePageImages'),
+    path('cartItems/<int:productid>/<int:listingid>/<int:userid>',views.CartItems,name='CartItems'),
+    path('graphic/designer/viewpage/<int:listingid>',vp.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
+    path('carrenter/viewpage/<int:listingid>',vp.CarRenterViewPage,name='CarRenterViewPage'),
+    # path('deleteReq/',views.deleteTable,name='deleteReq'),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

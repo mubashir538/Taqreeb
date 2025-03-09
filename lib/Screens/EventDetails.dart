@@ -311,29 +311,29 @@ class _EventDetailsState extends State<EventDetails> {
                               child: Text("Event CheckLlist")),
                         ),
 
-                        // Container(
-                        //   margin: EdgeInsets.all(MaximumThing * 0.01),
-                        //   padding: EdgeInsets.symmetric(
-                        //       vertical: screenHeight * 0.01,
-                        //       horizontal: screenWidth * 0.03),
-                        //   decoration: BoxDecoration(
-                        //       color: MyColors.DarkLighter,
-                        //       borderRadius: BorderRadius.circular(10),
-                        //       boxShadow: [
-                        //         BoxShadow(
-                        //           color: Colors.black.withOpacity(0.5),
-                        //           spreadRadius: 5,
-                        //           blurRadius: 4,
-                        //           offset: Offset(2, 2),
-                        //         ),
-                        //       ]),
-                        //   width: screenWidth * 0.8,
-                        //   child: InkWell(
-                        //       onTap: () {
-                        //         Navigator.pushNamed(context, '/InvitationCardEdit');
-                        //       },
-                        //       child: Text("View Invitation Card")),
-                        // ),
+                        Container(
+                          margin: EdgeInsets.all(MaximumThing * 0.01),
+                          padding: EdgeInsets.symmetric(
+                              vertical: screenHeight * 0.01,
+                              horizontal: screenWidth * 0.03),
+                          decoration: BoxDecoration(
+                              color: MyColors.DarkLighter,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 4,
+                                  offset: Offset(2, 2),
+                                ),
+                              ]),
+                          width: screenWidth * 0.8,
+                          child: InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/InvitationCardEdit');
+                              },
+                              child: Text("View Invitation Card")),
+                        ),
 
                         SizedBox(
                           height: screenHeight * 0.1,
