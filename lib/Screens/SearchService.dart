@@ -47,6 +47,9 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
+  Map<String, dynamic> additionalFilters = {}; // Stores dynamic filters
+  Map<String, dynamic> additionalSelections = {}; // Stores user selections
+
   @override
   void initState() {
     super.initState();
@@ -61,7 +64,7 @@ class _SearchServiceState extends State<SearchService> {
       if (args != null) {
         this.args = args as Map<String, dynamic>;
       }
-        fetchData();
+      fetchData();
     }
   }
 
@@ -112,6 +115,40 @@ class _SearchServiceState extends State<SearchService> {
     ischange = true;
   }
 
+  void fetchAdditionalFilters(String categoryType) async {
+    setState(() {
+      isLoading = true;
+    });
+    print('Fetching additional filters for $categoryType');
+    final response = await MyApi.getRequest(
+      endpoint: 'getListingDetails/$categoryType',
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response != null && response['fields'] != null) {
+      setState(() {
+        additionalFilters = {
+          for (var field in response['fields'])
+            if (field['choices'] != null && field['choices'].isNotEmpty)
+              field['name']: field['choices'],
+        };
+        print(additionalFilters);
+        additionalSelections = {
+          for (var field in additionalFilters.keys) field: []
+        };
+        isLoading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to fetch additional filters!'),
+        backgroundColor: MyColors.red,
+      ));
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     timer?.cancel();
@@ -131,13 +168,24 @@ class _SearchServiceState extends State<SearchService> {
     }
   }
 
+  String searchListingPicture(int listingid, Map<String, dynamic> listing) {
+    for (int i = 0; i < listing['pictures'].length; i++) {
+      if (listing['pictures'][i][0]['listingId'] == listingid) {
+        return listing['pictures'][i][0]['picturePath'];
+      }
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final maximumDimension =
         screenWidth > screenHeight ? screenWidth : screenHeight;
+
     _getHeaderHeight();
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       resizeToAvoidBottomInset: true,
@@ -153,8 +201,9 @@ class _SearchServiceState extends State<SearchService> {
                   isLoading
                       ? Center(
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(MyColors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              MyColors.white,
+                            ),
                           ),
                         )
                       : Column(
@@ -189,14 +238,30 @@ class _SearchServiceState extends State<SearchService> {
                                         });
                                       },
                                     ),
-                                    IconButton(
-                                      onPressed: () =>
-                                          _showFilterPopup(context),
-                                      icon: Icon(
-                                        Icons.tune,
-                                        size: maximumDimension * 0.03,
-                                        color: MyColors.white,
-                                      ),
+                                    Column(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () =>
+                                              _showFilterPopup(context),
+                                          icon: Icon(
+                                            Icons.tune,
+                                            size: maximumDimension * 0.03,
+                                            color: MyColors.white,
+                                          ),
+                                        ),
+                                        // Additional Filters Icon
+                                        if (appliedFilters.contains("Category"))
+                                          IconButton(
+                                            onPressed: () =>
+                                                _showAdditionalFilterPopup(
+                                                    context),
+                                            icon: Icon(
+                                              Icons.filter_alt,
+                                              size: maximumDimension * 0.03,
+                                              color: MyColors.white,
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -261,11 +326,13 @@ class _SearchServiceState extends State<SearchService> {
                                   listingid: templistings['HomeListing'][index]
                                           ['id']
                                       .toString(),
-                                  imageUrl: templistings['pictures'][index][0]
-                                              ['picturePath'] ==
-                                          " "
+                                  imageUrl: searchListingPicture(
+                                              templistings['HomeListing'][index]
+                                                  ['id'],
+                                              templistings) ==
+                                          ""
                                       ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${templistings['pictures'][index][0]['picturePath']}',
+                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${searchListingPicture(templistings['HomeListing'][index]['id'], templistings)}',
                                   venueName: templistings['HomeListing'][index]
                                       ['name'],
                                   location: templistings['HomeListing'][index]
@@ -286,10 +353,11 @@ class _SearchServiceState extends State<SearchService> {
             ),
           ),
           Positioned(
-              top: 0,
-              child: Header(
-                key: _headerKey,
-              )),
+            top: 0,
+            child: Header(
+              key: _headerKey,
+            ),
+          ),
         ],
       ),
     );
@@ -316,6 +384,7 @@ class _SearchServiceState extends State<SearchService> {
               .toList();
         }
         if (i == "Category") {
+          fetchAdditionalFilters(categoryController.selections[0]);
           templistings['HomeListing'] = templistings['HomeListing']
               .where((element) =>
                   categoryController.selections.contains(element['type']))
@@ -482,6 +551,84 @@ class _SearchServiceState extends State<SearchService> {
             ),
           );
         });
+      },
+    );
+  }
+
+// Method to Show Additional Filters Popup
+  void _showAdditionalFilterPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MyColors.Dark,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Additional Filters',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.Yellow,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Expanded(
+                    child: ListView(
+                      children: additionalFilters.entries.map((entry) {
+                        String fieldName = entry.key;
+                        List<String> choices = entry.value.cast<String>().toList();
+                        print(entry);
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              fieldName,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: MyColors.Yellow,
+                              ),
+                            ),
+                            CheckBoxQuestion(
+                              question: '',
+                              options: choices,
+                              controller: CheckBoxController(
+                                selections: additionalSelections[fieldName].cast<String>().toList(),
+                              ),
+                              onChanged: (selections) {
+                                setState(() {
+                                  additionalSelections[fieldName] = selections;
+                                });
+                              },
+                            ),
+                            Divider(color: MyColors.whiteDarker),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  ColoredButton(
+                    text: 'Apply Filters',
+                    onPressed: () {
+                      setState(() {
+                        searchwithFilters();
+                      });
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }

@@ -173,7 +173,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                 width: screenWidth * 0.3,
                 textSize: maximum * 0.015,
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); 
                 },
               ),
               ColoredButton(
@@ -262,7 +262,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
       if (result != null) {
         setState(() {
           (widget.listing['Addons'] as List).add(newItem);
-          print(widget.listing['Addons']);
         });
       }
     });
@@ -290,8 +289,6 @@ class _CategoryAddonsState extends State<CategoryAddons> {
         isEditingHeading.removeAt(index);
         isEditingValue.removeAt(index);
       });
-      print(widget.listing['Addons']);
-      print('running!');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Addon Deleted Successfully!',
             style: GoogleFonts.montserrat(

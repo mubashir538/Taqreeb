@@ -118,7 +118,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           'type': 'image',
         });
 
-        print('Image uploaded and message sent: $imageUrl');
       } else {
         print('Failed to upload image: ${response.statusCode}');
       }
@@ -196,7 +195,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   Text(
                     timestamp != null
                         ? _formatTimestamp(timestamp)
-                        : 'Sending...', // Placeholder for timestamp
+                        : 'Sending...', 
                     style: GoogleFonts.montserrat(
                         color: MyColors.DarkLighter, fontSize: 12),
                   ),

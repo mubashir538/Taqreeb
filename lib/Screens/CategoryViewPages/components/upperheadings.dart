@@ -126,6 +126,13 @@ class _UpperHeadingsState extends State<UpperHeadings> {
 
                                 if (response['status'] == 'success') {
                                   Navigator.pop(context);
+                                } else if (response['status'] ==
+                                    'BudgetError') {
+                                  warningDialog(
+                                    message: 'Event Budget is Exceeding',
+                                    title: 'Budget Exceed',
+                                    actions: [ColoredButton(text: 'Ok')],
+                                  ).showDialogBox(context);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -164,8 +171,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
         },
-        endpoint:
-            'businessowner/updateListings/', 
+        endpoint: 'businessowner/updateListings/',
         body: {
           'id': widget.listingId.toString(),
           field: value,
@@ -248,13 +254,18 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                widget.listing['Listing']['name'],
-                                softWrap: true,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: maximumDimension * 0.025,
-                                  fontWeight: FontWeight.w600,
-                                  color: MyColors.white,
+                              Container(
+                                width: screenWidth * 0.75,
+                                child: Text(
+                                  widget.listing['Listing']['name'],
+                                  softWrap: true,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: maximumDimension * 0.025,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.white,
+                                  ),
                                 ),
                               ),
                               !type
@@ -291,7 +302,6 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                                 final token =
                                                     await MyStorage.getToken(
                                                         MyTokens.accessToken);
-                                                print(token);
                                                 final response =
                                                     await MyApi.postRequest(
                                                         endpoint:

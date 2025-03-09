@@ -81,7 +81,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     if (_isPicking) return;
 
     setState(() {
-      _isPicking = true; // Set the picker as active
+      _isPicking = true; 
     });
 
     final XFile? pickedImage = await _picker.pickImage(
@@ -93,7 +93,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }
 
     setState(() {
-      _isPicking = false; // Reset the picker status
+      _isPicking = false; 
     });
   }
 

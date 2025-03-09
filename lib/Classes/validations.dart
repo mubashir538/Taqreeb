@@ -13,6 +13,35 @@ class Validations {
     return "Ok";
   }
 
+  static String validateName(String? value) {
+    value = value?.trim();
+
+    if (value == null || value.isEmpty) {
+      return 'Please enter a name';
+    }
+    RegExp regex = RegExp(r'[a-zA-Z]');
+    if (!regex.hasMatch(value)) {
+      return 'Invalid Data';
+    }
+
+    return "Ok";
+  }
+
+  static String validateIntFields(String? value) {
+    value = value?.trim();
+
+    if (value == null || value.isEmpty) {
+      return 'Please enter a value';
+    }
+
+    RegExp regex = RegExp(r'[0-9]');
+    if (!value.contains(regex)) {
+      return 'Invalid Data';
+    }
+
+    return "Ok";
+  }
+
   static String validateUsername(String? value) {
     value = value?.trim();
 

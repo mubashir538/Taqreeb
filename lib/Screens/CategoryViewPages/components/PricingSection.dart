@@ -86,7 +86,6 @@ class _PricingSectionState extends State<PricingSection> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     if (type) {
-      // Editable layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(
@@ -149,7 +148,6 @@ class _PricingSectionState extends State<PricingSection> {
         ),
       );
     } else {
-      // Original layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(

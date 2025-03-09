@@ -88,6 +88,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     _getHeaderHeight();
 
     return Scaffold(
@@ -95,54 +96,60 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: (screenHeight * 0.05) + _headerHeight,
-                ),
-                MyTextBox(
-                  hint: 'CNIC',
-                  focusNode: cnicFocusNode,
-                  isNum: true,
-                  valueController: cnicController,
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(profileNameFocusNode);
-                  },
-                ),
-                MyTextBox(
-                  hint: 'Profile Name',
-                  focusNode: profileNameFocusNode,
-                  valueController: profileNameController,
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).unfocus();
-                  },
-                ),
-                ColoredButton(
-                  onPressed: () {
-                    if (cnicController.text.isEmpty ||
-                        profileNameController.text.isEmpty) {
-                      warningDialog(
-                        message: "Please fill all the details",
-                        title: "Invalid Details",
-                      ).showDialogBox(context);
-                    } else if (Validations.validateCNIC(cnicController.text) !=
-                        'Ok') {
-                      warningDialog(
-                        message: Validations.validateCNIC(cnicController.text),
-                        title: "Invalid Details",
-                      ).showDialogBox(context);
-                    } else {
-                      MyStorage.saveToken(cnicController.text, MyTokens.bscnic);
-                      MyStorage.saveToken(
-                          profileNameController.text, MyTokens.bsname);
-                      Navigator.pushNamed(
-                          context, '/BusinessSignup_CNICUpload');
-                    }
-                  },
-                  text: 'Continue',
-                ),
-              ],
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: (screenHeight * 0.05) + _headerHeight,
+                  ),
+                  MyTextBox(
+                    hint: 'CNIC',
+                    focusNode: cnicFocusNode,
+                    isNum: true,
+                    valueController: cnicController,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(profileNameFocusNode);
+                    },
+                  ),
+                  MyTextBox(
+                    hint: 'Profile Name',
+                    focusNode: profileNameFocusNode,
+                    valueController: profileNameController,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).unfocus();
+                    },
+                  ),
+                  ColoredButton(
+                    onPressed: () {
+                      if (cnicController.text.isEmpty ||
+                          profileNameController.text.isEmpty) {
+                        warningDialog(
+                          message: "Please fill all the details",
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else if (Validations.validateCNIC(
+                              cnicController.text) !=
+                          'Ok') {
+                        warningDialog(
+                          message:
+                              Validations.validateCNIC(cnicController.text),
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else {
+                        MyStorage.saveToken(
+                            cnicController.text, MyTokens.bscnic);
+                        MyStorage.saveToken(
+                            profileNameController.text, MyTokens.bsname);
+                        Navigator.pushNamed(
+                            context, '/BusinessSignup_CNICUpload');
+                      }
+                    },
+                    text: 'Continue',
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(

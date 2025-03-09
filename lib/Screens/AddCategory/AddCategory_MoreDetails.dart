@@ -81,7 +81,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
           } else {
             for (int i = 0; i < textfields['fields'].length; i++) {
               controllers.add(TextEditingController());
-              print(i);
               focusNodes.add(FocusNode());
             }
             isLoading = false;
@@ -206,6 +205,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                     args.addAll(fieldValues.map((key, value) {
                       return MapEntry(key, value.toString());
                     }).cast<String, String>());
+                    print(args);
                     Navigator.pushNamed(context, '/AddCategory_Addons',
                         arguments: args);
                   },

@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.taqreeb"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -52,4 +52,5 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.7.0') // Use BOM for Firebase versions
     implementation 'com.google.firebase:firebase-firestore-ktx' // Firestore dependency
+
 }

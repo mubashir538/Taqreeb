@@ -3,7 +3,6 @@ import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryReview.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/components/categorySlots.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categorydetails.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/descriptionCategory.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/imageslider.dart';
@@ -316,22 +315,10 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
-                                CategorySlots(
+                                CategoryAddons(
                                   listing: listing,
-                                  onDateSelected: (date) {
-                                    setState(() {
-                                      selectedDate = date;
-                                    });
-                                  },
                                 ),
+                                CategoryPackages(listing: listing),
                                 SizedBox(
                                   height: screenHeight * 0.05,
                                   child: Center(

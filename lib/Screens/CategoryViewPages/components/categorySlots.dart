@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/calendar.dart';
 import 'package:taqreeb/theme/color.dart';
 
-import '../../../Components/calendar.dart';
 
 class CategorySlots extends StatefulWidget {
   final Function(DateTime) onDateSelected;

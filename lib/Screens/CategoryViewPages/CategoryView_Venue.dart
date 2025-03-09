@@ -257,4 +257,5 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
       ),
     );
   }
+
 }

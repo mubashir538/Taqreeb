@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
@@ -8,6 +12,7 @@ import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
+import 'package:taqreeb/Screens/BusinessInfoEdit.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_BakerySweet.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Caterers.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Decorator.dart';
@@ -58,20 +63,46 @@ import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventD
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/groupchats.dart';
+import 'package:taqreeb/Screens/newUserSearch.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/firebase_options.dart';
+import 'package:taqreeb/theme/color.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  bool ishome = false;
+
+  void initialize() async {
+    MyColors.getTheme();
+
+    Timer(Duration(seconds: 3), () async {
+      await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
+      if (await MyStorage.exists(MyTokens.accessToken)) {
+        ishome = true;
+      }
+    });
+    FlutterNativeSplash.remove();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +154,7 @@ class MainApp extends StatelessWidget {
         '/YourListings': (context) => MainScreen(index: 2),
         '/AccountInfo': (context) => MainScreen(index: 3),
         '/AccountInfoEdit': (context) => AccountInfoEdit(),
+        '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
         '/BusinessAccountInfo': (context) => MainScreen(index: 3),
         '/CreateGuestList': (context) => CreateGuestList(),
         '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
@@ -152,6 +184,7 @@ class MainApp extends StatelessWidget {
         '/EditEvent': (context) => CreateEvent(),
         '/EditFunction': (context) => CreateFunction(),
         '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
+        '/search_new_user': (context) => NewUserSearch(),
       },
       theme: ThemeData.dark(
         useMaterial3: true,

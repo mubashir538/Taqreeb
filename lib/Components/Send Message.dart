@@ -30,7 +30,6 @@ class SendMessage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // Display time
           Text(
             time,
             style: GoogleFonts.montserrat(
@@ -39,7 +38,6 @@ class SendMessage extends StatelessWidget {
             ),
           ),
           SizedBox(width: 15),
-          // Message container
           Container(
             constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
             padding: EdgeInsets.all(maximumDimension * 0.02),
@@ -55,7 +53,6 @@ class SendMessage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // Show image if imageUrl is provided
                 if (imageUrl != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
@@ -65,7 +62,6 @@ class SendMessage extends StatelessWidget {
                       width: screenWidth * 0.6,
                     ),
                   ),
-                // Show text if available
                 if (text.isNotEmpty)
                   Text(
                     text,
@@ -77,7 +73,6 @@ class SendMessage extends StatelessWidget {
                       color: MyColors.white,
                     ),
                   ),
-                // Show audio placeholder if audioUrl is provided
                 if (audioUrl != null)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

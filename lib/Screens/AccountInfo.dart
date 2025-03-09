@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -57,8 +56,7 @@ class _AccountInfoState extends State<AccountInfo> {
           } else {
             isLoading = false;
           }
-
-          });
+        });
       }
     });
   }
@@ -80,6 +78,11 @@ class _AccountInfoState extends State<AccountInfo> {
         _headerHeight = renderBox.size.height;
       });
     }
+  }
+
+  String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
   @override
@@ -133,19 +136,39 @@ class _AccountInfoState extends State<AccountInfo> {
                                     backgroundImage: NetworkImage(
                                         "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}"),
                                   ),
-                                  Container(
-                                    width: screenWidth * 0.5,
-                                    margin: EdgeInsets.only(
-                                        left: MaximumThing * 0.02),
-                                    child: Text(
-                                      "${user['firstName']} ${user['lastName']}",
-                                      softWrap: true,
-                                      maxLines: 3,
-                                      style: GoogleFonts.montserrat(
-                                          fontSize: MaximumThing * 0.02,
-                                          fontWeight: FontWeight.w600,
-                                          color: MyColors.white),
-                                    ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: screenWidth * 0.5,
+                                        margin: EdgeInsets.only(
+                                            left: MaximumThing * 0.02),
+                                        child: Text(
+                                          "${_capitalize(user['firstName'])} ${_capitalize(user['lastName'])}",
+                                          softWrap: true,
+                                          maxLines: 3,
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: MaximumThing * 0.02,
+                                              fontWeight: FontWeight.w600,
+                                              color: MyColors.white),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: screenWidth * 0.5,
+                                        margin: EdgeInsets.only(
+                                            left: MaximumThing * 0.02),
+                                        child: Text(
+                                          user['username'],
+                                          softWrap: true,
+                                          maxLines: 3,
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: MaximumThing * 0.015,
+                                              fontWeight: FontWeight.w400,
+                                              color: MyColors.Yellow),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ]),
                           ),

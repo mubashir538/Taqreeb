@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
+import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/Header.dart';
 import 'package:taqreeb/Components/ProductCard.dart';
 import 'package:taqreeb/Components/Search Box.dart';
@@ -66,9 +67,6 @@ class _HomePageState extends State<HomePage> {
               fetchedListings['status'] == 'error' ||
               fetchedImages == null ||
               fetchedImages['status'] == 'error') {
-            print('fetch image: ${fetchedImages}');
-            print('fetch listings: ${fetchedListings}');
-            print('fetch categories: ${fetchedCategories}');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
                   style: GoogleFonts.montserrat(
@@ -173,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                                         vertical: screenHeight * 0.015),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Browse Categories',
@@ -181,20 +179,6 @@ class _HomePageState extends State<HomePage> {
                                             fontSize: MaximumThing * 0.02,
                                             fontWeight: FontWeight.w600,
                                             color: MyColors.Yellow,
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/SearchService');
-                                          },
-                                          child: Text(
-                                            'See all',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: MaximumThing * 0.017,
-                                              fontWeight: FontWeight.w400,
-                                              color: MyColors.white,
-                                            ),
                                           ),
                                         ),
                                       ],
@@ -226,21 +210,43 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            // Center(
-                            //   child: ColoredButton(
-                            //     onPressed: () {
-                            //       Navigator.pushNamed(context, '/CreateAIPackage');
-                            //     },
-                            //     text: 'Create Package with AI',
-                            //   ),
-                            // ),
+                            Center(
+                              child: ColoredButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/CreateAIPackage');
+                                },
+                                text: 'Create Package with AI',
+                              ),
+                            ),
+                             Center(
+                                  child: Container(
+                                    width: screenWidth * 0.95,
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: screenHeight * 0.015),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'For You',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: MaximumThing * 0.02,
+                                            fontWeight: FontWeight.w600,
+                                            color: MyColors.Yellow,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                
                             Center(
                               child: SizedBox(
                                 width: screenWidth * 0.9,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: listings['HomeListing'].length,
+                                  itemCount: listings['HomeListing'].length > 10 ? 10:listings['HomeListing'].length ,
                                   itemBuilder: (context, index) {
                                     return Productcard(
                                       listingType: listings['HomeListing']

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:taqreeb/Classes/authService.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
@@ -93,57 +95,9 @@ class _BasicSignupState extends State<BasicSignup> {
     }
   }
 
-  // Future<void> signUpWithGoogle() async {
-  //   try {
-  //     // Trigger the Google Authentication flow
-  //     final GoogleSignIn googleSignIn = GoogleSignIn();
-  //     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-  //     if (googleUser != null) {
-  //       // Obtain the Google Sign-In authentication details
-  //       final GoogleSignInAuthentication googleAuth =
-  //           await googleUser.authentication;
-
-  //       // Create a new credential
-  //       final credential = GoogleAuthProvider.credential(
-  //         accessToken: googleAuth.accessToken,
-  //         idToken: googleAuth.idToken,
-  //       );
-
-  //       // Sign in to Firebase with the Google credential
-  //       final UserCredential userCredential =
-  //           await FirebaseAuth.instance.signInWithCredential(credential);
-
-  //       final User? user = userCredential.user;
-
-  //     //   if (user != null) {
-  //     //     // Check if the user already exists in the database
-  //     //     final userRef =
-  //     //         FirebaseFirestore.instance.collection('users').doc(user.uid);
-  //     //     final doc = await userRef.get();
-
-  //     //     if (!doc.exists) {
-  //     //       // If the user does not exist, add them to the database
-  //     //       await userRef.set({
-  //     //         'uid': user.uid,
-  //     //         'name': user.displayName ?? '',
-  //     //         'email': user.email ?? '',
-  //     //         'photoUrl': user.photoURL ?? '',
-  //     //         'createdAt': FieldValue.serverTimestamp(),
-  //     //       });
-  //     //     }
-
-  //     //     return user;
-  //     //   }
-  //     }
-  //   } catch (e) {
-  //     print('Error signing in with Google: $e');
-  //   }
-  //   return null;
-  // }
-
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
@@ -151,133 +105,150 @@ class _BasicSignupState extends State<BasicSignup> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: _headerHeight,
-                ),
-                MyTextBox(
-                    focusNode: firstNameFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(lastNameFocus);
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: _headerHeight,
+                  ),
+                  MyTextBox(
+                      focusNode: firstNameFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(lastNameFocus);
+                      },
+                      hint: "First Name",
+                      valueController: firstNameController),
+                  MyTextBox(
+                      focusNode: lastNameFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(passwordFocus);
+                      },
+                      hint: "Last Name",
+                      valueController: lastNameController),
+                  MyTextBox(
+                      focusNode: passwordFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(confirmPasswordFocus);
+                      },
+                      hint: "Password",
+                      isPassword: true,
+                      valueController: passwordController),
+                  MyTextBox(
+                      focusNode: confirmPasswordFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).unfocus();
+                      },
+                      hint: "Confirm Password",
+                      isPassword: true,
+                      valueController: confirmPasswordController),
+                  ColoredButton(
+                    text: "Continue",
+                    onPressed: () {
+                      if (firstNameController.text.isEmpty ||
+                          lastNameController.text.isEmpty ||
+                          passwordController.text.isEmpty ||
+                          confirmPasswordController.text.isEmpty) {
+                        warningDialog(
+                          message: "Please fill all the details",
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else if (Validations.validatePassword(
+                              passwordController.text) !=
+                          'Ok') {
+                        warningDialog(
+                          message: Validations.validatePassword(
+                              passwordController.text),
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else if (passwordController.text !=
+                          confirmPasswordController.text) {
+                        warningDialog(
+                          message:
+                              "Password and Confirm Password Should be Same!",
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else {
+                        MyStorage.saveToken(firstNameController.text, "sfname");
+                        MyStorage.saveToken(lastNameController.text, "slname");
+                        MyStorage.saveToken(
+                            passwordController.text, "spassword");
+                        Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+                      }
                     },
-                    hint: "First Name",
-                    valueController: firstNameController),
-                MyTextBox(
-                    focusNode: lastNameFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(passwordFocus);
-                    },
-                    hint: "Last Name",
-                    valueController: lastNameController),
-                MyTextBox(
-                    focusNode: passwordFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(confirmPasswordFocus);
-                    },
-                    hint: "Password",
-                    isPassword: true,
-                    valueController: passwordController),
-                MyTextBox(
-                    focusNode: confirmPasswordFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).unfocus();
-                    },
-                    hint: "Confirm Password",
-                    isPassword: true,
-                    valueController: confirmPasswordController),
-                ColoredButton(
-                  text: "Continue",
-                  onPressed: () {
-                    if (firstNameController.text.isEmpty ||
-                        lastNameController.text.isEmpty ||
-                        passwordController.text.isEmpty ||
-                        confirmPasswordController.text.isEmpty) {
-                      warningDialog(
-                        message: "Please fill all the details",
-                        title: "Invalid Details",
-                      ).showDialogBox(context);
-                    } else if (Validations.validatePassword(
-                            passwordController.text) !=
-                        'Ok') {
-                      warningDialog(
-                        message: Validations.validatePassword(
-                            passwordController.text),
-                        title: "Invalid Details",
-                      ).showDialogBox(context);
-                    } else if (passwordController.text !=
-                        confirmPasswordController.text) {
-                      warningDialog(
-                        message:
-                            "Password and Confirm Password Should be Same!",
-                        title: "Invalid Details",
-                      ).showDialogBox(context);
-                    } else {
-                      MyStorage.saveToken(firstNameController.text, "sfname");
-                      MyStorage.saveToken(lastNameController.text, "slname");
-                      MyStorage.saveToken(passwordController.text, "spassword");
-                      Navigator.pushNamed(context, '/Signup_ContactOTPSend');
-                    }
-                  },
-                ),
-                SizedBox(height: 10),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: InkWell(
+                  ),
+                  SizedBox(height: 10),
+                  InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/Login');
+                      Navigator.pushNamed(context, '/login');
                     },
-                    child: Text(
-                      "Already a Member? Login",
-                      style: TextStyle(color: MyColors.yellowonDark),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/Login');
+                      },
+                      child: Text(
+                        "Already a Member? Login",
+                        style: TextStyle(color: MyColors.yellowonDark),
+                      ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: screenHeight * 0.015,
-                          vertical: screenHeight * 0.02),
-                      height: screenHeight * 0.06,
-                      width: screenHeight * 0.06,
-                      decoration: BoxDecoration(
-                          color: MyColors.DarkLighter,
-                          borderRadius: BorderRadius.circular(50)),
-                      child: Center(
-                        child: SvgPicture.asset(MyIcons.google,
-                            width: screenHeight * 0.04,
-                            height: screenHeight * 0.04),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          User? user = await AuthService().signInWithGoogle();
+                          print(user);
+                          if (user != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Login Successful!'),
+                              backgroundColor: MyColors.green,
+                            ));
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: screenHeight * 0.015,
+                              vertical: screenHeight * 0.02),
+                          height: screenHeight * 0.06,
+                          width: screenHeight * 0.06,
+                          decoration: BoxDecoration(
+                              color: MyColors.DarkLighter,
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Center(
+                            child: SvgPicture.asset(MyIcons.google,
+                                width: screenHeight * 0.04,
+                                height: screenHeight * 0.04),
+                          ),
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: screenHeight * 0.015,
-                          vertical: screenHeight * 0.02),
-                      height: screenHeight * 0.06,
-                      width: screenHeight * 0.06,
-                      decoration: BoxDecoration(
-                          color: MyColors.DarkLighter,
-                          borderRadius: BorderRadius.circular(50)),
-                      child: Center(
-                        child: SvgPicture.asset(MyIcons.facebook,
-                            width: screenHeight * 0.04,
-                            height: screenHeight * 0.04),
-                      ),
-                    )
-                  ],
-                ),
-              ],
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: screenHeight * 0.015,
+                            vertical: screenHeight * 0.02),
+                        height: screenHeight * 0.06,
+                        width: screenHeight * 0.06,
+                        decoration: BoxDecoration(
+                            color: MyColors.DarkLighter,
+                            borderRadius: BorderRadius.circular(50)),
+                        child: Center(
+                          child: SvgPicture.asset(MyIcons.facebook,
+                              width: screenHeight * 0.04,
+                              height: screenHeight * 0.04),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: "SignUP",
+              heading: "Signup",
               para: "Unlock exclusive events - sign up now!",
               image: MyImages.Signup1,
             ),

@@ -14,12 +14,10 @@ class MembersScreen extends StatelessWidget {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-      // Fetch the group document to get participant IDs
       DocumentSnapshot groupDoc =
           await _firestore.collection('groups').doc(groupId).get();
       List<dynamic> participantIds = groupDoc['participants'];
 
-      // Fetch user details for each participant ID
       List<Map<String, dynamic>> members = [];
       for (String userId in participantIds) {
         DocumentSnapshot userDoc =

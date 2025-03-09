@@ -36,10 +36,7 @@ class _CategoryView_PhotographyPlaceState
 
   bool isToggled = true;
   List<String> headings = [
-    'Service Type',
-    'Catering Options',
-    'Staff',
-    'Expertise'
+    'Type',
   ];
   List<String> values = [];
   List<String> addonsheadings = [];
@@ -115,10 +112,7 @@ class _CategoryView_PhotographyPlaceState
                 this.addonsvalues.add(listing['Addons'][i]['price'].toString());
               }
             }
-            this.values.add(listing['View']['serviceType']);
-            this.values.add(listing['View']['cateringOptions']);
-            this.values.add(listing['View']['staff']);
-            this.values.add(listing['View']['expertise']);
+            this.values.add(listing['View']['type']);
             this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
             this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
@@ -202,13 +196,10 @@ class _CategoryView_PhotographyPlaceState
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                       listing: listing,)
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategorySlots(
                                   listing: listing,
                                   onDateSelected: (date) {

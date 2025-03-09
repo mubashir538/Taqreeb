@@ -92,6 +92,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           image =
               "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
         });
+        timer.cancel();
       }
     });
   }
@@ -211,7 +212,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           warningDialog(
                   title: 'Error',
                   message:
-                      'Failed to upload the profile picture. Please try again.')
+                      'Failed to Update Info, Please Try Again Later!.')
               .showDialogBox(context);
         }
       } catch (e) {

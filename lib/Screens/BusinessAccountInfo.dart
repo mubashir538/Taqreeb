@@ -19,8 +19,8 @@ class BusinessAccountInfo extends StatefulWidget {
 
 class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   String token = '';
-  Map<String, dynamic> user = {}; 
-  bool isLoading = true; 
+  Map<String, dynamic> user = {};
+  bool isLoading = true;
   List<String> items = [];
   String type = "";
   void initState() {
@@ -44,7 +44,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.user = user ?? {}; 
+          this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('Something Went Wrong!',
@@ -63,12 +63,12 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
       }
     });
   }
-  
-@override
-void dispose(){
-timer?.cancel();
-super.dispose();
-}
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -117,9 +117,7 @@ super.dispose();
                         CircleAvatar(
                           radius: 50,
                           backgroundImage: NetworkImage(
-                            type == 'freelancer'
-                                ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilePic']}'
-                                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
+                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
                           ),
                         ),
                         SizedBox(
@@ -137,9 +135,7 @@ super.dispose();
                           padding: EdgeInsets.symmetric(
                               horizontal: screenWidth * 0.04),
                           child: Text(
-                            type == 'freelancer'
-                                ? user['businessInfo']['description']
-                                : user['businessInfo']['Description'],
+                            user['businessInfo']['Description'],
                             style: style,
                             textAlign: TextAlign.center,
                           ),

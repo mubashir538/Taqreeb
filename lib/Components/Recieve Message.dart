@@ -45,7 +45,6 @@ class RecieveMessage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Display image if imageUrl is provided
                 if (imageUrl != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
@@ -55,7 +54,6 @@ class RecieveMessage extends StatelessWidget {
                       width: screenWidth * 0.6,
                     ),
                   ),
-                // Display text if available
                 if (text.isNotEmpty)
                   Text(
                     text,
@@ -67,7 +65,6 @@ class RecieveMessage extends StatelessWidget {
                       color: MyColors.white,
                     ),
                   ),
-                // Add placeholder for audio playback if audioUrl is provided
                 if (audioUrl != null)
                   Row(
                     children: [

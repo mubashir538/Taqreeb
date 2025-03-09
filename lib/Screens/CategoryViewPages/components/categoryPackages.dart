@@ -13,7 +13,7 @@ import 'package:taqreeb/theme/color.dart';
 
 class CategoryPackages extends StatefulWidget {
   final Map listing;
-  final bool type; // Toggle between editable and static layout
+  final bool type; 
 
   const CategoryPackages({super.key, required this.listing, this.type = false});
 
@@ -22,12 +22,10 @@ class CategoryPackages extends StatefulWidget {
 }
 
 class _CategoryPackagesState extends State<CategoryPackages> {
-  // Controllers for the text fields in the popup
   late TextEditingController nameController;
   late TextEditingController detailsController;
   late TextEditingController priceController;
 
-  // Track which package is being edited
   int? editingIndex;
 
   @override
@@ -36,23 +34,19 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     nameController = TextEditingController();
     detailsController = TextEditingController();
     priceController = TextEditingController();
-    print(widget.listing);
     SetType();
   }
 
-  // Method to show the popup for adding or editing a package
   void showPackagePopup(double screenWidth, double maximum, {int? index}) {
     FocusNode nameFocus = new FocusNode();
     FocusNode detailsFocus = new FocusNode();
     FocusNode priceFocus = new FocusNode();
     if (index != null) {
-      // If index is provided, we are editing an existing package
       var package = widget.listing['Package'][index];
       nameController.text = package['name'];
       detailsController.text = package['description'];
       priceController.text = package['price'].toString();
     } else {
-      // If no index, we are adding a new package
       nameController.clear();
       detailsController.clear();
       priceController.clear();
@@ -165,7 +159,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                       ));
                     }
                   } else {
-                    print(widget.listing['Package'][index]);
                     final response = await MyApi.postRequest(
                       headers: {
                         'Authorization':
@@ -219,7 +212,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                         'price': priceController.text,
                       };
                     } else {
-                      // Add new package
                       widget.listing['Package'].add({
                         'name': nameController.text,
                         'description': detailsController.text,
@@ -230,14 +222,12 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                   Navigator.pop(context);
                 })
 
-            // Save Button
           ],
         );
       },
     );
   }
 
-  // Method to delete a package
   void deletePackage(int index) async {
     final response = await MyApi.postRequest(
       headers: {
@@ -293,7 +283,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
         screenWidth > screenHeight ? screenWidth : screenHeight;
 
     if (type) {
-      // Editable layout
       return Padding(
         padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: Column(
@@ -318,7 +307,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Package Name, Details, and Price
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -345,14 +333,12 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                             ),
                           ],
                         ),
-                        // Icons for Edit and Delete
                       ],
                     ),
                   );
                 }).toList(),
               ),
             ),
-            // Add New Package Icon
             IconButton(
               icon: Icon(Icons.add_circle_outline, color: MyColors.Yellow),
               onPressed: () => showPackagePopup(screenWidth, maximumDimension),
@@ -368,7 +354,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
         ),
       );
     } else {
-      // Static layout
       return widget.listing['Package'].length != 0
           ? Padding(
               padding: EdgeInsets.only(top: screenHeight * 0.02),

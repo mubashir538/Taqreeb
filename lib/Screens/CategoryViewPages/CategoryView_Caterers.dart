@@ -197,14 +197,10 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                                     listing: listing,
                                     headings: headings,
                                     values: values),
-                                addonsheadings.length != 0
-                                    ? CategoryAddons(
-                                        listing: listing,
-                                      )
-                                    : Container(),
-                                listing['Package'].length != 0
-                                    ? CategoryPackages(listing: listing)
-                                    : Container(),
+                                CategoryAddons(
+                                  listing: listing,
+                                ),
+                                CategoryPackages(listing: listing),
                                 CategoryReview(
                                     listing: listing, starsvalue: starsvalue),
                                 SizedBox(
