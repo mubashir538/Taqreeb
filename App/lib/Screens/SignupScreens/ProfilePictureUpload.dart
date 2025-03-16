@@ -99,7 +99,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
       );
 
       if (compressedFile != null) {
-        return compressedFile;
+        final FcompressedFile = File(compressedFile.path);
+        return FcompressedFile;
       } else {
         throw Exception("Failed to compress image.");
       }

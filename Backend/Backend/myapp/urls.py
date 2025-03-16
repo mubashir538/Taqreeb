@@ -81,6 +81,7 @@ urlpatterns = [
     path('cartItems/<int:productid>/<int:listingid>/<int:userid>',views.CartItems,name='CartItems'),
     path('graphic/designer/viewpage/<int:listingid>',vp.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
     path('carrenter/viewpage/<int:listingid>',vp.CarRenterViewPage,name='CarRenterViewPage'),
+    path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     # path('deleteReq/',views.deleteTable,name='deleteReq'),
 ]
 

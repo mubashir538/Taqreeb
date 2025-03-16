@@ -272,4 +272,3 @@ def get_business_usernames(request):
 def deleteTable(request):
     md.Listing.objects.filter(id=103).delete()
     return Response({'status': 'success'})
-

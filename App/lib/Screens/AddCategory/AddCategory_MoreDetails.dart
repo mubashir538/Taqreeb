@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
+import 'package:taqreeb/Classes/validations.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/dropdown.dart';
 import 'package:taqreeb/Components/header.dart';
@@ -179,12 +180,23 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                 ),
                 ColoredButton(
                   text: 'Continue',
-                  onPressed: () {
+                  onPressed: () async {
                     bool allFieldsFilled = true;
                     for (int i = 0; i < textfields['fields'].length; i++) {
                       if (controllers[i].text.isEmpty) {
                         allFieldsFilled = false;
                         break;
+                      }
+                      if (textfields['fields'][i]['name'] == 'portfolioLink') {
+                        final ans = await Validations.validatePortfolio(
+                            controllers[i].text);
+                        if (ans != 'Ok') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Invalid Portfolio Link'),
+                            ),
+                          );
+                        }
                       }
                     }
 

@@ -151,7 +151,8 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
     );
 
     if (result != null) {
-      return result;
+      final FcompressedFile = File(result.path);
+        return FcompressedFile;
     } else {
       throw Exception('Image compression failed.');
     }

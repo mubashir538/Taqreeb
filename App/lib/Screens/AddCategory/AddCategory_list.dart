@@ -24,7 +24,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   int charactersleft = 1100;
-  TextEditingController locationController = TextEditingController();
+  TextEditingController locationController = TextEditingController(text: ' fsd');
   TextEditingController priceminController = TextEditingController();
   TextEditingController pricemaxController = TextEditingController();
   TextEditingController typeController = TextEditingController();

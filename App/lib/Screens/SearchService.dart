@@ -170,8 +170,12 @@ class _SearchServiceState extends State<SearchService> {
 
   String searchListingPicture(int listingid, Map<String, dynamic> listing) {
     for (int i = 0; i < listing['pictures'].length; i++) {
-      if (listing['pictures'][i][0]['listingId'] == listingid) {
-        return listing['pictures'][i][0]['picturePath'];
+      if (listing['pictures'][i].length != 0) {
+        if (listing['pictures'][i][0]['listingId'] == listingid) {
+          return listing['pictures'][i][0]['picturePath'];
+        }
+      } else {
+        return '';
       }
     }
     return '';
@@ -584,7 +588,8 @@ class _SearchServiceState extends State<SearchService> {
                     child: ListView(
                       children: additionalFilters.entries.map((entry) {
                         String fieldName = entry.key;
-                        List<String> choices = entry.value.cast<String>().toList();
+                        List<String> choices =
+                            entry.value.cast<String>().toList();
                         print(entry);
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -601,7 +606,9 @@ class _SearchServiceState extends State<SearchService> {
                               question: '',
                               options: choices,
                               controller: CheckBoxController(
-                                selections: additionalSelections[fieldName].cast<String>().toList(),
+                                selections: additionalSelections[fieldName]
+                                    .cast<String>()
+                                    .toList(),
                               ),
                               onChanged: (selections) {
                                 setState(() {

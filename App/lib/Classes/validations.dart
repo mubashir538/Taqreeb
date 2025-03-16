@@ -13,6 +13,14 @@ class Validations {
     return "Ok";
   }
 
+  static Future<String> validatePortfolio(String portfolio) async {
+    if (await canLaunchUrl(Uri.parse(portfolio))) {
+      return 'Ok';
+    } else {
+      return 'Enter a Valid Portfolio';
+    }
+  }
+
   static String validateName(String? value) {
     value = value?.trim();
 

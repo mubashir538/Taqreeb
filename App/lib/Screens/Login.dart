@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
+import 'package:taqreeb/Classes/authService.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Classes/validations.dart';
@@ -178,10 +179,42 @@ class _LoginState extends State<Login> {
                           child: MyDivider(),
                         ),
                         IconedButton(
+                          onPressed: () async {
+                            Map<String, dynamic>? user =
+                                await AuthService().signInWithGoogle();
+                            if (user.length != 0) {
+                              final response = await MyApi.postRequest(
+                                endpoint: 'Login/googleAuthentication',
+                                body: {
+                                  'userId': user['user'].uid,
+                                  'email': user['user'].email,
+                                  'name': user['user'].displayName,
+                                  'picture': user['user'].photoURL,
+                                  'phone': user['phone'],
+                                  'gender': user['gender'],
+                                  'age': user['age'],
+                                },
+                              );
+                              if (response['status'] == 'success') {
+                                MyStorage.saveToken(
+                                    response['refresh'].toString(), 'refresh');
+                                MyStorage.saveToken(
+                                    response['access'].toString(),
+                                    MyTokens.accessToken);
+                                MyStorage.saveToken(
+                                    response['userId'].toString(), 'userId');
+                                MyStorage.saveToken(
+                                    MyTokens.user, MyTokens.userType);
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    '/HomePage', ModalRoute.withName('/'));
+                              }
+                            }
+                          },
                           text: "Continue with Google",
                           icon: MyIcons.google,
                         ),
                         IconedButton(
+                            onPressed: () {},
                             text: "Continue with Facebook",
                             icon: MyIcons.facebook),
                       ],

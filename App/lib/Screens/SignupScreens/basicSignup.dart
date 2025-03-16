@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/authService.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -198,13 +199,35 @@ class _BasicSignupState extends State<BasicSignup> {
                     children: [
                       InkWell(
                         onTap: () async {
-                          User? user = await AuthService().signInWithGoogle();
-                          print(user);
-                          if (user != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Login Successful!'),
-                              backgroundColor: MyColors.green,
-                            ));
+                          Map<String, dynamic>? user =
+                              await AuthService().signInWithGoogle();
+                          if (user.length != 0) {
+                            final response = await MyApi.postRequest(
+                              endpoint: 'Login/googleAuthentication',
+                              body: {
+                                'userId': user['user'].uid,
+                                'email': user['user'].email,
+                                'name': user['user'].displayName,
+                                'picture': user['user'].photoURL,
+                                'phone': user['phone'],
+                                'gender': user['gender'],
+                                'age': user['age'],
+                              },
+                            );
+                            if (response['status'] == 'success') {
+                              MyStorage.saveToken(
+                                  response['refresh'].toString(),
+                                  'refresh');
+                              MyStorage.saveToken(
+                                  response['access'].toString(),
+                                  MyTokens.accessToken);
+                              MyStorage.saveToken(
+                                  response['userId'].toString(), 'userId');
+                              MyStorage.saveToken(
+                                  MyTokens.user, MyTokens.userType);
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  '/HomePage', ModalRoute.withName('/'));
+                            }
                           }
                         },
                         child: Container(
