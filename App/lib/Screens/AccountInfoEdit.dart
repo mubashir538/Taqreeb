@@ -156,7 +156,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     );
 
     if (result != null) {
-      return result;
+      return File(result.path);
     } else {
       throw Exception('Image compression failed.');
     }
@@ -211,8 +211,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
         } else {
           warningDialog(
                   title: 'Error',
-                  message:
-                      'Failed to Update Info, Please Try Again Later!.')
+                  message: 'Failed to Update Info, Please Try Again Later!.')
               .showDialogBox(context);
         }
       } catch (e) {

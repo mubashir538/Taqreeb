@@ -99,7 +99,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
       );
 
       if (compressedFile != null) {
-        return compressedFile;
+        return File(compressedFile.path);
       } else {
         throw Exception("Failed to compress image.");
       }
@@ -128,7 +128,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         if (type == 'Freelancer') {
           final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
           request.headers.addAll({
-            'Authorization': 'Bearer $token', 
+            'Authorization': 'Bearer $token',
           });
           final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
           request.fields['UserId'] = userId;
@@ -143,7 +143,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         } else if (type == 'Business') {
           final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
           request.headers.addAll({
-            'Authorization': 'Bearer $token', 
+            'Authorization': 'Bearer $token',
           });
 
           request.files.add(await http.MultipartFile.fromPath(
@@ -204,7 +204,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               ],
             ).showDialogBox(context);
           } else {
-
             if (type == 'Freelancer') {
               MyStorage.deleteToken(MyTokens.fscnic);
               MyStorage.deleteToken(MyTokens.fsname);

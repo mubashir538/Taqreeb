@@ -420,3 +420,51 @@ class Cars(m.Model):
     seats = m.IntegerField()
     driver = m.IntegerField()
     picture = m.CharField(max_length=255)
+
+    # User Activity Model to Track User Interactions
+class UserActivity(m.Model):
+    ACTIONS = [
+        ('search', 'Search Query'),
+        ('category_click', 'Clicked Category'),
+        ('service_click', 'Clicked Service'),
+        ('filter', 'Applied Filter'),
+        ('event_create', 'Created Event'),
+        ('event_edit', 'Edited Event'),
+        ('event_view', 'Viewed Event'),
+        ('invite_card_view', 'Viewed Invitation Card'),
+        ('service_view_duration', 'Time Spent on Service Page'),
+        ('category_view_duration', 'Time Spent on Category Page'),
+        ('book_venue', 'Booked Venue'),  # ✅ NEW ACTION ADDED
+
+    ]
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    action = m.CharField(max_length=50, choices=ACTIONS)
+    metadata = m.JSONField(null=True, blank=True)
+    timestamp = m.DateTimeField(auto_now_add=True)
+    # duration_seconds = m.IntegerField(null=True, blank=True) 
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action} - {self.timestamp}"
+
+# # User Events Model to Track Past Event Data for AI Suggestions
+# class UserEvent(m.Model):
+#     EVENT_TYPES = [
+#         ('shaadi', 'Shaadi'),
+#         ('baraat', 'Baraat'),
+#         ('rukhsati', 'Rukhsati'),
+#         ('mehendi', 'Mehendi'),
+#         ('valima', 'Valima'),
+#         ('birthday', 'Birthday'),
+#         ('corporate', 'Corporate'),
+#     ]
+
+#     user = m.ForeignKey(User, on_delete=m.CASCADE)
+#     event_name = m.CharField(max_length=255)
+#     event_type = m.CharField(max_length=50, choices=EVENT_TYPES)
+#     budget = m.DecimalField(max_digits=12, decimal_places=2)
+#     start_date = m.DateField()
+#     end_date = m.DateField(null=True, blank=True)
+#     created_at = m.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.user.username} - {self.event_name} ({self.event_type})"

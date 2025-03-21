@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from datetime import datetime
 import requests as rq
 from rest_framework.response import Response
+from .models import UserActivity
+from django.utils.timezone import now
+# from .Serializers import UserActivitySerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -273,3 +276,47 @@ def deleteTable(request):
     md.Listing.objects.filter(id=103).delete()
     return Response({'status': 'success'})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def log_user_activity(request):
+    """
+    Logs all user activities including searches, clicks, filters, and time spent.
+    """
+    action = request.data.get('action')  # Type of action (search, click, time spent, etc.)
+    metadata = request.data.get('metadata', {})  # Additional details (search term, clicked item, etc.)
+    # duration_seconds = request.data.get('duration_seconds', None)  # Time spent on a page (optional)
+
+    valid_actions = dict(UserActivity.ACTIONS).keys()
+    if action not in valid_actions:
+        return Response({'status': 'error', 'message': 'Invalid action type'}, status=400)
+
+    # Store the action in UserActivity model
+    UserActivity.objects.create(
+        user=request.user,
+        action=action,
+        metadata=metadata,
+        # duration_seconds=duration_seconds,
+        timestamp=now()
+    )
+
+    return Response({'status': 'success', 'message': 'Activity logged successfully'})
+
+# @api_view(['POST', 'GET'])
+# @permission_classes([IsAuthenticated])
+# def user_events(request):
+#     """
+#     Handles user event history for AI recommendations.
+#     - `GET` → Retrieve past events.
+#     - `POST` → Create a new event.
+#     """
+#     if request.method == 'GET':
+#         events = UserEvent.objects.filter(user=request.user)
+#         serializer = UserEventSerializer(events, many=True)
+#         return Response(serializer.data)
+
+#     elif request.method == 'POST':
+#         serializer = UserEventSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=request.user)  # ✅ Auto-assign user
+#             return Response({'status': 'success', 'message': 'Event logged successfully'})
+#         return Response(serializer.errors, status=400)

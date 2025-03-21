@@ -7,6 +7,8 @@ from .apis import Event_Management as em
 from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
+from .apis import User_Activity as ua 
+# from .apis import Event_Tracking as et  
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -82,6 +84,8 @@ urlpatterns = [
     path('graphic/designer/viewpage/<int:listingid>',vp.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
     path('carrenter/viewpage/<int:listingid>',vp.CarRenterViewPage,name='CarRenterViewPage'),
     # path('deleteReq/',views.deleteTable,name='deleteReq'),
+    path('log-user-activity/', ua.log_user_activity, name='log-user-activity'),
+    # path('user-events/', et.user_events, name='user-events'),
 ]
 
 if settings.DEBUG:
