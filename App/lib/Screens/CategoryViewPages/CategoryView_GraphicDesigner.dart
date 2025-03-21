@@ -7,6 +7,7 @@ import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/components/ChatIcon.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
@@ -235,6 +236,7 @@ class _CategoryView_GraphicDesignerState
               key: _headerKey,
             ),
           ),
+          ChatIcon(),
         ],
       ),
     );

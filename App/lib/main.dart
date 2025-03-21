@@ -66,8 +66,10 @@ import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_Functi
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/groupchats.dart';
 import 'package:taqreeb/Screens/newUserSearch.dart';
+import 'package:taqreeb/Screens/reviewScreen.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
+import 'package:taqreeb/Screens/wishlistViewPage.dart';
 import 'package:taqreeb/firebase_options.dart';
 import 'package:taqreeb/theme/color.dart';
 
@@ -143,15 +145,9 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  void getToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    print("FCM Token: $token");
-  }
-
   @override
   void initState() {
     super.initState();
-    getToken();
   }
 
   bool ishome = false;
@@ -172,9 +168,12 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: WishlistViewPage(),
       routes: {
         '/': (context) => SplashScreen(),
+        '/wishlist': (context) => WishlistViewPage(),
         '/settings': (context) => Settings(),
+        '/reviewPage': (context) => ReviewScreen(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
         '/AddCategory_AddImage': (context) => AddImage(),
         '/AddCategory_Addons': (context) => AddcategoryAddons(),

@@ -152,6 +152,20 @@ class _LoginState extends State<Login> {
                                 await MyStorage.saveToken(
                                     response['userid'].toString(),
                                     MyTokens.userId);
+                                final res = await MyApi.postRequest(
+                                    endpoint: 'notification/saveFCM',
+                                    body: {
+                                      'token': await MyStorage.yourFCM(),
+                                      'userId': await MyStorage.getToken(
+                                          MyTokens.userId),
+                                    },
+                                    headers: {
+                                      'Authorization':
+                                          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                                    });
+                                if (res['status'] == 'success') {
+                                  print('FCM saved');
+                                }
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     '/HomePage', ModalRoute.withName('/'));
                               } else {
@@ -205,6 +219,20 @@ class _LoginState extends State<Login> {
                                     response['userId'].toString(), 'userId');
                                 MyStorage.saveToken(
                                     MyTokens.user, MyTokens.userType);
+                                final res = await MyApi.postRequest(
+                                    endpoint: 'notification/saveFCM',
+                                    body: {
+                                      'token': await MyStorage.yourFCM(),
+                                      'userId': await MyStorage.getToken(
+                                          MyTokens.userId),
+                                    },
+                                    headers: {
+                                      'Authorization':
+                                          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                                    });
+                                if (res['status'] == 'success') {
+                                  print('FCM saved');
+                                }
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     '/HomePage', ModalRoute.withName('/'));
                               }
@@ -214,7 +242,9 @@ class _LoginState extends State<Login> {
                           icon: MyIcons.google,
                         ),
                         IconedButton(
-                            onPressed: () {},
+                            onPressed: () async{
+                              await AuthService().signInWithFacebook();
+                            },
                             text: "Continue with Facebook",
                             icon: MyIcons.facebook),
                       ],

@@ -269,6 +269,40 @@ def get_business_usernames(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def getWishlist(request,uid):
+    uid = md.User.objects.get(id=uid)
+    list = md.Wishlist.objects.filter(user=uid)
+    list = md.Listing.objects.filter(id__in=list.values_list('listing', flat=True))
+    ListingSerializer = s.ListingSerializer(list, many=True)
+    Pictures = []
+    Listings = ListingSerializer.data[:]
+    for i in Listings:
+        pic = md.PicturesListings.objects.filter(listingId=i['id'])
+        serializer = s.PicturesListingSerializers(pic, many=True)
+        Pictures.append(serializer.data)
+    return Response({'status':'success', 'list':Listings, 'pictures':Pictures})
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def addtoWishlist(request):
+    userid = request.data.get('userid')
+    listing = request.data.get('listing')
+    listing = md.Listing.objects.get(id=listing)
+    userid = md.User.objects.get(id=userid)
+    md.Wishlist(user=userid,listing=listing).save()
+    return Response({'status':'success'}) 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def removeFromWishlist(request):
+    userid = request.data.get('userid')
+    listing = request.data.get('listing')
+    listing = md.Listing.objects.get(id=listing)
+    userid = md.User.objects.get(id=userid)
+    md.Wishlist.objects.filter(user=userid,listing=listing).delete()
+    return Response({'status':'success'}) 
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def deleteTable(request):
-    md.Listing.objects.filter(id=103).delete()
+    md.Listing.objects.filter(type='Baker and Sweet').delete()
     return Response({'status': 'success'})

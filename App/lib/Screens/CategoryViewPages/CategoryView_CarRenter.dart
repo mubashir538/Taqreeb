@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:taqreeb/Screens/CategoryViewPages/components/ChatIcon.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
@@ -355,7 +356,9 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
               key: _headerKey,
             ),
           ),
+        ChatIcon(),
         ],
+      
       ),
     );
   }

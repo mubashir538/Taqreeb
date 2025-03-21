@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Classes/api.dart';
@@ -216,15 +215,27 @@ class _BasicSignupState extends State<BasicSignup> {
                             );
                             if (response['status'] == 'success') {
                               MyStorage.saveToken(
-                                  response['refresh'].toString(),
-                                  'refresh');
-                              MyStorage.saveToken(
-                                  response['access'].toString(),
+                                  response['refresh'].toString(), 'refresh');
+                              MyStorage.saveToken(response['access'].toString(),
                                   MyTokens.accessToken);
                               MyStorage.saveToken(
                                   response['userId'].toString(), 'userId');
                               MyStorage.saveToken(
                                   MyTokens.user, MyTokens.userType);
+                              final res = await MyApi.postRequest(
+                                  endpoint: 'notification/saveFCM',
+                                  body: {
+                                    'token': await MyStorage.yourFCM(),
+                                    'userId': await MyStorage.getToken(
+                                        MyTokens.userId),
+                                  },
+                                  headers: {
+                                    'Authorization':
+                                        'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                                  });
+                              if (res['status'] == 'success') {
+                                print('FCM saved');
+                              }
                               Navigator.pushNamedAndRemoveUntil(context,
                                   '/HomePage', ModalRoute.withName('/'));
                             }
@@ -246,19 +257,24 @@ class _BasicSignupState extends State<BasicSignup> {
                           ),
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: screenHeight * 0.015,
-                            vertical: screenHeight * 0.02),
-                        height: screenHeight * 0.06,
-                        width: screenHeight * 0.06,
-                        decoration: BoxDecoration(
-                            color: MyColors.DarkLighter,
-                            borderRadius: BorderRadius.circular(50)),
-                        child: Center(
-                          child: SvgPicture.asset(MyIcons.facebook,
-                              width: screenHeight * 0.04,
-                              height: screenHeight * 0.04),
+                      InkWell(
+                        onTap: () async {
+                          await AuthService().signInWithFacebook();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: screenHeight * 0.015,
+                              vertical: screenHeight * 0.02),
+                          height: screenHeight * 0.06,
+                          width: screenHeight * 0.06,
+                          decoration: BoxDecoration(
+                              color: MyColors.DarkLighter,
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Center(
+                            child: SvgPicture.asset(MyIcons.facebook,
+                                width: screenHeight * 0.04,
+                                height: screenHeight * 0.04),
+                          ),
                         ),
                       )
                     ],

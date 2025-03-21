@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
@@ -29,7 +30,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   bool isEditingLocation = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-
+  Color selectedColor = MyColors.white;
+  IconData selectedIcon = FontAwesomeIcons.heart;
   @override
   void initState() {
     super.initState();
@@ -207,6 +209,60 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     });
   }
 
+  void wishlistSelection(double max) async {
+    if (selectedColor == MyColors.red) {
+      final response =
+          await MyApi.postRequest(endpoint: 'wishlist/delete', body: {
+        'userid': await MyStorage.getToken(MyTokens.userId),
+        'listing': widget.listingId,
+      }, headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      });
+
+      if (response['status'] == 'success') {
+        selectedColor = MyColors.white;
+        selectedIcon = FontAwesomeIcons.heart;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: MyColors.red,
+            content: Text(
+              'Removed from wishlist!',
+              style: GoogleFonts.montserrat(
+                  color: MyColors.white,
+                  fontSize: max * 0.015,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        );
+      }
+    } else {
+      final response = await MyApi.postRequest(endpoint: 'wishlist/add', body: {
+        'userid': await MyStorage.getToken(MyTokens.userId),
+        'listing': widget.listingId,
+      }, headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      });
+      if (response['status'] == 'success') {
+        selectedIcon = FontAwesomeIcons.solidHeart;
+        selectedColor = MyColors.red;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: MyColors.red,
+            content: Text(
+              'Added to wishlist!',
+              style: GoogleFonts.montserrat(
+                  color: MyColors.white,
+                  fontSize: max * 0.015,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -255,7 +311,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                width: screenWidth * 0.75,
+                                width: screenWidth * 0.6,
                                 child: Text(
                                   widget.listing['Listing']['name'],
                                   softWrap: true,
@@ -269,16 +325,34 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                 ),
                               ),
                               !type
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        showHierarchicalOptions(context,
-                                            maximumDimension, screenWidth);
-                                      },
-                                      child: Icon(
-                                        Icons.add,
-                                        color: MyColors.Yellow,
-                                        size: maximumDimension * 0.05,
-                                      ),
+                                  ? Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              wishlistSelection(
+                                                  maximumDimension);
+                                            });
+                                          },
+                                          child: Icon(
+                                            selectedIcon,
+                                            color: selectedColor,
+                                            size: maximumDimension * 0.03,
+                                          ),
+                                        ),
+                                        SizedBox(width: screenWidth * 0.01),
+                                        GestureDetector(
+                                          onTap: () {
+                                            showHierarchicalOptions(context,
+                                                maximumDimension, screenWidth);
+                                          },
+                                          child: Icon(
+                                            Icons.add,
+                                            color: MyColors.Yellow,
+                                            size: maximumDimension * 0.05,
+                                          ),
+                                        ),
+                                      ],
                                     )
                                   : GestureDetector(
                                       onTap: () {
