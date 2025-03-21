@@ -32,6 +32,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
   Map<String, dynamic> listing = {};
   late int? listingId;
   bool isLoading = true;
+  DateTime? entryTime;
 
   bool isToggled = true;
   List<String> headings = [
@@ -56,6 +57,8 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    entryTime = DateTime.now();
+    print("📌 User opened CategoryView_Photographer at: $entryTime");
   }
 
   bool type = false;
@@ -130,6 +133,18 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
 
   @override
   void dispose() {
+    if (entryTime != null) {
+      DateTime exitTime = DateTime.now();
+      int timeSpent = exitTime.difference(entryTime!).inSeconds;
+      print(
+          "🕒 Logging category view duration for Photographer: $timeSpent seconds");
+
+      logUserActivity("category_view_duration", {
+        "category": "Photographer",
+        "listing_id": listingId ?? 0,
+        "time_spent_seconds": timeSpent
+      });
+    }
     timer?.cancel();
     super.dispose();
   }
@@ -265,6 +280,36 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     }
   }
 
+  Future<void> logUserActivity(
+      String action, Map<String, dynamic> metadata) async {
+    String? userId =
+        await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
+
+    if (userId == null) {
+      print("User ID not found. Skipping activity log.");
+      return;
+    }
+
+    final response = await MyApi.postRequest(
+      endpoint: 'log-user-activity/',
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+      body: {
+        "user_id": int.parse(userId), // Ensure user ID is an integer
+        "action": action,
+        "metadata": metadata,
+      },
+    );
+
+    if (response != null && response['status'] == 'success') {
+      print("Activity logged: $action");
+    } else {
+      print("Failed to log activity: ${response['message']}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -349,7 +394,26 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                                   padding:
                                       EdgeInsets.only(top: screenHeight * 0.03),
                                   child: Center(
-                                      child: ColoredButton(text: 'Book Venue')),
+                                      child: ColoredButton(
+                                    text: 'Book Photographer',
+                                    onPressed: () async {
+                                      print(
+                                          "🛒 User clicked 'Book Photographer' for listing ID: $listingId");
+
+                                      await logUserActivity("book_photographer",
+                                          {"listing_id": listingId ?? 0});
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('Booking action logged!',
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 14,
+                                                color: MyColors.white,
+                                                fontWeight: FontWeight.w400)),
+                                        backgroundColor: MyColors.green,
+                                      ));
+                                    },
+                                  )),
                                 ),
                               ],
                             ),

@@ -87,6 +87,7 @@ class _AddImageState extends State<AddImage> {
       );
 
       if (compressedFile != null) {
+
         final FcompressedFile = File(compressedFile.path);
         return FcompressedFile;
       } else {
@@ -278,8 +279,8 @@ class _AddImageState extends State<AddImage> {
                     request.fields['expertise'] = args['expertise'];
                   } else if (args['category'] == 'Car Renter') {
                     request.fields['serviceType'] = args['serviceType'];
-                  }
-                  else if (args['category'] == 'Graphic Designer' || args['category'] == 'Video Editor') {
+                  } else if (args['category'] == 'Graphic Designer' ||
+                      args['category'] == 'Video Editor') {
                     request.fields['portfolioLink'] = args['portfolioLink'];
                   }
 

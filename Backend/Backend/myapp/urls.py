@@ -8,6 +8,8 @@ from .apis import Event_Management as em
 from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
+from .apis import User_Activity as ua 
+# from .apis import Event_Tracking as et  
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -85,6 +87,7 @@ urlpatterns = [
     path('cartItems/<int:productid>/<int:listingid>/<int:userid>',views.CartItems,name='CartItems'),
     path('graphic/designer/viewpage/<int:listingid>',vp.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
     path('carrenter/viewpage/<int:listingid>',vp.CarRenterViewPage,name='CarRenterViewPage'),
+    path('log-user-activity/', ua.log_user_activity, name='log-user-activity'),
     path('wishlist/add',views.addtoWishlist,name='addtoWishlist'),
     path('wishlist/get/<int:uid>',views.getWishlist,name='getWishlist'),
     path('wishlist/delete',views.removeFromWishlist,name='removeFromWishlist'),
