@@ -28,13 +28,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = m.AutoField(primary_key=True)
     firstName = m.CharField(max_length=100)
     lastName = m.CharField(max_length=100)
-    password = m.CharField(max_length=10000)
+    password = m.CharField(max_length=10000,null=True)
     contactNumber = m.CharField(max_length=15,null=True)
     email = m.CharField(max_length=50,null=True)
-    city = m.CharField(max_length=50)
+    city = m.CharField(max_length=50,null=True)
     username = m.CharField(max_length=50,null=True)
     age = m.IntegerField(null=True)
-    gender = m.CharField(max_length=6)
+    gender = m.CharField(max_length=6,null=True)
     profilePicture = m.CharField(max_length=100)
 
     objects = CustomUserManager()
@@ -55,6 +55,12 @@ class BusinessOwner(m.Model):
     profilepic = m.CharField(max_length=200,null=True)
     Description = m.CharField(max_length=1100)
     status = m.TextField(null=True)
+
+
+class FCMTokens(m.Model):
+    id = m.AutoField(primary_key=True)
+    token = m.TextField()
+    userid = m.ForeignKey(User,on_delete=m.CASCADE)
 
 class Freelancer(m.Model):
     id = m.AutoField(primary_key=True)
@@ -225,12 +231,6 @@ class BakersAndSweets(m.Model):
     id = m.AutoField(primary_key=True)
     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
-# class PhotographyPlaces(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-#     type = m.CharField(max_length=100)
-
-
 class VideoEditors(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
@@ -258,6 +258,12 @@ class DesertItems(m.Model):
     type = m.CharField(max_length=100)
     description = m.CharField(max_length=500)
     picture = m.CharField(max_length=255)
+
+class Wishlist(m.Model):
+    id = m.AutoField(primary_key=True)
+    user = m.ForeignKey(User,on_delete=m.CASCADE)
+    listing = m.ForeignKey(Listing,on_delete=m.CASCADE)
+
 
 class Categories(m.Model):
     id = m.AutoField(primary_key=True)

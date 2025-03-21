@@ -3,7 +3,8 @@ import 'package:taqreeb/theme/color.dart';
 
 class MyDivider extends StatelessWidget {
   final double width;
-  const MyDivider({super.key, this.width = 0});
+  final double thickness;
+  const MyDivider({super.key, this.width = 0,this.thickness=1.5});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class MyDivider extends StatelessWidget {
       child: Opacity(
         opacity: 0.4,
         child: Divider(
-          thickness: 1.5,
+          thickness: thickness,
           color: MyColors.whiteDarker,
         ),
       ),

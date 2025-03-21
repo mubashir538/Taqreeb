@@ -5,11 +5,11 @@ import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/components/ChatIcon.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryReview.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/components/categorySlots.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categorydetails.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/descriptionCategory.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/imageslider.dart';
@@ -383,14 +383,6 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                   listing: listing,
                                 ),
                                 CategoryPackages(listing: listing),
-                                // CategorySlots(
-                                //   listing: listing,
-                                //   onDateSelected: (date) {
-                                //     setState(() {
-                                //       selectedDate = date;
-                                //     });
-                                //   },
-                                // ),
                                 SizedBox(
                                   height: screenHeight * 0.05,
                                   child: Center(
@@ -445,6 +437,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
               key: _headerKey,
             ),
           ),
+          ChatIcon(),
         ],
       ),
     );

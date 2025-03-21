@@ -85,7 +85,8 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
       );
 
       if (compressedFile != null) {
-        return File(compressedFile.path);
+        final FcompressedFile = File(compressedFile.path);
+        return FcompressedFile;
       } else {
         throw Exception("Failed to compress image.");
       }
@@ -143,12 +144,10 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               height: screenHeight * 0.2,
                               fit: BoxFit.contain,
                             ),
-                      GestureDetector(
-                        onTap: () => _pickImage('f'),
-                        child: IconedButton(
-                          icon: MyIcons.upload2,
-                          text: 'Upload Front',
-                        ),
+                      IconedButton(
+                        onPressed:() => _pickImage('f') ,
+                        icon: MyIcons.upload2,
+                        text: 'Upload Front',
                       ),
                     ],
                   ),
@@ -170,12 +169,10 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               height: screenHeight * 0.2,
                               fit: BoxFit.contain,
                             ),
-                      GestureDetector(
-                        onTap: () => _pickImage('b'),
-                        child: IconedButton(
-                          icon: MyIcons.upload2,
-                          text: 'Upload Back',
-                        ),
+                      IconedButton(
+                        onPressed:() => _pickImage('b') ,
+                        icon: MyIcons.upload2,
+                        text: 'Upload Back',
                       ),
                     ],
                   ),

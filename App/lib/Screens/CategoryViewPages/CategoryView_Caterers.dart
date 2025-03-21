@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +7,7 @@ import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/components/ChatIcon.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
@@ -312,6 +312,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
               ],
             ),
           ),
+          ChatIcon(),
           Positioned(
               top: 0,
               child: Header(

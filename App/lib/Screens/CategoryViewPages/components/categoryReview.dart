@@ -38,12 +38,17 @@ class _CategoryReviewState extends State<CategoryReview> {
                 color: MyColors.Yellow,
               ),
             ),
-            Text(
-              'View All',
-              style: GoogleFonts.montserrat(
-                fontSize: maximumDimension * 0.015,
-                fontWeight: FontWeight.w400,
-                color: MyColors.white,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/reviewPage');
+              },
+              child: Text(
+                'View All',
+                style: GoogleFonts.montserrat(
+                  fontSize: maximumDimension * 0.015,
+                  fontWeight: FontWeight.w600,
+                  color: MyColors.white,
+                ),
               ),
             ),
           ],

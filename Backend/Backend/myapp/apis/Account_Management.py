@@ -19,7 +19,6 @@ cred = credentials.Certificate(os.getenv('firebase_PATH'))
 firebase_app = initialize_app(cred)
 db = firestore.client()
 
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def AccountSignupPage(request):
@@ -114,7 +113,7 @@ def resendOTPPhone(request):
 @permission_classes([AllowAny])
 def sendOTPPhone(request):
     contactNumber = request.data.get('contactNumber')
-    country = request.data.get('countryCode')
+    country = '+92'
     if contactNumber.find(country) == -1:
         if contactNumber[0] == '0':
             contactNumber = contactNumber[1:]
@@ -233,30 +232,36 @@ def googleAuth(request):
     phone = request.data.get('phone')
     gender = request.data.get('gender')
     age = request.data.get('age')
-    firstName = name.split(' ')[0]
-    lastName = name.split(' ')[1]
-    username = generateUsername(firstName,lastName)
     if not md.User.objects.filter(email=email).exists():
-        user = md.User(firstName=firstName,lastName=lastName,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username)
-        firebase_user_data = {
-            "firstName": firstName,
-            "lastName": lastName,
-            "username": username,
-            "age":age,
-            "email": email,
-            "contactNumber": phone,
-            "city": 'Karachi',
-            "gender": gender,
-            "profilePicture": picture,
-        }
-        try:
-            db.collection("users").document(str(user.id)).set(firebase_user_data)
-        except Exception as e:
-            return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
-    refresh = RefreshToken.for_user(user)
-    id = user.id    
-    return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
-
+        firstName = name.split(' ')[0]
+        lastName = name.split(' ')[1]
+        username = generateUsername(firstName,lastName)
+        if not md.User.objects.filter(email=email).exists():
+            md.User(firstName=firstName,lastName=lastName,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
+            user = md.User.objects.filter(email=email).first()
+            firebase_user_data = {
+                "firstName": firstName,
+                "lastName": lastName,
+                "username": username,
+                "age":age,
+                "email": email,
+                "contactNumber": phone,
+                "city": 'Karachi',
+                "gender": gender,
+                "profilePicture": picture,
+            }
+            try:
+                db.collection("users").document(str(user.id)).set(firebase_user_data)
+            except Exception as e:
+                return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
+        refresh = RefreshToken.for_user(user)
+        id = user.id    
+        return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
+    else:
+        user = md.User.objects.filter(email=email).first()
+        refresh = RefreshToken.for_user(user)
+        id = user.id
+        return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

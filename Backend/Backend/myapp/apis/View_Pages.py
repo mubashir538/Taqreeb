@@ -92,7 +92,10 @@ def CatererViewPage(request,listingid):
     serializer = s.CaterersSerializer( CatererView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
     reviewData = CalculateReviews(Reviewserializer.data)
+    bookedDates = md.BookedSlots.objects.filter(listingId=listingid)
+    bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
     return Response({'status': 'success','View': serializer.data,
+    'bookedDates':bookedDatesSerializer.data,
                     'Addons': Addonsserializer.data,'reveiewData':reviewData,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 

@@ -60,6 +60,12 @@ class BookingCartSerializer(s.ModelSerializer):
         model = mp.BookingCart
         fields = '__all__'
 
+class WishlistSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.Wishlist
+        fields = '__all__'
+
+
 class PicturesListingSerializers(s.ModelSerializer):
     class Meta:
         model = mp.PicturesListings
