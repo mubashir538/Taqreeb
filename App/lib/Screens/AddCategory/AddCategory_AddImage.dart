@@ -87,7 +87,8 @@ class _AddImageState extends State<AddImage> {
       );
 
       if (compressedFile != null) {
-        return compressedFile;
+        final FcompressedFile = File(compressedFile.path);
+        return FcompressedFile;
       } else {
         throw Exception("Failed to compress image.");
       }

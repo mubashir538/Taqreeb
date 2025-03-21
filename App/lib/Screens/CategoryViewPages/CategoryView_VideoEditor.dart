@@ -218,7 +218,20 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                                   padding:
                                       EdgeInsets.only(top: screenHeight * 0.03),
                                   child: Center(
-                                      child: ColoredButton(text: 'Book Venue')),
+                                      child: ColoredButton(
+                                          text: 'Book Venue',
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                context, '/orderSummary',
+                                                arguments: {
+                                                  'Name': listing['Listing']
+                                                      ['name'],
+                                                  'type': listing['Listing']
+                                                      ['type'],
+                                                  'price': listing['Listing']
+                                                      ['basicPrice'],
+                                                });
+                                          })),
                                 ),
                               ],
                             ),

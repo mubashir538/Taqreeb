@@ -85,7 +85,8 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
       );
 
       if (compressedFile != null) {
-        return compressedFile;
+        final FcompressedFile = File(compressedFile.path);
+        return FcompressedFile;
       } else {
         throw Exception("Failed to compress image.");
       }

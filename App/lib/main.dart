@@ -5,6 +5,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/mainScreen.dart';
+import 'package:taqreeb/Screens/Add360video.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
 import 'package:taqreeb/Screens/AddCategory/AddCategory_AddPackage.dart';
@@ -50,6 +51,7 @@ import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_Description
 import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.dart';
 import 'package:taqreeb/Screens/FunctionDetail.dart';
 import 'package:taqreeb/Screens/Login.dart';
+import 'package:taqreeb/Screens/OrderSummary.dart';
 import 'package:taqreeb/Screens/SearchService.dart';
 import 'package:taqreeb/Screens/Settings.dart';
 import 'package:taqreeb/Screens/SignupScreens/ProfilePictureUpload.dart';
@@ -64,6 +66,7 @@ import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_Functi
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/groupchats.dart';
 import 'package:taqreeb/Screens/newUserSearch.dart';
+import 'package:taqreeb/Screens/paymentdetails.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
 import 'package:taqreeb/firebase_options.dart';
@@ -108,8 +111,12 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: OrderSummaryScreen(),
       routes: {
         '/': (context) => SplashScreen(),
+        '/orderSummary': (context) => OrderSummaryScreen(),
+        '/Add360video': (context) => Add360video(),
+        '/paymentdetails': (context) => SecurePaymentScreen(),
         '/settings': (context) => Settings(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
         '/AddCategory_AddImage': (context) => AddImage(),

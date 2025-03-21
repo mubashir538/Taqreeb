@@ -313,14 +313,14 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                   listing: listing,
                                 ),
                                 CategoryPackages(listing: listing),
-                                CategorySlots(
-                                  listing: listing,
-                                  onDateSelected: (date) {
-                                    setState(() {
-                                      selectedDate = date;
-                                    });
-                                  },
-                                ),
+                                // CategorySlots(
+                                //   listing: listing,
+                                //   onDateSelected: (date) {
+                                //     setState(() {
+                                //       selectedDate = date;
+                                //     });
+                                //   },
+                                // ),
                                 SizedBox(
                                   height: screenHeight * 0.05,
                                   child: Center(
@@ -341,7 +341,20 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                   padding:
                                       EdgeInsets.only(top: screenHeight * 0.03),
                                   child: Center(
-                                      child: ColoredButton(text: 'Book Venue')),
+                                      child: ColoredButton(
+                                          text: 'Book Venue',
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                context, '/orderSummary',
+                                                arguments: {
+                                                  'Name': listing['Listing']
+                                                      ['name'],
+                                                  'type': listing['Listing']
+                                                      ['type'],
+                                                  'price': listing['Listing']
+                                                      ['basicPrice'],
+                                                });
+                                          })),
                                 ),
                               ],
                             ),
