@@ -176,51 +176,61 @@ class _AccountInfoState extends State<AccountInfo> {
                             height: screenHeight * 0.05,
                             child: Center(child: MyDivider()),
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: MaximumThing * 0.02),
-                            child: Text(
-                              'Gender',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(
-                                fontSize: MaximumThing * 0.02,
-                                fontWeight: FontWeight.w700,
-                                color: MyColors.Yellow,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: screenWidth * 0.8,
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SvgPicture.asset(
-                                    MyIcons.profile,
-                                    width: size,
-                                    height: size,
-                                    color: MyColors.white,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: MaximumThing * 0.02),
-                                    child: Text(
-                                      user['gender'],
-                                      textAlign: TextAlign.start,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.015,
-                                        fontWeight: FontWeight.w200,
-                                        color: MyColors.white,
+                          user['gmail'] == null
+                              ? Container()
+                              : Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: MaximumThing * 0.02),
+                                      child: Text(
+                                        'Gender',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: MaximumThing * 0.02,
+                                          fontWeight: FontWeight.w700,
+                                          color: MyColors.Yellow,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ]),
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.05,
-                            child: Center(
-                                child: MyDivider(width: screenWidth * 0.7)),
-                          ),
+                                    SizedBox(
+                                      width: screenWidth * 0.8,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SvgPicture.asset(
+                                              MyIcons.profile,
+                                              width: size,
+                                              height: size,
+                                              color: MyColors.white,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: MaximumThing * 0.02),
+                                              child: Text(
+                                                user['gender'],
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      MaximumThing * 0.015,
+                                                  fontWeight: FontWeight.w200,
+                                                  color: MyColors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                    ),
+                                    SizedBox(
+                                      height: screenHeight * 0.05,
+                                      child: Center(
+                                          child: MyDivider(
+                                              width: screenWidth * 0.7)),
+                                    ),
+                                  ],
+                                ),
                           user['contactNumber'] == null
                               ? Container()
                               : Column(

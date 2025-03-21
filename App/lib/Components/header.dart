@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
@@ -127,6 +128,18 @@ class _HeaderState extends State<Header> {
                                   ),
                                   ColoredButton(
                                     onPressed: () async {
+                                      final res = await MyApi.postRequest(
+                                          endpoint: 'notification/DeleteFCM',
+                                          body: {
+                                            'token': await MyStorage.yourFCM(),
+                                          },
+                                          headers: {
+                                            'Authorization':
+                                                'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                                          });
+                                      if (res['status'] == 'success') {
+                                        print('FCM saved');
+                                      }
                                       await MyStorage.deleteToken(
                                           MyTokens.refreshToken);
                                       await MyStorage.deleteToken(
@@ -137,6 +150,7 @@ class _HeaderState extends State<Header> {
                                           MyTokens.userType);
                                       await MyStorage.deleteToken(
                                           MyTokens.isBusinessOwner);
+
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil('/Login',
                                               (Route<dynamic> route) => false);
@@ -146,10 +160,8 @@ class _HeaderState extends State<Header> {
                                     textSize: MaximumThing * 0.015,
                                   ),
                                 ]).showDialogBox(context);
-                          } else if(currentRoute == '/InvitationCardEdit'){
-                            
-                          } 
-                          else {
+                          } else if (currentRoute == '/InvitationCardEdit') {
+                          } else {
                             Navigator.pushNamed(context, '/settings');
                           }
                         },

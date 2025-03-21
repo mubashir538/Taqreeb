@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Classes/tokens.dart';
@@ -64,16 +66,74 @@ import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_Functi
 import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
 import 'package:taqreeb/Screens/groupchats.dart';
 import 'package:taqreeb/Screens/newUserSearch.dart';
+import 'package:taqreeb/Screens/reviewScreen.dart';
 import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
 import 'package:taqreeb/Screens/splash%20screen.dart';
+import 'package:taqreeb/Screens/wishlistViewPage.dart';
 import 'package:taqreeb/firebase_options.dart';
 import 'package:taqreeb/theme/color.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Background Message: ${message.notification?.title}");
+}
+
+FlutterLocalNotificationsPlugin localNotifications =
+    FlutterLocalNotificationsPlugin();
+
+void initializeLocalNotifications() {
+  const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initSettings =
+      InitializationSettings(android: androidSettings);
+  localNotifications.initialize(initSettings);
+}
+
+void showNotification(RemoteMessage message) async {
+  AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    'channel_id',
+    'channel_name',
+    importance: Importance.high,
+    priority: Priority.high,
+  );
+
+  NotificationDetails details = NotificationDetails(android: androidDetails);
+  await localNotifications.show(
+      0, message.notification?.title, message.notification?.body, details);
+}
+
+void requestPermission() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else {
+    print('User denied permission');
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  requestPermission();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("Message received: ${message.notification?.title}");
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print("App opened from notification: ${message.notification?.title}");
+  });
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    showNotification(message);
+  });
   runApp(const MainApp());
 }
 
@@ -108,9 +168,12 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: WishlistViewPage(),
       routes: {
         '/': (context) => SplashScreen(),
+        '/wishlist': (context) => WishlistViewPage(),
         '/settings': (context) => Settings(),
+        '/reviewPage': (context) => ReviewScreen(),
         '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
         '/AddCategory_AddImage': (context) => AddImage(),
         '/AddCategory_Addons': (context) => AddcategoryAddons(),

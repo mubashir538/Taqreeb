@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:taqreeb/Classes/api.dart';
 import 'package:taqreeb/Components/Message%20Chats.dart';
 import 'package:taqreeb/Components/Search%20Box.dart';
@@ -49,22 +47,13 @@ class _NewUserSearchState extends State<NewUserSearch> {
     }
   }
 
-  String _formatTimestamp(Timestamp timestamp) {
-    DateTime dateTime = timestamp.toDate();
-    var format = DateFormat('h:mm a');
-    return format.format(dateTime);
-  }
-
   void _navigateToChatbox(String userId) {
     Navigator.pushNamed(context, '/ChatBox', arguments: {'userId': userId});
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Scaffold(
         backgroundColor: MyColors.Dark,
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
