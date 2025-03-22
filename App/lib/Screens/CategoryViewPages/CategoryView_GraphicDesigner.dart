@@ -309,6 +309,14 @@ class _CategoryView_GraphicDesignerState
                                                 fontWeight: FontWeight.w400)),
                                         backgroundColor: MyColors.green,
                                       ));
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
                                     },
                                   )),
                                 ),

@@ -70,14 +70,14 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     super.didChangeDependencies();
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-   if (!ischange) {
-    setState(() {
-      listingId = args['id'];
-      type = args['isBusiness'];
-      ischange = true; // Prevents multiple API calls
-    });
-    fetchData();
-  }
+    if (!ischange) {
+      setState(() {
+        listingId = args['id'];
+        type = args['isBusiness'];
+        ischange = true; // Prevents multiple API calls
+      });
+      fetchData();
+    }
   }
 
   Timer? timer;
@@ -138,7 +138,8 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      print("🕒 Logging category view duration for Decorator: $timeSpent seconds");
+      print(
+          "🕒 Logging category view duration for Decorator: $timeSpent seconds");
 
       logUserActivity("category_view_duration", {
         "category": "Decorator",
@@ -152,26 +153,26 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
 
   // added-Function to log time spent
   // Future<void> logTimeSpent(int listingId, int timeSpent) async {
-    //   final response = await http.post(
-    //     Uri.parse(
-    //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: jsonEncode({
-    //       "user_id": 1, // Replace with actual user ID
-    //       "action": "category_view_duration",
-    //       "metadata": {
-    //         "category": "Venue",
-    //         "listing_id": listingId,
-    //         "time_spent_seconds": timeSpent
-    //       }
-    //     }),
-    //   );
+  //   final response = await http.post(
+  //     Uri.parse(
+  //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "user_id": 1, // Replace with actual user ID
+  //       "action": "category_view_duration",
+  //       "metadata": {
+  //         "category": "Venue",
+  //         "listing_id": listingId,
+  //         "time_spent_seconds": timeSpent
+  //       }
+  //     }),
+  //   );
 
-    //   if (response.statusCode == 201) {
-    //     print("Category view duration logged successfully");
-    //   } else {
-    //     print("Failed to log category view duration: ${response.body}");
-    //   }
+  //   if (response.statusCode == 201) {
+  //     print("Category view duration logged successfully");
+  //   } else {
+  //     print("Failed to log category view duration: ${response.body}");
+  //   }
   // }
   void showHierarchicalOptions(
       BuildContext context, double maxThing, double width) {
@@ -436,6 +437,14 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                                                 fontWeight: FontWeight.w400)),
                                         backgroundColor: MyColors.green,
                                       ));
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
                                     },
                                   )),
                                 ),

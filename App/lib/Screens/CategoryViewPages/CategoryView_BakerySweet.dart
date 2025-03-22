@@ -119,7 +119,8 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      print("🕒 Logging category view duration for Bakery Sweet: $timeSpent seconds");
+      print(
+          "🕒 Logging category view duration for Bakery Sweet: $timeSpent seconds");
 
       logUserActivity("category_view_duration", {
         "category": "Bakery and Sweets",
@@ -133,26 +134,26 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
 
   // added-Function to log time spent
   // Future<void> logTimeSpent(int listingId, int timeSpent) async {
-    //   final response = await http.post(
-    //     Uri.parse(
-    //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: jsonEncode({
-    //       "user_id": 1, // Replace with actual user ID
-    //       "action": "category_view_duration",
-    //       "metadata": {
-    //         "category": "Venue",
-    //         "listing_id": listingId,
-    //         "time_spent_seconds": timeSpent
-    //       }
-    //     }),
-    //   );
+  //   final response = await http.post(
+  //     Uri.parse(
+  //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "user_id": 1, // Replace with actual user ID
+  //       "action": "category_view_duration",
+  //       "metadata": {
+  //         "category": "Venue",
+  //         "listing_id": listingId,
+  //         "time_spent_seconds": timeSpent
+  //       }
+  //     }),
+  //   );
 
-    //   if (response.statusCode == 201) {
-    //     print("Category view duration logged successfully");
-    //   } else {
-    //     print("Failed to log category view duration: ${response.body}");
-    //   }
+  //   if (response.statusCode == 201) {
+  //     print("Category view duration logged successfully");
+  //   } else {
+  //     print("Failed to log category view duration: ${response.body}");
+  //   }
   // }
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -281,6 +282,14 @@ class _CategoryView_BakerySweetState extends State<CategoryView_BakerySweet> {
                                                 fontWeight: FontWeight.w400)),
                                         backgroundColor: MyColors.green,
                                       ));
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
                                     },
                                   )),
                                 ),

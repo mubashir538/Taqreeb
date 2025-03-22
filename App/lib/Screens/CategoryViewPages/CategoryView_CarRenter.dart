@@ -408,7 +408,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                   padding:
                                       EdgeInsets.only(top: screenHeight * 0.03),
                                   child: Center(
-                                      child: ColoredButton(
+                                      child: ColoredButton(                                          
                                     text: 'Book Car Renter',
                                     onPressed: () async {
                                       print(
@@ -426,6 +426,17 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                                 fontWeight: FontWeight.w400)),
                                         backgroundColor: MyColors.green,
                                       ));
+                                         Navigator.pushNamed(
+                                                context, '/orderSummary',
+                                                arguments: {
+                                                  'Name': listing['Listing']
+                                                      ['name'],
+                                                  'type': listing['Listing']
+                                                      ['type'],
+                                                  'price': listing['Listing']
+                                                      ['basicPrice'],
+                                                });
+                                          
                                     },
                                   )),
                                 ),

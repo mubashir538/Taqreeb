@@ -323,6 +323,14 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                                                 fontWeight: FontWeight.w400)),
                                         backgroundColor: MyColors.green,
                                       ));
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
                                     },
                                   )),
                                 ),

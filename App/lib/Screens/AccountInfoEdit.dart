@@ -156,10 +156,8 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     );
 
     if (result != null) {
-
       final FcompressedFile = File(result.path);
         return FcompressedFile;
-
     } else {
       throw Exception('Image compression failed.');
     }
