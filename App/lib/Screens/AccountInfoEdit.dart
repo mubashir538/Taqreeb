@@ -212,8 +212,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
         } else {
           warningDialog(
                   title: 'Error',
-                  message:
-                      'Failed to Update Info, Please Try Again Later!.')
+                  message: 'Failed to Update Info, Please Try Again Later!.')
               .showDialogBox(context);
         }
       } catch (e) {

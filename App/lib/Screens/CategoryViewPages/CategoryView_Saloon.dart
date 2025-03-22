@@ -32,6 +32,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   bool isLoading = true;
   bool ischange = false;
   bool isToggled = true;
+  DateTime? entryTime; //added
   List<String> headings = [];
   List<String> values = [];
   List<String> addonsheadings = [];
@@ -53,6 +54,8 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    entryTime = DateTime.now(); // added-Store entry time when user opens page
+    print("📌 User opened CategoryView_Saloon at: $entryTime");
   }
 
   @override
@@ -121,10 +124,44 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
 
   @override
   void dispose() {
+    if (entryTime != null) {
+      DateTime exitTime = DateTime.now();
+      int timeSpent = exitTime.difference(entryTime!).inSeconds;
+      print("🕒 Logging category view duration for Saloon: $timeSpent seconds");
+
+      logUserActivity("category_view_duration", {
+        "category": "Saloon",
+        "listing_id": listingId ?? 0,
+        "time_spent_seconds": timeSpent
+      });
+    }
     timer?.cancel();
     super.dispose();
   }
 
+// added-Function to log time spent
+  // Future<void> logTimeSpent(int listingId, int timeSpent) async {
+  //   final response = await http.post(
+  //     Uri.parse(
+  //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "user_id": 1, // Replace with actual user ID
+  //       "action": "category_view_duration",
+  //       "metadata": {
+  //         "category": "Venue",
+  //         "listing_id": listingId,
+  //         "time_spent_seconds": timeSpent
+  //       }
+  //     }),
+  //   );
+
+  //   if (response.statusCode == 201) {
+  //     print("Category view duration logged successfully");
+  //   } else {
+  //     print("Failed to log category view duration: ${response.body}");
+  //   }
+  // }
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
   void _getHeaderHeight() {
@@ -135,6 +172,36 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
       setState(() {
         _headerHeight = renderBox.size.height;
       });
+    }
+  }
+
+  Future<void> logUserActivity(
+      String action, Map<String, dynamic> metadata) async {
+    String? userId =
+        await MyStorage.getToken(MyTokens.userId); // Get actual user ID
+
+    if (userId == null) {
+      print("User ID not found. Skipping activity log.");
+      return;
+    }
+
+    final response = await MyApi.postRequest(
+      endpoint: 'log-user-activity/',
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+      body: {
+        "user_id": int.parse(userId), // Convert user ID to integer
+        "action": action,
+        "metadata": metadata,
+      },
+    );
+
+    if (response != null && response['status'] == 'success') {
+      print("Activity logged: $action");
+    } else {
+      print("Failed to log activity: ${response['message']}");
     }
   }
 
@@ -207,7 +274,34 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                                   padding:
                                       EdgeInsets.only(top: screenHeight * 0.03),
                                   child: Center(
-                                      child: ColoredButton(text: 'Book Venue')),
+                                      child: ColoredButton(
+                                    text: 'Book Saloon',
+                                    onPressed: () async {
+                                      print(
+                                          "🛒 User clicked 'Book Saloon' for listing ID: $listingId");
+
+                                      await logUserActivity("book_saloon",
+                                          {"listing_id": listingId ?? 0});
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('Booking action logged!',
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 14,
+                                                color: MyColors.white,
+                                                fontWeight: FontWeight.w400)),
+                                        backgroundColor: MyColors.green,
+                                      ));
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
+                                    },
+                                  )),
                                 ),
                               ],
                             ),
