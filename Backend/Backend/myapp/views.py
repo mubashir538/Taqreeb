@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from datetime import datetime
 import requests as rq
 from rest_framework.response import Response
+from .models import UserActivity
+from django.utils.timezone import now
+# from .Serializers import UserActivitySerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -269,7 +272,85 @@ def get_business_usernames(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def getWishlist(request,uid):
+    uid = md.User.objects.get(id=uid)
+    list = md.Wishlist.objects.filter(user=uid)
+    list = md.Listing.objects.filter(id__in=list.values_list('listing', flat=True))
+    ListingSerializer = s.ListingSerializer(list, many=True)
+    Pictures = []
+    Listings = ListingSerializer.data[:]
+    for i in Listings:
+        pic = md.PicturesListings.objects.filter(listingId=i['id'])
+        serializer = s.PicturesListingSerializers(pic, many=True)
+        Pictures.append(serializer.data)
+    return Response({'status':'success', 'list':Listings, 'pictures':Pictures})
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def addtoWishlist(request):
+    userid = request.data.get('userid')
+    listing = request.data.get('listing')
+    listing = md.Listing.objects.get(id=listing)
+    userid = md.User.objects.get(id=userid)
+    md.Wishlist(user=userid,listing=listing).save()
+    return Response({'status':'success'}) 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def removeFromWishlist(request):
+    userid = request.data.get('userid')
+    listing = request.data.get('listing')
+    listing = md.Listing.objects.get(id=listing)
+    userid = md.User.objects.get(id=userid)
+    md.Wishlist.objects.filter(user=userid,listing=listing).delete()
+    return Response({'status':'success'}) 
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def deleteTable(request):
-    md.Listing.objects.filter(id=103).delete()
+    md.Listing.objects.filter(type='Baker and Sweet').delete()
     return Response({'status': 'success'})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def log_user_activity(request):
+    """
+    Logs all user activities including searches, clicks, filters, and time spent.
+    """
+    action = request.data.get('action')  # Type of action (search, click, time spent, etc.)
+    metadata = request.data.get('metadata', {})  # Additional details (search term, clicked item, etc.)
+    # duration_seconds = request.data.get('duration_seconds', None)  # Time spent on a page (optional)
+
+    valid_actions = dict(UserActivity.ACTIONS).keys()
+    if action not in valid_actions:
+        return Response({'status': 'error', 'message': 'Invalid action type'}, status=400)
+
+    # Store the action in UserActivity model
+    UserActivity.objects.create(
+        user=request.user,
+        action=action,
+        metadata=metadata,
+        # duration_seconds=duration_seconds,
+        timestamp=now()
+    )
+
+    return Response({'status': 'success', 'message': 'Activity logged successfully'})
+
+# @api_view(['POST', 'GET'])
+# @permission_classes([IsAuthenticated])
+# def user_events(request):
+#     """
+#     Handles user event history for AI recommendations.
+#     - `GET` → Retrieve past events.
+#     - `POST` → Create a new event.
+#     """
+#     if request.method == 'GET':
+#         events = UserEvent.objects.filter(user=request.user)
+#         serializer = UserEventSerializer(events, many=True)
+#         return Response(serializer.data)
+
+#     elif request.method == 'POST':
+#         serializer = UserEventSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=request.user)  # ✅ Auto-assign user
+#             return Response({'status': 'success', 'message': 'Event logged successfully'})
+#         return Response(serializer.errors, status=400)

@@ -144,12 +144,10 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               height: screenHeight * 0.2,
                               fit: BoxFit.contain,
                             ),
-                      GestureDetector(
-                        onTap: () => _pickImage('f'),
-                        child: IconedButton(
-                          icon: MyIcons.upload2,
-                          text: 'Upload Front',
-                        ),
+                      IconedButton(
+                        onPressed:() => _pickImage('f') ,
+                        icon: MyIcons.upload2,
+                        text: 'Upload Front',
                       ),
                     ],
                   ),
@@ -171,12 +169,10 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               height: screenHeight * 0.2,
                               fit: BoxFit.contain,
                             ),
-                      GestureDetector(
-                        onTap: () => _pickImage('b'),
-                        child: IconedButton(
-                          icon: MyIcons.upload2,
-                          text: 'Upload Back',
-                        ),
+                      IconedButton(
+                        onPressed:() => _pickImage('b') ,
+                        icon: MyIcons.upload2,
+                        text: 'Upload Back',
                       ),
                     ],
                   ),

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyStorage {
@@ -21,4 +22,10 @@ class MyStorage {
     }
     return false;
   }
+
+  static Future<String?> yourFCM() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    return token;
+  }
+
 }

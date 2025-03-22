@@ -66,18 +66,24 @@ class _ChatsScreenState extends State<ChatsScreen> {
             .get();
 
         if (messagesSnapshot.docs.isNotEmpty) {
+          List<String> ids = chatDoc.id.split('-');
+          print(ids);
           final user = await usersCollection
               .doc(messagesSnapshot.docs.first['receiverId'])
               .get();
-          return {
-            'userId': user.id,
-            'chatimage':
-                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture'] ?? ''}',
-            'name': user['firstName'] ?? 'Unknown',
-            'lastMessage': chatDoc['lastMessage'] ?? '',
-            'newMessages': chatDoc['unreadMessages'][loggedInUserId] ?? 0,
-            'time': chatDoc['lastMessageTime'] ?? ''
-          };
+         if (user.id != loggedInUserId &&
+              (loggedInUserId == ids[0] || loggedInUserId == ids[1])) {
+            print('${ids[0]} - ${ids[1]}');
+            return {
+              'userId': user.id,
+              'chatimage':
+                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture'] ?? ''}',
+              'name': user['firstName'] ?? 'Unknown',
+              'lastMessage': chatDoc['lastMessage'] ?? '',
+              'newMessages': chatDoc['unreadMessages'][loggedInUserId] ?? 0,
+              'time': chatDoc['lastMessageTime'] ?? ''
+            };
+          }
         }
 
         return null;
@@ -101,6 +107,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
       setState(() {
         userChats.addAll(chats.cast<Map<String, dynamic>>());
+        for (int i = 0; i < userChats.length; i++) {
+          print('${userChats[i]['userId']}');
+        }
         groups = filteredGroups;
       });
     } catch (e) {

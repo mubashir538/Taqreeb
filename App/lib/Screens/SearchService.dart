@@ -27,6 +27,7 @@ class _SearchServiceState extends State<SearchService> {
   final TextEditingController searchController = TextEditingController();
   final List<String> appliedFilters = [];
   final List<String> FiltertoApply = [];
+  DateTime? entryTime;
 
   RangeSliderController rangeSliderController = RangeSliderController(
     minValue: 10000,
@@ -47,6 +48,36 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
+
+  Future<void> logUserActivity(
+      String action, Map<String, dynamic> metadata) async {
+    String? userId =
+        await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
+
+    if (userId == null) {
+      print("User ID not found. Skipping activity log.");
+      return;
+    }
+    final response = await MyApi.postRequest(
+      endpoint: 'log-user-activity/',
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+      body: {
+        "user_id": int.parse(userId), // Convert user ID to integer
+        "action": action,
+        "metadata": metadata,
+      },
+    );
+
+    // if (response != null && response['status'] == 'success') {
+    //   print("✅ Activity logged: $action");
+    // } else {
+    //   print("❌Failed to log activity: ${response['message']}");
+    // }
+  }
+
   Map<String, dynamic> additionalFilters = {}; // Stores dynamic filters
   Map<String, dynamic> additionalSelections = {}; // Stores user selections
 
@@ -54,6 +85,8 @@ class _SearchServiceState extends State<SearchService> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    entryTime = DateTime.now();
+    print("📌 User opened SearchService at: $entryTime");
   }
 
   @override
@@ -151,6 +184,14 @@ class _SearchServiceState extends State<SearchService> {
 
   @override
   void dispose() {
+    if (entryTime != null) {
+      DateTime exitTime = DateTime.now();
+      int timeSpent = exitTime.difference(entryTime!).inSeconds;
+      print("⏳ [DEBUG] User left SearchService at: $exitTime");
+
+      logUserActivity(
+          "search_page_view_duration", {"time_spent_seconds": timeSpent});
+    }
     timer?.cancel();
     super.dispose();
   }
@@ -170,8 +211,12 @@ class _SearchServiceState extends State<SearchService> {
 
   String searchListingPicture(int listingid, Map<String, dynamic> listing) {
     for (int i = 0; i < listing['pictures'].length; i++) {
-      if (listing['pictures'][i][0]['listingId'] == listingid) {
-        return listing['pictures'][i][0]['picturePath'];
+      if (listing['pictures'][i].length != 0) {
+        if (listing['pictures'][i][0]['listingId'] == listingid) {
+          return listing['pictures'][i][0]['picturePath'];
+        }
+      } else {
+        return '';
       }
     }
     return '';
@@ -236,6 +281,12 @@ class _SearchServiceState extends State<SearchService> {
                                                               .toLowerCase()))
                                                   .toList();
                                         });
+                                        if (value.isNotEmpty) {
+                                          print(
+                                              "🔍 [DEBUG] User searching: $value");
+                                          logUserActivity("search",
+                                              {"search_query": value});
+                                        }
                                       },
                                     ),
                                     Column(
@@ -319,28 +370,73 @@ class _SearchServiceState extends State<SearchService> {
                             SizedBox(
                               width: screenWidth * 0.9,
                               child: ListView.builder(
-                                itemBuilder: (context, index) => Productcard(
-                                  listingType: templistings['HomeListing']
-                                          [index]['type']
-                                      .toString(),
-                                  listingid: templistings['HomeListing'][index]
-                                          ['id']
-                                      .toString(),
-                                  imageUrl: searchListingPicture(
-                                              templistings['HomeListing'][index]
-                                                  ['id'],
-                                              templistings) ==
-                                          ""
-                                      ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                      : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${searchListingPicture(templistings['HomeListing'][index]['id'], templistings)}',
-                                  venueName: templistings['HomeListing'][index]
-                                      ['name'],
-                                  location: templistings['HomeListing'][index]
-                                      ['location'],
-                                  type: templistings['HomeListing'][index]
-                                          ['type']
-                                      .toString(),
-                                ),
+                                itemBuilder: (context, index) {
+                                  String serviceName =
+                                      templistings['HomeListing'][index]
+                                          ['name'];
+                                  int serviceId =
+                                      templistings['HomeListing'][index]['id'];
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      print(
+                                          "🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
+
+                                      logUserActivity("service_click", {
+                                        "service_id": serviceId,
+                                        "service_name": serviceName
+                                      });
+
+                                      // Store entry time when user starts viewing service
+                                      DateTime entryTime = DateTime.now();
+
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/SearchServiceDetails',
+                                        arguments: {
+                                          "id": serviceId,
+                                          "service_name": serviceName,
+                                          "entry_time":
+                                              entryTime.toIso8601String(),
+                                        },
+                                      ).then((_) {
+                                        DateTime exitTime = DateTime.now();
+                                        int duration = exitTime
+                                            .difference(entryTime)
+                                            .inSeconds;
+
+                                        logUserActivity(
+                                            "service_view_duration", {
+                                          "service_id": serviceId,
+                                          "service_name": serviceName,
+                                          "duration_seconds": duration
+                                        });
+                                      });
+                                    },
+                                    child: Productcard(
+                                      listingType: templistings['HomeListing']
+                                              [index]['type']
+                                          .toString(),
+                                      listingid: templistings['HomeListing']
+                                              [index]['id']
+                                          .toString(),
+                                      imageUrl: searchListingPicture(
+                                                  templistings['HomeListing']
+                                                      [index]['id'],
+                                                  templistings) ==
+                                              ""
+                                          ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                                          : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${searchListingPicture(templistings['HomeListing'][index]['id'], templistings)}',
+                                      venueName: templistings['HomeListing']
+                                          [index]['name'],
+                                      location: templistings['HomeListing']
+                                          [index]['location'],
+                                      type: templistings['HomeListing'][index]
+                                              ['type']
+                                          .toString(),
+                                    ),
+                                  );
+                                },
                                 itemCount: templistings['HomeListing'].length,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -508,6 +604,8 @@ class _SearchServiceState extends State<SearchService> {
                         if (!FiltertoApply.contains("Category")) {
                           FiltertoApply.add("Category");
                         }
+                        logUserActivity("category_click",
+                            {"selected_category": selections});
                       }),
                   Text('Location',
                       style: GoogleFonts.montserrat(
@@ -534,13 +632,56 @@ class _SearchServiceState extends State<SearchService> {
                     text: 'Apply Filters',
                     onPressed: () {
                       setState(() {
-                        if (dateController.text.isNotEmpty) {
-                          appliedFilters.add("Date");
-                        }
-                        for (String i in FiltertoApply) {
-                          appliedFilters.add(i);
-                        }
+                        appliedFilters.clear();
+                        FiltertoApply.forEach((filter) {
+                          appliedFilters.add(filter);
+                        });
                       });
+
+                      // ✅ Create metadata object with actual filter values
+                      Map<String, dynamic> filterData = {
+                        "applied_filters": appliedFilters,
+                        "filter_values": {} // Stores values for each filter
+                      };
+
+                      // 🏷️ Add Ratings filter values
+                      if (appliedFilters.contains("Ratings")) {
+                        filterData["filter_values"]["Ratings"] =
+                            ratingController.selections;
+                      }
+
+                      // 🏷️ Add Category filter values
+                      if (appliedFilters.contains("Category")) {
+                        filterData["filter_values"]["Category"] =
+                            categoryController.selections;
+                      }
+
+                      // 🏷️ Add Price Range filter values
+                      if (appliedFilters.contains("Price")) {
+                        filterData["filter_values"]["Price"] = {
+                          "min": rangeSliderController.minValue,
+                          "max": rangeSliderController.maxValue
+                        };
+                      }
+
+                      // 🏷️ Add Location filter values
+                      if (appliedFilters.contains("Location")) {
+                        filterData["filter_values"]["Location"] =
+                            locationcontroller.text;
+                      }
+
+                      // 🏷️ Add Date filter values
+                      if (appliedFilters.contains("Date")) {
+                        filterData["filter_values"]["Date"] =
+                            dateController.text;
+                      }
+
+                      // 🔍 Debugging Print Statement
+                      print("🔄 [DEBUG] Applying filters: $filterData");
+
+                      // ✅ Log filter application with values
+                      logUserActivity("filter", filterData);
+
                       Navigator.pop(context);
                       searchwithFilters();
                     },
@@ -584,7 +725,8 @@ class _SearchServiceState extends State<SearchService> {
                     child: ListView(
                       children: additionalFilters.entries.map((entry) {
                         String fieldName = entry.key;
-                        List<String> choices = entry.value.cast<String>().toList();
+                        List<String> choices =
+                            entry.value.cast<String>().toList();
                         print(entry);
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -601,7 +743,9 @@ class _SearchServiceState extends State<SearchService> {
                               question: '',
                               options: choices,
                               controller: CheckBoxController(
-                                selections: additionalSelections[fieldName].cast<String>().toList(),
+                                selections: additionalSelections[fieldName]
+                                    .cast<String>()
+                                    .toList(),
                               ),
                               onChanged: (selections) {
                                 setState(() {

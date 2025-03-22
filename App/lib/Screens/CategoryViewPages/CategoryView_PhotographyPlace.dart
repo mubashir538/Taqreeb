@@ -6,6 +6,7 @@ import 'package:taqreeb/Classes/flutterStorage.dart';
 import 'package:taqreeb/Components/Colored%20Button.dart';
 import 'package:taqreeb/Components/header.dart';
 import 'package:taqreeb/Components/my%20divider.dart';
+import 'package:taqreeb/Screens/CategoryViewPages/components/ChatIcon.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/PricingSection.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryAddons.dart';
 import 'package:taqreeb/Screens/CategoryViewPages/components/categoryPackages.dart';
@@ -33,6 +34,7 @@ class _CategoryView_PhotographyPlaceState
   late int? listingId;
   bool isLoading = true;
   bool type = false;
+  DateTime? entryTime;
 
   bool isToggled = true;
   List<String> headings = [
@@ -58,6 +60,8 @@ class _CategoryView_PhotographyPlaceState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    entryTime = DateTime.now(); // added-Store entry time when user opens page
+    print("📌 User opened CategoryView_PhotographyPlace at: $entryTime");
   }
 
   @override
@@ -127,8 +131,73 @@ class _CategoryView_PhotographyPlaceState
 
   @override
   void dispose() {
+    if (entryTime != null) {
+      DateTime exitTime = DateTime.now();
+      int timeSpent = exitTime.difference(entryTime!).inSeconds;
+      print(
+          "🕒 Logging category view duration for Photography Place: $timeSpent seconds");
+
+      logUserActivity("category_view_duration", {
+        "category": "PhotographyPlace",
+        "listing_id": listingId ?? 0,
+        "time_spent_seconds": timeSpent
+      });
+    }
     timer?.cancel();
     super.dispose();
+  }
+
+  // added-Function to log time spent
+  // Future<void> logTimeSpent(int listingId, int timeSpent) async {
+  //   final response = await http.post(
+  //     Uri.parse(
+  //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "user_id": 1, // Replace with actual user ID
+  //       "action": "category_view_duration",
+  //       "metadata": {
+  //         "category": "Venue",
+  //         "listing_id": listingId,
+  //         "time_spent_seconds": timeSpent
+  //       }
+  //     }),
+  //   );
+
+  //   if (response.statusCode == 201) {
+  //     print("Category view duration logged successfully");
+  //   } else {
+  //     print("Failed to log category view duration: ${response.body}");
+  //   }
+  // }
+  Future<void> logUserActivity(
+      String action, Map<String, dynamic> metadata) async {
+    String? userId =
+        await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
+
+    if (userId == null) {
+      print("User ID not found. Skipping activity log.");
+      return;
+    }
+
+    final response = await MyApi.postRequest(
+      endpoint: 'log-user-activity/',
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+      body: {
+        "user_id": int.parse(userId), // Ensure user ID is an integer
+        "action": action,
+        "metadata": metadata,
+      },
+    );
+
+    if (response != null && response['status'] == 'success') {
+      print("Activity logged: $action");
+    } else {
+      print("Failed to log activity: ${response['message']}");
+    }
   }
 
   final GlobalKey _headerKey = GlobalKey();
@@ -229,9 +298,25 @@ class _CategoryView_PhotographyPlaceState
                                       EdgeInsets.only(top: screenHeight * 0.03),
                                   child: Center(
                                       child: ColoredButton(
-                                          text: 'Book Venue',
-                                          onPressed: () {
-                                            Navigator.pushNamed(
+                                    text: 'Book Photography Place',
+                                    onPressed: () async {
+                                      print(
+                                          "🛒 User clicked 'Book Photography Place' for listing ID: $listingId");
+
+                                      await logUserActivity(
+                                          "book_photographyplace",
+                                          {"listing_id": listingId ?? 0});
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('Booking action logged!',
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 14,
+                                                color: MyColors.white,
+                                                fontWeight: FontWeight.w400)),
+                                        backgroundColor: MyColors.green,
+                                      ));
+                                         Navigator.pushNamed(
                                                 context, '/orderSummary',
                                                 arguments: {
                                                   'Name': listing['Listing']
@@ -241,7 +326,8 @@ class _CategoryView_PhotographyPlaceState
                                                   'price': listing['Listing']
                                                       ['basicPrice'],
                                                 });
-                                          })),
+                                    },
+                                  )),
                                 ),
                               ],
                             ),
@@ -256,7 +342,7 @@ class _CategoryView_PhotographyPlaceState
             child: Header(
               key: _headerKey,
             ),
-          ),
+          ),ChatIcon(),
         ],
       ),
     );

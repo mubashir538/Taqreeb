@@ -104,6 +104,20 @@ class _ChatBoxState extends State<ChatBox> {
       },
     }, SetOptions(merge: true));
 
+    final response = await MyApi.postRequest(
+        endpoint: 'notification/sendNotification',
+        body: {
+          'recv': chatUserId,
+          'send': _currentUserId,
+          'message': text,
+        },
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
+        });
+    if (response['status'] == 'success') {
+      print('Notification Sent Successful');
+    }
     _messageController.clear();
     setState(() {
       isMessageSent = true;
@@ -157,7 +171,6 @@ class _ChatBoxState extends State<ChatBox> {
             chatUserId: FieldValue.increment(1),
           },
         }, SetOptions(merge: true));
-
       } else {
         print('Failed to upload image: ${response.statusCode}');
       }
@@ -165,7 +178,6 @@ class _ChatBoxState extends State<ChatBox> {
       print('Error uploading image: $e');
     }
   }
-
 
   String _getChatId() {
     return _currentUserId!.compareTo(chatUserId) > 0
