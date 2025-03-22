@@ -306,3 +306,5 @@ def removeFromWishlist(request):
 def deleteTable(request):
     md.Listing.objects.filter(type='Baker and Sweet').delete()
     return Response({'status': 'success'})
+
+
