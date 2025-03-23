@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
@@ -20,26 +21,25 @@ class ForgotPassword_EmailorPhoneInput extends StatefulWidget {
 
 class _ForgotPassword_EmailorPhoneInputState
     extends State<ForgotPassword_EmailorPhoneInput> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
   bool isLoading = false;
   TextEditingController contactController = TextEditingController();
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   Future<void> _sendCode() async {
@@ -91,10 +91,11 @@ class _ForgotPassword_EmailorPhoneInputState
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: isLoading
@@ -108,10 +109,10 @@ class _ForgotPassword_EmailorPhoneInputState
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: _headerHeight),
+                      SizedBox(height: UI_Management.headerHeight),
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+                        padding: EdgeInsets.symmetric(
+                            vertical: Screen.max(context) * 0.02),
                         child: MyTextBox(
                           hint: "Enter Email/Phone Number",
                           valueController: contactController,
@@ -131,7 +132,7 @@ class _ForgotPassword_EmailorPhoneInputState
                 Positioned(
                   top: 0,
                   child: Header(
-                    key: _headerKey,
+                    key: headerKey,
                     heading: 'Forgot Password',
                     para:
                         'Enter the email address with your account  and we\'ll send an email with confirmation to reset your password',

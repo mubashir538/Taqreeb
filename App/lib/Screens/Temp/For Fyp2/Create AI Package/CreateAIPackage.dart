@@ -1,5 +1,4 @@
 // import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
 // import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';

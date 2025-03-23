@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class FadeAnimation extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
@@ -25,38 +26,41 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
-  void _getHeaderHeight() {
-    final RenderObject? renderObject =
-        _headerKey.currentContext?.findRenderObject();
-    if (renderObject is RenderBox) {
-      setState(() {
-        _headerHeight = renderObject.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
-          if (_headerHeight > 0)
+          if (UI_Management.headerHeight > 0)
             SingleChildScrollView(
               child: Container(
                 width: Screen.width(context),
@@ -67,7 +71,7 @@ class _LoginState extends State<Login> {
                       children: [
                         SizedBox(
                             height: (Screen.height(context) * 0.03) +
-                                _headerHeight),
+                                UI_Management.headerHeight),
                         MyTextBox(
                           focusNode: emailFocus,
                           onFieldSubmitted: (_) {
@@ -151,7 +155,7 @@ class _LoginState extends State<Login> {
                                 await MyStorage.saveToken(
                                     response['userid'].toString(),
                                     MyTokens.userId);
-                                final res = await MyApi.postRequest(
+                                await MyApi.postRequest(
                                     endpoint: 'notification/saveFCM',
                                     body: {
                                       'token': await MyStorage.yourFCM(),
@@ -215,7 +219,7 @@ class _LoginState extends State<Login> {
                                     response['userId'].toString(), 'userId');
                                 MyStorage.saveToken(
                                     MyTokens.user, MyTokens.userType);
-                                final res = await MyApi.postRequest(
+                                await MyApi.postRequest(
                                     endpoint: 'notification/saveFCM',
                                     body: {
                                       'token': await MyStorage.yourFCM(),
@@ -249,7 +253,7 @@ class _LoginState extends State<Login> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "Login to Continue",
               para:
                   "We believe that your event should not be delayed so let's login your Account so we can get Started",

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -23,22 +21,16 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   bool isLoading = true;
 
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
-    final user = await MyApi.getRequest(
-        endpoint: 'accountInfo/$Userid',
-        headers: {'Authorization': 'Bearer $token'});
-
-    setState(() {
-      this.token = token;
-      this.user = user ?? {};
-      if (user == null || user['status'] == 'error') {
-        MyScaffold(text: 'Something Went Wrong!').show(context);
-        return;
-      } else {
-        isLoading = false;
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    ApiCall.fetchAPI('accountInfo/$userid', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          token = token;
+          user = data;
+          isLoading = false;
+        });
       }
-    });
+    }, context: mounted ? context : null);
   }
 
   @override

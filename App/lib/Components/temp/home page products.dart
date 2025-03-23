@@ -24,9 +24,11 @@ class HomePageProducts extends StatelessWidget {
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.01,vertical: Screen.max(context)*0.02),
+        margin: EdgeInsets.symmetric(
+            horizontal: Screen.max(context) * 0.01,
+            vertical: Screen.max(context) * 0.02),
         height: Screen.height(context) * 0.2,
-        width: Screen.width(context)*0.4,        
+        width: Screen.width(context) * 0.4,
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(12),
@@ -53,7 +55,8 @@ class HomePageProducts extends StatelessWidget {
             Text(
               name,
               style: GoogleFonts.montserrat(
-                  fontSize: Screen.max(context) * 0.015, fontWeight: FontWeight.w500),
+                  fontSize: Screen.max(context) * 0.015,
+                  fontWeight: FontWeight.w500),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -63,7 +66,7 @@ class HomePageProducts extends StatelessWidget {
                   Text(
                     name,
                     style: TextStyle(
-                        fontSize: Screen.max(context)*0.015,
+                        fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),
@@ -80,7 +83,6 @@ class HomePageProducts extends StatelessWidget {
             ),
           ],
         ),
-     
       ),
     );
   }

@@ -1,15 +1,13 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/images.dart';
@@ -31,6 +29,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   bool isLoading = true;
   List<Map<String, dynamic>> bookinglist = [];
   bool ischanged = false;
+  GlobalKey headerKey = GlobalKey();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -47,65 +47,37 @@ class _FunctionDetailState extends State<FunctionDetail> {
     }
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-
-    final function = await MyApi.getRequest(
-      endpoint: 'ViewFunction/${this.FunctionId}',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    final bookings = await MyApi.getRequest(
-      endpoint: 'show/Bookcart/${this.FunctionId}',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI('ViewFunction/$FunctionId', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           this.token = token;
-          functions = function ?? {};
-          this.bookings = bookings ?? {};
-          if (bookings == null || bookings['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            for (int i = 0; i < this.bookings['cart'].length; i++) {
-              bookinglist.add(this.bookings['cart'][i]);
-            }
-            ischanged = true;
-            isLoading = false;
-          }
+          functions = data;
         });
       }
+    }, context: mounted ? context : null);
+    ApiCall.fetchAPI('show/Bookcart/$FunctionId', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          this.bookings = data;
+          for (int i = 0; i < this.bookings['cart'].length; i++) {
+            bookinglist.add(this.bookings['cart'][i]);
+          }
+          ischanged = true;
+          isLoading = false;
+        });
+      }
+    }, context: mounted ? context : null);
+  }
+
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
     });
   }
 
   @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    
-     
-    
     List<String> headings = ['Function Type', 'Guests', 'Date'];
 
     List<String> values = isLoading
@@ -115,7 +87,11 @@ class _FunctionDetailState extends State<FunctionDetail> {
             '${functions['Fuctions']['guestsmin'].toString()}-${functions['Fuctions']['guestsmax'].toString()}',
             functions['Fuctions']['date']
           ];
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
         backgroundColor: MyColors.Dark,
         body: Stack(
@@ -125,7 +101,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                 width: Screen.width(context),
                 child: Column(
                   children: [
-                    SizedBox(height: _headerHeight),
+                    SizedBox(height: UI_Management.headerHeight),
                     isLoading
                         ? Center(
                             child: CircularProgressIndicator(
@@ -157,7 +133,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                     Container(
                                       width: Screen.width(context) * 0.9,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: Screen.height(context) * 0.02),
+                                          vertical:
+                                              Screen.height(context) * 0.02),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(16),
@@ -168,7 +145,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                         child: Text(
                                           functions['Fuctions']['type'],
                                           style: GoogleFonts.montserrat(
-                                              fontSize: Screen.max(context) * 0.02,
+                                              fontSize:
+                                                  Screen.max(context) * 0.02,
                                               fontWeight: FontWeight.w600,
                                               color: MyColors.white),
                                         ),
@@ -196,7 +174,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                 'Budget',
                                                 style: GoogleFonts.montserrat(
                                                     fontSize:
-                                                        Screen.max(context) * 0.02,
+                                                        Screen.max(context) *
+                                                            0.02,
                                                     fontWeight: FontWeight.w600,
                                                     color: MyColors.white),
                                               ),
@@ -205,7 +184,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                     .toString(),
                                                 style: GoogleFonts.montserrat(
                                                     fontSize:
-                                                        Screen.max(context) * 0.02,
+                                                        Screen.max(context) *
+                                                            0.02,
                                                     fontWeight: FontWeight.w600,
                                                     color: MyColors.white),
                                               ),
@@ -215,7 +195,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                         for (var heading in headings)
                                           Container(
                                             margin: EdgeInsets.symmetric(
-                                                vertical: Screen.max(context) * 0.005,
+                                                vertical:
+                                                    Screen.max(context) * 0.005,
                                                 horizontal:
                                                     Screen.max(context) * 0.02),
                                             child: Row(
@@ -229,7 +210,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                   heading,
                                                   style: GoogleFonts.montserrat(
                                                       fontSize:
-                                                          Screen.max(context) * 0.015,
+                                                          Screen.max(context) *
+                                                              0.015,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color: MyColors.Yellow),
@@ -239,7 +221,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                       .indexOf(heading)],
                                                   style: GoogleFonts.montserrat(
                                                       fontSize:
-                                                          Screen.max(context) * 0.015,
+                                                          Screen.max(context) *
+                                                              0.015,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: MyColors.white),
@@ -258,12 +241,14 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                 booking['type'].toString(),
                                                 style: GoogleFonts.montserrat(
                                                     fontSize:
-                                                        Screen.max(context) * 0.02,
+                                                        Screen.max(context) *
+                                                            0.02,
                                                     fontWeight: FontWeight.w600,
                                                     color: MyColors.Yellow),
                                               ),
                                               Productcard(
-                                                mywidth: Screen.width(context) * 0.85,
+                                                mywidth: Screen.width(context) *
+                                                    0.85,
                                                 listingType: booking['listing']
                                                         ['type']
                                                     .toString(),
@@ -284,14 +269,17 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                               ),
                                             ],
                                           ),
-                                        MyDivider(width: Screen.width(context) * 0.6),
+                                        MyDivider(
+                                            width: Screen.width(context) * 0.6),
                                         const SizedBox(height: 20),
                                         Container(
                                           margin: EdgeInsets.all(
                                               Screen.max(context) * 0.01),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: Screen.height(context) * 0.01,
-                                              horizontal: Screen.width(context) * 0.03),
+                                              vertical:
+                                                  Screen.height(context) * 0.01,
+                                              horizontal:
+                                                  Screen.width(context) * 0.03),
                                           decoration: BoxDecoration(
                                               color: MyColors.DarkLighter,
                                               borderRadius:
@@ -344,8 +332,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           margin: EdgeInsets.all(
                                               Screen.max(context) * 0.01),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: Screen.height(context) * 0.01,
-                                              horizontal: Screen.width(context) * 0.03),
+                                              vertical:
+                                                  Screen.height(context) * 0.01,
+                                              horizontal:
+                                                  Screen.width(context) * 0.03),
                                           decoration: BoxDecoration(
                                               color: MyColors.DarkLighter,
                                               borderRadius:
@@ -375,8 +365,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                           margin: EdgeInsets.all(
                                               Screen.max(context) * 0.01),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: Screen.height(context) * 0.01,
-                                              horizontal: Screen.width(context) * 0.03),
+                                              vertical:
+                                                  Screen.height(context) * 0.01,
+                                              horizontal:
+                                                  Screen.width(context) * 0.03),
                                           decoration: BoxDecoration(
                                               color: MyColors.DarkLighter,
                                               borderRadius:
@@ -425,7 +417,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
             Positioned(
               top: 0,
               child: Header(
-                key: _headerKey,
+                key: headerKey,
                 heading: "Your Function Details",
                 image: MyImages.CheckList,
               ),

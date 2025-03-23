@@ -1,8 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -15,9 +16,6 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_pricing.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
-import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class CategoryView_Parlour extends StatefulWidget {
@@ -33,7 +31,6 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   late int? listingId;
   bool isLoading = true;
   DateTime? entryTime; //added
-
   bool isToggled = true;
   List<String> headings = [];
   List<String> values = [];
@@ -47,11 +44,11 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
     '1 Stars',
   ];
   List<String> starsvalue = [];
-
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
   bool type = false;
+  GlobalKey headerKey = GlobalKey();
   bool ischange = false;
 
   @override
@@ -66,57 +63,49 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
         type = args['isBusiness'];
         ischange = true; // Ensures fetchData runs only once
       });
-      fetchData();
+      ApiCall.fetchAPI(
+        'parlourviewpage/$listingId',
+        onSuccess: (token, listing) {
+          if (mounted) {
+            setState(() {
+              this.token = token;
+              this.listing = listing;
+              ApiCall.updateListingDetails(
+                listing: listing,
+                updateState: (isLoading, ischange) {
+                  setState(() {
+                    this.isLoading = isLoading;
+                    this.ischange = ischange;
+                  });
+                },
+                imageUrls: _imageUrls,
+                addonsheadings: addonsheadings,
+                addonsvalues: addonsvalues,
+                values: values,
+                starsvalue: starsvalue,
+              );
+            });
+          }
+        },
+        onError: () {
+          if (mounted) {
+            MyScaffold(text: 'Something Went Wrong!').show(context);
+          }
+        },
+      );
     }
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     entryTime = DateTime.now(); // added-Store entry time when user opens page
-  }
-
-  Timer? timer;
-  void fetchData() async {
-    ischange = true;
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final listing = await MyApi.getRequest(
-        headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'parlourviewpage/${this.listingId}');
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          this.token = token;
-          this.listing = listing ?? {};
-          if (listing == null || listing['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-            for (var i = 0; i < listing['pictures'].length; i++) {
-              this._imageUrls.add(listing['pictures'][i]['picturePath']);
-            }
-            for (var i = 0; i < listing['Addons'].length; i++) {
-              this.addonsheadings.add(listing['Addons'][i]['name']);
-              if (listing['Addons'][i]['isPer']) {
-                this.addonsvalues.add(
-                    '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
-              } else {
-                this.addonsvalues.add(listing['Addons'][i]['price'].toString());
-              }
-            }
-            this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
-            timer.cancel();
-          }
-        });
-      }
-    });
   }
 
   @override
@@ -125,13 +114,12 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
 
-      logUserActivity("category_view_duration", {
+      Logs.logUserActivity("category_view_duration", {
         "category": "Parlour",
         "listing_id": listingId ?? 0,
         "time_spent_seconds": timeSpent
       });
     }
-    timer?.cancel();
     super.dispose();
   }
 
@@ -161,161 +149,19 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   //   }
   // }
 
-  void showHierarchicalOptions(
-      BuildContext context, double maxThing, double width) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: MyColors.Dark,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(maxThing * 0.02),
-          decoration: BoxDecoration(
-            color: MyColors.Dark,
-            borderRadius:
-                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: maxThing * 0.02),
-                child: Text(
-                  "Choose for a Function",
-                  style: GoogleFonts.montserrat(
-                    fontSize: maxThing * 0.025,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.white,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: events['Event']?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final event = events['Event'][index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: maxThing * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          width: 1,
-                          color: MyColors.red,
-                        ),
-                        color: MyColors.DarkLighter,
-                      ),
-                      child: ExpansionTile(
-                        collapsedShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        backgroundColor: MyColors.red,
-                        collapsedBackgroundColor: MyColors.DarkLighter,
-                        title: Text(
-                          event['name'],
-                          style: GoogleFonts.montserrat(
-                            fontSize: maxThing * 0.015,
-                            fontWeight: FontWeight.w400,
-                            color: MyColors.white,
-                          ),
-                        ),
-                        children: [
-                          ...event['functions'].map<Widget>((function) {
-                            return ListTile(
-                              title: Text(
-                                function['name'],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: maxThing * 0.015,
-                                  color: MyColors.whiteDarker,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              onTap: () async {
-                                final response = await MyApi.postRequest(
-                                    headers: {'Authorization': 'Bearer $token'},
-                                    endpoint: 'add/Bookcart/',
-                                    body: {
-                                      'fid': function['id'].toString(),
-                                      'uid': await MyStorage.getToken(
-                                              MyTokens.userId) ??
-                                          "",
-                                      'lid': listingId.toString(),
-                                      'type': 'Venue',
-                                    });
-
-                                if (response['status'] == 'success') {
-                                  Navigator.pop(context);
-                                } else {
-                                  MyScaffold(text: 'Something Went Wrong!')
-                                      .show(context);
-                                  Navigator.pop(context);
-                                }
-                              },
-                            );
-                          }).toList(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  Future<void> logUserActivity(
-      String action, Map<String, dynamic> metadata) async {
-    String? userId =
-        await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
-
-    if (userId == null) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'User ID not found. Skipping activity log'});
-      return;
-    }
-
-    final response = await MyApi.postRequest(
-      endpoint: 'log-user-activity/',
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      body: {
-        "user_id": int.parse(userId), // Ensure user ID is an integer
-        "action": action,
-        "metadata": metadata,
-      },
-    );
-
-    if (!(response != null && response['status'] == 'success')) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'Failed to log activity: ${response['message']}'});
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -323,7 +169,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: _headerHeight),
+                SizedBox(height: UI_Management.headerHeight),
                 isLoading
                     ? Center(
                         child: CircularProgressIndicator(
@@ -367,14 +213,6 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                   listing: listing,
                                 ),
                                 CategoryPackages(listing: listing),
-                                // CategorySlots(
-                                //   listing: listing,
-                                //   onDateSelected: (date) {
-                                //     setState(() {
-                                //       selectedDate = date;
-                                //     });
-                                //   },
-                                // ),
                                 SizedBox(
                                   height: Screen.height(context) * 0.05,
                                   child: Center(
@@ -398,7 +236,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                                       child: ColoredButton(
                                     text: 'Book Parlour',
                                     onPressed: () async {
-                                      await logUserActivity("book_parlour",
+                                      await Logs.logUserActivity("book_parlour",
                                           {"listing_id": listingId ?? 0});
 
                                       Navigator.pushNamed(
@@ -423,7 +261,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
             ),
           ),
           ChatIcon(),

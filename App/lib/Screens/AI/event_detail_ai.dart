@@ -5,14 +5,11 @@ import 'package:taqreeb/Components/AI/c_ai_functions.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class AIPackage_EventDetail extends StatelessWidget {
-  const AIPackage_EventDetail({super.key});
+class AiPackageEventDetail extends StatelessWidget {
+  const AiPackageEventDetail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Column(

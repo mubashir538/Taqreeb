@@ -108,7 +108,7 @@ class AuthService {
         final OAuthCredential credential =
             FacebookAuthProvider.credential(DefaultFirebaseOptions.accessToken);
         final userCredential = await _auth.signInWithCredential(credential);
-        final userData = await FacebookAuth.instance.getUserData(
+        await FacebookAuth.instance.getUserData(
           fields:
               "name,email,picture.width(200).height(200),birthday,gender,location",
         );

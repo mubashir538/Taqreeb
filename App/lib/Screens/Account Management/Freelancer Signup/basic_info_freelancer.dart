@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -27,25 +28,23 @@ class _FreelancerSignup_BasicInfoState
   FocusNode fullnameFocus = FocusNode();
   FocusNode cnicFocus = FocusNode();
   FocusNode portfolioFocus = FocusNode();
+  GlobalKey headerKey = GlobalKey();
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getHeaderHeight();
+      UI_Management.getHeaderHeight(
+          headerKey: headerKey,
+          callback: (renderbox) {
+            changeHeight(renderbox);
+          });
 
       check(context);
     });
@@ -88,7 +87,11 @@ class _FreelancerSignup_BasicInfoState
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -99,7 +102,8 @@ class _FreelancerSignup_BasicInfoState
               child: Column(
                 children: [
                   SizedBox(
-                    height: (Screen.max(context) * 0.05) + _headerHeight,
+                    height: (Screen.max(context) * 0.05) +
+                        UI_Management.headerHeight,
                   ),
                   MyTextBox(
                     focusNode: fullnameFocus,
@@ -167,7 +171,7 @@ class _FreelancerSignup_BasicInfoState
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "Create A Freelancer Account",
               para:
                   "Earn a Soothing Income by Editing Videos or Pictures of Events",

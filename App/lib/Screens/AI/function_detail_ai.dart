@@ -10,9 +10,6 @@ class AIPackage_FunctionDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Column(

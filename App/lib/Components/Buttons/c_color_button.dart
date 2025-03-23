@@ -56,10 +56,13 @@ class _ColoredButtonState extends State<ColoredButton> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-        height: (widget.height != 0 ? widget.height : Screen.height(context) * 0.06) *
+        height: (widget.height != 0
+                ? widget.height
+                : Screen.height(context) * 0.06) *
             (_isPressed ? 0.95 : 1.0),
-        width: (widget.width != 0 ? widget.width : Screen.width(context) * 0.9) *
-            (_isPressed ? 0.95 : 1.0),
+        width:
+            (widget.width != 0 ? widget.width : Screen.width(context) * 0.9) *
+                (_isPressed ? 0.95 : 1.0),
         decoration: BoxDecoration(
           color: _isPressed ? MyColors.red.withOpacity(0.8) : MyColors.red,
           borderRadius: BorderRadius.circular(10),

@@ -1,37 +1,51 @@
-import 'dart:async';
-
+import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class ApiCall {
-  static void fetchAPI(
-    String endpoint, {
-    required Function(String token, Map<String, dynamic> listing) onSuccess,
-    required Function() onError,
-  }) async {
+  static Future<void> fetchAPI(String endpoint,
+      {required Function(String token, Map<String, dynamic> data) onSuccess,
+      Function()? onError,
+      BuildContext? context,
+      String type = 'get',
+      Map<String, dynamic>? body = const {}}) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final listing = await MyApi.getRequest(
-      endpoint: endpoint,
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    if (listing == null || listing['status'] == 'error') {
-      onError();
+    final data;
+    if (type == 'get') {
+      data = await MyApi.getRequest(
+        endpoint: endpoint,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+    } else {
+      data = await MyApi.postRequest(
+        endpoint: endpoint,
+        body: body,
+        headers: {'Authorization': 'Bearer $token'},
+      );
     }
-    else{
-      onSuccess(token, listing);
+    if (data == null || data['status'] == 'error') {
+      onError?.call() ??
+          () {
+            if (context!.mounted) {
+              MyScaffold(text: 'Something Went Wrong!').show(context);
+            }
+          };
+    } else {
+      onSuccess(token, data);
     }
   }
 
-  static void updateListingDetails({
-    required Map<String, dynamic> listing,
-    required Function(bool isLoading, bool ischange) updateState,
-    required List<String> imageUrls,
-    required List<String> addonsheadings,
-    required List<String> addonsvalues,
-    required List<String> values,
-    required List<String> starsvalue,
-  }) {
+  static void updateListingDetails(
+      {required Map<String, dynamic> listing,
+      required Function(bool isLoading, bool ischange) updateState,
+      required List<String> imageUrls,
+      required List<String> addonsheadings,
+      required List<String> addonsvalues,
+      required List<String> values,
+      required List<String> starsvalue,
+      List<String> searchValues = const []}) {
     // Clear existing data
     imageUrls.clear();
     addonsheadings.clear();
@@ -54,11 +68,14 @@ class ApiCall {
       }
     }
 
-    values.add(listing['View']['serviceType']);
-    values.add(listing['View']['cateringOptions']);
-    values.add(listing['View']['staff']);
-    values.add(listing['View']['expertise']);
-
+    for (int i = 0; i < searchValues.length; i++) {
+      if (searchValues[i] == 'guestminAllowed') {
+        values.add(
+            '${listing['View'][searchValues[i]].toString()}-${listing['View'][searchValues[i + 1]].toString()}');
+        break;
+      }
+      values.add(listing['View'][searchValues[i]].toString());
+    }
     starsvalue.add('(${listing['reveiewData']['5'].toString()})');
     starsvalue.add('(${listing['reveiewData']['4'].toString()})');
     starsvalue.add('(${listing['reveiewData']['3'].toString()})');

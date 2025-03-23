@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -23,11 +23,17 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
   late Timer _timer;
   bool _isResendEnabled = false;
   String _enteredOTP = "";
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
 
     _startTimer();
   }
@@ -57,17 +63,10 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
@@ -76,7 +75,11 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final contactNumber = arguments['contactNumber'];
     final Future<dynamic> response = arguments['response'];
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -92,7 +95,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
                     children: [
                       SizedBox(
                         height: (MediaQuery.of(context).size.height * 0.1) +
-                            _headerHeight,
+                            UI_Management.headerHeight,
                       ),
                       OTPBoxes(
                         onChanged: (otp) {
@@ -168,7 +171,7 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'OTP Verification',
               para:
                   'We have sent a 4-digit verification code to $contactNumber. Please check your number.',

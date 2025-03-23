@@ -1,19 +1,16 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
-
 import '../../../core/utils/images.dart';
 
 class CreateFunction extends StatefulWidget {
@@ -45,8 +42,10 @@ class _CreateFunctionState extends State<CreateFunction> {
   int EventId = 0;
   Map<String, dynamic> Function = {};
   Map<String, dynamic> args = {};
+  GlobalKey headerKey = GlobalKey();
   bool edit = false;
   bool changed = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -64,92 +63,58 @@ class _CreateFunctionState extends State<CreateFunction> {
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final eventtypes = await MyApi.getRequest(
-      endpoint: 'getEventTypes/',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    for (int i = 0; i < eventtypes['eventTypes'].length; i++) {
-      if (eventtypes['eventTypes'][i]['name'] == args['type']) {
-        eventtypeid = eventtypes['eventTypes'][i]['id'];
+    await ApiCall.fetchAPI('getEventTypes/', onSuccess: (token, data) {
+      for (int i = 0; i < data['eventTypes'].length; i++) {
+        if (data['eventTypes'][i]['name'] == args['type']) {
+          eventtypeid = data['eventTypes'][i]['id'];
+        }
       }
-    }
-    final types = await MyApi.getRequest(
-        endpoint: 'getFunctionTypes/$eventtypeid',
-        headers: {'Authorization': 'Bearer $token'});
+    }, context: mounted ? context : null);
 
-    final FunctiontDetails;
+    await ApiCall.fetchAPI('getFunctionTypes/$eventtypeid',
+        onSuccess: (token, data) {}, context: mounted ? context : null);
     if (edit) {
-      FunctiontDetails = await MyApi.getRequest(
-        endpoint: 'ViewFunction/${functionId}',
-        headers: {'Authorization': 'Bearer $token'},
-      );
-    } else {
-      FunctiontDetails = "";
-    }
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          if (edit) {
-            this.Function = FunctiontDetails ?? {};
-            if ((this.Function != {} && !changed)) {
-              nameController.text = this.Function['Fuctions']['name'];
-              typeController.text = this.Function['Fuctions']['type'];
-              _dateController.text = this.Function['Fuctions']['date'];
-              budgetController.text =
-                  this.Function['Fuctions']['budget'].toString();
+      await ApiCall.fetchAPI('ViewFunction/$functionId',
+          onSuccess: (token, data) {
+        if (mounted) {
+          setState(() {
+            Function = data;
+            if ((Function != {} && !changed)) {
+              nameController.text = Function['Fuctions']['name'];
+              typeController.text = Function['Fuctions']['type'];
+              _dateController.text = Function['Fuctions']['date'];
+              budgetController.text = Function['Fuctions']['budget'].toString();
               guestMaxController.text =
-                  this.Function['Fuctions']['guestsmax'].toString();
+                  Function['Fuctions']['guestsmax'].toString();
               guestMinController.text =
-                  this.Function['Fuctions']['guestsmin'].toString();
-              this.EventId =
+                  Function['Fuctions']['guestsmin'].toString();
+              EventId =
                   int.parse(this.Function['Fuctions']['eventId'].toString());
               changed = true;
             }
-          }
-          if (Function == {} || Function['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
             this.token = token;
-            this.types = types ?? {};
-            if (this.types == {} || this.types['status'] == 'error') {
-              MyScaffold(text: 'Something Went Wrong!').show(context);
-              return;
-            } else {
-              isLoading = false;
-            }
-          }
-        });
-      }
+            types = types;
+            isLoading = false;
+          });
+        }
+      }, context: mounted ? context : null);
+    }
+  }
+
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
     });
   }
 
   @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -161,7 +126,7 @@ class _CreateFunctionState extends State<CreateFunction> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: _headerHeight),
+                  SizedBox(height: UI_Management.headerHeight),
                   Column(
                     children: [
                       SizedBox(
@@ -292,7 +257,7 @@ class _CreateFunctionState extends State<CreateFunction> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: edit ? 'Edit Funtion' : 'Create Funtion',
               image: MyImages.Function,
             ),

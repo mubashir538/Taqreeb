@@ -1,5 +1,4 @@
 // import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 
 // class SendEmailScreen extends StatefulWidget {
 //   const SendEmailScreen({super.key});

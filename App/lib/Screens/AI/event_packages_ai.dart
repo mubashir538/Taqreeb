@@ -5,15 +5,11 @@ import 'package:taqreeb/Components/AI/c_ai_packages.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-
 class ViewAIPackage extends StatelessWidget {
   const ViewAIPackage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Column(
@@ -44,8 +40,7 @@ class ViewAIPackage extends StatelessWidget {
                       venueCost: "10000",
                       price: "10000",
                       events: '5',
-                      photographer: "Yes"
-                      );
+                      photographer: "Yes");
                 },
               ),
             ),

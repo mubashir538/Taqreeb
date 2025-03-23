@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -8,8 +8,6 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
@@ -51,40 +49,26 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     }
   }
 
-  Timer? timer;
-
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final fetchedlist = await MyApi.getRequest(
-      endpoint: isfunction
-          ? 'show/checklist/$eventId/$functionid'
-          : 'show/checklist/$eventId',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    if (mounted) {
-      setState(() {
-        this.token = token;
-        this.list = fetchedlist ?? {};
-        if (list.isEmpty || list['status'] == 'error') {
-          MyScaffold(text: 'Something Went Wrong!').show(context);
-          return;
-        }
+    ApiCall.fetchAPI(
+        isfunction
+            ? 'show/checklist/$eventId/$functionid'
+            : 'show/checklist/$eventId', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          list = data;
+          this.token = token;
+        });
         if (list['checklist'] != null) {
           checklistItems = (list['checklist'] as List)
               .map((e) => e as Map<String, dynamic>)
               .toList();
         }
         isLoading = false;
-      });
-    }
-    changedfirst = true;
-  }
+      }
 
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
+      changedfirst = true;
+    }, context: mounted ? context : null);
   }
 
   void _addChecklistItem(String text) {

@@ -1,8 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -20,63 +20,49 @@ class _DashboardState extends State<Dashboard> {
   Map<String, dynamic> user = {};
   String token = '';
   bool isLoading = true;
+  GlobalKey headerKey = GlobalKey();
   String type = '';
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
-    final user = await MyApi.getRequest(
-      endpoint: 'businessowner/accountInfo/$Userid/$type',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI('businessowner/accountInfo/$userid/$type',
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          this.token = token;
-          this.user = user ?? {};
-          if (user == null || user['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-          }
+          token = token;
+          user = data;
+          isLoading = false;
         });
       }
-    });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
+    }, context: mounted ? context : null);
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: RefreshIndicator(
@@ -99,7 +85,7 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           SizedBox(
                               height: (Screen.height(context) * 0.02) +
-                                  _headerHeight),
+                                  UI_Management.headerHeight),
                           Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: Screen.max(context) * 0.03,
@@ -198,7 +184,7 @@ class _DashboardState extends State<Dashboard> {
             Positioned(
               top: 0,
               child: Header(
-                key: _headerKey,
+                key: headerKey,
                 heading: "Business Dashboard",
               ),
             ),

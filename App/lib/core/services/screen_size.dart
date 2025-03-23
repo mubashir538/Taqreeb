@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 
 class Screen {
   static double width(BuildContext context) {
@@ -7,7 +6,7 @@ class Screen {
   }
 
   static double height(BuildContext context) {
-    return MediaQuery.of(context).size.width;
+    return MediaQuery.of(context).size.height;
   }
 
   static double max(BuildContext context) {

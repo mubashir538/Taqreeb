@@ -1,5 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
@@ -11,10 +12,9 @@ import 'dart:math';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class SearchService extends StatefulWidget {
@@ -50,45 +50,19 @@ class _SearchServiceState extends State<SearchService> {
   Map<String, dynamic> args = {};
   ScrollController _scrollController = ScrollController();
   bool ischange = false;
-
-  Future<void> logUserActivity(
-      String action, Map<String, dynamic> metadata) async {
-    String? userId =
-        await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
-
-    if (userId == null) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'User ID not found. Skipping activity log'});
-      return;
-    }
-    final response = await MyApi.postRequest(
-      endpoint: 'log-user-activity/',
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      body: {
-        "user_id": int.parse(userId), // Convert user ID to integer
-        "action": action,
-        "metadata": metadata,
-      },
-    );
-
-    if (!(response != null && response['status'] == 'success')) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'Failed to log activity: ${response['message']}'});
-    }
-  }
-
   Map<String, dynamic> additionalFilters = {}; // Stores dynamic filters
   Map<String, dynamic> additionalSelections = {}; // Stores user selections
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     entryTime = DateTime.now();
   }
 
@@ -104,43 +78,30 @@ class _SearchServiceState extends State<SearchService> {
     }
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    final fetchedListings = await MyApi.getRequest(
-        endpoint: 'home/listings/',
-        headers: {'Authorization': 'Bearer $token'});
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.categories = fetchedCategories ?? {};
-          this.listings = fetchedListings ?? {};
-          this.templistings = Map.from(fetchedListings);
-          if (this.listings == {} ||
-              this.listings['status'] == 'error' ||
-              this.categories == {} ||
-              this.categories['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-          } else {
-            if (this.args.isNotEmpty) {
-              appliedFilters.add('Category');
-              categoryController.selections.add(this.args['category']);
-              searchwithFilters();
-            }
-
-            isLoading = false;
-          }
+          categories = data;
         });
-        timer.cancel();
       }
-    });
+    }, context: mounted ? context : null);
+    await ApiCall.fetchAPI('home/listings/', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          listings = data;
+          templistings = Map.from(data);
+          if (this.args.isNotEmpty) {
+            appliedFilters.add('Category');
+            categoryController.selections.add(this.args['category']);
+            searchwithFilters();
+          }
+
+          isLoading = false;
+        });
+      }
+    }, context: mounted ? context : null);
     ischange = true;
   }
 
@@ -180,24 +141,16 @@ class _SearchServiceState extends State<SearchService> {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
 
-      logUserActivity(
+      Logs.logUserActivity(
           "search_page_view_duration", {"time_spent_seconds": timeSpent});
     }
-    timer?.cancel();
     super.dispose();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   String searchListingPicture(int listingid, Map<String, dynamic> listing) {
@@ -215,7 +168,11 @@ class _SearchServiceState extends State<SearchService> {
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -228,7 +185,7 @@ class _SearchServiceState extends State<SearchService> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: _headerHeight),
+                  SizedBox(height: UI_Management.headerHeight),
                   isLoading
                       ? Center(
                           child: CircularProgressIndicator(
@@ -268,7 +225,7 @@ class _SearchServiceState extends State<SearchService> {
                                                   .toList();
                                         });
                                         if (value.isNotEmpty) {
-                                          logUserActivity("search",
+                                          Logs.logUserActivity("search",
                                               {"search_query": value});
                                         }
                                       },
@@ -363,7 +320,7 @@ class _SearchServiceState extends State<SearchService> {
 
                                   return GestureDetector(
                                     onTap: () {
-                                      logUserActivity("service_click", {
+                                      Logs.logUserActivity("service_click", {
                                         "service_id": serviceId,
                                         "service_name": serviceName
                                       });
@@ -386,7 +343,7 @@ class _SearchServiceState extends State<SearchService> {
                                             .difference(entryTime)
                                             .inSeconds;
 
-                                        logUserActivity(
+                                        Logs.logUserActivity(
                                             "service_view_duration", {
                                           "service_id": serviceId,
                                           "service_name": serviceName,
@@ -432,7 +389,7 @@ class _SearchServiceState extends State<SearchService> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
             ),
           ),
         ],
@@ -580,7 +537,7 @@ class _SearchServiceState extends State<SearchService> {
                         if (!FiltertoApply.contains("Category")) {
                           FiltertoApply.add("Category");
                         }
-                        logUserActivity("category_click",
+                        Logs.logUserActivity("category_click",
                             {"selected_category": selections});
                       }),
                   Text('Location',
@@ -653,7 +610,7 @@ class _SearchServiceState extends State<SearchService> {
                       }
 
                       // ✅ Log filter application with values
-                      logUserActivity("filter", filterData);
+                      Logs.logUserActivity("filter", filterData);
 
                       Navigator.pop(context);
                       searchwithFilters();

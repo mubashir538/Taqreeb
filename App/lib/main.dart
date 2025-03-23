@@ -101,7 +101,7 @@ void showNotification(RemoteMessage message) async {
 
 void requestPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings = await messaging.requestPermission(
+  await messaging.requestPermission(
     alert: true,
     badge: true,
     sound: true,
@@ -200,7 +200,7 @@ class _MainAppState extends State<MainApp> {
             ForgotPassword_NewPassword(),
         // '/CreateAIPackage': (context) => CreateAIPackage(),
         '/ViewAIPackage': (context) => ViewAIPackage(),
-        '/AIPackage_EventDetail': (context) => AIPackage_EventDetail(),
+        '/AIPackage_EventDetail': (context) => AiPackageEventDetail(),
         '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
         '/ChatsScreen': (context) => MainScreen(index: 1),
         '/GroupChatBox': (context) => GroupChatScreen(),

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,54 +49,46 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   String image = '';
   bool ishchanged = false;
   get http => null;
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     if (!ishchanged) {
       fetchData();
     }
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     this.userId = userid;
-    final user = await MyApi.getRequest(
-        endpoint: 'accountInfo/$userid',
-        headers: {'Authorization': 'Bearer $token'});
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    await ApiCall.fetchAPI('accountInfo/$userid', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.user = user ?? {};
-          if (user == null || user['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-            ishchanged = true;
-          }
-
-          fnamecontroller.text = user['firstName'];
-          lastnameController.text = user['lastName'];
-          genderController.text = user['gender'];
-          locationcontroller.text = user['city'];
-          genderController.text = user['gender'];
-          image =
-              "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
+          user = user;
         });
-        timer.cancel();
       }
-    });
+    }, context: mounted ? context : null);
+    isLoading = false;
+    ishchanged = true;
+    fnamecontroller.text = user['firstName'];
+    lastnameController.text = user['lastName'];
+    genderController.text = user['gender'];
+    locationcontroller.text = user['city'];
+    genderController.text = user['gender'];
+    image =
+        "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
   }
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 
@@ -237,22 +231,19 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     }
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -261,7 +252,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
             child: Container(
               child: Column(children: [
                 SizedBox(
-                  height: _headerHeight,
+                  height: UI_Management.headerHeight,
                 ),
                 isLoading
                     ? Center(
@@ -379,7 +370,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "Edit Your Personal Info",
             ),
           ),

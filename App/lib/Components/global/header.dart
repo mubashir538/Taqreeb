@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -125,7 +124,7 @@ class _HeaderState extends State<Header> {
                                   ),
                                   ColoredButton(
                                     onPressed: () async {
-                                      final res = await MyApi.postRequest(
+                                      await MyApi.postRequest(
                                           endpoint: 'notification/DeleteFCM',
                                           body: {
                                             'token': await MyStorage.yourFCM(),

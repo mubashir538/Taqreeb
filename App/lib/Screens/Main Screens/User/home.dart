@@ -1,22 +1,21 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Home%20Page/c_image_slider.dart';
 import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
 import 'dart:math';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,116 +30,66 @@ class _HomePageState extends State<HomePage> {
   String token = '';
   bool isLoading = true;
   List<String> myImages = [];
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final fetchedCategories = await MyApi.getRequest(
-      endpoint: 'home/categories/',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    final fetchedImages = await MyApi.getRequest(
-      endpoint: 'Homepage/DemoImages/',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    final fetchedListings = await MyApi.getRequest(
-      endpoint: 'home/listings/',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          this.token = token;
-          this.categories = fetchedCategories ?? {};
-          this.listings = fetchedListings ?? {};
-          this.demoImages = fetchedImages ?? {};
-          if (fetchedCategories == null ||
-              fetchedCategories['status'] == 'error' ||
-              fetchedListings == null ||
-              fetchedListings['status'] == 'error' ||
-              fetchedImages == null ||
-              fetchedImages['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            loadimages();
-            isLoading = false;
-          }
+          categories = data;
         });
-        timer.cancel();
       }
-    });
+    }, context: mounted?context:null);
+    await ApiCall.fetchAPI('Homepage/DemoImages/', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          demoImages = data;
+        });
+      }
+    }, context: mounted?context:null);
+    await ApiCall.fetchAPI('home/listings/', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          listings = data;
+          loadimages();
+        });
+      }
+    }, context: mounted?context:null);
+    isLoading = false;
   }
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 
   void loadimages() async {
-    this.myImages = await demoImages['images']
+    myImages = await demoImages['images']
         .map((value) =>
             '${MyApi.baseUrl.toString().substring(0, MyApi.baseUrl.toString().length - 1)}${value["image"]}')
         .cast<String>()
         .toList();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
-  Future<void> logUserActivity(
-      String action, Map<String, dynamic> metadata) async {
-    String? userId =
-        await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
-
-    if (userId == null) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'User ID not found. Skipping activity log'});
-      return;
-    }
-
-    final response = await MyApi.postRequest(
-      endpoint: 'log-user-activity/', // Ensure this matches Django API URL
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      body: {
-        "user_id": int.parse(userId), // Convert user ID to integer
-        "action": action,
-        "metadata": metadata,
-      },
-    );
-
-    if (!(response != null && response['status'] == 'success')) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'Failed to log activity: ${response['message']}'});
-    }
-  }
-
-  // Future<void> logUserActivity(
+  // Future<void> Logs.logUserActivity(
   //     int userId, String action, Map<String, dynamic> metadata) async {
   //   final response = await http.post(
   //     Uri.parse(
@@ -170,17 +119,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
-          if (_headerHeight > 0)
+          if (UI_Management.headerHeight > 0)
             SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: _headerHeight),
+                  SizedBox(height: UI_Management.headerHeight),
                   Container(
                     margin: EdgeInsets.symmetric(
                         vertical: Screen.height(context) * 0.03),
@@ -192,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                           hint: 'Start Typing to Search',
                           onclick: () {
                             if (_searchController.text.isNotEmpty) {
-                              logUserActivity("search",
+                              Logs.logUserActivity("search",
                                   {"search_query": _searchController.text});
                             }
                             Navigator.pushNamed(context, '/SearchService');
@@ -252,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                                               ['name'];
                                       return CategoryIcon(
                                         onpressed: () {
-                                          logUserActivity("category_click",
+                                          Logs.logUserActivity("category_click",
                                               {"category": categoryName});
                                           Navigator.pushNamed(
                                               context, '/SearchService',
@@ -319,7 +272,8 @@ class _HomePageState extends State<HomePage> {
                                         listings['HomeListing'][index]['id'];
                                     return GestureDetector(
                                         onTap: () {
-                                          logUserActivity("service_click", {
+                                          Logs.logUserActivity(
+                                              "service_click", {
                                             "service_id": serviceId,
                                             "service_name": serviceName
                                           });
@@ -370,7 +324,7 @@ class _HomePageState extends State<HomePage> {
           Positioned(
               top: 0,
               child: Header(
-                key: _headerKey,
+                key: headerKey,
               )),
         ],
       ),

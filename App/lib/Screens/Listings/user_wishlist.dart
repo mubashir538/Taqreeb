@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -30,22 +29,16 @@ class _WishlistViewPageState extends State<WishlistViewPage> {
   }
 
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
-    final fetchedListings = await MyApi.getRequest(
-        headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'wishlist/get/${id}');
-
-    setState(() {
-      this.token = token;
-      listings = fetchedListings ?? {};
-      if (listings == {} || listings['status'] == 'error') {
-        MyScaffold(text: 'Something Went Wrong!').show(context);
-        return;
-      } else {
-        isLoading = false;
+    ApiCall.fetchAPI('wishlist/get/$id', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          token = token;
+          listings = data;
+          isLoading = false;
+        });
       }
-    });
+    }, context: mounted ? context : null);
   }
 
   @override

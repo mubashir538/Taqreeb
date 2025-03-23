@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
@@ -24,36 +25,31 @@ class _YourEventsState extends State<YourEvents> {
   Timer? _timer;
   bool isLoading = true;
   bool fetched = true;
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     fetchData();
   }
 
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
-
-    final fetchedEvents = await MyApi.getRequest(
-      endpoint: 'YourEvents/$id',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI('YourEvents/$id', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
-            fetched = false;
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-          }
           this.token = token;
-          this.events = fetchedEvents ?? {};
+          events = data;
           isLoading = false;
         });
       }
-    });
+    }, context: mounted ? context : null);
   }
 
   @override
@@ -62,25 +58,21 @@ class _YourEventsState extends State<YourEvents> {
     super.dispose();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -89,7 +81,7 @@ class _YourEventsState extends State<YourEvents> {
               ? SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: _headerHeight),
+                      SizedBox(height: UI_Management.headerHeight),
                       Container(
                         margin: EdgeInsets.symmetric(
                             vertical: Screen.max(context) * 0.02),
@@ -168,7 +160,7 @@ class _YourEventsState extends State<YourEvents> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Your Events',
             ),
           ),

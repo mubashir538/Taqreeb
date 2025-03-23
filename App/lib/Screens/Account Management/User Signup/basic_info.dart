@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -31,6 +32,7 @@ class _BasicSignupState extends State<BasicSignup> {
   final FocusNode confirmPasswordFocus = FocusNode();
   final FocusNode firstNameFocus = FocusNode();
   final FocusNode lastNameFocus = FocusNode();
+  GlobalKey headerKey = GlobalKey();
 
   void check(BuildContext context) async {
     if (await MyStorage.exists(MyTokens.sfname) &&
@@ -79,26 +81,27 @@ class _BasicSignupState extends State<BasicSignup> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       check(context);
-      _getHeaderHeight();
+      UI_Management.getHeaderHeight(
+          headerKey: headerKey,
+          callback: (renderbox) {
+            changeHeight(renderbox);
+          });
     });
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -109,7 +112,7 @@ class _BasicSignupState extends State<BasicSignup> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: _headerHeight,
+                    height: UI_Management.headerHeight,
                   ),
                   MyTextBox(
                       focusNode: firstNameFocus,
@@ -221,7 +224,7 @@ class _BasicSignupState extends State<BasicSignup> {
                                   response['userId'].toString(), 'userId');
                               MyStorage.saveToken(
                                   MyTokens.user, MyTokens.userType);
-                              final res = await MyApi.postRequest(
+                              await MyApi.postRequest(
                                   endpoint: 'notification/saveFCM',
                                   body: {
                                     'token': await MyStorage.yourFCM(),
@@ -282,7 +285,7 @@ class _BasicSignupState extends State<BasicSignup> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "Signup",
               para: "Unlock exclusive events - sign up now!",
               image: MyImages.Signup1,

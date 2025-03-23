@@ -1,7 +1,6 @@
 // import 'dart:async';
 
 // import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 // class CategoryView_BakerySweet extends StatefulWidget {

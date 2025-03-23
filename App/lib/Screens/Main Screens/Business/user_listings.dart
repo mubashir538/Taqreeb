@@ -1,9 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'dart:math';
@@ -29,35 +28,18 @@ class _YourListingsState extends State<YourListings> {
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
-    final fetchedListings = await MyApi.getRequest(
-        headers: {'Authorization': 'Bearer $token'},
-        endpoint: 'YourListing/$id/$type');
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI('YourListing/$id/$type', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          this.token = token;
-          this.listings = fetchedListings ?? {};
-          if (listings == {} || listings['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-          }
+          token = token;
+          listings = data;
+          isLoading = false;
         });
       }
-    });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
+    }, context: mounted ? context : null);
   }
 
   @override

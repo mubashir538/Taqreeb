@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,13 +29,19 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   File? _groupImage;
   String? _groupImageUrl;
   bool isChanged = false;
+  GlobalKey headerKey = GlobalKey();
 
   final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     addUser();
   }
 
@@ -43,18 +50,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         .add({'userId': await MyStorage.getToken(MyTokens.userId) ?? ""});
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   bool _isPicking = false;
@@ -153,9 +152,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -164,7 +160,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: _headerHeight),
+              SizedBox(height: UI_Management.headerHeight),
               SizedBox(height: Screen.max(context) * 0.03),
               GestureDetector(
                 onTap: _pickGroupImage,
@@ -232,7 +228,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           Positioned(
               top: 0,
               child: Header(
-                key: _headerKey,
+                key: headerKey,
                 heading: "Create Group",
                 para: "Add participants, name your group, and upload an image.",
               )),

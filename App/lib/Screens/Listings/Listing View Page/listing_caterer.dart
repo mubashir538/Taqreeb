@@ -1,7 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -15,9 +16,6 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_pricing.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
-import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class CategoryView_Caterers extends StatefulWidget {
@@ -33,7 +31,6 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   late int? listingId;
   bool isLoading = true;
   DateTime? entryTime;
-
   bool isToggled = true;
   List<String> headings = [
     'Service Type',
@@ -41,22 +38,39 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     'Staff',
     'Expertise'
   ];
+  List<String> search = [
+    'serviceType',
+    'cateringOptions',
+    'staff',
+    'expertise'
+  ];
   List<String> values = [];
   List<String> addonsheadings = [];
   List<String> addonsvalues = [];
   List<String> starsvalue = [];
-
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
   bool type = false;
   bool ischange = false;
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-    entryTime = DateTime.now(); // added-Store entry time when user opens page
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
+    entryTime = DateTime.now();
+  }
+
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
@@ -80,19 +94,19 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
               this.token = token;
               this.listing = listing;
               ApiCall.updateListingDetails(
-                listing: listing,
-                updateState: (isLoading, ischange) {
-                  setState(() {
-                    this.isLoading = isLoading;
-                    this.ischange = ischange;
-                  });
-                },
-                imageUrls: _imageUrls,
-                addonsheadings: addonsheadings,
-                addonsvalues: addonsvalues,
-                values: values,
-                starsvalue: starsvalue,
-              );
+                  listing: listing,
+                  updateState: (isLoading, ischange) {
+                    setState(() {
+                      this.isLoading = isLoading;
+                      this.ischange = ischange;
+                    });
+                  },
+                  imageUrls: _imageUrls,
+                  addonsheadings: addonsheadings,
+                  addonsvalues: addonsvalues,
+                  values: values,
+                  starsvalue: starsvalue,
+                  searchValues: search);
             });
           }
         },
@@ -110,7 +124,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      logUserActivity("category_view_duration", {
+      Logs.logUserActivity("category_view_duration", {
         "category": "Caterers",
         "listing_id": listingId ?? 0,
         "time_spent_seconds": timeSpent
@@ -143,54 +157,14 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   //   print("Failed to log category view duration: ${response.body}");
   //   }
   // }
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  Future<void> logUserActivity(
-      String action, Map<String, dynamic> metadata) async {
-    String? userId =
-        await MyStorage.getToken(MyTokens.userId); // Get user ID dynamically
-
-    if (userId == null) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'User ID not found. Skipping activity log'});
-      return;
-    }
-
-    final response = await MyApi.postRequest(
-      endpoint: 'log-user-activity/',
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      body: {
-        "user_id": int.parse(userId), // Ensure user ID is an integer
-        "action": action,
-        "metadata": metadata,
-      },
-    );
-
-    if (!(response != null && response['status'] == 'success')) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'Failed to log activity: ${response?['message']}'});
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -198,7 +172,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: _headerHeight),
+                SizedBox(height: UI_Management.headerHeight),
                 isLoading
                     ? Center(
                         child: CircularProgressIndicator(
@@ -258,7 +232,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                                       child: ColoredButton(
                                     text: 'Book Caterer',
                                     onPressed: () async {
-                                      await logUserActivity("book_caterer",
+                                      await Logs.logUserActivity("book_caterer",
                                           {"listing_id": listingId ?? 0});
 
                                       MyScaffold(text: 'Booking action logged!')
@@ -286,7 +260,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
           Positioned(
               top: 0,
               child: Header(
-                key: _headerKey,
+                key: headerKey,
               )),
         ],
       ),

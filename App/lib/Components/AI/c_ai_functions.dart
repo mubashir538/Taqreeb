@@ -15,9 +15,6 @@ class AIFunctions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     TextStyle heading = GoogleFonts.montserrat(
         fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w500,

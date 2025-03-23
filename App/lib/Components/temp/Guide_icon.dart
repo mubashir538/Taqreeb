@@ -15,7 +15,6 @@ class GuideIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final containerHeight = Screen.height(context) * 0.3;
     final containerWidth = Screen.width(context) * 0.4;
     final iconHeight = Screen.max(context) * 0.1;

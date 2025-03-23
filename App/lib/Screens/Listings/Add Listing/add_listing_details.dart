@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -10,9 +11,6 @@ import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 
 class AddcategoryMoredetails extends StatefulWidget {
   const AddcategoryMoredetails({super.key});
@@ -29,6 +27,8 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
   List<TextEditingController> controllers = [];
   List<FocusNode> focusNodes = [];
   bool ischange = false;
+  GlobalKey headerKey = GlobalKey();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -55,37 +55,32 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   Timer? timer;
   void fetchdata() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
-    final fields = await MyApi.getRequest(
-      endpoint:
-          'getListingDetails/${args['category'].toString().replaceAll(RegExp(r'\s+'), '')}',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI(
+        'getListingDetails/${args['category'].toString().replaceAll(RegExp(r'\s+'), '')}',
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          this.token = token;
-          textfields = fields ?? {};
-          if (textfields == {} || textfields['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            for (int i = 0; i < textfields['fields'].length; i++) {
-              controllers.add(TextEditingController());
-              focusNodes.add(FocusNode());
-            }
-            isLoading = false;
-            ischange = true;
-            timer.cancel();
+          token = token;
+          textfields = data;
+          for (int i = 0; i < textfields['fields'].length; i++) {
+            controllers.add(TextEditingController());
+            focusNodes.add(FocusNode());
           }
+          isLoading = false;
+          ischange = true;
         });
       }
-    });
+    }, context: mounted ? context : null);
   }
 
   String capitalize(String str) {
@@ -93,22 +88,19 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
     return str[0].toUpperCase() + str.substring(1);
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -117,7 +109,8 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
             child: Column(
               children: [
                 SizedBox(
-                    height: (Screen.height(context) * 0.04) + _headerHeight),
+                    height: (Screen.height(context) * 0.04) +
+                        UI_Management.headerHeight),
                 isLoading
                     ? Center(
                         child: CircularProgressIndicator(
@@ -217,7 +210,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Details of Service',
               para: 'Add the Specific Details for your Service',
             ),

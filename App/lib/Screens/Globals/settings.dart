@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Checklist/c_checklist_items.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
-import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -25,67 +24,52 @@ class _SettingsState extends State<Settings> {
   bool isLoading = true;
   bool businessOwnerSwitch = false;
   bool freelancerSwitch = false;
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getHeaderHeight();
+      UI_Management.getHeaderHeight(
+          headerKey: headerKey,
+          callback: (renderbox) {
+            changeHeight(renderbox);
+          });
     });
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
-    final fetchedtype = await MyApi.getRequest(
-      endpoint: 'searchType/$userid',
-      headers: {'Authorization': 'Bearer $token'},
-    );
     final isbusinessToken = await MyStorage.exists(MyTokens.isBusinessOwner);
     final isFreelancerToken = await MyStorage.exists(MyTokens.isFreelancer);
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    ApiCall.fetchAPI('searchType/$userid', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          this.token = token;
-          types = fetchedtype ?? {};
-          if (types == {} || types['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            businessOwnerSwitch = bool.parse(isbusinessToken.toString());
-            freelancerSwitch = bool.parse(isFreelancerToken.toString());
-            isLoading = false;
-          }
+          token = token;
+          types = data;
+          businessOwnerSwitch = bool.parse(isbusinessToken.toString());
+          freelancerSwitch = bool.parse(isFreelancerToken.toString());
+          isLoading = false;
         });
       }
+    }, context: mounted ? context : null);
+  }
+
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
     });
   }
 
   @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -93,7 +77,7 @@ class _SettingsState extends State<Settings> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: _headerHeight),
+                SizedBox(height: UI_Management.headerHeight),
                 isLoading
                     ? CircularProgressIndicator(
                         valueColor:
@@ -332,7 +316,7 @@ class _SettingsState extends State<Settings> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Settings',
               icon: Icons.logout_rounded,
             ),

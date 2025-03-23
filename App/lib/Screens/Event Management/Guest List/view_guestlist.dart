@@ -1,7 +1,7 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_guest_list_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
@@ -26,10 +26,17 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
   int functionid = 0;
   int eventId = 0;
   bool isLoading = true;
+  GlobalKey headerKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   @override
@@ -48,38 +55,23 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final fetchedGuests = await MyApi.postRequest(
-      headers: {'Authorization': 'Bearer $token'},
-      endpoint: 'show/guest/',
-      body: {
-        'EventId': eventId,
-        'FunctionID': isfunction ? functionid : "None"
-      },
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI('show/guest/', type: 'post', body: {
+      'EventId': eventId,
+      'FunctionID': isfunction ? functionid : "None"
+    }, onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.guests = fetchedGuests ?? {};
-          if (guests == {} || guests['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-          }
+          guests = data;
+          isLoading = false;
         });
-        timer.cancel();
       }
-    });
+    }, context: mounted ? context : null);
   }
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 
@@ -131,22 +123,19 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
     );
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -160,7 +149,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                 children: [
                   Column(children: [
                     SizedBox(
-                      height: _headerHeight,
+                      height: UI_Management.headerHeight,
                     ),
                     isLoading
                         ? Center(
@@ -219,7 +208,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Guest List',
             ),
           ),

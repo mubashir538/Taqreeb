@@ -58,9 +58,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     double keyboard = MediaQuery.of(context).viewInsets.bottom;
     bool isKeyboardVisible = keyboard > 0;
     List<Widget> currentPageList =

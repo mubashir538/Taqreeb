@@ -1,19 +1,19 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
-import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/c_business_categories.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
+import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class BusinessAccountInfo extends StatefulWidget {
-  BusinessAccountInfo({super.key});
+  const BusinessAccountInfo({super.key});
 
   @override
   State<BusinessAccountInfo> createState() => _BusinessAccountInfoState();
@@ -25,71 +25,66 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   bool isLoading = true;
   List<String> items = [];
   String type = "";
+  GlobalKey headerKey = GlobalKey();
+
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
-
-    fetchData();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
+    fetch();
   }
 
-  Timer? timer;
-  void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+  void fetch() async {
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
-    final user = await MyApi.getRequest(
-      endpoint: 'businessowner/accountInfo/$Userid/$type',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          this.token = token;
-          this.user = user ?? {};
-          if (user == null || user['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            this.items = user['categories'].cast<String>().toList() ?? [];
+    ApiCall.fetchAPI(
+      'businessowner/accountInfo/$userid/$type',
+      onError: () {
+        if (mounted) {
+          MyScaffold(text: 'Something Went Wrong!').show(context);
+        }
+      },
+      onSuccess: (token, data) {
+        if (mounted) {
+          setState(() {
+            this.token = token;
+            user = data;
+            items = user['categories'].cast<String>().toList() ?? [];
             isLoading = false;
-          }
-        });
-      }
-    });
+          });
+        }
+      },
+    );
   }
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     TextStyle style = GoogleFonts.montserrat(
       fontSize: Screen.max(context) * 0.015,
       fontWeight: FontWeight.w300,
       color: MyColors.white,
     );
 
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -102,7 +97,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                   : Column(
                       children: [
                         SizedBox(
-                          height: _headerHeight,
+                          height: UI_Management.headerHeight,
                         ),
                         SizedBox(
                           height: Screen.height(context) * 0.04,
@@ -153,12 +148,15 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                   : Column(
                                       children: [
                                         SizedBox(
-                                          height: Screen.height(context) * 0.015,
+                                          height:
+                                              Screen.height(context) * 0.015,
                                         ),
                                         Row(children: [
                                           Icon(Icons.mail,
                                               color: MyColors.white),
-                                          SizedBox(width: Screen.width(context) * 0.02),
+                                          SizedBox(
+                                              width:
+                                                  Screen.width(context) * 0.02),
                                           Text(user['userinfo']['email'],
                                               style: style)
                                         ]),
@@ -169,14 +167,17 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                   : Column(
                                       children: [
                                         SizedBox(
-                                          height: Screen.height(context) * 0.015,
+                                          height:
+                                              Screen.height(context) * 0.015,
                                         ),
                                         Row(children: [
                                           Icon(
                                             Icons.phone,
                                             color: MyColors.white,
                                           ),
-                                          SizedBox(width: Screen.width(context) * 0.02),
+                                          SizedBox(
+                                              width:
+                                                  Screen.width(context) * 0.02),
                                           Text(
                                               user['userinfo']['contactNumber']
                                                   .toString(),
@@ -224,7 +225,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "Account Info",
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -30,11 +31,17 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
   int functionid = 0;
   int eventId = 0;
   Map<String, dynamic> args = {};
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   @override
@@ -60,22 +67,19 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
     });
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -86,7 +90,8 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: (Screen.height(context) * 0.05) + _headerHeight,
+                    height: (Screen.height(context) * 0.05) +
+                        UI_Management.headerHeight,
                   ),
                   MyTextBox(
                     focusNode: familyNameFocus,
@@ -176,7 +181,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Add Family',
             ),
           ),

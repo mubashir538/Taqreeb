@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -44,53 +46,41 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
   bool ishchanged = false;
   get http => null;
   String type = '';
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
     if (!ishchanged) {
       fetchData();
     }
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
-    this.userId = Userid;
-    final user = await MyApi.getRequest(
-        endpoint: 'businessowner/accountInfo/$Userid/$type',
-        headers: {'Authorization': 'Bearer $token'});
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    userId = userid;
+    await ApiCall.fetchAPI('businessowner/accountInfo/$userid/$type',
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
+          user = user;
           this.token = token;
-          this.user = user ?? {};
-          if (user == null || user['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-            ishchanged = true;
-          }
-
-          namecontroller.text = user['businessInfo']['businessName'];
-          descriptioncontroller.text = user['businessInfo']['Description'];
-          image =
-              "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']["profilepic"]}";
         });
-        timer.cancel();
       }
-    });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
+    }, context: mounted ? context : null);
+    namecontroller.text = user['businessInfo']['businessName'];
+    descriptioncontroller.text = user['businessInfo']['Description'];
+    image =
+        "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']["profilepic"]}";
+    ishchanged = true;
+    isLoading = false;
   }
 
   Future<void> _pickImage() async {
@@ -230,22 +220,19 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
     }
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -254,7 +241,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
             child: Container(
               child: Column(children: [
                 SizedBox(
-                  height: _headerHeight,
+                  height: UI_Management.headerHeight,
                 ),
                 isLoading
                     ? Center(
@@ -358,7 +345,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "Edit Your Business Info",
             ),
           ),

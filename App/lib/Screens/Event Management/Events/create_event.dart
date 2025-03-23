@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -70,69 +69,35 @@ class _CreateEventState extends State<CreateEvent> {
     }
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final types = await MyApi.getRequest(
-      endpoint: 'getEventTypes/',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    final EventDetails;
     if (edit) {
-      EventDetails = await MyApi.getRequest(
-        endpoint: 'eventdetails/${eventid}',
-        headers: {'Authorization': 'Bearer $token'},
-      );
-    } else {
-      EventDetails = "";
-    }
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          if (edit) {
-            this.Event = EventDetails ?? {};
-            if (this.Event != {} ||
-                this.Event != {} ||
-                this.Event['status'] != 'error') {
-              eventNameController.text = this.Event['EventDetail']['name'];
-              typeController.text = this.Event['EventDetail']['type'];
-              dateController.text = this.Event['EventDetail']['date'];
-              locationController.text = this.Event['EventDetail']['location'];
-              descriptionController.text =
-                  this.Event['EventDetail']['description'];
-              budgetController.text =
-                  this.Event['EventDetail']['budget'].toString();
-              themeColor.text = this.Event['EventDetail']['themeColor'];
-              guestMaxController.text =
-                  this.Event['EventDetail']['guestsmax'].toString();
-              guestMinController.text =
-                  this.Event['EventDetail']['guestsmin'].toString();
-            }
-          }
-          if (Event == {} || Event['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            this.token = token;
-            this.types = types ?? {};
-            if (types == null || types['status'] == 'error') {
-              MyScaffold(text: 'Something Went Wrong!').show(context);
-              return;
-            } else {
+      ApiCall.fetchAPI('eventdetails/$eventid', onSuccess: (token, data) {
+        if (mounted) {
+          setState(() {
+            Event = data;
+            eventNameController.text = this.Event['EventDetail']['name'];
+            typeController.text = this.Event['EventDetail']['type'];
+            dateController.text = this.Event['EventDetail']['date'];
+            locationController.text = this.Event['EventDetail']['location'];
+            descriptionController.text =
+                this.Event['EventDetail']['description'];
+            budgetController.text =
+                this.Event['EventDetail']['budget'].toString();
+            themeColor.text = this.Event['EventDetail']['themeColor'];
+            guestMaxController.text =
+                this.Event['EventDetail']['guestsmax'].toString();
+            guestMinController.text =
+                this.Event['EventDetail']['guestsmin'].toString();
+            ApiCall.fetchAPI('getEventTypes/', onSuccess: (token, data) {
+              this.token = token;
+              types = types;
               isLoading = false;
               ischange = true;
-            }
-          }
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
+            }, context: mounted ? context : null);
+          });
+        }
+      }, context: mounted ? context : null);
+    }
   }
 
   @override

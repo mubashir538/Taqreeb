@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
@@ -24,6 +25,7 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
   FocusNode priceFocus = FocusNode();
   FocusNode perheadFocus = FocusNode();
   FocusNode headtypeFocus = FocusNode();
+  GlobalKey headerKey = GlobalKey();
 
   bool isPerhead = false;
   Map<String, dynamic> args = {};
@@ -36,23 +38,21 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
     this.args = args;
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   String _capitalize(String input) {
@@ -62,7 +62,11 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -71,7 +75,7 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
             child: Column(
               children: [
                 SizedBox(
-                  height: _headerHeight,
+                  height: UI_Management.headerHeight,
                 ),
                 MyTextBox(
                   focusNode: nameFocus,
@@ -150,7 +154,7 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Add AddOns',
             ),
           ),

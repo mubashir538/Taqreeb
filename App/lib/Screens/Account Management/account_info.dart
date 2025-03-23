@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -23,56 +23,34 @@ class _AccountInfoState extends State<AccountInfo> {
   String token = '';
   Map<String, dynamic> user = {};
   bool isLoading = true;
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
 
     fetchData();
   }
 
-  Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final Userid = await MyStorage.getToken(MyTokens.userId) ?? "";
-    final user = await MyApi.getRequest(
-        endpoint: 'accountInfo/$Userid',
-        headers: {'Authorization': 'Bearer $token'});
+    final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
+    await ApiCall.fetchAPI('accountInfo/$userid', onSuccess: (token, data) {
+      user = user;
+      token = token;
+    }, context: mounted ? context : null);
+    isLoading = false;
+  }
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          this.token = token;
-          this.user = user ?? {};
-          if (user == null || user['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-          }
-        });
-      }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
     });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
   }
 
   String _capitalize(String input) {
@@ -82,11 +60,12 @@ class _AccountInfoState extends State<AccountInfo> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     double size = Screen.max(context) * 0.03;
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -95,7 +74,7 @@ class _AccountInfoState extends State<AccountInfo> {
               child: Container(
             child: Column(children: [
               SizedBox(
-                height: _headerHeight,
+                height: UI_Management.headerHeight,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -142,7 +121,8 @@ class _AccountInfoState extends State<AccountInfo> {
                                           softWrap: true,
                                           maxLines: 3,
                                           style: GoogleFonts.montserrat(
-                                              fontSize: Screen.max(context) * 0.02,
+                                              fontSize:
+                                                  Screen.max(context) * 0.02,
                                               fontWeight: FontWeight.w600,
                                               color: MyColors.white),
                                         ),
@@ -156,7 +136,8 @@ class _AccountInfoState extends State<AccountInfo> {
                                           softWrap: true,
                                           maxLines: 3,
                                           style: GoogleFonts.montserrat(
-                                              fontSize: Screen.max(context) * 0.015,
+                                              fontSize:
+                                                  Screen.max(context) * 0.015,
                                               fontWeight: FontWeight.w400,
                                               color: MyColors.Yellow),
                                         ),
@@ -202,13 +183,15 @@ class _AccountInfoState extends State<AccountInfo> {
                                             ),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  left: Screen.max(context) * 0.02),
+                                                  left: Screen.max(context) *
+                                                      0.02),
                                               child: Text(
                                                 user['gender'],
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      Screen.max(context) * 0.015,
+                                                      Screen.max(context) *
+                                                          0.015,
                                                   fontWeight: FontWeight.w200,
                                                   color: MyColors.white,
                                                 ),
@@ -220,7 +203,8 @@ class _AccountInfoState extends State<AccountInfo> {
                                       height: Screen.height(context) * 0.05,
                                       child: Center(
                                           child: MyDivider(
-                                              width: Screen.width(context) * 0.7)),
+                                              width:
+                                                  Screen.width(context) * 0.7)),
                                     ),
                                   ],
                                 ),
@@ -256,13 +240,15 @@ class _AccountInfoState extends State<AccountInfo> {
                                             ),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  left: Screen.max(context) * 0.02),
+                                                  left: Screen.max(context) *
+                                                      0.02),
                                               child: Text(
                                                 user['contactNumber'],
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      Screen.max(context) * 0.015,
+                                                      Screen.max(context) *
+                                                          0.015,
                                                   fontWeight: FontWeight.w200,
                                                   color: MyColors.white,
                                                 ),
@@ -274,7 +260,8 @@ class _AccountInfoState extends State<AccountInfo> {
                                       height: Screen.height(context) * 0.05,
                                       child: Center(
                                           child: MyDivider(
-                                              width: Screen.width(context) * 0.7)),
+                                              width:
+                                                  Screen.width(context) * 0.7)),
                                     ),
                                   ],
                                 ),
@@ -310,12 +297,14 @@ class _AccountInfoState extends State<AccountInfo> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                left: Screen.max(context) * 0.02),
+                                                left:
+                                                    Screen.max(context) * 0.02),
                                             child: Text(
                                               user['email'],
                                               textAlign: TextAlign.start,
                                               style: GoogleFonts.montserrat(
-                                                fontSize: Screen.max(context) * 0.015,
+                                                fontSize:
+                                                    Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w200,
                                                 color: MyColors.white,
                                               ),
@@ -327,7 +316,8 @@ class _AccountInfoState extends State<AccountInfo> {
                                     height: Screen.height(context) * 0.05,
                                     child: Center(
                                         child: MyDivider(
-                                            width: Screen.width(context) * 0.7)),
+                                            width:
+                                                Screen.width(context) * 0.7)),
                                   ),
                                 ]),
                           Padding(
@@ -372,7 +362,8 @@ class _AccountInfoState extends State<AccountInfo> {
                           SizedBox(
                             height: Screen.height(context) * 0.05,
                             child: Center(
-                                child: MyDivider(width: Screen.width(context) * 0.7)),
+                                child: MyDivider(
+                                    width: Screen.width(context) * 0.7)),
                           ),
                         ])
             ]),
@@ -380,7 +371,7 @@ class _AccountInfoState extends State<AccountInfo> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: "My Profile",
             ),
           ),

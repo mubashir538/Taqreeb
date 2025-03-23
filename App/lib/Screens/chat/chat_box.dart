@@ -107,7 +107,7 @@ class _ChatBoxState extends State<ChatBox> {
       },
     }, SetOptions(merge: true));
 
-    final response = await MyApi.postRequest(
+    await MyApi.postRequest(
         endpoint: 'notification/sendNotification',
         body: {
           'recv': chatUserId,
@@ -178,7 +178,8 @@ class _ChatBoxState extends State<ChatBox> {
       }
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error uploading image: $e'});
+          endpoint: 'error/application',
+          body: {'error': 'Error uploading image: $e'});
     }
   }
 
@@ -247,9 +248,6 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -263,8 +261,8 @@ class _ChatBoxState extends State<ChatBox> {
                   children: [
                     SizedBox(height: Screen.height(context) * 0.1),
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.03),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Screen.max(context) * 0.03),
                       height: Screen.height(context) * 0.16,
                       width: Screen.width(context),
                       decoration: BoxDecoration(
@@ -339,7 +337,8 @@ class _ChatBoxState extends State<ChatBox> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Container(
                                         margin: EdgeInsets.symmetric(
-                                            vertical: Screen.max(context) * 0.012),
+                                            vertical:
+                                                Screen.max(context) * 0.012),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -347,7 +346,8 @@ class _ChatBoxState extends State<ChatBox> {
                                             Text(
                                               _formatDate(messageDate),
                                               style: GoogleFonts.montserrat(
-                                                fontSize: Screen.max(context) * 0.01,
+                                                fontSize:
+                                                    Screen.max(context) * 0.01,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

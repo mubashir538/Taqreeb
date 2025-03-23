@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -26,6 +27,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   TextEditingController contactcontroller = TextEditingController();
   FocusNode personFocus = FocusNode();
   FocusNode contactFocus = FocusNode();
+  GlobalKey headerKey = GlobalKey();
 
   bool isfunction = false;
   int functionid = 0;
@@ -49,7 +51,12 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   void removePerson(index) {
@@ -60,22 +67,19 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
     });
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -86,7 +90,8 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: (Screen.height(context) * 0.05) + _headerHeight,
+                    height: (Screen.height(context) * 0.05) +
+                        UI_Management.headerHeight,
                   ),
                   MyTextBox(
                     focusNode: personFocus,
@@ -178,7 +183,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Add Person',
             ),
           ),

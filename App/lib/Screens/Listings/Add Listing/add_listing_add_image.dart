@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,12 +24,10 @@ class AddImage extends StatefulWidget {
 }
 
 class _AddImageState extends State<AddImage> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-
   final List<String> _images = [];
   Map<String, dynamic> args = {};
   bool ischanged = true;
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void didChangeDependencies() {
@@ -41,21 +40,21 @@ class _AddImageState extends State<AddImage> {
     }
   }
 
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   Future<void> _pickImage() async {
@@ -107,9 +106,6 @@ class _AddImageState extends State<AddImage> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -117,16 +113,17 @@ class _AddImageState extends State<AddImage> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Final Step',
               para: 'Add images to your service',
             ),
           ),
           Column(
             children: [
-              SizedBox(height: _headerHeight),
+              SizedBox(height: UI_Management.headerHeight),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+                margin: EdgeInsets.symmetric(
+                    horizontal: Screen.width(context) * 0.05),
                 height: Screen.height(context) * 0.2,
                 width: double.infinity,
                 decoration: BoxDecoration(

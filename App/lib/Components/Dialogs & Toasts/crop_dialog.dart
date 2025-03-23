@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 
 class CropPopup extends StatelessWidget {
   final Uint8List imageBytes;

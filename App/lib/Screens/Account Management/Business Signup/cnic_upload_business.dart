@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ class BusinessSignup_CNICUpload extends StatefulWidget {
 class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
   File? frontImage;
   File? backImage;
+  GlobalKey headerKey = GlobalKey();
 
   Future<void> _pickImage(image) async {
     try {
@@ -96,28 +98,30 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
     }
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -127,7 +131,8 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                    height: (Screen.height(context) * 0.02) + _headerHeight),
+                    height: (Screen.height(context) * 0.02) +
+                        UI_Management.headerHeight),
                 Container(
                   padding: EdgeInsets.symmetric(
                       vertical: Screen.height(context) * 0.02),
@@ -205,7 +210,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Upload your ID Card for Verification',
               para:
                   'Uploading your ID card ensures secure identity verification for your account.',

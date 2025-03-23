@@ -1,5 +1,4 @@
 // import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:taqreeb/Components/temp/Cart%20Item.dart';
 
 // class Cart extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -21,30 +22,33 @@ class Signup_MoreInfo extends StatefulWidget {
 class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
   final TextEditingController cityController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
+  GlobalKey headerKey = GlobalKey();
   final TextEditingController ageController = TextEditingController();
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -57,8 +61,8 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                 children: [
                   Column(children: [
                     SizedBox(
-                        height:
-                            (Screen.height(context) * 0.01) + _headerHeight),
+                        height: (Screen.height(context) * 0.01) +
+                            UI_Management.headerHeight),
                     ResponsiveDropdown(
                         items: ["Karachi", "Lahore", "Islamabad", "Peshawar"],
                         labelText: "City",
@@ -118,7 +122,7 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'OTP Verification',
               para: 'Unlock exclusive events - sign up now!',
               image: MyImages.Signup1,

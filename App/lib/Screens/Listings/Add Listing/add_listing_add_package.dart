@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
@@ -22,18 +23,12 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   FocusNode detailsFocus = FocusNode();
   FocusNode priceFocus = FocusNode();
   Map<String, dynamic> args = {};
+  GlobalKey headerKey = GlobalKey();
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
@@ -47,7 +42,12 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   String _capitalize(String input) {
@@ -57,7 +57,11 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -68,7 +72,8 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
               child: Column(
                 children: [
                   SizedBox(
-                      height: (Screen.height(context) * 0.03) + _headerHeight),
+                      height: (Screen.height(context) * 0.03) +
+                          UI_Management.headerHeight),
                   MyTextBox(
                     focusNode: nameFocus,
                     onFieldSubmitted: (_) {
@@ -116,7 +121,7 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Add Packages',
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -21,29 +22,32 @@ class Signup_ContactOTPSend extends StatefulWidget {
 class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
   TextEditingController contactController = TextEditingController();
   FocusNode contactFocus = FocusNode();
+  GlobalKey headerKey = GlobalKey();
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+            headerKey: headerKey,
+            callback: (renderbox) {
+              changeHeight(renderbox);
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -57,7 +61,8 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
                   Column(
                     children: [
                       SizedBox(
-                        height: (Screen.height(context) * 0.05) + _headerHeight,
+                        height: (Screen.height(context) * 0.05) +
+                            UI_Management.headerHeight,
                       ),
                       MyTextBox(
                         focusNode: contactFocus,
@@ -122,7 +127,7 @@ class _Signup_ContactOTPSendState extends State<Signup_ContactOTPSend> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Contact Verification',
               para: 'Enter Phone number to send one time password',
               image: MyImages.SingupPng,

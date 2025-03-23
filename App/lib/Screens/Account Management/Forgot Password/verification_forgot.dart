@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -18,12 +19,11 @@ class ForgotPassword_VerifyCode extends StatefulWidget {
 }
 
 class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
   int _remainingTime = 120;
   late Timer _timer;
   bool _isResendEnabled = false;
   String _enteredOTP = "";
+  GlobalKey headerKey = GlobalKey();
 
   void _startTimer() {
     setState(() {
@@ -56,20 +56,19 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getHeaderHeight();
+      UI_Management.getHeaderHeight(
+          headerKey: headerKey,
+          callback: (renderbox) {
+            changeHeight(renderbox);
+          });
       _startTimer();
     });
   }
 
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
@@ -86,7 +85,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: _headerHeight),
+                SizedBox(height: UI_Management.headerHeight),
                 Container(
                     margin: EdgeInsets.only(
                         top: Screen.max(context) * 0.07,
@@ -162,7 +161,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Verify Code',
               para: 'We have send the code to $email',
             ),

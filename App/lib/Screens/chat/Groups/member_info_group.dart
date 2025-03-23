@@ -32,16 +32,14 @@ class MembersScreen extends StatelessWidget {
       return members;
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error fetching members: $e'});
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching members: $e'});
       return [];
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Column(

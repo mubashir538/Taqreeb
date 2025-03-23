@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
@@ -8,8 +9,6 @@ import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/images.dart';
@@ -40,28 +39,16 @@ class _EventDetailsState extends State<EventDetails> {
 
   Timer? timer;
   void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-
-    final Event = await MyApi.getRequest(
-      endpoint: 'eventdetails/${this.EventId}',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    ApiCall.fetchAPI('eventdetails/$EventId', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           this.token = token;
-          this.events = Event ?? {};
-          if (Event == null || Event['status'] == 'error') {
-            MyScaffold(text: 'Something Went Wrong!').show(context);
-            return;
-          } else {
-            isLoading = false;
-          }
+          events = data;
+          isLoading = false;
         });
       }
-    });
-  }
+    }, context: mounted ? context : null);
+    }
 
   @override
   void dispose() {
@@ -71,9 +58,6 @@ class _EventDetailsState extends State<EventDetails> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     TextStyle heading = GoogleFonts.montserrat(
         fontSize: Screen.max(context) * 0.017,
         fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
@@ -42,12 +43,17 @@ class _AddcategoryListState extends State<AddcategoryList> {
   Map<String, dynamic> categories = {};
   bool isLoading = true;
   String type = "";
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getHeaderHeight();
+      UI_Management.getHeaderHeight(
+          headerKey: headerKey,
+          callback: (renderbox) {
+            changeHeight(renderbox);
+          });
     });
     fetchCategories();
   }
@@ -103,22 +109,19 @@ class _AddcategoryListState extends State<AddcategoryList> {
     });
   }
 
-  final GlobalKey _headerKey = GlobalKey();
-  double _headerHeight = 0.0;
-  void _getHeaderHeight() {
-    final RenderObject? renderBox =
-        _headerKey.currentContext?.findRenderObject();
-
-    if (renderBox is RenderBox) {
-      setState(() {
-        _headerHeight = renderBox.size.height;
-      });
-    }
+  void changeHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _getHeaderHeight();
+    UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          changeHeight(renderbox);
+        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -134,7 +137,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: _headerHeight),
+                  SizedBox(height: UI_Management.headerHeight),
                   MyTextBox(
                     focusNode: nameFocus,
                     onFieldSubmitted: (_) {
@@ -256,7 +259,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
           Positioned(
             top: 0,
             child: Header(
-              key: _headerKey,
+              key: headerKey,
               heading: 'Add Service',
               para: 'Add your Services or Halls in the Application',
             ),

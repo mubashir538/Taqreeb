@@ -115,9 +115,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
           endpoint: 'error/application',
           body: {'error': 'Error fetching chats or groups: $e'});
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
