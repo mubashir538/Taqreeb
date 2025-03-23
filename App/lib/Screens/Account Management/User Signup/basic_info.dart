@@ -1,0 +1,299 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/auth_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/validations.dart';
+import 'package:taqreeb/core/utils/color.dart';
+import 'package:taqreeb/core/utils/icons.dart';
+import 'package:taqreeb/core/utils/images.dart';
+
+class BasicSignup extends StatefulWidget {
+  BasicSignup({super.key});
+
+  @override
+  State<BasicSignup> createState() => _BasicSignupState();
+}
+
+class _BasicSignupState extends State<BasicSignup> {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final FocusNode passwordFocus = FocusNode();
+  final FocusNode confirmPasswordFocus = FocusNode();
+  final FocusNode firstNameFocus = FocusNode();
+  final FocusNode lastNameFocus = FocusNode();
+
+  void check(BuildContext context) async {
+    if (await MyStorage.exists(MyTokens.sfname) &&
+        await MyStorage.exists(MyTokens.slname) &&
+        await MyStorage.exists(MyTokens.spassword)) {
+      warningDialog(
+        title: 'Fresh Start',
+        message:
+            'We noticed that you had lately attempted to signup the app Do you want to continue where you left or want a Fresh Start?',
+        actions: [
+          ColoredButton(
+            text: 'Fresh Start',
+            onPressed: () {
+              MyStorage.deleteToken(MyTokens.spassword);
+              MyStorage.deleteToken(MyTokens.sfname);
+              MyStorage.deleteToken(MyTokens.slname);
+              MyStorage.deleteToken(MyTokens.semail);
+              MyStorage.deleteToken(MyTokens.scity);
+              MyStorage.deleteToken(MyTokens.sgender);
+
+              Navigator.pop(context);
+            },
+          ),
+          ColoredButton(
+            text: 'Continue',
+            onPressed: () async {
+              if (await MyStorage.exists(MyTokens.scity)) {
+                Navigator.pushNamed(context, '/ProfilePictureUpload',
+                    arguments: {'type': 'User'});
+              } else if (await MyStorage.exists(MyTokens.sphone) ||
+                  await MyStorage.exists(MyTokens.semail)) {
+                Navigator.pushNamed(context, '/Signup_MoreInfo');
+              } else {
+                Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+              }
+            },
+          )
+        ],
+      ).showDialogBox(context);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      check(context);
+      _getHeaderHeight();
+    });
+  }
+
+  final GlobalKey _headerKey = GlobalKey();
+  double _headerHeight = 0.0;
+  void _getHeaderHeight() {
+    final RenderObject? renderBox =
+        _headerKey.currentContext?.findRenderObject();
+
+    if (renderBox is RenderBox) {
+      setState(() {
+        _headerHeight = renderBox.size.height;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    _getHeaderHeight();
+    return Scaffold(
+      backgroundColor: MyColors.Dark,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              width: screenWidth,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: _headerHeight,
+                  ),
+                  MyTextBox(
+                      focusNode: firstNameFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(lastNameFocus);
+                      },
+                      hint: "First Name",
+                      valueController: firstNameController),
+                  MyTextBox(
+                      focusNode: lastNameFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(passwordFocus);
+                      },
+                      hint: "Last Name",
+                      valueController: lastNameController),
+                  MyTextBox(
+                      focusNode: passwordFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(confirmPasswordFocus);
+                      },
+                      hint: "Password",
+                      isPassword: true,
+                      valueController: passwordController),
+                  MyTextBox(
+                      focusNode: confirmPasswordFocus,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).unfocus();
+                      },
+                      hint: "Confirm Password",
+                      isPassword: true,
+                      valueController: confirmPasswordController),
+                  ColoredButton(
+                    text: "Continue",
+                    onPressed: () {
+                      if (firstNameController.text.isEmpty ||
+                          lastNameController.text.isEmpty ||
+                          passwordController.text.isEmpty ||
+                          confirmPasswordController.text.isEmpty) {
+                        warningDialog(
+                          message: "Please fill all the details",
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else if (Validations.validatePassword(
+                              passwordController.text) !=
+                          'Ok') {
+                        warningDialog(
+                          message: Validations.validatePassword(
+                              passwordController.text),
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else if (passwordController.text !=
+                          confirmPasswordController.text) {
+                        warningDialog(
+                          message:
+                              "Password and Confirm Password Should be Same!",
+                          title: "Invalid Details",
+                        ).showDialogBox(context);
+                      } else {
+                        MyStorage.saveToken(firstNameController.text, "sfname");
+                        MyStorage.saveToken(lastNameController.text, "slname");
+                        MyStorage.saveToken(
+                            passwordController.text, "spassword");
+                        Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+                      }
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/Login');
+                      },
+                      child: Text(
+                        "Already a Member? Login",
+                        style: TextStyle(color: MyColors.yellowonDark),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          Map<String, dynamic>? user =
+                              await AuthService().signInWithGoogle();
+                          if (user.length != 0) {
+                            final response = await MyApi.postRequest(
+                              endpoint: 'Login/googleAuthentication',
+                              body: {
+                                'userId': user['user'].uid,
+                                'email': user['user'].email,
+                                'name': user['user'].displayName,
+                                'picture': user['user'].photoURL,
+                                'phone': user['phone'],
+                                'gender': user['gender'],
+                                'age': user['age'],
+                              },
+                            );
+                            if (response['status'] == 'success') {
+                              MyStorage.saveToken(
+                                  response['refresh'].toString(), 'refresh');
+                              MyStorage.saveToken(response['access'].toString(),
+                                  MyTokens.accessToken);
+                              MyStorage.saveToken(
+                                  response['userId'].toString(), 'userId');
+                              MyStorage.saveToken(
+                                  MyTokens.user, MyTokens.userType);
+                              final res = await MyApi.postRequest(
+                                  endpoint: 'notification/saveFCM',
+                                  body: {
+                                    'token': await MyStorage.yourFCM(),
+                                    'userId': await MyStorage.getToken(
+                                        MyTokens.userId),
+                                  },
+                                  headers: {
+                                    'Authorization':
+                                        'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                                  });
+                              if (res['status'] == 'success') {
+                                print('FCM saved');
+                              }
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  '/HomePage', ModalRoute.withName('/'));
+                            }
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: screenHeight * 0.015,
+                              vertical: screenHeight * 0.02),
+                          height: screenHeight * 0.06,
+                          width: screenHeight * 0.06,
+                          decoration: BoxDecoration(
+                              color: MyColors.DarkLighter,
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Center(
+                            child: SvgPicture.asset(MyIcons.google,
+                                width: screenHeight * 0.04,
+                                height: screenHeight * 0.04),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          await AuthService().signInWithFacebook();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: screenHeight * 0.015,
+                              vertical: screenHeight * 0.02),
+                          height: screenHeight * 0.06,
+                          width: screenHeight * 0.06,
+                          decoration: BoxDecoration(
+                              color: MyColors.DarkLighter,
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Center(
+                            child: SvgPicture.asset(MyIcons.facebook,
+                                width: screenHeight * 0.04,
+                                height: screenHeight * 0.04),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: "Signup",
+              para: "Unlock exclusive events - sign up now!",
+              image: MyImages.Signup1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

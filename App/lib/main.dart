@@ -4,77 +4,72 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:taqreeb/Classes/flutterStorage.dart';
-import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/Components/mainScreen.dart';
-import 'package:taqreeb/Screens/Add360video.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_AddPackage.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
-import 'package:taqreeb/Screens/BusinessInfoEdit.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_BakerySweet.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Caterers.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Decorator.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_GraphicDesigner.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Parlour.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Photographer.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_PhotographyPlace.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Saloon.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_VideoEditor.dart';
-import 'package:taqreeb/Screens/CreateGroup.dart';
-import 'package:taqreeb/Screens/Dashboard.dart';
-import 'package:taqreeb/Screens/AccountInfoEdit.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_BasicInfo.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_CNICUpload.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_Description.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/SubmissionSucessful.dart';
-import 'package:taqreeb/Screens/Cart.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Venue.dart';
-import 'package:taqreeb/Screens/BakerySweet_Products.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_CarRenter.dart';
-import 'package:taqreeb/Screens/ChatBox.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/CreateAIPackage.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_AddFamily.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_List.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_AddPerson.dart';
-import 'package:taqreeb/Screens/CreateChecklistItems.dart';
-import 'package:taqreeb/Screens/CreateEvent.dart';
-import 'package:taqreeb/Screens/CreateFunction.dart';
-import 'package:taqreeb/Screens/EventDetails.dart';
-import 'package:taqreeb/Screens/ForgotPassword_EmailorPhoneInput.dart';
-import 'package:taqreeb/Screens/ForgotPassword_NewPassword.dart';
-import 'package:taqreeb/Screens/ForgotPassword_VerifyCode.dart';
-import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_Description.dart';
-import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.dart';
-import 'package:taqreeb/Screens/FunctionDetail.dart';
-import 'package:taqreeb/Screens/Login.dart';
-import 'package:taqreeb/Screens/OrderSummary.dart';
-import 'package:taqreeb/Screens/SearchService.dart';
-import 'package:taqreeb/Screens/Settings.dart';
-import 'package:taqreeb/Screens/SignupScreens/ProfilePictureUpload.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPVerify.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPSend.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_EmailOTPVerify.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_EmailOTPSend.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_MoreInfo.dart';
-import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventDetail.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
-import 'package:taqreeb/Screens/groupchats.dart';
-import 'package:taqreeb/Screens/newUserSearch.dart';
-import 'package:taqreeb/Screens/paymentdetails.dart';
-import 'package:taqreeb/Screens/reviewScreen.dart';
-import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
-import 'package:taqreeb/Screens/splash%20screen.dart';
-import 'package:taqreeb/Screens/wishlistViewPage.dart';
+import 'package:taqreeb/Screens/Globals/splash_screen.dart';
+import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
+import 'package:taqreeb/Screens/Main%20Screens/main_screen.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_video_upload.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_image.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_addons.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_details.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_basic.dart';
+import 'package:taqreeb/Screens/Account%20Management/account_info_edit_business.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_caterer.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_decorator.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_graphic_designer.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_parlor.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_photographer.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_photography_place.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_salon.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_video_editor.dart';
+import 'package:taqreeb/Screens/Account%20Management/account_info_edit.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/basic_info_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/cnic_upload_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/description_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/submission_success.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_venue.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_car_renter.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_family.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
+import 'package:taqreeb/Screens/Event%20Management/Checklist/checklist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Events/create_event.dart';
+import 'package:taqreeb/Screens/Event%20Management/Functions/create_function.dart';
+import 'package:taqreeb/Screens/Event%20Management/Events/view_event.dart';
+import 'package:taqreeb/Screens/Account%20Management/Forgot%20Password/input_credentials_forgot.dart';
+import 'package:taqreeb/Screens/Account%20Management/Forgot%20Password/new_password_forgot.dart';
+import 'package:taqreeb/Screens/Account%20Management/Forgot%20Password/verification_forgot.dart';
+import 'package:taqreeb/Screens/Account%20Management/Freelancer%20Signup/description_freelancer.dart';
+import 'package:taqreeb/Screens/Account%20Management/Freelancer%20Signup/basic_info_freelancer.dart';
+import 'package:taqreeb/Screens/Event%20Management/Functions/view_function.dart';
+import 'package:taqreeb/Screens/Account%20Management/login.dart';
+import 'package:taqreeb/Screens/Payments/order_summary.dart';
+import 'package:taqreeb/Screens/Search/listing_search.dart';
+import 'package:taqreeb/Screens/Globals/settings.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/profile_upload.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/verify_otp_contact.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/send_otp_contact.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/verify_otp_email.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/send_otp_email.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/more_info_signup.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/basic_info.dart';
+import 'package:taqreeb/Screens/AI/event_detail_ai.dart';
+import 'package:taqreeb/Screens/AI/function_detail_ai.dart';
+import 'package:taqreeb/Screens/AI/event_packages_ai.dart';
+import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
+import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
+import 'package:taqreeb/Screens/chat/chat_box.dart';
+import 'package:taqreeb/Screens/chat/search_new_user.dart';
+import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
+import 'package:taqreeb/Screens/Listings/review_screen.dart';
+import 'package:taqreeb/Screens/Listings/user_wishlist.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/firebase_options.dart';
-import 'package:taqreeb/theme/color.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Background Message: ${message.notification?.title}");
@@ -174,7 +169,7 @@ class _MainAppState extends State<MainApp> {
       routes: {
         '/': (context) => SplashScreen(),
         '/wishlist': (context) => WishlistViewPage(),
- '/orderSummary': (context) => OrderSummaryScreen(),
+        '/orderSummary': (context) => OrderSummaryScreen(),
         '/Add360video': (context) => Add360video(),
         '/paymentdetails': (context) => SecurePaymentScreen(),
         '/settings': (context) => Settings(),
@@ -211,7 +206,7 @@ class _MainAppState extends State<MainApp> {
         '/ForgotPassword_VerifyCode': (context) => ForgotPassword_VerifyCode(),
         '/ForgotPassword_NewPassword': (context) =>
             ForgotPassword_NewPassword(),
-        '/CreateAIPackage': (context) => CreateAIPackage(),
+        // '/CreateAIPackage': (context) => CreateAIPackage(),
         '/ViewAIPackage': (context) => ViewAIPackage(),
         '/AIPackage_EventDetail': (context) => AIPackage_EventDetail(),
         '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
@@ -238,14 +233,14 @@ class _MainAppState extends State<MainApp> {
         '/CategoryView_PhotographyPlace': (context) =>
             CategoryView_PhotographyPlace(),
         '/CategoryView_Photographer': (context) => CategoryView_Photographer(),
-        '/CategoryView_BakerySweet': (context) => CategoryView_BakerySweet(),
+        // '/CategoryView_BakerySweet': (context) => CategoryView_BakerySweet(),
         '/CategoryView_GraphicDesigner': (context) =>
             CategoryView_GraphicDesigner(),
         '/CategoryView_CarRenter': (context) => CategoryView_CarRenter(),
         '/FunctionDetail': (context) => FunctionDetail(),
-        '/BakerySweet_Products': (context) => BakerySweet_Products(),
-        '/Cart': (context) => Cart(),
-        '/InvitationCardEdit': (context) => InvitationCardEdit(),
+        // '/BakerySweet_Products': (context) => BakerySweet_Products(),
+        // '/Cart': (context) => Cart(),
+        // '/InvitationCardEdit': (context) => InvitationCardEdit(),
         '/CreateEvent': (context) => CreateEvent(),
         '/YourEvents': (context) => MainScreen(index: 2),
         '/Dashboard': (context) => Dashboard(),
