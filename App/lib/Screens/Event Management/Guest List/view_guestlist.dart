@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_guest_list_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -64,14 +66,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
           this.token = token;
           this.guests = fetchedGuests ?? {};
           if (guests == {} || guests['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -151,10 +146,6 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -162,8 +153,8 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
-              constraints: BoxConstraints(minHeight: screenHeight),
+              width: Screen.width(context),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -179,7 +170,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                             ),
                           )
                         : SizedBox(
-                            width: screenWidth * 0.9,
+                            width: Screen.width(context) * 0.9,
                             child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -205,15 +196,8 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
                                       guests['Guests'].removeAt(index);
                                     });
                                     if (response['status'] == 'error') {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('Something Went Wrong!',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 14,
-                                                color: MyColors.white,
-                                                fontWeight: FontWeight.w400)),
-                                        backgroundColor: MyColors.red,
-                                      ));
+                                      MyScaffold(text: 'Something Went Wrong!')
+                                          .show(context);
                                       return;
                                     }
                                   },
@@ -243,11 +227,12 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyColors.Yellow,
-        onPressed: () => _showOptions(context, MaximumThing, screenWidth),
+        onPressed: () =>
+            _showOptions(context, Screen.max(context), Screen.width(context)),
         child: Icon(
           Icons.add,
           color: MyColors.Dark,
-          size: MaximumThing * 0.04,
+          size: Screen.max(context) * 0.04,
         ),
       ),
     );

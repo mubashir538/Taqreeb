@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class UpperHeadings extends StatefulWidget {
   final Map listing;
@@ -137,18 +138,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                     actions: [ColoredButton(text: 'Ok')],
                                   ).showDialogBox(context);
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Something went wrong',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: maxThing * 0.015,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      backgroundColor: MyColors.red,
-                                    ),
-                                  );
+                                  MyScaffold(text: 'Something Went Wrong!')
+                                      .show(context);
                                   Navigator.pop(context);
                                 }
                               },
@@ -188,16 +179,12 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           if (field == 'name') isEditingName = false;
           if (field == 'location') isEditingLocation = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$field updated successfully!')),
-        );
+        MyScaffold(text: '$field updated successfully!').show(context);
       } else {
         throw Exception(response['message'] ?? 'Failed to update $field.');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      MyScaffold(text: 'Error: ${e.toString()}').show(context);
     }
   }
 
@@ -224,18 +211,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       if (response['status'] == 'success') {
         selectedColor = MyColors.white;
         selectedIcon = FontAwesomeIcons.heart;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: MyColors.red,
-            content: Text(
-              'Removed from wishlist!',
-              style: GoogleFonts.montserrat(
-                  color: MyColors.white,
-                  fontSize: max * 0.015,
-                  fontWeight: FontWeight.w500),
-            ),
-          ),
-        );
+        MyScaffold(text: 'Removed from wishlist!').show(context);
       }
     } else {
       final response = await MyApi.postRequest(endpoint: 'wishlist/add', body: {
@@ -248,33 +224,17 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       if (response['status'] == 'success') {
         selectedIcon = FontAwesomeIcons.solidHeart;
         selectedColor = MyColors.red;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: MyColors.red,
-            content: Text(
-              'Added to wishlist!',
-              style: GoogleFonts.montserrat(
-                  color: MyColors.white,
-                  fontSize: max * 0.015,
-                  fontWeight: FontWeight.w500),
-            ),
-          ),
-        );
+        MyScaffold(text: 'Added to wishlist!').show(context);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.02),
+          padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -285,14 +245,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           TextField(
                             controller: nameController,
                             style: GoogleFonts.montserrat(
-                              fontSize: maximumDimension * 0.025,
+                              fontSize: Screen.max(context) * 0.025,
                               color: MyColors.white,
                             ),
                             decoration: InputDecoration(
                               hintText: 'Edit name',
                               hintStyle: GoogleFonts.montserrat(
                                 color: MyColors.white.withOpacity(0.6),
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                               ),
                               border: OutlineInputBorder(),
                             ),
@@ -312,14 +272,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                width: screenWidth * 0.6,
+                                width: Screen.width(context) * 0.6,
                                 child: Text(
                                   widget.listing['Listing']['name'],
                                   softWrap: true,
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.025,
+                                    fontSize: Screen.max(context) * 0.025,
                                     fontWeight: FontWeight.w600,
                                     color: MyColors.white,
                                   ),
@@ -332,25 +292,29 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                           onTap: () {
                                             setState(() {
                                               wishlistSelection(
-                                                  maximumDimension);
+                                                  Screen.max(context));
                                             });
                                           },
                                           child: Icon(
                                             selectedIcon,
                                             color: selectedColor,
-                                            size: maximumDimension * 0.03,
+                                            size: Screen.max(context) * 0.03,
                                           ),
                                         ),
-                                        SizedBox(width: screenWidth * 0.01),
+                                        SizedBox(
+                                            width:
+                                                Screen.width(context) * 0.01),
                                         GestureDetector(
                                           onTap: () {
-                                            showHierarchicalOptions(context,
-                                                maximumDimension, screenWidth);
+                                            showHierarchicalOptions(
+                                                context,
+                                                Screen.max(context),
+                                                Screen.width(context));
                                           },
                                           child: Icon(
                                             Icons.add,
                                             color: MyColors.Yellow,
-                                            size: maximumDimension * 0.05,
+                                            size: Screen.max(context) * 0.05,
                                           ),
                                         ),
                                       ],
@@ -367,9 +331,10 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
-                                              width: screenWidth * 0.3,
+                                              width:
+                                                  Screen.width(context) * 0.3,
                                               textSize:
-                                                  maximumDimension * 0.015,
+                                                  Screen.max(context) * 0.015,
                                             ),
                                             ColoredButton(
                                               text: 'Delete',
@@ -404,24 +369,13 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                                       'Something went Wrong!';
                                                   Navigator.of(context).pop();
                                                 }
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                  backgroundColor: MyColors.red,
-                                                  content: Text(message,
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        fontSize:
-                                                            maximumDimension *
-                                                                0.015,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: MyColors.white,
-                                                      )),
-                                                ));
+                                                MyScaffold(text: message)
+                                                    .show(context);
                                               },
-                                              width: screenWidth * 0.3,
+                                              width:
+                                                  Screen.width(context) * 0.3,
                                               textSize:
-                                                  maximumDimension * 0.015,
+                                                  Screen.max(context) * 0.015,
                                             ),
                                           ],
                                         ).showDialogBox(context);
@@ -436,10 +390,10 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                               blurStyle: BlurStyle.inner),
                                         ]),
                                         margin: EdgeInsets.all(
-                                            maximumDimension * 0.02),
+                                            Screen.max(context) * 0.02),
                                         child: Icon(
                                           Icons.delete,
-                                          size: maximumDimension * 0.03,
+                                          size: Screen.max(context) * 0.03,
                                           color: Colors.white,
                                         ),
                                       ),
@@ -461,8 +415,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           ),
         ),
         Container(
-          width: screenWidth * 0.9,
-          padding: EdgeInsets.only(top: screenHeight * 0.02),
+          width: Screen.width(context) * 0.9,
+          padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -474,14 +428,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           TextField(
                             controller: locationController,
                             style: GoogleFonts.montserrat(
-                              fontSize: maximumDimension * 0.015,
+                              fontSize: Screen.max(context) * 0.015,
                               color: MyColors.white,
                             ),
                             decoration: InputDecoration(
                               hintText: 'Edit location...',
                               hintStyle: GoogleFonts.montserrat(
                                 color: MyColors.white.withOpacity(0.6),
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                               ),
                               border: OutlineInputBorder(),
                             ),
@@ -495,7 +449,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                       ),
                     )
                   : SizedBox(
-                      width: screenWidth * 0.9,
+                      width: Screen.width(context) * 0.9,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -510,7 +464,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                                 maxLines: 3,
                                 "${widget.listing['reveiewData']['average']} (${widget.listing['reveiewData']['count']})",
                                 style: GoogleFonts.montserrat(
-                                  fontSize: maximumDimension * 0.015,
+                                  fontSize: Screen.max(context) * 0.015,
                                   color: MyColors.white,
                                 ),
                               ),
@@ -519,14 +473,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           Column(
                             children: [
                               Container(
-                                width: screenWidth * 0.6,
+                                width: Screen.width(context) * 0.6,
                                 child: Text(
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   widget.listing['Listing']['location'],
                                   softWrap: true,
                                   style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.015,
+                                    fontSize: Screen.max(context) * 0.015,
                                     color: MyColors.white,
                                   ),
                                 ),
@@ -534,8 +488,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                               if (type)
                                 ColoredButton(
                                     text: 'Edit',
-                                    width: screenWidth * 0.5,
-                                    textSize: maximumDimension * 0.015,
+                                    width: Screen.width(context) * 0.5,
+                                    textSize: Screen.max(context) * 0.015,
                                     onPressed: () {
                                       setState(() {
                                         isEditingLocation = true;
@@ -546,7 +500,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                           Icon(
                             Icons.location_on,
                             color: MyColors.white,
-                            size: maximumDimension * 0.04,
+                            size: Screen.max(context) * 0.04,
                           ),
                         ],
                       ),

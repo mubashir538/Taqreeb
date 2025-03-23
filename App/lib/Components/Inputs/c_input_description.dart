@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -45,18 +46,13 @@ class _DescriptionStateBox extends State<DescriptionBox> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Container(
-      margin: EdgeInsets.all(maximumDimension * 0.01),
-      height: screenHeight * 0.3,
-      width: screenWidth * 0.9,
+      margin: EdgeInsets.all(Screen.max(context) * 0.01),
+      height: Screen.height(context) * 0.3,
+      width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(
-          horizontal: maximumDimension * 0.03,
-          vertical: maximumDimension * 0.02),
+          horizontal: Screen.max(context) * 0.03,
+          vertical: Screen.max(context) * 0.02),
       decoration: BoxDecoration(
         color: MyColors.DarkLighter,
         border: Border.all(
@@ -81,14 +77,14 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         maxLines: 50,
         style: GoogleFonts.montserrat(
           color: MyColors.white,
-          fontSize: maximumDimension * 0.015,
+          fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintStyle: GoogleFonts.montserrat(
             color: MyColors.white.withOpacity(0.6),
-            fontSize: maximumDimension * 0.015,
+            fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,
           ),
           hintText: "Enter Description",

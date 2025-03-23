@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Checklist/c_checklist_items.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -50,14 +52,7 @@ class _SettingsState extends State<Settings> {
           this.token = token;
           types = fetchedtype ?? {};
           if (types == {} || types['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             businessOwnerSwitch = bool.parse(isbusinessToken.toString());
@@ -90,10 +85,6 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -109,16 +100,16 @@ class _SettingsState extends State<Settings> {
                             AlwaysStoppedAnimation<Color>(MyColors.white),
                       )
                     : Container(
-                        constraints:
-                            BoxConstraints(minHeight: screenHeight * 0.5),
+                        constraints: BoxConstraints(
+                            minHeight: Screen.height(context) * 0.5),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             this.types['business']
                                 ? Container(
-                                    height:
-                                        (MaximumThing * 0.08).clamp(60, 80.0),
-                                    width: screenWidth * 0.9,
+                                    height: (Screen.max(context) * 0.08)
+                                        .clamp(60, 80.0),
+                                    width: Screen.width(context) * 0.9,
                                     decoration: BoxDecoration(
                                       color: MyColors.DarkLighter,
                                       borderRadius: BorderRadius.circular(15),
@@ -132,7 +123,7 @@ class _SettingsState extends State<Settings> {
                                         Icon(
                                           Icons.business_rounded,
                                           color: MyColors.white,
-                                          size: MaximumThing * 0.02,
+                                          size: Screen.max(context) * 0.02,
                                         ),
                                         Flexible(
                                           child: Padding(
@@ -142,7 +133,8 @@ class _SettingsState extends State<Settings> {
                                               "Business Owner Mode",
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.montserrat(
-                                                fontSize: MaximumThing * 0.015,
+                                                fontSize:
+                                                    Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w500,
                                                 color: MyColors.white,
                                               ),
@@ -195,9 +187,9 @@ class _SettingsState extends State<Settings> {
                                   ),
                             this.types['freelancer']
                                 ? Container(
-                                    height:
-                                        (MaximumThing * 0.08).clamp(60, 80.0),
-                                    width: screenWidth * 0.9,
+                                    height: (Screen.max(context) * 0.08)
+                                        .clamp(60, 80.0),
+                                    width: Screen.width(context) * 0.9,
                                     decoration: BoxDecoration(
                                       color: MyColors.DarkLighter,
                                       borderRadius: BorderRadius.circular(15),
@@ -211,7 +203,7 @@ class _SettingsState extends State<Settings> {
                                         Icon(
                                           Icons.business_rounded,
                                           color: MyColors.white,
-                                          size: MaximumThing * 0.02,
+                                          size: Screen.max(context) * 0.02,
                                         ),
                                         Flexible(
                                           child: Padding(
@@ -221,7 +213,8 @@ class _SettingsState extends State<Settings> {
                                               "Freelancer Mode",
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.montserrat(
-                                                fontSize: MaximumThing * 0.015,
+                                                fontSize:
+                                                    Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w500,
                                                 color: MyColors.white,
                                               ),

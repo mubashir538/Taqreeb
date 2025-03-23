@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -44,14 +46,7 @@ class _AccountInfoState extends State<AccountInfo> {
           this.token = token;
           this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -87,12 +82,10 @@ class _AccountInfoState extends State<AccountInfo> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
-    double size = MaximumThing * 0.03;
+    
+     
+    
+    double size = Screen.max(context) * 0.03;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -106,13 +99,13 @@ class _AccountInfoState extends State<AccountInfo> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: MaximumThing * 0.02,
-                    vertical: MaximumThing * 0.03),
+                    horizontal: Screen.max(context) * 0.02,
+                    vertical: Screen.max(context) * 0.03),
                 child: Text(
                     "Here is the account information for your profile,please review and ensure all details are accurate for a seamless experience.",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.015,
+                        fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.w400,
                         color: MyColors.white)),
               ),
@@ -127,12 +120,12 @@ class _AccountInfoState extends State<AccountInfo> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                           SizedBox(
-                            width: screenWidth * 0.9,
+                            width: Screen.width(context) * 0.9,
                             child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   CircleAvatar(
-                                    radius: screenWidth * 0.1,
+                                    radius: Screen.width(context) * 0.1,
                                     backgroundImage: NetworkImage(
                                         "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}"),
                                   ),
@@ -141,29 +134,29 @@ class _AccountInfoState extends State<AccountInfo> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                        width: screenWidth * 0.5,
+                                        width: Screen.width(context) * 0.5,
                                         margin: EdgeInsets.only(
-                                            left: MaximumThing * 0.02),
+                                            left: Screen.max(context) * 0.02),
                                         child: Text(
                                           "${_capitalize(user['firstName'])} ${_capitalize(user['lastName'])}",
                                           softWrap: true,
                                           maxLines: 3,
                                           style: GoogleFonts.montserrat(
-                                              fontSize: MaximumThing * 0.02,
+                                              fontSize: Screen.max(context) * 0.02,
                                               fontWeight: FontWeight.w600,
                                               color: MyColors.white),
                                         ),
                                       ),
                                       Container(
-                                        width: screenWidth * 0.5,
+                                        width: Screen.width(context) * 0.5,
                                         margin: EdgeInsets.only(
-                                            left: MaximumThing * 0.02),
+                                            left: Screen.max(context) * 0.02),
                                         child: Text(
                                           user['username'],
                                           softWrap: true,
                                           maxLines: 3,
                                           style: GoogleFonts.montserrat(
-                                              fontSize: MaximumThing * 0.015,
+                                              fontSize: Screen.max(context) * 0.015,
                                               fontWeight: FontWeight.w400,
                                               color: MyColors.Yellow),
                                         ),
@@ -173,7 +166,7 @@ class _AccountInfoState extends State<AccountInfo> {
                                 ]),
                           ),
                           SizedBox(
-                            height: screenHeight * 0.05,
+                            height: Screen.height(context) * 0.05,
                             child: Center(child: MyDivider()),
                           ),
                           user['gmail'] == null
@@ -182,19 +175,19 @@ class _AccountInfoState extends State<AccountInfo> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: MaximumThing * 0.02),
+                                          vertical: Screen.max(context) * 0.02),
                                       child: Text(
                                         'Gender',
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.montserrat(
-                                          fontSize: MaximumThing * 0.02,
+                                          fontSize: Screen.max(context) * 0.02,
                                           fontWeight: FontWeight.w700,
                                           color: MyColors.Yellow,
                                         ),
                                       ),
                                     ),
                                     SizedBox(
-                                      width: screenWidth * 0.8,
+                                      width: Screen.width(context) * 0.8,
                                       child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -209,13 +202,13 @@ class _AccountInfoState extends State<AccountInfo> {
                                             ),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  left: MaximumThing * 0.02),
+                                                  left: Screen.max(context) * 0.02),
                                               child: Text(
                                                 user['gender'],
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      MaximumThing * 0.015,
+                                                      Screen.max(context) * 0.015,
                                                   fontWeight: FontWeight.w200,
                                                   color: MyColors.white,
                                                 ),
@@ -224,10 +217,10 @@ class _AccountInfoState extends State<AccountInfo> {
                                           ]),
                                     ),
                                     SizedBox(
-                                      height: screenHeight * 0.05,
+                                      height: Screen.height(context) * 0.05,
                                       child: Center(
                                           child: MyDivider(
-                                              width: screenWidth * 0.7)),
+                                              width: Screen.width(context) * 0.7)),
                                     ),
                                   ],
                                 ),
@@ -237,19 +230,19 @@ class _AccountInfoState extends State<AccountInfo> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: MaximumThing * 0.02),
+                                          vertical: Screen.max(context) * 0.02),
                                       child: Text(
                                         'Phone',
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.montserrat(
-                                          fontSize: MaximumThing * 0.02,
+                                          fontSize: Screen.max(context) * 0.02,
                                           fontWeight: FontWeight.w700,
                                           color: MyColors.Yellow,
                                         ),
                                       ),
                                     ),
                                     SizedBox(
-                                      width: screenWidth * 0.8,
+                                      width: Screen.width(context) * 0.8,
                                       child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -263,13 +256,13 @@ class _AccountInfoState extends State<AccountInfo> {
                                             ),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  left: MaximumThing * 0.02),
+                                                  left: Screen.max(context) * 0.02),
                                               child: Text(
                                                 user['contactNumber'],
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      MaximumThing * 0.015,
+                                                      Screen.max(context) * 0.015,
                                                   fontWeight: FontWeight.w200,
                                                   color: MyColors.white,
                                                 ),
@@ -278,10 +271,10 @@ class _AccountInfoState extends State<AccountInfo> {
                                           ]),
                                     ),
                                     SizedBox(
-                                      height: screenHeight * 0.05,
+                                      height: Screen.height(context) * 0.05,
                                       child: Center(
                                           child: MyDivider(
-                                              width: screenWidth * 0.7)),
+                                              width: Screen.width(context) * 0.7)),
                                     ),
                                   ],
                                 ),
@@ -290,19 +283,19 @@ class _AccountInfoState extends State<AccountInfo> {
                               : Column(children: [
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: MaximumThing * 0.02),
+                                        vertical: Screen.max(context) * 0.02),
                                     child: Text(
                                       'Email',
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.02,
+                                        fontSize: Screen.max(context) * 0.02,
                                         fontWeight: FontWeight.w700,
                                         color: MyColors.Yellow,
                                       ),
                                     ),
                                   ),
                                   SizedBox(
-                                    width: screenWidth * 0.8,
+                                    width: Screen.width(context) * 0.8,
                                     child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -317,12 +310,12 @@ class _AccountInfoState extends State<AccountInfo> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                left: MaximumThing * 0.02),
+                                                left: Screen.max(context) * 0.02),
                                             child: Text(
                                               user['email'],
                                               textAlign: TextAlign.start,
                                               style: GoogleFonts.montserrat(
-                                                fontSize: MaximumThing * 0.015,
+                                                fontSize: Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w200,
                                                 color: MyColors.white,
                                               ),
@@ -331,27 +324,27 @@ class _AccountInfoState extends State<AccountInfo> {
                                         ]),
                                   ),
                                   SizedBox(
-                                    height: screenHeight * 0.05,
+                                    height: Screen.height(context) * 0.05,
                                     child: Center(
                                         child: MyDivider(
-                                            width: screenWidth * 0.7)),
+                                            width: Screen.width(context) * 0.7)),
                                   ),
                                 ]),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: MaximumThing * 0.02),
+                                vertical: Screen.max(context) * 0.02),
                             child: Text(
                               'Location',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.montserrat(
-                                fontSize: MaximumThing * 0.02,
+                                fontSize: Screen.max(context) * 0.02,
                                 fontWeight: FontWeight.w700,
                                 color: MyColors.Yellow,
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: screenWidth * 0.8,
+                            width: Screen.width(context) * 0.8,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,12 +356,12 @@ class _AccountInfoState extends State<AccountInfo> {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        left: MaximumThing * 0.02),
+                                        left: Screen.max(context) * 0.02),
                                     child: Text(
                                       user['city'],
                                       textAlign: TextAlign.start,
                                       style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.015,
+                                        fontSize: Screen.max(context) * 0.015,
                                         fontWeight: FontWeight.w200,
                                         color: MyColors.white,
                                       ),
@@ -377,9 +370,9 @@ class _AccountInfoState extends State<AccountInfo> {
                                 ]),
                           ),
                           SizedBox(
-                            height: screenHeight * 0.05,
+                            height: Screen.height(context) * 0.05,
                             child: Center(
-                                child: MyDivider(width: screenWidth * 0.7)),
+                                child: MyDivider(width: Screen.width(context) * 0.7)),
                           ),
                         ])
             ]),

@@ -1,18 +1,13 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:taqreeb/Components/temp/c_image_slider.dart';
 
-// class cardprinter extends StatefulWidget {
-//   const cardprinter({super.key});
-
-//   @override
-//   State<cardprinter> createState() => _cardprinterState();
-// }
-// // 
-// class _cardprinterState extends State<cardprinter> {
+// class cardMyApi.postRequest(
+        
 //   @override
 //   Widget build(BuildContext context) {
-//     final screenWidth = MediaQuery.of(context).size.width;
+//     
 
 //     return Scaffold(
 //       backgroundColor: MyColors.Dark,
@@ -25,7 +20,8 @@
 //               padding:
 //                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
 //               child: Text(
-//                 "Card Printers",
+//                 "Card  
+
 //                 style: GoogleFonts.montserrat(
 //                   fontSize: 20,
 //                   fontWeight: FontWeight.bold,
@@ -40,13 +36,13 @@
 //                 children: [
 //                   buildFeaturedImage(
 //                       'https://i2.wp.com/cdn.geckoandfly.com/wp-content/uploads/2019/12/wedding-invitation-template-21.jpg',
-//                       screenWidth * 0.3),
+//                       Screen.width(context) * 0.3),
 //                   buildFeaturedImage(
 //                       'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/modern-wedding-invitation-card-2024-design-template-8968c363de9edc3c5ba5ededf79cdba0_screen.jpg?ts=1705863640',
-//                       screenWidth * 0.3),
+//                       Screen.width(context) * 0.3),
 //                   buildFeaturedImage(
 //                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3iv-B50L35g90tsd-EU6_hVy6tzzsANQZqsrGtysexhEJ08k9VmGHYOnn1N2PfGEZkdE&usqp=CAU',
-//                       screenWidth * 0.3),
+//                       Screen.width(context) * 0.3),
 //                 ],
 //               ),
 //             ),

@@ -1,17 +1,23 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:taqreeb/Components/global/header.dart';
 // import 'package:taqreeb/theme/color.dart';
 // import 'package:taqreeb/Components/Buttons/Border%20Button.dart';
 
-// class cardprinterviewpage extends StatefulWidget {
-//   const cardprinterviewpage({super.key});
-
+// class cardMyApi.postRequest(
+      
 //   @override
-//   State<cardprinterviewpage> createState() => _cardprinterviewpageState();
+//   State<cardMyApi.postRequest(
+  
+//    printerviewpageState();
 // }
 
-// class _cardprinterviewpageState extends State<cardprinterviewpage> {
+// class _cardMyApi.postRequest(
+      
+ //   printerviewpageState extends State<cardMyApi.postRequest(
+    
+ //   printerviewpage> {
 
 //     @override
 //   Widget build(BuildContext context) {

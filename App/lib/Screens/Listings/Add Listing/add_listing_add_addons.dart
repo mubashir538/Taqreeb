@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -60,7 +62,6 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -114,7 +115,7 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                         valueController: headtypeController)
                     : Container(),
                 SizedBox(
-                  height: screenHeight * 0.1,
+                  height: Screen.height(context) * 0.1,
                   child: Center(child: MyDivider()),
                 ),
                 ColoredButton(
@@ -123,15 +124,13 @@ class _AddcategoryAddaddonsState extends State<AddcategoryAddaddons> {
                       if (nameController.text.isEmpty ||
                           priceController.text.isEmpty ||
                           perheadController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Please fill all the fields'),
-                            backgroundColor: MyColors.DarkLighter));
+                        MyScaffold(text: 'Please fill all the fields')
+                            .show(context);
                         return;
                       }
                       if (isPerhead && headtypeController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Please fill all the fields'),
-                            backgroundColor: MyColors.DarkLighter));
+                        MyScaffold(text: 'Please fill all the fields')
+                            .show(context);
                         return;
                       }
                       args['addons'].add({

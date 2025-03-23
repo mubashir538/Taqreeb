@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class ChecklistItemsAdder extends StatelessWidget {
@@ -9,16 +11,13 @@ class ChecklistItemsAdder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     return Center(
       child: Container(
-          margin: EdgeInsets.all(MaximumThing * 0.01),
+          margin: EdgeInsets.all(Screen.max(context) * 0.01),
           padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.08, vertical: screenHeight * 0.01),
-          height: screenHeight * 0.05,
+              horizontal: Screen.width(context) * 0.08,
+              vertical: Screen.height(context) * 0.01),
+          height: Screen.height(context) * 0.05,
           decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
@@ -32,7 +31,7 @@ class ChecklistItemsAdder extends StatelessWidget {
             children: [
               Text(text,
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.015,
+                      fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w500,
                       color: MyColors.whiteDarker)),
               add

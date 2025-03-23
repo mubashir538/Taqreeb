@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -8,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/crop_dialog.dart';
 import 'package:http/http.dart' as https;
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -68,14 +70,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
           this.token = token;
           this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -197,10 +192,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
               ],
             ).showDialogBox(context);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Profile Updated Successfully'),
-              backgroundColor: MyColors.Dark,
-            ));
+            MyScaffold(text: 'Profile Updated Successfully').show(context);
             Navigator.pushNamed(context, '/AccountInfo');
           }
         } else {
@@ -227,10 +219,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
       });
 
       if (response2['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Profile Updated Successfully'),
-          backgroundColor: MyColors.Dark,
-        ));
+        MyScaffold(text: 'Profile Updated Successfully').show(context);
         Navigator.pushNamed(context, '/AccountInfo');
       } else {
         warningDialog(
@@ -256,10 +245,6 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -281,8 +266,8 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                         children: [
                           Container(
                             margin: EdgeInsets.symmetric(
-                                vertical: MaximumThing * 0.04,
-                                horizontal: MaximumThing * 0.02),
+                                vertical: Screen.max(context) * 0.04,
+                                horizontal: Screen.max(context) * 0.02),
                             child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -296,7 +281,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(
-                                        left: MaximumThing * 0.02),
+                                        left: Screen.max(context) * 0.02),
                                     child: InkWell(
                                       onTap: _pickImage,
                                       child: Text(
@@ -305,7 +290,8 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                                         style: GoogleFonts.montserrat(
                                             decoration:
                                                 TextDecoration.underline,
-                                            fontSize: MaximumThing * 0.015,
+                                            fontSize:
+                                                Screen.max(context) * 0.015,
                                             fontWeight: FontWeight.w400,
                                             color: MyColors.Yellow),
                                       ),
@@ -333,7 +319,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                             ],
                           ),
                           SizedBox(
-                            height: screenHeight * 0.1,
+                            height: Screen.height(context) * 0.1,
                             child: Center(child: MyDivider()),
                           ),
                           ColoredButton(

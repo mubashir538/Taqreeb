@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -14,19 +15,16 @@ class GuideIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final maxDimension = MediaQuery.of(context).size.shortestSide;
 
-    final containerHeight = screenHeight * 0.3; 
-    final containerWidth = screenWidth * 0.4; 
-    final iconHeight = maxDimension * 0.1; 
-    final fontSize = maxDimension * 0.04; 
+    final containerHeight = Screen.height(context) * 0.3;
+    final containerWidth = Screen.width(context) * 0.4;
+    final iconHeight = Screen.max(context) * 0.1;
+    final fontSize = Screen.max(context) * 0.04;
 
     return Center(
       child: Container(
-        height: containerHeight.clamp(200.0, 300.0), 
-        width: containerWidth.clamp(150.0, 250.0), 
+        height: containerHeight.clamp(200.0, 300.0),
+        width: containerWidth.clamp(150.0, 250.0),
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(15),
@@ -40,7 +38,7 @@ class GuideIcon extends StatelessWidget {
                 child: Image.asset(
                   iconPath,
                   color: MyColors.white,
-                  height: iconHeight.clamp(40.0, 80.0), 
+                  height: iconHeight.clamp(40.0, 80.0),
                 ),
               ),
             ),
@@ -51,7 +49,7 @@ class GuideIcon extends StatelessWidget {
                 text,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
-                  fontSize: fontSize.clamp(14.0, 20.0), 
+                  fontSize: fontSize.clamp(14.0, 20.0),
                   fontWeight: FontWeight.w500,
                   color: MyColors.white,
                 ),

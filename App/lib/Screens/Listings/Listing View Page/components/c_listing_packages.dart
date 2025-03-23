@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_package_box.dart';
@@ -11,10 +13,9 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-
 class CategoryPackages extends StatefulWidget {
   final Map listing;
-  final bool type; 
+  final bool type;
 
   const CategoryPackages({super.key, required this.listing, this.type = false});
 
@@ -38,7 +39,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     SetType();
   }
 
-  void showPackagePopup(double screenWidth, double maximum, {int? index}) {
+  void showPackagePopup({int? index}) {
     FocusNode nameFocus = new FocusNode();
     FocusNode detailsFocus = new FocusNode();
     FocusNode priceFocus = new FocusNode();
@@ -62,13 +63,13 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           title: Text(
             'Add Package',
             style: GoogleFonts.montserrat(
-              fontSize: maximum * 0.02,
+              fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w600,
               color: MyColors.Yellow,
             ),
           ),
           content: Container(
-            width: screenWidth,
+            width: Screen.width(context),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -104,16 +105,16 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           actions: [
             BorderButton(
               text: 'Cancel',
-              width: screenWidth * 0.3,
-              textSize: maximum * 0.015,
+              width: Screen.width(context) * 0.3,
+              textSize: Screen.max(context) * 0.015,
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ColoredButton(
                 text: 'Add',
-                width: screenWidth * 0.3,
-                textSize: maximum * 0.015,
+                width: Screen.width(context) * 0.3,
+                textSize: Screen.max(context) * 0.015,
                 onPressed: () async {
                   if (index == null) {
                     final response = await MyApi.postRequest(
@@ -141,23 +142,10 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                           'price': priceController.text,
                         });
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Package Added Successfully!',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w400)),
-                        backgroundColor: MyColors.red,
-                      ));
+                      MyScaffold(text: 'Package Added Successfully!')
+                          .show(context);
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Something Went Wrong!',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w400)),
-                        backgroundColor: MyColors.red,
-                      ));
+                      MyScaffold(text: 'Something Went Wrong!').show(context);
                     }
                   } else {
                     final response = await MyApi.postRequest(
@@ -185,23 +173,10 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                           'price': priceController.text,
                         };
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Package Updated Successfully!',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w400)),
-                        backgroundColor: MyColors.red,
-                      ));
+                      MyScaffold(text: 'Package Updated Successfully!')
+                          .show(context);
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Something Went Wrong!',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w400)),
-                        backgroundColor: MyColors.red,
-                      ));
+                      MyScaffold(text: 'Something Went Wrong!').show(context);
                     }
                   }
 
@@ -222,7 +197,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                   });
                   Navigator.pop(context);
                 })
-
           ],
         );
       },
@@ -247,23 +221,9 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       setState(() {
         widget.listing['Package'].removeAt(index);
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Package Deleted Successfully!',
-            style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400)),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Package Deleted Successfully!').show(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Something Went Wrong!',
-            style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400)),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Something Went Wrong!').show(context);
     }
   }
 
@@ -278,33 +238,28 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     if (type) {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Packages',
               style: GoogleFonts.montserrat(
-                fontSize: maximumDimension * 0.025,
+                fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: MyColors.Yellow,
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
+              padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
               child: Column(
                 children: widget.listing['Package'].map<Widget>((package) {
                   int index = widget.listing['Package'].indexOf(package);
                   return Container(
-                    margin:
-                        EdgeInsets.symmetric(vertical: maximumDimension * 0.01),
+                    margin: EdgeInsets.symmetric(
+                        vertical: Screen.max(context) * 0.01),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -317,9 +272,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                                   icon:
                                       Icon(Icons.edit, color: MyColors.Yellow),
                                   onPressed: () => showPackagePopup(
-                                      index: index,
-                                      screenWidth,
-                                      maximumDimension),
+                                    index: index,
+                                  ),
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.delete, color: MyColors.red),
@@ -342,13 +296,13 @@ class _CategoryPackagesState extends State<CategoryPackages> {
             ),
             IconButton(
               icon: Icon(Icons.add_circle_outline, color: MyColors.Yellow),
-              onPressed: () => showPackagePopup(screenWidth, maximumDimension),
+              onPressed: () => showPackagePopup(),
             ),
             SizedBox(
-              height: screenHeight * 0.05,
+              height: Screen.height(context) * 0.05,
               child: Center(
                   child: MyDivider(
-                width: screenWidth * 0.85,
+                width: Screen.width(context) * 0.85,
               )),
             ),
           ],
@@ -357,20 +311,21 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     } else {
       return widget.listing['Package'].length != 0
           ? Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
+              padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Packages',
                     style: GoogleFonts.montserrat(
-                      fontSize: maximumDimension * 0.025,
+                      fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.w600,
                       color: MyColors.Yellow,
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.02),
+                    padding:
+                        EdgeInsets.only(top: Screen.height(context) * 0.02),
                     child: Column(
                       children:
                           widget.listing['Package'].map<Widget>((package) {
@@ -383,10 +338,10 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                     ),
                   ),
                   SizedBox(
-                    height: screenHeight * 0.05,
+                    height: Screen.height(context) * 0.05,
                     child: Center(
                         child: MyDivider(
-                      width: screenWidth * 0.85,
+                      width: Screen.width(context) * 0.85,
                     )),
                   ),
                 ],

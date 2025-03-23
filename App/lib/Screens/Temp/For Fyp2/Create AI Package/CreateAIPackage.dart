@@ -1,4 +1,5 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
 // import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
@@ -17,13 +18,12 @@
 //   final CheckBoxController checkBoxController =
 //       CheckBoxController(selections: []);
 
- 
 //   @override
 //   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     double screenHeight = MediaQuery.of(context).size.height;
-//     double MaximumThing =
-//         screenWidth > screenHeight ? screenWidth : screenHeight;
+//
+//
+//     double Screen.max(context) =
+//         Screen.width(context) > Screen.height(context) ? Screen.width(context) : Screen.height(context);
 
 //     return Scaffold(
 //       backgroundColor: MyColors.Dark,
@@ -35,19 +35,19 @@
 //             Center(
 //               child: Container(
 //                 margin: EdgeInsets.only(
-//                     top: MaximumThing * 0.05, bottom: MaximumThing * 0.03),
+//                     top: Screen.max(context) * 0.05, bottom: Screen.max(context) * 0.03),
 //                 child: Text(
 //                   "Create your AI Package",
 //                   style: GoogleFonts.montserrat(
 //                       color: MyColors.Yellow,
 //                       fontWeight: FontWeight.w600,
-//                       fontSize: MaximumThing * 0.03),
+//                       fontSize: Screen.max(context) * 0.03),
 //                 ),
 //               ),
 //             ),
 //             QuestionGroup(questions: [
 //               NormalQuestion(
-//                   MaximumThing: MaximumThing,
+//                   Screen.max(context): Screen.max(context),
 //                   question: "What type of eveny you are planning"),
 //               SliderQuestion(
 //                   question: "How many guests are you expecting?",
@@ -75,7 +75,7 @@
 //             ], Heading: "Budget"),
 //             QuestionGroup(questions: [
 //               NormalQuestion(
-//                   MaximumThing: MaximumThing,
+//                   Screen.max(context): Screen.max(context),
 //                   question:
 //                       "In which city or area would you like to hold the event?"),
 //               RadioButtonQuestion(
@@ -97,10 +97,10 @@
 //                 onChanged: (selections) {},
 //               ),
 //               NormalQuestion(
-//                   MaximumThing: MaximumThing,
+//                   Screen.max(context): Screen.max(context),
 //                   question: "Describe the Theme of your event")
 //             ], Heading: "Entertainment & Extras"),
-//             SizedBox(height: screenHeight * 0.04),
+//             SizedBox(height: Screen.height(context) * 0.04),
 //             Center(
 //               child: ColoredButton(
 //                 text: "Generate Packages",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
@@ -42,10 +43,6 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -53,7 +50,7 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
         children: [
           SingleChildScrollView(
             child: Container(
-              constraints: BoxConstraints(minHeight: screenHeight),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -63,7 +60,7 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
                   Column(
                     children: [
                       SizedBox(
-                        height: screenHeight * 0.05,
+                        height: Screen.height(context) * 0.05,
                       ),
                       MyTextBox(
                         focusNode: emailFocus,
@@ -74,7 +71,7 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
                         valueController: emailController,
                       ),
                       SizedBox(
-                        height: screenHeight * 0.1,
+                        height: Screen.height(context) * 0.1,
                         child: Center(child: MyDivider()),
                       ),
                       ColoredButton(
@@ -108,7 +105,7 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
                           'Use Contact to Verify Instead',
                           style: TextStyle(
                             color: MyColors.Yellow,
-                            fontSize: MaximumThing * 0.015,
+                            fontSize: Screen.max(context) * 0.015,
                           ),
                         ),
                       ),

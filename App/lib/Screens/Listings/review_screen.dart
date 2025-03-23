@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Rating/c_listing_info.dart';
 import 'package:taqreeb/Components/Rating/c_rating_bar.dart';
@@ -13,9 +14,9 @@ class ReviewScreen extends StatelessWidget {
   TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
@@ -26,21 +27,21 @@ class ReviewScreen extends StatelessWidget {
             ProductInfo(rating: 4.5, reviews: 500),
             MyDivider(
               thickness: 0.5,
-              width: screenWidth,
+              width: Screen.width(context),
             ),
             RatingFilter(
               controller: controller,
             ),
             MyDivider(
               thickness: 0.5,
-              width: screenWidth,
+              width: Screen.width(context),
             ),
             RatingDistribution(
               ratingPercentages: {5: 50, 4: 30, 3: 10, 2: 5, 1: 5},
             ),
             MyDivider(
               thickness: 0.5,
-              width: screenWidth,
+              width: Screen.width(context),
             ),
             ListView.builder(
               itemBuilder: (context, index) {
@@ -64,7 +65,7 @@ class ReviewScreen extends StatelessWidget {
             ),
             SizedBox(height: max * 0.02),
             Container(
-              width: screenWidth,
+              width: Screen.width(context),
               padding: EdgeInsets.all(max * 0.02),
               color: MyColors.DarkLighter,
               child: Text("Load More",

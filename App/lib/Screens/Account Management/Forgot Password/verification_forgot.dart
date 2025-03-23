@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -73,10 +74,6 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     final arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final email = arguments['email'];
@@ -92,7 +89,8 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                 SizedBox(height: _headerHeight),
                 Container(
                     margin: EdgeInsets.only(
-                        top: MaximumThing * 0.07, bottom: MaximumThing * 0.02),
+                        top: Screen.max(context) * 0.07,
+                        bottom: Screen.max(context) * 0.02),
                     child: OTPBoxes(
                       onChanged: (value) {
                         setState(() {
@@ -126,7 +124,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                   ),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.1,
+                  height: Screen.height(context) * 0.1,
                   child: Center(child: MyDivider()),
                 ),
                 ColoredButton(
@@ -150,7 +148,6 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                             .showDialogBox(context);
                       }
                     } catch (e) {
-                      print('Error: $e');
                       warningDialog(
                               title: 'Error',
                               message:

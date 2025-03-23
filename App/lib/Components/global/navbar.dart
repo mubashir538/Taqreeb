@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
@@ -24,13 +25,8 @@ class _NavbarState extends State<Navbar> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
-    double iconSize = maximumThing * 0.025;
-    double tapAreaSize = iconSize + 20; 
+    double iconSize = Screen.max(context) * 0.025;
+    double tapAreaSize = iconSize + 20;
 
     return Container(
       decoration: BoxDecoration(
@@ -38,7 +34,7 @@ class _NavbarState extends State<Navbar> {
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       clipBehavior: Clip.hardEdge,
       child: BottomAppBar(
-        height: screenHeight * 0.06,
+        height: Screen.height(context) * 0.06,
         color: MyColors.red,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -55,7 +51,7 @@ class _NavbarState extends State<Navbar> {
               size: iconSize,
               tapAreaSize: tapAreaSize,
             ),
-            SizedBox(width: screenWidth * 0.05),
+            SizedBox(width: Screen.width(context) * 0.05),
             _buildNavItem(
               icon: MyIcons.events,
               index: 2,

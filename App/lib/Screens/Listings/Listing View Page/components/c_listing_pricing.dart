@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class PricingSection extends StatefulWidget {
   final Map listing;
@@ -56,17 +57,14 @@ class _PricingSectionState extends State<PricingSection> {
           if (field == 'priceMax') isEditingPriceMax = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$field updated successfully!')),
-        );
+        MyScaffold(text: '$field updated successfully!').show(context);
       } else {
         throw Exception(response['message'] ?? 'Failed to update $field.');
       }
     } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update $field: $e')),
-      );
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Error: $e'});
+      MyScaffold(text: 'Failed to update $field: $e').show(context);
     }
   }
 
@@ -81,14 +79,9 @@ class _PricingSectionState extends State<PricingSection> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     if (type) {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           children: [
             Row(
@@ -97,7 +90,7 @@ class _PricingSectionState extends State<PricingSection> {
                 Text(
                   "Pricing:",
                   style: GoogleFonts.montserrat(
-                    fontSize: maximumDimension * 0.02,
+                    fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w500,
                     color: MyColors.white,
                   ),
@@ -105,14 +98,14 @@ class _PricingSectionState extends State<PricingSection> {
                 Text(
                   "Rs. ${widget.listing['Listing']['priceMin'].toString()} - ${widget.listing['Listing']['priceMax'].toString()}",
                   style: GoogleFonts.montserrat(
-                    fontSize: maximumDimension * 0.02,
+                    fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w400,
                     color: MyColors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: maximumDimension * 0.02),
+            SizedBox(height: Screen.max(context) * 0.02),
             _buildEditableRow(
               "Minimum Price:",
               "priceMin",
@@ -120,29 +113,26 @@ class _PricingSectionState extends State<PricingSection> {
               priceMinController,
               () => setState(() => isEditingPriceMin = true),
               () => saveField('priceMin', priceMinController.text),
-              maximumDimension,
             ),
-            SizedBox(height: maximumDimension * 0.02),
+            SizedBox(height: Screen.max(context) * 0.02),
             _buildEditableRow(
-              "Maximum Price:",
+              "Screen.max(context) Price:",
               "priceMax",
               isEditingPriceMax,
               priceMaxController,
               () => setState(() => isEditingPriceMax = true),
               () => saveField('priceMax', priceMaxController.text),
-              maximumDimension,
             ),
-            SizedBox(height: maximumDimension * 0.02),
+            SizedBox(height: Screen.max(context) * 0.02),
             _buildNonEditableRow(
               "Basic Price:",
               widget.listing['Listing']['basicPrice'].toString(),
-              maximumDimension,
             ),
             SizedBox(
-              height: screenHeight * 0.05,
+              height: Screen.height(context) * 0.05,
               child: Center(
                   child: MyDivider(
-                width: screenWidth * 0.85,
+                width: Screen.width(context) * 0.85,
               )),
             ),
           ],
@@ -150,7 +140,7 @@ class _PricingSectionState extends State<PricingSection> {
       );
     } else {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           children: [
             Row(
@@ -159,7 +149,7 @@ class _PricingSectionState extends State<PricingSection> {
                 Text(
                   "Pricing:",
                   style: GoogleFonts.montserrat(
-                    fontSize: maximumDimension * 0.02,
+                    fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w500,
                     color: MyColors.white,
                   ),
@@ -167,21 +157,21 @@ class _PricingSectionState extends State<PricingSection> {
                 Text(
                   "Rs. ${widget.listing['Listing']['priceMin'].toString()} - ${widget.listing['Listing']['priceMax'].toString()}",
                   style: GoogleFonts.montserrat(
-                    fontSize: maximumDimension * 0.02,
+                    fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w400,
                     color: MyColors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: maximumDimension * 0.02),
+            SizedBox(height: Screen.max(context) * 0.02),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Basic Price:",
                   style: GoogleFonts.montserrat(
-                    fontSize: maximumDimension * 0.015,
+                    fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w500,
                     color: MyColors.Yellow,
                   ),
@@ -189,7 +179,7 @@ class _PricingSectionState extends State<PricingSection> {
                 Text(
                   widget.listing['Listing']['basicPrice'].toString(),
                   style: GoogleFonts.montserrat(
-                    fontSize: maximumDimension * 0.015,
+                    fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400,
                     color: MyColors.white,
                   ),
@@ -197,10 +187,10 @@ class _PricingSectionState extends State<PricingSection> {
               ],
             ),
             SizedBox(
-              height: screenHeight * 0.05,
+              height: Screen.height(context) * 0.05,
               child: Center(
                   child: MyDivider(
-                width: screenWidth * 0.85,
+                width: Screen.width(context) * 0.85,
               )),
             ),
           ],
@@ -216,7 +206,6 @@ class _PricingSectionState extends State<PricingSection> {
     TextEditingController controller,
     VoidCallback onEdit,
     VoidCallback onSave,
-    double maximumDimension,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +213,7 @@ class _PricingSectionState extends State<PricingSection> {
         Text(
           label,
           style: GoogleFonts.montserrat(
-            fontSize: maximumDimension * 0.015,
+            fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w500,
             color: MyColors.Yellow,
           ),
@@ -234,7 +223,7 @@ class _PricingSectionState extends State<PricingSection> {
             controller: controller,
             keyboardType: TextInputType.number,
             style: GoogleFonts.montserrat(
-              fontSize: maximumDimension * 0.015,
+              fontSize: Screen.max(context) * 0.015,
               color: MyColors.white,
             ),
             decoration: InputDecoration(
@@ -247,7 +236,7 @@ class _PricingSectionState extends State<PricingSection> {
           Text(
             widget.listing['Listing'][field].toString(),
             style: GoogleFonts.montserrat(
-              fontSize: maximumDimension * 0.015,
+              fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.w400,
               color: MyColors.white,
             ),
@@ -266,7 +255,6 @@ class _PricingSectionState extends State<PricingSection> {
   Widget _buildNonEditableRow(
     String label,
     String value,
-    double maximumDimension,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +262,7 @@ class _PricingSectionState extends State<PricingSection> {
         Text(
           label,
           style: GoogleFonts.montserrat(
-            fontSize: maximumDimension * 0.015,
+            fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w500,
             color: MyColors.Yellow,
           ),
@@ -282,7 +270,7 @@ class _PricingSectionState extends State<PricingSection> {
         Text(
           value,
           style: GoogleFonts.montserrat(
-            fontSize: maximumDimension * 0.015,
+            fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w400,
             color: MyColors.white,
           ),

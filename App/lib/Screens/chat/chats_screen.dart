@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -67,13 +68,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
         if (messagesSnapshot.docs.isNotEmpty) {
           List<String> ids = chatDoc.id.split('-');
-          print(ids);
+
           final user = await usersCollection
               .doc(messagesSnapshot.docs.first['receiverId'])
               .get();
           if (user.id != loggedInUserId &&
               (loggedInUserId == ids[0] || loggedInUserId == ids[1])) {
-            print('${ids[0]} - ${ids[1]}');
             return {
               'userId': user.id,
               'chatimage':
@@ -107,13 +107,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
       setState(() {
         userChats.addAll(chats.cast<Map<String, dynamic>>());
-        for (int i = 0; i < userChats.length; i++) {
-          print('${userChats[i]['userId']}');
-        }
+        for (int i = 0; i < userChats.length; i++) {}
         groups = filteredGroups;
       });
     } catch (e) {
-      print("Error fetching chats or groups: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching chats or groups: $e'});
     } finally {
       setState(() {
         isLoading = false;
@@ -155,9 +155,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -169,7 +169,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 heading: "Chats",
                 para: "View your chats and groups below.",
               ),
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: Screen.height(context) * 0.02),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -248,12 +248,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
             ],
           ),
           Positioned(
-            bottom: screenHeight * 0.05,
-            right: screenHeight * 0.03,
+            bottom: Screen.height(context) * 0.05,
+            right: Screen.height(context) * 0.03,
             child: InkWell(
               onTap: _navigateToCreateGroup,
               child: Container(
-                padding: EdgeInsets.all(screenWidth * 0.05),
+                padding: EdgeInsets.all(Screen.width(context) * 0.05),
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
@@ -275,7 +275,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       Icons.add,
                       color: Colors.white,
                     ),
-                    SizedBox(width: screenWidth * 0.01),
+                    SizedBox(width: Screen.width(context) * 0.01),
                     Text(
                       'Create Group',
                       style: GoogleFonts.montserrat(

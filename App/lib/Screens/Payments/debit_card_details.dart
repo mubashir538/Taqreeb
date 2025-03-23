@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/validations.dart';
@@ -28,9 +30,6 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
@@ -39,17 +38,21 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
             Header(
               heading: "Secure Payment",
             ),
-            SizedBox(height: screenHeight * 0.02), // Responsive spacing
             SizedBox(
-              width: screenWidth * 0.9,
+                height: Screen.height(context) * 0.02), // Responsive spacing
+            SizedBox(
+              width: Screen.width(context) * 0.9,
               child: Column(
                 children: [
                   // Card Information Section
                   Container(
-                    padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
+                    padding: EdgeInsets.all(
+                        Screen.width(context) * 0.04), // Responsive padding
                     decoration: BoxDecoration(
-                      color: MyColors.DarkLighter, // Use your card background color
-                      borderRadius: BorderRadius.circular(screenWidth * 0.02), // Rounded corners
+                      color: MyColors
+                          .DarkLighter, // Use your card background color
+                      borderRadius: BorderRadius.circular(
+                          Screen.width(context) * 0.02), // Rounded corners
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,18 +61,22 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                         Text(
                           'Card Information',
                           style: TextStyle(
-                            fontSize: screenWidth * 0.045, // Responsive font size
+                            fontSize: Screen.width(context) *
+                                0.045, // Responsive font size
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.02), // Responsive spacing
 
                         // Card Number
                         Text(
                           'Card Number',
                           style: TextStyle(
-                            fontSize: screenWidth * 0.035, // Responsive font size
+                            fontSize: Screen.width(context) *
+                                0.035, // Responsive font size
                             color: Colors.grey,
                           ),
                         ),
@@ -79,11 +86,14 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                           errorText: cardNumberError,
                           onChanged: (value) {
                             setState(() {
-                              cardNumberError = Validations.validateIntFields(value);
+                              cardNumberError =
+                                  Validations.validateIntFields(value);
                             });
                           },
                         ),
-                        SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.02), // Responsive spacing
 
                         // Expiry Date and CVV
                         Row(
@@ -96,7 +106,8 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                                   Text(
                                     'Expiry Date',
                                     style: TextStyle(
-                                      fontSize: screenWidth * 0.035, // Responsive font size
+                                      fontSize: Screen.width(context) *
+                                          0.035, // Responsive font size
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -106,7 +117,9 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                                     errorText: expiryDateError,
                                     onChanged: (value) {
                                       setState(() {
-                                        expiryDateError = Validations.validateIntFields(value);
+                                        expiryDateError =
+                                            Validations.validateIntFields(
+                                                value);
                                       });
                                     },
                                   ),
@@ -122,7 +135,8 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                                   Text(
                                     'CVV',
                                     style: TextStyle(
-                                      fontSize: screenWidth * 0.035, // Responsive font size
+                                      fontSize: Screen.width(context) *
+                                          0.035, // Responsive font size
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -132,7 +146,9 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                                     errorText: cvvError,
                                     onChanged: (value) {
                                       setState(() {
-                                        cvvError = Validations.validateIntFields(value);
+                                        cvvError =
+                                            Validations.validateIntFields(
+                                                value);
                                       });
                                     },
                                   ),
@@ -141,13 +157,16 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.02), // Responsive spacing
 
                         // Cardholder Name
                         Text(
                           'Cardholder Name',
                           style: TextStyle(
-                            fontSize: screenWidth * 0.035, // Responsive font size
+                            fontSize: Screen.width(context) *
+                                0.035, // Responsive font size
                             color: Colors.grey,
                           ),
                         ),
@@ -157,7 +176,8 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                           errorText: cardholderNameError,
                           onChanged: (value) {
                             setState(() {
-                              cardholderNameError = Validations.validateName(value);
+                              cardholderNameError =
+                                  Validations.validateName(value);
                             });
                           },
                         ),
@@ -167,25 +187,30 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.03), // Responsive spacing
+            SizedBox(
+                height: Screen.height(context) * 0.03), // Responsive spacing
 
             // Divider
             Divider(
               thickness: 1,
               color: Colors.grey[300],
             ),
-            SizedBox(height: screenHeight * 0.03), // Responsive spacing
+            SizedBox(
+                height: Screen.height(context) * 0.03), // Responsive spacing
 
             // Order Summary Section
             SizedBox(
-              width: screenWidth * 0.9,
+              width: Screen.width(context) * 0.9,
               child: Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
+                    padding: EdgeInsets.all(
+                        Screen.width(context) * 0.04), // Responsive padding
                     decoration: BoxDecoration(
-                      color: MyColors.DarkLighter, // Use your card background color
-                      borderRadius: BorderRadius.circular(screenWidth * 0.02), // Rounded corners
+                      color: MyColors
+                          .DarkLighter, // Use your card background color
+                      borderRadius: BorderRadius.circular(
+                          Screen.width(context) * 0.02), // Rounded corners
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,12 +219,15 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                         Text(
                           'Order Summary',
                           style: TextStyle(
-                            fontSize: screenWidth * 0.045, // Responsive font size
+                            fontSize: Screen.width(context) *
+                                0.045, // Responsive font size
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.02), // Responsive spacing
 
                         // Subtotal
                         Row(
@@ -208,21 +236,25 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                             Text(
                               'Subtotal',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.035, // Responsive font size
+                                fontSize: Screen.width(context) *
+                                    0.035, // Responsive font size
                                 color: Colors.grey,
                               ),
                             ),
                             Text(
                               '\$129.99',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.04, // Responsive font size
+                                fontSize: Screen.width(context) *
+                                    0.04, // Responsive font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: screenHeight * 0.01), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.01), // Responsive spacing
 
                         // Tax
                         Row(
@@ -231,28 +263,34 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                             Text(
                               'Tax',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.035, // Responsive font size
+                                fontSize: Screen.width(context) *
+                                    0.035, // Responsive font size
                                 color: Colors.grey,
                               ),
                             ),
                             Text(
                               '\$12.99',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.04, // Responsive font size
+                                fontSize: Screen.width(context) *
+                                    0.04, // Responsive font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: screenHeight * 0.03), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.03), // Responsive spacing
 
                         // Divider
                         Divider(
                           thickness: 1,
                           color: Colors.grey[300],
                         ),
-                        SizedBox(height: screenHeight * 0.03), // Responsive spacing
+                        SizedBox(
+                            height: Screen.height(context) *
+                                0.03), // Responsive spacing
 
                         // Total Amount
                         Row(
@@ -261,7 +299,8 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                             Text(
                               'Pay',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.045, // Responsive font size
+                                fontSize: Screen.width(context) *
+                                    0.045, // Responsive font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -269,7 +308,8 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                             Text(
                               '\$145.97',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.045, // Responsive font size
+                                fontSize: Screen.width(context) *
+                                    0.045, // Responsive font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -282,7 +322,8 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.03), // Responsive spacing
+            SizedBox(
+                height: Screen.height(context) * 0.03), // Responsive spacing
 
             // Payment Button
             ColoredButton(
@@ -290,10 +331,13 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
               onPressed: () {
                 // Validate all fields before proceeding
                 setState(() {
-                  cardNumberError = Validations.validateIntFields(CardNumber.text);
-                  expiryDateError = Validations.validateIntFields(ExpireyDate.text);
+                  cardNumberError =
+                      Validations.validateIntFields(CardNumber.text);
+                  expiryDateError =
+                      Validations.validateIntFields(ExpireyDate.text);
                   cvvError = Validations.validateIntFields(CVV.text);
-                  cardholderNameError = Validations.validateName(CardholderName.text);
+                  cardholderNameError =
+                      Validations.validateName(CardholderName.text);
                 });
 
                 if (cardNumberError.isEmpty &&
@@ -302,19 +346,15 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                     cardholderNameError.isEmpty) {
                   // All fields are valid, proceed with payment
                   // Add your payment logic here
-                  print("Payment Successful!");
                 } else {
                   // Show error message if any field is invalid
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Please fix the errors before proceeding."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  MyScaffold(text: 'Please fix the errors before proceeding.')
+                      .show(context);
                 }
               },
             ),
-            SizedBox(height: screenHeight * 0.005), // Responsive spacing
+            SizedBox(
+                height: Screen.height(context) * 0.005), // Responsive spacing
 
             // Cancel Payment
             Center(
@@ -326,30 +366,35 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
                   'Cancel Payment',
                   style: TextStyle(
                     color: MyColors.white,
-                    fontSize: screenWidth * 0.035, // Responsive font size
+                    fontSize:
+                        Screen.width(context) * 0.035, // Responsive font size
                   ),
                 ),
               ),
             ),
-            SizedBox(height: screenHeight * 0.02), // Responsive spacing
+            SizedBox(
+                height: Screen.height(context) * 0.02), // Responsive spacing
 
             // Footer
             Center(
               child: Text(
                 'By proceeding, you agree to our Terms and Privacy Policy',
                 style: TextStyle(
-                  fontSize: screenWidth * 0.03, // Responsive font size
+                  fontSize:
+                      Screen.width(context) * 0.03, // Responsive font size
                   color: Colors.grey,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: screenHeight * 0.01), // Responsive spacing
+            SizedBox(
+                height: Screen.height(context) * 0.01), // Responsive spacing
             Center(
               child: Text(
                 'Secure payment processing by Stripe',
                 style: TextStyle(
-                  fontSize: screenWidth * 0.03, // Responsive font size
+                  fontSize:
+                      Screen.width(context) * 0.03, // Responsive font size
                   color: Colors.grey,
                 ),
               ),

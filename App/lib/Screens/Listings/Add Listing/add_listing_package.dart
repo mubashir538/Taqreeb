@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class AddcategoryPackages extends StatefulWidget {
   const AddcategoryPackages({super.key});
@@ -45,10 +45,6 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -56,17 +52,18 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
         children: [
           SingleChildScrollView(
             child: Container(
-              constraints: BoxConstraints(minHeight: screenHeight),
-              width: screenWidth,
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
+              width: Screen.width(context),
               child: Column(
                 children: [
-                  SizedBox(height: (screenHeight * 0.03) + _headerHeight),
+                  SizedBox(
+                      height: (Screen.height(context) * 0.03) + _headerHeight),
                   Container(
-                    margin: EdgeInsets.all(MaximumThing * 0.01),
+                    margin: EdgeInsets.all(Screen.max(context) * 0.01),
                     child: Text(
                       "Packages",
                       style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.025,
+                        fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w600,
                         color: MyColors.Yellow,
                       ),
@@ -89,12 +86,12 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
             ),
           ),
           Positioned(
-            bottom: screenHeight * 0.02,
-            left: screenWidth * 0.25,
-            right: screenWidth * 0.25,
+            bottom: Screen.height(context) * 0.02,
+            left: Screen.width(context) * 0.25,
+            right: Screen.width(context) * 0.25,
             child: ColoredButton(
                 text: 'Continue',
-                width: screenWidth * 0.5,
+                width: Screen.width(context) * 0.5,
                 onPressed: () {
                   Navigator.pushNamed(
                     context,
@@ -128,7 +125,7 @@ class _AddcategoryPackagesState extends State<AddcategoryPackages> {
         child: Icon(
           Icons.add,
           color: MyColors.Dark,
-          size: MaximumThing * 0.04,
+          size: Screen.max(context) * 0.04,
         ),
       ),
     );

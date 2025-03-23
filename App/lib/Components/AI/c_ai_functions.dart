@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -14,27 +15,25 @@ class AIFunctions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     TextStyle heading = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.02,
+        fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w500,
         color: MyColors.white);
     TextStyle body = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.02,
+        fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w400,
         color: MyColors.white);
 
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
-        width: screenWidth * 0.9,
-        height: screenHeight * 0.2,
-        padding: EdgeInsets.all(MaximumThing * 0.02),
-        margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+        width: Screen.width(context) * 0.9,
+        height: Screen.height(context) * 0.2,
+        padding: EdgeInsets.all(Screen.max(context) * 0.02),
+        margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
             color: MyColors.DarkLighter),

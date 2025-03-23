@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/AI/c_ai_packages.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -10,30 +11,28 @@ class ViewAIPackage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Header(),
-          SizedBox(height: MaximumThing * 0.03),
+          SizedBox(height: Screen.max(context) * 0.03),
           Text(
             'Your Suggested Packages',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.025,
+                fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: Colors.yellow),
           ),
-          SizedBox(height: MaximumThing * 0.02),
+          SizedBox(height: Screen.max(context) * 0.02),
           Expanded(
             child: SizedBox(
-              width: screenWidth * 0.9,
+              width: Screen.width(context) * 0.9,
               child: ListView.builder(
                 itemCount: 5,
                 itemBuilder: (context, index) {

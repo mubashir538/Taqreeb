@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -31,20 +32,13 @@ class _ProductInfoState extends State<ProductInfo> {
     return formattedString;
   }
 
-  void main() {
-    int number = 1000000;
-    String formattedNumber = formatNumber(number);
-    print(formattedNumber);
-  }
-
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
     return Container(
-      padding:
-          EdgeInsets.only(top: max * 0.04),
+      padding: EdgeInsets.only(top: max * 0.04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

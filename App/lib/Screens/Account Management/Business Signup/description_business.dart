@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -42,10 +44,6 @@ class _BusinessSignup_DescriptionState
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
         backgroundColor: Colors.black,
@@ -53,7 +51,7 @@ class _BusinessSignup_DescriptionState
           children: [
             SingleChildScrollView(
               child: Container(
-                width: screenWidth,
+                width: Screen.width(context),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -70,7 +68,7 @@ class _BusinessSignup_DescriptionState
                                 });
                               }),
                           SizedBox(
-                            width: screenWidth * 0.9,
+                            width: Screen.width(context) * 0.9,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -78,7 +76,7 @@ class _BusinessSignup_DescriptionState
                                   "${charactersLeft.toString()} characters left",
                                   style: GoogleFonts.montserrat(
                                     color: MyColors.white,
-                                    fontSize: MaximumThing * 0.018,
+                                    fontSize: Screen.max(context) * 0.018,
                                     fontWeight: FontWeight.w300,
                                   ),
                                 ),
@@ -86,31 +84,29 @@ class _BusinessSignup_DescriptionState
                             ),
                           ),
                           SizedBox(
-                            height: screenHeight * 0.05,
+                            height: Screen.height(context) * 0.05,
                             child: MyDivider(),
                           ),
                           ColoredButton(
                               text: "Continue",
                               onPressed: () {
                                 if (descriptionController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              "Please Enter a Description")));
+                                  MyScaffold(text: "Please Enter a Description")
+                                      .show(context);
                                   return;
                                 }
                                 if (descriptionController.text.length > 1100) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              "Description should be less than 1100 characters")));
+                                  MyScaffold(
+                                          text:
+                                              "Description should be less than 1100 characters")
+                                      .show(context);
                                   return;
                                 }
                                 if (descriptionController.text.length < 50) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              "Description should be more than 50 characters")));
+                                  MyScaffold(
+                                          text:
+                                              "Description should be more than 50 characters")
+                                      .show(context);
                                   return;
                                 }
                                 MyStorage.saveToken(descriptionController.text,

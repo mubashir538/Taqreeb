@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -43,7 +44,6 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -51,12 +51,14 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
         children: [
           SingleChildScrollView(
             child: Container(
-              constraints: BoxConstraints(minHeight: screenHeight),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(children: [
-                    SizedBox(height: (screenHeight * 0.01) + _headerHeight),
+                    SizedBox(
+                        height:
+                            (Screen.height(context) * 0.01) + _headerHeight),
                     ResponsiveDropdown(
                         items: ["Karachi", "Lahore", "Islamabad", "Peshawar"],
                         labelText: "City",
@@ -78,7 +80,7 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
                         valueController: ageController,
                         isNum: true),
                     SizedBox(
-                      height: screenHeight * 0.1,
+                      height: Screen.height(context) * 0.1,
                       child: Center(child: MyDivider()),
                     ),
                     ColoredButton(

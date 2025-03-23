@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -52,18 +53,13 @@ class _MyTextBoxState extends State<MyTextBox> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: EdgeInsets.symmetric(vertical: maximumThing * 0.01),
-          height: screenHeight * 0.06,
-          width: screenWidth * 0.9,
+          margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+          height: Screen.height(context) * 0.06,
+          width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
             color: MyColors.DarkLighter,
             borderRadius: BorderRadius.circular(10),
@@ -85,7 +81,8 @@ class _MyTextBoxState extends State<MyTextBox> {
             ],
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+            padding:
+                EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
             child: Row(
               children: [
                 Expanded(
@@ -110,7 +107,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                               ]
                             : null,
                     style: GoogleFonts.montserrat(
-                      fontSize: maximumThing * 0.018,
+                      fontSize: Screen.max(context) * 0.018,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
                     ),
@@ -118,7 +115,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                       hintText: widget.hint,
                       hintStyle: GoogleFonts.montserrat(
                         color: MyColors.white.withOpacity(0.6),
-                        fontSize: maximumThing * 0.015,
+                        fontSize: Screen.max(context) * 0.015,
                       ),
                       border: InputBorder.none,
                     ),
@@ -142,12 +139,12 @@ class _MyTextBoxState extends State<MyTextBox> {
         ),
         if (widget.errorText != null && widget.errorText!.isNotEmpty)
           Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.05),
+            padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
             child: Text(
               widget.errorText!,
               style: GoogleFonts.montserrat(
                 color: MyColors.red,
-                fontSize: maximumThing * 0.015,
+                fontSize: Screen.max(context) * 0.015,
               ),
             ),
           ),

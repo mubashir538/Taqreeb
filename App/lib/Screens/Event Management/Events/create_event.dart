@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_color_picker.dart';
@@ -109,27 +111,13 @@ class _CreateEventState extends State<CreateEvent> {
             }
           }
           if (Event == {} || Event['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             this.token = token;
             this.types = types ?? {};
             if (types == null || types['status'] == 'error') {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Something Went Wrong!',
-                    style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        color: MyColors.white,
-                        fontWeight: FontWeight.w400)),
-                backgroundColor: MyColors.red,
-              ));
+              MyScaffold(text: 'Something Went Wrong!').show(context);
               return;
             } else {
               isLoading = false;
@@ -149,7 +137,6 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -164,7 +151,8 @@ class _CreateEventState extends State<CreateEvent> {
                   image: MyImages.SingupPng,
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                  margin: EdgeInsets.symmetric(
+                      horizontal: Screen.width(context) * 0.05),
                   child: Column(
                     children: [
                       QuestionGroup(questions: [
@@ -245,7 +233,7 @@ class _CreateEventState extends State<CreateEvent> {
                           onFieldSubmitted: (_) {
                             FocusScope.of(context).requestFocus(budgetFocus);
                           },
-                          hint: "Maximum Guests",
+                          hint: "Screen.max(context) Guests",
                           isNum: true,
                           valueController: guestMaxController,
                         ),
@@ -274,9 +262,8 @@ class _CreateEventState extends State<CreateEvent> {
                         locationController.text.isEmpty ||
                         descriptionController.text.isEmpty ||
                         budgetController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Please fill all the fields"),
-                      ));
+                      MyScaffold(text: 'Please fill all the fields')
+                          .show(context);
                       return;
                     }
                     final userId =
@@ -300,23 +287,26 @@ class _CreateEventState extends State<CreateEvent> {
                           'guestmax': guestMaxController.text
                         });
                     if (response['status'] == 'error') {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Something Went Wrong! Please Try Again Later!")));
+                      MyScaffold(
+                              text:
+                                  'Something Went Wrong! Please Try Again Later!')
+                          .show(context);
                       return;
                     }
                     if (response['status'] == 'success') {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: edit
-                              ? Text('Event Updated Successfully')
-                              : Text('Event Created Successfully')));
+                      MyScaffold(
+                              text: edit
+                                  ? 'Event Updated Successfully'
+                                  : 'Event Created Successfully')
+                          .show(context);
                       Navigator.pushNamedAndRemoveUntil(
                           context, '/YourEvents', ModalRoute.withName('/'));
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(edit
-                              ? 'Error Updating Event'
-                              : 'Error Creating Event')));
+                      MyScaffold(
+                              text: edit
+                                  ? 'Error Updating Event'
+                                  : 'Error Creating Event')
+                          .show(context);
                     }
                   },
                 ),

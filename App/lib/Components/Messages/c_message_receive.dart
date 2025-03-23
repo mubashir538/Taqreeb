@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -18,21 +19,16 @@ class RecieveMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
-      margin: EdgeInsets.only(bottom: MaximumThing * 0.02),
-      width: screenWidth * 0.9,
+      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
+      margin: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
+      width: Screen.width(context) * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
-            padding: EdgeInsets.all(MaximumThing * 0.02),
+            constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
+            padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
               color: MyColors.DarkLighter,
               borderRadius: BorderRadius.only(
@@ -51,7 +47,7 @@ class RecieveMessage extends StatelessWidget {
                     child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
-                      width: screenWidth * 0.6,
+                      width: Screen.width(context) * 0.6,
                     ),
                   ),
                 if (text.isNotEmpty)
@@ -60,7 +56,7 @@ class RecieveMessage extends StatelessWidget {
                     softWrap: true,
                     textAlign: TextAlign.start,
                     style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.015,
+                      fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
                     ),
@@ -74,7 +70,7 @@ class RecieveMessage extends StatelessWidget {
                         "Voice Note",
                         style: GoogleFonts.montserrat(
                           color: MyColors.white,
-                          fontSize: MaximumThing * 0.015,
+                          fontSize: Screen.max(context) * 0.015,
                         ),
                       ),
                     ],
@@ -87,7 +83,7 @@ class RecieveMessage extends StatelessWidget {
             time,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w300,
-              fontSize: MaximumThing * 0.013,
+              fontSize: Screen.max(context) * 0.013,
             ),
           ),
         ],

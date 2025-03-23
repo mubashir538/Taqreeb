@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -20,8 +21,6 @@ class Headersecondary extends StatefulWidget {
 class _HeadersecondaryState extends State<Headersecondary> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     bool hasSomething = widget.heading.isNotEmpty ||
         widget.para.isNotEmpty ||
         widget.image.isNotEmpty;
@@ -31,16 +30,10 @@ class _HeadersecondaryState extends State<Headersecondary> {
           ? true
           : false;
     }
-    double MaximumThing;
-    if (screenWidth > screenHeight) {
-      MaximumThing = screenWidth;
-    } else {
-      MaximumThing = screenHeight;
-    }
 
     return Container(
-      height: hasSomething ? null : screenHeight * 0.1,
-      width: screenWidth,
+      height: hasSomething ? null : Screen.height(context) * 0.1,
+      width: Screen.width(context),
       decoration: BoxDecoration(
         color: MyColors.red,
         borderRadius: hasSomething
@@ -51,51 +44,52 @@ class _HeadersecondaryState extends State<Headersecondary> {
       ),
       child: Column(
         children: [
-          SizedBox(height: screenHeight * 0.1),
+          SizedBox(height: Screen.height(context) * 0.1),
           widget.heading.isNotEmpty
               ? Column(children: [
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: Screen.height(context) * 0.02),
                   Text(
                     widget.heading,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.025,
+                        fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w700,
                         color: MyColors.Yellow),
                   ),
                   SizedBox(
                       height: widget.para.isNotEmpty || widget.image.isNotEmpty
-                          ? screenHeight * 0.01
-                          : screenHeight * 0.03),
+                          ? Screen.height(context) * 0.01
+                          : Screen.height(context) * 0.03),
                 ])
               : Container(),
           widget.para.isNotEmpty
               ? Column(children: [
-                  SizedBox(height: screenHeight * 0.005),
+                  SizedBox(height: Screen.height(context) * 0.005),
                   Text(
                     widget.para,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.013,
+                        fontSize: Screen.max(context) * 0.013,
                         fontWeight: FontWeight.w400,
                         color: MyColors.white),
                   ),
                   SizedBox(
                       height: widget.image.isNotEmpty
-                          ? screenHeight * 0.01
-                          : screenHeight * 0.03),
+                          ? Screen.height(context) * 0.01
+                          : Screen.height(context) * 0.03),
                 ])
               : Container(),
           widget.image.isNotEmpty
               ? Column(
                   children: [
-                    SizedBox(height: screenHeight * 0.01),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: Screen.height(context) * 0.01),
+                    SizedBox(height: Screen.height(context) * 0.03),
                     isSvg
                         ? SvgPicture.asset(widget.image,
-                            height: screenHeight * 0.2)
-                        : Image.asset(widget.image, height: screenHeight * 0.2),
-                    SizedBox(height: screenHeight * 0.03),
+                            height: Screen.height(context) * 0.2)
+                        : Image.asset(widget.image,
+                            height: Screen.height(context) * 0.2),
+                    SizedBox(height: Screen.height(context) * 0.03),
                   ],
                 )
               : Container(),

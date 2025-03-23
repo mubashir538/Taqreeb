@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -51,14 +53,7 @@ class _EventDetailsState extends State<EventDetails> {
           this.token = token;
           this.events = Event ?? {};
           if (Event == null || Event['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -76,18 +71,16 @@ class _EventDetailsState extends State<EventDetails> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     TextStyle heading = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.017,
+        fontSize: Screen.max(context) * 0.017,
         fontWeight: FontWeight.w600,
         color: MyColors.Yellow);
 
     TextStyle text = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.017,
+        fontSize: Screen.max(context) * 0.017,
         fontWeight: FontWeight.w400,
         color: MyColors.white);
     return Scaffold(
@@ -100,7 +93,7 @@ class _EventDetailsState extends State<EventDetails> {
                 heading: "Your Event Details",
                 image: MyImages.EventDetails,
               ),
-              SizedBox(height: screenHeight * 0.03),
+              SizedBox(height: Screen.height(context) * 0.03),
               isLoading
                   ? Center(
                       child: CircularProgressIndicator(
@@ -111,13 +104,13 @@ class _EventDetailsState extends State<EventDetails> {
                         Text(
                           events['EventDetail']['name'],
                           style: GoogleFonts.montserrat(
-                              fontSize: MaximumThing * 0.03,
+                              fontSize: Screen.max(context) * 0.03,
                               fontWeight: FontWeight.w700,
                               color: MyColors.Yellow),
                         ),
-                        SizedBox(height: screenHeight * 0.02),
+                        SizedBox(height: Screen.height(context) * 0.02),
                         SizedBox(
-                          width: screenWidth * 0.9,
+                          width: Screen.width(context) * 0.9,
                           child: Column(children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -130,7 +123,7 @@ class _EventDetailsState extends State<EventDetails> {
                                     style: text)
                               ],
                             ),
-                            SizedBox(height: screenHeight * 0.01),
+                            SizedBox(height: Screen.height(context) * 0.01),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -138,7 +131,7 @@ class _EventDetailsState extends State<EventDetails> {
                                 Text(events['EventDetail']['type'], style: text)
                               ],
                             ),
-                            SizedBox(height: screenHeight * 0.01),
+                            SizedBox(height: Screen.height(context) * 0.01),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -148,7 +141,7 @@ class _EventDetailsState extends State<EventDetails> {
                                     style: text)
                               ],
                             ),
-                            SizedBox(height: screenHeight * 0.01),
+                            SizedBox(height: Screen.height(context) * 0.01),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -156,10 +149,10 @@ class _EventDetailsState extends State<EventDetails> {
                                 Text(events['EventDetail']['date'], style: text)
                               ],
                             ),
-                            SizedBox(height: screenHeight * 0.01),
+                            SizedBox(height: Screen.height(context) * 0.01),
                           ]),
                         ),
-                        SizedBox(height: screenHeight * 0.02),
+                        SizedBox(height: Screen.height(context) * 0.02),
                         ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -177,32 +170,15 @@ class _EventDetailsState extends State<EventDetails> {
                                           .toString(),
                                     });
                                 if (response['status'] == 'success') {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                      'Function Deleted Successfully',
-                                      style: GoogleFonts.montserrat(
-                                        color: MyColors.white,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    backgroundColor: MyColors.green,
-                                  ));
+                                  MyScaffold(
+                                          text: 'Function Deleted Successfully')
+                                      .show(context);
                                   setState(() {
                                     events["Functions"].removeAt(index);
                                   });
                                 } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                      'Something Went Wrong!',
-                                      style: GoogleFonts.montserrat(
-                                        color: MyColors.white,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    backgroundColor: MyColors.red,
-                                  ));
+                                  MyScaffold(text: 'Something Went Wrong!')
+                                      .show(context);
                                 }
                               },
                               color: Color(int.parse(
@@ -239,10 +215,10 @@ class _EventDetailsState extends State<EventDetails> {
                               : 0,
                         ),
                         Container(
-                          margin: EdgeInsets.all(MaximumThing * 0.01),
+                          margin: EdgeInsets.all(Screen.max(context) * 0.01),
                           padding: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.01,
-                              horizontal: screenWidth * 0.03),
+                              vertical: Screen.height(context) * 0.01,
+                              horizontal: Screen.width(context) * 0.03),
                           decoration: BoxDecoration(
                               color: MyColors.DarkLighter,
                               borderRadius: BorderRadius.circular(10),
@@ -254,7 +230,7 @@ class _EventDetailsState extends State<EventDetails> {
                                   offset: Offset(2, 2),
                                 ),
                               ]),
-                          width: screenWidth * 0.8,
+                          width: Screen.width(context) * 0.8,
                           child: InkWell(
                               onTap: () async {
                                 final response = await MyApi.postRequest(
@@ -283,10 +259,10 @@ class _EventDetailsState extends State<EventDetails> {
                               child: Text("Event GuestList")),
                         ),
                         Container(
-                          margin: EdgeInsets.all(MaximumThing * 0.01),
+                          margin: EdgeInsets.all(Screen.max(context) * 0.01),
                           padding: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.01,
-                              horizontal: screenWidth * 0.03),
+                              vertical: Screen.height(context) * 0.01,
+                              horizontal: Screen.width(context) * 0.03),
                           decoration: BoxDecoration(
                               color: MyColors.DarkLighter,
                               borderRadius: BorderRadius.circular(10),
@@ -298,7 +274,7 @@ class _EventDetailsState extends State<EventDetails> {
                                   offset: Offset(2, 2),
                                 ),
                               ]),
-                          width: screenWidth * 0.8,
+                          width: Screen.width(context) * 0.8,
                           child: InkWell(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -310,10 +286,10 @@ class _EventDetailsState extends State<EventDetails> {
                               child: Text("Event CheckLlist")),
                         ),
                         Container(
-                          margin: EdgeInsets.all(MaximumThing * 0.01),
+                          margin: EdgeInsets.all(Screen.max(context) * 0.01),
                           padding: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.01,
-                              horizontal: screenWidth * 0.03),
+                              vertical: Screen.height(context) * 0.01,
+                              horizontal: Screen.width(context) * 0.03),
                           decoration: BoxDecoration(
                               color: MyColors.DarkLighter,
                               borderRadius: BorderRadius.circular(10),
@@ -325,7 +301,7 @@ class _EventDetailsState extends State<EventDetails> {
                                   offset: Offset(2, 2),
                                 ),
                               ]),
-                          width: screenWidth * 0.8,
+                          width: Screen.width(context) * 0.8,
                           child: InkWell(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -334,7 +310,7 @@ class _EventDetailsState extends State<EventDetails> {
                               child: Text("View Invitation Card")),
                         ),
                         SizedBox(
-                          height: screenHeight * 0.1,
+                          height: Screen.height(context) * 0.1,
                           child: Center(child: MyDivider()),
                         ),
                         ColoredButton(

@@ -1,4 +1,5 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:taqreeb/Components/temp/Cart%20Item.dart';
 
 // class Cart extends StatefulWidget {
@@ -11,8 +12,8 @@
 // class _CartState extends State<Cart> {
 //   @override
 //   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     double screenHeight = MediaQuery.of(context).size.height;
+//
+//
 
 //     return Scaffold(
 //       backgroundColor: MyColors.Dark,
@@ -23,7 +24,7 @@
 //               child: Column(
 //                 children: [
 //                   SizedBox(
-//                     width: screenWidth * 0.9,
+//                     width: Screen.width(context) * 0.9,
 //                     child: ListView.builder(
 //                       shrinkWrap: true,
 //                       physics: NeverScrollableScrollPhysics(),
@@ -35,7 +36,7 @@
 //                   ),
 //                   Container(
 //                       margin:
-//                           EdgeInsets.symmetric(vertical: screenHeight * 0.04),
+//                           EdgeInsets.symmetric(vertical: Screen.height(context) * 0.04),
 //                       child: ColoredButton(text: 'Proceed'))
 //                 ],
 //               ),

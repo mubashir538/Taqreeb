@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
 import 'package:taqreeb/Screens/chat/chats_screen.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -57,11 +58,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     double keyboard = MediaQuery.of(context).viewInsets.bottom;
     bool isKeyboardVisible = keyboard > 0;
     List<Widget> currentPageList =
@@ -77,8 +76,8 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: isKeyboardVisible
           ? null
           : SizedBox(
-              width: screenWidth * 0.15,
-              height: screenWidth * 0.15,
+              width: Screen.width(context) * 0.15,
+              height: Screen.width(context) * 0.15,
               child: FloatingActionButton(
                 heroTag: null,
                 onPressed: () {
@@ -92,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
                 shape: const CircleBorder(),
                 child: Icon(
                   Icons.add,
-                  size: maximumThing * 0.04,
+                  size: Screen.max(context) * 0.04,
                   color: MyColors.Dark,
                 ),
               ),

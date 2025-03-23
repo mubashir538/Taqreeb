@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -87,10 +88,6 @@ class _FreelancerSignup_BasicInfoState
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -98,11 +95,11 @@ class _FreelancerSignup_BasicInfoState
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
+              width: Screen.width(context),
               child: Column(
                 children: [
                   SizedBox(
-                    height: (MaximumThing * 0.05) + _headerHeight,
+                    height: (Screen.max(context) * 0.05) + _headerHeight,
                   ),
                   MyTextBox(
                     focusNode: fullnameFocus,
@@ -129,7 +126,7 @@ class _FreelancerSignup_BasicInfoState
                     valueController: portfoliocontroller,
                   ),
                   SizedBox(
-                    height: screenHeight * 0.05,
+                    height: Screen.height(context) * 0.05,
                     child: MyDivider(),
                   ),
                   ColoredButton(

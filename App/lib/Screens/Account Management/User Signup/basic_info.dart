@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -97,8 +98,6 @@ class _BasicSignupState extends State<BasicSignup> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -106,7 +105,7 @@ class _BasicSignupState extends State<BasicSignup> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
+              width: Screen.width(context),
               child: Column(
                 children: [
                   SizedBox(
@@ -233,9 +232,6 @@ class _BasicSignupState extends State<BasicSignup> {
                                     'Authorization':
                                         'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
                                   });
-                              if (res['status'] == 'success') {
-                                print('FCM saved');
-                              }
                               Navigator.pushNamedAndRemoveUntil(context,
                                   '/HomePage', ModalRoute.withName('/'));
                             }
@@ -243,17 +239,17 @@ class _BasicSignupState extends State<BasicSignup> {
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(
-                              horizontal: screenHeight * 0.015,
-                              vertical: screenHeight * 0.02),
-                          height: screenHeight * 0.06,
-                          width: screenHeight * 0.06,
+                              horizontal: Screen.height(context) * 0.015,
+                              vertical: Screen.height(context) * 0.02),
+                          height: Screen.height(context) * 0.06,
+                          width: Screen.height(context) * 0.06,
                           decoration: BoxDecoration(
                               color: MyColors.DarkLighter,
                               borderRadius: BorderRadius.circular(50)),
                           child: Center(
                             child: SvgPicture.asset(MyIcons.google,
-                                width: screenHeight * 0.04,
-                                height: screenHeight * 0.04),
+                                width: Screen.height(context) * 0.04,
+                                height: Screen.height(context) * 0.04),
                           ),
                         ),
                       ),
@@ -263,17 +259,17 @@ class _BasicSignupState extends State<BasicSignup> {
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(
-                              horizontal: screenHeight * 0.015,
-                              vertical: screenHeight * 0.02),
-                          height: screenHeight * 0.06,
-                          width: screenHeight * 0.06,
+                              horizontal: Screen.height(context) * 0.015,
+                              vertical: Screen.height(context) * 0.02),
+                          height: Screen.height(context) * 0.06,
+                          width: Screen.height(context) * 0.06,
                           decoration: BoxDecoration(
                               color: MyColors.DarkLighter,
                               borderRadius: BorderRadius.circular(50)),
                           child: Center(
                             child: SvgPicture.asset(MyIcons.facebook,
-                                width: screenHeight * 0.04,
-                                height: screenHeight * 0.04),
+                                width: Screen.height(context) * 0.04,
+                                height: Screen.height(context) * 0.04),
                           ),
                         ),
                       )

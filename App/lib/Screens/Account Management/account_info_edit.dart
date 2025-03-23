@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/crop_dialog.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -70,14 +72,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           this.token = token;
           this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -203,10 +198,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
               ],
             ).showDialogBox(context);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Profile Updated Successfully'),
-              backgroundColor: MyColors.Dark,
-            ));
+            MyScaffold(text: 'Profile Updated Successfully').show(context);
             Navigator.pushNamed(context, '/AccountInfo');
           }
         } else {
@@ -234,10 +226,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       });
 
       if (response2['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Profile Updated Successfully'),
-          backgroundColor: MyColors.Dark,
-        ));
+        MyScaffold(text: 'Profile Updated Successfully').show(context);
         Navigator.pushNamed(context, '/AccountInfo');
       } else {
         warningDialog(
@@ -263,10 +252,6 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -288,8 +273,8 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                         children: [
                           Container(
                             margin: EdgeInsets.symmetric(
-                                vertical: MaximumThing * 0.04,
-                                horizontal: MaximumThing * 0.02),
+                                vertical: Screen.max(context) * 0.04,
+                                horizontal: Screen.max(context) * 0.02),
                             child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -303,7 +288,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(
-                                        left: MaximumThing * 0.02),
+                                        left: Screen.max(context) * 0.02),
                                     child: InkWell(
                                       onTap: _pickImage,
                                       child: Text(
@@ -312,7 +297,8 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                         style: GoogleFonts.montserrat(
                                             decoration:
                                                 TextDecoration.underline,
-                                            fontSize: MaximumThing * 0.015,
+                                            fontSize:
+                                                Screen.max(context) * 0.015,
                                             fontWeight: FontWeight.w400,
                                             color: MyColors.Yellow),
                                       ),
@@ -354,7 +340,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                             ],
                           ),
                           SizedBox(
-                            height: screenHeight * 0.1,
+                            height: Screen.height(context) * 0.1,
                             child: Center(child: MyDivider()),
                           ),
                           ColoredButton(

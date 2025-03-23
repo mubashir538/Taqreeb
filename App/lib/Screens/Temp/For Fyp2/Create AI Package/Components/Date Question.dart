@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -22,25 +23,22 @@ class DateQuestion extends StatefulWidget {
 class _DateQuestionState extends State<DateQuestion> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: widget.question != '' ? MaximumThing * 0.02 : 0),
+          horizontal: widget.question != '' ? Screen.max(context) * 0.02 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           widget.question != ''
               ? Text(widget.question,
                   style: GoogleFonts.montserrat(
-                      color: MyColors.white, fontSize: MaximumThing * 0.018))
+                      color: MyColors.white,
+                      fontSize: Screen.max(context) * 0.018))
               : Container(),
           Container(
-            margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-            height: screenHeight * 0.06,
-            width: screenWidth * 0.9,
+            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+            height: Screen.height(context) * 0.06,
+            width: Screen.width(context) * 0.9,
             decoration: BoxDecoration(
               color: MyColors.DarkLighter,
               borderRadius: BorderRadius.circular(10),
@@ -53,7 +51,8 @@ class _DateQuestionState extends State<DateQuestion> {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+              padding: EdgeInsets.symmetric(
+                  horizontal: Screen.width(context) * 0.02),
               child: TextField(
                 readOnly: true,
                 focusNode: widget.focusNode,
@@ -61,7 +60,7 @@ class _DateQuestionState extends State<DateQuestion> {
                 textAlignVertical: TextAlignVertical.center,
                 controller: widget.valuecontroller,
                 style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.018,
+                  fontSize: Screen.max(context) * 0.018,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
                 ),
@@ -70,7 +69,7 @@ class _DateQuestionState extends State<DateQuestion> {
                   hintText: 'Select Date',
                   hintStyle: GoogleFonts.montserrat(
                     color: MyColors.white.withOpacity(0.6),
-                    fontSize: MaximumThing * 0.015,
+                    fontSize: Screen.max(context) * 0.015,
                   ),
                   border: InputBorder.none,
                 ),

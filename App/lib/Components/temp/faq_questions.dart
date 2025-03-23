@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -8,11 +9,10 @@ class FAQQuestion extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
 
-
-  const FAQQuestion({super.key, 
+  const FAQQuestion({
+    super.key,
     required this.question,
     required this.answer,
-
     required this.isExpanded,
     required this.onToggle,
   });

@@ -1,4 +1,5 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:taqreeb/Components/temp/faq_questions.dart';
 // import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 

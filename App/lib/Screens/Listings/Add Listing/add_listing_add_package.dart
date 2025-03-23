@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -20,7 +21,7 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
   FocusNode nameFocus = FocusNode();
   FocusNode detailsFocus = FocusNode();
   FocusNode priceFocus = FocusNode();
-   Map<String, dynamic> args = {};
+  Map<String, dynamic> args = {};
 
   final GlobalKey _headerKey = GlobalKey();
   double _headerHeight = 0.0;
@@ -56,8 +57,6 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -65,10 +64,11 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
+              width: Screen.width(context),
               child: Column(
                 children: [
-                  SizedBox(height: (screenHeight * 0.03) + _headerHeight),
+                  SizedBox(
+                      height: (Screen.height(context) * 0.03) + _headerHeight),
                   MyTextBox(
                     focusNode: nameFocus,
                     onFieldSubmitted: (_) {
@@ -95,7 +95,7 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
                     valueController: priceController,
                   ),
                   SizedBox(
-                    height: screenHeight * 0.1,
+                    height: Screen.height(context) * 0.1,
                     child: Center(child: MyDivider()),
                   ),
                   ColoredButton(

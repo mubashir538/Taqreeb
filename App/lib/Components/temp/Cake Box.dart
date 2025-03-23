@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 
@@ -18,17 +19,15 @@ class CakeBox extends StatelessWidget {
         child: Column(
           children: [
             Container(
-             decoration: BoxDecoration(
-              
-             ),
+              decoration: BoxDecoration(),
               child: ClipRRect(
-                borderRadius: BorderRadius.only(topLeft:Radius.circular(20),topRight: Radius.circular(20)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
                 child: Image.network(
                   "https://mrbrownbakery.com/image/images/GJ7uCwGiteTF24HTWBclkziVTdhpQeZWH23MvQfq.jpeg?p=full",
-                  
                   height: 150,
                   width: 150,
-                 
                   loadingBuilder: (BuildContext context, Widget child,
                       ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) return child;
@@ -38,8 +37,6 @@ class CakeBox extends StatelessWidget {
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                             : null,
-                
-                            
                       ),
                     );
                   },
@@ -53,7 +50,7 @@ class CakeBox extends StatelessWidget {
             Container(
               child: Column(
                 children: [
-                   SizedBox(
+                  SizedBox(
                     height: 5,
                   ),
                   Text(
@@ -68,7 +65,7 @@ class CakeBox extends StatelessWidget {
                   ),
                   Text(
                     "A Luscious dessert, perfect for chocolate lovers. Densely chocolatey lava,along with a..... ",
-                     textAlign: TextAlign.center,
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                         fontSize: 8,
                         fontWeight: FontWeight.w300,
@@ -77,14 +74,19 @@ class CakeBox extends StatelessWidget {
                 ],
               ),
             ),
-             SizedBox(
-                    height: 17,
-                  ),
-            ColoredButton(text: "Rs, 200",
-            height: 16,width: 70,),
-
-            ColoredButton(text: "Add to Cart",
-            height: 21,width:120 ,),
+            SizedBox(
+              height: 17,
+            ),
+            ColoredButton(
+              text: "Rs, 200",
+              height: 16,
+              width: 70,
+            ),
+            ColoredButton(
+              text: "Add to Cart",
+              height: 21,
+              width: 120,
+            ),
           ],
         ),
       ),

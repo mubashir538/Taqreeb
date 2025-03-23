@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -11,7 +13,6 @@ import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
-
 
 class AddcategoryMoredetails extends StatefulWidget {
   const AddcategoryMoredetails({super.key});
@@ -71,14 +72,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
           this.token = token;
           textfields = fields ?? {};
           if (textfields == {} || textfields['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             for (int i = 0; i < textfields['fields'].length; i++) {
@@ -114,7 +108,6 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -123,7 +116,8 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: (screenHeight * 0.04) + _headerHeight),
+                SizedBox(
+                    height: (Screen.height(context) * 0.04) + _headerHeight),
                 isLoading
                     ? Center(
                         child: CircularProgressIndicator(
@@ -176,7 +170,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                         ],
                       ),
                 SizedBox(
-                  height: screenHeight * 0.1,
+                  height: Screen.height(context) * 0.1,
                   child: Center(child: MyDivider()),
                 ),
                 ColoredButton(
@@ -192,21 +186,15 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                         final ans = await Validations.validatePortfolio(
                             controllers[i].text);
                         if (ans != 'Ok') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Invalid Portfolio Link'),
-                            ),
-                          );
+                          MyScaffold(text: 'Invalid Portfolio Link')
+                              .show(context);
                         }
                       }
                     }
 
                     if (!allFieldsFilled) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Please fill all the fields'),
-                        ),
-                      );
+                      MyScaffold(text: 'Please fill all the fields')
+                          .show(context);
                       return;
                     }
 
@@ -218,7 +206,7 @@ class _AddcategoryMoredetailsState extends State<AddcategoryMoredetails> {
                     args.addAll(fieldValues.map((key, value) {
                       return MapEntry(key, value.toString());
                     }).cast<String, String>());
-                    print(args);
+
                     Navigator.pushNamed(context, '/AddCategory_Addons',
                         arguments: args);
                   },

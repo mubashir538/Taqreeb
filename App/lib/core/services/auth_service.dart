@@ -3,6 +3,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:taqreeb/core/services/api_service.dart' show MyApi;
 import 'package:taqreeb/firebase_options.dart';
 
 class AuthService {
@@ -30,7 +31,7 @@ class AuthService {
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
-      print('done');
+
       final response = await http.get(
         Uri.parse(
             "https://people.googleapis.com/v1/people/me?personFields=phoneNumbers,genders,birthdays,emailAddresses"),
@@ -78,11 +79,15 @@ class AuthService {
         };
         return mydata;
       } else {
-        print("Error fetching additional details ${response.statusCode}");
+        MyApi.postRequest(endpoint: 'error/application', body: {
+          'error': 'Error fetching additional details ${response.statusCode}'
+        });
         return {};
       }
     } catch (e) {
-      print("Error signing in with Google: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error signing in with Google: $e'});
       return {};
     }
   }
@@ -107,12 +112,12 @@ class AuthService {
           fields:
               "name,email,picture.width(200).height(200),birthday,gender,location",
         );
-        print('User data: $userData');
-        print('User credential: $userCredential');
+
         return userCredential;
       }
     } catch (e) {
-      print("Facebook login error: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Facebook login error: $e'});
     }
     return null;
   }
@@ -121,9 +126,9 @@ class AuthService {
     try {
       await FacebookAuth.instance.logOut();
       await FirebaseAuth.instance.signOut();
-      print("Logged out successfully");
     } catch (e) {
-      print("Error logging out: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Error logging out: $e'});
     }
   }
 

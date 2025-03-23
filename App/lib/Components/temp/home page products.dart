@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -20,17 +21,12 @@ class HomePageProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenHeight > screenWidth ? screenHeight : screenWidth;
-
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.01,vertical: MaximumThing*0.02),
-        height: screenHeight * 0.2,
-        width: screenWidth*0.4,        
+        margin: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.01,vertical: Screen.max(context)*0.02),
+        height: Screen.height(context) * 0.2,
+        width: Screen.width(context)*0.4,        
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(12),
@@ -50,14 +46,14 @@ class HomePageProducts extends StatelessWidget {
               child: Image.network(
                 image,
                 width: double.infinity,
-                height: screenHeight * 0.1,
+                height: Screen.height(context) * 0.1,
                 fit: BoxFit.cover,
               ),
             ),
             Text(
               name,
               style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.015, fontWeight: FontWeight.w500),
+                  fontSize: Screen.max(context) * 0.015, fontWeight: FontWeight.w500),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -67,7 +63,7 @@ class HomePageProducts extends StatelessWidget {
                   Text(
                     name,
                     style: TextStyle(
-                        fontSize: MaximumThing*0.015,
+                        fontSize: Screen.max(context)*0.015,
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),

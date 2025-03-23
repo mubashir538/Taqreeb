@@ -1,4 +1,5 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:taqreeb/Components/Colored%20Button.dart';
 // import 'package:taqreeb/Components/global/header.dart';
@@ -34,7 +35,7 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
+//
 //     _getHeaderHeight();
 //     return Scaffold(
 //       backgroundColor: MyColors.Dark,
@@ -158,7 +159,7 @@
 //                   height: 40,
 //                 ),
 
-//                 MyDivider(width: screenWidth * 0.6),
+//                 MyDivider(width: Screen.width(context) * 0.6),
 //                 const SizedBox(height: 20),
 
 //                 ColoredButton(text: 'Continue'),

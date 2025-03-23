@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -66,14 +68,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
           functions = function ?? {};
           this.bookings = bookings ?? {};
           if (bookings == null || bookings['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             for (int i = 0; i < this.bookings['cart'].length; i++) {
@@ -108,11 +103,9 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     List<String> headings = ['Function Type', 'Guests', 'Date'];
 
     List<String> values = isLoading
@@ -129,7 +122,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
           children: [
             SingleChildScrollView(
               child: Container(
-                width: screenWidth,
+                width: Screen.width(context),
                 child: Column(
                   children: [
                     SizedBox(height: _headerHeight),
@@ -143,17 +136,17 @@ class _FunctionDetailState extends State<FunctionDetail> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: MaximumThing * 0.03),
+                                    vertical: Screen.max(context) * 0.03),
                                 child: Text(
                                   eventName,
                                   style: GoogleFonts.montserrat(
-                                      fontSize: MaximumThing * 0.03,
+                                      fontSize: Screen.max(context) * 0.03,
                                       fontWeight: FontWeight.w700,
                                       color: MyColors.Yellow),
                                 ),
                               ),
                               Container(
-                                width: screenWidth * 0.9,
+                                width: Screen.width(context) * 0.9,
                                 decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(16)),
@@ -162,9 +155,9 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                 child: Column(
                                   children: [
                                     Container(
-                                      width: screenWidth * 0.9,
+                                      width: Screen.width(context) * 0.9,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: screenHeight * 0.02),
+                                          vertical: Screen.height(context) * 0.02),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(16),
@@ -175,14 +168,14 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                         child: Text(
                                           functions['Fuctions']['type'],
                                           style: GoogleFonts.montserrat(
-                                              fontSize: MaximumThing * 0.02,
+                                              fontSize: Screen.max(context) * 0.02,
                                               fontWeight: FontWeight.w600,
                                               color: MyColors.white),
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      width: screenWidth * 0.9,
+                                      width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
                                         color: MyColors.DarkLighter,
                                         borderRadius: BorderRadius.only(
@@ -192,7 +185,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                       child: Column(children: [
                                         Container(
                                           margin: EdgeInsets.all(
-                                              MaximumThing * 0.02),
+                                              Screen.max(context) * 0.02),
                                           child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -203,7 +196,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                 'Budget',
                                                 style: GoogleFonts.montserrat(
                                                     fontSize:
-                                                        MaximumThing * 0.02,
+                                                        Screen.max(context) * 0.02,
                                                     fontWeight: FontWeight.w600,
                                                     color: MyColors.white),
                                               ),
@@ -212,7 +205,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                     .toString(),
                                                 style: GoogleFonts.montserrat(
                                                     fontSize:
-                                                        MaximumThing * 0.02,
+                                                        Screen.max(context) * 0.02,
                                                     fontWeight: FontWeight.w600,
                                                     color: MyColors.white),
                                               ),
@@ -222,9 +215,9 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                         for (var heading in headings)
                                           Container(
                                             margin: EdgeInsets.symmetric(
-                                                vertical: MaximumThing * 0.005,
+                                                vertical: Screen.max(context) * 0.005,
                                                 horizontal:
-                                                    MaximumThing * 0.02),
+                                                    Screen.max(context) * 0.02),
                                             child: Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
@@ -236,7 +229,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                   heading,
                                                   style: GoogleFonts.montserrat(
                                                       fontSize:
-                                                          MaximumThing * 0.015,
+                                                          Screen.max(context) * 0.015,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color: MyColors.Yellow),
@@ -246,7 +239,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                       .indexOf(heading)],
                                                   style: GoogleFonts.montserrat(
                                                       fontSize:
-                                                          MaximumThing * 0.015,
+                                                          Screen.max(context) * 0.015,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: MyColors.white),
@@ -255,7 +248,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                             ),
                                           ),
                                         SizedBox(
-                                          height: screenHeight * 0.1,
+                                          height: Screen.height(context) * 0.1,
                                           child: Center(child: MyDivider()),
                                         ),
                                         for (var booking in bookinglist)
@@ -265,12 +258,12 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                 booking['type'].toString(),
                                                 style: GoogleFonts.montserrat(
                                                     fontSize:
-                                                        MaximumThing * 0.02,
+                                                        Screen.max(context) * 0.02,
                                                     fontWeight: FontWeight.w600,
                                                     color: MyColors.Yellow),
                                               ),
                                               Productcard(
-                                                mywidth: screenWidth * 0.85,
+                                                mywidth: Screen.width(context) * 0.85,
                                                 listingType: booking['listing']
                                                         ['type']
                                                     .toString(),
@@ -291,14 +284,14 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                               ),
                                             ],
                                           ),
-                                        MyDivider(width: screenWidth * 0.6),
+                                        MyDivider(width: Screen.width(context) * 0.6),
                                         const SizedBox(height: 20),
                                         Container(
                                           margin: EdgeInsets.all(
-                                              MaximumThing * 0.01),
+                                              Screen.max(context) * 0.01),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: screenHeight * 0.01,
-                                              horizontal: screenWidth * 0.03),
+                                              vertical: Screen.height(context) * 0.01,
+                                              horizontal: Screen.width(context) * 0.03),
                                           decoration: BoxDecoration(
                                               color: MyColors.DarkLighter,
                                               borderRadius:
@@ -312,7 +305,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                   offset: Offset(2, 2),
                                                 ),
                                               ]),
-                                          width: screenWidth * 0.8,
+                                          width: Screen.width(context) * 0.8,
                                           child: InkWell(
                                               onTap: () async {
                                                 final response =
@@ -349,10 +342,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                         ),
                                         Container(
                                           margin: EdgeInsets.all(
-                                              MaximumThing * 0.01),
+                                              Screen.max(context) * 0.01),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: screenHeight * 0.01,
-                                              horizontal: screenWidth * 0.03),
+                                              vertical: Screen.height(context) * 0.01,
+                                              horizontal: Screen.width(context) * 0.03),
                                           decoration: BoxDecoration(
                                               color: MyColors.DarkLighter,
                                               borderRadius:
@@ -366,7 +359,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                   offset: Offset(2, 2),
                                                 ),
                                               ]),
-                                          width: screenWidth * 0.8,
+                                          width: Screen.width(context) * 0.8,
                                           child: InkWell(
                                               onTap: () {
                                                 Navigator.pushNamed(context,
@@ -380,10 +373,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                         ),
                                         Container(
                                           margin: EdgeInsets.all(
-                                              MaximumThing * 0.01),
+                                              Screen.max(context) * 0.01),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: screenHeight * 0.01,
-                                              horizontal: screenWidth * 0.03),
+                                              vertical: Screen.height(context) * 0.01,
+                                              horizontal: Screen.width(context) * 0.03),
                                           decoration: BoxDecoration(
                                               color: MyColors.DarkLighter,
                                               borderRadius:
@@ -397,7 +390,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                                   offset: Offset(2, 2),
                                                 ),
                                               ]),
-                                          width: screenWidth * 0.8,
+                                          width: Screen.width(context) * 0.8,
                                           child: InkWell(
                                               onTap: () {
                                                 Navigator.pushNamed(context,
@@ -412,7 +405,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                                 ),
                               ),
                               SizedBox(
-                                height: screenHeight * 0.05,
+                                height: Screen.height(context) * 0.05,
                               ),
                               ColoredButton(
                                 text: 'Add New Item',

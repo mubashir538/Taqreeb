@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
@@ -13,7 +15,6 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
-
 class AddcategoryList extends StatefulWidget {
   const AddcategoryList({super.key});
 
@@ -25,7 +26,8 @@ class _AddcategoryListState extends State<AddcategoryList> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   int charactersleft = 1100;
-  TextEditingController locationController = TextEditingController(text: ' fsd');
+  TextEditingController locationController =
+      TextEditingController(text: ' fsd');
   TextEditingController priceminController = TextEditingController();
   TextEditingController pricemaxController = TextEditingController();
   TextEditingController typeController = TextEditingController();
@@ -52,7 +54,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
 
   void check(BuildContext context) async {
     if (await MyStorage.exists(MyTokens.acname)) {
-        warningDialog(
+      warningDialog(
         title: 'Fresh Start',
         message:
             'We noticed that you had lately attempted to Add a Listing Before Do you want to continue where you left or want a Fresh Start?',
@@ -93,14 +95,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
       this.token = token;
       this.categories = categories ?? {};
       if (categories == null || categories['status'] == 'error') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
+        MyScaffold(text: 'Something Went Wrong!').show(context);
         return;
       } else {
         isLoading = false;
@@ -123,10 +118,6 @@ class _AddcategoryListState extends State<AddcategoryList> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -134,7 +125,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
         children: [
           RefreshIndicator(
             color: MyColors.red,
-            displacement: screenHeight * 0.2,
+            displacement: Screen.height(context) * 0.2,
             backgroundColor: MyColors.Dark,
             onRefresh: () async {
               await Future.delayed(Duration(seconds: 2));
@@ -162,7 +153,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
                         setState(() => charactersleft = 1100 - value.length),
                   ),
                   SizedBox(
-                    width: screenWidth * 0.9,
+                    width: Screen.width(context) * 0.9,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -170,7 +161,7 @@ class _AddcategoryListState extends State<AddcategoryList> {
                           "${charactersleft} characters left",
                           style: GoogleFonts.montserrat(
                             color: MyColors.white,
-                            fontSize: MaximumThing * 0.015,
+                            fontSize: Screen.max(context) * 0.015,
                             fontWeight: FontWeight.w300,
                           ),
                         ),
@@ -210,13 +201,13 @@ class _AddcategoryListState extends State<AddcategoryList> {
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).unfocus();
                     },
-                    hint: 'Maximum Price',
+                    hint: 'Screen.max(context) Price',
                     isNum: true,
                     isPrice: true,
                     valueController: pricemaxController,
                   ),
                   SizedBox(
-                    height: screenHeight * 0.1,
+                    height: Screen.height(context) * 0.1,
                     child: Center(child: MyDivider()),
                   ),
                   ColoredButton(
@@ -225,21 +216,18 @@ class _AddcategoryListState extends State<AddcategoryList> {
                       if (nameController.text.isEmpty ||
                           locationController.text.isEmpty ||
                           typeController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Please fill all the fields'),
-                        ));
+                        MyScaffold(text: 'Please fill all the fields')
+                            .show(context);
                         return;
                       }
                       if (charactersleft > 1050) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Description is too Short'),
-                        ));
+                        MyScaffold(text: 'Description is too Short')
+                            .show(context);
                         return;
                       }
                       if (charactersleft < 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Description is too Long'),
-                        ));
+                        MyScaffold(text: 'Description is too Long')
+                            .show(context);
                         return;
                       }
                       Map<String, dynamic> args = {

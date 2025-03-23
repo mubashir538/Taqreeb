@@ -106,12 +106,6 @@ void requestPermission() async {
     badge: true,
     sound: true,
   );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-  } else {
-    print('User denied permission');
-  }
 }
 
 void main() async {
@@ -125,9 +119,7 @@ void main() async {
     print("Message received: ${message.notification?.title}");
   });
 
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print("App opened from notification: ${message.notification?.title}");
-  });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     showNotification(message);

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
@@ -31,7 +33,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
   late int? listingId;
   bool isLoading = true;
   DateTime? entryTime; //added
-
   bool isToggled = true;
   List<String> headings = [
     'Service Type',
@@ -47,7 +48,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     '1 Stars',
   ];
   List<String> starsvalue = [];
-
   final List<String> _imageUrls = [];
   DateTime? selectedDate = DateTime.now();
   Map<String, dynamic> events = {};
@@ -65,7 +65,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
       setState(() {
         listingId = args['id'];
         type = args['isBusiness'];
-        ischange = true; // Prevents multiple API calls
+        ischange = true;
       });
       fetchData();
     }
@@ -76,14 +76,13 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
     entryTime = DateTime.now(); // added-Store entry time when user opens page
-    print("📌 User opened CategoryView_CarRenter at: $entryTime");
   }
 
   Timer? timer;
   void fetchData() async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final listing = await MyApi.getRequest(
-      endpoint: 'carrenter/viewpage/${this.listingId}',
+      endpoint: 'carrenter/viewpage/$listingId',
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -93,36 +92,29 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
           this.token = token;
           this.listing = listing ?? {};
           if (listing == null || listing['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
             ischange = true;
             for (var i = 0; i < listing['pictures'].length; i++) {
-              this._imageUrls.add(listing['pictures'][i]['picturePath']);
+              _imageUrls.add(listing['pictures'][i]['picturePath']);
             }
             for (var i = 0; i < listing['Addons'].length; i++) {
-              this.addonsheadings.add(listing['Addons'][i]['name']);
+              addonsheadings.add(listing['Addons'][i]['name']);
               if (listing['Addons'][i]['isPer']) {
-                this.addonsvalues.add(
+                addonsvalues.add(
                     '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
               } else {
-                this.addonsvalues.add(listing['Addons'][i]['price'].toString());
+                addonsvalues.add(listing['Addons'][i]['price'].toString());
               }
             }
-            this.values.add(listing['View']['serviceType']);
-            this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+            values.add(listing['View']['serviceType']);
+            starsvalue.add('(${listing['reveiewData']['5'].toString()})');
+            starsvalue.add('(${listing['reveiewData']['4'].toString()})');
+            starsvalue.add('(${listing['reveiewData']['3'].toString()})');
+            starsvalue.add('(${listing['reveiewData']['2'].toString()})');
+            starsvalue.add('(${listing['reveiewData']['1'].toString()})');
             timer.cancel();
           }
         });
@@ -135,7 +127,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      print("🕒 Logging category view duration for Car Renter: $timeSpent seconds");
 
       logUserActivity("category_view_duration", {
         "category": "Car Renter",
@@ -149,26 +140,28 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
 
   // added-Function to log time spent
   // Future<void> logTimeSpent(int listingId, int timeSpent) async {
-    //   final response = await http.post(
-    //     Uri.parse(
-    //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: jsonEncode({
-    //       "user_id": 1, // Replace with actual user ID
-    //       "action": "category_view_duration",
-    //       "metadata": {
-    //         "category": "Venue",
-    //         "listing_id": listingId,
-    //         "time_spent_seconds": timeSpent
-    //       }
-    //     }),
-    //   );
+  //   final response = await http.post(
+  //     Uri.parse(
+  //         'http://yourserver.com/api/log-activity/'), // Replace with actual Django API URL
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "user_id": 1, // Replace with actual user ID
+  //       "action": "category_view_duration",
+  //       "metadata": {
+  //         "category": "Venue",
+  //         "listing_id": listingId,
+  //         "time_spent_seconds": timeSpent
+  //       }
+  //     }),
+  //   );
 
-    //   if (response.statusCode == 201) {
-    //     print("Category view duration logged successfully");
-    //   } else {
-    //     print("Failed to log category view duration: ${response.body}");
-    //   }
+  //   if (response.statusCode == 201) {
+  //
+  //   print("Category view duration logged successfully");
+  //   } else {
+  //
+  //   print("Failed to log category view duration: ${response.body}");
+  //   }
   // }
   void showHierarchicalOptions(
       BuildContext context, double maxThing, double width) {
@@ -259,18 +252,8 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                 if (response['status'] == 'success') {
                                   Navigator.pop(context);
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Something went wrong',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: maxThing * 0.015,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      backgroundColor: MyColors.red,
-                                    ),
-                                  );
+                                  MyScaffold(text: 'Something Went Wrong!')
+                                      .show(context);
                                   Navigator.pop(context);
                                 }
                               },
@@ -308,7 +291,9 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
         await MyStorage.getToken(MyTokens.userId); // Get user ID dynamically
 
     if (userId == null) {
-      print("⚠️ User ID not found. Skipping activity log.");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'User ID not found. Skipping activity log'});
       return;
     }
 
@@ -325,17 +310,15 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
       },
     );
 
-    if (response != null && response['status'] == 'success') {
-      print("✅ Activity logged: $action");
-    } else {
-      print("❌ Failed to log activity: ${response?['message']}");
+    if ((!response['status'] == 'success')) {
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': ' Failed to log activity: ${response?['message']}'});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -357,11 +340,11 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                             imageUrls: _imageUrls,
                           ),
                           Container(
-                            width: screenWidth,
+                            width: Screen.width(context),
                             color: MyColors.Dark,
                             padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04,
-                              vertical: screenHeight * 0.01,
+                              horizontal: Screen.width(context) * 0.04,
+                              vertical: Screen.height(context) * 0.01,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,10 +355,10 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                     selectedDate: selectedDate,
                                     events: events),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 PricingSection(listing: listing),
@@ -389,54 +372,41 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
                                 ),
                                 CategoryPackages(listing: listing),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 CategoryReview(
                                     listing: listing, starsvalue: starsvalue),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 Padding(
-                                  padding:
-                                      EdgeInsets.only(top: screenHeight * 0.03),
+                                  padding: EdgeInsets.only(
+                                      top: Screen.height(context) * 0.03),
                                   child: Center(
-                                      child: ColoredButton(                                          
+                                      child: ColoredButton(
                                     text: 'Book Car Renter',
                                     onPressed: () async {
-                                      print(
-                                          "🛒 User clicked 'Book Car Renter' for listing ID: $listingId");
-
                                       await logUserActivity("book_car_renter",
                                           {"listing_id": listingId ?? 0});
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('Booking action logged!',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 14,
-                                                color: MyColors.white,
-                                                fontWeight: FontWeight.w400)),
-                                        backgroundColor: MyColors.green,
-                                      ));
-                                         Navigator.pushNamed(
-                                                context, '/orderSummary',
-                                                arguments: {
-                                                  'Name': listing['Listing']
-                                                      ['name'],
-                                                  'type': listing['Listing']
-                                                      ['type'],
-                                                  'price': listing['Listing']
-                                                      ['basicPrice'],
-                                                });
-                                          
+                                      MyScaffold(text: 'Booking action logged!')
+                                          .show(context);
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
                                     },
                                   )),
                                 ),
@@ -454,9 +424,8 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
               key: _headerKey,
             ),
           ),
-        ChatIcon(),
+          ChatIcon(),
         ],
-      
       ),
     );
   }

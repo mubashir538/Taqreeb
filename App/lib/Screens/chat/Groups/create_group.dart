@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -98,13 +100,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   Future<void> _uploadGroupImage() async {
     if (_groupImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Please select a Group Image to upload.',
-          style: TextStyle(color: MyColors.white),
-        ),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Please select a Group Image to upload.').show(context);
     }
     ;
 
@@ -131,25 +127,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         _groupImageUrl = jsonResponse['path'];
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Failed to upload image.',
-          style: TextStyle(color: MyColors.white),
-        ),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Failed to upload image.').show(context);
     }
   }
 
   Future<void> _createGroup() async {
     if (groupNameController.text.isEmpty || selectedUsers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Group name and participants are required.',
-          style: TextStyle(color: MyColors.white),
-        ),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Group name and participants are required.')
+          .show(context);
       return;
     }
 
@@ -168,11 +153,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -182,7 +165,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: _headerHeight),
-              SizedBox(height: MaximumThing * 0.03),
+              SizedBox(height: Screen.max(context) * 0.03),
               GestureDetector(
                 onTap: _pickGroupImage,
                 child: CircleAvatar(
@@ -196,7 +179,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       : null,
                 ),
               ),
-              SizedBox(height: MaximumThing * 0.03),
+              SizedBox(height: Screen.max(context) * 0.03),
               MyTextBox(
                   hint: 'Enter Group Name',
                   valueController: groupNameController),
@@ -209,9 +192,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       onTap: () => _toggleUserSelection(user),
                       child: Container(
                         margin: EdgeInsets.symmetric(
-                            horizontal: screenWidth * 0.06,
-                            vertical: screenWidth * 0.02),
-                        padding: EdgeInsets.all(screenWidth * 0.04),
+                            horizontal: Screen.width(context) * 0.06,
+                            vertical: Screen.width(context) * 0.02),
+                        padding: EdgeInsets.all(Screen.width(context) * 0.04),
                         decoration: BoxDecoration(
                           color: selectedUsers.contains(user)
                               ? MyColors.red.withOpacity(0.2)

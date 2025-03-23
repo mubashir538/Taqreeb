@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -30,8 +31,7 @@ class _HeaderState extends State<Header> {
   @override
   Widget build(BuildContext context) {
     String? currentRoute = ModalRoute.of(context)?.settings.name;
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+
     bool hasSomething = widget.heading.isNotEmpty ||
         widget.para.isNotEmpty ||
         widget.image.isNotEmpty;
@@ -40,12 +40,6 @@ class _HeaderState extends State<Header> {
       isSvg = widget.image.substring(widget.image.length - 3) == 'svg'
           ? true
           : false;
-    }
-    double MaximumThing;
-    if (screenWidth > screenHeight) {
-      MaximumThing = screenWidth;
-    } else {
-      MaximumThing = screenHeight;
     }
 
     if (currentRoute == '/Login' ||
@@ -66,9 +60,9 @@ class _HeaderState extends State<Header> {
       nosettings = true;
     }
     return Container(
-      height: hasSomething ? null : screenHeight * 0.1,
-      width: screenWidth,
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+      height: hasSomething ? null : Screen.height(context) * 0.1,
+      width: Screen.width(context),
+      padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.04),
       decoration: BoxDecoration(
         color: MyColors.red,
         borderRadius: hasSomething
@@ -94,18 +88,21 @@ class _HeaderState extends State<Header> {
                             (Route<dynamic> route) => false);
                       }
                     } catch (e) {
-                      print('Exceptions: $e');
+                      MyApi.postRequest(
+                          endpoint: 'error/application',
+                          body: {'error': 'Exceptions: $e'});
                       Navigator.pushNamedAndRemoveUntil(context, '/HomePage',
                           (Route<dynamic> route) => false);
                     }
                   },
                   child: Icon(Icons.chevron_left_outlined,
-                      color: MyColors.redonWhite, size: MaximumThing * 0.03),
+                      color: MyColors.redonWhite,
+                      size: Screen.max(context) * 0.03),
                 ),
                 Text(
                   'Taqreeb',
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.03,
+                      fontSize: Screen.max(context) * 0.03,
                       fontWeight: FontWeight.w500,
                       color: MyColors.redonWhite),
                 ),
@@ -123,8 +120,8 @@ class _HeaderState extends State<Header> {
                                       Navigator.pop(context);
                                     },
                                     text: 'Cancel',
-                                    textSize: MaximumThing * 0.015,
-                                    width: screenWidth * 0.3,
+                                    textSize: Screen.max(context) * 0.015,
+                                    width: Screen.width(context) * 0.3,
                                   ),
                                   ColoredButton(
                                     onPressed: () async {
@@ -137,9 +134,6 @@ class _HeaderState extends State<Header> {
                                             'Authorization':
                                                 'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
                                           });
-                                      if (res['status'] == 'success') {
-                                        print('FCM saved');
-                                      }
                                       await MyStorage.deleteToken(
                                           MyTokens.refreshToken);
                                       await MyStorage.deleteToken(
@@ -156,8 +150,8 @@ class _HeaderState extends State<Header> {
                                               (Route<dynamic> route) => false);
                                     },
                                     text: 'Logout',
-                                    width: screenWidth * 0.3,
-                                    textSize: MaximumThing * 0.015,
+                                    width: Screen.width(context) * 0.3,
+                                    textSize: Screen.max(context) * 0.015,
                                   ),
                                 ]).showDialogBox(context);
                           } else if (currentRoute == '/InvitationCardEdit') {
@@ -167,55 +161,56 @@ class _HeaderState extends State<Header> {
                         },
                         child: Icon(widget.icon,
                             color: MyColors.redonWhite,
-                            size: MaximumThing * 0.03),
+                            size: Screen.max(context) * 0.03),
                       ),
               ],
             ),
           ),
           widget.heading.isNotEmpty
               ? Column(children: [
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: Screen.height(context) * 0.02),
                   Text(
                     widget.heading,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.025,
+                        fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w700,
                         color: MyColors.Yellow),
                   ),
                   SizedBox(
                       height: widget.para.isNotEmpty || widget.image.isNotEmpty
-                          ? screenHeight * 0.01
-                          : screenHeight * 0.03),
+                          ? Screen.height(context) * 0.01
+                          : Screen.height(context) * 0.03),
                 ])
               : Container(),
           widget.para.isNotEmpty
               ? Column(children: [
-                  SizedBox(height: screenHeight * 0.005),
+                  SizedBox(height: Screen.height(context) * 0.005),
                   Text(
                     widget.para,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.013,
+                        fontSize: Screen.max(context) * 0.013,
                         fontWeight: FontWeight.w400,
                         color: MyColors.white),
                   ),
                   SizedBox(
                       height: widget.image.isNotEmpty
-                          ? screenHeight * 0.01
-                          : screenHeight * 0.03),
+                          ? Screen.height(context) * 0.01
+                          : Screen.height(context) * 0.03),
                 ])
               : Container(),
           widget.image.isNotEmpty
               ? Column(
                   children: [
-                    SizedBox(height: screenHeight * 0.01),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: Screen.height(context) * 0.01),
+                    SizedBox(height: Screen.height(context) * 0.03),
                     isSvg
                         ? SvgPicture.asset(widget.image,
-                            height: screenHeight * 0.2)
-                        : Image.asset(widget.image, height: screenHeight * 0.2),
-                    SizedBox(height: screenHeight * 0.03),
+                            height: Screen.height(context) * 0.2)
+                        : Image.asset(widget.image,
+                            height: Screen.height(context) * 0.2),
+                    SizedBox(height: Screen.height(context) * 0.03),
                   ],
                 )
               : Container(),

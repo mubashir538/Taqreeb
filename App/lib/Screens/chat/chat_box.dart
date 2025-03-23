@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -72,7 +73,9 @@ class _ChatBoxState extends State<ChatBox> {
             '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture']}';
       });
     } catch (e) {
-      print("Error fetching chat user details: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching chat user details: $e'});
     }
   }
 
@@ -115,9 +118,6 @@ class _ChatBoxState extends State<ChatBox> {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
         });
-    if (response['status'] == 'success') {
-      print('Notification Sent Successful');
-    }
     _messageController.clear();
     setState(() {
       isMessageSent = true;
@@ -172,10 +172,13 @@ class _ChatBoxState extends State<ChatBox> {
           },
         }, SetOptions(merge: true));
       } else {
-        print('Failed to upload image: ${response.statusCode}');
+        MyApi.postRequest(endpoint: 'error/application', body: {
+          'error': 'Error: Failed to upload image: ${response.statusCode}'
+        });
       }
     } catch (e) {
-      print('Error uploading image: $e');
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Error uploading image: $e'});
     }
   }
 
@@ -244,11 +247,9 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -260,12 +261,12 @@ class _ChatBoxState extends State<ChatBox> {
                 ))
               : Column(
                   children: [
-                    SizedBox(height: screenHeight * 0.1),
+                    SizedBox(height: Screen.height(context) * 0.1),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: MaximumThing * 0.03),
-                      height: screenHeight * 0.16,
-                      width: screenWidth,
+                          EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.03),
+                      height: Screen.height(context) * 0.16,
+                      width: Screen.width(context),
                       decoration: BoxDecoration(
                         color: MyColors.red,
                       ),
@@ -278,13 +279,13 @@ class _ChatBoxState extends State<ChatBox> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                width: screenWidth * 0.6,
+                                width: Screen.width(context) * 0.6,
                                 child: Text(
                                   softWrap: true,
                                   maxLines: 2,
                                   chatName.toString(),
                                   style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.025,
+                                    fontSize: Screen.max(context) * 0.025,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -293,7 +294,7 @@ class _ChatBoxState extends State<ChatBox> {
                                 children: [
                                   Text(chatUserName.toString(),
                                       style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.015,
+                                        fontSize: Screen.max(context) * 0.015,
                                         fontWeight: FontWeight.w400,
                                       ))
                                 ],
@@ -301,7 +302,7 @@ class _ChatBoxState extends State<ChatBox> {
                             ],
                           ),
                           CircleAvatar(
-                            radius: MaximumThing * 0.05,
+                            radius: Screen.max(context) * 0.05,
                             backgroundImage: NetworkImage(chatUserImage!),
                           )
                         ],
@@ -338,7 +339,7 @@ class _ChatBoxState extends State<ChatBox> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Container(
                                         margin: EdgeInsets.symmetric(
-                                            vertical: MaximumThing * 0.012),
+                                            vertical: Screen.max(context) * 0.012),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -346,7 +347,7 @@ class _ChatBoxState extends State<ChatBox> {
                                             Text(
                                               _formatDate(messageDate),
                                               style: GoogleFonts.montserrat(
-                                                fontSize: MaximumThing * 0.01,
+                                                fontSize: Screen.max(context) * 0.01,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

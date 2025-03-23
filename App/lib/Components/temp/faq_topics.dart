@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -8,7 +9,7 @@ class VenueSelection extends StatelessWidget {
 
   const VenueSelection({
     super.key,
-    this.text = 'Venue Selection', 
+    this.text = 'Venue Selection',
     required this.icon,
   });
 
@@ -33,13 +34,13 @@ class VenueSelection extends StatelessWidget {
                 size: 24,
               ),
             ),
-            SizedBox(width: 20), 
+            SizedBox(width: 20),
             Text(
               text,
               style: GoogleFonts.montserrat(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: Color(0xffEDF2F4), 
+                color: Color(0xffEDF2F4),
               ),
             ),
           ],

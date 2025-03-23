@@ -65,6 +65,7 @@ urlpatterns = [
     path('Caterer/viewpage/<int:listingid>',vp.CatererViewPage,name='CatererViewPage'),
     path('Bakers/viewpage/<int:listingid>',vp.BakersViewPage,name='BakersViewPage'),
     path('ViewFunction/<int:FunctionId>',views.ViewFunction,name='ViewFunction'),
+    path('error/application',views.application_errors,name='error'),
     path('videoeditorviewpage/<int:listingid>',vp.VideoEditorViewPage,name='VideoEditorViewPage'),
     path('add/Bookcart/',views.AddtoBookCart,name='AddtoBookCart'),
     path('show/Bookcart/<int:id>',views.showBookCart,name='showBookCart'),

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Home%20Page/c_image_slider.dart';
 import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
@@ -67,14 +69,7 @@ class _HomePageState extends State<HomePage> {
               fetchedListings['status'] == 'error' ||
               fetchedImages == null ||
               fetchedImages['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             loadimages();
@@ -119,7 +114,9 @@ class _HomePageState extends State<HomePage> {
         await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
 
     if (userId == null) {
-      print("User ID not found. Skipping activity log.");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'User ID not found. Skipping activity log'});
       return;
     }
 
@@ -136,10 +133,10 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
-    if (response != null && response['status'] == 'success') {
-      print("Activity logged: $action");
-    } else {
-      print("Failed to log activity: ${response['message']}");
+    if (!(response != null && response['status'] == 'success')) {
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Failed to log activity: ${response['message']}'});
     }
   }
 
@@ -157,21 +154,22 @@ class _HomePageState extends State<HomePage> {
   //   );
 
   //     if (response.statusCode == 201) {
-  //       print("Activity logged successfully: $action");
+  //
+  //   print("Activity logged successfully: $action");
   //     } else {
-  //       print("Failed to log activity: ${response.body}");
+  //
+  //   print("Failed to log activity: ${response.body}");
   //     }
-  //   // print("User ID: $userId");
-  //   // print("Action: $action");
-  //   // print("Metadata: $metadata");
+  //   //
+  //   print("User ID: $userId");
+  //   //
+  //   print("Action: $action");
+  //   //
+  //   print("Metadata: $metadata");
   // }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -184,7 +182,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   SizedBox(height: _headerHeight),
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
+                    margin: EdgeInsets.symmetric(
+                        vertical: Screen.height(context) * 0.03),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -199,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(context, '/SearchService');
                           },
                           controller: _searchController,
-                          width: screenWidth * 0.9,
+                          width: Screen.width(context) * 0.9,
                         ),
                       ],
                     ),
@@ -218,14 +217,15 @@ class _HomePageState extends State<HomePage> {
                                 Center(
                                   child: AutoImageSlider(
                                     imageUrls: this.myImages,
-                                    height: screenHeight * 0.25,
+                                    height: Screen.height(context) * 0.25,
                                   ),
                                 ),
                                 Center(
                                   child: Container(
-                                    width: screenWidth * 0.95,
+                                    width: Screen.width(context) * 0.95,
                                     margin: EdgeInsets.symmetric(
-                                        vertical: screenHeight * 0.015),
+                                        vertical:
+                                            Screen.height(context) * 0.015),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -233,7 +233,8 @@ class _HomePageState extends State<HomePage> {
                                         Text(
                                           'Browse Categories',
                                           style: GoogleFonts.montserrat(
-                                            fontSize: MaximumThing * 0.02,
+                                            fontSize:
+                                                Screen.max(context) * 0.02,
                                             fontWeight: FontWeight.w600,
                                             color: MyColors.Yellow,
                                           ),
@@ -243,7 +244,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: screenHeight * 0.19,
+                                  height: Screen.height(context) * 0.19,
                                   child: ListView.builder(
                                     itemBuilder: (context, index) {
                                       String categoryName =
@@ -284,16 +285,16 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Center(
                               child: Container(
-                                width: screenWidth * 0.95,
+                                width: Screen.width(context) * 0.95,
                                 margin: EdgeInsets.symmetric(
-                                    vertical: screenHeight * 0.015),
+                                    vertical: Screen.height(context) * 0.015),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
                                       'For You',
                                       style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.02,
+                                        fontSize: Screen.max(context) * 0.02,
                                         fontWeight: FontWeight.w600,
                                         color: MyColors.Yellow,
                                       ),
@@ -304,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Center(
                               child: SizedBox(
-                                width: screenWidth * 0.9,
+                                width: Screen.width(context) * 0.9,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),

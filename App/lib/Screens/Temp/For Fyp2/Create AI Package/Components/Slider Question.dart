@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -40,23 +41,21 @@ class _SliderQuestionState extends State<SliderQuestion> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Container(
-      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+            padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
             child: Text(
               widget.question,
               style: GoogleFonts.montserrat(
                 color: MyColors.white,
-                fontSize: MaximumThing * 0.018,
+                fontSize: Screen.max(context) * 0.018,
               ),
             ),
           ),
@@ -95,7 +94,7 @@ class _SliderQuestionState extends State<SliderQuestion> {
           ),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+            padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

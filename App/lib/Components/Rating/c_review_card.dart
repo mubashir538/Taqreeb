@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -24,9 +25,9 @@ class ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
 
     return Container(
       margin:

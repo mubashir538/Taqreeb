@@ -1,4 +1,5 @@
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 
 // class SupportScreen extends StatefulWidget {
@@ -13,7 +14,7 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
+//
 
 //     return Scaffold(
 //       backgroundColor: MyColors.Dark,
@@ -38,7 +39,7 @@
 //               SizedBox(height: 20),
 //               Image.asset(
 //                 MyImages.CustomerSupport,
-//                 height: screenWidth * 0.5,
+//                 height: Screen.width(context) * 0.5,
 //               ),
 //               SizedBox(height: 20),
 //               Text(

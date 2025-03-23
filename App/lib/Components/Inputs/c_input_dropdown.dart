@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -27,12 +28,9 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Container(
-      width: screenWidth * 0.9, 
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+      width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.02),
       child: DropdownButtonFormField<String>(
         focusNode: widget.focusNode,
         onSaved: (value) => widget.onFieldSubmitted,
@@ -40,7 +38,7 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
           labelText: widget.labelText,
           labelStyle: GoogleFonts.montserrat(
             color: Colors.white,
-            fontSize: screenWidth * 0.03, 
+            fontSize: Screen.width(context) * 0.03,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -51,12 +49,12 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
             borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
-          fillColor: MyColors.DarkLighter, 
+          fillColor: MyColors.DarkLighter,
         ),
-        dropdownColor: MyColors.DarkLighter, 
+        dropdownColor: MyColors.DarkLighter,
         style: GoogleFonts.montserrat(
           color: MyColors.white,
-          fontSize: screenWidth * 0.035, 
+          fontSize: Screen.width(context) * 0.035,
         ),
         value: selectedItem,
         isExpanded: true,
@@ -71,9 +69,9 @@ class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
                   color: item == selectedItem
                       ? MyColors.red
                       : MyColors.whiteDarker,
-                  size: screenWidth * 0.03, 
+                  size: Screen.width(context) * 0.03,
                 ),
-                SizedBox(width: screenWidth * 0.02),
+                SizedBox(width: Screen.width(context) * 0.02),
                 Text(item),
               ],
             ),

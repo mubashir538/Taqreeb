@@ -1,6 +1,7 @@
 // import 'dart:async';
 
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 // class CategoryView_BakerySweet extends StatefulWidget {
@@ -38,7 +39,8 @@
 //     super.initState();
 //     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
 //     entryTime = DateTime.now(); // added-Store entry time when user opens page
-//     print("📌 User opened CategoryView_BakerySweet at: $entryTime");
+//      
+//    print("📌 User opened CategoryView_BakerySweet at: $entryTime");
 //   }
 
 //   bool type = false;
@@ -75,7 +77,8 @@
 //           this.token = token;
 //           this.listing = listing ?? {};
 //           if (listing == null || listing['status'] == 'error') {
-//             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//             MyScaffold(text: 'Something Went Wrong!').show(context);
+// ScaffoldMessenger.of(context).showSnackBar(SnackBar(
 //               content: Text('Something Went Wrong!',
 //                   style: GoogleFonts.montserrat(
 //                       fontSize: 14,
@@ -105,7 +108,8 @@
 //     if (entryTime != null) {
 //       DateTime exitTime = DateTime.now();
 //       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-//       print(
+//        
+ //   print(
 //           "🕒 Logging category view duration for Bakery Sweet: $timeSpent seconds");
 
 //       logUserActivity("category_view_duration", {
@@ -136,9 +140,11 @@
 //   //   );
 
 //   //   if (response.statusCode == 201) {
-//   //     print("Category view duration logged successfully");
+//   //      
+ //   print("Category view duration logged successfully");
 //   //   } else {
-//   //     print("Failed to log category view duration: ${response.body}");
+//   //      
+ //   print("Failed to log category view duration: ${response.body}");
 //   //   }
 //   // }
 //   final GlobalKey _headerKey = GlobalKey();
@@ -160,7 +166,8 @@
 //         await MyStorage.getToken(MyTokens.userId); // Get user ID dynamically
 
 //     if (userId == null) {
-//       print("⚠️ User ID not found. Skipping activity log.");
+//        
+//    print("⚠️ User ID not found. Skipping activity log.");
 //       return;
 //     }
 
@@ -178,16 +185,18 @@
 //     );
 
 //     if (response != null && response['status'] == 'success') {
-//       print("✅ Activity logged: $action");
+//        
+ //   print("✅ Activity logged: $action");
 //     } else {
-//       print("❌ Failed to log activity: ${response?['message']}");
+//        
+ //   print("❌ Failed to log activity: ${response?['message']}");
 //     }
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
-//     final double screenWidth = MediaQuery.of(context).size.width;
-//     final double screenHeight = MediaQuery.of(context).size.height;
+//     
+//     final  
 //     _getHeaderHeight();
 //     return Scaffold(
 //       backgroundColor: MyColors.Dark,
@@ -209,11 +218,11 @@
 //                             imageUrls: _imageUrls,
 //                           ),
 //                           Container(
-//                             width: screenWidth,
+//                             width: Screen.width(context),
 //                             color: MyColors.Dark,
 //                             padding: EdgeInsets.symmetric(
-//                               horizontal: screenWidth * 0.04,
-//                               vertical: screenHeight * 0.01,
+//                               horizontal: Screen.width(context) * 0.04,
+//                               vertical: Screen.height(context) * 0.01,
 //                             ),
 //                             child: Column(
 //                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,10 +233,10 @@
 //                                     selectedDate: selectedDate,
 //                                     events: events),
 //                                 SizedBox(
-//                                   height: screenHeight * 0.05,
+//                                   height: Screen.height(context) * 0.05,
 //                                   child: Center(
 //                                       child: MyDivider(
-//                                     width: screenWidth * 0.85,
+//                                     width: Screen.width(context) * 0.85,
 //                                   )),
 //                                 ),
 //                                 PricingSection(listing: listing),
@@ -240,26 +249,28 @@
 //                                 CategoryReview(
 //                                     listing: listing, starsvalue: starsvalue),
 //                                 SizedBox(
-//                                   height: screenHeight * 0.05,
+//                                   height: Screen.height(context) * 0.05,
 //                                   child: Center(
 //                                       child: MyDivider(
-//                                     width: screenWidth * 0.85,
+//                                     width: Screen.width(context) * 0.85,
 //                                   )),
 //                                 ),
 //                                 Padding(
 //                                   padding:
-//                                       EdgeInsets.only(top: screenHeight * 0.03),
+//                                       EdgeInsets.only(top: Screen.height(context) * 0.03),
 //                                   child: Center(
 //                                       child: ColoredButton(
 //                                     text: 'Book Bakery and Sweets',
 //                                     onPressed: () async {
-//                                       print(
+//                                        
+ //   print(
 //                                           "🛒 User clicked 'Book Bakery and Sweets' for listing ID: $listingId");
 
 //                                       await logUserActivity("book_bakerysweet",
 //                                           {"listing_id": listingId ?? 0});
 
-//                                       ScaffoldMessenger.of(context)
+//                                       MyScaffold(text: 'Something Went Wrong!').show(context);
+// ScaffoldMessenger.of(context)
 //                                           .showSnackBar(SnackBar(
 //                                         content: Text('Booking action logged!',
 //                                             style: GoogleFonts.montserrat(

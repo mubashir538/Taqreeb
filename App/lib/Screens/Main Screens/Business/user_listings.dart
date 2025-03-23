@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'dart:math';
@@ -20,11 +22,11 @@ class _YourListingsState extends State<YourListings> {
   Map<String, dynamic> listings = {};
   String token = '';
   String type = "";
-  bool isLoading = true; 
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
-    fetchData(); 
+    fetchData();
   }
 
   Timer? timer;
@@ -42,14 +44,7 @@ class _YourListingsState extends State<YourListings> {
           this.token = token;
           this.listings = fetchedListings ?? {};
           if (listings == {} || listings['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -67,10 +62,6 @@ class _YourListingsState extends State<YourListings> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -82,11 +73,11 @@ class _YourListingsState extends State<YourListings> {
               : SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: screenHeight * 0.14),
+                      SizedBox(height: Screen.height(context) * 0.14),
                       Text(
                         "Your Listings",
                         style: GoogleFonts.montserrat(
-                            fontSize: MaximumThing * 0.025,
+                            fontSize: Screen.max(context) * 0.025,
                             fontWeight: FontWeight.w700,
                             color: MyColors.Yellow),
                       ),
@@ -96,7 +87,7 @@ class _YourListingsState extends State<YourListings> {
                         itemCount: listings['YourListings'].length,
                         itemBuilder: (context, index) {
                           return Productcard(
-                            isBusiness: true,
+                              isBusiness: true,
                               listingType: listings['YourListings'][index]
                                   ['type'],
                               listingid: listings['YourListings'][index]['id']

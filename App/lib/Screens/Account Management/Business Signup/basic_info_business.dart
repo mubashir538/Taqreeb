@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -87,8 +88,6 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
     _getHeaderHeight();
 
     return Scaffold(
@@ -97,12 +96,12 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
+              width: Screen.width(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: (screenHeight * 0.05) + _headerHeight,
+                    height: (Screen.height(context) * 0.05) + _headerHeight,
                   ),
                   MyTextBox(
                     hint: 'CNIC',

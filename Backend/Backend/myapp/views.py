@@ -354,3 +354,10 @@ def log_user_activity(request):
 #             serializer.save(user=request.user)  # ✅ Auto-assign user
 #             return Response({'status': 'success', 'message': 'Event logged successfully'})
 #         return Response(serializer.errors, status=400)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def application_errors(request):
+    error = request.data.get('error')
+    print('App Error: ', error)
+    return Response({'status': 'success'})

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -17,11 +18,6 @@ class _PackageBoxState extends State<PackageBox> {
   bool isCollapsed = true;
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     void ChangeCollapse() {
       setState(() {
         isCollapsed = !isCollapsed;
@@ -31,9 +27,9 @@ class _PackageBoxState extends State<PackageBox> {
     return InkWell(
       onTap: () => ChangeCollapse(),
       child: Container(
-          margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-          width: screenWidth * 0.9,
-          height: isCollapsed ? screenHeight * 0.07 : null,
+          margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+          width: Screen.width(context) * 0.9,
+          height: isCollapsed ? Screen.height(context) * 0.07 : null,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
               color: MyColors.DarkLighter,
@@ -44,13 +40,14 @@ class _PackageBoxState extends State<PackageBox> {
                   : MainAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+                  margin: EdgeInsets.symmetric(
+                      horizontal: Screen.max(context) * 0.02),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(widget.packagename,
                           style: GoogleFonts.montserrat(
-                              fontSize: MaximumThing * 0.02,
+                              fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: MyColors.white)),
                       InkWell(
@@ -62,7 +59,7 @@ class _PackageBoxState extends State<PackageBox> {
                                 ? Icons.chevron_right
                                 : Icons.chevron_left,
                             color: MyColors.white,
-                            size: MaximumThing * 0.05,
+                            size: Screen.max(context) * 0.05,
                           ),
                         ),
                       )
@@ -72,24 +69,24 @@ class _PackageBoxState extends State<PackageBox> {
                 isCollapsed
                     ? Container()
                     : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            margin: EdgeInsets.all(MaximumThing * 0.02),
+                            margin: EdgeInsets.all(Screen.max(context) * 0.02),
                             child: Text(widget.packagedetails,
                                 style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.015,
+                                    fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w300,
                                     color: MyColors.white)),
                           ),
                           Container(
-                            margin: EdgeInsets.all(MaximumThing * 0.02),
+                            margin: EdgeInsets.all(Screen.max(context) * 0.02),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(widget.packageprice,
                                     style: GoogleFonts.montserrat(
-                                        fontSize: MaximumThing * 0.02,
+                                        fontSize: Screen.max(context) * 0.02,
                                         fontWeight: FontWeight.w600,
                                         color: MyColors.Yellow)),
                               ],

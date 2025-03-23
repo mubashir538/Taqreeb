@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -12,7 +14,6 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
-
 
 class AddImage extends StatefulWidget {
   const AddImage({super.key});
@@ -106,11 +107,9 @@ class _AddImageState extends State<AddImage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -127,8 +126,8 @@ class _AddImageState extends State<AddImage> {
             children: [
               SizedBox(height: _headerHeight),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                height: screenHeight * 0.2,
+                margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+                height: Screen.height(context) * 0.2,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: MyColors.DarkLighter,
@@ -158,11 +157,11 @@ class _AddImageState extends State<AddImage> {
               const SizedBox(height: 10),
               Expanded(
                 child: GridView.builder(
-                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  padding: EdgeInsets.all(Screen.width(context) * 0.03),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    crossAxisSpacing: screenWidth * 0.03,
-                    mainAxisSpacing: screenWidth * 0.03,
+                    crossAxisSpacing: Screen.width(context) * 0.03,
+                    mainAxisSpacing: Screen.width(context) * 0.03,
                     childAspectRatio: 1,
                   ),
                   itemCount: _images.length,
@@ -218,12 +217,12 @@ class _AddImageState extends State<AddImage> {
             ],
           ),
           Positioned(
-            bottom: MaximumThing * 0.02,
-            left: screenWidth * 0.25,
-            right: screenWidth * 0.25,
+            bottom: Screen.max(context) * 0.02,
+            left: Screen.width(context) * 0.25,
+            right: Screen.width(context) * 0.25,
             child: ColoredButton(
                 text: 'Add Service',
-                width: screenWidth * 0.5,
+                width: Screen.width(context) * 0.5,
                 onPressed: () async {
                   final request = http.MultipartRequest('POST',
                       Uri.parse(MyApi.baseUrl + 'businessowner/addListings/'));
@@ -292,12 +291,7 @@ class _AddImageState extends State<AddImage> {
                     final Map<String, dynamic> jsonResponse =
                         jsonDecode(responseBody);
                     if (jsonResponse['status'] == 'error') {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(jsonResponse['message']),
-                          backgroundColor: MyColors.Dark,
-                        ),
-                      );
+                      MyScaffold(text: jsonResponse['message']).show(context);
                     }
                     Navigator.pushNamedAndRemoveUntil(
                       context,
@@ -305,13 +299,8 @@ class _AddImageState extends State<AddImage> {
                       ModalRoute.withName('/'),
                     );
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text('Failed to add service. Please try again.'),
-                        backgroundColor: MyColors.Dark,
-                      ),
-                    );
+                    MyScaffold(text: 'Failed to add service. Please try again.')
+                        .show(context);
                   }
                 }),
           ),

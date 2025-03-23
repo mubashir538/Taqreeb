@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -15,22 +16,18 @@ class CategoryIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
         margin: EdgeInsets.symmetric(
-            horizontal: MaximumThing * 0.01, vertical: MaximumThing * 0.02),
+            horizontal: Screen.max(context) * 0.01,
+            vertical: Screen.max(context) * 0.02),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: MaximumThing * 0.1,
-              height: MaximumThing * 0.08,
+              width: Screen.max(context) * 0.1,
+              height: Screen.max(context) * 0.08,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -41,15 +38,15 @@ class CategoryIcon extends StatelessWidget {
               ),
             ),
             Container(
-              constraints: BoxConstraints(maxWidth: MaximumThing * 0.12),
-              margin: EdgeInsets.only(top: MaximumThing * 0.004),
+              constraints: BoxConstraints(maxWidth: Screen.max(context) * 0.12),
+              margin: EdgeInsets.only(top: Screen.max(context) * 0.004),
               child: Text(
                 label,
                 softWrap: true,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
-                  fontSize: MaximumThing * 0.013,
+                  fontSize: Screen.max(context) * 0.013,
                   fontWeight: FontWeight.w300,
                   color: MyColors.white,
                 ),

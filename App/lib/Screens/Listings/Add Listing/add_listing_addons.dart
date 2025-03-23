@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class AddcategoryAddons extends StatefulWidget {
   const AddcategoryAddons({super.key});
@@ -44,10 +44,6 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -55,9 +51,10 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
-              margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-              constraints: BoxConstraints(minHeight: screenHeight),
+              width: Screen.width(context),
+              margin:
+                  EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -65,22 +62,22 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
                     height: _headerHeight,
                   ),
                   Container(
-                    margin: EdgeInsets.all(MaximumThing * 0.01),
+                    margin: EdgeInsets.all(Screen.max(context) * 0.01),
                     child: Text(
                       "Add-Ons",
                       style: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.025,
+                        fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w600,
                         color: MyColors.Yellow,
                       ),
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.all(screenWidth * 0.01),
-                    width: screenWidth * 0.9,
+                    margin: EdgeInsets.all(Screen.width(context) * 0.01),
+                    width: Screen.width(context) * 0.9,
                     padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.03,
-                      vertical: screenHeight * 0.02,
+                      horizontal: Screen.width(context) * 0.03,
+                      vertical: Screen.height(context) * 0.02,
                     ),
                     decoration: BoxDecoration(
                       color: MyColors.DarkLighter,
@@ -105,17 +102,20 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
                                       children: [
                                         Container(
                                           margin: EdgeInsets.symmetric(
-                                            horizontal: screenWidth * 0.02,
+                                            horizontal:
+                                                Screen.width(context) * 0.02,
                                           ),
                                           child: Row(
                                             children: [
                                               SizedBox(
-                                                  height: MaximumThing * 0.01),
+                                                  height: Screen.max(context) *
+                                                      0.01),
                                               Text(
                                                 addon['name'],
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      MaximumThing * 0.015,
+                                                      Screen.max(context) *
+                                                          0.015,
                                                   fontWeight: FontWeight.w400,
                                                   color: MyColors.Yellow,
                                                 ),
@@ -130,7 +130,8 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
                                                     : addon['price'],
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      MaximumThing * 0.015,
+                                                      Screen.max(context) *
+                                                          0.015,
                                                   fontWeight: FontWeight.w400,
                                                   color: MyColors.white,
                                                 ),
@@ -138,7 +139,8 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(height: MaximumThing * 0.01),
+                                        SizedBox(
+                                            height: Screen.max(context) * 0.01),
                                       ],
                                     );
                                   }).toList(),
@@ -153,17 +155,17 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
             ),
           ),
           Positioned(
-            bottom: MaximumThing * 0.02,
-            left: screenWidth * 0.25,
-            right: screenWidth * 0.25,
+            bottom: Screen.max(context) * 0.02,
+            left: Screen.width(context) * 0.25,
+            right: Screen.width(context) * 0.25,
             child: ColoredButton(
                 text: 'Continue',
-                width: screenWidth * 0.5,
+                width: Screen.width(context) * 0.5,
                 onPressed: () {
                   Navigator.pushNamed(
                     context,
-                    '/AddCategory_Packages', 
-                    arguments: args, 
+                    '/AddCategory_Packages',
+                    arguments: args,
                   );
                 }),
           ),
@@ -185,14 +187,14 @@ class _AddcategoryAddonsState extends State<AddcategoryAddons> {
           }
           Navigator.pushNamed(
             context,
-            '/AddCategory_Add_Addons', 
-            arguments: args, 
+            '/AddCategory_Add_Addons',
+            arguments: args,
           );
         },
         child: Icon(
           Icons.add,
           color: MyColors.Dark,
-          size: MaximumThing * 0.04,
+          size: Screen.max(context) * 0.04,
         ),
       ),
     );

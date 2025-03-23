@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class ChatIcon extends StatelessWidget {
   const ChatIcon({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    final double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
     return Positioned(
-      bottom: screenHeight * 0.05,
-      right: screenHeight * 0.03,
+      bottom: Screen.height(context) * 0.05,
+      right: Screen.height(context) * 0.03,
       child: Container(
         decoration: BoxDecoration(
           color: MyColors.red,

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/crop_dialog.dart';
@@ -245,9 +246,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                     'Authorization':
                         'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
                   });
-              if (res['status'] == 'success') {
-                print('FCM saved');
-              }
               Navigator.pushNamedAndRemoveUntil(
                   context, '/HomePage', ModalRoute.withName('/'));
             }
@@ -288,10 +286,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -299,8 +293,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
-              constraints: BoxConstraints(minHeight: screenHeight),
+              width: Screen.width(context),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -312,7 +306,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                       GestureDetector(
                         onTap: _pickImage,
                         child: Container(
-                          margin: EdgeInsets.all(MaximumThing * 0.04),
+                          margin: EdgeInsets.all(Screen.max(context) * 0.04),
                           child: Stack(
                             children: [
                               ClipOval(
@@ -321,25 +315,25 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                                   child: _selectedImage != null
                                       ? Image.file(
                                           _selectedImage!,
-                                          width: screenWidth * 0.5,
-                                          height: screenWidth * 0.5,
+                                          width: Screen.width(context) * 0.5,
+                                          height: Screen.width(context) * 0.5,
                                           fit: BoxFit.cover,
                                         )
                                       : Image.asset(
                                           MyImages.UploadProfile,
-                                          width: screenWidth * 0.5,
-                                          height: screenWidth * 0.5,
+                                          width: Screen.width(context) * 0.5,
+                                          height: Screen.width(context) * 0.5,
                                           fit: BoxFit.cover,
                                         ),
                                 ),
                               ),
                               Positioned(
-                                bottom: screenWidth * 0.03,
-                                left: screenWidth * 0.03,
+                                bottom: Screen.width(context) * 0.03,
+                                left: Screen.width(context) * 0.03,
                                 child: SvgPicture.asset(
                                   MyIcons.upload,
-                                  width: MaximumThing * 0.03,
-                                  height: MaximumThing * 0.03,
+                                  width: Screen.max(context) * 0.03,
+                                  height: Screen.max(context) * 0.03,
                                 ),
                               ),
                             ],

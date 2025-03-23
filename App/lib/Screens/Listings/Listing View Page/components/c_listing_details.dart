@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -7,7 +9,6 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class CategoryDetails extends StatefulWidget {
   final List<String> headings;
@@ -113,16 +114,12 @@ class _CategoryDetailsState extends State<CategoryDetails> {
         isEditGuestMin = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('${widget.headings[index]} updated successfully!')),
-      );
+      MyScaffold(text: '${widget.headings[index]} updated successfully!')
+          .show(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                '${widget.headings[index]} failed to Update Server Error!')),
-      );
+      MyScaffold(
+              text: '${widget.headings[index]} failed to Update Server Error!')
+          .show(context);
     }
   }
 
@@ -142,24 +139,19 @@ class _CategoryDetailsState extends State<CategoryDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     if (type) {
       return isLoading
           ? CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(MyColors.white),
             )
           : Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
+              padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
               child: Column(
                 children: [
                   for (int i = 0; i < widget.headings.length; i++)
                     Container(
                       margin: EdgeInsets.symmetric(
-                          vertical: maximumDimension * 0.01),
+                          vertical: Screen.max(context) * 0.01),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -176,19 +168,20 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         'Guest Min',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w500,
                                           color: MyColors.Yellow,
                                         ),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(
-                                          maxWidth: screenWidth * 0.4,
+                                          maxWidth: Screen.width(context) * 0.4,
                                         ),
                                         child: TextField(
                                           controller: controllers[i],
                                           style: GoogleFonts.montserrat(
-                                            fontSize: maximumDimension * 0.015,
+                                            fontSize:
+                                                Screen.max(context) * 0.015,
                                             color: MyColors.white,
                                           ),
                                           decoration: InputDecoration(
@@ -202,8 +195,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: ColoredButton(
-                                          width: screenWidth * 0.4,
-                                          textSize: maximumDimension * 0.015,
+                                          width: Screen.width(context) * 0.4,
+                                          textSize: Screen.max(context) * 0.015,
                                           text:
                                               isEditGuestMin ? "Save" : "Edit",
                                           onPressed: isEditGuestMin
@@ -220,7 +213,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         'Guest Max',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w500,
                                           color: MyColors.Yellow,
                                         ),
@@ -228,7 +221,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         widget.values[i].split('-')[1],
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w400,
                                           color: MyColors.white,
                                         ),
@@ -236,8 +229,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: ColoredButton(
-                                          width: screenWidth * 0.4,
-                                          textSize: maximumDimension * 0.015,
+                                          width: Screen.width(context) * 0.4,
+                                          textSize: Screen.max(context) * 0.015,
                                           text:
                                               isEditGuestMax ? "Save" : "Edit",
                                           onPressed: isEditGuestMax
@@ -264,7 +257,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         'Guest Min',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w500,
                                           color: MyColors.Yellow,
                                         ),
@@ -272,7 +265,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         widget.values[i].split('-')[0],
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w400,
                                           color: MyColors.white,
                                         ),
@@ -280,8 +273,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: ColoredButton(
-                                          width: screenWidth * 0.4,
-                                          textSize: maximumDimension * 0.015,
+                                          width: Screen.width(context) * 0.4,
+                                          textSize: Screen.max(context) * 0.015,
                                           text:
                                               isEditGuestMin ? "Save" : "Edit",
                                           onPressed: isEditGuestMin
@@ -300,20 +293,21 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         'Guest Max',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w500,
                                           color: MyColors.Yellow,
                                         ),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(
-                                          maxWidth: screenWidth * 0.4,
+                                          maxWidth: Screen.width(context) * 0.4,
                                         ),
                                         child: TextField(
                                           controller: controllers[
                                               controllers.length - 1],
                                           style: GoogleFonts.montserrat(
-                                            fontSize: maximumDimension * 0.015,
+                                            fontSize:
+                                                Screen.max(context) * 0.015,
                                             color: MyColors.white,
                                           ),
                                           decoration: InputDecoration(
@@ -327,8 +321,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: ColoredButton(
-                                          width: screenWidth * 0.4,
-                                          textSize: maximumDimension * 0.015,
+                                          width: Screen.width(context) * 0.4,
+                                          textSize: Screen.max(context) * 0.015,
                                           text:
                                               isEditGuestMax ? "Save" : "Edit",
                                           onPressed: isEditGuestMax
@@ -353,7 +347,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         'Guest Min',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w500,
                                           color: MyColors.Yellow,
                                         ),
@@ -361,7 +355,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         widget.values[i].split('-')[0],
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w400,
                                           color: MyColors.white,
                                         ),
@@ -369,8 +363,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: ColoredButton(
-                                          width: screenWidth * 0.4,
-                                          textSize: maximumDimension * 0.015,
+                                          width: Screen.width(context) * 0.4,
+                                          textSize: Screen.max(context) * 0.015,
                                           text: isEditing[i] ? "Save" : "Edit",
                                           onPressed: isEditing[i]
                                               ? () => saveValue(i)
@@ -388,7 +382,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         'Guest Max',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w500,
                                           color: MyColors.Yellow,
                                         ),
@@ -396,7 +390,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Text(
                                         widget.values[i].split('-')[1],
                                         style: GoogleFonts.montserrat(
-                                          fontSize: maximumDimension * 0.015,
+                                          fontSize: Screen.max(context) * 0.015,
                                           fontWeight: FontWeight.w400,
                                           color: MyColors.white,
                                         ),
@@ -404,8 +398,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: ColoredButton(
-                                          width: screenWidth * 0.4,
-                                          textSize: maximumDimension * 0.015,
+                                          width: Screen.width(context) * 0.4,
+                                          textSize: Screen.max(context) * 0.015,
                                           text: isEditing[i] ? "Save" : "Edit",
                                           onPressed: isEditing[i]
                                               ? () => saveValue(i)
@@ -426,7 +420,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                 Text(
                                   widget.headings[i],
                                   style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.015,
+                                    fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w500,
                                     color: MyColors.Yellow,
                                   ),
@@ -452,7 +446,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                             style: GoogleFonts.montserrat(
                                                 color: MyColors.white,
                                                 fontSize:
-                                                    maximumDimension * 0.015,
+                                                    Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w400),
                                           ),
                                         );
@@ -467,7 +461,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                     TextField(
                                       controller: controllers[i],
                                       style: GoogleFonts.montserrat(
-                                        fontSize: maximumDimension * 0.015,
+                                        fontSize: Screen.max(context) * 0.015,
                                         color: MyColors.white,
                                       ),
                                       decoration: InputDecoration(
@@ -482,7 +476,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                   Text(
                                     widget.values[i],
                                     style: GoogleFonts.montserrat(
-                                      fontSize: maximumDimension * 0.015,
+                                      fontSize: Screen.max(context) * 0.015,
                                       fontWeight: FontWeight.w400,
                                       color: MyColors.white,
                                     ),
@@ -504,10 +498,10 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                     ),
                   if (widget.headings.length != 0)
                     SizedBox(
-                      height: screenHeight * 0.05,
+                      height: Screen.height(context) * 0.05,
                       child: Center(
                           child: MyDivider(
-                        width: screenWidth * 0.85,
+                        width: Screen.width(context) * 0.85,
                       )),
                     ),
                 ],
@@ -515,19 +509,20 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             );
     } else {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           children: [
             for (int i = 0; i < widget.headings.length; i++)
               Container(
-                margin: EdgeInsets.symmetric(vertical: maximumDimension * 0.01),
+                margin:
+                    EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       widget.headings[i],
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.015,
+                        fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.w500,
                         color: MyColors.Yellow,
                       ),
@@ -542,19 +537,18 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                                   mode: LaunchMode.externalApplication,
                                 );
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text('Can not Open Link')));
+                                MyScaffold(text: 'Can not Open Link')
+                                    .show(context);
                               }
                             },
                             child: Icon(
                               Icons.link,
-                              size: maximumDimension * 0.03,
+                              size: Screen.max(context) * 0.03,
                               color: MyColors.white,
                             ),
                           )
                         : Container(
-                            width: screenWidth * 0.5,
+                            width: Screen.width(context) * 0.5,
                             child: Text(
                               widget.values[i],
                               maxLines: 3,
@@ -562,7 +556,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                               textAlign: TextAlign.right,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.montserrat(
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w400,
                                 color: MyColors.white,
                               ),
@@ -573,10 +567,10 @@ class _CategoryDetailsState extends State<CategoryDetails> {
               ),
             if (widget.headings.length != 0)
               SizedBox(
-                height: screenHeight * 0.05,
+                height: Screen.height(context) * 0.05,
                 child: Center(
                     child: MyDivider(
-                  width: screenWidth * 0.85,
+                  width: Screen.width(context) * 0.85,
                 )),
               ),
           ],

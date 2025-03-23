@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -44,16 +46,7 @@ class _YourEventsState extends State<YourEvents> {
         setState(() {
           if (fetchedEvents == null || fetchedEvents['status'] == 'error') {
             fetched = false;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                'Something Went Wrong!',
-                style: GoogleFonts.montserrat(
-                  color: MyColors.white,
-                  fontSize: 15,
-                ),
-              ),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
           }
           this.token = token;
           this.events = fetchedEvents ?? {};
@@ -87,10 +80,6 @@ class _YourEventsState extends State<YourEvents> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -102,13 +91,13 @@ class _YourEventsState extends State<YourEvents> {
                     children: [
                       SizedBox(height: _headerHeight),
                       Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+                        margin: EdgeInsets.symmetric(
+                            vertical: Screen.max(context) * 0.02),
                         child: SearchBox(
                             onChanged: (value) {},
                             controller: controller,
                             hint: 'Search Typing to Search',
-                            width: screenWidth * 0.9),
+                            width: Screen.width(context) * 0.9),
                       ),
                       isLoading
                           ? Center(
@@ -133,32 +122,15 @@ class _YourEventsState extends State<YourEvents> {
                                             .toString(),
                                       });
                                   if (response['status'] == 'success') {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(
-                                        'Event Deleted Successfully',
-                                        style: GoogleFonts.montserrat(
-                                          color: MyColors.white,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      backgroundColor: MyColors.green,
-                                    ));
+                                    MyScaffold(
+                                            text: 'Event Deleted Successfully')
+                                        .show(context);
                                     setState(() {
                                       events["Event"].removeAt(index);
                                     });
                                   } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(
-                                        'Something Went Wrong!',
-                                        style: GoogleFonts.montserrat(
-                                          color: MyColors.white,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      backgroundColor: MyColors.red,
-                                    ));
+                                    MyScaffold(text: 'Something Went Wrong!')
+                                        .show(context);
                                   }
                                 },
                                 color: Color(int.parse(

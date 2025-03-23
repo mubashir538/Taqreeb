@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -33,14 +34,12 @@ class CheckBoxQuestion extends StatefulWidget {
 class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: MaximumThing * 0.02,
+        horizontal: Screen.max(context) * 0.02,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,11 +47,11 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
           widget.question == ""
               ? Container()
               : Padding(
-                  padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+                  padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
                   child: Text(widget.question,
                       style: GoogleFonts.montserrat(
                           color: MyColors.white,
-                          fontSize: MaximumThing * 0.018)),
+                          fontSize: Screen.max(context) * 0.018)),
                 ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +61,7 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
                     style: GoogleFonts.montserrat(
                       color: MyColors.whiteDarker,
                       fontWeight: FontWeight.w300,
-                      fontSize: MaximumThing * 0.015,
+                      fontSize: Screen.max(context) * 0.015,
                     )),
                 value: widget.controller.selections.contains(option),
                 onChanged: (bool? value) {

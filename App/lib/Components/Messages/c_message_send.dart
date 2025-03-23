@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -18,15 +19,10 @@ class SendMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: maximumDimension * 0.02),
-      margin: EdgeInsets.only(bottom: maximumDimension * 0.02),
-      width: screenWidth * 0.9,
+      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
+      margin: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
+      width: Screen.width(context) * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -34,17 +30,15 @@ class SendMessage extends StatelessWidget {
             time,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w300,
-              fontSize: maximumDimension * 0.013,
+              fontSize: Screen.max(context) * 0.013,
             ),
           ),
           SizedBox(width: 15),
           Container(
-            constraints: BoxConstraints(maxWidth: screenWidth * 0.7),
-            padding: EdgeInsets.all(maximumDimension * 0.02),
+            constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
+            padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
-              color: 
-              
-              MyColors.red,
+              color: MyColors.red,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30),
                 bottomLeft: Radius.circular(30),
@@ -61,7 +55,7 @@ class SendMessage extends StatelessWidget {
                     child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
-                      width: screenWidth * 0.6,
+                      width: Screen.width(context) * 0.6,
                     ),
                   ),
                 if (text.isNotEmpty)
@@ -70,7 +64,7 @@ class SendMessage extends StatelessWidget {
                     softWrap: true,
                     textAlign: TextAlign.end,
                     style: GoogleFonts.montserrat(
-                      fontSize: maximumDimension * 0.015,
+                      fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
                     ),
@@ -85,7 +79,7 @@ class SendMessage extends StatelessWidget {
                         "Voice Note",
                         style: GoogleFonts.montserrat(
                           color: MyColors.white,
-                          fontSize: maximumDimension * 0.015,
+                          fontSize: Screen.max(context) * 0.015,
                         ),
                       ),
                     ],

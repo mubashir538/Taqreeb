@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -53,7 +54,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error fetching group data: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching group data: $e'});
       setState(() {
         isLoading = false;
       });
@@ -118,10 +121,14 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           'type': 'image',
         });
       } else {
-        print('Failed to upload image: ${response.statusCode}');
+        MyApi.postRequest(
+            endpoint: 'error/application',
+            body: {'error': 'Failed to upload image: ${response.statusCode}'});
       }
     } catch (e) {
-      print('Error uploading image: $e');
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error uploading image: $e'});
     }
   }
 

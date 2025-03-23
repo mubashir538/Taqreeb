@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -16,19 +17,15 @@ class IconedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return InkWell(
       onTap: onPressed,
       child: Center(
         child: Container(
-          height: screenHeight * 0.06,
-          width: screenWidth * 0.9,
-          margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+          height: Screen.height(context) * 0.06,
+          width: Screen.width(context) * 0.9,
+          margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+          padding:
+              EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
           decoration: BoxDecoration(
             color: MyColors.DarkLighter,
             borderRadius: BorderRadius.circular(10),
@@ -42,14 +39,14 @@ class IconedButton extends StatelessWidget {
             ],
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SvgPicture.asset(icon, height: MaximumThing * 0.03),
+            SvgPicture.asset(icon, height: Screen.max(context) * 0.03),
             SizedBox(
-              width: MaximumThing * 0.02,
+              width: Screen.max(context) * 0.02,
             ),
             Text(
               text,
               style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.015,
+                fontSize: Screen.max(context) * 0.015,
                 fontWeight: FontWeight.w200,
                 color: Colors.white,
               ),

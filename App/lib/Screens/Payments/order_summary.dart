@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -31,28 +33,22 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       this.token = token;
       this.user = user ?? {};
       if (user == null || user['status'] == 'error') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: MyColors.white,
-                  fontWeight: FontWeight.w400)),
-          backgroundColor: MyColors.red,
-        ));
+        MyScaffold(text: 'Something Went Wrong!').show(context);
         return;
       } else {
         isLoading = false;
       }
     });
   }
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchData();
   }
-  @override
 
+  @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -63,14 +59,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       listingprice = args['price'];
       listingtype = args['type'];
     });
-    print("${listingname} + ${listingprice} + ${listingtype}");
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: SingleChildScrollView(
@@ -82,18 +74,20 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   children: [
                     // Order Summary Title
                     Header(heading: "Order Summary"),
-                    SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                    SizedBox(
+                        height: Screen.height(context) *
+                            0.02), // Responsive spacing
 
                     // Event Details Section
                     Container(
-                      width: screenWidth * 0.9, // 90% of screen width
+                      width: Screen.width(context) * 0.9, // 90% of screen width
                       padding: EdgeInsets.all(
-                          screenWidth * 0.04), // Responsive padding
+                          Screen.width(context) * 0.04), // Responsive padding
                       decoration: BoxDecoration(
                         color: MyColors
                             .DarkLighter, // Use your card background color
                         borderRadius: BorderRadius.circular(
-                            screenWidth * 0.02), // Rounded corners
+                            Screen.width(context) * 0.02), // Rounded corners
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,32 +95,34 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           Text(
                             'Event Details',
                             style: TextStyle(
-                              fontSize:
-                                  screenWidth * 0.045, // Responsive font size
+                              fontSize: Screen.width(context) *
+                                  0.045, // Responsive font size
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
                           SizedBox(
-                              height:
-                                  screenHeight * 0.02), // Responsive spacing
+                              height: Screen.height(context) *
+                                  0.02), // Responsive spacing
                           _buildDetailRow('Service Name', listingname),
                           _buildDetailRow('Service Type', listingtype),
                           _buildDetailRow('Price', listingprice.toString()),
                         ],
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03), // Responsive spacing
+                    SizedBox(
+                        height: Screen.height(context) *
+                            0.03), // Responsive spacing
 
                     // Service Breakdown Section
                     // Container(
-                    //   width: screenWidth * 0.9, // 90% of screen width
+                    //   width: Screen.width(context) * 0.9, // 90% of screen width
                     //   padding:
-                    //       EdgeInsets.all(screenWidth * 0.04), // Responsive padding
+                    //       EdgeInsets.all(Screen.width(context) * 0.04), // Responsive padding
                     //   decoration: BoxDecoration(
                     //     color: MyColors.DarkLighter, // Use your card background color
                     //     borderRadius: BorderRadius.circular(
-                    //         screenWidth * 0.02), // Rounded corners
+                    //         Screen.width(context) * 0.02), // Rounded corners
                     //   ),
                     //   child: Column(
                     //     crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,12 +130,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     //       Text(
                     //         'Service Breakdown',
                     //         style: TextStyle(
-                    //           fontSize: screenWidth * 0.045, // Responsive font size
+                    //           fontSize: Screen.width(context) * 0.045, // Responsive font size
                     //           fontWeight: FontWeight.bold,
                     //           color: Colors.white,
                     //         ),
                     //       ),
-                    //       SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                    //       SizedBox(height: Screen.height(context) * 0.02), // Responsive spacing
                     //       _buildDetailRow('Venue Rental', '\$3,500'),
                     //       _buildDetailRow('Catering Service', '\$4,500'),
                     //       _buildDetailRow('Decoration', '\$1,200'),
@@ -147,18 +143,18 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     //     ],
                     //   ),
                     // ),
-                    // SizedBox(height: screenHeight * 0.03), // Responsive spacing
+                    // SizedBox(height: Screen.height(context) * 0.03), // Responsive spacing
 
                     // Customer Information Section
                     Container(
-                      width: screenWidth * 0.9, // 90% of screen width
+                      width: Screen.width(context) * 0.9, // 90% of screen width
                       padding: EdgeInsets.all(
-                          screenWidth * 0.04), // Responsive padding
+                          Screen.width(context) * 0.04), // Responsive padding
                       decoration: BoxDecoration(
                         color: MyColors
                             .DarkLighter, // Use your card background color
                         borderRadius: BorderRadius.circular(
-                            screenWidth * 0.02), // Rounded corners
+                            Screen.width(context) * 0.02), // Rounded corners
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,16 +162,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                           Text(
                             'Customer Information',
                             style: TextStyle(
-                              fontSize:
-                                  screenWidth * 0.045, // Responsive font size
+                              fontSize: Screen.width(context) *
+                                  0.045, // Responsive font size
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
                           SizedBox(
-                              height:
-                                  screenHeight * 0.02), // Responsive spacing
-                          _buildDetailRow('Name', user['firstName'] + " " + user['lastName']),
+                              height: Screen.height(context) *
+                                  0.02), // Responsive spacing
+                          _buildDetailRow('Name',
+                              user['firstName'] + " " + user['lastName']),
                           _buildDetailRow('Contact', user['email']),
                           _buildDetailRow('Location', 'Karachi, Pakistan'),
                           Row(
@@ -183,7 +180,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                               Text(
                                 'Secure Payment',
                                 style: TextStyle(
-                                  fontSize: screenWidth *
+                                  fontSize: Screen.width(context) *
                                       0.035, // Responsive font size
                                   color: Colors.grey,
                                 ),
@@ -200,7 +197,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.03), // Responsive spacing
+                    SizedBox(
+                        height: Screen.height(context) *
+                            0.03), // Responsive spacing
 
                     // Payment Buttons
                     Column(
@@ -212,7 +211,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                                 '/paymentdetails'); // Navigate to SecondScreen
                           },
                         ),
-                        SizedBox(height: screenHeight * 0.02),
+                        SizedBox(height: Screen.height(context) * 0.02),
                         ColoredButton(
                           text: "Pay Full Amount ",
                           onPressed: () {
@@ -222,7 +221,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: screenHeight * 0.03),
+                    SizedBox(height: Screen.height(context) * 0.03),
                   ],
                 ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -23,12 +24,9 @@ class GuideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final maxDimension = MediaQuery.of(context).size.shortestSide;
-
-    final containerHeight = maxDimension * 0.08;
-    final iconSize = maxDimension * 0.05;
-    final fontSize = maxDimension * 0.015;
+    final containerHeight = Screen.max(context) * 0.08;
+    final iconSize = Screen.max(context) * 0.05;
+    final fontSize = Screen.max(context) * 0.015;
 
     final isLeftSvg = leftIconPath.isNotEmpty && leftIconPath.endsWith('svg');
     final isRightSvg =
@@ -38,8 +36,8 @@ class GuideButton extends StatelessWidget {
       onTap: () => onpressed(),
       child: Center(
         child: Container(
-          height: containerHeight.clamp(60, 80.0), 
-          width: screenWidth * 0.9, 
+          height: containerHeight.clamp(60, 80.0),
+          width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
             color: MyColors.DarkLighter,
             borderRadius: BorderRadius.circular(12),
@@ -53,8 +51,7 @@ class GuideButton extends StatelessWidget {
                     ? (isLeftSvg
                         ? SvgPicture.asset(
                             leftIconPath,
-                            width:
-                                iconSize.clamp(20.0, 40.0), 
+                            width: iconSize.clamp(20.0, 40.0),
                             height: iconSize.clamp(20.0, 40.0),
                           )
                         : Image.asset(
@@ -68,19 +65,17 @@ class GuideButton extends StatelessWidget {
                         color: MyColors.white,
                       ),
               ),
-
               Expanded(
                 child: Text(
                   text,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                    fontSize: fontSize.clamp(14.0, 22.0), 
+                    fontSize: fontSize.clamp(14.0, 22.0),
                     fontWeight: FontWeight.w500,
                     color: MyColors.white,
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: rightIconPath.isNotEmpty

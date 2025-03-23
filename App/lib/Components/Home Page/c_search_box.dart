@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -20,39 +21,34 @@ class SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return InkWell(
       onTap: onclick,
       child: Container(
-        height: screenHeight * 0.07,
-        width: width == 0 ? screenWidth * 0.8 : width,
+        height: Screen.height(context) * 0.07,
+        width: width == 0 ? Screen.width(context) * 0.8 : width,
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+          margin: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Icon(Icons.search, color: MyColors.white),
               Container(
-                margin: EdgeInsets.only(left: MaximumThing * 0.02),
-                width: screenWidth * 0.5,
+                margin: EdgeInsets.only(left: Screen.max(context) * 0.02),
+                width: Screen.width(context) * 0.5,
                 child: GestureDetector(
                   onTap: onclick,
                   child: TextField(
-                    readOnly: isHome? true:false,
+                    readOnly: isHome ? true : false,
                     onTap: onclick,
                     controller: controller,
                     onChanged: onChanged,
                     style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.015,
+                      fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
                     ),
@@ -60,7 +56,7 @@ class SearchBox extends StatelessWidget {
                       border: InputBorder.none,
                       hintText: hint,
                       hintStyle: GoogleFonts.montserrat(
-                        fontSize: MaximumThing * 0.015,
+                        fontSize: Screen.max(context) * 0.015,
                         color: MyColors.whiteDarker,
                       ),
                     ),

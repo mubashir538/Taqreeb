@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -56,14 +58,7 @@ class _DashboardState extends State<Dashboard> {
           this.token = token;
           this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -81,10 +76,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -102,16 +93,17 @@ class _DashboardState extends State<Dashboard> {
                   )
                 : SingleChildScrollView(
                     child: Padding(
-                      padding: EdgeInsets.all(maximumDimension * 0.02),
+                      padding: EdgeInsets.all(Screen.max(context) * 0.02),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
-                              height: (screenHeight * 0.02) + _headerHeight),
+                              height: (Screen.height(context) * 0.02) +
+                                  _headerHeight),
                           Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: maximumDimension * 0.03,
-                                vertical: maximumDimension * 0.02),
+                                horizontal: Screen.max(context) * 0.03,
+                                vertical: Screen.max(context) * 0.02),
                             decoration: BoxDecoration(
                               color: MyColors.DarkLighter,
                               borderRadius: BorderRadius.circular(20),
@@ -128,14 +120,14 @@ class _DashboardState extends State<Dashboard> {
                               children: [
                                 CircleAvatar(
                                   backgroundColor: MyColors.red,
-                                  radius: screenHeight * 0.05,
+                                  radius: Screen.height(context) * 0.05,
                                   backgroundImage: NetworkImage(
                                     type == 'freelancer'
                                         ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilePic']}'
                                         : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
                                   ),
                                 ),
-                                SizedBox(width: screenWidth * 0.05),
+                                SizedBox(width: Screen.width(context) * 0.05),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -143,16 +135,17 @@ class _DashboardState extends State<Dashboard> {
                                       user['businessInfo']['businessName'],
                                       style: GoogleFonts.montserrat(
                                         color: MyColors.Yellow,
-                                        fontSize: maximumDimension * 0.02,
+                                        fontSize: Screen.max(context) * 0.02,
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                    SizedBox(height: screenHeight * 0.01),
+                                    SizedBox(
+                                        height: Screen.height(context) * 0.01),
                                     Text(
                                       "${user['listingCount']} Active Listings",
                                       style: GoogleFonts.montserrat(
                                         color: MyColors.white.withOpacity(0.7),
-                                        fontSize: maximumDimension * 0.015,
+                                        fontSize: Screen.max(context) * 0.015,
                                       ),
                                     ),
                                   ],
@@ -160,7 +153,7 @@ class _DashboardState extends State<Dashboard> {
                               ],
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.01),
+                          SizedBox(height: Screen.height(context) * 0.01),
                           ListView(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -217,16 +210,11 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildOptionCard(BuildContext context, String title, IconData icon,
       Color color, VoidCallback? onpressed) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double maximumDimension = screenWidth > MediaQuery.of(context).size.height
-        ? screenWidth
-        : MediaQuery.of(context).size.height;
-
     return GestureDetector(
       onTap: onpressed,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: maximumDimension * 0.01),
-        padding: EdgeInsets.all(maximumDimension * 0.02),
+        margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+        padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(15),
@@ -243,19 +231,19 @@ class _DashboardState extends State<Dashboard> {
           children: [
             CircleAvatar(
               backgroundColor: color,
-              radius: screenWidth * 0.05,
+              radius: Screen.width(context) * 0.05,
               child: Icon(
                 icon,
                 color: MyColors.white,
-                size: screenWidth * 0.05,
+                size: Screen.width(context) * 0.05,
               ),
             ),
-            SizedBox(width: screenWidth * 0.05),
+            SizedBox(width: Screen.width(context) * 0.05),
             Text(
               title,
               style: GoogleFonts.montserrat(
                 color: MyColors.white,
-                fontSize: maximumDimension * 0.02,
+                fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -263,7 +251,7 @@ class _DashboardState extends State<Dashboard> {
             Icon(
               Icons.arrow_forward_ios,
               color: MyColors.white,
-              size: maximumDimension * 0.02,
+              size: Screen.max(context) * 0.02,
             ),
           ],
         ),

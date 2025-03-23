@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -47,24 +49,18 @@ class _ForgotPassword_EmailorPhoneInputState
     String contact = contactController.text.trim();
     String type = '';
     if (contact.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please enter your email/phone number'),
-      ));
+      MyScaffold(text: 'Please enter your email/phone number').show(context);
       return;
     }
     if (contactController.text.contains('@')) {
       if (Validations.validateEmail(contact) != "Ok") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(Validations.validateEmail(contact)),
-        ));
+        MyScaffold(text: Validations.validateEmail(contact)).show(context);
         return;
       }
       type = 'email';
     } else {
       if (Validations.validateContact(contact) != "Ok") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(Validations.validateContact(contact)),
-        ));
+        MyScaffold(text: Validations.validateContact(contact)).show(context);
         return;
       }
       type = 'phone';
@@ -78,20 +74,14 @@ class _ForgotPassword_EmailorPhoneInputState
       );
 
       if (response['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Verification code sent successfully.'),
-        ));
+        MyScaffold(text: 'Verification code sent successfully.').show(context);
         Navigator.pushNamed(context, '/ForgotPassword_VerifyCode',
             arguments: {'email': contactController.text, 'response': response});
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(response['message'] ?? 'Something went wrong.'),
-        ));
+        MyScaffold(text: 'Something Went Wrong!').show(context);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: $e'),
-      ));
+      MyScaffold(text: 'Something Went Wrong!').show(context);
     }
 
     setState(() {
@@ -101,11 +91,9 @@ class _ForgotPassword_EmailorPhoneInputState
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -123,14 +111,14 @@ class _ForgotPassword_EmailorPhoneInputState
                       SizedBox(height: _headerHeight),
                       Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+                            EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
                         child: MyTextBox(
                           hint: "Enter Email/Phone Number",
                           valueController: contactController,
                         ),
                       ),
                       SizedBox(
-                        height: screenHeight * 0.05,
+                        height: Screen.height(context) * 0.05,
                         child: Center(child: MyDivider()),
                       ),
                       ColoredButton(

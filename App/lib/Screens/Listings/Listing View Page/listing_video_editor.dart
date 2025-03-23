@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'dart:math';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
@@ -18,7 +19,6 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class CategoryView_VideoEditor extends StatefulWidget {
   const CategoryView_VideoEditor({Key? key}) : super(key: key);
@@ -66,7 +66,6 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
     entryTime = DateTime.now(); // added-Store entry time when user opens page
-    print("📌 User opened CategoryView_VideoEditor at: $entryTime");
   }
 
   Timer? timer;
@@ -91,14 +90,7 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
               listing['status'] == 'error' ||
               events == null ||
               events['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             isLoading = false;
@@ -139,8 +131,6 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      print(
-          "🕒 Logging category view duration for Video Editor: $timeSpent seconds");
 
       logUserActivity("category_view_duration", {
         "category": "Video Editor",
@@ -170,9 +160,11 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
   //   );
 
   //   if (response.statusCode == 201) {
-  //     print("Category view duration logged successfully");
+  //
+  //   print("Category view duration logged successfully");
   //   } else {
-  //     print("Failed to log category view duration: ${response.body}");
+  //
+//    print("Failed to log category view duration: ${response.body}");
   //   }
   // }
   final GlobalKey _headerKey = GlobalKey();
@@ -195,7 +187,9 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
         await MyStorage.getToken(MyTokens.userId); // Get the actual user ID
 
     if (userId == null) {
-      print("User ID not found. Skipping activity log.");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'User ID not found. Skipping activity log.'});
       return;
     }
 
@@ -212,17 +206,15 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
       },
     );
 
-    if (response != null && response['status'] == 'success') {
-      print("Activity logged: $action");
-    } else {
-      print("Failed to log activity: ${response['message']}");
+    if (!(response != null && response['status'] == 'success')) {
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Failed to log activity: ${response['message']}'});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -244,11 +236,11 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                             imageUrls: _imageUrls,
                           ),
                           Container(
-                            width: screenWidth,
+                            width: Screen.width(context),
                             color: MyColors.Dark,
                             padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04,
-                              vertical: screenHeight * 0.01,
+                              horizontal: Screen.width(context) * 0.04,
+                              vertical: Screen.height(context) * 0.01,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,10 +251,10 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                                     selectedDate: selectedDate,
                                     events: events),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 PricingSection(listing: listing),
@@ -278,43 +270,29 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                                 CategoryReview(
                                     listing: listing, starsvalue: starsvalue),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 Padding(
-                                  padding:
-                                      EdgeInsets.only(top: screenHeight * 0.03),
+                                  padding: EdgeInsets.only(
+                                      top: Screen.height(context) * 0.03),
                                   child: Center(
                                       child: ColoredButton(
                                     text: 'Book Video Editor',
                                     onPressed: () async {
-                                      print(
-                                          "🛒 User clicked 'Book Video Editor' for listing ID: $listingId");
-
                                       await logUserActivity("book_videoeditor",
                                           {"listing_id": listingId ?? 0});
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('Booking action logged!',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 14,
-                                                color: MyColors.white,
-                                                fontWeight: FontWeight.w400)),
-                                        backgroundColor: MyColors.green,
-                                      ));
-                                        Navigator.pushNamed(
-                                                context, '/orderSummary',
-                                                arguments: {
-                                                  'Name': listing['Listing']
-                                                      ['name'],
-                                                  'type': listing['Listing']
-                                                      ['type'],
-                                                  'price': listing['Listing']
-                                                      ['basicPrice'],
-                                                });
+                                      Navigator.pushNamed(
+                                          context, '/orderSummary',
+                                          arguments: {
+                                            'Name': listing['Listing']['name'],
+                                            'type': listing['Listing']['type'],
+                                            'price': listing['Listing']
+                                                ['basicPrice'],
+                                          });
                                     },
                                   )),
                                 ),

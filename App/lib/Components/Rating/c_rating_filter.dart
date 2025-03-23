@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -23,9 +24,8 @@ class _RatingFilterState extends State<RatingFilter> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: screenHeight * 0.07,
+      height: Screen.height(context) * 0.07,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -56,13 +56,13 @@ class FilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
     return Container(
       padding:
           EdgeInsets.symmetric(horizontal: max * 0.01, vertical: max * 0.007),
-      width: screenWidth * 0.3,
+      width: Screen.width(context) * 0.3,
       margin: EdgeInsets.symmetric(horizontal: max * 0.01),
       decoration: BoxDecoration(
         border: Border.all(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -14,7 +15,6 @@ class SubmissionSucessful extends StatefulWidget {
 class _SubmissionSucessfulState extends State<SubmissionSucessful> {
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
@@ -27,7 +27,7 @@ class _SubmissionSucessfulState extends State<SubmissionSucessful> {
             image: MyImages.BusinessSignup,
           ),
           SizedBox(
-            height: screenHeight * 0.1,
+            height: Screen.height(context) * 0.1,
             child: Center(child: MyDivider()),
           ),
           ColoredButton(

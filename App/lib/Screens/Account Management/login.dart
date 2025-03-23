@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -50,10 +51,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -62,13 +59,15 @@ class _LoginState extends State<Login> {
           if (_headerHeight > 0)
             SingleChildScrollView(
               child: Container(
-                width: screenWidth,
+                width: Screen.width(context),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       children: [
-                        SizedBox(height: (screenHeight * 0.03) + _headerHeight),
+                        SizedBox(
+                            height: (Screen.height(context) * 0.03) +
+                                _headerHeight),
                         MyTextBox(
                           focusNode: emailFocus,
                           onFieldSubmitted: (_) {
@@ -87,7 +86,7 @@ class _LoginState extends State<Login> {
                           valueController: passwordController,
                         ),
                         SizedBox(
-                          width: screenWidth * 0.9,
+                          width: Screen.width(context) * 0.9,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -99,7 +98,7 @@ class _LoginState extends State<Login> {
                                 child: Text(
                                   "Forgot Password?",
                                   style: GoogleFonts.montserrat(
-                                    fontSize: MaximumThing * 0.012,
+                                    fontSize: Screen.max(context) * 0.012,
                                     fontWeight: FontWeight.w300,
                                     color: MyColors.Yellow,
                                   ),
@@ -109,7 +108,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         SizedBox(
-                          height: screenHeight * 0.03,
+                          height: Screen.height(context) * 0.03,
                         ),
                         ColoredButton(
                           text: "Login",
@@ -163,9 +162,6 @@ class _LoginState extends State<Login> {
                                       'Authorization':
                                           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
                                     });
-                                if (res['status'] == 'success') {
-                                  print('FCM saved');
-                                }
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     '/HomePage', ModalRoute.withName('/'));
                               } else {
@@ -189,7 +185,7 @@ class _LoginState extends State<Login> {
                           },
                         ),
                         SizedBox(
-                          height: screenHeight * 0.05,
+                          height: Screen.height(context) * 0.05,
                           child: MyDivider(),
                         ),
                         IconedButton(
@@ -230,9 +226,6 @@ class _LoginState extends State<Login> {
                                       'Authorization':
                                           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
                                     });
-                                if (res['status'] == 'success') {
-                                  print('FCM saved');
-                                }
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     '/HomePage', ModalRoute.withName('/'));
                               }

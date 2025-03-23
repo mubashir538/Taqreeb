@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Inputs/c_input_location.dart';
 import 'package:taqreeb/Components/Inputs/c_input_range_slider.dart';
@@ -14,7 +16,6 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class SearchService extends StatefulWidget {
   const SearchService({super.key});
@@ -56,7 +57,9 @@ class _SearchServiceState extends State<SearchService> {
         await MyStorage.getToken(MyTokens.userId); // Fetch actual user ID
 
     if (userId == null) {
-      print("User ID not found. Skipping activity log.");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'User ID not found. Skipping activity log'});
       return;
     }
     final response = await MyApi.postRequest(
@@ -72,10 +75,10 @@ class _SearchServiceState extends State<SearchService> {
       },
     );
 
-    if (response != null && response['status'] == 'success') {
-      print("✅ Activity logged: $action");
-    } else {
-      print("❌Failed to log activity: ${response['message']}");
+    if (!(response != null && response['status'] == 'success')) {
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Failed to log activity: ${response['message']}'});
     }
   }
 
@@ -87,7 +90,6 @@ class _SearchServiceState extends State<SearchService> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
     entryTime = DateTime.now();
-    print("📌 User opened SearchService at: $entryTime");
   }
 
   @override
@@ -125,14 +127,7 @@ class _SearchServiceState extends State<SearchService> {
               this.listings['status'] == 'error' ||
               this.categories == {} ||
               this.categories['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
           } else {
             if (this.args.isNotEmpty) {
               appliedFilters.add('Category');
@@ -153,7 +148,6 @@ class _SearchServiceState extends State<SearchService> {
     setState(() {
       isLoading = true;
     });
-    print('Fetching additional filters for $categoryType');
     final response = await MyApi.getRequest(
       endpoint: 'getListingDetails/$categoryType',
       headers: {'Authorization': 'Bearer $token'},
@@ -166,17 +160,14 @@ class _SearchServiceState extends State<SearchService> {
             if (field['choices'] != null && field['choices'].isNotEmpty)
               field['name']: field['choices'],
         };
-        print(additionalFilters);
+
         additionalSelections = {
           for (var field in additionalFilters.keys) field: []
         };
         isLoading = false;
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to fetch additional filters!'),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Failed to fetch additional filters!').show(context);
       setState(() {
         isLoading = false;
       });
@@ -188,7 +179,6 @@ class _SearchServiceState extends State<SearchService> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      print("⏳ [DEBUG] User left SearchService at: $exitTime");
 
       logUserActivity(
           "search_page_view_duration", {"time_spent_seconds": timeSpent});
@@ -225,11 +215,6 @@ class _SearchServiceState extends State<SearchService> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     _getHeaderHeight();
 
     return Scaffold(
@@ -239,7 +224,7 @@ class _SearchServiceState extends State<SearchService> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
+              width: Screen.width(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -256,10 +241,10 @@ class _SearchServiceState extends State<SearchService> {
                           children: [
                             Container(
                               margin: EdgeInsets.only(
-                                top: maximumDimension * 0.05,
+                                top: Screen.max(context) * 0.05,
                               ),
                               child: SizedBox(
-                                width: screenWidth * 0.9,
+                                width: Screen.width(context) * 0.9,
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -268,7 +253,7 @@ class _SearchServiceState extends State<SearchService> {
                                       onclick: () {},
                                       hint: 'Start typing to search',
                                       controller: searchController,
-                                      width: screenWidth * 0.75,
+                                      width: Screen.width(context) * 0.75,
                                       onChanged: (value) {
                                         setState(() {
                                           searchwithFilters();
@@ -283,8 +268,6 @@ class _SearchServiceState extends State<SearchService> {
                                                   .toList();
                                         });
                                         if (value.isNotEmpty) {
-                                          print(
-                                              "🔍 [DEBUG] User searching: $value");
                                           logUserActivity("search",
                                               {"search_query": value});
                                         }
@@ -297,7 +280,7 @@ class _SearchServiceState extends State<SearchService> {
                                               _showFilterPopup(context),
                                           icon: Icon(
                                             Icons.tune,
-                                            size: maximumDimension * 0.03,
+                                            size: Screen.max(context) * 0.03,
                                             color: MyColors.white,
                                           ),
                                         ),
@@ -309,7 +292,7 @@ class _SearchServiceState extends State<SearchService> {
                                                     context),
                                             icon: Icon(
                                               Icons.filter_alt,
-                                              size: maximumDimension * 0.03,
+                                              size: Screen.max(context) * 0.03,
                                               color: MyColors.white,
                                             ),
                                           ),
@@ -322,8 +305,8 @@ class _SearchServiceState extends State<SearchService> {
                             if (appliedFilters.isNotEmpty)
                               Container(
                                 margin: EdgeInsets.only(
-                                    top: maximumDimension * 0.02),
-                                width: screenWidth * 0.9,
+                                    top: Screen.max(context) * 0.02),
+                                width: Screen.width(context) * 0.9,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
@@ -369,7 +352,7 @@ class _SearchServiceState extends State<SearchService> {
                                 ),
                               ),
                             SizedBox(
-                              width: screenWidth * 0.9,
+                              width: Screen.width(context) * 0.9,
                               child: ListView.builder(
                                 itemBuilder: (context, index) {
                                   String serviceName =
@@ -380,9 +363,6 @@ class _SearchServiceState extends State<SearchService> {
 
                                   return GestureDetector(
                                     onTap: () {
-                                      print(
-                                          "🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
-
                                       logUserActivity("service_click", {
                                         "service_id": serviceId,
                                         "service_name": serviceName
@@ -504,11 +484,6 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void _showFilterPopup(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -522,15 +497,15 @@ class _SearchServiceState extends State<SearchService> {
                 .jumpTo(_scrollController.position.maxScrollExtent);
           }
           return Container(
-            padding: EdgeInsets.all(maximumDimension * 0.02),
+            padding: EdgeInsets.all(Screen.max(context) * 0.02),
             width: double.infinity,
             constraints: BoxConstraints(
-              maxHeight: maximumDimension * 0.8,
+              maxHeight: Screen.max(context) * 0.8,
             ),
             decoration: BoxDecoration(
               color: MyColors.DarkLighter,
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(maximumDimension * 0.05),
+                top: Radius.circular(Screen.max(context) * 0.05),
               ),
             ),
             child: SingleChildScrollView(
@@ -541,14 +516,14 @@ class _SearchServiceState extends State<SearchService> {
                   Text(
                     "Filter Options",
                     style: GoogleFonts.montserrat(
-                      fontSize: maximumDimension * 0.03,
+                      fontSize: Screen.max(context) * 0.03,
                       fontWeight: FontWeight.bold,
                       color: MyColors.red,
                     ),
                   ),
                   Text('Pricing',
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.02,
+                        fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
                         color: MyColors.Yellow,
                       )),
@@ -565,7 +540,7 @@ class _SearchServiceState extends State<SearchService> {
                   ),
                   Text('Ratings',
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.02,
+                        fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
                         color: MyColors.Yellow,
                       )),
@@ -586,7 +561,7 @@ class _SearchServiceState extends State<SearchService> {
                       }),
                   Text('Category',
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.02,
+                        fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
                         color: MyColors.Yellow,
                       )),
@@ -610,7 +585,7 @@ class _SearchServiceState extends State<SearchService> {
                       }),
                   Text('Location',
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.02,
+                        fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
                         color: MyColors.Yellow,
                       )),
@@ -624,7 +599,7 @@ class _SearchServiceState extends State<SearchService> {
                   ),
                   Text('Date',
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.02,
+                        fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
                         color: MyColors.Yellow,
                       )),
@@ -677,9 +652,6 @@ class _SearchServiceState extends State<SearchService> {
                             dateController.text;
                       }
 
-                      // 🔍 Debugging Print Statement
-                      print("🔄 [DEBUG] Applying filters: $filterData");
-
                       // ✅ Log filter application with values
                       logUserActivity("filter", filterData);
 
@@ -728,7 +700,7 @@ class _SearchServiceState extends State<SearchService> {
                         String fieldName = entry.key;
                         List<String> choices =
                             entry.value.cast<String>().toList();
-                        print(entry);
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

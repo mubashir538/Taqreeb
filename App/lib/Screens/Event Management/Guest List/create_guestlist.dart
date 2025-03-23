@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -71,16 +72,16 @@ class _CreateGuestListState extends State<CreateGuestList> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maxThing = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double maxThing = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Row(
         children: [
           SingleChildScrollView(
             child: Container(
-              constraints: BoxConstraints(minHeight: screenHeight),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -96,7 +97,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyColors.Yellow,
-        onPressed: () => _showOptions(context, maxThing, screenWidth),
+        onPressed: () => _showOptions(context, maxThing, Screen.width(context)),
         child: Icon(
           Icons.add,
           color: MyColors.Dark,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -14,11 +15,6 @@ class warningDialog extends StatelessWidget {
       this.actions = const []});
 
   Future<void> showDialogBox(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -28,17 +24,17 @@ class warningDialog extends StatelessWidget {
                 title,
                 style: GoogleFonts.montserrat(
                     color: MyColors.Yellow,
-                    fontSize: MaximumThing * 0.02,
+                    fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600),
               ),
               content: Text(
                 message,
                 style: GoogleFonts.montserrat(
                     color: MyColors.white,
-                    fontSize: MaximumThing * 0.015,
+                    fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400),
               ),
-              actions: actions.isNotEmpty 
+              actions: actions.isNotEmpty
                   ? actions
                   : [
                       ColoredButton(

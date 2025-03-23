@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -11,28 +12,26 @@ class QuestionGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: MaximumThing * 0.02, vertical: MaximumThing * 0.02),
+              horizontal: Screen.max(context) * 0.02, vertical: Screen.max(context) * 0.02),
           child: Text(
             Heading,
             style: GoogleFonts.montserrat(
                 color: MyColors.Yellow,
                 fontWeight: FontWeight.w500,
-                fontSize: MaximumThing * 0.02),
+                fontSize: Screen.max(context) * 0.02),
           ),
         ),
         for (var question in questions) question,
         SizedBox(
-          height: screenHeight * 0.04,
+          height: Screen.height(context) * 0.04,
           child: Center(child: MyDivider()),
         ),
       ],

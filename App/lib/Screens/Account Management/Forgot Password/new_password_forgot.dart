@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -51,11 +53,6 @@ class _ForgotPassword_NewPasswordState
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     email = args['email'].toString();
@@ -72,7 +69,7 @@ class _ForgotPassword_NewPasswordState
                   "This password should be different from the previous password",
             ),
             Container(
-              margin: EdgeInsets.only(top: MaximumThing * 0.05),
+              margin: EdgeInsets.only(top: Screen.max(context) * 0.05),
               child: Column(
                 children: [
                   MyTextBox(
@@ -86,24 +83,22 @@ class _ForgotPassword_NewPasswordState
                     isPassword: true,
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-                    width: screenWidth * 0.9,
+                    margin: EdgeInsets.symmetric(
+                        vertical: Screen.max(context) * 0.02),
+                    width: Screen.width(context) * 0.9,
                     child: Column(
                       children: [
                         _buildRuleRow(
                           "At least 8 characters",
                           hasMinLength,
-                          MaximumThing,
                         ),
                         _buildRuleRow(
                           "At least 1 number",
                           hasNumber,
-                          MaximumThing,
                         ),
                         _buildRuleRow(
                           "At least one special character",
                           hasSpecialChar,
-                          MaximumThing,
                         ),
                       ],
                     ),
@@ -112,22 +107,19 @@ class _ForgotPassword_NewPasswordState
               ),
             ),
             SizedBox(
-              height: screenHeight * 0.1,
+              height: Screen.height(context) * 0.1,
               child: Center(child: MyDivider()),
             ),
             ColoredButton(
               text: "Reset Password",
               onPressed: () async {
                 if (passwordController.text != confirmpasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Passwords do not match.'),
-                  ));
+                  MyScaffold(text: 'Something Went Wrong!').show(context);
                   return;
                 }
                 if (!hasMinLength || !hasNumber || !hasSpecialChar) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Password does not meet the requirements.'),
-                  ));
+                  MyScaffold(text: 'Password does not meet the requirements.')
+                      .show(context);
                   return;
                 }
                 final response = await MyApi.postRequest(
@@ -138,9 +130,8 @@ class _ForgotPassword_NewPasswordState
                     });
 
                 if (response['status'] == 'success') {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Password reset successfully.'),
-                  ));
+                  MyScaffold(text: 'Password reset successfully.')
+                      .show(context);
                   Navigator.pushReplacementNamed(context, '/Login');
                 }
               },
@@ -151,11 +142,11 @@ class _ForgotPassword_NewPasswordState
     );
   }
 
-  Widget _buildRuleRow(String text, bool isValid, double maximumThing) {
+  Widget _buildRuleRow(String text, bool isValid) {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: maximumThing * 0.01),
+          padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.01),
           child: Icon(
             Icons.check_circle_outline_rounded,
             size: 20,
@@ -165,7 +156,7 @@ class _ForgotPassword_NewPasswordState
         Text(
           text,
           style: GoogleFonts.montserrat(
-            fontSize: maximumThing * 0.015,
+            fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,
             color: isValid ? Colors.green : Colors.red,
           ),

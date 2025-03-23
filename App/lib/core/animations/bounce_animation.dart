@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 
 class BounceAnimation extends StatefulWidget {
   final Widget child;
@@ -19,15 +20,15 @@ class _BounceAnimationState extends State<BounceAnimation>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800), 
+      duration: Duration(milliseconds: 800),
     )..repeat(reverse: true);
     _bounceAnimation = Tween<double>(
-      begin: 0.95, 
-      end: 1.05,  
+      begin: 0.95,
+      end: 1.05,
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeInOut, 
+        curve: Curves.easeInOut,
       ),
     );
   }

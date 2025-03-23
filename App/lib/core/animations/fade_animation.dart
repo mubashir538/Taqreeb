@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class FadeAnimation extends StatefulWidget {
@@ -15,9 +16,10 @@ class FadeAnimation extends StatefulWidget {
   _FadeAnimationState createState() => _FadeAnimationState();
 }
 
-class _FadeAnimationState extends State<FadeAnimation> with SingleTickerProviderStateMixin {
+class _FadeAnimationState extends State<FadeAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool _isVisible = false; 
+  bool _isVisible = false;
 
   @override
   void initState() {
@@ -44,10 +46,9 @@ class _FadeAnimationState extends State<FadeAnimation> with SingleTickerProvider
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) {
-        _triggerFadeIn(); 
+        _triggerFadeIn();
       },
-      onExit: (_) {
-      },
+      onExit: (_) {},
       child: VisibilityDetector(
         key: Key('fade-animation-key'),
         onVisibilityChanged: (visibilityInfo) {

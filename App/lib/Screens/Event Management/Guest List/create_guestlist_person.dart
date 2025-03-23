@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_guest_list_card.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -73,8 +75,6 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -82,11 +82,11 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
+              width: Screen.width(context),
               child: Column(
                 children: [
                   SizedBox(
-                    height: (screenHeight * 0.05) + _headerHeight,
+                    height: (Screen.height(context) * 0.05) + _headerHeight,
                   ),
                   MyTextBox(
                     focusNode: personFocus,
@@ -106,7 +106,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                     valueController: contactcontroller,
                   ),
                   SizedBox(
-                    width: screenWidth * 0.9,
+                    width: Screen.width(context) * 0.9,
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -116,7 +116,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                           ondelete: () {
                             removePerson(index);
                           },
-                          mywidth: screenWidth * 0.8,
+                          mywidth: Screen.width(context) * 0.8,
                           name: guestList[index]['name'] ?? '',
                           contact: guestList[index]['contact'] ?? '',
                         );
@@ -125,11 +125,11 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                     ),
                   ),
                   SizedBox(
-                    height: screenHeight * 0.05,
+                    height: Screen.height(context) * 0.05,
                   ),
                   ColoredButton(
                     text: 'Add Person',
-                    width: screenWidth * 0.7,
+                    width: Screen.width(context) * 0.7,
                     onPressed: () {
                       setState(() {
                         guestList.add({
@@ -141,7 +141,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                   ),
                   BorderButton(
                     text: 'Done',
-                    width: screenWidth * 0.7,
+                    width: Screen.width(context) * 0.7,
                     onPressed: () async {
                       for (int i = 0; i < guestList.length; i++) {
                         final token =
@@ -159,16 +159,9 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
                               'PersonContact': guestList[i]['contact']
                             });
                         if (response['status'] == 'success') {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Person Added'),
-                          ));
+                          MyScaffold(text: 'Person Added').show(context);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                              'Person Not Added',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ));
+                          MyScaffold(text: 'Person Not Added').show(context);
                         }
                       }
                       Navigator.pushNamedAndRemoveUntil(

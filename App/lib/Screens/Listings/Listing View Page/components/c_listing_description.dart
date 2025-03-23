@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class DescriptionCategory extends StatefulWidget {
   final Map listing;
@@ -52,16 +53,12 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
           isEditing = false;
           widget.listing['Listing']['description'] = newDescription;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Description updated successfully!')),
-        );
+        MyScaffold(text: 'Description updated successfully!').show(context);
       } else {
         throw Exception(response['message'] ?? 'Failed to update description.');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      MyScaffold(text: 'Error: ${e.toString()}').show(context);
     }
   }
 
@@ -76,23 +73,18 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     if (type) {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(bottom: maximumDimension * 0.015),
+              margin: EdgeInsets.only(bottom: Screen.max(context) * 0.015),
               child: Text(
                 "Description",
                 style: GoogleFonts.montserrat(
-                  fontSize: maximumDimension * 0.025,
+                  fontSize: Screen.max(context) * 0.025,
                   fontWeight: FontWeight.w600,
                   color: MyColors.Yellow,
                 ),
@@ -105,7 +97,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                     controller: descriptionController,
                     maxLines: null,
                     style: GoogleFonts.montserrat(
-                      fontSize: maximumDimension * 0.015,
+                      fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w300,
                       color: MyColors.white,
                     ),
@@ -115,7 +107,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: Screen.height(context) * 0.02),
                   ColoredButton(
                     text: 'Save',
                     onPressed: saveDescription,
@@ -126,7 +118,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
               InkWell(
                 onTap: () => setState(() => isToggled = !isToggled),
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: maximumDimension * 0.01),
+                  padding: EdgeInsets.only(bottom: Screen.max(context) * 0.01),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -135,7 +127,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: isToggled ? 6 : 200,
                         style: GoogleFonts.montserrat(
-                          fontSize: maximumDimension * 0.015,
+                          fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w300,
                           color: MyColors.white,
                         ),
@@ -148,17 +140,17 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                   ),
                 ),
               ),
-            SizedBox(height: screenHeight * 0.02),
+            SizedBox(height: Screen.height(context) * 0.02),
             if (!isEditing)
               ColoredButton(
                 text: 'Edit',
                 onPressed: () => setState(() => isEditing = true),
               ),
             SizedBox(
-              height: screenHeight * 0.05,
+              height: Screen.height(context) * 0.05,
               child: Center(
                   child: MyDivider(
-                width: screenWidth * 0.85,
+                width: Screen.width(context) * 0.85,
               )),
             ),
           ],
@@ -166,16 +158,16 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
       );
     } else {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(bottom: maximumDimension * 0.015),
+              margin: EdgeInsets.only(bottom: Screen.max(context) * 0.015),
               child: Text(
                 "Description",
                 style: GoogleFonts.montserrat(
-                  fontSize: maximumDimension * 0.025,
+                  fontSize: Screen.max(context) * 0.025,
                   fontWeight: FontWeight.w600,
                   color: MyColors.Yellow,
                 ),
@@ -184,7 +176,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
             InkWell(
               onTap: () => setState(() => isToggled = !isToggled),
               child: Padding(
-                padding: EdgeInsets.only(bottom: maximumDimension * 0.01),
+                padding: EdgeInsets.only(bottom: Screen.max(context) * 0.01),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -193,7 +185,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
                       overflow: TextOverflow.ellipsis,
                       maxLines: isToggled ? 6 : 200,
                       style: GoogleFonts.montserrat(
-                        fontSize: maximumDimension * 0.015,
+                        fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.w300,
                         color: MyColors.white,
                       ),
@@ -207,10 +199,10 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
               ),
             ),
             SizedBox(
-              height: screenHeight * 0.05,
+              height: Screen.height(context) * 0.05,
               child: Center(
                   child: MyDivider(
-                width: screenWidth * 0.85,
+                width: Screen.width(context) * 0.85,
               )),
             ),
           ],

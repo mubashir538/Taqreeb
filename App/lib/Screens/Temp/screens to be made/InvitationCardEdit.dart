@@ -2,6 +2,7 @@
 // import 'dart:typed_data';
 // import 'dart:ui' as ui;
 // import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 // import 'package:flutter/rendering.dart';
 // import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 // import 'package:image_picker/image_picker.dart';
@@ -160,7 +161,7 @@
 //       await Share.shareXFiles([XFile(filePath)],
 //           text: 'Check out my invitation card!');
 //     } catch (e) {
-//       print('Error saving card: $e');
+//        //print('Error saving card: $e');
 //     }
 //   }
 
@@ -168,12 +169,12 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     double screenHeight = MediaQuery.of(context).size.height;
+//
+//
 
 //     return Scaffold(
 //       body: Container(
-//         width: screenWidth,
+//         width: Screen.width(context),
 //         child: Column(
 //           children: [
 //             Header(
@@ -185,8 +186,8 @@
 //                 key: _globalKey,
 //                 child: Container(
 //                   color: MyColors.white,
-//                   width: screenWidth,
-//                   height: screenHeight * 0.6,
+//                   width: Screen.width(context),
+//                   height: Screen.height(context) * 0.6,
 //                   child: Stack(
 //                     children: [
 //                       if (selectedImage != null)
@@ -222,7 +223,7 @@
 //               ),
 //             ),
 //             SizedBox(
-//               height: screenWidth * 0.15,
+//               height: Screen.width(context) * 0.15,
 //               child: Row(
 //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
 //                 children: [
@@ -243,8 +244,8 @@
 //                       },
 //                       child: Container(
 //                         margin: EdgeInsets.symmetric(horizontal: 8),
-//                         width: screenWidth * 0.15,
-//                         height: screenWidth * 0.15,
+//                         width: Screen.width(context) * 0.15,
+//                         height: Screen.width(context) * 0.15,
 //                         decoration: BoxDecoration(
 //                           color: MyColors.DarkLighter,
 //                           borderRadius: BorderRadius.circular(10),
@@ -260,7 +261,7 @@
 //             ),
 //             ColoredButton(
 //               text: 'Save Card',
-//               width: screenWidth * 0.5,
+//               width: Screen.width(context) * 0.5,
 //               onPressed: _saveCard,
 //             ),
 //           ],

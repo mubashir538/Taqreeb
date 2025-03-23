@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class ImageSliderCategory extends StatefulWidget {
   final List<String> imageUrls;
@@ -16,18 +16,13 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Column(
       children: [
         Stack(
           children: [
             SizedBox(
               width: double.infinity,
-              height: screenHeight * 0.3,
+              height: Screen.height(context) * 0.3,
               child: PageView.builder(
                 itemCount: widget.imageUrls.length,
                 onPageChanged: (index) {
@@ -44,17 +39,17 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
               ),
             ),
             Positioned(
-              bottom: -(maximumDimension * 0.01),
+              bottom: -(Screen.max(context) * 0.01),
               child: Container(
-                height: maximumDimension * 0.05,
-                width: screenWidth,
+                height: Screen.max(context) * 0.05,
+                width: Screen.width(context),
                 decoration: BoxDecoration(
                   color: MyColors.Dark,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10)),
                 ),
-                margin: EdgeInsets.only(top: maximumDimension * 0.01),
+                margin: EdgeInsets.only(top: Screen.max(context) * 0.01),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(widget.imageUrls.length, (index) {
@@ -62,11 +57,11 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
                       duration: Duration(milliseconds: 300),
                       margin: EdgeInsets.symmetric(horizontal: 4),
                       width: _currentIndex == index
-                          ? maximumDimension * 0.015
-                          : maximumDimension * 0.01,
+                          ? Screen.max(context) * 0.015
+                          : Screen.max(context) * 0.01,
                       height: _currentIndex == index
-                          ? maximumDimension * 0.015
-                          : maximumDimension * 0.01,
+                          ? Screen.max(context) * 0.015
+                          : Screen.max(context) * 0.01,
                       decoration: BoxDecoration(
                         color: _currentIndex == index
                             ? MyColors.red

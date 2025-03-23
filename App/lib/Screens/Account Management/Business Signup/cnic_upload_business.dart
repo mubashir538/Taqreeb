@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -116,8 +117,6 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -127,21 +126,23 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: (screenHeight * 0.02) + _headerHeight),
+                SizedBox(
+                    height: (Screen.height(context) * 0.02) + _headerHeight),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Screen.height(context) * 0.02),
                   child: Column(
                     children: [
                       frontImage != null
                           ? Image.file(
                               frontImage!,
-                              width: screenWidth * 0.5,
-                              height: screenWidth * 0.5,
+                              width: Screen.width(context) * 0.5,
+                              height: Screen.width(context) * 0.5,
                               fit: BoxFit.cover,
                             )
                           : Image.asset(
                               MyImages.Cnic,
-                              height: screenHeight * 0.2,
+                              height: Screen.height(context) * 0.2,
                               fit: BoxFit.contain,
                             ),
                       IconedButton(
@@ -154,19 +155,20 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                 ),
                 const SizedBox(height: 30),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Screen.height(context) * 0.01),
                   child: Column(
                     children: [
                       backImage != null
                           ? Image.file(
                               backImage!,
-                              width: screenWidth * 0.5,
-                              height: screenWidth * 0.5,
+                              width: Screen.width(context) * 0.5,
+                              height: Screen.width(context) * 0.5,
                               fit: BoxFit.cover,
                             )
                           : Image.asset(
                               MyImages.Cnic,
-                              height: screenHeight * 0.2,
+                              height: Screen.height(context) * 0.2,
                               fit: BoxFit.contain,
                             ),
                       IconedButton(
@@ -177,9 +179,9 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                     ],
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.03),
+                SizedBox(height: Screen.height(context) * 0.03),
                 MyDivider(),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: Screen.height(context) * 0.02),
                 ColoredButton(
                   onPressed: () {
                     if (frontImage == null || backImage == null) {

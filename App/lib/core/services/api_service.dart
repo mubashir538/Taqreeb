@@ -25,7 +25,8 @@ class MyApi {
         return {"status": "error", "message": "Something went wrong"};
       }
     } catch (e) {
-      print('Error occurred: $e');
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Error: $e'});
     }
   }
 
@@ -53,7 +54,8 @@ class MyApi {
         return {"status": "error", "message": "Something went wrong"};
       }
     } catch (e) {
-      print('Error occurred: $e');
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Error: $e'});
     }
   }
 }

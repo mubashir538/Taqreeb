@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Productcard extends StatefulWidget {
@@ -33,11 +34,6 @@ String toLowerCaseNoSpaces(String input) {
 class _ProductcardState extends State<Productcard> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return InkWell(
       onTap: () {
         String path = '';
@@ -71,9 +67,10 @@ class _ProductcardState extends State<Productcard> {
         });
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
-        width: widget.mywidth == 0 ? screenWidth * 0.7 : widget.mywidth,
-        height: screenHeight * 0.25,
+        margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+        width:
+            widget.mywidth == 0 ? Screen.width(context) * 0.7 : widget.mywidth,
+        height: Screen.height(context) * 0.25,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           image: DecorationImage(
@@ -86,8 +83,8 @@ class _ProductcardState extends State<Productcard> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                height: screenHeight * 0.1,
-                padding: EdgeInsets.all(MaximumThing * 0.01),
+                height: Screen.height(context) * 0.1,
+                padding: EdgeInsets.all(Screen.max(context) * 0.01),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.7),
                   borderRadius: BorderRadius.only(
@@ -107,12 +104,12 @@ class _ProductcardState extends State<Productcard> {
                               ? "${widget.venueName.substring(0, 20)}..."
                               : widget.venueName,
                           style: GoogleFonts.montserrat(
-                            fontSize: MaximumThing * 0.02,
+                            fontSize: Screen.max(context) * 0.02,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.01),
+                        SizedBox(height: Screen.height(context) * 0.01),
                         Text(
                           widget.location.length > 30
                               ? "${widget.location.replaceAll('\n', '').replaceAll('\r', '').substring(0, 30)}..."
@@ -120,12 +117,12 @@ class _ProductcardState extends State<Productcard> {
                                   .replaceAll('\n', '')
                                   .replaceAll('\r', ''),
                           style: GoogleFonts.montserrat(
-                            fontSize: MaximumThing * 0.015,
+                            fontSize: Screen.max(context) * 0.015,
                             fontWeight: FontWeight.w400,
                             color: Colors.white70,
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.01),
+                        SizedBox(height: Screen.height(context) * 0.01),
                       ],
                     ),
                     Flexible(
@@ -134,7 +131,7 @@ class _ProductcardState extends State<Productcard> {
                         softWrap: true,
                         textAlign: TextAlign.right,
                         style: GoogleFonts.montserrat(
-                          fontSize: MaximumThing * 0.015,
+                          fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
                         ),

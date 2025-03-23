@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/c_business_categories.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -46,14 +48,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
           this.token = token;
           this.user = user ?? {};
           if (user == null || user['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             this.items = user['categories'].cast<String>().toList() ?? [];
@@ -85,13 +80,11 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
+    
+     
+    
     TextStyle style = GoogleFonts.montserrat(
-      fontSize: MaximumThing * 0.015,
+      fontSize: Screen.max(context) * 0.015,
       fontWeight: FontWeight.w300,
       color: MyColors.white,
     );
@@ -112,7 +105,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           height: _headerHeight,
                         ),
                         SizedBox(
-                          height: screenHeight * 0.04,
+                          height: Screen.height(context) * 0.04,
                         ),
                         CircleAvatar(
                           radius: 50,
@@ -121,19 +114,19 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           ),
                         ),
                         SizedBox(
-                          height: MaximumThing * 0.02,
+                          height: Screen.max(context) * 0.02,
                         ),
                         Text(
                           user['businessInfo']['businessName'],
                           style: GoogleFonts.montserrat(
                               color: MyColors.white,
                               fontWeight: FontWeight.w500,
-                              fontSize: MaximumThing * 0.03),
+                              fontSize: Screen.max(context) * 0.03),
                         ),
                         MyDivider(),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04),
+                              horizontal: Screen.width(context) * 0.04),
                           child: Text(
                             user['businessInfo']['Description'],
                             style: style,
@@ -141,15 +134,15 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           ),
                         ),
                         SizedBox(
-                            height: screenHeight * 0.04,
+                            height: Screen.height(context) * 0.04,
                             child: Center(child: MyDivider())),
                         Container(
-                          padding: EdgeInsets.all(MaximumThing * 0.03),
+                          padding: EdgeInsets.all(Screen.max(context) * 0.03),
                           child: Column(
                             children: [
                               Row(children: [
                                 Icon(Icons.location_on_outlined),
-                                SizedBox(width: screenWidth * 0.02),
+                                SizedBox(width: Screen.width(context) * 0.02),
                                 Text(
                                   '${user['userinfo']['city']},Pakistan',
                                   style: style,
@@ -160,12 +153,12 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                   : Column(
                                       children: [
                                         SizedBox(
-                                          height: screenHeight * 0.015,
+                                          height: Screen.height(context) * 0.015,
                                         ),
                                         Row(children: [
                                           Icon(Icons.mail,
                                               color: MyColors.white),
-                                          SizedBox(width: screenWidth * 0.02),
+                                          SizedBox(width: Screen.width(context) * 0.02),
                                           Text(user['userinfo']['email'],
                                               style: style)
                                         ]),
@@ -176,14 +169,14 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                   : Column(
                                       children: [
                                         SizedBox(
-                                          height: screenHeight * 0.015,
+                                          height: Screen.height(context) * 0.015,
                                         ),
                                         Row(children: [
                                           Icon(
                                             Icons.phone,
                                             color: MyColors.white,
                                           ),
-                                          SizedBox(width: screenWidth * 0.02),
+                                          SizedBox(width: Screen.width(context) * 0.02),
                                           Text(
                                               user['userinfo']['contactNumber']
                                                   .toString(),
@@ -195,12 +188,12 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           ),
                         ),
                         SizedBox(
-                            height: screenHeight * 0.02,
+                            height: Screen.height(context) * 0.02,
                             child: Center(child: MyDivider())),
                         Container(
                           margin: EdgeInsets.only(
-                              top: MaximumThing * 0.03,
-                              left: MaximumThing * 0.03),
+                              top: Screen.max(context) * 0.03,
+                              left: Screen.max(context) * 0.03),
                           child: Row(
                             children: [
                               Text(
@@ -208,13 +201,13 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                 style: GoogleFonts.montserrat(
                                     color: MyColors.white,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: MaximumThing * 0.02),
+                                    fontSize: Screen.max(context) * 0.02),
                               ),
                             ],
                           ),
                         ),
                         SizedBox(
-                          height: screenHeight * 0.1,
+                          height: Screen.height(context) * 0.1,
                           child: ListView.builder(
                             itemCount: items.length,
                             itemBuilder: (context, index) {
@@ -224,7 +217,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           ),
                         ),
                         SizedBox(
-                          height: screenHeight * 0.05,
+                          height: Screen.height(context) * 0.05,
                         )
                       ],
                     )),

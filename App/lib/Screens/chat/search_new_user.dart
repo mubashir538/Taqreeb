@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
@@ -42,7 +43,9 @@ class _NewUserSearchState extends State<NewUserSearch> {
           }).toList();
         });
       } catch (e) {
-        print("Error searching users: $e");
+        MyApi.postRequest(
+            endpoint: 'error/application',
+            body: {'error': 'Error searching users: $e'});
       }
     }
   }
@@ -53,14 +56,13 @@ class _NewUserSearchState extends State<NewUserSearch> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: MyColors.Dark,
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Header(
             heading: "Search New User",
           ),
-          SizedBox(height: screenHeight * 0.02),
+          SizedBox(height: Screen.height(context) * 0.02),
           SearchBox(
             onChanged: (query) {
               _searchUsers(query);

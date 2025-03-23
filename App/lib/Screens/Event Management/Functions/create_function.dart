@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
@@ -109,27 +111,13 @@ class _CreateFunctionState extends State<CreateFunction> {
             }
           }
           if (Function == {} || Function['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
+            MyScaffold(text: 'Something Went Wrong!').show(context);
             return;
           } else {
             this.token = token;
             this.types = types ?? {};
             if (this.types == {} || this.types['status'] == 'error') {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Something Went Wrong!',
-                    style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        color: MyColors.white,
-                        fontWeight: FontWeight.w400)),
-                backgroundColor: MyColors.red,
-              ));
+              MyScaffold(text: 'Something Went Wrong!').show(context);
               return;
             } else {
               isLoading = false;
@@ -161,8 +149,6 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -170,8 +156,8 @@ class _CreateFunctionState extends State<CreateFunction> {
         children: [
           SingleChildScrollView(
             child: Container(
-              width: screenWidth,
-              constraints: BoxConstraints(minHeight: screenHeight),
+              width: Screen.width(context),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -179,7 +165,7 @@ class _CreateFunctionState extends State<CreateFunction> {
                   Column(
                     children: [
                       SizedBox(
-                        height: screenHeight * 0.04,
+                        height: Screen.height(context) * 0.04,
                       ),
                       MyTextBox(
                         focusNode: namefocus,
@@ -238,7 +224,7 @@ class _CreateFunctionState extends State<CreateFunction> {
                         onFieldSubmitted: (_) {
                           FocusScope.of(context).unfocus();
                         },
-                        hint: 'Maximum Guests',
+                        hint: 'Screen.max(context) Guests',
                         isNum: true,
                         valueController: guestMaxController,
                       ),
@@ -253,9 +239,8 @@ class _CreateFunctionState extends State<CreateFunction> {
                           budgetController.text.isEmpty ||
                           guestMaxController.text.isEmpty ||
                           guestMinController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Please fill all the fields"),
-                        ));
+                        MyScaffold(text: 'Please fill all the fields')
+                            .show(context);
                         return;
                       }
                       final response = await MyApi.postRequest(
@@ -274,10 +259,11 @@ class _CreateFunctionState extends State<CreateFunction> {
                             'Event Id': this.EventId
                           });
                       if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(edit
-                                ? 'Function Updated Successfully'
-                                : 'Function Added Successfully')));
+                        MyScaffold(
+                                text: edit
+                                    ? 'Function Updated Successfully'
+                                    : 'Function Added Successfully')
+                            .show(context);
                         edit
                             ? Navigator.pop(context)
                             : Navigator.pushNamed(context, '/YourEvents');
@@ -291,10 +277,11 @@ class _CreateFunctionState extends State<CreateFunction> {
                             ? Navigator.pop(context)
                             : Navigator.pushNamed(context, '/YourEvents');
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(edit
-                                ? 'Error Updating Function'
-                                : 'Error Creating Function')));
+                        MyScaffold(
+                                text: edit
+                                    ? 'Error Updating Function'
+                                    : 'Error Creating Function')
+                            .show(context);
                       }
                     },
                   ),

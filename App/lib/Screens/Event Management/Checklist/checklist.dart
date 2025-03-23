@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
@@ -65,17 +67,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         this.token = token;
         this.list = fetchedlist ?? {};
         if (list.isEmpty || list['status'] == 'error') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-              'Something Went Wrong!',
-              style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            backgroundColor: MyColors.red,
-          ));
+          MyScaffold(text: 'Something Went Wrong!').show(context);
           return;
         }
         if (list['checklist'] != null) {
@@ -140,9 +132,9 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   void _showAddItemDialog() {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double maxthing = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double maxthing = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
 
     showDialog(
       context: context,
@@ -196,17 +188,13 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Container(
-              constraints: BoxConstraints(minHeight: screenHeight),
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,11 +218,11 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                               final item = checklistItems[index];
                               return Container(
                                 margin: EdgeInsets.symmetric(
-                                    horizontal: MaximumThing * 0.02,
-                                    vertical: MaximumThing * 0.01),
+                                    horizontal: Screen.max(context) * 0.02,
+                                    vertical: Screen.max(context) * 0.01),
                                 padding: EdgeInsets.symmetric(
-                                    vertical: MaximumThing * 0.007,
-                                    horizontal: MaximumThing * 0.02),
+                                    vertical: Screen.max(context) * 0.007,
+                                    horizontal: Screen.max(context) * 0.02),
                                 decoration: BoxDecoration(
                                   color: MyColors.DarkLighter,
                                   borderRadius: BorderRadius.circular(10),
@@ -266,7 +254,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                               );
                             },
                           ),
-                    SizedBox(height: MaximumThing * 0.02),
+                    SizedBox(height: Screen.max(context) * 0.02),
                   ]),
                   Center(
                     child: ColoredButton(
@@ -305,17 +293,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                               break;
                             }
                           }
-                          SnackBar snackBar = SnackBar(
-                            content: Text(flag
-                                ? 'Failed to save checklist'
-                                : 'Checklist Saved successfully'),
-                            backgroundColor: MyColors.Dark,
-                            duration: Duration(seconds: 2),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          MyScaffold(
+                                  text: flag
+                                      ? 'Failed to save checklist'
+                                      : 'Checklist Saved successfully')
+                              .show(context);
                           Navigator.of(context).pop();
                         },
-                        width: screenWidth * 0.5),
+                        width: Screen.width(context) * 0.5),
                   ),
                 ],
               ),

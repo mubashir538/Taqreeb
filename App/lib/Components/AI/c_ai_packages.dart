@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -17,25 +18,20 @@ class AIPackage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     TextStyle heading = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.015,
+        fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.w400,
         color: MyColors.white);
     TextStyle body = GoogleFonts.montserrat(
-        fontSize: MaximumThing * 0.015,
+        fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.w300,
         color: MyColors.white);
 
     return Container(
-      width: screenWidth * 0.8,
-      height: screenHeight * 0.35,
-      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
-      padding: EdgeInsets.all(MaximumThing * 0.02),
+      width: Screen.width(context) * 0.8,
+      height: Screen.height(context) * 0.35,
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+      padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           boxShadow: [
@@ -54,18 +50,18 @@ class AIPackage extends StatelessWidget {
             children: [
               Text('Price',
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.026,
+                      fontSize: Screen.max(context) * 0.026,
                       fontWeight: FontWeight.w600,
                       color: MyColors.white)),
               Text(price,
                   style: GoogleFonts.montserrat(
-                      fontSize: MaximumThing * 0.026,
+                      fontSize: Screen.max(context) * 0.026,
                       fontWeight: FontWeight.w600,
                       color: MyColors.white)),
             ],
           ),
           SizedBox(
-            height: screenHeight * 0.01,
+            height: Screen.height(context) * 0.01,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,13 +109,13 @@ class AIPackage extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(height: screenHeight * 0.01),
+          SizedBox(height: Screen.height(context) * 0.01),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ColoredButton(
                 text: 'See Details',
-                width: screenWidth * 0.4,
+                width: Screen.width(context) * 0.4,
                 onPressed: () => onpressed(),
               ),
             ],

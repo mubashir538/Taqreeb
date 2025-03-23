@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -10,9 +11,9 @@ class RatingDistribution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double max = screenWidth > screenHeight ? screenWidth : screenHeight;
+    double max = Screen.width(context) > Screen.height(context)
+        ? Screen.width(context)
+        : Screen.height(context);
 
     return Container(
       padding: EdgeInsets.all(max * 0.02),
@@ -34,7 +35,7 @@ class RatingDistribution extends StatelessWidget {
               child: Row(
                 children: [
                   SizedBox(
-                    width: screenWidth * 0.2,
+                    width: Screen.width(context) * 0.2,
                     child: Text(
                       "${entry.key}★ ${entry.value}%",
                       style: GoogleFonts.montserrat(
@@ -47,13 +48,12 @@ class RatingDistribution extends StatelessWidget {
                   SizedBox(width: max * 0.02),
                   Expanded(
                     child: LinearProgressIndicator(
-                      minHeight: screenHeight*0.02,
+                      minHeight: Screen.height(context) * 0.02,
                       value: entry.value / 100,
                       backgroundColor: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
                     ),
                   ),
-                  
                 ],
               ),
             ),

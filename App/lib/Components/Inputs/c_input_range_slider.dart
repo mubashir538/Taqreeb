@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -41,18 +42,14 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
   @override
   void initState() {
     super.initState();
-    currentRange = RangeValues(widget.controller.minValue, widget.controller.maxValue);
+    currentRange =
+        RangeValues(widget.controller.minValue, widget.controller.maxValue);
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Container(
-      margin: EdgeInsets.symmetric(vertical: MaximumThing * 0.02),
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -64,7 +61,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               overlayColor: MyColors.red.withOpacity(0.2),
               valueIndicatorTextStyle: GoogleFonts.montserrat(
                 color: Colors.white,
-                fontSize: MaximumThing * 0.015,
+                fontSize: Screen.max(context) * 0.015,
               ),
             ),
             child: RangeSlider(
@@ -83,16 +80,17 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
                     (newRange.end / 10000).round() * 10000.toDouble(),
                   );
 
-                  widget.controller.updateValues(currentRange.start, currentRange.end);
+                  widget.controller
+                      .updateValues(currentRange.start, currentRange.end);
 
                   widget.onChanged(currentRange.start, currentRange.end);
                 });
               },
             ),
           ),
-
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: MaximumThing * 0.02),
+            padding:
+                EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

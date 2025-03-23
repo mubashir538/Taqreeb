@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+
+import '../../core/services/api_service.dart' show MyApi;
 
 class LocationInputWidget extends StatefulWidget {
   final TextEditingController locationController;
@@ -24,7 +27,6 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
   String _currentLocation = "Unknown Location";
 
   Future<List<String>> _fetchSuggestions(String query) async {
-    print('Running');
     if (query.isEmpty) return [];
 
     try {
@@ -47,7 +49,9 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
         throw Exception('Failed to fetch suggestions');
       }
     } catch (error) {
-      print("Error fetching suggestions: $error");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching suggestions: $error'});
       return [];
     }
   }
@@ -63,7 +67,9 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
         widget.onLocationChanged(_currentLocation);
       });
     } catch (e) {
-      print("Error fetching current location: $e");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching current location: $e'});
     }
   }
 

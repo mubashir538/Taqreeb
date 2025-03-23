@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/radio%20button%20question.dart';
@@ -75,23 +77,9 @@ class _CategoryAddonsState extends State<CategoryAddons> {
         isEditingHeading[index] = false;
         isEditingValue[index] = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Addon Updated Successfully!',
-            style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400)),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Addon Updated Successfully!').show(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Something Went Wrong!',
-            style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400)),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Something Went Wrong!').show(context);
     }
   }
 
@@ -100,7 +88,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
-  void addAddon(double screenWidth, double maximum) {
+  void addAddon() {
     TextEditingController nameController = new TextEditingController();
     TextEditingController perheadController = new TextEditingController();
     TextEditingController headtypeController = new TextEditingController();
@@ -120,7 +108,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             title: Text(
               'Add Add-Ons',
               style: GoogleFonts.montserrat(
-                fontSize: maximum * 0.02,
+                fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.w600,
                 color: MyColors.Yellow,
               ),
@@ -170,16 +158,16 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             actions: [
               BorderButton(
                 text: 'Cancel',
-                width: screenWidth * 0.3,
-                textSize: maximum * 0.015,
+                width: Screen.width(context) * 0.3,
+                textSize: Screen.max(context) * 0.015,
                 onPressed: () {
-                  Navigator.of(context).pop(); 
+                  Navigator.of(context).pop();
                 },
               ),
               ColoredButton(
                 text: 'Add',
-                width: screenWidth * 0.3,
-                textSize: maximum * 0.015,
+                width: Screen.width(context) * 0.3,
+                textSize: Screen.max(context) * 0.015,
                 onPressed: () async {
                   if (nameController.text.isNotEmpty &&
                       priceController.text.isNotEmpty) {
@@ -223,33 +211,14 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                         isEditingHeading.add(false);
                         isEditingValue.add(false);
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Addon Added Successfully!',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w400)),
-                        backgroundColor: MyColors.red,
-                      ));
+                      MyScaffold(text: 'Addon Added Successfully!')
+                          .show(context);
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Failed to Add Addon!',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w400)),
-                        backgroundColor: MyColors.red,
-                      ));
+                      MyScaffold(text: 'Failed to Add Addon!').show(context);
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Please Fill All the Fields!',
-                          style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              color: MyColors.white,
-                              fontWeight: FontWeight.w400)),
-                      backgroundColor: MyColors.red,
-                    ));
+                    MyScaffold(text: 'Please Fill All the Fields!')
+                        .show(context);
                   }
                   Navigator.of(context).pop();
                 },
@@ -289,62 +258,43 @@ class _CategoryAddonsState extends State<CategoryAddons> {
         isEditingHeading.removeAt(index);
         isEditingValue.removeAt(index);
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Addon Deleted Successfully!',
-            style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400)),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Addon Deleted Successfully!').show(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Something Went Wrong!',
-            style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: MyColors.white,
-                fontWeight: FontWeight.w400)),
-        backgroundColor: MyColors.red,
-      ));
+      MyScaffold(text: 'Something Went Wrong!').show(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    double maximumDimension =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     if (type) {
       return Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.02),
+        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Add-Ons',
               style: GoogleFonts.montserrat(
-                fontSize: maximumDimension * 0.025,
+                fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: MyColors.Yellow,
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
+              padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
               child: Column(
                 children: [
                   for (int i = 0; i < widget.listing['Addons'].length; i++)
                     Container(
                       margin: EdgeInsets.symmetric(
-                          vertical: maximumDimension * 0.01),
+                          vertical: Screen.max(context) * 0.01),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Add-On ${i + 1}',
                             style: GoogleFonts.montserrat(
-                              fontSize: maximumDimension * 0.015,
+                              fontSize: Screen.max(context) * 0.015,
                               fontWeight: FontWeight.w500,
                               color: MyColors.Yellow,
                             ),
@@ -353,7 +303,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                             TextField(
                               controller: headingControllers[i],
                               style: GoogleFonts.montserrat(
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                                 color: MyColors.white,
                               ),
                               decoration: InputDecoration(
@@ -366,7 +316,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                             Text(
                               _capitalize(widget.listing['Addons'][i]['name']),
                               style: GoogleFonts.montserrat(
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w400,
                                 color: MyColors.white,
                               ),
@@ -375,7 +325,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                             TextField(
                               controller: valueControllers[i],
                               style: GoogleFonts.montserrat(
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                                 color: MyColors.white,
                               ),
                               decoration: InputDecoration(
@@ -395,7 +345,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                                   : widget.listing['Addons'][i]['price']
                                       .toString(),
                               style: GoogleFonts.montserrat(
-                                fontSize: maximumDimension * 0.015,
+                                fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w400,
                                 color: MyColors.white,
                               ),
@@ -406,27 +356,27 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                               ColoredButton(
                                 text:
                                     isEditingHeading[i] ? 'Save' : 'Edit Name',
-                                width: screenWidth * 0.25,
-                                textSize: maximumDimension * 0.015,
+                                width: Screen.width(context) * 0.25,
+                                textSize: Screen.max(context) * 0.015,
                                 onPressed: isEditingHeading[i]
                                     ? () => saveAddon(i)
                                     : () => setState(
                                         () => isEditingHeading[i] = true),
                               ),
-                              SizedBox(width: maximumDimension * 0.02),
+                              SizedBox(width: Screen.max(context) * 0.02),
                               ColoredButton(
-                                textSize: maximumDimension * 0.015,
-                                width: screenWidth * 0.25,
+                                textSize: Screen.max(context) * 0.015,
+                                width: Screen.width(context) * 0.25,
                                 text: isEditingValue[i] ? 'Save' : 'Edit Price',
                                 onPressed: isEditingValue[i]
                                     ? () => saveAddon(i)
                                     : () => setState(
                                         () => isEditingValue[i] = true),
                               ),
-                              SizedBox(width: maximumDimension * 0.02),
+                              SizedBox(width: Screen.max(context) * 0.02),
                               ColoredButton(
-                                textSize: maximumDimension * 0.015,
-                                width: screenWidth * 0.25,
+                                textSize: Screen.max(context) * 0.015,
+                                width: Screen.width(context) * 0.25,
                                 text: 'Delete',
                                 onPressed: () => deleteAddon(i),
                               ),
@@ -437,16 +387,16 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                     ),
                   ColoredButton(
                     text: 'Add New Add-On',
-                    onPressed: () => addAddon(screenWidth, maximumDimension),
+                    onPressed: () => addAddon(),
                   ),
                 ],
               ),
             ),
             SizedBox(
-              height: screenHeight * 0.05,
+              height: Screen.height(context) * 0.05,
               child: Center(
                   child: MyDivider(
-                width: screenWidth * 0.85,
+                width: Screen.width(context) * 0.85,
               )),
             ),
           ],
@@ -455,20 +405,21 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     } else {
       return widget.listing['Addons'].length != 0
           ? Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
+              padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Add-Ons',
                     style: GoogleFonts.montserrat(
-                      fontSize: maximumDimension * 0.025,
+                      fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.w600,
                       color: MyColors.Yellow,
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.02),
+                    padding:
+                        EdgeInsets.only(top: Screen.height(context) * 0.02),
                     child: Column(
                       children: [
                         for (int i = 0;
@@ -476,14 +427,14 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                             i++)
                           Container(
                             margin: EdgeInsets.symmetric(
-                                vertical: maximumDimension * 0.01),
+                                vertical: Screen.max(context) * 0.01),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   widget.listing['Addons'][i]['name'],
                                   style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.015,
+                                    fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w500,
                                     color: MyColors.Yellow,
                                   ),
@@ -498,7 +449,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                                       : widget.listing['Addons'][i]['price']
                                           .toString(),
                                   style: GoogleFonts.montserrat(
-                                    fontSize: maximumDimension * 0.015,
+                                    fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w400,
                                     color: MyColors.white,
                                   ),
@@ -510,10 +461,10 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                     ),
                   ),
                   SizedBox(
-                    height: screenHeight * 0.05,
+                    height: Screen.height(context) * 0.05,
                     child: Center(
                         child: MyDivider(
-                      width: screenWidth * 0.85,
+                      width: Screen.width(context) * 0.85,
                     )),
                   ),
                 ],

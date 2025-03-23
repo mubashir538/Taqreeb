@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
@@ -13,12 +14,11 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_pricing.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
-
 
 class CategoryView_Caterers extends StatefulWidget {
   const CategoryView_Caterers({super.key});
@@ -32,7 +32,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   Map<String, dynamic> listing = {};
   late int? listingId;
   bool isLoading = true;
-  DateTime? entryTime; //added
+  DateTime? entryTime;
 
   bool isToggled = true;
   List<String> headings = [
@@ -57,7 +57,6 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _getHeaderHeight());
     entryTime = DateTime.now(); // added-Store entry time when user opens page
-    print("📌 User opened CategoryView_Caterers at: $entryTime");
   }
 
   @override
@@ -73,63 +72,37 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
         type = args['isBusiness'];
         ischange = true; // Prevents multiple API calls
       });
-      fetchData();
-    }
-  }
-
-  Timer? timer;
-  void fetchData() async {
-    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final listing = await MyApi.getRequest(
-      endpoint: 'Caterer/viewpage/${this.listingId}',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          this.token = token;
-          this.listing = listing ?? {};
-          if (listing == null || listing['status'] == 'error') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Something Went Wrong!',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: MyColors.white,
-                      fontWeight: FontWeight.w400)),
-              backgroundColor: MyColors.red,
-            ));
-            return;
-          } else {
-            this.events = listing['View'];
-            isLoading = false;
-            ischange = true;
-            for (var i = 0; i < listing['pictures'].length; i++) {
-              this._imageUrls.add(listing['pictures'][i]['picturePath']);
-            }
-            for (var i = 0; i < listing['Addons'].length; i++) {
-              this.addonsheadings.add(listing['Addons'][i]['name']);
-              if (listing['Addons'][i]['isPer']) {
-                this.addonsvalues.add(
-                    '${listing['Addons'][i]['price'].toString()}/${listing['Addons'][i]['perType'].toString()}');
-              } else {
-                this.addonsvalues.add(listing['Addons'][i]['price'].toString());
-              }
-            }
-            this.values.add(listing['View']['serviceType']);
-            this.values.add(listing['View']['cateringOptions']);
-            this.values.add(listing['View']['staff']);
-            this.values.add(listing['View']['expertise']);
-            this.starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-            this.starsvalue.add('(${listing['reveiewData']['1'].toString()})');
-            timer.cancel();
+      ApiCall.fetchAPI(
+        'Caterer/viewpage/$listingId',
+        onSuccess: (token, listing) {
+          if (mounted) {
+            setState(() {
+              this.token = token;
+              this.listing = listing;
+              ApiCall.updateListingDetails(
+                listing: listing,
+                updateState: (isLoading, ischange) {
+                  setState(() {
+                    this.isLoading = isLoading;
+                    this.ischange = ischange;
+                  });
+                },
+                imageUrls: _imageUrls,
+                addonsheadings: addonsheadings,
+                addonsvalues: addonsvalues,
+                values: values,
+                starsvalue: starsvalue,
+              );
+            });
           }
-        });
-      }
-    });
+        },
+        onError: () {
+          if (mounted) {
+            MyScaffold(text: 'Something Went Wrong!').show(context);
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -137,16 +110,12 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     if (entryTime != null) {
       DateTime exitTime = DateTime.now();
       int timeSpent = exitTime.difference(entryTime!).inSeconds;
-      print(
-          "🕒 Logging category view duration for Caterers: $timeSpent seconds");
-
       logUserActivity("category_view_duration", {
         "category": "Caterers",
         "listing_id": listingId ?? 0,
         "time_spent_seconds": timeSpent
       });
     }
-    timer?.cancel();
     super.dispose();
   }
 
@@ -168,9 +137,10 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   //   );
 
   //   if (response.statusCode == 201) {
-  //     print("Category view duration logged successfully");
+  //      //print("Category view duration logged successfully");
   //   } else {
-  //     print("Failed to log category view duration: ${response.body}");
+  //
+  //   print("Failed to log category view duration: ${response.body}");
   //   }
   // }
   final GlobalKey _headerKey = GlobalKey();
@@ -192,7 +162,9 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
         await MyStorage.getToken(MyTokens.userId); // Get user ID dynamically
 
     if (userId == null) {
-      print("⚠️ User ID not found. Skipping activity log.");
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'User ID not found. Skipping activity log'});
       return;
     }
 
@@ -209,17 +181,15 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
       },
     );
 
-    if (response != null && response['status'] == 'success') {
-      print("✅ Activity logged: $action");
-    } else {
-      print("❌ Failed to log activity: ${response?['message']}");
+    if (!(response != null && response['status'] == 'success')) {
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Failed to log activity: ${response?['message']}'});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     _getHeaderHeight();
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -241,11 +211,11 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                             imageUrls: _imageUrls,
                           ),
                           Container(
-                            width: screenWidth,
+                            width: Screen.width(context),
                             color: MyColors.Dark,
                             padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04,
-                              vertical: screenHeight * 0.01,
+                              horizontal: Screen.width(context) * 0.04,
+                              vertical: Screen.height(context) * 0.01,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,10 +226,10 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                                     selectedDate: selectedDate,
                                     events: events),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 PricingSection(listing: listing),
@@ -275,34 +245,24 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                                 CategoryReview(
                                     listing: listing, starsvalue: starsvalue),
                                 SizedBox(
-                                  height: screenHeight * 0.05,
+                                  height: Screen.height(context) * 0.05,
                                   child: Center(
                                       child: MyDivider(
-                                    width: screenWidth * 0.85,
+                                    width: Screen.width(context) * 0.85,
                                   )),
                                 ),
                                 Padding(
-                                  padding:
-                                      EdgeInsets.only(top: screenHeight * 0.03),
+                                  padding: EdgeInsets.only(
+                                      top: Screen.height(context) * 0.03),
                                   child: Center(
                                       child: ColoredButton(
                                     text: 'Book Caterer',
                                     onPressed: () async {
-                                      print(
-                                          "🛒 User clicked 'Book Caterer' for listing ID: $listingId");
-
                                       await logUserActivity("book_caterer",
                                           {"listing_id": listingId ?? 0});
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('Booking action logged!',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 14,
-                                                color: MyColors.white,
-                                                fontWeight: FontWeight.w400)),
-                                        backgroundColor: MyColors.green,
-                                      ));
+                                      MyScaffold(text: 'Booking action logged!')
+                                          .show(context);
                                       Navigator.pushNamed(
                                           context, '/orderSummary',
                                           arguments: {

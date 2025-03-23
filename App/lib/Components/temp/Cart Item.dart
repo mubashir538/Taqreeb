@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -17,16 +18,12 @@ class CartItems extends StatefulWidget {
 class _CartItemsState extends State<CartItems> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double MaximumThing =
-        screenWidth > screenHeight ? screenWidth : screenHeight;
-
     return Container(
-      height: screenHeight * 0.2,
-      width: screenWidth * 0.9,
+      height: Screen.height(context) * 0.2,
+      width: Screen.width(context) * 0.9,
       margin: EdgeInsets.symmetric(
-          vertical: MaximumThing * 0.02, horizontal: MaximumThing * 0.01),
+          vertical: Screen.max(context) * 0.02,
+          horizontal: Screen.max(context) * 0.01),
       decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           border: Border.all(
@@ -38,11 +35,11 @@ class _CartItemsState extends State<CartItems> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: MaximumThing * 0.01),
+            padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             child: Text(
               widget.name,
               style: GoogleFonts.montserrat(
-                fontSize: MaximumThing * 0.02,
+                fontSize: Screen.max(context) * 0.02,
                 color: MyColors.Yellow,
                 fontWeight: FontWeight.w400,
               ),
@@ -58,9 +55,9 @@ class _CartItemsState extends State<CartItems> {
                     borderRadius: BorderRadius.circular(16),
                     child: Image.network(
                       "https://shorturl.at/9nzlw",
-                      height: MaximumThing * 0.05,
-                      width: MaximumThing * 0.05,
-                      ),
+                      height: Screen.max(context) * 0.05,
+                      width: Screen.max(context) * 0.05,
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +65,7 @@ class _CartItemsState extends State<CartItems> {
                       Text(
                         widget.name,
                         style: GoogleFonts.montserrat(
-                          fontSize: MaximumThing * 0.02,
+                          fontSize: Screen.max(context) * 0.02,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -78,15 +75,15 @@ class _CartItemsState extends State<CartItems> {
                       Text(
                         "Rs, ${widget.price}",
                         style: GoogleFonts.montserrat(
-                          fontSize: MaximumThing * 0.015,
+                          fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
                     ],
                   ),
                   Container(
-                    height: screenHeight * 0.04,
-                    width: screenWidth * 0.25,
+                    height: Screen.height(context) * 0.04,
+                    width: Screen.width(context) * 0.25,
                     decoration: BoxDecoration(
                         color: MyColors.Dark,
                         border: Border.all(
@@ -101,13 +98,14 @@ class _CartItemsState extends State<CartItems> {
                             widget.quantity == 1 ? null : widget.quantity--;
                           }),
                           child: Icon(Icons.remove,
-                              color: Colors.white, size: MaximumThing * 0.015),
+                              color: Colors.white,
+                              size: Screen.max(context) * 0.015),
                         ),
                         Text(
                           widget.quantity.toString(),
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: MaximumThing * 0.015),
+                              fontSize: Screen.max(context) * 0.015),
                         ),
                         InkWell(
                             onTap: () => setState(() {
@@ -115,7 +113,7 @@ class _CartItemsState extends State<CartItems> {
                                 }),
                             child: Icon(Icons.add,
                                 color: Colors.white,
-                                size: MaximumThing * 0.015)),
+                                size: Screen.max(context) * 0.015)),
                       ],
                     ),
                   ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class CalendarView extends StatefulWidget {
-  final List<DateTime> bookedDates; 
-  final Function(DateTime) onDateSelected; 
+  final List<DateTime> bookedDates;
+  final Function(DateTime) onDateSelected;
   const CalendarView(
       {Key? key, required this.bookedDates, required this.onDateSelected})
       : super(key: key);
@@ -24,24 +25,21 @@ class _CalendarViewState extends State<CalendarView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TableCalendar(
-          firstDay: DateTime.now(), 
-          lastDay:
-              DateTime.now().add(const Duration(days: 365)), 
+          firstDay: DateTime.now(),
+          lastDay: DateTime.now().add(const Duration(days: 365)),
           focusedDay: _focusedDay,
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               _selectedDay = selectedDay;
-              _focusedDay = focusedDay; 
+              _focusedDay = focusedDay;
             });
             widget.onDateSelected(selectedDay);
           },
           calendarFormat: CalendarFormat.month,
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
-              color: 
-              
-              MyColors.red,
+              color: MyColors.red,
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(

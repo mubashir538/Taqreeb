@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 
 class AutoImageSlider extends StatefulWidget {
   final List<String> imageUrls;
