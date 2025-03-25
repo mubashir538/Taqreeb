@@ -84,6 +84,16 @@ class Listing(m.Model):
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
 
+
+class Transaction(m.Model):
+    id = m.AutoField(primary_key=True)
+    sender = m.ForeignKey(User,on_delete=m.CASCADE,null=True)
+    receiver = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
+    amount = m.IntegerField()
+    status = m.TextField(null=True)
+    date = m.DateTimeField(auto_now_add=True)
+    listing = m.ForeignKey(Listing,on_delete=m.CASCADE,null=True)
+    
 class PicturesListings(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)

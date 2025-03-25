@@ -1,0 +1,380 @@
+import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/utils/color.dart';
+import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
+import 'package:taqreeb/core/utils/images.dart';
+
+class CreateFunction extends StatefulWidget {
+  const CreateFunction({super.key});
+
+  @override
+  State<CreateFunction> createState() => _CreateFunctionState();
+}
+
+class _FunctionFormData {
+  final TextEditingController name = TextEditingController();
+  final TextEditingController budget = TextEditingController();
+  final TextEditingController type = TextEditingController();
+  final TextEditingController date = TextEditingController();
+  final TextEditingController guestMax = TextEditingController();
+  final TextEditingController guestMin = TextEditingController();
+
+  final FocusNode nameFocus = FocusNode();
+  final FocusNode budgetFocus = FocusNode();
+  final FocusNode typeFocus = FocusNode();
+  final FocusNode dateFocus = FocusNode();
+  final FocusNode guestMaxFocus = FocusNode();
+  final FocusNode guestMinFocus = FocusNode();
+
+  void dispose() {
+    name.dispose();
+    budget.dispose();
+    type.dispose();
+    date.dispose();
+    guestMax.dispose();
+    guestMin.dispose();
+
+    nameFocus.dispose();
+    budgetFocus.dispose();
+    typeFocus.dispose();
+    dateFocus.dispose();
+    guestMaxFocus.dispose();
+    guestMinFocus.dispose();
+  }
+}
+
+class _CreateFunctionState extends State<CreateFunction> {
+  final _formData = _FunctionFormData();
+  final GlobalKey headerKey = GlobalKey();
+  final Map<String, dynamic> _functionTypes = {};
+  
+  String _token = '';
+  String _functionId = '';
+  int _eventTypeId = 0;
+  int _eventId = 0;
+  bool _isLoading = true;
+  bool _isEditMode = false;
+  bool _hasChanges = false;
+  Map<String, dynamic> _functionDetails = {};
+  Map<String, dynamic> _routeArgs = {};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeFromArguments();
+  }
+
+  void _initializeFromArguments() {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
+    _routeArgs = args;
+    
+    setState(() {
+      _isEditMode = args['functionId'] != null;
+      _functionId = args['functionId'] ?? '';
+      _eventId = int.parse(args['eventId']?.toString() ?? '0');
+    });
+    
+    _fetchInitialData();
+  }
+
+  Future<void> _fetchInitialData() async {
+    await _fetchEventTypes();
+    await _fetchFunctionTypes();
+    
+    if (_isEditMode) {
+      await _fetchFunctionDetails();
+    }
+    
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _fetchEventTypes() async {
+    await ApiCall.fetchAPI(
+      'getEventTypes/',
+      onSuccess: (token, data) {
+        _token = token;
+        _findEventTypeId(data['eventTypes']);
+      },
+      context: mounted ? context : null,
+    );
+  }
+
+  void _findEventTypeId(List<dynamic> eventTypes) {
+    for (final type in eventTypes) {
+      if (type['name'] == _routeArgs['type']) {
+        _eventTypeId = type['id'];
+        break;
+      }
+    }
+  }
+
+  Future<void> _fetchFunctionTypes() async {
+    await ApiCall.fetchAPI(
+      'getFunctionTypes/$_eventTypeId',
+      onSuccess: (token, data) {
+        if (mounted) {
+          setState(() => _functionTypes.addAll(data));
+        }
+      },
+      context: mounted ? context : null,
+    );
+  }
+
+Future<void> _fetchFunctionDetails() async {
+  await ApiCall.fetchAPI(
+    'ViewFunction/$_functionId',
+    onSuccess: (token, data) {
+      if (!mounted) return;
+      
+      setState(() {
+        _functionDetails = data; // Store the complete response
+        _token = token;
+        
+        if (!_hasChanges) {
+          _populateFormData(_functionDetails['Fuctions']); // Use the stored data
+          _hasChanges = true;
+        }
+      });
+    },
+    context: mounted ? context : null,
+  );
+}
+
+  void _populateFormData(Map<String, dynamic> function) {
+    _formData.name.text = function['name'];
+    _formData.type.text = function['type'];
+    _formData.date.text = function['date'];
+    _formData.budget.text = function['budget'].toString();
+    _formData.guestMax.text = function['guestsmax'].toString();
+    _formData.guestMin.text = function['guestsmin'].toString();
+    _eventId = int.parse(function['eventId'].toString());
+  }
+
+  void _updateHeaderHeight(RenderBox renderBox) {
+    if (mounted) {
+      setState(() => UI_Management.headerHeight = renderBox.size.height);
+    }
+  }
+
+  Future<void> _submitFunction() async {
+    if (!_validateForm()) {
+      MyScaffold(text: 'Please fill all the fields').show(context);
+      return;
+    }
+
+    final response = await _sendFunctionRequest();
+    _handleResponse(response);
+  }
+
+  bool _validateForm() {
+    return _formData.name.text.isNotEmpty &&
+        _formData.type.text.isNotEmpty &&
+        _formData.date.text.isNotEmpty &&
+        _formData.budget.text.isNotEmpty &&
+        _formData.guestMax.text.isNotEmpty &&
+        _formData.guestMin.text.isNotEmpty;
+  }
+
+  Future<Map<String, dynamic>> _sendFunctionRequest() async {
+    return await MyApi.postRequest(
+      endpoint: _isEditMode ? 'editfunction/' : 'createfunction/',
+      headers: {'Authorization': 'Bearer $_token'},
+      body: {
+        'Function Name': _formData.name.text,
+        'Date': _formData.date.text,
+        'Type': _formData.type.text,
+        'Budget': _formData.budget.text,
+        'guest min': _formData.guestMin.text,
+        'guest max': _formData.guestMax.text,
+        'Function Id': _functionId,
+        'Event Id': _eventId,
+      },
+    );
+  }
+
+  void _handleResponse(Map<String, dynamic> response) {
+    if (response['status'] == 'success') {
+      _showSuccessMessage();
+      _navigateAfterSubmit();
+    } else if (response['status'] == 'BudgetError') {
+      _showBudgetWarning();
+    } else {
+      _showErrorMessage();
+    }
+  }
+
+  void _showSuccessMessage() {
+    MyScaffold(
+      text: _isEditMode 
+          ? 'Function Updated Successfully' 
+          : 'Function Added Successfully',
+    ).show(context);
+  }
+
+  void _navigateAfterSubmit() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/YourEvents',
+      (route) => route.isFirst,
+    );
+  }
+
+  void _showBudgetWarning() {
+    warningDialog(
+      message: 'Event Budget is Exceeding',
+      title: 'Budget Exceed',
+      actions: [ColoredButton(text: 'Ok')],
+    ).showDialogBox(context);
+  }
+
+  void _showErrorMessage() {
+    MyScaffold(
+      text: _isEditMode 
+          ? 'Error Updating Function' 
+          : 'Error Creating Function',
+    ).show(context);
+  }
+
+  @override
+  void dispose() {
+    _formData.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    UI_Management.getHeaderHeight(
+      headerKey: headerKey,
+      callback: _updateHeaderHeight,
+    );
+
+    return Scaffold(
+      backgroundColor: MyColors.Dark,
+      body: Stack(
+        children: [
+          _buildContent(),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: headerKey,
+              heading: _isEditMode ? 'Edit Function' : 'Create Function',
+              image: MyImages.Function,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      child: Container(
+        width: Screen.width(context),
+        constraints: BoxConstraints(minHeight: Screen.height(context)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(height: UI_Management.headerHeight),
+            Column(
+              children: [
+                SizedBox(height: Screen.height(context) * 0.04),
+                _buildNameField(),
+                _buildBudgetField(),
+                _buildTypeDropdown(),
+                _buildDateField(),
+                _buildGuestMinField(),
+                _buildGuestMaxField(),
+              ],
+            ),
+            _buildSubmitButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNameField() {
+    return MyTextBox(
+      focusNode: _formData.nameFocus,
+      onFieldSubmitted: (_) => _focusNext(_formData.budgetFocus),
+      hint: 'Function Name',
+      valueController: _formData.name,
+    );
+  }
+
+  Widget _buildBudgetField() {
+    return MyTextBox(
+      focusNode: _formData.budgetFocus,
+      onFieldSubmitted: (_) => _focusNext(_formData.typeFocus),
+      hint: 'Budget',
+      isNum: true,
+      isPrice: true,
+      valueController: _formData.budget,
+    );
+  }
+
+  Widget _buildTypeDropdown() {
+    return ResponsiveDropdown(
+      focusNode: _formData.typeFocus,
+      onFieldSubmitted: (_) => _focusNext(_formData.guestMinFocus),
+      items: _isLoading
+          ? []
+          : _functionTypes['functionTypes']
+              .map((val) => val['name'].toString())
+              .cast<String>()
+              .toList(),
+      labelText: 'Function Type',
+      onChanged: (value) => setState(() => _formData.type.text = value),
+    );
+  }
+
+  Widget _buildDateField() {
+    return DateQuestion(
+      question: '',
+      valuecontroller: _formData.date,
+      focusNode: _formData.dateFocus,
+      onFieldSubmitted: (_) => _focusNext(_formData.guestMinFocus),
+    );
+  }
+
+  Widget _buildGuestMinField() {
+    return MyTextBox(
+      focusNode: _formData.guestMinFocus,
+      onFieldSubmitted: (_) => _focusNext(_formData.guestMaxFocus),
+      hint: 'Minimum Guests',
+      isNum: true,
+      valueController: _formData.guestMin,
+    );
+  }
+
+  Widget _buildGuestMaxField() {
+    return MyTextBox(
+      focusNode: _formData.guestMaxFocus,
+      onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+      hint: 'Maximum Guests',
+      isNum: true,
+      valueController: _formData.guestMax,
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return ColoredButton(
+      text: _isEditMode ? 'Edit Function' : 'Add Function',
+      onPressed: _submitFunction,
+    );
+  }
+
+  void _focusNext(FocusNode focusNode) {
+    FocusScope.of(context).requestFocus(focusNode);
+  }
+}

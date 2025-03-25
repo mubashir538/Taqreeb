@@ -72,7 +72,7 @@ def GraphicDesignerViewPage(request, listingid):
     serializer = s.GraphicDesignersSerializer(GraphicDesigners,many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
     reviewData = CalculateReviews(Reviewserializer.data)
-    return Response({'status': 'success','GraphicDesigners': serializer.data,'reveiewData':reviewData, 'Addons':Addonsserializer.data,'Packages':Packageserializer.data,  'Listing':Listingserializer.data, 
+    return Response({'status': 'success','View': serializer.data,'reveiewData':reviewData, 'Addons':Addonsserializer.data,'Packages':Packageserializer.data,  'Listing':Listingserializer.data, 
                      'Package': Packageserializer.data, 'Review': Reviewserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
@@ -115,7 +115,7 @@ def VideoEditorViewPage(request, VideoEditorID):
     ReviewSerializer = s.ReviewSerializer(Review,many=True)
     ListingSerializer = s.ListingSerializer(Listing, many=False)
     reviewData = CalculateReviews(ReviewSerializer.data)
-    return Response({'status': 'success','GraphicDesigners': VideoEditorsSerializer.data,'reveiewData':reviewData, 'Addons':Addonsserializer.data,  'Listing':ListingSerializer.data, 
+    return Response({'status': 'success','View': VideoEditorsSerializer.data,'reveiewData':reviewData, 'Addons':Addonsserializer.data,  'Listing':ListingSerializer.data, 
                      'Package': PackageSerializer.data, 'Review': ReviewSerializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
@@ -137,7 +137,7 @@ def VenueViewPage(request, listingid):
     reviewData = CalculateReviews(Reviewserializer.data)
     bookedDates = md.BookedSlots.objects.filter(listingId=venueId)
     bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
-    return Response({'status': 'success','VenueView': serializer.data,
+    return Response({'status': 'success','View': serializer.data,
                     'Addons': Addonsserializer.data,'reveiewData':reviewData,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data,'bookedDates':bookedDatesSerializer.data})
 
