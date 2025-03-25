@@ -1,32 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class SecurePaymentScreen extends StatefulWidget {
-  @override
-  State<SecurePaymentScreen> createState() => _SecurePaymentScreenState();
-}
 
-class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
-  final TextEditingController CardNumber = TextEditingController();
-  final TextEditingController ExpireyDate = TextEditingController();
-  final TextEditingController CVV = TextEditingController();
-  final TextEditingController CardholderName = TextEditingController();
+class PaymentController {
+  final TextEditingController cardNumberController = TextEditingController();
+  final TextEditingController expiryDateController = TextEditingController();
+  final TextEditingController cvvController = TextEditingController();
+  final TextEditingController cardholderNameController = TextEditingController();
 
-  final FocusNode CardNumberFocus = FocusNode();
+  final FocusNode cardNumberFocus = FocusNode();
   final FocusNode expiryDateFocus = FocusNode();
-  final FocusNode CVVFocus = FocusNode();
-  final FocusNode CardholderNameFocus = FocusNode();
+  final FocusNode cvvFocus = FocusNode();
+  final FocusNode cardholderNameFocus = FocusNode();
 
   String cardNumberError = '';
   String expiryDateError = '';
   String cvvError = '';
   String cardholderNameError = '';
+
+  void validateAllFields() {
+    cardNumberError = Validations.validateIntFields(cardNumberController.text);
+    expiryDateError = Validations.validateIntFields(expiryDateController.text);
+    cvvError = Validations.validateIntFields(cvvController.text);
+    cardholderNameError = Validations.validateName(cardholderNameController.text);
+  }
+
+  bool get isFormValid {
+    return cardNumberError.isEmpty &&
+        expiryDateError.isEmpty &&
+        cvvError.isEmpty &&
+        cardholderNameError.isEmpty;
+  }
+
+  void dispose() {
+    cardNumberController.dispose();
+    expiryDateController.dispose();
+    cvvController.dispose();
+    cardholderNameController.dispose();
+    
+    cardNumberFocus.dispose();
+    expiryDateFocus.dispose();
+    cvvFocus.dispose();
+    cardholderNameFocus.dispose();
+  }
+}
+
+
+class SecurePaymentScreen extends StatefulWidget {
+  const SecurePaymentScreen({super.key});
+
+  @override
+  State<SecurePaymentScreen> createState() => _SecurePaymentScreenState();
+}
+
+class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
+  final PaymentController _controller = PaymentController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,373 +75,267 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Header(
-              heading: "Secure Payment",
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.02), // Responsive spacing
-            SizedBox(
-              width: Screen.width(context) * 0.9,
-              child: Column(
-                children: [
-                  // Card Information Section
-                  Container(
-                    padding: EdgeInsets.all(
-                        Screen.width(context) * 0.04), // Responsive padding
-                    decoration: BoxDecoration(
-                      color: MyColors
-                          .DarkLighter, // Use your card background color
-                      borderRadius: BorderRadius.circular(
-                          Screen.width(context) * 0.02), // Rounded corners
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Card Information Title
-                        Text(
-                          'Card Information',
-                          style: TextStyle(
-                            fontSize: Screen.width(context) *
-                                0.045, // Responsive font size
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.02), // Responsive spacing
-
-                        // Card Number
-                        Text(
-                          'Card Number',
-                          style: TextStyle(
-                            fontSize: Screen.width(context) *
-                                0.035, // Responsive font size
-                            color: Colors.grey,
-                          ),
-                        ),
-                        MyTextBox(
-                          hint: "1234 5678 9012 3456",
-                          valueController: CardNumber,
-                          errorText: cardNumberError,
-                          onChanged: (value) {
-                            setState(() {
-                              cardNumberError =
-                                  Validations.validateIntFields(value);
-                            });
-                          },
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.02), // Responsive spacing
-
-                        // Expiry Date and CVV
-                        Row(
-                          children: [
-                            // Expiry Date
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Expiry Date',
-                                    style: TextStyle(
-                                      fontSize: Screen.width(context) *
-                                          0.035, // Responsive font size
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  MyTextBox(
-                                    hint: "MM/YY",
-                                    valueController: ExpireyDate,
-                                    errorText: expiryDateError,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        expiryDateError =
-                                            Validations.validateIntFields(
-                                                value);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // CVV
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'CVV',
-                                    style: TextStyle(
-                                      fontSize: Screen.width(context) *
-                                          0.035, // Responsive font size
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  MyTextBox(
-                                    hint: "123",
-                                    valueController: CVV,
-                                    errorText: cvvError,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        cvvError =
-                                            Validations.validateIntFields(
-                                                value);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.02), // Responsive spacing
-
-                        // Cardholder Name
-                        Text(
-                          'Cardholder Name',
-                          style: TextStyle(
-                            fontSize: Screen.width(context) *
-                                0.035, // Responsive font size
-                            color: Colors.grey,
-                          ),
-                        ),
-                        MyTextBox(
-                          hint: "John Smith",
-                          valueController: CardholderName,
-                          errorText: cardholderNameError,
-                          onChanged: (value) {
-                            setState(() {
-                              cardholderNameError =
-                                  Validations.validateName(value);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.03), // Responsive spacing
-
-            // Divider
-            Divider(
-              thickness: 1,
-              color: Colors.grey[300],
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.03), // Responsive spacing
-
-            // Order Summary Section
-            SizedBox(
-              width: Screen.width(context) * 0.9,
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(
-                        Screen.width(context) * 0.04), // Responsive padding
-                    decoration: BoxDecoration(
-                      color: MyColors
-                          .DarkLighter, // Use your card background color
-                      borderRadius: BorderRadius.circular(
-                          Screen.width(context) * 0.02), // Rounded corners
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Order Summary Title
-                        Text(
-                          'Order Summary',
-                          style: TextStyle(
-                            fontSize: Screen.width(context) *
-                                0.045, // Responsive font size
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.02), // Responsive spacing
-
-                        // Subtotal
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Subtotal',
-                              style: TextStyle(
-                                fontSize: Screen.width(context) *
-                                    0.035, // Responsive font size
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              '\$129.99',
-                              style: TextStyle(
-                                fontSize: Screen.width(context) *
-                                    0.04, // Responsive font size
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.01), // Responsive spacing
-
-                        // Tax
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Tax',
-                              style: TextStyle(
-                                fontSize: Screen.width(context) *
-                                    0.035, // Responsive font size
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              '\$12.99',
-                              style: TextStyle(
-                                fontSize: Screen.width(context) *
-                                    0.04, // Responsive font size
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.03), // Responsive spacing
-
-                        // Divider
-                        Divider(
-                          thickness: 1,
-                          color: Colors.grey[300],
-                        ),
-                        SizedBox(
-                            height: Screen.height(context) *
-                                0.03), // Responsive spacing
-
-                        // Total Amount
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Pay',
-                              style: TextStyle(
-                                fontSize: Screen.width(context) *
-                                    0.045, // Responsive font size
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              '\$145.97',
-                              style: TextStyle(
-                                fontSize: Screen.width(context) *
-                                    0.045, // Responsive font size
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.03), // Responsive spacing
-
-            // Payment Button
-            ColoredButton(
-              text: 'Pay Now',
-              onPressed: () {
-                // Validate all fields before proceeding
-                setState(() {
-                  cardNumberError =
-                      Validations.validateIntFields(CardNumber.text);
-                  expiryDateError =
-                      Validations.validateIntFields(ExpireyDate.text);
-                  cvvError = Validations.validateIntFields(CVV.text);
-                  cardholderNameError =
-                      Validations.validateName(CardholderName.text);
-                });
-
-                if (cardNumberError.isEmpty &&
-                    expiryDateError.isEmpty &&
-                    cvvError.isEmpty &&
-                    cardholderNameError.isEmpty) {
-                  // All fields are valid, proceed with payment
-                  // Add your payment logic here
-                } else {
-                  // Show error message if any field is invalid
-                  MyScaffold(text: 'Please fix the errors before proceeding.')
-                      .show(context);
-                }
-              },
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.005), // Responsive spacing
-
-            // Cancel Payment
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  // Handle cancel payment
-                },
-                child: Text(
-                  'Cancel Payment',
-                  style: TextStyle(
-                    color: MyColors.white,
-                    fontSize:
-                        Screen.width(context) * 0.035, // Responsive font size
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.02), // Responsive spacing
-
-            // Footer
-            Center(
-              child: Text(
-                'By proceeding, you agree to our Terms and Privacy Policy',
-                style: TextStyle(
-                  fontSize:
-                      Screen.width(context) * 0.03, // Responsive font size
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(
-                height: Screen.height(context) * 0.01), // Responsive spacing
-            Center(
-              child: Text(
-                'Secure payment processing by Stripe',
-                style: TextStyle(
-                  fontSize:
-                      Screen.width(context) * 0.03, // Responsive font size
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+            const Header(heading: "Secure Payment"),
+            _buildVerticalSpace(0.02),
+            _buildCardInformationSection(),
+            _buildVerticalSpace(0.03),
+            const Divider(thickness: 1, color: Colors.grey),
+            _buildVerticalSpace(0.03),
+            _buildOrderSummarySection(),
+            _buildVerticalSpace(0.03),
+            _buildPaymentButton(context),
+            _buildVerticalSpace(0.005),
+            _buildCancelButton(),
+            _buildVerticalSpace(0.02),
+            _buildFooter(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildVerticalSpace(double heightFactor) {
+    return SizedBox(height: Screen.height(context) * heightFactor);
+  }
+
+  Widget _buildCardInformationSection() {
+    return Container(
+      width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.all(Screen.width(context) * 0.04),
+      decoration: BoxDecoration(
+        color: MyColors.DarkLighter,
+        borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle('Card Information'),
+          _buildVerticalSpace(0.02),
+          _buildCardNumberField(),
+          _buildVerticalSpace(0.02),
+          _buildExpiryAndCvvFields(),
+          _buildVerticalSpace(0.02),
+          _buildCardholderNameField(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: Screen.width(context) * 0.045,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildCardNumberField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldLabel('Card Number'),
+        MyTextBox(
+          hint: "1234 5678 9012 3456",
+          valueController: _controller.cardNumberController,
+          errorText: _controller.cardNumberError,
+          onChanged: (value) {
+            setState(() {
+              _controller.cardNumberError = Validations.validateIntFields(value);
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExpiryAndCvvFields() {
+    return Row(
+      children: [
+        Expanded(child: _buildExpiryDateField()),
+        const SizedBox(width: 16),
+        Expanded(child: _buildCvvField()),
+      ],
+    );
+  }
+
+  Widget _buildExpiryDateField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldLabel('Expiry Date'),
+        MyTextBox(
+          hint: "MM/YY",
+          valueController: _controller.expiryDateController,
+          errorText: _controller.expiryDateError,
+          onChanged: (value) {
+            setState(() {
+              _controller.expiryDateError = Validations.validateIntFields(value);
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCvvField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldLabel('CVV'),
+        MyTextBox(
+          hint: "123",
+          valueController: _controller.cvvController,
+          errorText: _controller.cvvError,
+          onChanged: (value) {
+            setState(() {
+              _controller.cvvError = Validations.validateIntFields(value);
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCardholderNameField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldLabel('Cardholder Name'),
+        MyTextBox(
+          hint: "John Smith",
+          valueController: _controller.cardholderNameController,
+          errorText: _controller.cardholderNameError,
+          onChanged: (value) {
+            setState(() {
+              _controller.cardholderNameError = Validations.validateName(value);
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: Screen.width(context) * 0.035,
+        color: Colors.grey,
+      ),
+    );
+  }
+
+  Widget _buildOrderSummarySection() {
+    return Container(
+      width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.all(Screen.width(context) * 0.04),
+      decoration: BoxDecoration(
+        color: MyColors.DarkLighter,
+        borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle('Order Summary'),
+          _buildVerticalSpace(0.02),
+          _buildOrderDetailRow('Subtotal', '\$129.99'),
+          _buildVerticalSpace(0.01),
+          _buildOrderDetailRow('Tax', '\$12.99'),
+          _buildVerticalSpace(0.03),
+          const Divider(thickness: 1, color: Colors.grey),
+          _buildVerticalSpace(0.03),
+          _buildOrderDetailRow('Pay', '\$145.97', isTotal: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderDetailRow(String label, String value, {bool isTotal = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: Screen.width(context) * (isTotal ? 0.045 : 0.035),
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+            color: isTotal ? Colors.white : Colors.grey,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: Screen.width(context) * (isTotal ? 0.045 : 0.04),
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentButton(BuildContext context) {
+    return ColoredButton(
+      text: 'Pay Now',
+      onPressed: () {
+        setState(() {
+          _controller.validateAllFields();
+        });
+
+        if (_controller.isFormValid) {
+          // Proceed with payment
+        } else {
+          MyScaffold(text: 'Please fix the errors before proceeding.')
+              .show(context);
+        }
+      },
+    );
+  }
+
+  Widget _buildCancelButton() {
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          // Handle cancel payment
+        },
+        child: Text(
+          'Cancel Payment',
+          style: TextStyle(
+            color: MyColors.white,
+            fontSize: Screen.width(context) * 0.035,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Column(
+      children: [
+        Center(
+          child: Text(
+            'By proceeding, you agree to our Terms and Privacy Policy',
+            style: TextStyle(
+              fontSize: Screen.width(context) * 0.03,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        _buildVerticalSpace(0.01),
+        Center(
+          child: Text(
+            'Secure payment processing by Stripe',
+            style: TextStyle(
+              fontSize: Screen.width(context) * 0.03,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

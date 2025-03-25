@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -9,99 +7,245 @@ import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/auth_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
 class BasicSignup extends StatefulWidget {
-  BasicSignup({super.key});
+  const BasicSignup({super.key});
 
   @override
   State<BasicSignup> createState() => _BasicSignupState();
 }
 
 class _BasicSignupState extends State<BasicSignup> {
+  // Controllers and Focus Nodes
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
   final FocusNode passwordFocus = FocusNode();
   final FocusNode confirmPasswordFocus = FocusNode();
   final FocusNode firstNameFocus = FocusNode();
   final FocusNode lastNameFocus = FocusNode();
-  GlobalKey headerKey = GlobalKey();
 
-  void check(BuildContext context) async {
-    if (await MyStorage.exists(MyTokens.sfname) &&
-        await MyStorage.exists(MyTokens.slname) &&
-        await MyStorage.exists(MyTokens.spassword)) {
-      warningDialog(
-        title: 'Fresh Start',
-        message:
-            'We noticed that you had lately attempted to signup the app Do you want to continue where you left or want a Fresh Start?',
-        actions: [
-          ColoredButton(
-            text: 'Fresh Start',
-            onPressed: () {
-              MyStorage.deleteToken(MyTokens.spassword);
-              MyStorage.deleteToken(MyTokens.sfname);
-              MyStorage.deleteToken(MyTokens.slname);
-              MyStorage.deleteToken(MyTokens.semail);
-              MyStorage.deleteToken(MyTokens.scity);
-              MyStorage.deleteToken(MyTokens.sgender);
-
-              Navigator.pop(context);
-            },
-          ),
-          ColoredButton(
-            text: 'Continue',
-            onPressed: () async {
-              if (await MyStorage.exists(MyTokens.scity)) {
-                Navigator.pushNamed(context, '/ProfilePictureUpload',
-                    arguments: {'type': 'User'});
-              } else if (await MyStorage.exists(MyTokens.sphone) ||
-                  await MyStorage.exists(MyTokens.semail)) {
-                Navigator.pushNamed(context, '/Signup_MoreInfo');
-              } else {
-                Navigator.pushNamed(context, '/Signup_ContactOTPSend');
-              }
-            },
-          )
-        ],
-      ).showDialogBox(context);
-    }
-  }
+  final GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      check(context);
-      UI_Management.getHeaderHeight(
-          headerKey: headerKey,
-          callback: (renderbox) {
-            changeHeight(renderbox);
-          });
-    });
-  }
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      _checkPreviousSignupAttempt();
+      _measureHeaderHeight();
     });
   }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    // Clean up controllers and focus nodes
+    firstNameController.dispose();
+    lastNameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    passwordFocus.dispose();
+    confirmPasswordFocus.dispose();
+    firstNameFocus.dispose();
+    lastNameFocus.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkPreviousSignupAttempt() async {
+    final hasPreviousAttempt = await MyStorage.exists(MyTokens.sfname) &&
+        await MyStorage.exists(MyTokens.slname) &&
+        await MyStorage.exists(MyTokens.spassword);
+
+    if (hasPreviousAttempt) {
+      _showContinueDialog();
+    }
+  }
+
+  void _showContinueDialog() {
+    warningDialog(
+      title: 'Fresh Start',
+      message: 'We noticed that you had lately attempted to signup the app. '
+          'Do you want to continue where you left or want a Fresh Start?',
+      actions: [
+        ColoredButton(
+          text: 'Fresh Start',
+          onPressed: () => _clearPreviousSignupData(context),
+        ),
+        ColoredButton(
+          text: 'Continue',
+          onPressed: () => _navigateBasedOnPreviousProgress(context),
+        ),
+      ],
+    ).showDialogBox(context);
+  }
+
+  void _clearPreviousSignupData(BuildContext context) {
+    MyStorage.deleteToken(MyTokens.spassword);
+    MyStorage.deleteToken(MyTokens.sfname);
+    MyStorage.deleteToken(MyTokens.slname);
+    MyStorage.deleteToken(MyTokens.semail);
+    MyStorage.deleteToken(MyTokens.scity);
+    MyStorage.deleteToken(MyTokens.sgender);
+    Navigator.pop(context);
+  }
+
+  Future<void> _navigateBasedOnPreviousProgress(BuildContext context) async {
+    if (await MyStorage.exists(MyTokens.scity)) {
+      Navigator.pushNamed(context, '/ProfilePictureUpload',
+          arguments: {'type': 'User'});
+    } else if (await MyStorage.exists(MyTokens.sphone) ||
+        await MyStorage.exists(MyTokens.semail)) {
+      Navigator.pushNamed(context, '/Signup_MoreInfo');
+    } else {
+      Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+    }
+    Navigator.pop(context);
+  }
+
+  void _measureHeaderHeight() {
     UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+      headerKey: headerKey,
+      callback: (renderBox) {
+        if (mounted) {
+          setState(() {
+            UI_Management.headerHeight = renderBox.size.height;
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> _handleSignup() async {
+    if (!_validateForm()) return;
+
+    await _saveUserData();
+    Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+  }
+
+  bool _validateForm() {
+    if (firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
+      _showErrorDialog("Please fill all the details");
+      return false;
+    }
+
+    final passwordValidation =
+        Validations.validatePassword(passwordController.text);
+    if (passwordValidation != 'Ok') {
+      _showErrorDialog(passwordValidation);
+      return false;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      _showErrorDialog("Password and Confirm Password Should be Same!");
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showErrorDialog(String message) {
+    warningDialog(
+      message: message,
+      title: "Invalid Details",
+    ).showDialogBox(context);
+  }
+
+  Future<void> _saveUserData() async {
+    await MyStorage.saveToken(firstNameController.text, "sfname");
+    await MyStorage.saveToken(lastNameController.text, "slname");
+    await MyStorage.saveToken(passwordController.text, "spassword");
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    final user = await AuthService().signInWithGoogle();
+    if (user.isEmpty) return;
+
+    final response = await MyApi.postRequest(
+      endpoint: 'Login/googleAuthentication',
+      body: {
+        'userId': user['user'].uid,
+        'email': user['user'].email,
+        'name': user['user'].displayName,
+        'picture': user['user'].photoURL,
+        'phone': user['phone'],
+        'gender': user['gender'],
+        'age': user['age'],
+      },
+    );
+
+    if (response['status'] == 'success') {
+      await _handleSuccessfulLogin(response);
+    }
+  }
+
+  Future<void> _handleSuccessfulLogin(Map<String, dynamic> response) async {
+    await MyStorage.saveToken(response['refresh'].toString(), 'refresh');
+    await MyStorage.saveToken(
+        response['access'].toString(), MyTokens.accessToken);
+    await MyStorage.saveToken(response['userId'].toString(), 'userId');
+    await MyStorage.saveToken(MyTokens.user, MyTokens.userType);
+
+    await MyApi.postRequest(
+      endpoint: 'notification/saveFCM',
+      body: {
+        'token': await MyStorage.yourFCM(),
+        'userId': await MyStorage.getToken(MyTokens.userId),
+      },
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+    );
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/HomePage',
+      ModalRoute.withName('/'),
+    );
+  }
+
+  Widget _buildSocialLoginButton({
+    required String icon,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: Screen.height(context) * 0.015,
+          vertical: Screen.height(context) * 0.02,
+        ),
+        height: Screen.height(context) * 0.06,
+        width: Screen.height(context) * 0.06,
+        decoration: BoxDecoration(
+          color: MyColors.DarkLighter,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Center(
+          child: SvgPicture.asset(
+            icon,
+            width: Screen.height(context) * 0.04,
+            height: Screen.height(context) * 0.04,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -111,171 +255,59 @@ class _BasicSignupState extends State<BasicSignup> {
               width: Screen.width(context),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: UI_Management.headerHeight,
+                  SizedBox(height: UI_Management.headerHeight),
+                  MyTextBox(
+                    focusNode: firstNameFocus,
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(lastNameFocus),
+                    hint: "First Name",
+                    valueController: firstNameController,
                   ),
                   MyTextBox(
-                      focusNode: firstNameFocus,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(lastNameFocus);
-                      },
-                      hint: "First Name",
-                      valueController: firstNameController),
+                    focusNode: lastNameFocus,
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(passwordFocus),
+                    hint: "Last Name",
+                    valueController: lastNameController,
+                  ),
                   MyTextBox(
-                      focusNode: lastNameFocus,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(passwordFocus);
-                      },
-                      hint: "Last Name",
-                      valueController: lastNameController),
+                    focusNode: passwordFocus,
+                    onFieldSubmitted: (_) => FocusScope.of(context)
+                        .requestFocus(confirmPasswordFocus),
+                    hint: "Password",
+                    isPassword: true,
+                    valueController: passwordController,
+                  ),
                   MyTextBox(
-                      focusNode: passwordFocus,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context)
-                            .requestFocus(confirmPasswordFocus);
-                      },
-                      hint: "Password",
-                      isPassword: true,
-                      valueController: passwordController),
-                  MyTextBox(
-                      focusNode: confirmPasswordFocus,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).unfocus();
-                      },
-                      hint: "Confirm Password",
-                      isPassword: true,
-                      valueController: confirmPasswordController),
+                    focusNode: confirmPasswordFocus,
+                    onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+                    hint: "Confirm Password",
+                    isPassword: true,
+                    valueController: confirmPasswordController,
+                  ),
                   ColoredButton(
                     text: "Continue",
-                    onPressed: () {
-                      if (firstNameController.text.isEmpty ||
-                          lastNameController.text.isEmpty ||
-                          passwordController.text.isEmpty ||
-                          confirmPasswordController.text.isEmpty) {
-                        warningDialog(
-                          message: "Please fill all the details",
-                          title: "Invalid Details",
-                        ).showDialogBox(context);
-                      } else if (Validations.validatePassword(
-                              passwordController.text) !=
-                          'Ok') {
-                        warningDialog(
-                          message: Validations.validatePassword(
-                              passwordController.text),
-                          title: "Invalid Details",
-                        ).showDialogBox(context);
-                      } else if (passwordController.text !=
-                          confirmPasswordController.text) {
-                        warningDialog(
-                          message:
-                              "Password and Confirm Password Should be Same!",
-                          title: "Invalid Details",
-                        ).showDialogBox(context);
-                      } else {
-                        MyStorage.saveToken(firstNameController.text, "sfname");
-                        MyStorage.saveToken(lastNameController.text, "slname");
-                        MyStorage.saveToken(
-                            passwordController.text, "spassword");
-                        Navigator.pushNamed(context, '/Signup_ContactOTPSend');
-                      }
-                    },
+                    onPressed: _handleSignup,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Login');
-                      },
-                      child: Text(
-                        "Already a Member? Login",
-                        style: TextStyle(color: MyColors.yellowonDark),
-                      ),
+                    onTap: () => Navigator.pushNamed(context, '/Login'),
+                    child: Text(
+                      "Already a Member? Login",
+                      style: TextStyle(color: MyColors.yellowonDark),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      InkWell(
-                        onTap: () async {
-                          Map<String, dynamic>? user =
-                              await AuthService().signInWithGoogle();
-                          if (user.length != 0) {
-                            final response = await MyApi.postRequest(
-                              endpoint: 'Login/googleAuthentication',
-                              body: {
-                                'userId': user['user'].uid,
-                                'email': user['user'].email,
-                                'name': user['user'].displayName,
-                                'picture': user['user'].photoURL,
-                                'phone': user['phone'],
-                                'gender': user['gender'],
-                                'age': user['age'],
-                              },
-                            );
-                            if (response['status'] == 'success') {
-                              MyStorage.saveToken(
-                                  response['refresh'].toString(), 'refresh');
-                              MyStorage.saveToken(response['access'].toString(),
-                                  MyTokens.accessToken);
-                              MyStorage.saveToken(
-                                  response['userId'].toString(), 'userId');
-                              MyStorage.saveToken(
-                                  MyTokens.user, MyTokens.userType);
-                              await MyApi.postRequest(
-                                  endpoint: 'notification/saveFCM',
-                                  body: {
-                                    'token': await MyStorage.yourFCM(),
-                                    'userId': await MyStorage.getToken(
-                                        MyTokens.userId),
-                                  },
-                                  headers: {
-                                    'Authorization':
-                                        'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-                                  });
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  '/HomePage', ModalRoute.withName('/'));
-                            }
-                          }
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: Screen.height(context) * 0.015,
-                              vertical: Screen.height(context) * 0.02),
-                          height: Screen.height(context) * 0.06,
-                          width: Screen.height(context) * 0.06,
-                          decoration: BoxDecoration(
-                              color: MyColors.DarkLighter,
-                              borderRadius: BorderRadius.circular(50)),
-                          child: Center(
-                            child: SvgPicture.asset(MyIcons.google,
-                                width: Screen.height(context) * 0.04,
-                                height: Screen.height(context) * 0.04),
-                          ),
-                        ),
+                      _buildSocialLoginButton(
+                        icon: MyIcons.google,
+                        onPressed: _handleGoogleSignIn,
                       ),
-                      InkWell(
-                        onTap: () async {
-                          await AuthService().signInWithFacebook();
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: Screen.height(context) * 0.015,
-                              vertical: Screen.height(context) * 0.02),
-                          height: Screen.height(context) * 0.06,
-                          width: Screen.height(context) * 0.06,
-                          decoration: BoxDecoration(
-                              color: MyColors.DarkLighter,
-                              borderRadius: BorderRadius.circular(50)),
-                          child: Center(
-                            child: SvgPicture.asset(MyIcons.facebook,
-                                width: Screen.height(context) * 0.04,
-                                height: Screen.height(context) * 0.04),
-                          ),
-                        ),
-                      )
+                      _buildSocialLoginButton(
+                        icon: MyIcons.facebook,
+                        onPressed: () => AuthService().signInWithFacebook(),
+                      ),
                     ],
                   ),
                 ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:taqreeb/core/providers/ThemeProvider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -65,13 +67,19 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider =
+        Provider.of<ThemeProvider>(context); // Get the ThemeProvider
+
     UI_Management.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
         });
+
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: themeProvider.themeMode == ThemeMode.dark
+          ? MyColors.Dark
+          : MyColors.white, // Use theme-based colors
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -89,16 +97,22 @@ class _SettingsState extends State<Settings> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            this.types['business']
+                            types['business']
                                 ? Container(
                                     height: (Screen.max(context) * 0.08)
                                         .clamp(60, 80.0),
                                     width: Screen.width(context) * 0.9,
                                     decoration: BoxDecoration(
-                                      color: MyColors.DarkLighter,
+                                      color: themeProvider.themeMode ==
+                                              ThemeMode.dark
+                                          ? MyColors.DarkLighter
+                                          : MyColors.whiteDarker,
                                       borderRadius: BorderRadius.circular(15),
                                       border: Border.all(
-                                          color: MyColors.DarkLighter),
+                                          color: themeProvider.themeMode ==
+                                                  ThemeMode.dark
+                                              ? MyColors.DarkLighter
+                                              : MyColors.whiteDarker),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
@@ -106,7 +120,10 @@ class _SettingsState extends State<Settings> {
                                       children: [
                                         Icon(
                                           Icons.business_rounded,
-                                          color: MyColors.white,
+                                          color: themeProvider.themeMode ==
+                                                  ThemeMode.dark
+                                              ? MyColors.white
+                                              : MyColors.Dark,
                                           size: Screen.max(context) * 0.02,
                                         ),
                                         Flexible(
@@ -120,7 +137,11 @@ class _SettingsState extends State<Settings> {
                                                 fontSize:
                                                     Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w500,
-                                                color: MyColors.white,
+                                                color:
+                                                    themeProvider.themeMode ==
+                                                            ThemeMode.dark
+                                                        ? MyColors.white
+                                                        : MyColors.Dark,
                                               ),
                                             ),
                                           ),
@@ -175,10 +196,16 @@ class _SettingsState extends State<Settings> {
                                         .clamp(60, 80.0),
                                     width: Screen.width(context) * 0.9,
                                     decoration: BoxDecoration(
-                                      color: MyColors.DarkLighter,
+                                      color: themeProvider.themeMode ==
+                                              ThemeMode.dark
+                                          ? MyColors.DarkLighter
+                                          : MyColors.whiteDarker,
                                       borderRadius: BorderRadius.circular(15),
                                       border: Border.all(
-                                          color: MyColors.DarkLighter),
+                                          color: themeProvider.themeMode ==
+                                                  ThemeMode.dark
+                                              ? MyColors.DarkLighter
+                                              : MyColors.whiteDarker),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
@@ -186,7 +213,10 @@ class _SettingsState extends State<Settings> {
                                       children: [
                                         Icon(
                                           Icons.business_rounded,
-                                          color: MyColors.white,
+                                          color: themeProvider.themeMode ==
+                                                  ThemeMode.dark
+                                              ? MyColors.white
+                                              : MyColors.Dark,
                                           size: Screen.max(context) * 0.02,
                                         ),
                                         Flexible(
@@ -200,7 +230,11 @@ class _SettingsState extends State<Settings> {
                                                 fontSize:
                                                     Screen.max(context) * 0.015,
                                                 fontWeight: FontWeight.w500,
-                                                color: MyColors.white,
+                                                color:
+                                                    themeProvider.themeMode ==
+                                                            ThemeMode.dark
+                                                        ? MyColors.white
+                                                        : MyColors.Dark,
                                               ),
                                             ),
                                           ),
@@ -262,7 +296,8 @@ class _SettingsState extends State<Settings> {
                                         child: Text('Cancel')),
                                     TextButton(
                                         onPressed: () {
-                                          MyColors.switchTheme();
+                                          themeProvider
+                                              .switchTheme(); // Use ThemeProvider
                                           Navigator.pushNamedAndRemoveUntil(
                                             context,
                                             '/HomePage',
@@ -273,7 +308,7 @@ class _SettingsState extends State<Settings> {
                                   ],
                                 ).showDialogBox(context);
                               },
-                              text: 'Apperence',
+                              text: 'Appearance',
                               leftIcon: Icons.palette_rounded,
                               rightIcon: Icons.arrow_forward_ios_rounded,
                             ),
@@ -289,24 +324,6 @@ class _SettingsState extends State<Settings> {
                               leftIcon: Icons.edit_rounded,
                               rightIcon: Icons.arrow_forward_ios_rounded,
                             ),
-                            // GuideButton(
-                            //   onpressed: () {},
-                            //   text: 'Help & Support',
-                            //   leftIcon: Icons.help_rounded,
-                            //   rightIcon: Icons.arrow_forward_ios_rounded,
-                            // ),
-                            // GuideButton(
-                            //   onpressed: () {},
-                            //   text: 'About',
-                            //   leftIcon: Icons.info_rounded,
-                            //   rightIcon: Icons.arrow_forward_ios_rounded,
-                            // ),
-                            // GuideButton(
-                            //   onpressed: () {},
-                            //   text: 'Terms and Conditions',
-                            //   leftIcon: Icons.privacy_tip_rounded,
-                            //   rightIcon: Icons.arrow_forward_ios_rounded,
-                            // ),
                           ],
                         ),
                       )

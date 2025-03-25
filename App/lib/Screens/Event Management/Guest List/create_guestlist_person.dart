@@ -16,179 +16,215 @@ class CreateGuestList_AddPerson extends StatefulWidget {
   const CreateGuestList_AddPerson({super.key});
 
   @override
-  State<CreateGuestList_AddPerson> createState() =>
-      _CreateGuestList_AddPersonState();
+  State<CreateGuestList_AddPerson> createState() => _CreateGuestList_AddPersonState();
 }
 
 class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
-  List<Map<String, String>> guestList = [];
-
-  TextEditingController personcontroller = TextEditingController();
-  TextEditingController contactcontroller = TextEditingController();
-  FocusNode personFocus = FocusNode();
-  FocusNode contactFocus = FocusNode();
-  GlobalKey headerKey = GlobalKey();
-
-  bool isfunction = false;
-  int functionid = 0;
-  int eventId = 0;
-  Map<String, dynamic> args = {};
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    this.args = args;
-    setState(() {
-      if (args['functionid'] != null) {
-        isfunction = true;
-        functionid = args['functionid'];
-      }
-      eventId = args['eventId'];
-    });
-  }
+  final GlobalKey _headerKey = GlobalKey();
+  final List<Map<String, String>> _guestList = [];
+  final TextEditingController _personController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final FocusNode _personFocus = FocusNode();
+  final FocusNode _contactFocus = FocusNode();
+  
+  bool _isFunction = false;
+  int _functionId = 0;
+  int _eventId = 0;
+  Map<String, dynamic> _routeArgs = {};
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
-  }
-
-  void removePerson(index) {
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        guestList.removeAt(index);
-      });
-    });
-  }
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: _headerKey,
+        callback: _updateHeaderHeight,
+      );
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeFromArguments();
+  }
+
+  void _initializeFromArguments() {
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    _routeArgs = args;
+    
+    setState(() {
+      _isFunction = args['functionid'] != null;
+      _functionId = args['functionid'] ?? 0;
+      _eventId = args['eventId'] ?? 0;
+    });
+  }
+
+  void _updateHeaderHeight(RenderBox renderBox) {
+    if (mounted) {
+      setState(() => UI_Management.headerHeight = renderBox.size.height);
+    }
+  }
+
+  void _addPerson() {
+    if (_personController.text.isEmpty || _contactController.text.isEmpty) {
+      MyScaffold(text: 'Please fill all fields').show(context);
+      return;
+    }
+
+    setState(() {
+      _guestList.add({
+        'name': _personController.text,
+        'contact': _contactController.text
+      });
+      _personController.clear();
+      _contactController.clear();
+      _personFocus.requestFocus();
+    });
+  }
+
+  void _removePerson(int index) {
+    setState(() => _guestList.removeAt(index));
+  }
+
+  Future<void> _submitPersons() async {
+    if (_guestList.isEmpty) {
+      MyScaffold(text: 'Please add at least one person').show(context);
+      return;
+    }
+
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    bool allSuccess = true;
+
+    for (final guest in _guestList) {
+      final response = await MyApi.postRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'add/guests/',
+        body: {
+          'eid': _eventId,
+          'fid': _isFunction ? _functionId : 'None',
+          'guesttype': 'Person',
+          'PersonName': guest['name'],
+          'PersonContact': guest['contact']
+        },
+      );
+
+      if (response['status'] != 'success') {
+        allSuccess = false;
+      }
+    }
+
+    if (mounted) {
+      MyScaffold(
+        text: allSuccess ? 'Persons Added' : 'Some persons not added',
+      ).show(context);
+      
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/CreateGuestList_List',
+        ModalRoute.withName('//EventDetails'),
+        arguments: _routeArgs,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _personController.dispose();
+    _contactController.dispose();
+    _personFocus.dispose();
+    _contactFocus.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Container(
-              width: Screen.width(context),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: (Screen.height(context) * 0.05) +
-                        UI_Management.headerHeight,
-                  ),
-                  MyTextBox(
-                    focusNode: personFocus,
-                    onFieldSubmitted: (value) {
-                      FocusScope.of(context).requestFocus(contactFocus);
-                    },
-                    hint: 'Person Name',
-                    valueController: personcontroller,
-                  ),
-                  MyTextBox(
-                    focusNode: contactFocus,
-                    onFieldSubmitted: (value) {
-                      FocusScope.of(context).unfocus();
-                    },
-                    hint: 'Contact Number',
-                    isNum: true,
-                    valueController: contactcontroller,
-                  ),
-                  SizedBox(
-                    width: Screen.width(context) * 0.9,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Guests(
-                          onpressed: () {},
-                          ondelete: () {
-                            removePerson(index);
-                          },
-                          mywidth: Screen.width(context) * 0.8,
-                          name: guestList[index]['name'] ?? '',
-                          contact: guestList[index]['contact'] ?? '',
-                        );
-                      },
-                      itemCount: guestList.length,
-                    ),
-                  ),
-                  SizedBox(
-                    height: Screen.height(context) * 0.05,
-                  ),
-                  ColoredButton(
-                    text: 'Add Person',
-                    width: Screen.width(context) * 0.7,
-                    onPressed: () {
-                      setState(() {
-                        guestList.add({
-                          'name': personcontroller.text,
-                          'contact': contactcontroller.text
-                        });
-                      });
-                    },
-                  ),
-                  BorderButton(
-                    text: 'Done',
-                    width: Screen.width(context) * 0.7,
-                    onPressed: () async {
-                      for (int i = 0; i < guestList.length; i++) {
-                        final token =
-                            await MyStorage.getToken(MyTokens.accessToken) ??
-                                "";
-
-                        final response = await MyApi.postRequest(
-                            headers: {'Authorization': 'Bearer $token'},
-                            endpoint: 'add/guests/',
-                            body: {
-                              'eid': eventId,
-                              'fid': isfunction ? functionid : 'None',
-                              'guesttype': 'Person',
-                              'PersonName': guestList[i]['name'],
-                              'PersonContact': guestList[i]['contact']
-                            });
-                        if (response['status'] == 'success') {
-                          MyScaffold(text: 'Person Added').show(context);
-                        } else {
-                          MyScaffold(text: 'Person Not Added').show(context);
-                        }
-                      }
-                      Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/CreateGuestList_List',
-                          ModalRoute.withName('//EventDetails'),
-                          arguments: args);
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
+          _buildContent(),
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'Add Person',
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      child: Container(
+        width: Screen.width(context),
+        child: Column(
+          children: [
+            SizedBox(height: (Screen.height(context) * 0.05) + UI_Management.headerHeight),
+            _buildInputFields(),
+            _buildGuestList(),
+            SizedBox(height: Screen.height(context) * 0.05),
+            _buildActionButtons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputFields() {
+    return Column(
+      children: [
+        MyTextBox(
+          focusNode: _personFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_contactFocus),
+          hint: 'Person Name',
+          valueController: _personController,
+        ),
+        MyTextBox(
+          focusNode: _contactFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+          hint: 'Contact Number',
+          isNum: true,
+          valueController: _contactController,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuestList() {
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _guestList.length,
+        itemBuilder: (context, index) => Guests(
+          onpressed: () {},
+          ondelete: () => _removePerson(index),
+          mywidth: Screen.width(context) * 0.8,
+          name: _guestList[index]['name'] ?? '',
+          contact: _guestList[index]['contact'] ?? '',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        ColoredButton(
+          text: 'Add Person',
+          width: Screen.width(context) * 0.7,
+          onPressed: _addPerson,
+        ),
+        BorderButton(
+          text: 'Done',
+          width: Screen.width(context) * 0.7,
+          onPressed: _submitPersons,
+        ),
+      ],
     );
   }
 }

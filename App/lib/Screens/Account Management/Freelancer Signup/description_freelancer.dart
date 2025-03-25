@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +12,56 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
+class FreelancerSignupDescriptionViewModel with ChangeNotifier {
+  int _charactersLeft = 1100;
+  final TextEditingController _descriptionController = TextEditingController();
+
+  int get charactersLeft => _charactersLeft;
+  TextEditingController get descriptionController => _descriptionController;
+
+  void updateCharactersLeft(String value) {
+    _charactersLeft = 1100 - value.length;
+    notifyListeners();
+  }
+
+  bool validateDescription() {
+    if (_descriptionController.text.isEmpty) {
+      return false;
+    } else if (_descriptionController.text.length > 1100) {
+      return false;
+    } else if (_descriptionController.text.length < 50) {
+      return false;
+    }
+    return true;
+  }
+
+  void saveDescription(BuildContext context) {
+    if (!validateDescription()) {
+      MyScaffold(
+        text: _descriptionController.text.isEmpty
+            ? 'Please Enter a Description'
+            : _descriptionController.text.length > 1100
+                ? 'Description should be less than 1100 characters'
+                : 'Description should be more than 50 characters',
+      ).show(context);
+      return;
+    }
+
+    MyStorage.saveToken(_descriptionController.text, MyTokens.fsdescription);
+    Navigator.pushNamed(
+      context,
+      '/ProfilePictureUpload',
+      arguments: {'type': 'Freelancer'},
+    );
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+}
+
 class FreelancerSignup_Description extends StatefulWidget {
   const FreelancerSignup_Description({super.key});
 
@@ -21,29 +72,28 @@ class FreelancerSignup_Description extends StatefulWidget {
 
 class _FreelancerSignup_DescriptionState
     extends State<FreelancerSignup_Description> {
-  int charactersLeft = 1100;
-  TextEditingController descriptionController = TextEditingController();
   GlobalKey headerKey = GlobalKey();
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: headerKey,
+        callback: (renderbox) {
+          setState(() {
+            UI_Management.headerHeight = renderbox.size.height;
+          });
+        },
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel =
+        Provider.of<FreelancerSignupDescriptionViewModel>(context);
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -58,26 +108,26 @@ class _FreelancerSignup_DescriptionState
                         UI_Management.headerHeight,
                   ),
                   DescriptionBox(
-                      valueController: descriptionController,
-                      onChanged: (value) {
-                        setState(() {
-                          charactersLeft = 1100 - value.length;
-                        });
-                      }),
+                    valueController: viewModel.descriptionController,
+                    onChanged: (value) {
+                      viewModel.updateCharactersLeft(value);
+                    },
+                  ),
                   SizedBox(
                     width: Screen.width(context) * 0.9,
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "${charactersLeft.toString()} characters left",
-                            style: GoogleFonts.montserrat(
-                              color: MyColors.white,
-                              fontSize: Screen.max(context) * 0.018,
-                              fontWeight: FontWeight.w300,
-                            ),
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${viewModel.charactersLeft.toString()} characters left",
+                          style: GoogleFonts.montserrat(
+                            color: MyColors.white,
+                            fontSize: Screen.max(context) * 0.018,
+                            fontWeight: FontWeight.w300,
                           ),
-                        ]),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: Screen.height(context) * 0.05,
@@ -86,32 +136,9 @@ class _FreelancerSignup_DescriptionState
                   ColoredButton(
                     text: "Continue",
                     onPressed: () {
-                      if (descriptionController.text.isEmpty) {
-                        MyScaffold(text: 'Please Enter a Description')
-                            .show(context);
-                        return;
-                      }
-                      if (descriptionController.text.length > 1100) {
-                        MyScaffold(
-                                text:
-                                    'Description should be less than 1100 characters')
-                            .show(context);
-                        return;
-                      }
-                      if (descriptionController.text.length < 50) {
-                        MyScaffold(
-                                text:
-                                    'Description should be more than 50 characters')
-                            .show(context);
-                        return;
-                      }
-                      MyStorage.saveToken(
-                          descriptionController.text, MyTokens.fsdescription);
-
-                      Navigator.pushNamed(context, '/ProfilePictureUpload',
-                          arguments: {'type': 'Freelancer'});
+                      viewModel.saveDescription(context);
                     },
-                  )
+                  ),
                 ],
               ),
             ),

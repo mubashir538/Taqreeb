@@ -22,6 +22,7 @@ class MyTokens {
   static const String slname = "slname";
   static const String spassword = "spassword";
   static const String semail = "semail";
+  static const String sage = "sage";
   static const String scity = "scity";
   static const String sgender = "sgender";
   static const String sphone = "sphone";
@@ -38,8 +39,6 @@ class MyTokens {
   static const String addons = "addons";
   static const String packages = "packages";
 
-
-
   static Future<String> getBusinessType() async {
     String type;
 
@@ -50,5 +49,28 @@ class MyTokens {
     }
 
     return type;
+  }
+
+  static void DeleteSignupTokens(String type) {
+    if (type == 'Freelancer') {
+      MyStorage.deleteToken(MyTokens.fscnic);
+      MyStorage.deleteToken(MyTokens.fsname);
+      MyStorage.deleteToken(MyTokens.fsportfolio);
+      MyStorage.deleteToken(MyTokens.fsdescription);
+    } else if (type == 'Business') {
+      MyStorage.deleteToken(bscnic);
+      MyStorage.deleteToken(bsname);
+      MyStorage.deleteToken(bsusername);
+      MyStorage.deleteToken(bsfront);
+      MyStorage.deleteToken(bsback);
+      MyStorage.deleteToken(bsdescription);
+    } else {
+      MyStorage.deleteToken('spassword');
+      MyStorage.deleteToken('sfname');
+      MyStorage.deleteToken('slname');
+      MyStorage.deleteToken('semail');
+      MyStorage.deleteToken('scity');
+      MyStorage.deleteToken('sgender');
+    }
   }
 }

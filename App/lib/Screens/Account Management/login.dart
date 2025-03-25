@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -8,12 +6,14 @@ import 'package:taqreeb/Components/Buttons/c_icon_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
+import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/auth_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/validations.dart';
-import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
@@ -26,36 +26,194 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  FocusNode emailFocus = FocusNode();
-  FocusNode passwordFocus = FocusNode();
-  GlobalKey headerKey = GlobalKey();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final GlobalKey _headerKey = GlobalKey();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeaderHeight());
   }
 
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    super.dispose();
+  }
+
+  void _measureHeaderHeight() {
+    UI_Management.getHeaderHeight(
+      headerKey: _headerKey,
+      callback: (renderBox) {
+        if (mounted) {
+          setState(() {
+            UI_Management.headerHeight = renderBox.size.height;
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_validateCredentials()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await MyApi.postRequest(
+        endpoint: 'User/login/',
+        body: {
+          "contact": _emailController.text,
+          "password": _passwordController.text,
+        },
+      );
+
+      if (response == null || response['status'] != 'success') {
+        _showErrorDialog(
+            "Error", response?['message'] ?? "Invalid Credentials");
+        return;
+      }
+
+      await _handleSuccessfulLogin(response);
+    } catch (e) {
+      _showErrorDialog("Error", "Something went wrong!");
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  bool _validateCredentials() {
+    if (_emailController.text.contains("@")) {
+      final emailValidation = Validations.validateEmail(_emailController.text);
+      if (emailValidation != "Ok") {
+        _showErrorDialog("Invalid Email", emailValidation);
+        return false;
+      }
+    } else {
+      final contactValidation =
+          Validations.validateContact(_emailController.text);
+      if (contactValidation != "Ok") {
+        _showErrorDialog("Invalid Contact", contactValidation);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<void> _handleSuccessfulLogin(Map<String, dynamic> response) async {
+    await MyStorage.saveToken(response['refresh'], MyTokens.refreshToken);
+    await MyStorage.saveToken(response['access'], MyTokens.accessToken);
+    await MyStorage.saveToken(response['userid'].toString(), MyTokens.userId);
+
+    await MyApi.postRequest(
+      endpoint: 'notification/saveFCM',
+      body: {
+        'token': await MyStorage.yourFCM(),
+        'userId': await MyStorage.getToken(MyTokens.userId),
+      },
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+    );
+
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/HomePage',
+        ModalRoute.withName('/'),
+      );
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    final user = await AuthService().signInWithGoogle();
+    if (user.isEmpty) return;
+
+    try {
+      final response = await MyApi.postRequest(
+        endpoint: 'Login/googleAuthentication',
+        body: {
+          'userId': user['user'].uid,
+          'email': user['user'].email,
+          'name': user['user'].displayName,
+          'picture': user['user'].photoURL,
+          'phone': user['phone'],
+          'gender': user['gender'],
+          'age': user['age'],
+        },
+      );
+
+      if (response['status'] == 'success') {
+        await _handleSocialLoginSuccess(response);
+      }
+    } catch (e) {
+      _showErrorDialog("Error", "Google sign-in failed");
+    }
+  }
+
+  Future<void> _handleFacebookSignIn() async {
+    try {
+      await AuthService().signInWithFacebook();
+    } catch (e) {
+      _showErrorDialog("Error", "Facebook sign-in failed");
+    }
+  }
+
+  Future<void> _handleSocialLoginSuccess(Map<String, dynamic> response) async {
+    await MyStorage.saveToken(response['refresh'].toString(), 'refresh');
+    await MyStorage.saveToken(
+        response['access'].toString(), MyTokens.accessToken);
+    await MyStorage.saveToken(response['userId'].toString(), 'userId');
+    await MyStorage.saveToken(MyTokens.user, MyTokens.userType);
+
+    await MyApi.postRequest(
+      endpoint: 'notification/saveFCM',
+      body: {
+        'token': await MyStorage.yourFCM(),
+        'userId': await MyStorage.getToken(MyTokens.userId),
+      },
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+    );
+
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/HomePage',
+        ModalRoute.withName('/'),
+      );
+    }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    warningDialog(
+      title: title,
+      message: message,
+    ).showDialogBox(context);
+  }
+
+  void _navigateToForgotPassword() {
+    Navigator.pushNamed(context, '/ForgotPassword_EmailorPhoneInput');
+  }
+
+  void _navigateToSignup() {
+    Navigator.pushNamed(context, '/basicSignup');
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -70,24 +228,22 @@ class _LoginState extends State<Login> {
                     Column(
                       children: [
                         SizedBox(
-                            height: (Screen.height(context) * 0.03) +
-                                UI_Management.headerHeight),
-                        MyTextBox(
-                          focusNode: emailFocus,
-                          onFieldSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(passwordFocus);
-                          },
-                          hint: "Enter Email or Phone Number",
-                          valueController: emailController,
+                          height: (Screen.height(context) * 0.03) +
+                              UI_Management.headerHeight,
                         ),
                         MyTextBox(
-                          focusNode: passwordFocus,
-                          onFieldSubmitted: (_) {
-                            passwordFocus.unfocus();
-                          },
+                          focusNode: _emailFocus,
+                          onFieldSubmitted: (_) => FocusScope.of(context)
+                              .requestFocus(_passwordFocus),
+                          hint: "Enter Email or Phone Number",
+                          valueController: _emailController,
+                        ),
+                        MyTextBox(
+                          focusNode: _passwordFocus,
+                          onFieldSubmitted: (_) => _passwordFocus.unfocus(),
                           hint: "Enter Password",
                           isPassword: true,
-                          valueController: passwordController,
+                          valueController: _passwordController,
                         ),
                         SizedBox(
                           width: Screen.width(context) * 0.9,
@@ -95,10 +251,7 @@ class _LoginState extends State<Login> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(context,
-                                      '/ForgotPassword_EmailorPhoneInput');
-                                },
+                                onTap: _navigateToForgotPassword,
                                 child: Text(
                                   "Forgot Password?",
                                   style: GoogleFonts.montserrat(
@@ -111,139 +264,29 @@ class _LoginState extends State<Login> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: Screen.height(context) * 0.03,
-                        ),
+                        SizedBox(height: Screen.height(context) * 0.03),
                         ColoredButton(
                           text: "Login",
-                          onPressed: () async {
-                            if (emailController.text.contains("@")) {
-                              if (Validations.validateEmail(
-                                      emailController.text) !=
-                                  "Ok") {
-                                warningDialog(
-                                        title: "Invalid Email",
-                                        message: Validations.validateEmail(
-                                            emailController.text))
-                                    .showDialogBox(context);
-                                return;
-                              }
-                            } else {
-                              if (Validations.validateContact(
-                                      emailController.text) !=
-                                  "Ok") {
-                                warningDialog(
-                                        title: "Invalid Contact",
-                                        message: Validations.validateContact(
-                                            emailController.text))
-                                    .showDialogBox(context);
-                                return;
-                              }
-                            }
-                            final response = await MyApi.postRequest(
-                                endpoint: 'User/login/',
-                                body: {
-                                  "contact": emailController.text,
-                                  "password": passwordController.text
-                                });
-                            if (response != null) {
-                              if (response['status'] == 'success') {
-                                await MyStorage.saveToken(
-                                    response['refresh'], MyTokens.refreshToken);
-                                await MyStorage.saveToken(
-                                    response['access'], MyTokens.accessToken);
-                                await MyStorage.saveToken(
-                                    response['userid'].toString(),
-                                    MyTokens.userId);
-                                await MyApi.postRequest(
-                                    endpoint: 'notification/saveFCM',
-                                    body: {
-                                      'token': await MyStorage.yourFCM(),
-                                      'userId': await MyStorage.getToken(
-                                          MyTokens.userId),
-                                    },
-                                    headers: {
-                                      'Authorization':
-                                          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-                                    });
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    '/HomePage', ModalRoute.withName('/'));
-                              } else {
-                                warningDialog(
-                                  message: "Invalid Credentials",
-                                  title: "Error",
-                                ).showDialogBox(context);
-                              }
-                            } else {
-                              warningDialog(
-                                message: "Something Went Wrong!",
-                                title: "Error",
-                              ).showDialogBox(context);
-                            }
-                          },
+                          onPressed: _isLoading ? null : _handleLogin,
                         ),
                         BorderButton(
                           text: "Signup",
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/basicSignup');
-                          },
+                          onPressed: _navigateToSignup,
                         ),
                         SizedBox(
                           height: Screen.height(context) * 0.05,
-                          child: MyDivider(),
+                          child: const MyDivider(),
                         ),
                         IconedButton(
-                          onPressed: () async {
-                            Map<String, dynamic>? user =
-                                await AuthService().signInWithGoogle();
-                            if (user.length != 0) {
-                              final response = await MyApi.postRequest(
-                                endpoint: 'Login/googleAuthentication',
-                                body: {
-                                  'userId': user['user'].uid,
-                                  'email': user['user'].email,
-                                  'name': user['user'].displayName,
-                                  'picture': user['user'].photoURL,
-                                  'phone': user['phone'],
-                                  'gender': user['gender'],
-                                  'age': user['age'],
-                                },
-                              );
-                              if (response['status'] == 'success') {
-                                MyStorage.saveToken(
-                                    response['refresh'].toString(), 'refresh');
-                                MyStorage.saveToken(
-                                    response['access'].toString(),
-                                    MyTokens.accessToken);
-                                MyStorage.saveToken(
-                                    response['userId'].toString(), 'userId');
-                                MyStorage.saveToken(
-                                    MyTokens.user, MyTokens.userType);
-                                await MyApi.postRequest(
-                                    endpoint: 'notification/saveFCM',
-                                    body: {
-                                      'token': await MyStorage.yourFCM(),
-                                      'userId': await MyStorage.getToken(
-                                          MyTokens.userId),
-                                    },
-                                    headers: {
-                                      'Authorization':
-                                          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-                                    });
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    '/HomePage', ModalRoute.withName('/'));
-                              }
-                            }
-                          },
+                          onPressed: _handleGoogleSignIn,
                           text: "Continue with Google",
                           icon: MyIcons.google,
                         ),
                         IconedButton(
-                            onPressed: () async {
-                              await AuthService().signInWithFacebook();
-                            },
-                            text: "Continue with Facebook",
-                            icon: MyIcons.facebook),
+                          onPressed: _handleFacebookSignIn,
+                          text: "Continue with Facebook",
+                          icon: MyIcons.facebook,
+                        ),
                       ],
                     ),
                   ],
@@ -253,10 +296,10 @@ class _LoginState extends State<Login> {
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: "Login to Continue",
-              para:
-                  "We believe that your event should not be delayed so let's login your Account so we can get Started",
+              para: "We believe that your event should not be delayed so let's "
+                  "login your Account so we can get Started",
               image: MyImages.Login,
             ),
           ),

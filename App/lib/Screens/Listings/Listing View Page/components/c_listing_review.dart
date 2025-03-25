@@ -1,106 +1,127 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class CategoryReview extends StatefulWidget {
   final Map listing;
-  final List<String> stars = [
+  final List<String> starsvalue;
+
+  static const List<String> stars = [
     '5 Stars',
     '4 Stars',
     '3 Stars',
     '2 Stars',
     '1 Stars',
   ];
-  final List<String> starsvalue;
-  CategoryReview({super.key, required this.listing, required this.starsvalue});
+
+  const CategoryReview({
+    super.key,
+    required this.listing,
+    required this.starsvalue,
+  });
 
   @override
   State<CategoryReview> createState() => _CategoryReviewState();
 }
 
 class _CategoryReviewState extends State<CategoryReview> {
+  TextStyle _buildTextStyle({
+    double fontSize = 0.015,
+    FontWeight fontWeight = FontWeight.w400,
+    required Color color,
+  }) {
+    return GoogleFonts.montserrat(
+      fontSize: Screen.max(context) * fontSize,
+      fontWeight: fontWeight,
+      color: color,
+    );
+  }
+
+  Widget _buildHeaderRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Reviews',
+          style: _buildTextStyle(
+            fontSize: 0.025,
+            fontWeight: FontWeight.w600,
+            color: MyColors.Yellow,
+          ),
+        ),
+        GestureDetector(
+          onTap: _navigateToReviewPage,
+          child: Text(
+            'View All',
+            style: _buildTextStyle(
+              fontSize: 0.015,
+              color: MyColors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _navigateToReviewPage() {
+    Navigator.pushNamed(context, '/reviewPage');
+  }
+
+  Widget _buildRatingSummary() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: Screen.max(context) * 0.02,
+      ),
+      child: Row(
+        children: [
+          Text(
+            '${widget.listing['reveiewData']['count'].toString()} Reviews',
+            style: _buildTextStyle(color: MyColors.white),
+          ),
+          SizedBox(width: Screen.width(context) * 0.02),
+          Icon(Icons.star, color: MyColors.Yellow),
+          SizedBox(width: Screen.width(context) * 0.02),
+          Text(
+            widget.listing['reveiewData']['average'].toString(),
+            style: _buildTextStyle(color: MyColors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStarRatingRow(String star) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            star,
+            style: _buildTextStyle(
+                fontWeight: FontWeight.w500, color: MyColors.white),
+          ),
+          Text(
+            widget.starsvalue[CategoryReview.stars.indexOf(star)],
+            style: _buildTextStyle(
+              fontWeight: FontWeight.w500,
+              color: MyColors.Yellow,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Reviews',
-              style: GoogleFonts.montserrat(
-                fontSize: Screen.max(context) * 0.025,
-                fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/reviewPage');
-              },
-              child: Text(
-                'View All',
-                style: GoogleFonts.montserrat(
-                  fontSize: Screen.max(context) * 0.015,
-                  fontWeight: FontWeight.w600,
-                  color: MyColors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Container(
-          margin: EdgeInsets.symmetric(
-            vertical: Screen.max(context) * 0.02,
-          ),
-          child: Row(
-            children: [
-              Text(
-                '${widget.listing['reveiewData']['count'].toString()} Reviews',
-                style: GoogleFonts.montserrat(
-                  fontSize: Screen.max(context) * 0.015,
-                  fontWeight: FontWeight.w400,
-                  color: MyColors.white,
-                ),
-              ),
-              SizedBox(width: Screen.width(context) * 0.02),
-              Icon(Icons.star, color: MyColors.Yellow),
-              SizedBox(width: Screen.width(context) * 0.02),
-              Text(
-                "${widget.listing['reveiewData']['average'].toString()}",
-                style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.015,
-                    color: MyColors.white),
-              ),
-            ],
-          ),
-        ),
-        for (var star in widget.stars)
-          Container(
-            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  star,
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.white,
-                  ),
-                ),
-                Text(
-                  widget.starsvalue[widget.stars.indexOf(star)],
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.Yellow,
-                  ),
-                ),
-              ],
-            ),
-          ),
+        _buildHeaderRow(),
+        _buildRatingSummary(),
+        ...CategoryReview.stars.map(_buildStarRatingRow),
       ],
     );
   }

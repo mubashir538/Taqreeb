@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -9,46 +7,123 @@ import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
-class Signup_MoreInfo extends StatefulWidget {
-  Signup_MoreInfo({super.key});
+class SignupMoreInfo extends StatefulWidget {
+  const SignupMoreInfo({super.key});
 
   @override
-  State<Signup_MoreInfo> createState() => _Signup_MoreInfoState();
+  State<SignupMoreInfo> createState() => _SignupMoreInfoState();
 }
 
-class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
+class _SignupMoreInfoState extends State<SignupMoreInfo> {
+  // Form controllers
   final TextEditingController cityController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
-  GlobalKey headerKey = GlobalKey();
   final TextEditingController ageController = TextEditingController();
 
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
-  }
+  final GlobalKey headerKey = GlobalKey();
+  final List<String> cities = ["Karachi", "Lahore", "Islamabad", "Peshawar"];
+  final List<String> genders = ["Male", "Female"];
+  static const int minimumAge = 18;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeaderHeight());
+  }
+
+  @override
+  void dispose() {
+    cityController.dispose();
+    genderController.dispose();
+    ageController.dispose();
+    super.dispose();
+  }
+
+  void _measureHeaderHeight() {
+    UI_Management.getHeaderHeight(
+      headerKey: headerKey,
+      callback: (renderBox) {
+        if (mounted) {
+          setState(() {
+            UI_Management.headerHeight = renderBox.size.height;
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> _handleContinue() async {
+    if (!_validateForm()) return;
+
+    await _saveUserData();
+    _navigateToProfilePictureUpload();
+  }
+
+  bool _validateForm() {
+    if (genderController.text.isEmpty ||
+        cityController.text.isEmpty ||
+        ageController.text.isEmpty) {
+      _showErrorDialog('Details Missing', 'Please fill all the fields');
+      return false;
+    }
+
+    final age = int.tryParse(ageController.text);
+    if (age == null || age < minimumAge) {
+      _showErrorDialog(
+        'Invalid Age',
+        'User should be at least $minimumAge years old',
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showErrorDialog(String title, String message) {
+    warningDialog(
+      title: title,
+      message: message,
+    ).showDialogBox(context);
+  }
+
+  Future<void> _saveUserData() async {
+    await MyStorage.saveToken(cityController.text, 'scity');
+    await MyStorage.saveToken(genderController.text, 'sgender');
+  }
+
+  void _navigateToProfilePictureUpload() {
+    Navigator.pushNamed(
+      context,
+      '/ProfilePictureUpload',
+      arguments: {'type': 'user'},
+    );
+  }
+
+  Widget _buildFormField({
+    required String labelText,
+    required List<String> items,
+    required TextEditingController controller,
+  }) {
+    return ResponsiveDropdown(
+      items: items,
+      labelText: labelText,
+      onChanged: (value) {
+        if (mounted) {
+          setState(() {
+            controller.text = value;
+          });
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -59,62 +134,38 @@ class _Signup_MoreInfoState extends State<Signup_MoreInfo> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(children: [
-                    SizedBox(
+                  Column(
+                    children: [
+                      SizedBox(
                         height: (Screen.height(context) * 0.01) +
-                            UI_Management.headerHeight),
-                    ResponsiveDropdown(
-                        items: ["Karachi", "Lahore", "Islamabad", "Peshawar"],
+                            UI_Management.headerHeight,
+                      ),
+                      _buildFormField(
                         labelText: "City",
-                        onChanged: (value) {
-                          setState(() {
-                            cityController.text = value.toString();
-                          });
-                        }),
-                    ResponsiveDropdown(
-                        items: ["Male", "Female"],
+                        items: cities,
+                        controller: cityController,
+                      ),
+                      _buildFormField(
                         labelText: "Gender",
-                        onChanged: (value) {
-                          setState(() {
-                            genderController.text = value.toString();
-                          });
-                        }),
-                    MyTextBox(
+                        items: genders,
+                        controller: genderController,
+                      ),
+                      MyTextBox(
                         hint: 'Enter Your Age',
                         valueController: ageController,
-                        isNum: true),
-                    SizedBox(
-                      height: Screen.height(context) * 0.1,
-                      child: Center(child: MyDivider()),
-                    ),
-                    ColoredButton(
-                      text: 'Continue',
-                      onPressed: () {
-                        if (genderController.text.isEmpty ||
-                            cityController.text.isEmpty ||
-                            ageController.text.isEmpty) {
-                          warningDialog(
-                                  title: 'Details Missing',
-                                  message: 'Please fill all the fields')
-                              .showDialogBox(context);
-                        } else if (int.parse(ageController.text) < 18) {
-                          warningDialog(
-                                  title: 'Invalid Age',
-                                  message:
-                                      'User should be atleast 18 years old')
-                              .showDialogBox(context);
-                        } else {
-                          MyStorage.saveToken(cityController.text, 'scity');
-                          MyStorage.saveToken(genderController.text, 'sgender');
-                          Navigator.pushNamed(context, '/ProfilePictureUpload',
-                              arguments: {'type': 'user'});
-                        }
-                      },
-                    ),
-                  ]),
-                  ProgressBar(
-                    Progress: 2,
+                        isNum: true,
+                      ),
+                      SizedBox(
+                        height: Screen.height(context) * 0.1,
+                        child: const Center(child: MyDivider()),
+                      ),
+                      ColoredButton(
+                        text: 'Continue',
+                        onPressed: _handleContinue,
+                      ),
+                    ],
                   ),
+                  const ProgressBar(Progress: 2),
                 ],
               ),
             ),

@@ -16,10 +16,20 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    // Load theme and check if the user is logged in
     MyColors.getTheme();
-    Timer(Duration(seconds: 3), () async {
-      await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
-      if (await MyStorage.exists(MyTokens.accessToken)) {
+    await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
+
+    // Check if the user has an access token
+    final bool isLoggedIn = await MyStorage.exists(MyTokens.accessToken);
+
+    // Navigate to the appropriate screen after a delay
+    Timer(const Duration(seconds: 3), () {
+      if (isLoggedIn) {
         Navigator.pushReplacementNamed(context, '/HomePage');
       } else {
         Navigator.pushReplacementNamed(context, '/Login');
@@ -31,18 +41,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Center(
-            child: Image.asset(
-              MyImages.Logo,
-              width: MediaQuery.of(context).size.width * 0.9,
-            ),
-          ),
+      body: Center(
+        child: Image.asset(
+          MyImages.Logo,
+          width: MediaQuery.of(context).size.width * 0.9,
         ),
       ),
     );

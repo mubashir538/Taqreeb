@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -29,553 +29,396 @@ class CategoryDetails extends StatefulWidget {
 }
 
 class _CategoryDetailsState extends State<CategoryDetails> {
-  List<TextEditingController> controllers = [];
-  List<bool> isEditing = [];
+  late List<TextEditingController> _controllers;
+  late List<bool> _isEditing;
+  late List<List<String>> _dropdownChoices;
+  bool _isLoading = true;
+  bool _isBusinessUser = false;
+  bool _isEditGuestMin = false;
+  bool _isEditGuestMax = false;
 
   @override
   void initState() {
     super.initState();
-    String mincontrol = '';
-    bool guest = false;
-    controllers = widget.values.map((value) {
-      if (value.contains('-')) {
-        final parts = value.split('-');
-        mincontrol = parts[1].trim();
-        guest = true;
-        return TextEditingController(text: parts[0].trim());
-      } else {
-        return TextEditingController(text: value);
-      }
-    }).toList();
-    if (guest) controllers.add(TextEditingController(text: mincontrol));
-    isEditing = List<bool>.generate(widget.values.length, (_) => false);
-    SetType();
-    fetchListingDetails();
+    _initializeControllers();
+    _checkUserType();
+    _fetchListingDetails();
   }
 
-  List<List<String>> dropdownChoices = [];
-  bool isLoading = true;
-  List<dynamic> choices = [];
-  Future<void> fetchListingDetails() async {
-    final response = await MyApi.getRequest(
+  @override
+  void dispose() {
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _initializeControllers() {
+    String minControl = '';
+    bool hasGuestRange = false;
+
+    _controllers = widget.values.map((value) {
+      if (value.contains('-')) {
+        final parts = value.split('-');
+        minControl = parts[1].trim();
+        hasGuestRange = true;
+        return TextEditingController(text: parts[0].trim());
+      }
+      return TextEditingController(text: value);
+    }).toList();
+
+    if (hasGuestRange) {
+      _controllers.add(TextEditingController(text: minControl));
+    }
+
+    _isEditing = List<bool>.filled(widget.values.length, false);
+    _dropdownChoices = [];
+  }
+
+  Future<void> _checkUserType() async {
+    final isBusinessUser = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    if (mounted) {
+      setState(() => _isBusinessUser = isBusinessUser);
+    }
+  }
+
+  Future<void> _fetchListingDetails() async {
+    try {
+      final response = await MyApi.getRequest(
         endpoint: 'getListingDetails/${widget.listing['Listing']['type']}',
         headers: {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+      );
+
+      if (mounted) {
+        setState(() {
+          if (response['fields'] != null) {
+            _dropdownChoices = (response['fields'] as List)
+                .map<List<String>>((field) =>
+                    (field['choices'] as List<dynamic>?)?.cast<String>() ?? [])
+                .toList();
+          }
+          _isLoading = false;
         });
-
-    if (response['fields'] != null) {
-      setState(() {
-        dropdownChoices = [];
-        isEditing = [];
-
-        for (var field in response['fields']) {
-          choices.add(field['choices']?.isEmpty ?? true ? '' : '');
-          dropdownChoices.add(field['choices']?.cast<String>() ?? []);
-          isEditing.add(false);
-        }
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        MyScaffold(text: 'Failed to load listing details').show(context);
+      }
     }
   }
 
-  Future<void> saveValue(int index) async {
-    final response = await MyApi.postRequest(
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      endpoint: 'businessowner/updateListings/',
-      body: {
-        'id': widget.listing['Listing']['id'].toString(),
-        toLowerCaseNoSpaces(widget.headings[index]):
-            widget.values[index].contains('-')
-                ? controllers[index].text +
-                    '-' +
-                    controllers[controllers.length - 1].text
-                : controllers[index].text,
-      },
-    );
-    if (response['status'] == 'success') {
-      setState(() {
-        if (widget.values[index].contains('-')) {
-          final guestMin = controllers[index].text.trim();
-          final guestMax = controllers[controllers.length - 1].text.trim();
-          widget.values[index] = '$guestMin-$guestMax';
-        } else {
-          widget.values[index] = controllers[index].text;
-        }
-        isEditing[index] = false;
-        isEditGuestMax = false;
-        isEditGuestMin = false;
-      });
+  Future<void> _saveValue(int index) async {
+    final newValue = widget.values[index].contains('-')
+        ? '${_controllers[index].text}-${_controllers.last.text}'
+        : _controllers[index].text;
 
-      MyScaffold(text: '${widget.headings[index]} updated successfully!')
-          .show(context);
-    } else {
-      MyScaffold(
-              text: '${widget.headings[index]} failed to Update Server Error!')
-          .show(context);
+    if (newValue.isEmpty) {
+      MyScaffold(text: 'Value cannot be empty').show(context);
+      return;
+    }
+
+    try {
+      final response = await MyApi.postRequest(
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+        endpoint: 'businessowner/updateListings/',
+        body: {
+          'id': widget.listing['Listing']['id'].toString(),
+          _toLowerCaseNoSpaces(widget.headings[index]): newValue,
+        },
+      );
+
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        setState(() {
+          widget.values[index] = newValue;
+          _isEditing[index] = false;
+          _isEditGuestMin = false;
+          _isEditGuestMax = false;
+        });
+        MyScaffold(text: '${widget.headings[index]} updated successfully!')
+            .show(context);
+      } else {
+        throw Exception(response['message'] ?? 'Failed to update value');
+      }
+    } catch (e) {
+      if (mounted) {
+        MyScaffold(text: 'Error: ${e.toString()}').show(context);
+      }
     }
   }
 
-  bool type = false;
-  bool isEditGuestMin = false, isEditGuestMax = false;
-  Future<void> SetType() async {
-    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
-        await MyStorage.exists(MyTokens.isFreelancer);
-    setState(() {
-      type = value;
-    });
-  }
-
-  String toLowerCaseNoSpaces(String input) {
+  String _toLowerCaseNoSpaces(String input) {
     return input.toLowerCase().replaceAll(' ', '');
+  }
+
+  TextStyle _buildTextStyle({
+    double fontSize = 0.015,
+    FontWeight fontWeight = FontWeight.w400,
+    required Color color,
+  }) {
+    return GoogleFonts.montserrat(
+      fontSize: Screen.max(context) * fontSize,
+      fontWeight: fontWeight,
+      color: color,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (type) {
-      return isLoading
-          ? CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(MyColors.white),
-            )
-          : Padding(
-              padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-              child: Column(
-                children: [
-                  for (int i = 0; i < widget.headings.length; i++)
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          vertical: Screen.max(context) * 0.01),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (widget.values[i].contains('-') && type)
-                            if (isEditGuestMin)
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Guest Min',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w500,
-                                          color: MyColors.Yellow,
-                                        ),
-                                      ),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: Screen.width(context) * 0.4,
-                                        ),
-                                        child: TextField(
-                                          controller: controllers[i],
-                                          style: GoogleFonts.montserrat(
-                                            fontSize:
-                                                Screen.max(context) * 0.015,
-                                            color: MyColors.white,
-                                          ),
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            hintText: 'Enter Guest Min...',
-                                            hintStyle:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ColoredButton(
-                                          width: Screen.width(context) * 0.4,
-                                          textSize: Screen.max(context) * 0.015,
-                                          text:
-                                              isEditGuestMin ? "Save" : "Edit",
-                                          onPressed: isEditGuestMin
-                                              ? () => saveValue(i)
-                                              : () => setState(
-                                                  () => isEditing[i] = true),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Guest Max',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w500,
-                                          color: MyColors.Yellow,
-                                        ),
-                                      ),
-                                      Text(
-                                        widget.values[i].split('-')[1],
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ColoredButton(
-                                          width: Screen.width(context) * 0.4,
-                                          textSize: Screen.max(context) * 0.015,
-                                          text:
-                                              isEditGuestMax ? "Save" : "Edit",
-                                          onPressed: isEditGuestMax
-                                              ? () => saveValue(i)
-                                              : () => setState(() {
-                                                    isEditing[i] = true;
-                                                    isEditGuestMax = true;
-                                                  }),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )
-                            else if (isEditGuestMax)
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Guest Min',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w500,
-                                          color: MyColors.Yellow,
-                                        ),
-                                      ),
-                                      Text(
-                                        widget.values[i].split('-')[0],
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ColoredButton(
-                                          width: Screen.width(context) * 0.4,
-                                          textSize: Screen.max(context) * 0.015,
-                                          text:
-                                              isEditGuestMin ? "Save" : "Edit",
-                                          onPressed: isEditGuestMin
-                                              ? () => saveValue(i)
-                                              : () => setState(() {
-                                                    isEditing[i] = true;
-                                                    isEditGuestMin = true;
-                                                  }),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Guest Max',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w500,
-                                          color: MyColors.Yellow,
-                                        ),
-                                      ),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: Screen.width(context) * 0.4,
-                                        ),
-                                        child: TextField(
-                                          controller: controllers[
-                                              controllers.length - 1],
-                                          style: GoogleFonts.montserrat(
-                                            fontSize:
-                                                Screen.max(context) * 0.015,
-                                            color: MyColors.white,
-                                          ),
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            hintText: 'Enter Guest Max...',
-                                            hintStyle:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ColoredButton(
-                                          width: Screen.width(context) * 0.4,
-                                          textSize: Screen.max(context) * 0.015,
-                                          text:
-                                              isEditGuestMax ? "Save" : "Edit",
-                                          onPressed: isEditGuestMax
-                                              ? () => saveValue(i)
-                                              : () => setState(
-                                                  () => isEditing[i] = true),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )
-                            else
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Guest Min',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w500,
-                                          color: MyColors.Yellow,
-                                        ),
-                                      ),
-                                      Text(
-                                        widget.values[i].split('-')[0],
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ColoredButton(
-                                          width: Screen.width(context) * 0.4,
-                                          textSize: Screen.max(context) * 0.015,
-                                          text: isEditing[i] ? "Save" : "Edit",
-                                          onPressed: isEditing[i]
-                                              ? () => saveValue(i)
-                                              : () => setState(() {
-                                                    isEditing[i] = true;
-                                                    isEditGuestMin = true;
-                                                  }),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Guest Max',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w500,
-                                          color: MyColors.Yellow,
-                                        ),
-                                      ),
-                                      Text(
-                                        widget.values[i].split('-')[1],
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: Screen.max(context) * 0.015,
-                                          fontWeight: FontWeight.w400,
-                                          color: MyColors.white,
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ColoredButton(
-                                          width: Screen.width(context) * 0.4,
-                                          textSize: Screen.max(context) * 0.015,
-                                          text: isEditing[i] ? "Save" : "Edit",
-                                          onPressed: isEditing[i]
-                                              ? () => saveValue(i)
-                                              : () => setState(() {
-                                                    isEditing[i] = true;
-                                                    isEditGuestMax = true;
-                                                  }),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )
-                          else
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.headings[i],
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: Screen.max(context) * 0.015,
-                                    fontWeight: FontWeight.w500,
-                                    color: MyColors.Yellow,
-                                  ),
-                                ),
-                                if (isEditing[i])
-                                  if (dropdownChoices[i].isNotEmpty)
-                                    DropdownButtonFormField<String>(
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        hintText:
-                                            'Select ${widget.headings[i]}...',
-                                        hintStyle: GoogleFonts.montserrat(
-                                            color: MyColors.whiteDarker),
-                                      ),
-                                      value: widget.values[i].isEmpty
-                                          ? null
-                                          : widget.values[i],
-                                      items: dropdownChoices[i].map((choice) {
-                                        return DropdownMenuItem<String>(
-                                          value: choice,
-                                          child: Text(
-                                            choice,
-                                            style: GoogleFonts.montserrat(
-                                                color: MyColors.white,
-                                                fontSize:
-                                                    Screen.max(context) * 0.015,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          controllers[i].text = value ?? '';
-                                        });
-                                      },
-                                    )
-                                  else
-                                    TextField(
-                                      controller: controllers[i],
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: Screen.max(context) * 0.015,
-                                        color: MyColors.white,
-                                      ),
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        hintText:
-                                            'Enter ${widget.headings[i]}...',
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                      ),
-                                    )
-                                else
-                                  Text(
-                                    widget.values[i],
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: Screen.max(context) * 0.015,
-                                      fontWeight: FontWeight.w400,
-                                      color: MyColors.white,
-                                    ),
-                                  ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: ColoredButton(
-                                    text: isEditing[i] ? "Save" : "Edit",
-                                    onPressed: isEditing[i]
-                                        ? () => saveValue(i)
-                                        : () =>
-                                            setState(() => isEditing[i] = true),
-                                  ),
-                                ),
-                              ],
-                            )
-                        ],
-                      ),
-                    ),
-                  if (widget.headings.length != 0)
-                    SizedBox(
-                      height: Screen.height(context) * 0.05,
-                      child: Center(
-                          child: MyDivider(
-                        width: Screen.width(context) * 0.85,
-                      )),
-                    ),
-                ],
-              ),
-            );
-    } else {
-      return Padding(
-        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-        child: Column(
-          children: [
-            for (int i = 0; i < widget.headings.length; i++)
-              Container(
-                margin:
-                    EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.headings[i],
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.015,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.Yellow,
-                      ),
-                    ),
-                    widget.headings[i] == 'portfolio Link'
-                        ? InkWell(
-                            onTap: () async {
-                              if (await canLaunchUrl(
-                                  Uri.parse(widget.values[i]))) {
-                                await launchUrl(
-                                  Uri.parse(widget.values[i]),
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              } else {
-                                MyScaffold(text: 'Can not Open Link')
-                                    .show(context);
-                              }
-                            },
-                            child: Icon(
-                              Icons.link,
-                              size: Screen.max(context) * 0.03,
-                              color: MyColors.white,
-                            ),
-                          )
-                        : Container(
-                            width: Screen.width(context) * 0.5,
-                            child: Text(
-                              widget.values[i],
-                              maxLines: 3,
-                              softWrap: true,
-                              textAlign: TextAlign.right,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
-                                fontSize: Screen.max(context) * 0.015,
-                                fontWeight: FontWeight.w400,
-                                color: MyColors.white,
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            if (widget.headings.length != 0)
-              SizedBox(
-                height: Screen.height(context) * 0.05,
-                child: Center(
-                    child: MyDivider(
-                  width: Screen.width(context) * 0.85,
-                )),
-              ),
-          ],
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(MyColors.white),
         ),
       );
     }
+
+    return Padding(
+      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      child: Column(
+        children: [
+          for (int i = 0; i < widget.headings.length; i++) _buildDetailItem(i),
+          if (widget.headings.isNotEmpty) _buildDivider(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailItem(int index) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+      child: _isBusinessUser
+          ? _buildEditableDetail(index)
+          : _buildReadOnlyDetail(index),
+    );
+  }
+
+  Widget _buildEditableDetail(int index) {
+    final isGuestRange = widget.values[index].contains('-');
+
+    if (isGuestRange) {
+      return _buildGuestRangeEditor(index);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.headings[index],
+          style: _buildTextStyle(
+            fontWeight: FontWeight.w500,
+            color: MyColors.Yellow,
+          ),
+        ),
+        _isEditing[index]
+            ? _buildEditField(index)
+            : Text(
+                widget.values[index],
+                style: _buildTextStyle(color: MyColors.white),
+              ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: ColoredButton(
+            text: _isEditing[index] ? "Save" : "Edit",
+            onPressed: () {
+              if (_isEditing[index]) {
+                _saveValue(index);
+              } else {
+                setState(() => _isEditing[index] = true);
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuestRangeEditor(int index) {
+    final parts = widget.values[index].split('-');
+    final isEditingMin = _isEditGuestMin && _isEditing[index];
+    final isEditingMax = _isEditGuestMax && _isEditing[index];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildGuestRangePart(
+          label: 'Guest Min',
+          value: parts[0],
+          isEditing: isEditingMin,
+          controller: _controllers[index],
+          onEdit: () => setState(() {
+            _isEditing[index] = true;
+            _isEditGuestMin = true;
+          }),
+          onSave: () => _saveValue(index),
+        ),
+        _buildGuestRangePart(
+          label: 'Guest Max',
+          value: parts[1],
+          isEditing: isEditingMax,
+          controller: _controllers.last,
+          onEdit: () => setState(() {
+            _isEditing[index] = true;
+            _isEditGuestMax = true;
+          }),
+          onSave: () => _saveValue(index),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuestRangePart({
+    required String label,
+    required String value,
+    required bool isEditing,
+    required TextEditingController controller,
+    required VoidCallback onEdit,
+    required VoidCallback onSave,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: _buildTextStyle(
+            fontWeight: FontWeight.w500,
+            color: MyColors.Yellow,
+          ),
+        ),
+        isEditing
+            ? Container(
+                constraints: BoxConstraints(
+                  maxWidth: Screen.width(context) * 0.4,
+                ),
+                child: TextField(
+                  controller: controller,
+                  style: _buildTextStyle(color: MyColors.white),
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Enter $label...',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+              )
+            : Text(
+                value,
+                style: _buildTextStyle(color: MyColors.white),
+              ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: ColoredButton(
+            width: Screen.width(context) * 0.4,
+            textSize: Screen.max(context) * 0.015,
+            text: isEditing ? "Save" : "Edit",
+            onPressed: isEditing ? onSave : onEdit,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditField(int index) {
+    if (_dropdownChoices[index].isNotEmpty) {
+      return DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          hintText: 'Select ${widget.headings[index]}...',
+          hintStyle: _buildTextStyle(color: MyColors.whiteDarker),
+        ),
+        value: widget.values[index].isEmpty ? null : widget.values[index],
+        items: _dropdownChoices[index].map((choice) {
+          return DropdownMenuItem<String>(
+            value: choice,
+            child: Text(
+              choice,
+              style: _buildTextStyle(color: MyColors.white),
+            ),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            _controllers[index].text = value ?? '';
+          });
+        },
+      );
+    }
+
+    return TextField(
+      controller: _controllers[index],
+      style: _buildTextStyle(color: MyColors.white),
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        hintText: 'Enter ${widget.headings[index]}...',
+        hintStyle: const TextStyle(color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget _buildReadOnlyDetail(int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          widget.headings[index],
+          style: _buildTextStyle(
+            fontWeight: FontWeight.w500,
+            color: MyColors.Yellow,
+          ),
+        ),
+        widget.headings[index] == 'portfolio Link'
+            ? InkWell(
+                onTap: () => _launchUrl(widget.values[index]),
+                child: Icon(
+                  Icons.link,
+                  size: Screen.max(context) * 0.03,
+                  color: MyColors.white,
+                ),
+              )
+            : Container(
+                width: Screen.width(context) * 0.5,
+                child: Text(
+                  widget.values[index],
+                  maxLines: 3,
+                  softWrap: true,
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
+                  style: _buildTextStyle(color: MyColors.white),
+                ),
+              ),
+      ],
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(
+          Uri.parse(url),
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        MyScaffold(text: 'Cannot open link').show(context);
+      }
+    } catch (e) {
+      MyScaffold(text: 'Error opening link').show(context);
+    }
+  }
+
+  Widget _buildDivider() {
+    return SizedBox(
+      height: Screen.height(context) * 0.05,
+      child: Center(
+        child: MyDivider(width: Screen.width(context) * 0.85),
+      ),
+    );
   }
 }

@@ -1,18 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/picture_options.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 
@@ -24,88 +21,65 @@ class AddImage extends StatefulWidget {
 }
 
 class _AddImageState extends State<AddImage> {
-  final List<String> _images = [];
-  Map<String, dynamic> args = {};
-  bool ischanged = true;
-  GlobalKey headerKey = GlobalKey();
+  final _imageController = ImageController();
+  final GlobalKey _headerKey = GlobalKey();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    if (ischanged) {
-      this.args = args;
-      ischanged = false;
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null && _imageController.args.isEmpty) {
+      _imageController.args = args as Map<String, dynamic>;
     }
-  }
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: _headerKey,
+        callback: _updateHeaderHeight,
+      );
+    });
+  }
+
+  void _updateHeaderHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
   }
 
   Future<void> _pickImage() async {
-    try {
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        final compressedFile = await _compressImage(File(pickedFile.path));
-        setState(() {
-          _images.add(compressedFile.path);
-        });
-      }
-    } catch (e) {
-      warningDialog(
-        title: 'Error',
-        message: 'Failed to pick an image. Please try again.',
-      ).showDialogBox(context);
-    }
-  }
-
-  Future<File> _compressImage(File file) async {
-    try {
-      final tempDir = Directory.systemTemp;
-      final compressedPath =
-          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
-
-      final compressedFile = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path,
-        compressedPath,
-        quality: 50,
-      );
-
-      if (compressedFile != null) {
-        final FcompressedFile = File(compressedFile.path);
-        return FcompressedFile;
-      } else {
-        throw Exception("Failed to compress image.");
-      }
-    } catch (e) {
-      throw Exception("Compression error: ${e.toString()}");
-    }
-  }
-
-  void _deleteImage(int index) {
-    setState(() {
-      _images.removeAt(index);
+    await Picture.pickImage(context, callback: (file) {
+      setState(() => _imageController.addImage(file.path));
     });
+  }
+
+  Future<void> _submitService() async {
+    final response = await _imageController.submitService();
+
+    if (!mounted) return;
+
+    if (response['status'] == 'success') {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/HomePage',
+        ModalRoute.withName('/'),
+      );
+    } else {
+      MyScaffold(text: 'Failed to add service. Please try again.')
+          .show(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    UI_Management.getHeaderHeight(
+      headerKey: _headerKey,
+      callback: _updateHeaderHeight,
+    );
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -113,7 +87,7 @@ class _AddImageState extends State<AddImage> {
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'Final Step',
               para: 'Add images to your service',
             ),
@@ -121,188 +95,198 @@ class _AddImageState extends State<AddImage> {
           Column(
             children: [
               SizedBox(height: UI_Management.headerHeight),
-              Container(
-                margin: EdgeInsets.symmetric(
-                    horizontal: Screen.width(context) * 0.05),
-                height: Screen.height(context) * 0.2,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: MyColors.DarkLighter,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.4),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                        offset: Offset(2, 2)),
-                  ],
-                ),
-                child: InkWell(
-                  onTap: _pickImage,
-                  child: Center(
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: MyColors.DarkLighter,
-                      child: Image.asset(
-                        MyIcons.add,
-                        color: MyColors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _buildImageUploadButton(),
               const SizedBox(height: 10),
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.all(Screen.width(context) * 0.03),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: Screen.width(context) * 0.03,
-                    mainAxisSpacing: Screen.width(context) * 0.03,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: _images.length,
-                  itemBuilder: (context, index) {
-                    return Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: MyColors.DarkLighter,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.4),
-                                blurRadius: 4,
-                                spreadRadius: 1,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Image.file(
-                                  File(_images[index]),
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                ),
-                                Container(
-                                  color: Colors.black.withOpacity(0.5),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              color: MyColors.white,
-                              size: 30,
-                            ),
-                            onPressed: () => _deleteImage(index),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+              _buildImageGrid(),
             ],
           ),
-          Positioned(
-            bottom: Screen.max(context) * 0.02,
-            left: Screen.width(context) * 0.25,
-            right: Screen.width(context) * 0.25,
-            child: ColoredButton(
-                text: 'Add Service',
-                width: Screen.width(context) * 0.5,
-                onPressed: () async {
-                  final request = http.MultipartRequest('POST',
-                      Uri.parse(MyApi.baseUrl + 'businessowner/addListings/'));
-
-                  for (int i = 0; i < _images.length; i++) {
-                    request.files.add(
-                      await http.MultipartFile.fromPath(
-                        'pictures',
-                        _images[i],
-                      ),
-                    );
-                  }
-
-                  request.fields['userid'] =
-                      await MyStorage.getToken(MyTokens.userId) ?? "";
-                  request.fields['name'] = args['name'];
-                  request.fields['type'] = await MyTokens.getBusinessType();
-                  request.fields['description'] = args['description'];
-                  request.fields['category'] = args['category'];
-                  request.fields['location'] = args['location'];
-                  final token =
-                      await MyStorage.getToken(MyTokens.accessToken) ?? "";
-                  request.headers.addAll({
-                    'Authorization': 'Bearer $token',
-                  });
-
-                  request.fields['priceMin'] = args['pricemin'];
-                  request.fields['priceMax'] = args['pricemax'];
-                  if (args['packages'] != null) {
-                    request.fields['packages'] = jsonEncode(args['packages']);
-                  }
-                  if (args['addons'] != null) {
-                    request.fields['addons'] = jsonEncode(args['addons']);
-                  }
-                  if (args['category'] == 'Venue') {
-                    request.fields['venueType'] = args['venueType'];
-                    request.fields['staff'] = args['staff'];
-                    request.fields['guestmaxAllowed'] = args['guestmaxAllowed'];
-                    request.fields['guestminAllowed'] = args['guestminAllowed'];
-                    request.fields['catering'] = args['catering'];
-                  } else if (args['category'] == 'Photography Place') {
-                    request.fields['type'] = args['type'];
-                  } else if (args['category'] == 'Decorator') {
-                    request.fields['decorType'] = args['decorType'];
-                    request.fields['catering'] = args['catering'];
-                    request.fields['staff'] = args['staff'];
-                  } else if (args['category'] == 'Photographer') {
-                    request.fields['portfolioLink'] = args['portfolioLink'];
-                  } else if (args['category'] == 'Caterer') {
-                    request.fields['serviceType'] = args['serviceType'];
-                    request.fields['cateringOptions'] = args['cateringOptions'];
-                    request.fields['staff'] = args['staff'];
-                    request.fields['expertise'] = args['expertise'];
-                  } else if (args['category'] == 'Car Renter') {
-                    request.fields['serviceType'] = args['serviceType'];
-                  } else if (args['category'] == 'Graphic Designer' ||
-                      args['category'] == 'Video Editor') {
-                    request.fields['portfolioLink'] = args['portfolioLink'];
-                  }
-
-                  final response = await request.send();
-
-                  final responseBody = await response.stream.bytesToString();
-
-                  if (response.statusCode == 200) {
-                    final Map<String, dynamic> jsonResponse =
-                        jsonDecode(responseBody);
-                    if (jsonResponse['status'] == 'error') {
-                      MyScaffold(text: jsonResponse['message']).show(context);
-                    }
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/HomePage',
-                      ModalRoute.withName('/'),
-                    );
-                  } else {
-                    MyScaffold(text: 'Failed to add service. Please try again.')
-                        .show(context);
-                  }
-                }),
-          ),
+          _buildSubmitButton(),
         ],
       ),
     );
+  }
+
+  Widget _buildImageUploadButton() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+      height: Screen.height(context) * 0.2,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: MyColors.DarkLighter,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 4,
+            spreadRadius: 1,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: _pickImage,
+        child: Center(
+          child: CircleAvatar(
+            radius: 30,
+            backgroundColor: MyColors.DarkLighter,
+            child: Image.asset(
+              MyIcons.add,
+              color: MyColors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageGrid() {
+    return Expanded(
+      child: GridView.builder(
+        padding: EdgeInsets.all(Screen.width(context) * 0.03),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: Screen.width(context) * 0.03,
+          mainAxisSpacing: Screen.width(context) * 0.03,
+          childAspectRatio: 1,
+        ),
+        itemCount: _imageController.images.length,
+        itemBuilder: (context, index) {
+          return _buildImageItem(index);
+        },
+      ),
+    );
+  }
+
+  Widget _buildImageItem(int index) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: MyColors.DarkLighter,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 4,
+                spreadRadius: 1,
+                offset: const Offset(2, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.file(
+                  File(_imageController.images[index]),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Center(
+          child: IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: MyColors.white,
+              size: 30,
+            ),
+            onPressed: () =>
+                setState(() => _imageController.removeImage(index)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return Positioned(
+      bottom: Screen.max(context) * 0.02,
+      left: Screen.width(context) * 0.25,
+      right: Screen.width(context) * 0.25,
+      child: ColoredButton(
+        text: 'Add Service',
+        width: Screen.width(context) * 0.5,
+        onPressed: _submitService,
+      ),
+    );
+  }
+}
+
+class ImageController {
+  final List<String> images = [];
+  Map<String, dynamic> args = {};
+
+  void addImage(String path) {
+    images.add(path);
+  }
+
+  void removeImage(int index) {
+    images.removeAt(index);
+  }
+
+  Future<Map<String, dynamic>> submitService() async {
+    final data = {
+      'userid': await MyStorage.getToken(MyTokens.userId) ?? "",
+      'name': args['name'],
+      'type': await MyTokens.getBusinessType(),
+      'description': args['description'],
+      'category': args['category'],
+      'location': args['location'],
+      'priceMin': args['pricemin'],
+      'priceMax': args['pricemax'],
+      'packages':
+          args['packages'] != null ? jsonEncode(args['packages']) : null,
+      'addons': args['addons'] != null ? jsonEncode(args['addons']) : null,
+    };
+
+    _addCategorySpecificData(data);
+
+    return await MyApi.postMultipartRequest(
+      endpoint: 'businessowner/addListings/',
+      body: data,
+      files: {'pictures': images},
+    );
+  }
+
+  void _addCategorySpecificData(Map<String, dynamic> data) {
+    switch (args['category']) {
+      case 'Venue':
+        data['venueType'] = args['venueType'];
+        data['staff'] = args['staff'];
+        data['guestmaxAllowed'] = args['guestmaxAllowed'];
+        data['guestminAllowed'] = args['guestminAllowed'];
+        data['catering'] = args['catering'];
+        break;
+      case 'Photography Place':
+        data['type'] = args['type'];
+        break;
+      case 'Decorator':
+        data['decorType'] = args['decorType'];
+        data['catering'] = args['catering'];
+        data['staff'] = args['staff'];
+        break;
+      case 'Photographer':
+      case 'Graphic Designer':
+      case 'Video Editor':
+        data['portfolioLink'] = args['portfolioLink'];
+        break;
+      case 'Caterer':
+        data['serviceType'] = args['serviceType'];
+        data['cateringOptions'] = args['cateringOptions'];
+        data['staff'] = args['staff'];
+        data['expertise'] = args['expertise'];
+        break;
+      case 'Car Renter':
+        data['serviceType'] = args['serviceType'];
+        break;
+    }
   }
 }

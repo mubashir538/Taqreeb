@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
@@ -12,153 +12,169 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class UpperHeadings extends StatefulWidget {
-  final Map listing;
+  final Map<String, dynamic> listing;
   final int? listingId;
-  final Map events;
+  final Map<String, dynamic> events;
   final DateTime? selectedDate;
-  const UpperHeadings(
-      {super.key,
-      required this.listing,
-      required this.listingId,
-      required this.selectedDate,
-      required this.events});
+
+  const UpperHeadings({
+    super.key,
+    required this.listing,
+    required this.listingId,
+    required this.selectedDate,
+    required this.events,
+  });
 
   @override
   State<UpperHeadings> createState() => _UpperHeadingsState();
 }
 
 class _UpperHeadingsState extends State<UpperHeadings> {
-  bool isEditingName = false;
-  bool isEditingLocation = false;
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  Color selectedColor = MyColors.white;
-  IconData selectedIcon = FontAwesomeIcons.heart;
+  late final TextEditingController _nameController;
+  late final TextEditingController _locationController;
+  bool _isEditingName = false;
+  bool _isEditingLocation = false;
+  Color _wishlistColor = MyColors.white;
+  IconData _wishlistIcon = FontAwesomeIcons.heart;
+  bool _isBusinessUser = false;
+
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.listing['Listing']['name'] ?? '';
-    locationController.text = widget.listing['Listing']['location'] ?? '';
-    SetType();
+    _nameController =
+        TextEditingController(text: widget.listing['Listing']['name'] ?? '');
+    _locationController = TextEditingController(
+        text: widget.listing['Listing']['location'] ?? '');
+    _checkUserType();
   }
 
-  void showHierarchicalOptions(
-      BuildContext context, double maxThing, double width) {
-    showModalBottomSheet(
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkUserType() async {
+    final isBusinessUser = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    if (mounted) {
+      setState(() => _isBusinessUser = isBusinessUser);
+    }
+  }
+
+  Future<void> _showEventSelectionDialog() async {
+    await showModalBottomSheet(
       context: context,
       backgroundColor: MyColors.Dark,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(maxThing * 0.02),
-          decoration: BoxDecoration(
-            color: MyColors.Dark,
-            borderRadius:
-                BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: maxThing * 0.02),
-                child: Text(
-                  "Choose for a Function",
-                  style: GoogleFonts.montserrat(
-                    fontSize: maxThing * 0.025,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.white,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.events['Event']?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final event = widget.events['Event'][index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: maxThing * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          width: 1,
-                          color: MyColors.red,
-                        ),
-                        color: MyColors.DarkLighter,
-                      ),
-                      child: ExpansionTile(
-                        collapsedShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        backgroundColor: MyColors.red,
-                        collapsedBackgroundColor: MyColors.DarkLighter,
-                        title: Text(
-                          event['name'],
-                          style: GoogleFonts.montserrat(
-                            fontSize: maxThing * 0.015,
-                            fontWeight: FontWeight.w400,
-                            color: MyColors.white,
-                          ),
-                        ),
-                        children: [
-                          ...event['functions'].map<Widget>((function) {
-                            return ListTile(
-                              title: Text(
-                                function['name'],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: maxThing * 0.015,
-                                  color: MyColors.whiteDarker,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              onTap: () async {
-                                final token = await MyStorage.getToken(
-                                    MyTokens.accessToken);
-                                final response = await MyApi.postRequest(
-                                    headers: {'Authorization': 'Bearer $token'},
-                                    endpoint: 'add/Bookcart/',
-                                    body: {
-                                      'fid': function['id'].toString(),
-                                      'uid': await MyStorage.getToken(
-                                              MyTokens.userId) ??
-                                          "",
-                                      'lid': widget.listingId.toString(),
-                                      'type': 'Venue',
-                                    });
-
-                                if (response['status'] == 'success') {
-                                  Navigator.pop(context);
-                                } else if (response['status'] ==
-                                    'BudgetError') {
-                                  warningDialog(
-                                    message: 'Event Budget is Exceeding',
-                                    title: 'Budget Exceed',
-                                    actions: [ColoredButton(text: 'Ok')],
-                                  ).showDialogBox(context);
-                                } else {
-                                  MyScaffold(text: 'Something Went Wrong!')
-                                      .show(context);
-                                  Navigator.pop(context);
-                                }
-                              },
-                            );
-                          }).toList(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (context) => _buildEventSelectionDialog(),
     );
   }
 
-  Future<void> saveField(String field, String value) async {
+  Widget _buildEventSelectionDialog() {
+    final maxDimension = Screen.max(context);
+    return Container(
+      padding: EdgeInsets.all(maxDimension * 0.02),
+      decoration: BoxDecoration(
+        color: MyColors.Dark,
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(maxDimension * 0.05)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Choose for a Function",
+            style: _buildTextStyle(
+                fontSize: 0.025,
+                fontWeight: FontWeight.w500,
+                color: MyColors.white),
+          ),
+          SizedBox(height: maxDimension * 0.02),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: widget.events['Event']?.length ?? 0,
+              itemBuilder: (context, index) =>
+                  _buildEventItem(index, maxDimension),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventItem(int index, double maxDimension) {
+    final event = widget.events['Event'][index];
+    return Container(
+      margin: EdgeInsets.only(bottom: maxDimension * 0.02),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(width: 1, color: MyColors.red),
+        color: MyColors.DarkLighter,
+      ),
+      child: ExpansionTile(
+        collapsedShape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        backgroundColor: MyColors.red,
+        collapsedBackgroundColor: MyColors.DarkLighter,
+        title: Text(
+          event['name'],
+          style: _buildTextStyle(fontSize: 0.015, color: MyColors.white),
+        ),
+        children: (event['functions'] as List).map<Widget>((function) {
+          return ListTile(
+            title: Text(
+              function['name'],
+              style: _buildTextStyle(
+                fontSize: 0.015,
+                color: MyColors.whiteDarker,
+              ),
+            ),
+            onTap: () => _addToBookCart(function),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Future<void> _addToBookCart(Map<String, dynamic> function) async {
+    try {
+      final token = await MyStorage.getToken(MyTokens.accessToken);
+      final response = await MyApi.postRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'add/Bookcart/',
+        body: {
+          'fid': function['id'].toString(),
+          'uid': await MyStorage.getToken(MyTokens.userId) ?? "",
+          'lid': widget.listingId.toString(),
+          'type': 'Venue',
+        },
+      );
+
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        Navigator.pop(context);
+      } else if (response['status'] == 'BudgetError') {
+        warningDialog(
+          message: 'Event Budget is Exceeding',
+          title: 'Budget Exceed',
+          actions: [ColoredButton(text: 'Ok')],
+        ).showDialogBox(context);
+      } else {
+        MyScaffold(text: 'Something Went Wrong!').show(context);
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        MyScaffold(text: 'Error: ${e.toString()}').show(context);
+      }
+    }
+  }
+
+  Future<void> _saveField(String field, String value) async {
     try {
       final response = await MyApi.postRequest(
         headers: {
@@ -172,342 +188,342 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         },
       );
 
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         setState(() {
           widget.listing['Listing'][field] = value;
-
-          if (field == 'name') isEditingName = false;
-          if (field == 'location') isEditingLocation = false;
+          if (field == 'name') _isEditingName = false;
+          if (field == 'location') _isEditingLocation = false;
         });
         MyScaffold(text: '$field updated successfully!').show(context);
       } else {
-        throw Exception(response['message'] ?? 'Failed to update $field.');
+        throw Exception(response['message'] ?? 'Failed to update $field');
       }
     } catch (e) {
-      MyScaffold(text: 'Error: ${e.toString()}').show(context);
+      if (mounted) {
+        MyScaffold(text: 'Error: ${e.toString()}').show(context);
+      }
     }
   }
 
-  bool type = false;
-  Future<void> SetType() async {
-    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
-        await MyStorage.exists(MyTokens.isFreelancer);
-    setState(() {
-      type = value;
-    });
-  }
+  Future<void> _toggleWishlist() async {
+    try {
+      final endpoint =
+          _wishlistColor == MyColors.red ? 'wishlist/delete' : 'wishlist/add';
+      final response = await MyApi.postRequest(
+        endpoint: endpoint,
+        body: {
+          'userid': await MyStorage.getToken(MyTokens.userId),
+          'listing': widget.listingId,
+        },
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+      );
 
-  void wishlistSelection(double max) async {
-    if (selectedColor == MyColors.red) {
-      final response =
-          await MyApi.postRequest(endpoint: 'wishlist/delete', body: {
-        'userid': await MyStorage.getToken(MyTokens.userId),
-        'listing': widget.listingId,
-      }, headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      });
+      if (!mounted) return;
 
       if (response['status'] == 'success') {
-        selectedColor = MyColors.white;
-        selectedIcon = FontAwesomeIcons.heart;
-        MyScaffold(text: 'Removed from wishlist!').show(context);
+        setState(() {
+          if (_wishlistColor == MyColors.red) {
+            _wishlistColor = MyColors.white;
+            _wishlistIcon = FontAwesomeIcons.heart;
+          } else {
+            _wishlistIcon = FontAwesomeIcons.solidHeart;
+            _wishlistColor = MyColors.red;
+          }
+        });
+        MyScaffold(
+          text: _wishlistColor == MyColors.red
+              ? 'Added to wishlist!'
+              : 'Removed from wishlist!',
+        ).show(context);
       }
-    } else {
-      final response = await MyApi.postRequest(endpoint: 'wishlist/add', body: {
-        'userid': await MyStorage.getToken(MyTokens.userId),
-        'listing': widget.listingId,
-      }, headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      });
-      if (response['status'] == 'success') {
-        selectedIcon = FontAwesomeIcons.solidHeart;
-        selectedColor = MyColors.red;
-        MyScaffold(text: 'Added to wishlist!').show(context);
+    } catch (e) {
+      if (mounted) {
+        MyScaffold(text: 'Error updating wishlist').show(context);
       }
     }
+  }
+
+  Future<void> _deleteListing() async {
+    warningDialog(
+      title: 'Delete',
+      message: 'Are you sure you want to delete this Listing?',
+      actions: [
+        BorderButton(
+          text: 'Cancel',
+          onPressed: () => Navigator.of(context).pop(false),
+          width: Screen.width(context) * 0.3,
+          textSize: Screen.max(context) * 0.015,
+        ),
+        ColoredButton(
+          text: 'Delete',
+          onPressed: () async {
+            try {
+              final token = await MyStorage.getToken(MyTokens.accessToken);
+              final response = await MyApi.postRequest(
+                endpoint: 'businessowner/DeleteListings/',
+                body: {'id': widget.listingId},
+                headers: {'Authorization': 'Bearer $token'},
+              );
+
+              if (!mounted) return;
+
+              if (response['status'] == 'success') {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/YourListings',
+                  ModalRoute.withName('/HomePage'),
+                );
+                MyScaffold(text: 'Listing Deleted Successfully!').show(context);
+              } else {
+                MyScaffold(text: 'Something went Wrong!').show(context);
+              }
+            } catch (e) {
+              if (mounted) {
+                MyScaffold(text: 'Error: ${e.toString()}').show(context);
+              }
+            }
+            Navigator.of(context).pop(true);
+          },
+          width: Screen.width(context) * 0.3,
+          textSize: Screen.max(context) * 0.015,
+        ),
+      ],
+    ).showDialogBox(context);
+  }
+
+  TextStyle _buildTextStyle({
+    double fontSize = 0.015,
+    FontWeight fontWeight = FontWeight.w400,
+    required Color color,
+  }) {
+    return GoogleFonts.montserrat(
+      fontSize: Screen.max(context) * fontSize,
+      fontWeight: fontWeight,
+      color: color,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-          child: Row(
+        _buildNameSection(),
+        _buildLocationAndRatingSection(),
+      ],
+    );
+  }
+
+  Widget _buildNameSection() {
+    return Padding(
+      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _isEditingName && _isBusinessUser
+              ? _buildNameEditField()
+              : _buildNameDisplay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNameEditField() {
+    return Flexible(
+      child: Column(
+        children: [
+          TextField(
+            controller: _nameController,
+            style: _buildTextStyle(fontSize: 0.025, color: MyColors.white),
+            decoration: InputDecoration(
+              hintText: 'Edit name',
+              hintStyle: _buildTextStyle(
+                fontSize: 0.015,
+                color: MyColors.white.withOpacity(0.6),
+              ),
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          ColoredButton(
+            text: 'Save',
+            onPressed: () => _saveField('name', _nameController.text),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNameDisplay() {
+    return Flexible(
+      child: Column(
+        children: [
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              isEditingName && type
-                  ? Flexible(
-                      child: Column(
-                        children: [
-                          TextField(
-                            controller: nameController,
-                            style: GoogleFonts.montserrat(
-                              fontSize: Screen.max(context) * 0.025,
-                              color: MyColors.white,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Edit name',
-                              hintStyle: GoogleFonts.montserrat(
-                                color: MyColors.white.withOpacity(0.6),
-                                fontSize: Screen.max(context) * 0.015,
-                              ),
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                          ColoredButton(
-                            text: 'Save',
-                            onPressed: () =>
-                                saveField('name', nameController.text),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Flexible(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: Screen.width(context) * 0.6,
-                                child: Text(
-                                  widget.listing['Listing']['name'],
-                                  softWrap: true,
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: Screen.max(context) * 0.025,
-                                    fontWeight: FontWeight.w600,
-                                    color: MyColors.white,
-                                  ),
-                                ),
-                              ),
-                              !type
-                                  ? Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              wishlistSelection(
-                                                  Screen.max(context));
-                                            });
-                                          },
-                                          child: Icon(
-                                            selectedIcon,
-                                            color: selectedColor,
-                                            size: Screen.max(context) * 0.03,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                Screen.width(context) * 0.01),
-                                        GestureDetector(
-                                          onTap: () {
-                                            showHierarchicalOptions(
-                                                context,
-                                                Screen.max(context),
-                                                Screen.width(context));
-                                          },
-                                          child: Icon(
-                                            Icons.add,
-                                            color: MyColors.Yellow,
-                                            size: Screen.max(context) * 0.05,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : GestureDetector(
-                                      onTap: () {
-                                        warningDialog(
-                                          title: 'Delete',
-                                          message:
-                                              'Are yo sure You want to delete this Listing?',
-                                          actions: [
-                                            BorderButton(
-                                              text: 'Cancel',
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              width:
-                                                  Screen.width(context) * 0.3,
-                                              textSize:
-                                                  Screen.max(context) * 0.015,
-                                            ),
-                                            ColoredButton(
-                                              text: 'Delete',
-                                              onPressed: () async {
-                                                final token =
-                                                    await MyStorage.getToken(
-                                                        MyTokens.accessToken);
-                                                final response =
-                                                    await MyApi.postRequest(
-                                                        endpoint:
-                                                            'businessowner/DeleteListings/',
-                                                        body: {
-                                                      'id': widget.listingId
-                                                    },
-                                                        headers: {
-                                                      'Authorization':
-                                                          'Bearer $token'
-                                                    });
-                                                String message;
-                                                if (response['status'] ==
-                                                    'success') {
-                                                  message =
-                                                      'Listing Deleted Successfully!';
-                                                  Navigator
-                                                      .pushNamedAndRemoveUntil(
-                                                          context,
-                                                          '/YourListings',
-                                                          ModalRoute.withName(
-                                                              '/HomePage'));
-                                                } else {
-                                                  message =
-                                                      'Something went Wrong!';
-                                                  Navigator.of(context).pop();
-                                                }
-                                                MyScaffold(text: message)
-                                                    .show(context);
-                                              },
-                                              width:
-                                                  Screen.width(context) * 0.3,
-                                              textSize:
-                                                  Screen.max(context) * 0.015,
-                                            ),
-                                          ],
-                                        ).showDialogBox(context);
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(boxShadow: [
-                                          BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              spreadRadius: 0.5,
-                                              blurRadius: 3,
-                                              blurStyle: BlurStyle.inner),
-                                        ]),
-                                        margin: EdgeInsets.all(
-                                            Screen.max(context) * 0.02),
-                                        child: Icon(
-                                          Icons.delete,
-                                          size: Screen.max(context) * 0.03,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                            ],
-                          ),
-                          !type
-                              ? Container()
-                              : ColoredButton(
-                                  text: 'Edit',
-                                  onPressed: () => setState(() {
-                                    isEditingName = true;
-                                  }),
-                                ),
-                        ],
-                      ),
-                    ),
+              Container(
+                width: Screen.width(context) * 0.6,
+                child: Text(
+                  widget.listing['Listing']['name'],
+                  softWrap: true,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: _buildTextStyle(
+                      fontSize: 0.025,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.white),
+                ),
+              ),
+              _isBusinessUser ? _buildDeleteButton() : _buildUserActions(),
             ],
           ),
+          if (_isBusinessUser)
+            ColoredButton(
+              text: 'Edit',
+              onPressed: () => setState(() => _isEditingName = true),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserActions() {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: _toggleWishlist,
+          child: Icon(
+            _wishlistIcon,
+            color: _wishlistColor,
+            size: Screen.max(context) * 0.03,
+          ),
         ),
+        SizedBox(width: Screen.width(context) * 0.01),
+        GestureDetector(
+          onTap: _showEventSelectionDialog,
+          child: Icon(
+            Icons.add,
+            color: MyColors.Yellow,
+            size: Screen.max(context) * 0.05,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDeleteButton() {
+    return GestureDetector(
+      onTap: _deleteListing,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 0.5,
+              blurRadius: 3,
+              blurStyle: BlurStyle.inner,
+            ),
+          ],
+        ),
+        margin: EdgeInsets.all(Screen.max(context) * 0.02),
+        child: Icon(
+          Icons.delete,
+          size: Screen.max(context) * 0.03,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationAndRatingSection() {
+    return Container(
+      width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _isEditingLocation && _isBusinessUser
+              ? _buildLocationEditField()
+              : _buildLocationAndRatingDisplay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationEditField() {
+    return Flexible(
+      child: Column(
+        children: [
+          TextField(
+            controller: _locationController,
+            style: _buildTextStyle(color: MyColors.white),
+            decoration: InputDecoration(
+              hintText: 'Edit location...',
+              hintStyle:
+                  _buildTextStyle(color: MyColors.white.withOpacity(0.6)),
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          ColoredButton(
+            text: 'Save',
+            onPressed: () => _saveField('location', _locationController.text),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationAndRatingDisplay() {
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildRatingDisplay(),
+          _buildLocationDisplay(),
+          Icon(Icons.location_on, color: MyColors.white),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRatingDisplay() {
+    return Row(
+      children: [
+        Icon(Icons.star, color: MyColors.Yellow),
+        Text(
+          "${widget.listing['reveiewData']['average']} (${widget.listing['reveiewData']['count']})",
+          style: _buildTextStyle(color: MyColors.white),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationDisplay() {
+    return Column(
+      children: [
         Container(
-          width: Screen.width(context) * 0.9,
-          padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              isEditingLocation && type
-                  ? Flexible(
-                      child: Column(
-                        children: [
-                          TextField(
-                            controller: locationController,
-                            style: GoogleFonts.montserrat(
-                              fontSize: Screen.max(context) * 0.015,
-                              color: MyColors.white,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Edit location...',
-                              hintStyle: GoogleFonts.montserrat(
-                                color: MyColors.white.withOpacity(0.6),
-                                fontSize: Screen.max(context) * 0.015,
-                              ),
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                          ColoredButton(
-                            text: 'Save',
-                            onPressed: () =>
-                                saveField('location', locationController.text),
-                          ),
-                        ],
-                      ),
-                    )
-                  : SizedBox(
-                      width: Screen.width(context) * 0.9,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.star, color: MyColors.Yellow),
-                              Text(
-                                textAlign: TextAlign.start,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: true,
-                                maxLines: 3,
-                                "${widget.listing['reveiewData']['average']} (${widget.listing['reveiewData']['count']})",
-                                style: GoogleFonts.montserrat(
-                                  fontSize: Screen.max(context) * 0.015,
-                                  color: MyColors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Container(
-                                width: Screen.width(context) * 0.6,
-                                child: Text(
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 3,
-                                  widget.listing['Listing']['location'],
-                                  softWrap: true,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: Screen.max(context) * 0.015,
-                                    color: MyColors.white,
-                                  ),
-                                ),
-                              ),
-                              if (type)
-                                ColoredButton(
-                                    text: 'Edit',
-                                    width: Screen.width(context) * 0.5,
-                                    textSize: Screen.max(context) * 0.015,
-                                    onPressed: () {
-                                      setState(() {
-                                        isEditingLocation = true;
-                                      });
-                                    }),
-                            ],
-                          ),
-                          Icon(
-                            Icons.location_on,
-                            color: MyColors.white,
-                            size: Screen.max(context) * 0.04,
-                          ),
-                        ],
-                      ),
-                    ),
-            ],
+          width: Screen.width(context) * 0.6,
+          child: Text(
+            widget.listing['Listing']['location'],
+            overflow: TextOverflow.ellipsis,
+            maxLines: 3,
+            softWrap: true,
+            style: _buildTextStyle(color: MyColors.white),
           ),
         ),
+        if (_isBusinessUser)
+          ColoredButton(
+            text: 'Edit',
+            width: Screen.width(context) * 0.5,
+            textSize: Screen.max(context) * 0.015,
+            onPressed: () => setState(() => _isEditingLocation = true),
+          ),
       ],
     );
   }

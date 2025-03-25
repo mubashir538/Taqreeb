@@ -1,181 +1,187 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
-import 'package:taqreeb/core/services/validations.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/images.dart';
 
-class FreelancerSignup_BasicInfo extends StatefulWidget {
-  const FreelancerSignup_BasicInfo({super.key});
+class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
+  int _remainingTime = 120;
+  bool _isResendEnabled = false;
+  String _enteredOTP = "";
+  Timer? _timer;
 
-  @override
-  State<FreelancerSignup_BasicInfo> createState() =>
-      _FreelancerSignup_BasicInfoState();
-}
+  int get remainingTime => _remainingTime;
+  bool get isResendEnabled => _isResendEnabled;
+  String get enteredOTP => _enteredOTP;
 
-class _FreelancerSignup_BasicInfoState
-    extends State<FreelancerSignup_BasicInfo> {
-  TextEditingController fullnamecontroller = TextEditingController();
-  TextEditingController cniccontroller = TextEditingController();
-  TextEditingController portfoliocontroller = TextEditingController();
-  FocusNode fullnameFocus = FocusNode();
-  FocusNode cnicFocus = FocusNode();
-  FocusNode portfolioFocus = FocusNode();
-  GlobalKey headerKey = GlobalKey();
+  void setEnteredOTP(String value) {
+    _enteredOTP = value;
+    notifyListeners();
+  }
 
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+  void startTimer() {
+    _isResendEnabled = false;
+    _remainingTime = 120;
+    notifyListeners();
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingTime > 0) {
+        _remainingTime--;
+        notifyListeners();
+      } else {
+        _timer?.cancel();
+        _isResendEnabled = true;
+        notifyListeners();
+      }
     });
   }
+
+  String formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> resendOTP(String email, String otp) async {
+    // Call your API here
+    await MyApi.postRequest(
+      endpoint: 'resendOTP/email',
+      body: {'email': email, 'otp': otp},
+    );
+    startTimer();
+  }
+
+  Future<void> verifyOTP(String enteredOTP, String receivedOTP,
+      BuildContext context, String email) async {
+    if (int.parse(enteredOTP) == int.parse(receivedOTP)) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/ForgotPassword_NewPassword',
+        arguments: {'email': email},
+        ModalRoute.withName('/'),
+      );
+    } else {
+      warningDialog(
+        title: 'Invalid OTP',
+        message: 'The entered OTP is incorrect.',
+      ).showDialogBox(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+}
+
+class ForgotPassword_VerifyCode extends StatefulWidget {
+  const ForgotPassword_VerifyCode({super.key});
+
+  @override
+  State<ForgotPassword_VerifyCode> createState() =>
+      _ForgotPassword_VerifyCodeState();
+}
+
+class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
+  GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       UI_Management.getHeaderHeight(
-          headerKey: headerKey,
-          callback: (renderbox) {
-            changeHeight(renderbox);
+        headerKey: headerKey,
+        callback: (renderbox) {
+          setState(() {
+            UI_Management.headerHeight = renderbox.size.height;
           });
-
-      check(context);
+        },
+      );
+      Provider.of<ForgotPasswordVerifyCodeViewModel>(context, listen: false)
+          .startTimer();
     });
-  }
-
-  void check(BuildContext context) async {
-    if (await MyStorage.exists(MyTokens.bscnic) &&
-        await MyStorage.exists(MyTokens.bsusername) &&
-        await MyStorage.exists(MyTokens.bsname)) {
-      warningDialog(
-        title: 'Fresh Start',
-        message:
-            'We noticed that you had lately attempted to do Freelancer Signup in the app Do you want to continue where you left or want a Fresh Start?',
-        actions: [
-          ColoredButton(
-            text: 'Fresh Start',
-            onPressed: () {
-              MyStorage.deleteToken(MyTokens.fscnic);
-              MyStorage.deleteToken(MyTokens.fsname);
-              MyStorage.deleteToken(MyTokens.fsdescription);
-
-              Navigator.pop(context);
-            },
-          ),
-          ColoredButton(
-            text: 'Continue',
-            onPressed: () async {
-              if (await MyStorage.exists(MyTokens.fsdescription)) {
-                Navigator.pushNamed(context, '/ProfilePictureUpload',
-                    arguments: {'type': 'Freelancer'});
-              } else {
-                Navigator.pushNamed(context, '/FreelancerSignup_Description');
-              }
-            },
-          )
-        ],
-      ).showDialogBox(context);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final email = arguments['email'];
+    final Map<String, dynamic> response = arguments['response'];
+    final viewModel = Provider.of<ForgotPasswordVerifyCodeViewModel>(context);
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
-              width: Screen.width(context),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: (Screen.max(context) * 0.05) +
-                        UI_Management.headerHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: UI_Management.headerHeight),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: Screen.max(context) * 0.07,
+                    bottom: Screen.max(context) * 0.02,
                   ),
-                  MyTextBox(
-                    focusNode: fullnameFocus,
-                    onFieldSubmitted: (value) {
-                      FocusScope.of(context).requestFocus(cnicFocus);
+                  child: OTPBoxes(
+                    onChanged: (value) {
+                      viewModel.setEnteredOTP(value);
                     },
-                    hint: "Enter Business Name",
-                    valueController: fullnamecontroller,
                   ),
-                  MyTextBox(
-                    focusNode: cnicFocus,
-                    onFieldSubmitted: (value) {
-                      FocusScope.of(context).requestFocus(portfolioFocus);
-                    },
-                    hint: "Enter CNIC Number",
-                    valueController: cniccontroller,
+                ),
+                TextButton(
+                  onPressed: viewModel.isResendEnabled
+                      ? () async {
+                          await viewModel.resendOTP(
+                              response['email'], response['otp']);
+                        }
+                      : null,
+                  child: Text(
+                    viewModel.isResendEnabled
+                        ? 'Send Code Again'
+                        : 'Send Code Again in ${viewModel.formatTime(viewModel.remainingTime)}',
+                    style: TextStyle(
+                      color: MyColors.white,
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      decoration: viewModel.isResendEnabled
+                          ? TextDecoration.underline
+                          : null,
+                    ),
                   ),
-                  MyTextBox(
-                    focusNode: portfolioFocus,
-                    onFieldSubmitted: (value) {
-                      FocusScope.of(context).unfocus();
-                    },
-                    hint: "Enter Portfolio Link",
-                    valueController: portfoliocontroller,
-                  ),
-                  SizedBox(
-                    height: Screen.height(context) * 0.05,
-                    child: MyDivider(),
-                  ),
-                  ColoredButton(
-                    text: "Continue",
-                    onPressed: () {
-                      if (cniccontroller.text.isEmpty ||
-                          fullnamecontroller.text.isEmpty ||
-                          portfoliocontroller.text.isEmpty) {
-                        warningDialog(
-                          message: "Please fill all the details",
-                          title: "Invalid Details",
-                        ).showDialogBox(context);
-                      } else if (Validations.validateCNIC(
-                              cniccontroller.text) !=
-                          'Ok') {
-                        warningDialog(
-                          message:
-                              Validations.validateCNIC(cniccontroller.text),
-                          title: "Invalid Details",
-                        ).showDialogBox(context);
-                      } else {
-                        MyStorage.saveToken(
-                            cniccontroller.text, MyTokens.fscnic);
-                        MyStorage.saveToken(
-                            fullnamecontroller.text, MyTokens.fsname);
-                        MyStorage.saveToken(
-                            portfoliocontroller.text, MyTokens.fsportfolio);
-
-                        Navigator.pushNamed(
-                            context, '/FreelancerSignup_Description');
-                      }
-                    },
-                  )
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: Screen.height(context) * 0.1,
+                  child: const Center(child: MyDivider()),
+                ),
+                ColoredButton(
+                  text: 'Verify Code',
+                  onPressed: () async {
+                    await viewModel.verifyOTP(
+                      viewModel.enteredOTP,
+                      response['otp'],
+                      context,
+                      email,
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           Positioned(
             top: 0,
             child: Header(
               key: headerKey,
-              heading: "Create A Freelancer Account",
-              para:
-                  "Earn a Soothing Income by Editing Videos or Pictures of Events",
-              image: MyImages.FreelancerSignup,
+              heading: 'Verify Code',
+              para: 'We have sent the code to $email',
             ),
           ),
         ],

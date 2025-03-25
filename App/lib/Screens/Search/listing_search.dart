@@ -1,20 +1,21 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/api_calls.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Inputs/c_input_location.dart';
 import 'package:taqreeb/Components/Inputs/c_input_range_slider.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'dart:math';
+import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/core/services/user_logs.dart';
-import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
+import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class SearchService extends StatefulWidget {
@@ -25,154 +26,370 @@ class SearchService extends StatefulWidget {
 }
 
 class _SearchServiceState extends State<SearchService> {
-  List<Map<String, dynamic>> searchResults = [];
-  final TextEditingController searchController = TextEditingController();
-  final List<String> appliedFilters = [];
-  final List<String> FiltertoApply = [];
-  DateTime? entryTime;
+  // Data State
+  final Map<String, dynamic> _args = {};
+  final Map<String, dynamic> _categories = {};
+  final Map<String, dynamic> _listings = {};
+  final Map<String, dynamic> _tempListings = {};
+  final Map<String, dynamic> _additionalFilters = {};
+  final Map<String, dynamic> _additionalSelections = {};
 
-  RangeSliderController rangeSliderController = RangeSliderController(
+  // Controllers
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final RangeSliderController _rangeSliderController = RangeSliderController(
     minValue: 10000,
     maxValue: 5000000,
   );
-  final CheckBoxController ratingController =
+  final CheckBoxController _ratingController =
       CheckBoxController(selections: []);
+  final CheckBoxController _categoryController =
+      CheckBoxController(selections: []);
+  final ScrollController _scrollController = ScrollController();
 
-  final CheckBoxController categoryController =
-      CheckBoxController(selections: []);
-  TextEditingController locationcontroller = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  String token = '';
-  Map<String, dynamic> categories = {};
-  Map<String, dynamic> listings = {};
-  bool isLoading = true;
-  Map<String, dynamic> templistings = {};
-  Map<String, dynamic> args = {};
-  ScrollController _scrollController = ScrollController();
-  bool ischange = false;
-  Map<String, dynamic> additionalFilters = {}; // Stores dynamic filters
-  Map<String, dynamic> additionalSelections = {}; // Stores user selections
-  GlobalKey headerKey = GlobalKey();
+  // UI State
+  final GlobalKey _headerKey = GlobalKey();
+  DateTime? _entryTime;
+  String _token = '';
+  bool _isLoading = true;
+  bool _isChanged = false;
+  final List<String> _appliedFilters = [];
+  final List<String> _filtersToApply = [];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
-    entryTime = DateTime.now();
+    _entryTime = DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        UI_Management.getHeaderHeight(
+            headerKey: _headerKey,
+            callback: (renderbox) => _updateHeaderHeight(renderbox)));
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)!.settings.arguments;
-    if (!ischange) {
+    if (!_isChanged) {
+      final args = ModalRoute.of(context)?.settings.arguments;
       if (args != null) {
-        this.args = args as Map<String, dynamic>;
+        _args.addAll(args as Map<String, dynamic>);
       }
-      fetchData();
-    }
-  }
-
-  void fetchData() async {
-    await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
-      if (mounted) {
-        setState(() {
-          this.token = token;
-          categories = data;
-        });
-      }
-    }, context: mounted ? context : null);
-    await ApiCall.fetchAPI('home/listings/', onSuccess: (token, data) {
-      if (mounted) {
-        setState(() {
-          listings = data;
-          templistings = Map.from(data);
-          if (this.args.isNotEmpty) {
-            appliedFilters.add('Category');
-            categoryController.selections.add(this.args['category']);
-            searchwithFilters();
-          }
-
-          isLoading = false;
-        });
-      }
-    }, context: mounted ? context : null);
-    ischange = true;
-  }
-
-  void fetchAdditionalFilters(String categoryType) async {
-    setState(() {
-      isLoading = true;
-    });
-    final response = await MyApi.getRequest(
-      endpoint: 'getListingDetails/$categoryType',
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    if (response != null && response['fields'] != null) {
-      setState(() {
-        additionalFilters = {
-          for (var field in response['fields'])
-            if (field['choices'] != null && field['choices'].isNotEmpty)
-              field['name']: field['choices'],
-        };
-
-        additionalSelections = {
-          for (var field in additionalFilters.keys) field: []
-        };
-        isLoading = false;
-      });
-    } else {
-      MyScaffold(text: 'Failed to fetch additional filters!').show(context);
-      setState(() {
-        isLoading = false;
-      });
+      _fetchData();
     }
   }
 
   @override
   void dispose() {
-    if (entryTime != null) {
-      DateTime exitTime = DateTime.now();
-      int timeSpent = exitTime.difference(entryTime!).inSeconds;
-
-      Logs.logUserActivity(
-          "search_page_view_duration", {"time_spent_seconds": timeSpent});
-    }
+    _logPageViewDuration();
     super.dispose();
   }
 
-  void changeHeight(RenderBox renderbox) {
+  void _logPageViewDuration() {
+    if (_entryTime != null) {
+      final exitTime = DateTime.now();
+      final timeSpent = exitTime.difference(_entryTime!).inSeconds;
+      Logs.logUserActivity(
+          "search_page_view_duration", {"time_spent_seconds": timeSpent});
+    }
+  }
+
+  void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
       UI_Management.headerHeight = renderbox.size.height;
     });
   }
 
-  String searchListingPicture(int listingid, Map<String, dynamic> listing) {
-    for (int i = 0; i < listing['pictures'].length; i++) {
-      if (listing['pictures'][i].length != 0) {
-        if (listing['pictures'][i][0]['listingId'] == listingid) {
-          return listing['pictures'][i][0]['picturePath'];
+  Future<void> _fetchData() async {
+    await _fetchCategories();
+    await _fetchListings();
+    _isChanged = true;
+  }
+
+  Future<void> _fetchCategories() async {
+    await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
+      if (mounted) {
+        setState(() {
+          _token = token;
+          _categories.addAll(data);
+        });
+      }
+    }, context: mounted ? context : null);
+  }
+
+  Future<void> _fetchListings() async {
+    await ApiCall.fetchAPI('home/listings/', onSuccess: (_, data) {
+      if (mounted) {
+        setState(() {
+          _listings.addAll(data);
+          _tempListings.addAll(Map.from(data));
+          if (_args.isNotEmpty) {
+            _appliedFilters.add('Category');
+            _categoryController.selections.add(_args['category']);
+            _searchWithFilters();
+          }
+          _isLoading = false;
+        });
+      }
+    }, context: mounted ? context : null);
+  }
+
+  Future<void> _fetchAdditionalFilters(String categoryType) async {
+    setState(() => _isLoading = true);
+
+    final response = await MyApi.getRequest(
+      endpoint: 'getListingDetails/$categoryType',
+      headers: {'Authorization': 'Bearer $_token'},
+    );
+
+    if (mounted) {
+      setState(() {
+        if (response != null && response['fields'] != null) {
+          _additionalFilters.clear();
+          _additionalSelections.clear();
+
+          for (var field in response['fields']) {
+            if (field['choices'] != null && field['choices'].isNotEmpty) {
+              _additionalFilters[field['name']] = field['choices'];
+              _additionalSelections[field['name']] = [];
+            }
+          }
+        } else {
+          MyScaffold(text: 'Failed to fetch additional filters!').show(context);
         }
-      } else {
-        return '';
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _getListingPicture(int listingId, Map<String, dynamic> listing) {
+    for (var pictureGroup in listing['pictures']) {
+      if (pictureGroup.isNotEmpty &&
+          pictureGroup[0]['listingId'] == listingId) {
+        return pictureGroup[0]['picturePath'];
       }
     }
     return '';
   }
 
+  void _searchWithFilters() {
+    setState(() {
+      _tempListings['HomeListing'] = List.from(_listings['HomeListing']);
+
+      for (String filter in _appliedFilters) {
+        switch (filter) {
+          case "Price":
+            _tempListings['HomeListing'] = _tempListings['HomeListing']
+                .where((element) =>
+                    element['basicPrice'] >= _rangeSliderController.minValue &&
+                    element['basicPrice'] <= _rangeSliderController.maxValue)
+                .toList();
+            break;
+
+          case "Ratings":
+            _tempListings['HomeListing'] = _tempListings['HomeListing']
+                .where((element) =>
+                    _ratingController.selections.contains(element['rating']))
+                .toList();
+            break;
+
+          case "Category":
+            _tempListings['HomeListing'] = _tempListings['HomeListing']
+                .where((element) =>
+                    _categoryController.selections.contains(element['type']))
+                .toList();
+            break;
+
+          case "Location":
+            _tempListings['HomeListing'] = _tempListings['HomeListing']
+                .where((element) => element['location']
+                    .toLowerCase()
+                    .contains(_locationController.text.toLowerCase()))
+                .toList();
+            break;
+        }
+      }
+
+      // Apply additional filters if they exist
+      if (_additionalSelections.isNotEmpty) {
+        _tempListings['HomeListing'] =
+            _tempListings['HomeListing'].where((listing) {
+          return _additionalSelections.entries.every((entry) {
+            if (entry.value.isEmpty)
+              return true; // No filter applied for this field
+            if (listing[entry.key] == null) return false;
+            return entry.value.contains(listing[entry.key].toString());
+          });
+        }).toList();
+      }
+    });
+  }
+
+  void _navigateToServiceDetails(Map<String, dynamic> service) {
+    final entryTime = DateTime.now();
+    final serviceId = service['id'];
+    final serviceName = service['name'];
+
+    Logs.logUserActivity("service_click",
+        {"service_id": serviceId, "service_name": serviceName});
+
+    Navigator.pushNamed(
+      context,
+      '/SearchServiceDetails',
+      arguments: {
+        "id": serviceId,
+        "service_name": serviceName,
+        "entry_time": entryTime.toIso8601String(),
+      },
+    ).then((_) {
+      final duration = DateTime.now().difference(entryTime).inSeconds;
+      Logs.logUserActivity("service_view_duration", {
+        "service_id": serviceId,
+        "service_name": serviceName,
+        "duration_seconds": duration
+      });
+    });
+  }
+
+  Widget _buildFilterChips() {
+    return Container(
+      margin: EdgeInsets.only(top: Screen.max(context) * 0.02),
+      width: Screen.width(context) * 0.9,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: _appliedFilters.map((filter) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: MyColors.whiteDarker,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    filter,
+                    style: GoogleFonts.montserrat(
+                      color: MyColors.Dark,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _appliedFilters.remove(filter);
+                        _searchWithFilters();
+                      });
+                    },
+                    child: Icon(
+                      Icons.close,
+                      size: 16,
+                      color: MyColors.Dark,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceList() {
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          final service = _tempListings['HomeListing'][index];
+          final imageUrl = _getListingPicture(service['id'], _tempListings);
+
+          return GestureDetector(
+            onTap: () => _navigateToServiceDetails(service),
+            child: Productcard(
+              listingType: service['type'].toString(),
+              listingid: service['id'].toString(),
+              imageUrl: imageUrl.isEmpty
+                  ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                  : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$imageUrl',
+              venueName: service['name'],
+              location: service['location'],
+              type: service['type'].toString(),
+            ),
+          );
+        },
+        itemCount: _tempListings['HomeListing'].length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      margin: EdgeInsets.only(top: Screen.max(context) * 0.05),
+      child: SizedBox(
+        width: Screen.width(context) * 0.9,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SearchBox(
+              onclick: () {},
+              hint: 'Start typing to search',
+              controller: _searchController,
+              width: Screen.width(context) * 0.75,
+              onChanged: (value) {
+                setState(() {
+                  _searchWithFilters();
+                  _tempListings['HomeListing'] = _tempListings['HomeListing']
+                      .where((element) => element['name']
+                          .toString()
+                          .toLowerCase()
+                          .contains(value.toLowerCase()))
+                      .toList();
+                });
+                if (value.isNotEmpty) {
+                  Logs.logUserActivity("search", {"search_query": value});
+                }
+              },
+            ),
+            Column(
+              children: [
+                IconButton(
+                  onPressed: () => _showFilterPopup(context),
+                  icon: Icon(
+                    Icons.tune,
+                    size: Screen.max(context) * 0.03,
+                    color: MyColors.white,
+                  ),
+                ),
+                // Only show additional filters button if we have additional filters
+                if (_appliedFilters.contains("Category") &&
+                    _additionalFilters.isNotEmpty)
+                  IconButton(
+                    onPressed: () => _showAdditionalFilterPopup(context),
+                    icon: Icon(
+                      Icons.filter_alt,
+                      size: Screen.max(context) * 0.03,
+                      color: MyColors.white,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+      headerKey: _headerKey,
+      callback: (renderbox) => _updateHeaderHeight(renderbox),
+    );
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -186,7 +403,7 @@ class _SearchServiceState extends State<SearchService> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: UI_Management.headerHeight),
-                  isLoading
+                  _isLoading
                       ? Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
@@ -196,190 +413,9 @@ class _SearchServiceState extends State<SearchService> {
                         )
                       : Column(
                           children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: Screen.max(context) * 0.05,
-                              ),
-                              child: SizedBox(
-                                width: Screen.width(context) * 0.9,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SearchBox(
-                                      onclick: () {},
-                                      hint: 'Start typing to search',
-                                      controller: searchController,
-                                      width: Screen.width(context) * 0.75,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          searchwithFilters();
-                                          templistings['HomeListing'] =
-                                              templistings['HomeListing']
-                                                  .where((element) =>
-                                                      element['name']
-                                                          .toString()
-                                                          .toLowerCase()
-                                                          .contains(value
-                                                              .toLowerCase()))
-                                                  .toList();
-                                        });
-                                        if (value.isNotEmpty) {
-                                          Logs.logUserActivity("search",
-                                              {"search_query": value});
-                                        }
-                                      },
-                                    ),
-                                    Column(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () =>
-                                              _showFilterPopup(context),
-                                          icon: Icon(
-                                            Icons.tune,
-                                            size: Screen.max(context) * 0.03,
-                                            color: MyColors.white,
-                                          ),
-                                        ),
-                                        // Additional Filters Icon
-                                        if (appliedFilters.contains("Category"))
-                                          IconButton(
-                                            onPressed: () =>
-                                                _showAdditionalFilterPopup(
-                                                    context),
-                                            icon: Icon(
-                                              Icons.filter_alt,
-                                              size: Screen.max(context) * 0.03,
-                                              color: MyColors.white,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (appliedFilters.isNotEmpty)
-                              Container(
-                                margin: EdgeInsets.only(
-                                    top: Screen.max(context) * 0.02),
-                                width: Screen.width(context) * 0.9,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: appliedFilters.map((filter) {
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
-                                        decoration: BoxDecoration(
-                                          color: MyColors.whiteDarker,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              filter,
-                                              style: GoogleFonts.montserrat(
-                                                color: MyColors.Dark,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  appliedFilters.remove(filter);
-                                                  searchwithFilters();
-                                                });
-                                              },
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 16,
-                                                color: MyColors.Dark,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
-                            SizedBox(
-                              width: Screen.width(context) * 0.9,
-                              child: ListView.builder(
-                                itemBuilder: (context, index) {
-                                  String serviceName =
-                                      templistings['HomeListing'][index]
-                                          ['name'];
-                                  int serviceId =
-                                      templistings['HomeListing'][index]['id'];
-
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Logs.logUserActivity("service_click", {
-                                        "service_id": serviceId,
-                                        "service_name": serviceName
-                                      });
-
-                                      // Store entry time when user starts viewing service
-                                      DateTime entryTime = DateTime.now();
-
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/SearchServiceDetails',
-                                        arguments: {
-                                          "id": serviceId,
-                                          "service_name": serviceName,
-                                          "entry_time":
-                                              entryTime.toIso8601String(),
-                                        },
-                                      ).then((_) {
-                                        DateTime exitTime = DateTime.now();
-                                        int duration = exitTime
-                                            .difference(entryTime)
-                                            .inSeconds;
-
-                                        Logs.logUserActivity(
-                                            "service_view_duration", {
-                                          "service_id": serviceId,
-                                          "service_name": serviceName,
-                                          "duration_seconds": duration
-                                        });
-                                      });
-                                    },
-                                    child: Productcard(
-                                      listingType: templistings['HomeListing']
-                                              [index]['type']
-                                          .toString(),
-                                      listingid: templistings['HomeListing']
-                                              [index]['id']
-                                          .toString(),
-                                      imageUrl: searchListingPicture(
-                                                  templistings['HomeListing']
-                                                      [index]['id'],
-                                                  templistings) ==
-                                              ""
-                                          ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                                          : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${searchListingPicture(templistings['HomeListing'][index]['id'], templistings)}',
-                                      venueName: templistings['HomeListing']
-                                          [index]['name'],
-                                      location: templistings['HomeListing']
-                                          [index]['location'],
-                                      type: templistings['HomeListing'][index]
-                                              ['type']
-                                          .toString(),
-                                    ),
-                                  );
-                                },
-                                itemCount: templistings['HomeListing'].length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                              ),
-                            ),
+                            _buildSearchBar(),
+                            if (_appliedFilters.isNotEmpty) _buildFilterChips(),
+                            _buildServiceList(),
                           ],
                         ),
                 ],
@@ -388,56 +424,11 @@ class _SearchServiceState extends State<SearchService> {
           ),
           Positioned(
             top: 0,
-            child: Header(
-              key: headerKey,
-            ),
+            child: Header(key: _headerKey),
           ),
         ],
       ),
     );
-  }
-
-  void searchwithFilters() {
-    templistings['HomeListing'] = List.from(listings['HomeListing']);
-    setState(() {
-      for (String i in appliedFilters) {
-        if (i == "Price") {
-          templistings['HomeListing'] = templistings['HomeListing']
-              .where((element) =>
-                  element['basicPrice'] >= rangeSliderController.minValue &&
-                  element['basicPrice'] <= rangeSliderController.maxValue)
-              .toList();
-        } else {
-          rangeSliderController.minValue = 10000;
-          rangeSliderController.maxValue = 5000000;
-        }
-        if (i == "Ratings") {
-          templistings['HomeListing'] = templistings['HomeListing']
-              .where((element) =>
-                  ratingController.selections.contains(element['rating']))
-              .toList();
-        }
-        if (i == "Category") {
-          fetchAdditionalFilters(categoryController.selections[0]);
-          templistings['HomeListing'] = templistings['HomeListing']
-              .where((element) =>
-                  categoryController.selections.contains(element['type']))
-              .toList();
-        }
-        if (i == "Location") {
-          templistings['HomeListing'] = templistings['HomeListing']
-              .where((element) => element['location']
-                  .toLowerCase()
-                  .contains(locationcontroller.text.toLowerCase()))
-              .toList();
-        }
-        // if (i == "Date") {
-        //   templistings['HomeListing'] = templistings['HomeListing']
-        //       .where((element) => element['date'].toLowerCase().contains(dateController.text.toLowerCase()))
-        //       .toList();
-        // }
-      }
-    });
   }
 
   void _showFilterPopup(BuildContext context) {
@@ -446,199 +437,185 @@ class _SearchServiceState extends State<SearchService> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return LayoutBuilder(builder: (builder, constraints) {
-          double keyboard = MediaQuery.of(context).viewInsets.bottom;
-          bool isKeyboardVisible = keyboard > 0;
-          if (isKeyboardVisible && _scrollController.hasClients) {
-            _scrollController
-                .jumpTo(_scrollController.position.maxScrollExtent);
-          }
-          return Container(
-            padding: EdgeInsets.all(Screen.max(context) * 0.02),
-            width: double.infinity,
-            constraints: BoxConstraints(
-              maxHeight: Screen.max(context) * 0.8,
+        final keyboard = MediaQuery.of(context).viewInsets.bottom;
+        final isKeyboardVisible = keyboard > 0;
+
+        if (isKeyboardVisible && _scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+
+        return Container(
+          padding: EdgeInsets.all(Screen.max(context) * 0.02),
+          constraints: BoxConstraints(maxHeight: Screen.max(context) * 0.8),
+          decoration: BoxDecoration(
+            color: MyColors.DarkLighter,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(Screen.max(context) * 0.05),
             ),
-            decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(Screen.max(context) * 0.05),
-              ),
-            ),
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Filter Options",
-                    style: GoogleFonts.montserrat(
-                      fontSize: Screen.max(context) * 0.03,
-                      fontWeight: FontWeight.bold,
-                      color: MyColors.red,
-                    ),
+          ),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Filter Options",
+                  style: GoogleFonts.montserrat(
+                    fontSize: Screen.max(context) * 0.03,
+                    fontWeight: FontWeight.bold,
+                    color: MyColors.red,
                   ),
-                  Text('Pricing',
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.Yellow,
-                      )),
-                  RangeSliderWidget(
+                ),
+                _buildFilterSection(
+                  title: 'Pricing',
+                  child: RangeSliderWidget(
                     start: 10000,
                     end: 5000000,
                     divisions: 500,
-                    controller: rangeSliderController,
+                    controller: _rangeSliderController,
                     onChanged: (min, max) {
-                      if (!FiltertoApply.contains("Price")) {
-                        FiltertoApply.add("Price");
+                      if (!_filtersToApply.contains("Price")) {
+                        _filtersToApply.add("Price");
                       }
                     },
                   ),
-                  Text('Ratings',
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.Yellow,
-                      )),
-                  CheckBoxQuestion(
-                      question: '',
-                      options: [
-                        '5 Stars',
-                        '4 Stars',
-                        '3 Stars',
-                        '2 Stars',
-                        '1 Stars',
-                      ],
-                      controller: ratingController,
-                      onChanged: (selections) {
-                        if (!FiltertoApply.contains("Ratings")) {
-                          FiltertoApply.add("Ratings");
-                        }
-                      }),
-                  Text('Category',
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.Yellow,
-                      )),
-                  CheckBoxQuestion(
-                      question: '',
-                      options: isLoading
-                          ? []
-                          : categories['categories']
-                              .map((value) {
-                                return value['name'].toString();
-                              })
-                              .cast<String>()
-                              .toList(),
-                      controller: categoryController,
-                      onChanged: (selections) {
-                        if (!FiltertoApply.contains("Category")) {
-                          FiltertoApply.add("Category");
-                        }
-                        Logs.logUserActivity("category_click",
-                            {"selected_category": selections});
-                      }),
-                  Text('Location',
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.Yellow,
-                      )),
-                  LocationInputWidget(
-                    locationController: locationcontroller,
-                    onLocationChanged: (location) {
-                      if (!FiltertoApply.contains("Location")) {
-                        FiltertoApply.add("Location");
+                ),
+                _buildFilterSection(
+                  title: 'Ratings',
+                  child: CheckBoxQuestion(
+                    question: '',
+                    options: [
+                      '5 Stars',
+                      '4 Stars',
+                      '3 Stars',
+                      '2 Stars',
+                      '1 Stars'
+                    ],
+                    controller: _ratingController,
+                    onChanged: (_) {
+                      if (!_filtersToApply.contains("Ratings")) {
+                        _filtersToApply.add("Ratings");
                       }
                     },
                   ),
-                  Text('Date',
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.Yellow,
-                      )),
-                  DateQuestion(question: "", valuecontroller: dateController),
-                  ColoredButton(
-                    text: 'Apply Filters',
-                    onPressed: () {
-                      setState(() {
-                        appliedFilters.clear();
-                        FiltertoApply.forEach((filter) {
-                          appliedFilters.add(filter);
-                        });
-                      });
-
-                      // ✅ Create metadata object with actual filter values
-                      Map<String, dynamic> filterData = {
-                        "applied_filters": appliedFilters,
-                        "filter_values": {} // Stores values for each filter
-                      };
-
-                      // 🏷️ Add Ratings filter values
-                      if (appliedFilters.contains("Ratings")) {
-                        filterData["filter_values"]["Ratings"] =
-                            ratingController.selections;
+                ),
+                _buildFilterSection(
+                  title: 'Category',
+                  child: CheckBoxQuestion(
+                    question: '',
+                    options: _isLoading
+                        ? []
+                        : _categories['categories']
+                            .map((value) => value['name'].toString())
+                            .cast<String>()
+                            .toList(),
+                    controller: _categoryController,
+                    onChanged: (selections) {
+                      if (!_filtersToApply.contains("Category")) {
+                        _filtersToApply.add("Category");
                       }
-
-                      // 🏷️ Add Category filter values
-                      if (appliedFilters.contains("Category")) {
-                        filterData["filter_values"]["Category"] =
-                            categoryController.selections;
-                      }
-
-                      // 🏷️ Add Price Range filter values
-                      if (appliedFilters.contains("Price")) {
-                        filterData["filter_values"]["Price"] = {
-                          "min": rangeSliderController.minValue,
-                          "max": rangeSliderController.maxValue
-                        };
-                      }
-
-                      // 🏷️ Add Location filter values
-                      if (appliedFilters.contains("Location")) {
-                        filterData["filter_values"]["Location"] =
-                            locationcontroller.text;
-                      }
-
-                      // 🏷️ Add Date filter values
-                      if (appliedFilters.contains("Date")) {
-                        filterData["filter_values"]["Date"] =
-                            dateController.text;
-                      }
-
-                      // ✅ Log filter application with values
-                      Logs.logUserActivity("filter", filterData);
-
-                      Navigator.pop(context);
-                      searchwithFilters();
+                      Logs.logUserActivity(
+                          "category_click", {"selected_category": selections});
                     },
                   ),
-                  SizedBox(height: keyboard),
-                ],
-              ),
+                ),
+                _buildFilterSection(
+                  title: 'Location',
+                  child: LocationInputWidget(
+                    locationController: _locationController,
+                    onLocationChanged: (_) {
+                      if (!_filtersToApply.contains("Location")) {
+                        _filtersToApply.add("Location");
+                      }
+                    },
+                  ),
+                ),
+                _buildFilterSection(
+                  title: 'Date',
+                  child: DateQuestion(
+                    question: "",
+                    valuecontroller: _dateController,
+                  ),
+                ),
+                ColoredButton(
+                  text: 'Apply Filters',
+                  onPressed: () {
+                    _applyFilters();
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(height: keyboard),
+              ],
             ),
-          );
-        });
+          ),
+        );
       },
     );
   }
 
-// Method to Show Additional Filters Popup
+  Widget _buildFilterSection({required String title, required Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.montserrat(
+            fontSize: Screen.max(context) * 0.02,
+            fontWeight: FontWeight.w500,
+            color: MyColors.Yellow,
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+
+  void _applyFilters() {
+    setState(() {
+      _appliedFilters.clear();
+      _appliedFilters.addAll(_filtersToApply);
+    });
+
+    // Fetch additional filters when category is selected
+    if (_appliedFilters.contains("Category") &&
+        _categoryController.selections.isNotEmpty) {
+      _fetchAdditionalFilters(_categoryController.selections[0]);
+    }
+
+    final filterData = {
+      "applied_filters": _appliedFilters,
+      "filter_values": {
+        if (_appliedFilters.contains("Ratings"))
+          "Ratings": _ratingController.selections,
+        if (_appliedFilters.contains("Category"))
+          "Category": _categoryController.selections,
+        if (_appliedFilters.contains("Price"))
+          "Price": {
+            "min": _rangeSliderController.minValue,
+            "max": _rangeSliderController.maxValue
+          },
+        if (_appliedFilters.contains("Location"))
+          "Location": _locationController.text,
+        if (_appliedFilters.contains("Date")) "Date": _dateController.text,
+      }
+    };
+
+    Logs.logUserActivity("filter", filterData);
+    _searchWithFilters();
+  }
+
   void _showAdditionalFilterPopup(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: MyColors.Dark,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
             return Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -650,19 +627,15 @@ class _SearchServiceState extends State<SearchService> {
                       color: MyColors.Yellow,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: ListView(
-                      children: additionalFilters.entries.map((entry) {
-                        String fieldName = entry.key;
-                        List<String> choices =
-                            entry.value.cast<String>().toList();
-
+                      children: _additionalFilters.entries.map((entry) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              fieldName,
+                              entry.key,
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -671,15 +644,15 @@ class _SearchServiceState extends State<SearchService> {
                             ),
                             CheckBoxQuestion(
                               question: '',
-                              options: choices,
+                              options: entry.value.cast<String>().toList(),
                               controller: CheckBoxController(
-                                selections: additionalSelections[fieldName]
+                                selections: _additionalSelections[entry.key]
                                     .cast<String>()
                                     .toList(),
                               ),
                               onChanged: (selections) {
                                 setState(() {
-                                  additionalSelections[fieldName] = selections;
+                                  _additionalSelections[entry.key] = selections;
                                 });
                               },
                             ),
@@ -692,9 +665,7 @@ class _SearchServiceState extends State<SearchService> {
                   ColoredButton(
                     text: 'Apply Filters',
                     onPressed: () {
-                      setState(() {
-                        searchwithFilters();
-                      });
+                      setState(() => _searchWithFilters());
                       Navigator.pop(context);
                     },
                   )

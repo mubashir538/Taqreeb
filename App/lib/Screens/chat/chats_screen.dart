@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -19,22 +19,20 @@ class ChatsScreen extends StatefulWidget {
 }
 
 class _ChatsScreenState extends State<ChatsScreen> {
-  final TextEditingController controller = TextEditingController();
-  final CollectionReference usersCollection =
+  final TextEditingController _searchController = TextEditingController();
+  final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
-  final CollectionReference groupsCollection =
+  final CollectionReference _groupsCollection =
       FirebaseFirestore.instance.collection('groups');
-  List<Map<String, dynamic>> userChats = [];
-  List<Map<String, dynamic>> groups = [];
-  List<Map<String, dynamic>> searchedUsers = [];
-  bool isLoading = true;
-  String loggedInUserId = "";
-  bool isSearching = false;
+  final CollectionReference _chatsCollection =
+      FirebaseFirestore.instance.collection('chats');
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  List<Map<String, dynamic>> _userChats = [];
+  List<Map<String, dynamic>> _groups = [];
+  List<Map<String, dynamic>> _searchedUsers = [];
+  bool _isLoading = true;
+  String _loggedInUserId = "";
+  bool _isSearching = false;
 
   @override
   void didChangeDependencies() {
@@ -43,44 +41,41 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Future<void> _initialize() async {
-    loggedInUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
+    _loggedInUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
     _fetchChatsAndGroups();
   }
 
   Future<void> _fetchChatsAndGroups() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     try {
-      final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-      QuerySnapshot chatsSnapshot = await _firestore.collection('chats').get();
+      final chatsSnapshot = await _chatsCollection.get();
 
       final filteredChats =
           await Future.wait(chatsSnapshot.docs.map((chatDoc) async {
-        final messagesSnapshot = await _firestore
-            .collection('chats')
+        final messagesSnapshot = await _chatsCollection
             .doc(chatDoc.id)
             .collection('messages')
             .limit(1)
             .get();
 
         if (messagesSnapshot.docs.isNotEmpty) {
-          List<String> ids = chatDoc.id.split('-');
+          final List<String> ids = chatDoc.id.split('-');
 
-          final user = await usersCollection
+          final user = await _usersCollection
               .doc(messagesSnapshot.docs.first['receiverId'])
               .get();
-          if (user.id != loggedInUserId &&
-              (loggedInUserId == ids[0] || loggedInUserId == ids[1])) {
+          if (user.id != _loggedInUserId &&
+              (_loggedInUserId == ids[0] || _loggedInUserId == ids[1])) {
             return {
               'userId': user.id,
               'chatimage':
                   '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture'] ?? ''}',
               'name': user['firstName'] ?? 'Unknown',
               'lastMessage': chatDoc['lastMessage'] ?? '',
-              'newMessages': chatDoc['unreadMessages'][loggedInUserId] ?? 0,
+              'newMessages': chatDoc['unreadMessages'][_loggedInUserId] ?? 0,
               'time': chatDoc['lastMessageTime'] ?? ''
             };
           }
@@ -91,11 +86,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
       final chats = filteredChats.where((chat) => chat != null).toList();
 
-      final groupsSnapshot = await _firestore.collection('groups').get();
+      final groupsSnapshot = await _groupsCollection.get();
 
       final filteredGroups = groupsSnapshot.docs.where((groupDoc) {
         final participants = groupDoc['participants'] as List<dynamic>;
-        return participants.contains(loggedInUserId);
+        return participants.contains(_loggedInUserId);
       }).map((groupDoc) {
         return {
           'groupId': groupDoc.id,
@@ -106,18 +101,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
       }).toList();
 
       setState(() {
-        userChats.addAll(chats.cast<Map<String, dynamic>>());
-        for (int i = 0; i < userChats.length; i++) {}
-        groups = filteredGroups;
+        _userChats = chats.cast<Map<String, dynamic>>();
+        _groups = filteredGroups;
       });
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'Error fetching chats or groups: $e'});
+        endpoint: 'error/application',
+        body: {'error': 'Error fetching chats or groups: $e'},
+      );
     } finally {
       if (mounted) {
         setState(() {
-          isLoading = false;
+          _isLoading = false;
         });
       }
     }
@@ -126,13 +121,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
   void _searchUsers(String query) {
     if (query.isEmpty) {
       setState(() {
-        isSearching = false;
-        searchedUsers = [];
+        _isSearching = false;
+        _searchedUsers = [];
       });
     } else {
       setState(() {
-        isSearching = true;
-        searchedUsers = userChats
+        _isSearching = true;
+        _searchedUsers = _userChats
             .where((chat) =>
                 chat['name'].toLowerCase().contains(query.toLowerCase()))
             .toList();
@@ -146,20 +141,19 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   void _navigateToCreateGroup() {
     Navigator.pushNamed(context, '/CreateGroup',
-        arguments: {'chats': userChats});
+        arguments: {'chats': _userChats});
   }
 
   String _formatTimestamp(Timestamp timestamp) {
-    DateTime dateTime = timestamp.toDate();
-    var format = DateFormat('h:mm a');
+    final DateTime dateTime = timestamp.toDate();
+    final DateFormat format = DateFormat('h:mm a');
     return format.format(dateTime);
   }
 
   @override
   Widget build(BuildContext context) {
-    double max = Screen.width(context) > Screen.height(context)
-        ? Screen.width(context)
-        : Screen.height(context);
+    final double max = Screen.max(context);
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -172,125 +166,134 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 para: "View your chats and groups below.",
               ),
               SizedBox(height: Screen.height(context) * 0.02),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SearchBox(
-                    onChanged: (query) {
-                      _searchUsers(query);
-                    },
-                    hint: 'Search Users',
-                    controller: controller,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/search_new_user');
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(max * 0.015),
-                      decoration: BoxDecoration(
-                        color: MyColors.red,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: MyColors.white,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              isLoading
-                  ? CircularProgressIndicator()
+              _buildSearchBar(max),
+              _isLoading
+                  ? const CircularProgressIndicator()
                   : Expanded(
                       child: ListView(
-                        children: isSearching
-                            ? [
-                                ...searchedUsers.map((user) =>
-                                    MessageChatButton(
-                                      image: user['chatimage'],
-                                      onpressed: () =>
-                                          _navigateToChatbox(user['userId']),
-                                      name: user['name'],
-                                      message: 'Start a conversation',
-                                      newMessage: 0,
-                                      time: '',
-                                    ))
-                              ]
-                            : [
-                                ...userChats.map((chat) => MessageChatButton(
-                                      image: chat['chatimage'],
-                                      onpressed: () =>
-                                          _navigateToChatbox(chat['userId']),
-                                      name: chat['name'],
-                                      message: chat['lastMessage'],
-                                      newMessage: chat['newMessages'],
-                                      time: _formatTimestamp(chat['time']),
-                                    )),
-                                ...groups.map((group) => MessageChatButton(
-                                      image:
-                                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
-                                      onpressed: () {
-                                        Navigator.pushNamed(
-                                            context, '/GroupChatBox',
-                                            arguments: {
-                                              'groupId': group['groupId'],
-                                              'participants':
-                                                  group['participants'],
-                                            });
-                                      },
-                                      name: group['name'],
-                                      message: 'Group Chat',
-                                      newMessage: 0,
-                                      time: '',
-                                    )),
-                              ],
+                        children: _isSearching
+                            ? _buildSearchedUsersList()
+                            : _buildChatsAndGroupsList(),
                       ),
                     ),
             ],
           ),
-          Positioned(
-            bottom: Screen.height(context) * 0.05,
-            right: Screen.height(context) * 0.03,
-            child: InkWell(
-              onTap: _navigateToCreateGroup,
-              child: Container(
-                padding: EdgeInsets.all(Screen.width(context) * 0.05),
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: MyColors.Dark.withOpacity(0.2),
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(max * 0.05),
-                    topRight: Radius.circular(max * 0.05),
-                    bottomLeft: Radius.circular(max * 0.05),
-                  ),
-                  color: MyColors.red,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: Screen.width(context) * 0.01),
-                    Text(
-                      'Create Group',
-                      style: GoogleFonts.montserrat(
-                          color: MyColors.white,
-                          fontSize: max * 0.015,
-                          fontWeight: FontWeight.w400),
-                    )
-                  ],
-                ),
-              ),
+          _buildCreateGroupButton(max),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(double max) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        SearchBox(
+          onChanged: _searchUsers,
+          hint: 'Search Users',
+          controller: _searchController,
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, '/search_new_user');
+          },
+          child: Container(
+            padding: EdgeInsets.all(max * 0.015),
+            decoration: BoxDecoration(
+              color: MyColors.red,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.add,
+              color: MyColors.white,
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildSearchedUsersList() {
+    return _searchedUsers
+        .map((user) => MessageChatButton(
+              image: user['chatimage'],
+              onpressed: () => _navigateToChatbox(user['userId']),
+              name: user['name'],
+              message: 'Start a conversation',
+              newMessage: 0,
+              time: '',
+            ))
+        .toList();
+  }
+
+  List<Widget> _buildChatsAndGroupsList() {
+    return [
+      ..._userChats.map((chat) => MessageChatButton(
+            image: chat['chatimage'],
+            onpressed: () => _navigateToChatbox(chat['userId']),
+            name: chat['name'],
+            message: chat['lastMessage'],
+            newMessage: chat['newMessages'],
+            time: _formatTimestamp(chat['time']),
+          )),
+      ..._groups.map((group) => MessageChatButton(
+            image:
+                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
+            onpressed: () {
+              Navigator.pushNamed(context, '/GroupChatBox', arguments: {
+                'groupId': group['groupId'],
+                'participants': group['participants'],
+              });
+            },
+            name: group['name'],
+            message: 'Group Chat',
+            newMessage: 0,
+            time: '',
+          )),
+    ];
+  }
+
+  Widget _buildCreateGroupButton(double max) {
+    return Positioned(
+      bottom: Screen.height(context) * 0.05,
+      right: Screen.height(context) * 0.03,
+      child: InkWell(
+        onTap: _navigateToCreateGroup,
+        child: Container(
+          padding: EdgeInsets.all(Screen.width(context) * 0.05),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: MyColors.Dark.withOpacity(0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(max * 0.05),
+              topRight: Radius.circular(max * 0.05),
+              bottomLeft: Radius.circular(max * 0.05),
+            ),
+            color: MyColors.red,
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              SizedBox(width: Screen.width(context) * 0.01),
+              Text(
+                'Create Group',
+                style: GoogleFonts.montserrat(
+                  color: MyColors.white,
+                  fontSize: max * 0.015,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

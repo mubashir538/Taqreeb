@@ -1,13 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Components/Buttons/c_icon_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/crop_dialog.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -17,6 +12,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
+import '../../../core/services/picture_options.dart';
 
 class BusinessSignup_CNICUpload extends StatefulWidget {
   const BusinessSignup_CNICUpload({super.key});
@@ -30,73 +26,6 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
   File? frontImage;
   File? backImage;
   GlobalKey headerKey = GlobalKey();
-
-  Future<void> _pickImage(image) async {
-    try {
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-
-      if (pickedFile != null) {
-        final imageBytes = await File(pickedFile.path).readAsBytes();
-
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CropPopup(
-              imageBytes: imageBytes,
-              onCropped: (croppedBytes) async {
-                final croppedFile = await _saveCroppedImage(croppedBytes);
-                final compressedFile = await _compressImage(croppedFile);
-                setState(() {
-                  if (image == 'f') {
-                    frontImage = compressedFile;
-                  } else {
-                    backImage = compressedFile;
-                  }
-                });
-              },
-            );
-          },
-        );
-      }
-    } catch (e) {
-      warningDialog(
-        title: 'Error',
-        message: 'Failed to pick or crop the image. Please try again.',
-      ).showDialogBox(context);
-    }
-  }
-
-  Future<File> _saveCroppedImage(Uint8List croppedBytes) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/cropped_image.png';
-    final croppedFile = File(path);
-    await croppedFile.writeAsBytes(croppedBytes);
-    return croppedFile;
-  }
-
-  Future<File> _compressImage(File file) async {
-    try {
-      final tempDir = Directory.systemTemp;
-      final compressedPath =
-          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
-
-      final compressedFile = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path,
-        compressedPath,
-        quality: 50,
-      );
-
-      if (compressedFile != null) {
-        final FcompressedFile = File(compressedFile.path);
-        return FcompressedFile;
-      } else {
-        throw Exception("Failed to compress image.");
-      }
-    } catch (e) {
-      throw Exception("Compression error: ${e.toString()}");
-    }
-  }
 
   void changeHeight(RenderBox renderbox) {
     setState(() {
@@ -151,7 +80,9 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               fit: BoxFit.contain,
                             ),
                       IconedButton(
-                        onPressed: () => _pickImage('f'),
+                        onPressed: () => () => Picture.pickImage(context,
+                            callback: (file) =>
+                                setState(() => frontImage = file)),
                         icon: MyIcons.upload2,
                         text: 'Upload Front',
                       ),
@@ -177,7 +108,9 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               fit: BoxFit.contain,
                             ),
                       IconedButton(
-                        onPressed: () => _pickImage('b'),
+                        onPressed: () => Picture.pickImage(context,
+                            callback: (file) =>
+                                setState(() => backImage = file)),
                         icon: MyIcons.upload2,
                         text: 'Upload Back',
                       ),

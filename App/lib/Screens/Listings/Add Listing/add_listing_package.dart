@@ -1,137 +1,166 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class AddcategoryPackages extends StatefulWidget {
-  const AddcategoryPackages({super.key});
+class AddCategoryPackages extends StatefulWidget {
+  const AddCategoryPackages({super.key});
 
   @override
-  State<AddcategoryPackages> createState() => _AddcategoryPackagesState();
+  State<AddCategoryPackages> createState() => _AddCategoryPackagesState();
 }
 
-class _AddcategoryPackagesState extends State<AddcategoryPackages> {
-  Map<String, dynamic> args = {};
-  GlobalKey headerKey = GlobalKey();
+class _AddCategoryPackagesState extends State<AddCategoryPackages> {
+  final GlobalKey _headerKey = GlobalKey();
+  Map<String, dynamic> _args = {};
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    this.args = args;
-  }
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
+    final routeArgs = ModalRoute.of(context)?.settings.arguments;
+    if (routeArgs != null) {
+      _args = routeArgs as Map<String, dynamic>;
+      _args['packages'] ??= []; // Initialize packages if null
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: _headerKey,
+        callback: _updateHeaderHeight,
+      );
+    });
+  }
+
+  void _updateHeaderHeight(RenderBox renderbox) {
+    setState(() => UI_Management.headerHeight = renderbox.size.height);
+  }
+
+  void _navigateToAddPackage() {
+    Navigator.pushNamed(
+      context,
+      '/AddCategory_AddPackage',
+      arguments: _args,
+    );
+  }
+
+  void _navigateToAddImage() {
+    Navigator.pushNamed(
+      context,
+      '/AddCategory_AddImage',
+      arguments: _args,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+      headerKey: _headerKey,
+      callback: _updateHeaderHeight,
+    );
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Container(
-              constraints: BoxConstraints(minHeight: Screen.height(context)),
-              width: Screen.width(context),
-              child: Column(
-                children: [
-                  SizedBox(
-                      height: (Screen.height(context) * 0.03) +
-                          UI_Management.headerHeight),
-                  Container(
-                    margin: EdgeInsets.all(Screen.max(context) * 0.01),
-                    child: Text(
-                      "Packages",
-                      style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.025,
-                        fontWeight: FontWeight.w600,
-                        color: MyColors.Yellow,
-                      ),
-                    ),
-                  ),
-                  args['packages'] != null
-                      ? Column(
-                          children: [
-                            ...args['packages'].map<Widget>((package) {
-                              return PackageBox(
-                                  packagedetails: package['details'],
-                                  packageprice: package['price'],
-                                  packagename: package['name']);
-                            }).toList(),
-                          ],
-                        )
-                      : Container(),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: Screen.height(context) * 0.02,
-            left: Screen.width(context) * 0.25,
-            right: Screen.width(context) * 0.25,
-            child: ColoredButton(
-                text: 'Continue',
-                width: Screen.width(context) * 0.5,
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/AddCategory_AddImage',
-                    arguments: args,
-                  );
-                }),
-          ),
-          Positioned(
-            top: 0,
-            child: Header(
-              key: headerKey,
-              heading: 'Service Packages',
-              para: 'Add packages for your service',
-            ),
-          ),
+          _buildContent(),
+          _buildContinueButton(),
+          _buildHeader(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: MyColors.Yellow,
-        onPressed: () {
-          if (args['packages'] == null) {
-            args.addAll({'packages': []});
-          }
-          Navigator.pushNamed(
-            context,
-            '/AddCategory_AddPackage',
-            arguments: args,
-          );
-        },
-        child: Icon(
-          Icons.add,
-          color: MyColors.Dark,
-          size: Screen.max(context) * 0.04,
+      floatingActionButton: _buildAddButton(),
+    );
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      child: Container(
+        constraints: BoxConstraints(minHeight: Screen.height(context)),
+        width: Screen.width(context),
+        child: Column(
+          children: [
+            SizedBox(
+              height: (Screen.height(context) * 0.03) + UI_Management.headerHeight,
+            ),
+            _buildTitle(),
+            _buildPackagesList(),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.01),
+      child: Text(
+        "Packages",
+        style: GoogleFonts.montserrat(
+          fontSize: Screen.max(context) * 0.025,
+          fontWeight: FontWeight.w600,
+          color: MyColors.Yellow,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPackagesList() {
+    return _args['packages']?.isNotEmpty ?? false
+        ? Column(
+            children: _args['packages']
+                .map<Widget>((package) => _buildPackageItem(package))
+                .toList(),
+          )
+        : const SizedBox.shrink();
+  }
+
+  Widget _buildPackageItem(Map<String, dynamic> package) {
+    return PackageBox(
+      packagedetails: package['details'],
+      packageprice: package['price'],
+      packagename: package['name'],
+    );
+  }
+
+  Widget _buildContinueButton() {
+    return Positioned(
+      bottom: Screen.height(context) * 0.02,
+      left: Screen.width(context) * 0.25,
+      right: Screen.width(context) * 0.25,
+      child: ColoredButton(
+        text: 'Continue',
+        width: Screen.width(context) * 0.5,
+        onPressed: _navigateToAddImage,
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Positioned(
+      top: 0,
+      child: Header(
+        key: _headerKey,
+        heading: 'Service Packages',
+        para: 'Add packages for your service',
+      ),
+    );
+  }
+
+  Widget _buildAddButton() {
+    return FloatingActionButton(
+      backgroundColor: MyColors.Yellow,
+      onPressed: _navigateToAddPackage,
+      child: Icon(
+        Icons.add,
+        color: MyColors.Dark,
+        size: Screen.max(context) * 0.04,
       ),
     );
   }

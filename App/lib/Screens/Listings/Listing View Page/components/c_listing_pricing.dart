@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -18,20 +18,40 @@ class PricingSection extends StatefulWidget {
 }
 
 class _PricingSectionState extends State<PricingSection> {
-  bool isEditingPriceMin = false;
-  bool isEditingPriceMax = false;
-  final TextEditingController priceMinController = TextEditingController();
-  final TextEditingController priceMaxController = TextEditingController();
+  late final TextEditingController _priceMinController;
+  late final TextEditingController _priceMaxController;
+  bool _isEditingPriceMin = false;
+  bool _isEditingPriceMax = false;
+  bool _isBusinessUser = false;
 
   @override
   void initState() {
     super.initState();
-    priceMinController.text = widget.listing['Listing']['priceMin'].toString();
-    priceMaxController.text = widget.listing['Listing']['priceMax'].toString();
-    SetType();
+    _priceMinController = TextEditingController(
+      text: widget.listing['Listing']['priceMin'].toString(),
+    );
+    _priceMaxController = TextEditingController(
+      text: widget.listing['Listing']['priceMax'].toString(),
+    );
+    _checkUserType();
   }
 
-  Future<void> saveField(String field, String value) async {
+  @override
+  void dispose() {
+    _priceMinController.dispose();
+    _priceMaxController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkUserType() async {
+    final isBusinessUser = await MyStorage.exists(MyTokens.isBusinessOwner) ||
+        await MyStorage.exists(MyTokens.isFreelancer);
+    if (mounted) {
+      setState(() => _isBusinessUser = isBusinessUser);
+    }
+  }
+
+  Future<void> _savePriceField(String field, String value) async {
     try {
       final response = await MyApi.postRequest(
         headers: {
@@ -44,238 +64,226 @@ class _PricingSectionState extends State<PricingSection> {
           field: value,
         },
       );
-      if (response['status'] == 'success') {
-        setState(() {
-          widget.listing['Listing'][field] = value;
-          widget.listing['Listing']['basicPrice'] = ((int.parse(
-                          widget.listing['Listing']['priceMin'].toString()) +
-                      int.parse(
-                          widget.listing['Listing']['priceMax'].toString())) /
-                  2)
-              .round();
-          if (field == 'priceMin') isEditingPriceMin = false;
-          if (field == 'priceMax') isEditingPriceMax = false;
-        });
 
-        MyScaffold(text: '$field updated successfully!').show(context);
+      if (response['status'] == 'success') {
+        _handleSuccessfulUpdate(field, value);
       } else {
-        throw Exception(response['message'] ?? 'Failed to update $field.');
+        throw Exception(response['message'] ?? 'Failed to update $field');
       }
     } catch (e) {
-      MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error: $e'});
-      MyScaffold(text: 'Failed to update $field: $e').show(context);
+      _handleError(e, field);
     }
   }
 
-  bool type = false;
-  Future<void> SetType() async {
-    final value = await MyStorage.exists(MyTokens.isBusinessOwner) ||
-        await MyStorage.exists(MyTokens.isFreelancer);
+  void _handleSuccessfulUpdate(String field, String value) {
     setState(() {
-      type = value;
+      widget.listing['Listing'][field] = value;
+      widget.listing['Listing']['basicPrice'] = _calculateBasicPrice();
+      if (field == 'priceMin') _isEditingPriceMin = false;
+      if (field == 'priceMax') _isEditingPriceMax = false;
     });
+    _showSuccessMessage('$field updated successfully!');
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (type) {
-      return Padding(
-        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Pricing:",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.white,
-                  ),
-                ),
-                Text(
-                  "Rs. ${widget.listing['Listing']['priceMin'].toString()} - ${widget.listing['Listing']['priceMax'].toString()}",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w400,
-                    color: MyColors.white,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: Screen.max(context) * 0.02),
-            _buildEditableRow(
-              "Minimum Price:",
-              "priceMin",
-              isEditingPriceMin,
-              priceMinController,
-              () => setState(() => isEditingPriceMin = true),
-              () => saveField('priceMin', priceMinController.text),
-            ),
-            SizedBox(height: Screen.max(context) * 0.02),
-            _buildEditableRow(
-              "Screen.max(context) Price:",
-              "priceMax",
-              isEditingPriceMax,
-              priceMaxController,
-              () => setState(() => isEditingPriceMax = true),
-              () => saveField('priceMax', priceMaxController.text),
-            ),
-            SizedBox(height: Screen.max(context) * 0.02),
-            _buildNonEditableRow(
-              "Basic Price:",
-              widget.listing['Listing']['basicPrice'].toString(),
-            ),
-            SizedBox(
-              height: Screen.height(context) * 0.05,
-              child: Center(
-                  child: MyDivider(
-                width: Screen.width(context) * 0.85,
-              )),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Padding(
-        padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Pricing:",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.white,
-                  ),
-                ),
-                Text(
-                  "Rs. ${widget.listing['Listing']['priceMin'].toString()} - ${widget.listing['Listing']['priceMax'].toString()}",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w400,
-                    color: MyColors.white,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: Screen.max(context) * 0.02),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Basic Price:",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.Yellow,
-                  ),
-                ),
-                Text(
-                  widget.listing['Listing']['basicPrice'].toString(),
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w400,
-                    color: MyColors.white,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: Screen.height(context) * 0.05,
-              child: Center(
-                  child: MyDivider(
-                width: Screen.width(context) * 0.85,
-              )),
-            ),
-          ],
-        ),
-      );
-    }
+  int _calculateBasicPrice() {
+    return ((int.parse(widget.listing['Listing']['priceMin'].toString()) +
+        int.parse(widget.listing['Listing']['priceMax'].toString())));
   }
 
-  Widget _buildEditableRow(
-    String label,
-    String field,
-    bool isEditing,
-    TextEditingController controller,
-    VoidCallback onEdit,
-    VoidCallback onSave,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  void _handleError(dynamic error, String field) {
+    MyApi.postRequest(
+      endpoint: 'error/application',
+      body: {'error': 'Error updating $field: $error'},
+    );
+    _showErrorMessage('Failed to update $field: ${error.toString()}');
+  }
+
+  void _showSuccessMessage(String message) {
+    MyScaffold(text: message).show(context);
+  }
+
+  void _showErrorMessage(String message) {
+    MyScaffold(text: message).show(context);
+  }
+
+  Widget _buildPriceRangeRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
-          style: GoogleFonts.montserrat(
-            fontSize: Screen.max(context) * 0.015,
+          "Pricing:",
+          style: _buildTextStyle(
+            fontSize: 0.02,
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.white,
           ),
         ),
-        if (isEditing)
-          TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            style: GoogleFonts.montserrat(
-              fontSize: Screen.max(context) * 0.015,
-              color: MyColors.white,
-            ),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter $label...',
-              hintStyle: TextStyle(color: Colors.grey),
-            ),
-          )
-        else
-          Text(
-            widget.listing['Listing'][field].toString(),
-            style: GoogleFonts.montserrat(
-              fontSize: Screen.max(context) * 0.015,
-              fontWeight: FontWeight.w400,
-              color: MyColors.white,
-            ),
-          ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ColoredButton(
-            text: isEditing ? "Save" : "Edit",
-            onPressed: isEditing ? onSave : onEdit,
+        Text(
+          "Rs. ${widget.listing['Listing']['priceMin']} - ${widget.listing['Listing']['priceMax']}",
+          style: _buildTextStyle(
+            fontSize: 0.02,
+            fontWeight: FontWeight.w400,
+            color: MyColors.white,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildNonEditableRow(
-    String label,
-    String value,
-  ) {
+  Widget _buildBasicPriceRow() {
+    return _buildNonEditableRow(
+      label: "Basic Price:",
+      value: widget.listing['Listing']['basicPrice'].toString(),
+      isYellow: !_isBusinessUser,
+    );
+  }
+
+  Widget _buildEditablePriceRow({
+    required String label,
+    required String field,
+    required bool isEditing,
+    required TextEditingController controller,
+    required VoidCallback onSave,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
-            fontSize: Screen.max(context) * 0.015,
+          style: _buildTextStyle(
+            fontSize: 0.015,
             fontWeight: FontWeight.w500,
             color: MyColors.Yellow,
           ),
         ),
+        const SizedBox(height: 4),
+        if (isEditing)
+          TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: _buildTextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 0.015,
+              color: MyColors.white,
+            ),
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: 'Enter $label...',
+              hintStyle: const TextStyle(color: Colors.grey),
+            ),
+          )
+        else
+          Text(
+            widget.listing['Listing'][field].toString(),
+            style: _buildTextStyle(
+              fontSize: 0.015,
+              fontWeight: FontWeight.w400,
+              color: MyColors.white,
+            ),
+          ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerRight,
+          child: ColoredButton(
+            text: isEditing ? "Save" : "Edit",
+            onPressed: isEditing ? onSave : () => _toggleEditing(field),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNonEditableRow({
+    required String label,
+    required String value,
+    bool isYellow = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: _buildTextStyle(
+            fontSize: 0.015,
+            fontWeight: FontWeight.w500,
+            color: isYellow ? MyColors.Yellow : MyColors.white,
+          ),
+        ),
         Text(
           value,
-          style: GoogleFonts.montserrat(
-            fontSize: Screen.max(context) * 0.015,
+          style: _buildTextStyle(
+            fontSize: 0.015,
             fontWeight: FontWeight.w400,
             color: MyColors.white,
           ),
         ),
       ],
+    );
+  }
+
+  TextStyle _buildTextStyle({
+    required double fontSize,
+    required FontWeight fontWeight,
+    required Color color,
+  }) {
+    return GoogleFonts.montserrat(
+      fontSize: Screen.max(context) * fontSize,
+      fontWeight: fontWeight,
+      color: color,
+    );
+  }
+
+  void _toggleEditing(String field) {
+    setState(() {
+      if (field == 'priceMin') {
+        _isEditingPriceMin = true;
+      } else if (field == 'priceMax') {
+        _isEditingPriceMax = true;
+      }
+    });
+  }
+
+  Widget _buildDivider() {
+    return SizedBox(
+      height: Screen.height(context) * 0.05,
+      child: Center(
+        child: MyDivider(width: Screen.width(context) * 0.85),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      child: Column(
+        children: [
+          _buildPriceRangeRow(),
+          SizedBox(height: Screen.max(context) * 0.02),
+          if (_isBusinessUser) ...[
+            _buildEditablePriceRow(
+              label: "Minimum Price:",
+              field: "priceMin",
+              isEditing: _isEditingPriceMin,
+              controller: _priceMinController,
+              onSave: () =>
+                  _savePriceField('priceMin', _priceMinController.text),
+            ),
+            SizedBox(height: Screen.max(context) * 0.02),
+            _buildEditablePriceRow(
+              label: "Maximum Price:",
+              field: "priceMax",
+              isEditing: _isEditingPriceMax,
+              controller: _priceMaxController,
+              onSave: () =>
+                  _savePriceField('priceMax', _priceMaxController.text),
+            ),
+            SizedBox(height: Screen.max(context) * 0.02),
+          ],
+          _buildBasicPriceRow(),
+          _buildDivider(),
+        ],
+      ),
     );
   }
 }

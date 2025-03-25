@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as https;
 import 'package:taqreeb/core/config/config.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 
 class MyApi {
   static String baseUrl = AppConfig.baseUrl;
@@ -50,6 +53,48 @@ class MyApi {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return jsonDecode(response.body);
+      } else {
+        return {"status": "error", "message": "Something went wrong"};
+      }
+    } catch (e) {
+      MyApi.postRequest(
+          endpoint: 'error/application', body: {'error': 'Error: $e'});
+    }
+  }
+
+  static Future<dynamic> postMultipartRequest(
+      {required String endpoint,
+      bool token = true,
+      Map<String, String>? headers,
+      required dynamic body,
+      required Map<String, dynamic> files}) async {
+    final request =
+        https.MultipartRequest('POST', Uri.parse(MyApi.baseUrl + endpoint));
+
+    for (int i = 0; i < files.length; i++) {
+      request.files.add(await https.MultipartFile.fromPath(
+        files.keys.toList()[i],
+        files.values.toList()[i],
+      ));
+    }
+    if (token) {
+      final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+      request.headers.addAll({
+        'Authorization': 'Bearer $token',
+      });
+    }
+
+    for (int i = 0; i < body.length; i++) {
+      request.fields[body.keys.toList()[i]] = body.values.toList()[i];
+    }
+    final response = await request.send();
+
+    try {
+      final responseBody = await response.stream.bytesToString();
+      final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return jsonResponse;
       } else {
         return {"status": "error", "message": "Something went wrong"};
       }

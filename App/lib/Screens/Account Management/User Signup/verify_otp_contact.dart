@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -9,52 +8,113 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class SignupContactOTPVerify extends StatefulWidget {
-  const SignupContactOTPVerify({super.key});
+class SignupContactOtpVerify extends StatefulWidget {
+  const SignupContactOtpVerify({super.key});
 
   @override
-  _SignupContactOTPVerifyState createState() => _SignupContactOTPVerifyState();
+  State<SignupContactOtpVerify> createState() => _SignupContactOtpVerifyState();
 }
 
-class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
+class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
+  final GlobalKey _headerKey = GlobalKey();
+  final int _initialTimerDuration = 120;
   int _remainingTime = 120;
   late Timer _timer;
   bool _isResendEnabled = false;
   String _enteredOTP = "";
-  GlobalKey headerKey = GlobalKey();
+  bool _isVerifying = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
-
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeaderHeight());
     _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _measureHeaderHeight() {
+    UI_Management.getHeaderHeight(
+      headerKey: _headerKey,
+      callback: (renderBox) {
+        if (mounted) {
+          setState(() {
+            UI_Management.headerHeight = renderBox.size.height;
+          });
+        }
+      },
+    );
   }
 
   void _startTimer() {
     setState(() {
       _isResendEnabled = false;
-      _remainingTime = 120;
+      _remainingTime = _initialTimerDuration;
     });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
-        setState(() {
-          _remainingTime--;
-        });
+        setState(() => _remainingTime--);
       } else {
         _timer.cancel();
-        setState(() {
-          _isResendEnabled = true;
-        });
+        setState(() => _isResendEnabled = true);
       }
     });
+  }
+
+  Future<void> _resendOtp(Map<String, dynamic> response) async {
+    try {
+      await MyApi.postRequest(
+        endpoint: 'resendOTP/phone',
+        body: {
+          'phone': response['contact'],
+          'otp': response['otp'],
+        },
+      );
+      _startTimer();
+    } catch (e) {
+      _showErrorDialog('Error', 'Failed to resend OTP. Please try again.');
+    }
+  }
+
+  Future<void> _verifyOtp(Map<String, dynamic> response) async {
+    if (_enteredOTP.isEmpty || _enteredOTP.length != 4) {
+      _showErrorDialog('Invalid OTP', 'Please enter a 4-digit code');
+      return;
+    }
+
+    setState(() => _isVerifying = true);
+
+    try {
+      if (_enteredOTP == response['otp']) {
+        await MyStorage.saveToken(response['contact'], 'sphone');
+        if (mounted) {
+          Navigator.pushNamed(context, '/Signup_MoreInfo');
+        }
+      } else {
+        _showErrorDialog('Invalid OTP', 'The entered OTP is incorrect.');
+      }
+    } catch (e) {
+      _showErrorDialog('Error', 'Failed to verify OTP. Please try again.');
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifying = false);
+      }
+    }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    warningDialog(
+      title: title,
+      message: message,
+    ).showDialogBox(context);
   }
 
   String _formatTime(int seconds) {
@@ -63,23 +123,20 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final arguments =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final contactNumber = arguments['contactNumber'];
-    final Future<dynamic> response = arguments['response'];
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final contactNumber = arguments?['contactNumber'] ?? '';
+    final response = arguments?['response'] as Future<dynamic>?;
+
+    if (response == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pop(context);
+      });
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -94,76 +151,61 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
                   Column(
                     children: [
                       SizedBox(
-                        height: (MediaQuery.of(context).size.height * 0.1) +
-                            UI_Management.headerHeight,
-                      ),
+                          height: (MediaQuery.of(context).size.height * 0.1) +
+                              UI_Management.headerHeight),
                       OTPBoxes(
-                        onChanged: (otp) {
-                          _enteredOTP = otp;
-                        },
+                        onChanged: (otp) => _enteredOTP = otp,
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      TextButton(
-                        onPressed: _isResendEnabled
-                            ? () async {
-                                final result = await response;
+                      FutureBuilder<dynamic>(
+                        future: response,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text(
+                              'Error loading OTP',
+                              style: TextStyle(color: MyColors.white),
+                            );
+                          }
 
-                                MyApi.postRequest(
-                                    endpoint: 'resendOTP/phone',
-                                    body: {
-                                      'phone': result['contact'],
-                                      'otp': result['otp']
-                                    });
-                                _startTimer();
-                              }
-                            : null,
-                        child: Text(
-                          _isResendEnabled
-                              ? 'Send Code Again'
-                              : 'Send Code Again in ${_formatTime(_remainingTime)}',
-                          style: TextStyle(
-                            color: MyColors.white,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            decoration: _isResendEnabled
-                                ? TextDecoration.underline
+                          return TextButton(
+                            onPressed: _isResendEnabled && snapshot.hasData
+                                ? () => _resendOtp(snapshot.data!)
                                 : null,
-                          ),
-                        ),
+                            child: Text(
+                              _isResendEnabled
+                                  ? 'Send Code Again'
+                                  : 'Send Code Again in ${_formatTime(_remainingTime)}',
+                              style: TextStyle(
+                                color: MyColors.white,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
+                                decoration: _isResendEnabled
+                                    ? TextDecoration.underline
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.1,
-                        child: Center(child: MyDivider()),
+                        child: const Center(child: MyDivider()),
                       ),
-                      ColoredButton(
-                        text: 'Verify OTP',
-                        onPressed: () async {
-                          try {
-                            final result = await response;
-                            final receivedOTP = result['otp'];
-                            if (_enteredOTP == receivedOTP) {
-                              MyStorage.saveToken(result['contact'], 'sphone');
-                              Navigator.pushNamed(context, '/Signup_MoreInfo');
-                            } else {
-                              warningDialog(
-                                      title: 'Invalid OTP',
-                                      message: 'The entered OTP is incorrect.')
-                                  .showDialogBox(context);
-                            }
-                          } catch (e) {
-                            warningDialog(
-                                    title: 'Error',
-                                    message:
-                                        'Failed to verify OTP. Please try again.')
-                                .showDialogBox(context);
-                          }
+                      FutureBuilder<dynamic>(
+                        future: response,
+                        builder: (context, snapshot) {
+                          return ColoredButton(
+                            text: 'Verify OTP',
+                            onPressed: snapshot.hasData && !_isVerifying
+                                ? () => _verifyOtp(snapshot.data!)
+                                : null,
+                          );
                         },
                       ),
                     ],
                   ),
-                  ProgressBar(
-                    Progress: 1,
-                  ),
+                  const ProgressBar(Progress: 1),
                 ],
               ),
             ),
@@ -171,10 +213,11 @@ class _SignupContactOTPVerifyState extends State<SignupContactOTPVerify> {
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'OTP Verification',
               para:
-                  'We have sent a 4-digit verification code to $contactNumber. Please check your number.',
+                  'We have sent a 4-digit verification code to $contactNumber. '
+                  'Please check your number.',
             ),
           ),
         ],

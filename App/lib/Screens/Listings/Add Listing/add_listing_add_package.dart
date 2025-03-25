@@ -1,67 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class AddcategoryAddpackage extends StatefulWidget {
-  const AddcategoryAddpackage({super.key});
+class AddCategoryPackage extends StatefulWidget {
+  const AddCategoryPackage({super.key});
 
   @override
-  State<AddcategoryAddpackage> createState() => _AddcategoryAddpackageState();
+  State<AddCategoryPackage> createState() => _AddCategoryPackageState();
 }
 
-class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController detailsController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  FocusNode nameFocus = FocusNode();
-  FocusNode detailsFocus = FocusNode();
-  FocusNode priceFocus = FocusNode();
-  Map<String, dynamic> args = {};
-  GlobalKey headerKey = GlobalKey();
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
-  }
+class _AddCategoryPackageState extends State<AddCategoryPackage> {
+  final _formController = PackageFormController();
+  final GlobalKey _headerKey = GlobalKey();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    this.args = args;
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null) {
+      _formController.args = args as Map<String, dynamic>;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: _headerKey,
+        callback: _updateHeaderHeight,
+      );
+    });
   }
 
-  String _capitalize(String input) {
-    if (input.isEmpty) return input;
-    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  void _updateHeaderHeight(RenderBox renderbox) {
+    setState(() {
+      UI_Management.headerHeight = renderbox.size.height;
+    });
+  }
+
+  void _submitForm() {
+    _formController.addPackage();
+    Navigator.pushNamed(
+      context,
+      '/AddCategory_Packages',
+      arguments: _formController.args,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+      headerKey: _headerKey,
+      callback: _updateHeaderHeight,
+    );
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -72,48 +71,17 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
               child: Column(
                 children: [
                   SizedBox(
-                      height: (Screen.height(context) * 0.03) +
-                          UI_Management.headerHeight),
-                  MyTextBox(
-                    focusNode: nameFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(detailsFocus);
-                    },
-                    hint: 'Name',
-                    valueController: nameController,
+                    height: (Screen.height(context) * 0.03) + 
+                        UI_Management.headerHeight,
                   ),
-                  DescriptionBox(
-                    valueController: detailsController,
-                    focusNode: detailsFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(priceFocus);
-                    },
-                  ),
-                  MyTextBox(
-                    focusNode: priceFocus,
-                    onFieldSubmitted: (_) {
-                      priceFocus.unfocus();
-                    },
-                    hint: 'Price',
-                    isNum: true,
-                    isPrice: true,
-                    valueController: priceController,
-                  ),
+                  _buildNameField(),
+                  _buildDetailsField(),
+                  _buildPriceField(),
                   SizedBox(
                     height: Screen.height(context) * 0.1,
-                    child: Center(child: MyDivider()),
+                    child: const Center(child: MyDivider()),
                   ),
-                  ColoredButton(
-                      text: 'Add Package',
-                      onPressed: () {
-                        args['packages'].add({
-                          'name': _capitalize(nameController.text),
-                          'details': _capitalize(detailsController.text),
-                          'price': _capitalize(priceController.text),
-                        });
-                        Navigator.pushNamed(context, '/AddCategory_Packages',
-                            arguments: args);
-                      })
+                  _buildSubmitButton(),
                 ],
               ),
             ),
@@ -121,12 +89,89 @@ class _AddcategoryAddpackageState extends State<AddcategoryAddpackage> {
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'Add Packages',
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildNameField() {
+    return MyTextBox(
+      focusNode: _formController.nameFocus,
+      onFieldSubmitted: (_) {
+        FocusScope.of(context).requestFocus(_formController.detailsFocus);
+      },
+      hint: 'Name',
+      valueController: _formController.nameController,
+    );
+  }
+
+  Widget _buildDetailsField() {
+    return DescriptionBox(
+      valueController: _formController.detailsController,
+      focusNode: _formController.detailsFocus,
+      onFieldSubmitted: (_) {
+        FocusScope.of(context).requestFocus(_formController.priceFocus);
+      },
+    );
+  }
+
+  Widget _buildPriceField() {
+    return MyTextBox(
+      focusNode: _formController.priceFocus,
+      onFieldSubmitted: (_) => _formController.priceFocus.unfocus(),
+      hint: 'Price',
+      isNum: true,
+      isPrice: true,
+      valueController: _formController.priceController,
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return ColoredButton(
+      text: 'Add Package',
+      onPressed: _submitForm,
+    );
+  }
+}
+
+class PackageFormController {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController detailsController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  
+  final FocusNode nameFocus = FocusNode();
+  final FocusNode detailsFocus = FocusNode();
+  final FocusNode priceFocus = FocusNode();
+  
+  Map<String, dynamic> args = {};
+
+  void addPackage() {
+    if (!args.containsKey('packages')) {
+      args['packages'] = [];
+    }
+    
+    args['packages'].add({
+      'name': _capitalize(nameController.text),
+      'details': _capitalize(detailsController.text),
+      'price': _capitalize(priceController.text),
+    });
+  }
+
+  String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
+  void dispose() {
+    nameController.dispose();
+    detailsController.dispose();
+    priceController.dispose();
+    nameFocus.dispose();
+    detailsFocus.dispose();
+    priceFocus.dispose();
   }
 }

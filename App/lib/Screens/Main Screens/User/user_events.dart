@@ -20,152 +20,158 @@ class YourEvents extends StatefulWidget {
 }
 
 class _YourEventsState extends State<YourEvents> {
-  String token = '';
-  Map<String, dynamic> events = {};
-  Timer? _timer;
-  bool isLoading = true;
-  bool fetched = true;
-  GlobalKey headerKey = GlobalKey();
+  final TextEditingController _searchController = TextEditingController();
+  Map<String, dynamic> _events = {};
+  bool _isLoading = true;
+  GlobalKey _headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
-    fetchData();
+    _initializeHeaderHeight();
+    _fetchData();
   }
 
-  void fetchData() async {
-    final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
-    ApiCall.fetchAPI('YourEvents/$id', onSuccess: (token, data) {
+  void _initializeHeaderHeight() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: _headerKey,
+        callback: (renderbox) {
+          _changeHeight(renderbox);
+        },
+      );
+    });
+  }
+
+  Future<void> _fetchData() async {
+    final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+    await ApiCall.fetchAPI('YourEvents/$userId', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          this.token = token;
-          events = data;
-          isLoading = false;
+          _events = data;
+          _isLoading = false;
         });
       }
     }, context: mounted ? context : null);
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void changeHeight(RenderBox renderbox) {
+  void _changeHeight(RenderBox renderbox) {
     setState(() {
       UI_Management.headerHeight = renderbox.size.height;
     });
   }
 
-  TextEditingController controller = TextEditingController();
+  Future<void> _deleteEvent(int eventId, int index) async {
+    final response = await MyApi.postRequest(
+      endpoint: 'DeleteEvent/',
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+      body: {'EventId': eventId.toString()},
+    );
+
+    if (response['status'] == 'success') {
+      MyScaffold(text: 'Event Deleted Successfully').show(context);
+      setState(() {
+        _events["Event"].removeAt(index);
+      });
+    } else {
+      MyScaffold(text: 'Something Went Wrong!').show(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
+      headerKey: _headerKey,
+      callback: (renderbox) {
+        _changeHeight(renderbox);
+      },
+    );
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
-          fetched
-              ? SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: UI_Management.headerHeight),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical: Screen.max(context) * 0.02),
-                        child: SearchBox(
-                            onChanged: (value) {},
-                            controller: controller,
-                            hint: 'Search Typing to Search',
-                            width: Screen.width(context) * 0.9),
-                      ),
-                      isLoading
-                          ? Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    MyColors.white),
-                              ),
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: events["Event"].length,
-                              itemBuilder: (context, index) => Function12(
-                                delete: () async {
-                                  final response = await MyApi.postRequest(
-                                      endpoint: 'DeleteEvent/',
-                                      headers: {
-                                        'Authorization': 'Bearer $token'
-                                      },
-                                      body: {
-                                        'EventId': events["Event"][index]["id"]
-                                            .toString(),
-                                      });
-                                  if (response['status'] == 'success') {
-                                    MyScaffold(
-                                            text: 'Event Deleted Successfully')
-                                        .show(context);
-                                    setState(() {
-                                      events["Event"].removeAt(index);
-                                    });
-                                  } else {
-                                    MyScaffold(text: 'Something Went Wrong!')
-                                        .show(context);
-                                  }
-                                },
-                                color: Color(int.parse(
-                                    '0xff${events["Event"][index]["themeColor"].substring(1, events["Event"][index]["themeColor"].length)}')),
-                                name: events["Event"][index]["name"],
-                                head: 'Budget',
-                                budget:
-                                    events["Event"][index]["budget"].toString(),
-                                headings: [
-                                  'Event Type',
-                                  'Functions',
-                                  'Date',
-                                ],
-                                values: [
-                                  events["Event"][index]["type"],
-                                  events["nofunctions"][index].toString(),
-                                  events["Event"][index]["date"],
-                                ],
-                                type: 'Event',
-                                seePressed: () {
-                                  Navigator.pushNamed(context, '/EventDetails',
-                                      arguments: events["Event"][index]["id"]);
-                                },
-                                editPressed: () {
-                                  Navigator.pushNamed(context, '/EditEvent',
-                                      arguments: events["Event"][index]["id"]
-                                          .toString());
-                                },
-                              ),
-                            )
-                    ],
-                  ),
-                )
-              : Container(),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: UI_Management.headerHeight),
+                _buildSearchBox(),
+                _isLoading ? _buildLoadingIndicator() : _buildEventList(),
+              ],
+            ),
+          ),
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'Your Events',
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSearchBox() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+      child: SearchBox(
+        onChanged: (value) {},
+        controller: _searchController,
+        hint: 'Search Typing to Search',
+        width: Screen.width(context) * 0.9,
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+      ),
+    );
+  }
+
+  Widget _buildEventList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _events["Event"].length,
+      itemBuilder: (context, index) {
+        final event = _events["Event"][index];
+        return Function12(
+          delete: () => _deleteEvent(event["id"], index),
+          color: Color(int.parse(
+              '0xff${event["themeColor"].substring(1, event["themeColor"].length)}')),
+          name: event["name"],
+          head: 'Budget',
+          budget: event["budget"].toString(),
+          headings: ['Event Type', 'Functions', 'Date'],
+          values: [
+            event["type"],
+            _events["nofunctions"][index].toString(),
+            event["date"],
+          ],
+          type: 'Event',
+          seePressed: () {
+            Navigator.pushNamed(
+              context,
+              '/EventDetails',
+              arguments: event["id"],
+            );
+          },
+          editPressed: () {
+            Navigator.pushNamed(
+              context,
+              '/EditEvent',
+              arguments: event["id"].toString(),
+            );
+          },
+        );
+      },
     );
   }
 }

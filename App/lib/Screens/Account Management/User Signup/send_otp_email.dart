@@ -1,53 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
-import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
-class Signup_EmailOTPSend extends StatefulWidget {
-  Signup_EmailOTPSend({super.key});
+class SignupEmailOtpSend extends StatefulWidget {
+  const SignupEmailOtpSend({super.key});
 
   @override
-  State<Signup_EmailOTPSend> createState() => _Signup_EmailOTPSendState();
+  State<SignupEmailOtpSend> createState() => _SignupEmailOtpSendState();
 }
 
-class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
-  TextEditingController emailController = TextEditingController();
-  FocusNode emailFocus = FocusNode();
-  GlobalKey headerKey = GlobalKey();
+class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
+  final TextEditingController _emailController = TextEditingController();
+  final FocusNode _emailFocus = FocusNode();
+  final GlobalKey _headerKey = GlobalKey();
+  bool _isLoading = false;
 
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
-  }
+  // Constants
+  static const double _topPaddingFactor = 0.05;
+  static const double _dividerHeightFactor = 0.1;
+  static const double _textSizeFactor = 0.015;
+  static const int _progressStep = 1;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeaderHeight());
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _emailFocus.dispose();
+    super.dispose();
+  }
+
+  void _measureHeaderHeight() {
+    UI_Management.getHeaderHeight(
+      headerKey: _headerKey,
+      callback: (renderBox) {
+        if (mounted) {
+          setState(() {
+            UI_Management.headerHeight = renderBox.size.height;
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> _sendOtp() async {
+    if (!_validateEmail()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await MyApi.postRequest(
+        endpoint: 'sendOTP/email',
+        body: {'email': _emailController.text},
+      );
+
+      if (mounted) {
+        Navigator.pushNamed(
+          context,
+          '/Signup_EmailOTPVerify',
+          arguments: {
+            'email': _emailController.text,
+            'response': response,
+          },
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  bool _validateEmail() {
+    final validationResult = Validations.validateEmail(_emailController.text);
+    if (validationResult != "Ok") {
+      _showErrorDialog('Invalid Email', validationResult);
+      return false;
+    }
+    return true;
+  }
+
+  void _showErrorDialog(String title, String message) {
+    warningDialog(
+      title: title,
+      message: message,
+    ).showDialogBox(context);
+  }
+
+  void _navigateToContactVerification() {
+    Navigator.pushNamed(context, '/Signup_ContactOTPSend');
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -58,66 +117,38 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    height: UI_Management.headerHeight,
-                  ),
                   Column(
                     children: [
+                      SizedBox(height: UI_Management.headerHeight),
                       SizedBox(
-                        height: Screen.height(context) * 0.05,
-                      ),
+                          height: Screen.height(context) * _topPaddingFactor),
                       MyTextBox(
-                        focusNode: emailFocus,
-                        onFieldSubmitted: (value) {
-                          emailFocus.unfocus();
-                        },
+                        focusNode: _emailFocus,
+                        onFieldSubmitted: (_) => _emailFocus.unfocus(),
                         hint: 'Email',
-                        valueController: emailController,
+                        valueController: _emailController,
                       ),
                       SizedBox(
-                        height: Screen.height(context) * 0.1,
-                        child: Center(child: MyDivider()),
+                        height: Screen.height(context) * _dividerHeightFactor,
+                        child: const Center(child: MyDivider()),
                       ),
                       ColoredButton(
                         text: 'Send OTP',
-                        onPressed: () async {
-                          if (Validations.validateEmail(emailController.text) !=
-                              "Ok") {
-                            warningDialog(
-                                    title: 'Invalid Contact Number',
-                                    message: Validations.validateEmail(
-                                        emailController.text))
-                                .showDialogBox(context);
-                          } else {
-                            dynamic response = await MyApi.postRequest(
-                                endpoint: 'sendOTP/email',
-                                body: {'email': emailController.text});
-                            Navigator.pushNamed(
-                                context, '/Signup_EmailOTPVerify', arguments: {
-                              'email': emailController.text,
-                              'response': response
-                            });
-                          }
-                        },
+                        onPressed: _isLoading ? null : _sendOtp,
                       ),
                       InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, '/Signup_ContactOTPSend');
-                        },
+                        onTap: _navigateToContactVerification,
                         child: Text(
                           'Use Contact to Verify Instead',
                           style: TextStyle(
                             color: MyColors.Yellow,
-                            fontSize: Screen.max(context) * 0.015,
+                            fontSize: Screen.max(context) * _textSizeFactor,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  ProgressBar(
-                    Progress: 1,
-                  ),
+                  const ProgressBar(Progress: _progressStep),
                 ],
               ),
             ),
@@ -125,7 +156,7 @@ class _Signup_EmailOTPSendState extends State<Signup_EmailOTPSend> {
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'Email Verification',
               para: 'Enter Email to send one time password',
               image: MyImages.SingupPng,

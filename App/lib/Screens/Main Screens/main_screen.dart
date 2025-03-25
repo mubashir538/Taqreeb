@@ -12,91 +12,107 @@ import 'package:taqreeb/Screens/Main%20Screens/Business/user_listings.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-// ignore: must_be_immutable
 class MainScreen extends StatefulWidget {
-  MainScreen({super.key, this.index = 0});
-  int index;
+  final int index;
+
+  const MainScreen({super.key, this.index = 0});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List<Widget> pages = [HomePage(), ChatsScreen(), YourEvents(), AccountInfo()];
-  List<Widget> businessPages = [
-    Dashboard(),
-    ChatsScreen(),
-    YourListings(),
-    BusinessAccountInfo()
-  ];
+  late List<Widget> _pages;
+  late List<Widget> _businessPages;
+  bool _isLoading = true;
+  bool _isBusinessOwner = false;
+  bool _isFreelancer = false;
+  int _currentIndex = 0; // Local state variable for managing the selected index
+  final controller = YourListingsController();
 
-  bool isLoading = true;
-  bool isBusinessOwner = false;
-  bool isFreelancer = false;
+  void InitializeController() async {
+    await controller.fetchData();
+  }
+
   @override
   void initState() {
     super.initState();
-
-    fetchUser();
+    _initializePages();
+    _fetchUser();
+    _currentIndex = widget.index; // Initialize with the provided index
   }
 
-  void fetchUser() async {
-    final utype = await MyStorage.exists(MyTokens.isBusinessOwner);
-    final ftype = await MyStorage.exists(MyTokens.isFreelancer);
+  void _initializePages() {
+    InitializeController();
+    _pages = [
+      const HomePage(),
+      const ChatsScreen(),
+      const YourEvents(),
+      const AccountInfo(),
+    ];
+
+    _businessPages = [
+      const Dashboard(),
+      const ChatsScreen(),
+      YourListingsScreen(controller: controller),
+      const BusinessAccountInfo(),
+    ];
+  }
+
+  Future<void> _fetchUser() async {
+    final isBusinessOwner = await MyStorage.exists(MyTokens.isBusinessOwner);
+    final isFreelancer = await MyStorage.exists(MyTokens.isFreelancer);
+
     setState(() {
-      isBusinessOwner = utype;
-      isFreelancer = ftype;
-      isLoading = false;
+      _isBusinessOwner = isBusinessOwner;
+      _isFreelancer = isFreelancer;
+      _isLoading = false;
     });
   }
 
-  void updateValue(int newValue) {
+  void _updateIndex(int newIndex) {
     setState(() {
-      widget.index = newValue;
+      _currentIndex = newIndex; // Update the local state variable
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double keyboard = MediaQuery.of(context).viewInsets.bottom;
-    bool isKeyboardVisible = keyboard > 0;
-    List<Widget> currentPageList =
-        isBusinessOwner || isFreelancer ? businessPages : pages;
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    final currentPageList =
+        _isBusinessOwner || _isFreelancer ? _businessPages : _pages;
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
-      body: isLoading
-          ? Center(
+      body: _isLoading
+          ? const Center(
               child: CircularProgressIndicator(),
             )
-          : currentPageList[widget.index],
+          : currentPageList[_currentIndex], // Use the local state variable
       floatingActionButton: isKeyboardVisible
           ? null
-          : SizedBox(
-              width: Screen.width(context) * 0.15,
-              height: Screen.width(context) * 0.15,
-              child: FloatingActionButton(
-                heroTag: null,
-                onPressed: () {
-                  Navigator.pushReplacementNamed(
-                      context,
-                      isBusinessOwner || isFreelancer
-                          ? '/AddCategory_List'
-                          : '/CreateEvent');
-                },
-                backgroundColor: MyColors.Yellow,
-                shape: const CircleBorder(),
-                child: Icon(
-                  Icons.add,
-                  size: Screen.max(context) * 0.04,
-                  color: MyColors.Dark,
-                ),
+          : FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                Navigator.pushReplacementNamed(
+                  context,
+                  _isBusinessOwner || _isFreelancer
+                      ? '/AddCategory_List'
+                      : '/CreateEvent',
+                );
+              },
+              backgroundColor: MyColors.Yellow,
+              shape: const CircleBorder(),
+              child: Icon(
+                Icons.add,
+                size: Screen.max(context) * 0.04,
+                color: MyColors.Dark,
               ),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Navbar(
-        selectedIndex: widget.index,
-        onValueChanged: updateValue,
+        selectedIndex: _currentIndex, // Use the local state variable
+        onValueChanged: _updateIndex,
       ),
     );
   }

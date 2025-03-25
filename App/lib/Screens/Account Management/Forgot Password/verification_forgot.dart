@@ -1,13 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:taqreeb/core/providers/ForgotPasswordVerifyCodeViewModel.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
-import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class ForgotPassword_VerifyCode extends StatefulWidget {
@@ -19,55 +18,23 @@ class ForgotPassword_VerifyCode extends StatefulWidget {
 }
 
 class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
-  int _remainingTime = 120;
-  late Timer _timer;
-  bool _isResendEnabled = false;
-  String _enteredOTP = "";
   GlobalKey headerKey = GlobalKey();
-
-  void _startTimer() {
-    setState(() {
-      _isResendEnabled = false;
-      _remainingTime = 120;
-    });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_remainingTime > 0 && mounted) {
-        setState(() {
-          _remainingTime--;
-        });
-      } else {
-        _timer.cancel();
-        if (mounted) {
-          setState(() {
-            _isResendEnabled = true;
-          });
-        }
-      }
-    });
-  }
-
-  String _formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSeconds = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
-  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       UI_Management.getHeaderHeight(
-          headerKey: headerKey,
-          callback: (renderbox) {
-            changeHeight(renderbox);
+        headerKey: headerKey,
+        callback: (renderbox) {
+          setState(() {
+            UI_Management.headerHeight = renderbox.size.height;
           });
-      _startTimer();
-    });
-  }
-
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+        },
+      );
+      // Start the timer when the screen loads
+      Provider.of<ForgotPasswordVerifyCodeViewModel>(context, listen: false)
+          .startTimer();
     });
   }
 
@@ -77,6 +44,8 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final email = arguments['email'];
     final Map<String, dynamic> response = arguments['response'];
+    final viewModel = Provider.of<ForgotPasswordVerifyCodeViewModel>(context);
+
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
@@ -87,72 +56,49 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
               children: [
                 SizedBox(height: UI_Management.headerHeight),
                 Container(
-                    margin: EdgeInsets.only(
-                        top: Screen.max(context) * 0.07,
-                        bottom: Screen.max(context) * 0.02),
-                    child: OTPBoxes(
-                      onChanged: (value) {
-                        setState(() {
-                          _enteredOTP = value;
-                        });
-                      },
-                    )),
+                  margin: EdgeInsets.only(
+                    top: Screen.max(context) * 0.07,
+                    bottom: Screen.max(context) * 0.02,
+                  ),
+                  child: OTPBoxes(
+                    onChanged: (value) {
+                      viewModel.setEnteredOTP(value);
+                    },
+                  ),
+                ),
                 TextButton(
-                  onPressed: _isResendEnabled
+                  onPressed: viewModel.isResendEnabled
                       ? () async {
-                          final result = await response;
-                          await MyApi.postRequest(
-                              endpoint: 'resendOTP/email',
-                              body: {
-                                'email': result['email'],
-                                'otp': result['otp']
-                              });
-                          _startTimer();
+                          await viewModel.resendOTP(
+                              response['email'], response['otp']);
                         }
                       : null,
                   child: Text(
-                    _isResendEnabled
+                    viewModel.isResendEnabled
                         ? 'Send Code Again'
-                        : 'Send Code Again in ${_formatTime(_remainingTime)}',
+                        : 'Send Code Again in ${viewModel.formatTime(viewModel.remainingTime)}',
                     style: TextStyle(
                       color: MyColors.white,
                       fontSize: MediaQuery.of(context).size.width * 0.04,
-                      decoration:
-                          _isResendEnabled ? TextDecoration.underline : null,
+                      decoration: viewModel.isResendEnabled
+                          ? TextDecoration.underline
+                          : null,
                     ),
                   ),
                 ),
                 SizedBox(
                   height: Screen.height(context) * 0.1,
-                  child: Center(child: MyDivider()),
+                  child: const Center(child: MyDivider()),
                 ),
                 ColoredButton(
                   text: 'Verify Code',
                   onPressed: () async {
-                    try {
-                      final result = await response;
-                      final receivedOTP = result['otp'];
-                      if (int.parse(_enteredOTP) == receivedOTP) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            '/ForgotPassword_NewPassword',
-                            arguments: {
-                              'email': email,
-                            },
-                            ModalRoute.withName('/'));
-                      } else {
-                        warningDialog(
-                                title: 'Invalid OTP',
-                                message: 'The entered OTP is incorrect.')
-                            .showDialogBox(context);
-                      }
-                    } catch (e) {
-                      warningDialog(
-                              title: 'Error',
-                              message:
-                                  'Failed to verify OTP. Please try again.')
-                          .showDialogBox(context);
-                    }
+                    await viewModel.verifyOTP(
+                      viewModel.enteredOTP,
+                      response['otp'],
+                      context,
+                      email,
+                    );
                   },
                 ),
               ],
@@ -163,7 +109,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
             child: Header(
               key: headerKey,
               heading: 'Verify Code',
-              para: 'We have send the code to $email',
+              para: 'We have sent the code to $email',
             ),
           ),
         ],

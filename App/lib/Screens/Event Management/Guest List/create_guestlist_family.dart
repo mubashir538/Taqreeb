@@ -21,172 +21,215 @@ class CreateGuestList_AddFamily extends StatefulWidget {
 }
 
 class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
-  List<Map<String, String>> guestList = [];
+  final GlobalKey _headerKey = GlobalKey();
+  final List<Map<String, String>> _guestList = [];
+  final TextEditingController _familyNameController = TextEditingController();
+  final TextEditingController _membersController = TextEditingController();
+  final FocusNode _familyNameFocus = FocusNode();
+  final FocusNode _membersFocus = FocusNode();
 
-  TextEditingController familyNamecontroller = TextEditingController();
-  TextEditingController memberscontroller = TextEditingController();
-  FocusNode familyNameFocus = FocusNode();
-  FocusNode membersFocus = FocusNode();
-  bool isfunction = false;
-  int functionid = 0;
-  int eventId = 0;
-  Map<String, dynamic> args = {};
-  GlobalKey headerKey = GlobalKey();
+  bool _isFunction = false;
+  int _functionId = 0;
+  int _eventId = 0;
+  Map<String, dynamic> _routeArgs = {};
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
-            headerKey: headerKey,
-            callback: (renderbox) {
-              changeHeight(renderbox);
-            }));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UI_Management.getHeaderHeight(
+        headerKey: _headerKey,
+        callback: _updateHeaderHeight,
+      );
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final Map<String, dynamic> args =
+    _initializeFromArguments();
+  }
+
+  void _initializeFromArguments() {
+    final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    this.args = args;
+    _routeArgs = args;
+
     setState(() {
-      if (args['functionid'] != null) {
-        isfunction = true;
-        functionid = args['functionid'];
-      }
-      eventId = args['eventId'];
+      _isFunction = args['functionid'] != null;
+      _functionId = args['functionid'] ?? 0;
+      _eventId = args['eventId'] ?? 0;
     });
   }
 
-  void removeFamily(index) {
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        guestList.removeAt(index);
+  void _updateHeaderHeight(RenderBox renderBox) {
+    if (mounted) {
+      setState(() => UI_Management.headerHeight = renderBox.size.height);
+    }
+  }
+
+  void _addFamily() {
+    if (_familyNameController.text.isEmpty || _membersController.text.isEmpty) {
+      MyScaffold(text: 'Please fill all fields').show(context);
+      return;
+    }
+
+    setState(() {
+      _guestList.add({
+        'name': _familyNameController.text,
+        'members': _membersController.text
       });
+      _familyNameController.clear();
+      _membersController.clear();
+      _familyNameFocus.requestFocus();
     });
   }
 
-  void changeHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
+  void _removeFamily(int index) {
+    setState(() => _guestList.removeAt(index));
+  }
+
+  Future<void> _submitFamilies() async {
+    if (_guestList.isEmpty) {
+      MyScaffold(text: 'Please add at least one family').show(context);
+      return;
+    }
+
+    final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    bool allSuccess = true;
+
+    for (final guest in _guestList) {
+      final response = await MyApi.postRequest(
+        headers: {'Authorization': 'Bearer $token'},
+        endpoint: 'add/guests/',
+        body: {
+          'eid': _eventId,
+          'fid': _isFunction ? _functionId : 'None',
+          'guesttype': 'Family',
+          'FamilyName': guest['name'],
+          'member': guest['members']
+        },
+      );
+
+      if (response['status'] != 'success') {
+        allSuccess = false;
+      }
+    }
+
+    if (mounted) {
+      MyScaffold(
+        text: allSuccess ? 'Families Added' : 'Some families not added',
+      ).show(context);
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/CreateGuestList_List',
+        ModalRoute.withName('//EventDetails'),
+        arguments: _routeArgs,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _familyNameController.dispose();
+    _membersController.dispose();
+    _familyNameFocus.dispose();
+    _membersFocus.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          changeHeight(renderbox);
-        });
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Container(
-              width: Screen.width(context),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: (Screen.height(context) * 0.05) +
-                        UI_Management.headerHeight,
-                  ),
-                  MyTextBox(
-                    focusNode: familyNameFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(membersFocus);
-                    },
-                    hint: 'Family Name',
-                    valueController: familyNamecontroller,
-                  ),
-                  MyTextBox(
-                    focusNode: membersFocus,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).unfocus();
-                    },
-                    hint: 'No. of Members',
-                    isNum: true,
-                    valueController: memberscontroller,
-                  ),
-                  SizedBox(
-                    width: Screen.width(context) * 0.9,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Guests(
-                          onpressed: () {},
-                          ondelete: () {
-                            removeFamily(index);
-                          },
-                          mywidth: Screen.width(context) * 0.8,
-                          name: guestList[index]['name'] ?? '',
-                          contact: guestList[index]['members'] ?? '',
-                        );
-                      },
-                      itemCount: guestList.length,
-                    ),
-                  ),
-                  SizedBox(
-                    height: Screen.height(context) * 0.05,
-                  ),
-                  ColoredButton(
-                    text: 'Add Family',
-                    width: Screen.width(context) * 0.7,
-                    onPressed: () {
-                      setState(() {
-                        guestList.add({
-                          'name': familyNamecontroller.text,
-                          'members': memberscontroller.text
-                        });
-                      });
-                    },
-                  ),
-                  BorderButton(
-                    text: 'Done',
-                    width: Screen.width(context) * 0.7,
-                    onPressed: () async {
-                      final token =
-                          await MyStorage.getToken(MyTokens.accessToken) ?? "";
-                      for (int i = 0; i < guestList.length; i++) {
-                        final response = await MyApi.postRequest(
-                            headers: {'Authorization': 'Bearer $token'},
-                            endpoint: 'add/guests/',
-                            body: {
-                              'eid': eventId,
-                              'fid': isfunction ? functionid : 'None',
-                              'guesttype': 'Family',
-                              'FamilyName': guestList[i]['name'],
-                              'member': guestList[i]['members']
-                            });
-                        if (response['status'] == 'success') {
-                          MyScaffold(text: 'Family Added').show(context);
-                        } else {
-                          MyScaffold(text: 'Family not Added').show(context);
-                        }
-                      }
-                      Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/CreateGuestList_List',
-                          ModalRoute.withName('//EventDetails'),
-                          arguments: args);
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
+          _buildContent(),
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
+              key: _headerKey,
               heading: 'Add Family',
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      child: Container(
+        width: Screen.width(context),
+        child: Column(
+          children: [
+            SizedBox(
+                height: (Screen.height(context) * 0.05) +
+                    UI_Management.headerHeight),
+            _buildInputFields(),
+            _buildGuestList(),
+            SizedBox(height: Screen.height(context) * 0.05),
+            _buildActionButtons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputFields() {
+    return Column(
+      children: [
+        MyTextBox(
+          focusNode: _familyNameFocus,
+          onFieldSubmitted: (_) =>
+              FocusScope.of(context).requestFocus(_membersFocus),
+          hint: 'Family Name',
+          valueController: _familyNameController,
+        ),
+        MyTextBox(
+          focusNode: _membersFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+          hint: 'No. of Members',
+          isNum: true,
+          valueController: _membersController,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuestList() {
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _guestList.length,
+        itemBuilder: (context, index) => Guests(
+          onpressed: () {},
+          ondelete: () => _removeFamily(index),
+          mywidth: Screen.width(context) * 0.8,
+          name: _guestList[index]['name'] ?? '',
+          contact: _guestList[index]['members'] ?? '',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        ColoredButton(
+          text: 'Add Family',
+          width: Screen.width(context) * 0.7,
+          onPressed: _addFamily,
+        ),
+        BorderButton(
+          text: 'Done',
+          width: Screen.width(context) * 0.7,
+          onPressed: _submitFamilies,
+        ),
+      ],
     );
   }
 }
