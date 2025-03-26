@@ -83,251 +83,254 @@ class _SettingsState extends State<Settings> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: UI_Management.headerHeight),
-                isLoading
-                    ? CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(MyColors.white),
-                      )
-                    : Container(
-                        constraints: BoxConstraints(
-                            minHeight: Screen.height(context) * 0.5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            types['business']
-                                ? Container(
-                                    height: (Screen.max(context) * 0.08)
-                                        .clamp(60, 80.0),
-                                    width: Screen.width(context) * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: themeProvider.themeMode ==
-                                              ThemeMode.dark
-                                          ? MyColors.DarkLighter
-                                          : MyColors.whiteDarker,
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                          color: themeProvider.themeMode ==
-                                                  ThemeMode.dark
-                                              ? MyColors.DarkLighter
-                                              : MyColors.whiteDarker),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Icon(
-                                          Icons.business_rounded,
-                                          color: themeProvider.themeMode ==
-                                                  ThemeMode.dark
-                                              ? MyColors.white
-                                              : MyColors.Dark,
-                                          size: Screen.max(context) * 0.02,
-                                        ),
-                                        Flexible(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Text(
-                                              "Business Owner Mode",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize:
-                                                    Screen.max(context) * 0.015,
-                                                fontWeight: FontWeight.w500,
-                                                color:
-                                                    themeProvider.themeMode ==
-                                                            ThemeMode.dark
-                                                        ? MyColors.white
-                                                        : MyColors.Dark,
+            child: Container(
+              width: Screen.width(context),
+              child: Column(
+                children: [
+                  SizedBox(height: UI_Management.headerHeight),
+                  isLoading
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(MyColors.white),
+                        )
+                      : Container(
+                          constraints: BoxConstraints(
+                              minHeight: Screen.height(context) * 0.5),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              types['business']
+                                  ? Container(
+                                      height: (Screen.max(context) * 0.08)
+                                          .clamp(60, 80.0),
+                                      width: Screen.width(context) * 0.9,
+                                      decoration: BoxDecoration(
+                                        color: themeProvider.themeMode ==
+                                                ThemeMode.dark
+                                            ? MyColors.DarkLighter
+                                            : MyColors.whiteDarker,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                            color: themeProvider.themeMode ==
+                                                    ThemeMode.dark
+                                                ? MyColors.DarkLighter
+                                                : MyColors.whiteDarker),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Icon(
+                                            Icons.business_rounded,
+                                            color: themeProvider.themeMode ==
+                                                    ThemeMode.dark
+                                                ? MyColors.white
+                                                : MyColors.Dark,
+                                            size: Screen.max(context) * 0.02,
+                                          ),
+                                          Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              child: Text(
+                                                "Business Owner Mode",
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      Screen.max(context) * 0.015,
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      themeProvider.themeMode ==
+                                                              ThemeMode.dark
+                                                          ? MyColors.white
+                                                          : MyColors.Dark,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Switch(
-                                          value: businessOwnerSwitch,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              businessOwnerSwitch = value;
-                                              if (businessOwnerSwitch) {
-                                                MyStorage.saveToken(
-                                                  value.toString(),
-                                                  MyTokens.isBusinessOwner,
+                                          Switch(
+                                            value: businessOwnerSwitch,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                businessOwnerSwitch = value;
+                                                if (businessOwnerSwitch) {
+                                                  MyStorage.saveToken(
+                                                    value.toString(),
+                                                    MyTokens.isBusinessOwner,
+                                                  );
+                                                  MyStorage.deleteToken(
+                                                    MyTokens.isFreelancer,
+                                                  );
+                                                  setState(() {
+                                                    freelancerSwitch = false;
+                                                  });
+                                                } else {
+                                                  MyStorage.deleteToken(
+                                                      MyTokens.isBusinessOwner);
+                                                }
+                                                Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  '/HomePage',
+                                                  ModalRoute.withName('/'),
                                                 );
-                                                MyStorage.deleteToken(
-                                                  MyTokens.isFreelancer,
-                                                );
-                                                setState(() {
-                                                  freelancerSwitch = false;
-                                                });
-                                              } else {
-                                                MyStorage.deleteToken(
-                                                    MyTokens.isBusinessOwner);
-                                              }
-                                              Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                '/HomePage',
-                                                ModalRoute.withName('/'),
-                                              );
-                                            });
-                                          },
-                                          activeColor: MyColors.white,
-                                          activeTrackColor: MyColors.green,
-                                          inactiveThumbColor: MyColors.white,
-                                          inactiveTrackColor: MyColors.red,
-                                        ),
-                                      ],
+                                              });
+                                            },
+                                            activeColor: MyColors.white,
+                                            activeTrackColor: MyColors.green,
+                                            inactiveThumbColor: MyColors.white,
+                                            inactiveTrackColor: MyColors.red,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : GuideButton(
+                                      onpressed: () {
+                                        Navigator.pushNamed(
+                                            context, '/BusinessSignup_BasicInfo');
+                                      },
+                                      text: 'Signup As Business',
+                                      leftIcon: Icons.business_rounded,
+                                      rightIcon: Icons.arrow_forward_ios_rounded,
                                     ),
-                                  )
-                                : GuideButton(
-                                    onpressed: () {
-                                      Navigator.pushNamed(
-                                          context, '/BusinessSignup_BasicInfo');
-                                    },
-                                    text: 'Signup As Business',
-                                    leftIcon: Icons.business_rounded,
-                                    rightIcon: Icons.arrow_forward_ios_rounded,
-                                  ),
-                            this.types['freelancer']
-                                ? Container(
-                                    height: (Screen.max(context) * 0.08)
-                                        .clamp(60, 80.0),
-                                    width: Screen.width(context) * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: themeProvider.themeMode ==
-                                              ThemeMode.dark
-                                          ? MyColors.DarkLighter
-                                          : MyColors.whiteDarker,
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                          color: themeProvider.themeMode ==
-                                                  ThemeMode.dark
-                                              ? MyColors.DarkLighter
-                                              : MyColors.whiteDarker),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Icon(
-                                          Icons.business_rounded,
-                                          color: themeProvider.themeMode ==
-                                                  ThemeMode.dark
-                                              ? MyColors.white
-                                              : MyColors.Dark,
-                                          size: Screen.max(context) * 0.02,
-                                        ),
-                                        Flexible(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Text(
-                                              "Freelancer Mode",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize:
-                                                    Screen.max(context) * 0.015,
-                                                fontWeight: FontWeight.w500,
-                                                color:
-                                                    themeProvider.themeMode ==
-                                                            ThemeMode.dark
-                                                        ? MyColors.white
-                                                        : MyColors.Dark,
+                              this.types['freelancer']
+                                  ? Container(
+                                      height: (Screen.max(context) * 0.08)
+                                          .clamp(60, 80.0),
+                                      width: Screen.width(context) * 0.9,
+                                      decoration: BoxDecoration(
+                                        color: themeProvider.themeMode ==
+                                                ThemeMode.dark
+                                            ? MyColors.DarkLighter
+                                            : MyColors.whiteDarker,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                            color: themeProvider.themeMode ==
+                                                    ThemeMode.dark
+                                                ? MyColors.DarkLighter
+                                                : MyColors.whiteDarker),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Icon(
+                                            Icons.business_rounded,
+                                            color: themeProvider.themeMode ==
+                                                    ThemeMode.dark
+                                                ? MyColors.white
+                                                : MyColors.Dark,
+                                            size: Screen.max(context) * 0.02,
+                                          ),
+                                          Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              child: Text(
+                                                "Freelancer Mode",
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      Screen.max(context) * 0.015,
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      themeProvider.themeMode ==
+                                                              ThemeMode.dark
+                                                          ? MyColors.white
+                                                          : MyColors.Dark,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Switch(
-                                          value: freelancerSwitch,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              freelancerSwitch = value;
-                                              if (freelancerSwitch) {
-                                                MyStorage.saveToken(
-                                                  value.toString(),
-                                                  MyTokens.isFreelancer,
+                                          Switch(
+                                            value: freelancerSwitch,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                freelancerSwitch = value;
+                                                if (freelancerSwitch) {
+                                                  MyStorage.saveToken(
+                                                    value.toString(),
+                                                    MyTokens.isFreelancer,
+                                                  );
+                                                  MyStorage.deleteToken(
+                                                    MyTokens.isBusinessOwner,
+                                                  );
+                                                  setState(() {
+                                                    businessOwnerSwitch = false;
+                                                  });
+                                                } else {
+                                                  MyStorage.deleteToken(
+                                                      MyTokens.isFreelancer);
+                                                }
+                                                Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  '/HomePage',
+                                                  ModalRoute.withName('/'),
                                                 );
-                                                MyStorage.deleteToken(
-                                                  MyTokens.isBusinessOwner,
-                                                );
-                                                setState(() {
-                                                  businessOwnerSwitch = false;
-                                                });
-                                              } else {
-                                                MyStorage.deleteToken(
-                                                    MyTokens.isFreelancer);
-                                              }
-                                              Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                '/HomePage',
-                                                ModalRoute.withName('/'),
-                                              );
-                                            });
-                                          },
-                                          activeColor: MyColors.white,
-                                          activeTrackColor: MyColors.green,
-                                          inactiveThumbColor: MyColors.white,
-                                          inactiveTrackColor: MyColors.red,
-                                        ),
-                                      ],
+                                              });
+                                            },
+                                            activeColor: MyColors.white,
+                                            activeTrackColor: MyColors.green,
+                                            inactiveThumbColor: MyColors.white,
+                                            inactiveTrackColor: MyColors.red,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : GuideButton(
+                                      onpressed: () {
+                                        Navigator.pushNamed(context,
+                                            '/FreelancerSignup_BasicInfo');
+                                      },
+                                      text: 'Signup As Freelancer',
+                                      leftIcon: Icons.work_outline_rounded,
+                                      rightIcon: Icons.arrow_forward_ios_rounded,
                                     ),
-                                  )
-                                : GuideButton(
-                                    onpressed: () {
-                                      Navigator.pushNamed(context,
-                                          '/FreelancerSignup_BasicInfo');
-                                    },
-                                    text: 'Signup As Freelancer',
-                                    leftIcon: Icons.work_outline_rounded,
-                                    rightIcon: Icons.arrow_forward_ios_rounded,
-                                  ),
-                            GuideButton(
-                              onpressed: () {
-                                warningDialog(
-                                  title: 'Switch Theme',
-                                  message: 'Change the theme of the App',
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Cancel')),
-                                    TextButton(
-                                        onPressed: () {
-                                          themeProvider
-                                              .switchTheme(); // Use ThemeProvider
-                                          Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            '/HomePage',
-                                            ModalRoute.withName('/'),
-                                          );
-                                        },
-                                        child: Text('Confirm')),
-                                  ],
-                                ).showDialogBox(context);
-                              },
-                              text: 'Appearance',
-                              leftIcon: Icons.palette_rounded,
-                              rightIcon: Icons.arrow_forward_ios_rounded,
-                            ),
-                            GuideButton(
-                              onpressed: () {
-                                Navigator.pushNamed(
-                                    context,
-                                    businessOwnerSwitch || freelancerSwitch
-                                        ? '/BusinessInfoEdit'
-                                        : '/AccountInfoEdit');
-                              },
-                              text: 'Edit Account Info',
-                              leftIcon: Icons.edit_rounded,
-                              rightIcon: Icons.arrow_forward_ios_rounded,
-                            ),
-                          ],
-                        ),
-                      )
-              ],
+                              GuideButton(
+                                onpressed: () {
+                                  warningDialog(
+                                    title: 'Switch Theme',
+                                    message: 'Change the theme of the App',
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Cancel')),
+                                      TextButton(
+                                          onPressed: () {
+                                            themeProvider
+                                                .switchTheme(); // Use ThemeProvider
+                                            Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              '/HomePage',
+                                              ModalRoute.withName('/'),
+                                            );
+                                          },
+                                          child: Text('Confirm')),
+                                    ],
+                                  ).showDialogBox(context);
+                                },
+                                text: 'Appearance',
+                                leftIcon: Icons.palette_rounded,
+                                rightIcon: Icons.arrow_forward_ios_rounded,
+                              ),
+                              GuideButton(
+                                onpressed: () {
+                                  Navigator.pushNamed(
+                                      context,
+                                      businessOwnerSwitch || freelancerSwitch
+                                          ? '/BusinessInfoEdit'
+                                          : '/AccountInfoEdit');
+                                },
+                                text: 'Edit Account Info',
+                                leftIcon: Icons.edit_rounded,
+                                rightIcon: Icons.arrow_forward_ios_rounded,
+                              ),
+                            ],
+                          ),
+                        )
+                ],
+              ),
             ),
           ),
           Positioned(

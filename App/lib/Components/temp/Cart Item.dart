@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,8 +54,8 @@ class _CartItemsState extends State<CartItems> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      "https://shorturl.at/9nzlw",
+                    child: CachedNetworkImage(
+                      imageUrl: "https://shorturl.at/9nzlw",
                       height: Screen.max(context) * 0.05,
                       width: Screen.max(context) * 0.05,
                     ),

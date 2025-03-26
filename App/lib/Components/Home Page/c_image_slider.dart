@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AutoImageSlider extends StatefulWidget {
   final List<String> imageUrls;
@@ -56,8 +57,8 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
           });
         },
         itemBuilder: (context, index) {
-          return Image.network(
-            widget.imageUrls[index],
+          return CachedNetworkImage(
+            imageUrl: widget.imageUrls[index],
             fit: BoxFit.cover,
             width: double.infinity,
           );

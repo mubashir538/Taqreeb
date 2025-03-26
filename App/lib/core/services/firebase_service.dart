@@ -4,35 +4,43 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:taqreeb/firebase_options.dart';
 
 class FirebaseService {
-  static final FlutterLocalNotificationsPlugin localNotifications =
-      FlutterLocalNotificationsPlugin();
+  static final _messaging = FirebaseMessaging.instance;
+  static final _localNotifications = FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
+    await _initializeFirebaseCore();
+    await _initializeNotifications();
+  }
+
+  static Future<void> _initializeFirebaseCore() async {
     await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
-    await _initializeLocalNotifications();
-    await _requestNotificationPermissions();
-    _setupFirebaseMessagingHandlers();
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
-  static Future<void> _initializeLocalNotifications() async {
-    const AndroidInitializationSettings androidSettings =
+  static Future<void> _initializeNotifications() async {
+    await _setupLocalNotifications();
+    await _requestPermissions();
+    _registerMessageHandlers();
+  }
+
+  static Future<void> _setupLocalNotifications() async {
+    const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initSettings =
-        InitializationSettings(android: androidSettings);
-    await localNotifications.initialize(initSettings);
+    await _localNotifications.initialize(
+      const InitializationSettings(android: androidSettings),
+    );
   }
 
-  static Future<void> _requestNotificationPermissions() async {
-    final FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(
+  static Future<void> _requestPermissions() async {
+    await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
   }
 
-  static void _setupFirebaseMessagingHandlers() {
+  static void _registerMessageHandlers() {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen(_onMessageReceived);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpened);
@@ -62,7 +70,7 @@ class FirebaseService {
     );
     const NotificationDetails details =
         NotificationDetails(android: androidDetails);
-    await localNotifications.show(
+    await _localNotifications.show(
       0,
       message.notification?.title,
       message.notification?.body,

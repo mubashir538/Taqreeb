@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -206,13 +206,13 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     if (messageType == 'image')
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
                           height: 150,
                           width: 200,
                           fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
+                          imageBuilder: (context, image) {
                             return Container(
                               height: 150,
                               width: 200,
@@ -221,7 +221,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                   child: CircularProgressIndicator()),
                             );
                           },
-                          errorBuilder: (context, error, stackTrace) {
+                          errorWidget: (context, error, stackTrace) {
                             return Container(
                               height: 150,
                               width: 200,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class SlidingRow extends StatelessWidget {
   final String title;
@@ -51,8 +53,8 @@ class SlidingRow extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 8.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        images[index],
+                      child: CachedNetworkImage(
+                        imageUrl: images[index],
                         width: Screen.width(context) * 0.3,
                         height: Screen.width(context) * 0.4,
                         fit: BoxFit.cover,

@@ -40,12 +40,9 @@ import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
 import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
 import 'package:taqreeb/Screens/chat/chat_box.dart';
 import 'package:taqreeb/Screens/chat/search_new_user.dart';
-import 'package:taqreeb/core/providers/BusinessSignupProvider.dart';
-import 'package:taqreeb/core/providers/ForgotPasswordVerifyCodeViewModel.dart';
 import 'package:taqreeb/core/providers/ThemeProvider.dart';
-import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
-import 'package:taqreeb/core/providers/forgotPasswordProvider.dart';
-import 'package:taqreeb/core/services/firebase_service.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/app_initializer.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -53,26 +50,31 @@ import 'package:taqreeb/Screens/Globals/splash_screen.dart';
 import 'package:taqreeb/core/utils/themes.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase and notifications
-  await FirebaseService.initialize();
+  // Preserve splash screen with required widgetsBinding parameter
+  FlutterNativeSplash.preserve(
+    widgetsBinding: widgetsBinding,
+  );
 
-  // Remove splash screen after initialization
-  FlutterNativeSplash.remove();
+  // Initialize in background
+  final initialization = AppInitializer.init();
 
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => BusinessSignupProvider()),
-        ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
-        ChangeNotifierProvider(create: (_) => BusinessInfoEditViewModel()),
-        ChangeNotifierProvider(
-            create: (_) => ForgotPasswordVerifyCodeViewModel()),
-        ChangeNotifierProvider(create: (_) => BusinessAccountInfoViewModel()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()..loadTheme()),
-      ],
-      child: MainApp(),
+      providers: AppInitializer.getProviders(),
+      child: FutureBuilder(
+        future: initialization,
+        builder: (context, snapshot) {
+          // Remove splash when done
+          if (snapshot.connectionState == ConnectionState.done) {
+            FlutterNativeSplash.remove();
+            return MainApp();
+          }
+          // Show empty container while loading
+          return const SizedBox.shrink();
+        },
+      ),
     ),
   );
 }
@@ -110,13 +112,18 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppThemes.lightTheme,
-      darkTheme: AppThemes.darkTheme,
-      themeMode: themeProvider.themeMode,
-      initialRoute: '/',
-      routes: _buildRoutes(),
+    return PopScope(
+      onPopInvokedWithResult: (didpop, Object? result) async {
+        await MyApi.cacheManager.emptyCache();
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppThemes.lightTheme,
+        darkTheme: AppThemes.darkTheme,
+        themeMode: themeProvider.themeMode,
+        initialRoute: '/',
+        routes: _buildRoutes(),
+      ),
     );
   }
 

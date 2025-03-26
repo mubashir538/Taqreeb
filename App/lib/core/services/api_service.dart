@@ -1,12 +1,14 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as https;
+import 'package:http/http.dart' as http;
 import 'package:taqreeb/core/config/config.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class MyApi {
   static String baseUrl = AppConfig.baseUrl;
+  static DefaultCacheManager cacheManager = DefaultCacheManager();
   static Future<dynamic> getRequest({
     required String endpoint,
     Map<String, String>? headers,
@@ -14,22 +16,37 @@ class MyApi {
     Uri url = Uri.parse('$baseUrl$endpoint');
 
     http.Response response;
+    // final cache = await APICacheManager().isAPICacheKeyExist(endpoint);
+    final cache = await cacheManager.getFileFromCache(url.toString());
+    print(cache);
+    if (cache == null) {
+      try {
+        if (headers != null) {
+          response = await http.get(url, headers: headers);
+        } else {
+          response = await http.get(url);
+        }
+        await cacheManager.putFile(url.toString(), response.bodyBytes,
+            fileExtension: 'json', maxAge: const Duration(hours: 1));
 
-    try {
-      if (headers != null) {
-        response = await http.get(url, headers: headers);
-      } else {
-        response = await http.get(url);
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          return jsonDecode(response.body);
+        } else {
+          return {"status": "error", "message": "Something went wrong"};
+        }
+      } catch (e) {
+        print('Error occurred: $e');
       }
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return jsonDecode(response.body);
-      } else {
-        return {"status": "error", "message": "Something went wrong"};
-      }
-    } catch (e) {
-      MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error: $e'});
+    } else {
+      final cachedData = await cacheManager.getSingleFile(
+        url.toString(),
+        headers: headers,
+      );
+      final data = jsonDecode(await cachedData.readAsString());
+      print('Cache HIT');
+      print(cachedData);
+      print(data);
+      return data;
     }
   }
 
@@ -103,4 +120,6 @@ class MyApi {
           endpoint: 'error/application', body: {'error': 'Error: $e'});
     }
   }
+
+  
 }

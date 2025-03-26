@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SendMessage extends StatelessWidget {
   final String text;
@@ -52,8 +53,8 @@ class SendMessage extends StatelessWidget {
                 if (imageUrl != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      imageUrl!,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl!,
                       fit: BoxFit.cover,
                       width: Screen.width(context) * 0.6,
                     ),
