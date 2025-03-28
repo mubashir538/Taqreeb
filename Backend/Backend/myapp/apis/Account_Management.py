@@ -10,7 +10,7 @@ from myapp import Serializers as s
 from twilio.rest import Client
 import random as rd
 import requests as rq
-from firebase_admin import credentials, firestore, initialize_app
+from firebase_admin import credentials, firestore, initialize_app,messaging
 import os
 from django.conf import settings
 
@@ -26,6 +26,7 @@ def AccountSignupPage(request):
     lastName = request.data.get('lastName')
     password = request.data.get('password')
     age = request.data.get('age')
+    print('age: ',age)
     contactType = request.data.get('contactType')
     city = request.data.get('city')
     gender = request.data.get('gender')
@@ -101,12 +102,12 @@ def resendOTPEmail(request):
 def resendOTPPhone(request):
     contactNumber = request.data.get('phone')
     otp = request.data.get('otp')
-    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    message = client.messages.create(
-        body=f"Your OTP for Taqreeb is {otp}",
-        from_=settings.TWILIO_PHONE_NUMBER,
-        to=contactNumber
-    )
+    # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    # message = client.messages.create(
+    #     body=f"Your OTP for Taqreeb is {otp}",
+    #     from_=settings.TWILIO_PHONE_NUMBER,
+    #     to=contactNumber
+    # )
     return Response({'status':'success','otp': otp,'contact':contactNumber})
 
 @api_view(['POST'])
@@ -118,32 +119,45 @@ def sendOTPPhone(request):
         if contactNumber[0] == '0':
             contactNumber = contactNumber[1:]
         contactNumber = country + contactNumber
-
+    print('contactNumber: ',contactNumber)
     otp = rd.randint(100000,999999)
-    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    message = client.messages.create(
-        body=f"Your OTP for Taqreeb is {otp}",
-        from_=settings.TWILIO_PHONE_NUMBER,
-        to=contactNumber
-    )
+    message = messaging.Message(
+            notification=messaging.Notification(
+                title="Your OTP Code",
+                body=f"Your Taqreeb verification code is {otp}. Do not share it with anyone."
+            ),
+            token=contactNumber,  # Phone number should be FCM token from the mobile app
+        )
+
+    response = messaging.send(message)
+    print(response)
+    # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    # message = client.messages.create(
+    #     body=f"Your OTP for Taqreeb is {otp}",
+    #     from_=settings.TWILIO_PHONE_NUMBER,
+    #     to=contactNumber
+    # )
     return Response({'status':'success','otp': otp,'contact':contactNumber})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def sendOTPEmail(request):
     email = request.data.get('email')
-    otp = rd.randint(1000,9999)
-    subject = 'The OTP for Taqreeb'
-    message = f''' The Otp for your Taqreeb App is
-    YOUR OTP IS: {otp}'''
-    email_from = settings.EMAIL_HOST_USER
-    email_to = email
-    try:
-        send_mail(subject,message,email_from,[email_to])
-        return Response({'status': 200,'otp':otp,'email':email})
-    except Exception as e:
-        print(e)
-        return Response({'status': 400})
+    if not md.User.objects.filter(email=email).exists():
+        otp = rd.randint(1000,9999)
+        subject = 'The OTP for Taqreeb'
+        message = f''' The Otp for your Taqreeb App is
+        YOUR OTP IS: {otp}'''
+        email_from = settings.EMAIL_HOST_USER
+        email_to = email
+        try:
+            send_mail(subject,message,email_from,[email_to])
+            return Response({'status': 'success','otp':otp,'email':email})
+        except Exception as e:
+            print(e)
+            return Response({'status': 'error'})
+    else:
+        return Response({'status': 'error','message': 'Email Already Exists'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -208,8 +222,8 @@ def resendOTP(request):
     email = request.data.get('email')
     otp = request.data.get('otp')
     if str(email).find('@') != -1:
-        subject = 'Password Reset OTP for Taqreeb'
-        message = f''' The Passowrd Reset Otp for your Taqreeb App is
+        subject = 'The OTP for Taqreeb'
+        message = f''' The Otp for your Taqreeb App is
         YOUR OTP IS: {otp}'''
         email_from = settings.EMAIL_HOST_USER
         email_to = email
@@ -408,6 +422,7 @@ def FreelancerSignup(request):
 def UserLogin(request):
     contact = request.data.get('contact')
     password = request.data.get('password')
+    print('pass: ',password)
     # salt = bcrypt.gensalt()
     # hashed = bcrypt.hashpw(str(password).encode(),salt)
     # password = hashed.decode()
@@ -415,9 +430,10 @@ def UserLogin(request):
         user = md.User.objects.filter(email=contact).first()
     else:
         user = md.User.objects.filter(contactNumber=contact).first()
-    if bcrypt.checkpw(password.encode(), user.password.encode()):
-        refresh = RefreshToken.for_user(user)
-        return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})
+    if(user):
+        if bcrypt.checkpw(password.encode(), user.password.encode()):
+            refresh = RefreshToken.for_user(user)
+            return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})
     
     return Response({'status': 'error', 'message': 'Invalid Credentials'})
 

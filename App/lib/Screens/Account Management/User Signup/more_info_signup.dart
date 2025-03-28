@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -8,6 +8,7 @@ import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
@@ -26,7 +27,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   final TextEditingController ageController = TextEditingController();
 
   final GlobalKey headerKey = GlobalKey();
-  final List<String> cities = ["Karachi", "Lahore", "Islamabad", "Peshawar"];
+  final List<String> cities = ["Karachi"];
   final List<String> genders = ["Male", "Female"];
   static const int minimumAge = 18;
 
@@ -65,6 +66,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   }
 
   bool _validateForm() {
+    cityController.text = cities[0];
     if (genderController.text.isEmpty ||
         cityController.text.isEmpty ||
         ageController.text.isEmpty) {
@@ -85,15 +87,13 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   }
 
   void _showErrorDialog(String title, String message) {
-    warningDialog(
-      title: title,
-      message: message,
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
 
   Future<void> _saveUserData() async {
-    await MyStorage.saveToken(cityController.text, 'scity');
-    await MyStorage.saveToken(genderController.text, 'sgender');
+    await MyStorage.saveToken(cityController.text, MyTokens.scity);
+    await MyStorage.saveToken(genderController.text, MyTokens.sgender);
+    await MyStorage.saveToken(ageController.text, MyTokens.sage);
   }
 
   void _navigateToProfilePictureUpload() {
@@ -139,11 +139,6 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
                       SizedBox(
                         height: (Screen.height(context) * 0.01) +
                             UI_Management.headerHeight,
-                      ),
-                      _buildFormField(
-                        labelText: "City",
-                        items: cities,
-                        controller: cityController,
                       ),
                       _buildFormField(
                         labelText: "Gender",

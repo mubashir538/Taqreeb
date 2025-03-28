@@ -29,6 +29,7 @@ class Header extends StatefulWidget {
 
 class _HeaderState extends State<Header> {
   bool _noSettings = false;
+  bool _noBack = false;
 
   @override
   void didChangeDependencies() {
@@ -40,7 +41,7 @@ class _HeaderState extends State<Header> {
     final currentRoute = ModalRoute.of(context)?.settings.name;
     const noSettingsRoutes = {
       '/Login',
-      '/basicSignup',
+      '/BasicSignup',
       '/Signup_ContactOTPSend',
       '/Signup_ContactOTPVerify',
       '/Signup_EmailOTPSend',
@@ -56,8 +57,17 @@ class _HeaderState extends State<Header> {
       '/ForgotPassword_NewPassword',
     };
 
+    const noBackRoutes = {
+      '/Login',
+      '/BasicSignup',
+      '/ForgotPassword_EmailorPhoneInput',
+      '/ForgotPassword_VerifyCode',
+      '/ForgotPassword_NewPassword',
+      '/SubmissionSucessful',
+    };
     setState(() {
       _noSettings = noSettingsRoutes.contains(currentRoute);
+      _noBack = noBackRoutes.contains(currentRoute);
     });
   }
 
@@ -66,7 +76,8 @@ class _HeaderState extends State<Header> {
       endpoint: 'notification/DeleteFCM',
       body: {'token': await MyStorage.yourFCM()},
       headers: {
-        'Authorization': 'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
       },
     );
 
@@ -97,6 +108,7 @@ class _HeaderState extends State<Header> {
         ),
         ColoredButton(
           onPressed: () async {
+            await MyApi.cacheManager.emptyCache();
             await _handleLogout();
           },
           text: 'Logout',
@@ -124,7 +136,7 @@ class _HeaderState extends State<Header> {
             ? const BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
-            )
+              )
             : BorderRadius.zero,
       ),
       child: Column(
@@ -134,24 +146,23 @@ class _HeaderState extends State<Header> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    } else {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/HomePage',
-                        (Route<dynamic> route) => false,
-                      );
-                    }
-                  },
-                  child: Icon(
-                    Icons.chevron_left_outlined,
-                    color: MyColors.redonWhite,
-                    size: Screen.max(context) * 0.03,
-                  ),
-                ),
+                _noBack
+                    ? const SizedBox.shrink()
+                    : InkWell(
+                        onTap: () async {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            await MyApi.cacheManager.emptyCache();
+                            print('No screen to Pop');
+                          }
+                        },
+                        child: Icon(
+                          Icons.chevron_left_outlined,
+                          color: MyColors.redonWhite,
+                          size: Screen.max(context) * 0.03,
+                        ),
+                      ),
                 Text(
                   'Taqreeb',
                   style: GoogleFonts.montserrat(
@@ -164,7 +175,8 @@ class _HeaderState extends State<Header> {
                     ? const SizedBox.shrink()
                     : InkWell(
                         onTap: () {
-                          if (ModalRoute.of(context)?.settings.name == '/Settings') {
+                          if (ModalRoute.of(context)?.settings.name ==
+                              '/Settings') {
                             _showLogoutDialog();
                           } else {
                             Navigator.pushNamed(context, '/Settings');

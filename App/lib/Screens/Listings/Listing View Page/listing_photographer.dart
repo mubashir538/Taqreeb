@@ -156,7 +156,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     if (mounted) {
       Navigator.pushNamed(
         context,
-        '/orderSummary',
+        '/OrderSummary',
         arguments: {
           'Name': _listing['Listing']['name'],
           'type': _listing['Listing']['type'],

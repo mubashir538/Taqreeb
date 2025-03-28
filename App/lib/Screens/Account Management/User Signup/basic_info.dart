@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/auth_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -82,7 +84,9 @@ class _BasicSignupState extends State<BasicSignup> {
         ),
         ColoredButton(
           text: 'Continue',
-          onPressed: () => _navigateBasedOnPreviousProgress(context),
+          onPressed: () async {
+            await _navigateBasedOnPreviousProgress(context);
+          },
         ),
       ],
     ).showDialogBox(context);
@@ -99,6 +103,13 @@ class _BasicSignupState extends State<BasicSignup> {
   }
 
   Future<void> _navigateBasedOnPreviousProgress(BuildContext context) async {
+    if (Navigator.of(context).canPop()) {
+      await Navigator.of(context, rootNavigator: true).maybePop();
+    }
+
+    await Future.delayed(Duration(
+        milliseconds: 100)); // Small delay ensures smooth UI transition
+
     if (await MyStorage.exists(MyTokens.scity)) {
       Navigator.pushNamed(context, '/ProfilePictureUpload',
           arguments: {'type': 'User'});
@@ -106,9 +117,9 @@ class _BasicSignupState extends State<BasicSignup> {
         await MyStorage.exists(MyTokens.semail)) {
       Navigator.pushNamed(context, '/Signup_MoreInfo');
     } else {
-      Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+      print('No previous progress');
+      Navigator.pushNamed(context, '/Signup_EmailOTPSend');
     }
-    Navigator.pop(context);
   }
 
   void _measureHeaderHeight() {
@@ -128,7 +139,7 @@ class _BasicSignupState extends State<BasicSignup> {
     if (!_validateForm()) return;
 
     await _saveUserData();
-    Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+    Navigator.pushNamed(context, '/Signup_EmailOTPSend');
   }
 
   bool _validateForm() {
@@ -137,6 +148,16 @@ class _BasicSignupState extends State<BasicSignup> {
         passwordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
       _showErrorDialog("Please fill all the details");
+      return false;
+    }
+    final firstNameValidation =
+        Validations.validateName(firstNameController.text);
+    final lastNameValidation =
+        Validations.validateName(lastNameController.text);
+    if (firstNameValidation != 'Ok' || lastNameValidation != 'Ok') {
+      _showErrorDialog(firstNameValidation == 'Ok'
+          ? lastNameValidation
+          : firstNameValidation);
       return false;
     }
 
@@ -156,10 +177,7 @@ class _BasicSignupState extends State<BasicSignup> {
   }
 
   void _showErrorDialog(String message) {
-    warningDialog(
-      message: message,
-      title: "Invalid Details",
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
 
   Future<void> _saveUserData() async {
@@ -251,11 +269,16 @@ class _BasicSignupState extends State<BasicSignup> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context),
               child: Column(
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  Headersecondary(
+                    heading: "Signup",
+                    para: "Unlock exclusive events - sign up now!",
+                    image: MyImages.Signup1,
+                  ),
+                  SizedBox(height: Screen.height(context) * 0.01),
                   MyTextBox(
                     focusNode: firstNameFocus,
                     onFieldSubmitted: (_) =>
@@ -291,7 +314,7 @@ class _BasicSignupState extends State<BasicSignup> {
                   ),
                   const SizedBox(height: 10),
                   InkWell(
-                    onTap: () => Navigator.pushNamed(context, '/Login'),
+                    onTap: () => Navigator.pushReplacementNamed(context, '/Login'),
                     child: Text(
                       "Already a Member? Login",
                       style: TextStyle(color: MyColors.yellowonDark),
@@ -318,9 +341,6 @@ class _BasicSignupState extends State<BasicSignup> {
             top: 0,
             child: Header(
               key: headerKey,
-              heading: "Signup",
-              para: "Unlock exclusive events - sign up now!",
-              image: MyImages.Signup1,
             ),
           ),
         ],

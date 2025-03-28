@@ -27,9 +27,12 @@ class _ColoredButtonState extends State<ColoredButton> {
   bool _isPressed = false;
 
   void _handleTapDown(TapDownDetails details) {
+    if(mounted){
+
     setState(() {
       _isPressed = true;
     });
+    }
   }
 
   void _handleTapUp(TapUpDetails details) {

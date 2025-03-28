@@ -3,10 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Buttons/c_icon_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/auth_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -92,17 +93,21 @@ class _LoginState extends State<Login> {
   }
 
   bool _validateCredentials() {
+    if (_passwordController.text.isEmpty || _emailController.text.isEmpty) {
+      _showErrorDialog("Invalid Credentials", "Please fill all the fields");
+      return false;
+    }
     if (_emailController.text.contains("@")) {
       final emailValidation = Validations.validateEmail(_emailController.text);
       if (emailValidation != "Ok") {
-        _showErrorDialog("Invalid Email", emailValidation);
+        _showErrorDialog("", 'Invalid Credentials');
         return false;
       }
     } else {
       final contactValidation =
           Validations.validateContact(_emailController.text);
       if (contactValidation != "Ok") {
-        _showErrorDialog("Invalid Contact", contactValidation);
+        _showErrorDialog("", 'Invalid Credentials');
         return false;
       }
     }
@@ -198,10 +203,7 @@ class _LoginState extends State<Login> {
   }
 
   void _showErrorDialog(String title, String message) {
-    warningDialog(
-      title: title,
-      message: message,
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
 
   void _navigateToForgotPassword() {
@@ -209,7 +211,7 @@ class _LoginState extends State<Login> {
   }
 
   void _navigateToSignup() {
-    Navigator.pushNamed(context, '/basicSignup');
+    Navigator.pushReplacementNamed(context, '/BasicSignup');
   }
 
   @override
@@ -220,17 +222,21 @@ class _LoginState extends State<Login> {
         children: [
           if (UI_Management.headerHeight > 0)
             SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                 width: Screen.width(context),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       children: [
-                        SizedBox(
-                          height: (Screen.height(context) * 0.03) +
-                              UI_Management.headerHeight,
+                        Headersecondary(
+                          heading: "Login to Continue",
+                          para:
+                              "We believe that your event should not be delayed so let's "
+                              "login your Account so we can get Started",
+                          image: MyImages.Login,
                         ),
+                        SizedBox(height: (Screen.height(context) * 0.03)),
                         MyTextBox(
                           focusNode: _emailFocus,
                           onFieldSubmitted: (_) => FocusScope.of(context)
@@ -297,10 +303,6 @@ class _LoginState extends State<Login> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: "Login to Continue",
-              para: "We believe that your event should not be delayed so let's "
-                  "login your Account so we can get Started",
-              image: MyImages.Login,
             ),
           ),
         ],

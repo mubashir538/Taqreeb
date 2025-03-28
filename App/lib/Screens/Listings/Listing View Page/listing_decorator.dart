@@ -164,7 +164,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     if (mounted) {
       Navigator.pushNamed(
         context,
-        '/orderSummary',
+        '/OrderSummary',
         arguments: {
           'Name': _listing['Listing']['name'],
           'type': _listing['Listing']['type'],

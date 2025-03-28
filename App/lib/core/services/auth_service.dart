@@ -103,6 +103,7 @@ class AuthService {
           'user_location'
         ],
       );
+      print('executed');
 
       if (result.status == LoginStatus.success) {
         final OAuthCredential credential =

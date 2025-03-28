@@ -2,40 +2,52 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/crop_dialog.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/core/utils/color.dart';
 
 class Picture {
-  static Future<void> pickImage(BuildContext context,
-      {required Function(File compressedFile) callback}) async {
+  static Future<void> pickImage(
+    BuildContext context, {
+    required Function(File compressedFile) callback,
+  }) async {
     try {
+      // 1. Pick image from gallery
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile == null) return;
 
-      if (pickedFile != null) {
-        final imageBytes = await File(pickedFile.path).readAsBytes();
+      // 2. Immediately crop the image
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 90,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: MyColors.red,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(
+            title: 'Crop Image',
+            aspectRatioLockEnabled: false,
+          ),
+        ],
+      );
 
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CropPopup(
-              imageBytes: imageBytes,
-              onCropped: (croppedBytes) async {
-                final croppedFile = await saveCroppedImage(croppedBytes);
-                final compressedFile = await compressImage(croppedFile);
-                callback(compressedFile);
-              },
-            );
-          },
-        );
+      if (croppedFile != null) {
+        // 3. Compress and return the file
+        final compressedFile = await compressImage(File(croppedFile.path));
+        callback(compressedFile);
       }
     } catch (e) {
-      warningDialog(
-        title: 'Error',
-        message: 'Failed to pick or crop the image. Please try again.',
-      ).showDialogBox(context);
+      print('Image processing error: $e');
+      MyScaffold(text: 'Failed to process image. Please try again.')
+          .show(context);
     }
   }
 

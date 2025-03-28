@@ -149,7 +149,7 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
     if (mounted) {
       Navigator.pushNamed(
         context,
-        '/orderSummary',
+        '/OrderSummary',
         arguments: {
           'Name': _listing['Listing']['name'],
           'type': _listing['Listing']['type'],

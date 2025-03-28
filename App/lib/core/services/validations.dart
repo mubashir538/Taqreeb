@@ -27,9 +27,9 @@ class Validations {
     if (value == null || value.isEmpty) {
       return 'Please enter a name';
     }
-    RegExp regex = RegExp(r'[a-zA-Z]');
+    RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
     if (!regex.hasMatch(value)) {
-      return 'Invalid Data';
+      return 'Name can only contain letters and spaces';
     }
 
     return "Ok";

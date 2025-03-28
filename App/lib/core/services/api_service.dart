@@ -18,7 +18,6 @@ class MyApi {
     http.Response response;
     // final cache = await APICacheManager().isAPICacheKeyExist(endpoint);
     final cache = await cacheManager.getFileFromCache(url.toString());
-    print(cache);
     if (cache == null) {
       try {
         if (headers != null) {
@@ -35,7 +34,8 @@ class MyApi {
           return {"status": "error", "message": "Something went wrong"};
         }
       } catch (e) {
-        print('Error occurred: $e');
+        MyApi.postRequest(
+            endpoint: 'error/application', body: {'error': 'Error: $e'});
       }
     } else {
       final cachedData = await cacheManager.getSingleFile(
@@ -43,9 +43,6 @@ class MyApi {
         headers: headers,
       );
       final data = jsonDecode(await cachedData.readAsString());
-      print('Cache HIT');
-      print(cachedData);
-      print(data);
       return data;
     }
   }
@@ -105,7 +102,7 @@ class MyApi {
       request.fields[body.keys.toList()[i]] = body.values.toList()[i];
     }
     final response = await request.send();
-
+    print('executed');
     try {
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
@@ -120,6 +117,4 @@ class MyApi {
           endpoint: 'error/application', body: {'error': 'Error: $e'});
     }
   }
-
-  
 }

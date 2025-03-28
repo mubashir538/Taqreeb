@@ -87,10 +87,10 @@ class PackagesSerializer(s.ModelSerializer):
         model = mp.Packages
         fields = '__all__'
         
-class OrdersSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.Orders
-        fields = '__all__'
+# class OrdersSerializer(s.ModelSerializer):
+#     class Meta:
+#         model = mp.Orders
+#         fields = '__all__'
 
 
 class CartSerializer(s.ModelSerializer):

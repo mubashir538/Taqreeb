@@ -8,14 +8,14 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class AddCategoryPackage extends StatefulWidget {
-  const AddCategoryPackage({super.key});
+class AddCategoryAddPackage extends StatefulWidget {
+  const AddCategoryAddPackage({super.key});
 
   @override
-  State<AddCategoryPackage> createState() => _AddCategoryPackageState();
+  State<AddCategoryAddPackage> createState() => _AddCategoryAddPackageState();
 }
 
-class _AddCategoryPackageState extends State<AddCategoryPackage> {
+class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
   final _formController = PackageFormController();
   final GlobalKey _headerKey = GlobalKey();
 

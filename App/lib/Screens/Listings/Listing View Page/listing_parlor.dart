@@ -147,7 +147,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
     if (mounted) {
       Navigator.pushNamed(
         context, 
-        '/orderSummary',
+        '/OrderSummary',
         arguments: {
           'Name': _listing['Listing']['name'],
           'type': _listing['Listing']['type'],
