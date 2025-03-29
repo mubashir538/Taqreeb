@@ -47,6 +47,7 @@ class _SearchServiceState extends State<SearchService> {
   final CheckBoxController _categoryController =
       CheckBoxController(selections: []);
   final ScrollController _scrollController = ScrollController();
+  FocusNode searchFocus = FocusNode();
 
   // UI State
   final GlobalKey _headerKey = GlobalKey();
@@ -336,7 +337,10 @@ class _SearchServiceState extends State<SearchService> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SearchBox(
-              onclick: () {},
+              focusNode: searchFocus,
+              onclick: () {
+                searchFocus.requestFocus();
+              },
               hint: 'Start typing to search',
               controller: _searchController,
               width: Screen.width(context) * 0.75,

@@ -160,7 +160,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: 2),
+                  const ProgressBar(progress: 2),
                 ],
               ),
             ),

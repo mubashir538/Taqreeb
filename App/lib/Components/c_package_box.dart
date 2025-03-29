@@ -18,14 +18,14 @@ class _PackageBoxState extends State<PackageBox> {
   bool isCollapsed = true;
   @override
   Widget build(BuildContext context) {
-    void ChangeCollapse() {
+    void changeCollapse() {
       setState(() {
         isCollapsed = !isCollapsed;
       });
     }
 
     return InkWell(
-      onTap: () => ChangeCollapse(),
+      onTap: () => changeCollapse(),
       child: Container(
           margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
           width: Screen.width(context) * 0.9,
@@ -51,7 +51,7 @@ class _PackageBoxState extends State<PackageBox> {
                               fontWeight: FontWeight.w500,
                               color: MyColors.white)),
                       InkWell(
-                        onTap: () => ChangeCollapse(),
+                        onTap: () => changeCollapse(),
                         child: Transform.rotate(
                           angle: 90 * 3.14 / 180,
                           child: Icon(

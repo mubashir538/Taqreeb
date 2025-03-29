@@ -61,7 +61,6 @@ class _EventFormData {
     typeFocus.dispose();
     dateFocus.dispose();
     locationFocus.dispose();
-    descriptionFocus.dispose();
     budgetFocus.dispose();
     guestMinFocus.dispose();
     guestMaxFocus.dispose();
@@ -71,7 +70,7 @@ class _EventFormData {
 
 class _CreateEventState extends State<CreateEvent> {
   final _formData = _EventFormData();
-  final Map<String, dynamic> _eventTypes = {};
+  Map<String, dynamic> _eventTypes = {};
   bool _isLoading = true;
   bool _isEditMode = false;
   String _eventId = "";
@@ -89,8 +88,23 @@ class _CreateEventState extends State<CreateEvent> {
         _eventId = args;
         _isEditMode = true;
       });
+      _fetchEventTypes();
       _fetchEventDetails();
     }
+  }
+
+  Future<void> _fetchEventTypes() async {
+    await ApiCall.fetchAPI(
+      'getEventTypes/',
+      onSuccess: (token, data) {
+        if (!mounted) return;
+        setState(() {
+          _eventTypes = data;
+          print(_eventTypes);
+        });
+      },
+      context: mounted ? context : null,
+    );
   }
 
   Future<void> _fetchEventDetails() async {
@@ -190,19 +204,36 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   void dispose() {
-    _formData.dispose();
+    // Unfocus all focus nodes first
+    _formData.descriptionFocus.unfocus();
+    _formData.eventNameFocus.unfocus();
+    _formData.typeFocus.unfocus();
+    _formData.dateFocus.unfocus();
+    _formData.locationFocus.unfocus();
+    _formData.budgetFocus.unfocus();
+    _formData.guestMinFocus.unfocus();
+    _formData.guestMaxFocus.unfocus();
+    _formData.themeColorFocus.unfocus();
+    if (mounted) {
+      _formData.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MyColors.Dark,
-      body: Stack(
-        children: [
-          _buildContent(),
-          const Positioned(top: 0, child: Header()),
-        ],
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) async {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: MyColors.Dark,
+        body: Stack(
+          children: [
+            _buildContent(),
+            const Positioned(top: 0, child: Header()),
+          ],
+        ),
       ),
     );
   }

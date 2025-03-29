@@ -158,7 +158,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: _progressStep),
+                  const ProgressBar(progress: _progressStep),
                 ],
               ),
             ),

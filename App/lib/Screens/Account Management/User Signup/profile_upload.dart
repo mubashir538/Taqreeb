@@ -77,7 +77,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     }
     await Picture.pickImage(context, callback: (file) {
       if (mounted) {
-        print('file path: ${file.path}');
         setState(() => _selectedImage = file);
       }
     });
@@ -96,7 +95,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
     try {
       final response = await _performUpload();
-      print('Response: $response');
       await _handleUploadResponse(response);
     } catch (e) {
       MyScaffold(text: 'Upload failed: ${e.toString()}').show(context);
@@ -229,7 +227,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                 children: [
                   SizedBox(height: UI_Management.headerHeight),
                   _buildProfileImageSection(),
-                  const ProgressBar(Progress: _progressStep),
+                  const ProgressBar(progress: _progressStep),
                 ],
               ),
             ),

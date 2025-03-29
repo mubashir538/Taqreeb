@@ -206,7 +206,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: 1),
+                  const ProgressBar(progress: 1),
                 ],
               ),
             ),

@@ -9,6 +9,7 @@ class SearchBox extends StatelessWidget {
   final VoidCallback? onclick;
   final bool isHome;
   final String hint;
+  final FocusNode focusNode;
   final Function(String) onChanged;
   const SearchBox(
       {super.key,
@@ -16,6 +17,7 @@ class SearchBox extends StatelessWidget {
       required this.onChanged,
       required this.hint,
       required this.controller,
+      required this.focusNode,
       this.width = 0,
       this.onclick});
 
@@ -44,6 +46,7 @@ class SearchBox extends StatelessWidget {
                   onTap: onclick,
                   child: TextField(
                     readOnly: isHome ? true : false,
+                    focusNode: focusNode,
                     onTap: onclick,
                     controller: controller,
                     onChanged: onChanged,

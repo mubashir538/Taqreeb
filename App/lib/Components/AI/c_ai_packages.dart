@@ -36,7 +36,7 @@ class AIPackage extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withAlpha(127),
                 blurRadius: 4,
                 spreadRadius: 1,
                 offset: Offset(2, 2))

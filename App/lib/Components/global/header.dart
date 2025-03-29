@@ -64,6 +64,12 @@ class _HeaderState extends State<Header> {
       '/ForgotPassword_VerifyCode',
       '/ForgotPassword_NewPassword',
       '/SubmissionSucessful',
+      '/HomePage',
+      '/YourEvents',
+      '/YourListings',
+      '/AccountInfo',
+      '/BusinessAccountInfo',
+      '/ChatsScreen',
     };
     setState(() {
       _noSettings = noSettingsRoutes.contains(currentRoute);

@@ -3,8 +3,8 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class ProgressBar extends StatelessWidget {
-  final int Progress;
-  const ProgressBar({super.key, required this.Progress});
+  final int progress;
+  const ProgressBar({super.key, required this.progress});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ProgressBar extends StatelessWidget {
       MyColors.whiteDarker,
       MyColors.whiteDarker
     ];
-    for (int i = 0; i < Progress; i++) {
+    for (int i = 0; i < progress; i++) {
       c[i] = MyColors.Yellow;
     }
 

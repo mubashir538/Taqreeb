@@ -205,7 +205,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: 1),
+                  const ProgressBar(progress: 1),
                 ],
               ),
             ),

@@ -67,13 +67,13 @@ class _ColoredButtonState extends State<ColoredButton> {
             (widget.width != 0 ? widget.width : Screen.width(context) * 0.9) *
                 (_isPressed ? 0.95 : 1.0),
         decoration: BoxDecoration(
-          color: _isPressed ? MyColors.red.withOpacity(0.8) : MyColors.red,
+          color: _isPressed ? MyColors.red.withAlpha(204) : MyColors.red,
           borderRadius: BorderRadius.circular(10),
           boxShadow: _isPressed
               ? []
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withAlpha(51),
                     blurRadius: 5,
                     offset: const Offset(0, 3),
                   ),

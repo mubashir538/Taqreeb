@@ -149,7 +149,6 @@ class _MainAppState extends State<MainApp> {
     );
   }
 
-
   Map<String, WidgetBuilder> _buildRoutes() {
     return {
       '/': (context) => SplashScreen(),
@@ -185,6 +184,7 @@ class _MainAppState extends State<MainApp> {
       '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
       '/ChatBox': (context) => ChatBox(),
       '/ChatsScreen': (context) => MainScreen(index: 1),
+      '/CreateAIPackage': (context) => MainScreen(index: 1),
       '/CreateChecklistItems': (context) => CreateChecklistItems(),
       '/CreateEvent': (context) => CreateEvent(),
       '/CreateFunction': (context) => CreateFunction(),
