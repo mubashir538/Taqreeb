@@ -149,9 +149,11 @@ def AddListing(request):
     view.save()
     
     listId = listingId.id
+    count = 0
     for i in pictures:
+        count += 1
         filestorage = FileSystemStorage()
-        filePath = filestorage.save(f'uploads/listings/{category}/{listId}-{i}.png', i)
+        filePath = filestorage.save(f'uploads/listings/{category}/{listId}-{count}.png', i)
         md.PicturesListings(listingId=listingId,picturePath=filestorage.url(filePath)).save()            
     packages = json.loads(packages) if packages else []
     if packages:

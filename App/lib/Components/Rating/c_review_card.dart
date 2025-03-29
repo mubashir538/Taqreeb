@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class ReviewCard extends StatelessWidget {
   final String name;
@@ -118,8 +120,8 @@ class ReviewCard extends StatelessWidget {
                     margin: EdgeInsets.only(right: max * 0.01),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(max * 0.01),
-                      child: Image.network(
-                        pictures![index],
+                      child: CachedNetworkImage(
+                        imageUrl: pictures![index],
                         width: max * 0.1,
                         height: max * 0.1,
                         fit: BoxFit.cover,

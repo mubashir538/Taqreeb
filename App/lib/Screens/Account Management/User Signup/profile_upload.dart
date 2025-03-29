@@ -26,6 +26,7 @@ class ProfilePictureUpload extends StatefulWidget {
 class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   File? _selectedImage;
   String _userType = '';
+  bool _isPickerActive = false;
   final GlobalKey headerKey = GlobalKey();
 
   // Constants
@@ -69,11 +70,21 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   }
 
   Future<void> _pickImage() async {
+    if (mounted) {
+      setState(() {
+        _isPickerActive = true;
+      });
+    }
     await Picture.pickImage(context, callback: (file) {
       if (mounted) {
         setState(() => _selectedImage = file);
       }
     });
+    if (mounted) {
+      setState(() {
+        _isPickerActive = false;
+      });
+    }
   }
 
   Future<void> _uploadProfilePicture() async {
@@ -93,7 +104,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   Future<Map<String, dynamic>> _performUpload() async {
     final endpoint = _getEndpointForUserType();
     final body = await _getRequestBodyForUserType();
-    Map<String, dynamic> files = {'profilePicture': _selectedImage!};
+
+    Map<String, dynamic> files = {'profilePicture': _selectedImage!.path};
 
     if (_userType == 'Business') {
       files.addAll({
@@ -104,7 +116,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
     return await MyApi.postMultipartRequest(
       endpoint: endpoint,
-      token: _userType == 'User',
+      token: false,
       body: body,
       files: files,
     );
@@ -145,8 +157,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
           'password': await MyStorage.getToken(MyTokens.spassword) ?? "",
           'contactType':
               await MyStorage.exists(MyTokens.semail) ? 'email' : 'phone',
-          'email': await MyStorage.getToken(MyTokens.semail),
-          'contactNumber': await MyStorage.getToken(MyTokens.sphone),
+          'email': await MyStorage.getToken(MyTokens.semail) ?? "",
+          'contactNumber': await MyStorage.getToken(MyTokens.sphone) ?? "",
           'city': await MyStorage.getToken(MyTokens.scity) ?? "",
           'gender': await MyStorage.getToken(MyTokens.sgender) ?? "",
           'age': await MyStorage.getToken(MyTokens.sage) ?? "",
@@ -215,7 +227,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                 children: [
                   SizedBox(height: UI_Management.headerHeight),
                   _buildProfileImageSection(),
-                  const ProgressBar(Progress: _progressStep),
+                  const ProgressBar(progress: _progressStep),
                 ],
               ),
             ),
@@ -239,7 +251,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     return Column(
       children: [
         GestureDetector(
-          onTap: _pickImage,
+          onTap: _isPickerActive ? null : _pickImage,
           child: Container(
             margin: EdgeInsets.all(Screen.max(context) * 0.04),
             child: Stack(

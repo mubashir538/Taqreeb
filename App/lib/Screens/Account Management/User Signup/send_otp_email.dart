@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
@@ -67,9 +67,13 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
         endpoint: 'sendOTP/email',
         body: {'email': _emailController.text},
       );
-
+      if (response['status'] == 'error') {
+        MyScaffold(text: 'You Already have an Account, Try a Different Email')
+            .show(context);
+        return;
+      }
       if (mounted) {
-        Navigator.pushNamed(
+        Navigator.pushReplacementNamed(
           context,
           '/Signup_EmailOTPVerify',
           arguments: {
@@ -95,14 +99,11 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
   }
 
   void _showErrorDialog(String title, String message) {
-    warningDialog(
-      title: title,
-      message: message,
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
 
   void _navigateToContactVerification() {
-    Navigator.pushNamed(context, '/Signup_ContactOTPSend');
+    Navigator.pushReplacementNamed(context, '/Signup_ContactOTPSend');
   }
 
   @override
@@ -132,10 +133,12 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
                         height: Screen.height(context) * _dividerHeightFactor,
                         child: const Center(child: MyDivider()),
                       ),
-                      ColoredButton(
-                        text: 'Send OTP',
-                        onPressed: _isLoading ? null : _sendOtp,
-                      ),
+                      _isLoading
+                          ? CircularProgressIndicator.adaptive()
+                          : ColoredButton(
+                              text: 'Send OTP',
+                              onPressed: _isLoading ? null : _sendOtp,
+                            ),
                       InkWell(
                         onTap: _navigateToContactVerification,
                         child: Text(
@@ -148,7 +151,7 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: _progressStep),
+                  const ProgressBar(progress: _progressStep),
                 ],
               ),
             ),

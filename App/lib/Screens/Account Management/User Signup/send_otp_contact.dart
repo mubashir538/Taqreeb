@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
-import 'package:taqreeb/core/services/api_service.dart';
+// import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/phone_auth_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/validations.dart';
@@ -62,10 +64,12 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await MyApi.postRequest(
-        endpoint: 'sendOTP/phone',
-        body: {'contactNumber': _contactController.text},
-      );
+      await PhoneAuthService()
+          .sendOTP("+92${_contactController.text.substring(1)}");
+      //   final response = await MyApi.postRequest(
+      //     endpoint: 'sendOTP/phone',
+      //     body: {'contactNumber': },
+      //   );
 
       if (mounted) {
         Navigator.pushNamed(
@@ -73,9 +77,11 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
           '/Signup_ContactOTPVerify',
           arguments: {
             'contactNumber': _contactController.text,
-            'response': response,
           },
         );
+      } else {
+        MyScaffold(text: 'Failed to send OTP. Please try again later.')
+            .show(context);
       }
     } finally {
       if (mounted) {
@@ -101,8 +107,9 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
     ).showDialogBox(context);
   }
 
+
   void _navigateToEmailVerification() {
-    Navigator.pushNamed(context, '/Signup_EmailOTPSend');
+    Navigator.pushReplacementNamed(context, '/Signup_EmailOTPSend');
   }
 
   @override
@@ -151,7 +158,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: _progressStep),
+                  const ProgressBar(progress: _progressStep),
                 ],
               ),
             ),

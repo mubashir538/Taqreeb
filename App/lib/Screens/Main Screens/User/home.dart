@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   bool _isLoading = true;
   List<String> _myImages = [];
   GlobalKey headerKey = GlobalKey();
+  FocusNode searchFocus = FocusNode();
 
   @override
   void initState() {
@@ -190,6 +191,7 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SearchBox(
+            focusNode: searchFocus,
             onChanged: (value) {},
             hint: 'Start Typing to Search',
             onclick: _handleSearch,

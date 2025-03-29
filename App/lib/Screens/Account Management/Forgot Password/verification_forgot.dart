@@ -52,12 +52,12 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
         children: [
           SingleChildScrollView(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UI_Management.headerHeight * 0.7),
                 Container(
                   margin: EdgeInsets.only(
-                    top: Screen.max(context) * 0.07,
                     bottom: Screen.max(context) * 0.02,
                   ),
                   child: OTPBoxes(
@@ -70,7 +70,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                   onPressed: viewModel.isResendEnabled
                       ? () async {
                           await viewModel.resendOTP(
-                              response['email'], response['otp']);
+                              response['email'], response['otp'].toString());
                         }
                       : null,
                   child: Text(
@@ -94,7 +94,7 @@ class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
                   text: 'Verify Code',
                   onPressed: () async {
                     await viewModel.verifyOTP(
-                      viewModel.enteredOTP,
+                      int.parse(viewModel.enteredOTP),
                       response['otp'],
                       context,
                       email,

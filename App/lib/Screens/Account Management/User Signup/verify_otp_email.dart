@@ -70,6 +70,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
   }
 
   Future<void> _resendOtp(Map<String, dynamic> response) async {
+    setState(() => _isResendEnabled = false);
     try {
       await MyApi.postRequest(
         endpoint: 'resendOTP/email',
@@ -128,14 +129,14 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final email = arguments?['email'] ?? '';
-    final response = arguments?['response'] as Future<dynamic>?;
+    Future<dynamic> response = Future.value(arguments?['response']);
 
-    if (response == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pop(context);
-      });
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    // if (response == null) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     Navigator.pop(context);
+    //   });
+    //   return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    // }
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
@@ -205,7 +206,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                       ),
                     ],
                   ),
-                  const ProgressBar(Progress: 1),
+                  const ProgressBar(progress: 1),
                 ],
               ),
             ),

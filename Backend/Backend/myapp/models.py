@@ -106,14 +106,14 @@ class Packages(m.Model):
     description = m.CharField(max_length=1100)
     price= m.IntegerField()
 
-class Orders(m.Model):
-    id = m.AutoField(primary_key=True)
-    customerID = m.ForeignKey(User,on_delete=m.CASCADE)
-    ownerID = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
-    ServiceID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    price = m.IntegerField()
-    packageID = m.ForeignKey(Packages,on_delete=m.CASCADE)
-    status = m.CharField(max_length=100)
+# class Orders(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     customerID = m.ForeignKey(User,on_delete=m.CASCADE)
+#     ownerID = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
+#     ServiceID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     price = m.IntegerField()
+#     packageID = m.ForeignKey(Packages,on_delete=m.CASCADE)
+#     status = m.CharField(max_length=100)
 
 class AIEventQuestions(m.Model):
     id = m.AutoField(primary_key=True)

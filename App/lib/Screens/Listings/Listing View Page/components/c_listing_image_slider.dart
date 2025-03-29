@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class ImageSliderCategory extends StatefulWidget {
   final List<String> imageUrls;
-  
+
   const ImageSliderCategory({
-    super.key, 
+    super.key,
     required this.imageUrls,
   });
 
@@ -29,8 +31,8 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
       child: PageView.builder(
         itemCount: widget.imageUrls.length,
         onPageChanged: (index) => setState(() => _currentIndex = index),
-        itemBuilder: (context, index) => Image.network(
-          _getImageUrl(widget.imageUrls[index]),
+        itemBuilder: (context, index) => CachedNetworkImage(
+          imageUrl: _getImageUrl(widget.imageUrls[index]),
           fit: BoxFit.cover,
         ),
       ),
@@ -42,12 +44,10 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: isActive 
-          ? Screen.max(context) * 0.015 
-          : Screen.max(context) * 0.01,
-      height: isActive 
-          ? Screen.max(context) * 0.015 
-          : Screen.max(context) * 0.01,
+      width:
+          isActive ? Screen.max(context) * 0.015 : Screen.max(context) * 0.01,
+      height:
+          isActive ? Screen.max(context) * 0.015 : Screen.max(context) * 0.01,
       decoration: BoxDecoration(
         color: isActive ? MyColors.red : MyColors.whiteDarker,
         borderRadius: BorderRadius.circular(10),

@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
           : FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                Navigator.pushReplacementNamed(
+                Navigator.pushNamed(
                   context,
                   _isBusinessOwner || _isFreelancer
                       ? '/AddCategory_List'

@@ -7,8 +7,8 @@ class AppThemes {
     primaryColor: MyColors.red,
     scaffoldBackgroundColor: MyColors.white,
     colorScheme: ColorScheme.light(
-      primary: MyColors.Yellow,
-      secondary: MyColors.red,
+      primary: MyColors.red,
+      secondary: MyColors.Yellow,
     ),
     textTheme: TextTheme(
       displayMedium: TextStyle(color: MyColors.Dark),
@@ -21,8 +21,8 @@ class AppThemes {
     primaryColor: MyColors.DarkLighter,
     scaffoldBackgroundColor: MyColors.Dark,
     colorScheme: ColorScheme.dark(
-      primary: MyColors.Yellow,
-      secondary: MyColors.red,
+      primary: MyColors.red,
+      secondary: MyColors.Yellow,
     ),
     textTheme: TextTheme(
       displayMedium: TextStyle(color: MyColors.white),

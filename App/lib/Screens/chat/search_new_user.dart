@@ -18,6 +18,8 @@ class _NewUserSearchState extends State<NewUserSearch> {
   final TextEditingController _searchController = TextEditingController();
   final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
+  FocusNode searchFocus = FocusNode();
+
   List<Map<String, dynamic>> _searchedUsers = [];
   bool _isSearching = false;
 
@@ -119,6 +121,10 @@ class _NewUserSearchState extends State<NewUserSearch> {
             const Header(heading: "Search New User"),
             SizedBox(height: Screen.height(context) * 0.02),
             SearchBox(
+              focusNode: searchFocus,
+              onclick: () {
+                searchFocus.requestFocus();
+              },
               onChanged: _searchUsers,
               hint: 'Search by Username',
               controller: _searchController,

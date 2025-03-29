@@ -26,6 +26,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
       FirebaseFirestore.instance.collection('groups');
   final CollectionReference _chatsCollection =
       FirebaseFirestore.instance.collection('chats');
+  FocusNode searchFocus = FocusNode();
 
   List<Map<String, dynamic>> _userChats = [];
   List<Map<String, dynamic>> _groups = [];
@@ -189,6 +190,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         SearchBox(
+          focusNode: searchFocus,
+          onclick: () {
+            searchFocus.requestFocus();
+          },
           onChanged: _searchUsers,
           hint: 'Search Users',
           controller: _searchController,

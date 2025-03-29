@@ -133,9 +133,12 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
       UI_Management.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
+          if(mounted){
+
           setState(() {
             UI_Management.headerHeight = renderbox.size.height;
           });
+          }
         },
       );
       Provider.of<BusinessInfoEditViewModel>(context, listen: false)

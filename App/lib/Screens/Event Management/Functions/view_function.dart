@@ -24,7 +24,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   String _token = '';
   Map<String, dynamic> _functionDetails = {};
-  Map<String, dynamic> _bookings = {};
   int _functionId = 0;
   int _eventId = 0;
   String _eventName = '';
@@ -43,7 +42,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
-            _bookings = data; // Store the complete response
             _bookingList.addAll(data['cart'] ?? []); // Use the stored data
           });
         }

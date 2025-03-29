@@ -124,7 +124,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/CreateGuestList_List',
-        ModalRoute.withName('//EventDetails'),
+        ModalRoute.withName('/EventDetails'),
         arguments: _routeArgs,
       );
     }

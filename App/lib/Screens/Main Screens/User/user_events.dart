@@ -23,7 +23,9 @@ class _YourEventsState extends State<YourEvents> {
   final TextEditingController _searchController = TextEditingController();
   Map<String, dynamic> _events = {};
   bool _isLoading = true;
-  GlobalKey _headerKey = GlobalKey();
+  final GlobalKey _headerKey = GlobalKey();
+  List<dynamic> _filteredEvents = [];
+  FocusNode searchFocus = FocusNode();
 
   @override
   void initState() {
@@ -43,12 +45,27 @@ class _YourEventsState extends State<YourEvents> {
     });
   }
 
+  void _searchEvents(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredEvents = List.from(_events["Event"]);
+      } else {
+        _filteredEvents = _events["Event"]
+            .where((event) =>
+                event["name"].toLowerCase().contains(query.toLowerCase()) ||
+                event["type"].toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
   Future<void> _fetchData() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
     await ApiCall.fetchAPI('YourEvents/$userId', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           _events = data;
+          _filteredEvents = List.from(data["Event"]);
           _isLoading = false;
         });
       }
@@ -119,7 +136,13 @@ class _YourEventsState extends State<YourEvents> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       child: SearchBox(
-        onChanged: (value) {},
+        focusNode: searchFocus,
+        onclick: () {
+          searchFocus.requestFocus();
+        },
+        onChanged: (value) {
+          _searchEvents(value); // Call the search method
+        },
         controller: _searchController,
         hint: 'Search Typing to Search',
         width: Screen.width(context) * 0.9,
@@ -139,9 +162,9 @@ class _YourEventsState extends State<YourEvents> {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: _events["Event"].length,
+      itemCount: _filteredEvents.length,
       itemBuilder: (context, index) {
-        final event = _events["Event"][index];
+        final event = _filteredEvents[index];
         return Function12(
           delete: () => _deleteEvent(event["id"], index),
           color: Color(int.parse(

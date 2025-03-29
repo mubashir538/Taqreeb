@@ -93,7 +93,7 @@ urlpatterns = [
     path('wishlist/get/<int:uid>',views.getWishlist,name='getWishlist'),
     path('wishlist/delete',views.removeFromWishlist,name='removeFromWishlist'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
-    path('deleteReq/',views.deleteTable,name='deleteReq'),
+    # path('deleteReq/',views.deleteTable,name='deleteReq'),
 ]
 
 if settings.DEBUG:

@@ -169,7 +169,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     if (mounted) {
       Navigator.pushNamed(
         context, 
-        '/orderSummary',
+        '/OrderSummary',
         arguments: {
           'Name': _listing['Listing']['name'],
           'type': _listing['Listing']['type'],

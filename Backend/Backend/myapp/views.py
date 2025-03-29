@@ -307,7 +307,10 @@ def removeFromWishlist(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def deleteTable(request):
-    md.Listing.objects.filter(type='Baker and Sweet').delete()
+    md.User.objects.filter(id=26).delete()
+    md.User.objects.filter(id=24).delete()
+    md.User.objects.filter(id=22).delete()
+    # md.Listing.objects.filter(type='Baker and Sweet').delete()
     return Response({'status': 'success'})
 
 @api_view(['POST'])

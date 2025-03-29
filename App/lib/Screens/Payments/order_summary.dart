@@ -169,12 +169,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       children: [
         ColoredButton(
           text: "Pay 10% Advance",
-          onPressed: () => _navigateToPayment('/paymentdetails'),
+          onPressed: () => _navigateToPayment('/PaymentDetails'),
         ),
         _buildVerticalSpace(0.02),
         ColoredButton(
           text: "Pay Full Amount",
-          onPressed: () => _navigateToPayment('/paymentdetails'),
+          onPressed: () => _navigateToPayment('/PaymentDetails'),
         ),
       ],
     );
@@ -186,7 +186,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       route,
       arguments: {
         'amount': _controller.listingPrice,
-        'isFullPayment': route == '/paymentdetails',
+        'isFullPayment': route == '/PaymentDetails',
       },
     );
   }

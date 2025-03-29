@@ -158,7 +158,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
     if (mounted) {
       Navigator.pushNamed(
         context,
-        '/orderSummary',
+        '/OrderSummary',
         arguments: {
           'Name': _listing['Listing']['name'],
           'type': _listing['Listing']['type'],

@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 
 class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
-  int _remainingTime = 120;
+  int _remainingTime = 10;
   bool _isResendEnabled = false;
   String _enteredOTP = "";
   Timer? _timer;
@@ -19,7 +20,7 @@ class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
 
   void startTimer() {
     _isResendEnabled = false;
-    _remainingTime = 120;
+    _remainingTime = 10;
     notifyListeners();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -41,14 +42,13 @@ class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
   }
 
   Future<void> resendOTP(String email, String otp) async {
-    // Call your API here
-    // await MyApi.postRequest(endpoint: 'resendOTP/email', body: {'email': email, 'otp': otp});
+    await MyApi.postRequest(endpoint: 'resendOTP/email', body: {'email': email, 'otp': otp});
     startTimer();
   }
 
-  Future<void> verifyOTP(String enteredOTP, String receivedOTP,
+  Future<void> verifyOTP(int enteredOTP, int receivedOTP,
       BuildContext context, String email) async {
-    if (int.parse(enteredOTP) == int.parse(receivedOTP)) {
+    if (enteredOTP == receivedOTP) {
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/ForgotPassword_NewPassword',

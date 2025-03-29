@@ -1,187 +1,223 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
+import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
-import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:taqreeb/core/utils/images.dart';
 
-class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
-  int _remainingTime = 120;
-  bool _isResendEnabled = false;
-  String _enteredOTP = "";
-  Timer? _timer;
-
-  int get remainingTime => _remainingTime;
-  bool get isResendEnabled => _isResendEnabled;
-  String get enteredOTP => _enteredOTP;
-
-  void setEnteredOTP(String value) {
-    _enteredOTP = value;
-    notifyListeners();
-  }
-
-  void startTimer() {
-    _isResendEnabled = false;
-    _remainingTime = 120;
-    notifyListeners();
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingTime > 0) {
-        _remainingTime--;
-        notifyListeners();
-      } else {
-        _timer?.cancel();
-        _isResendEnabled = true;
-        notifyListeners();
-      }
-    });
-  }
-
-  String formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSeconds = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> resendOTP(String email, String otp) async {
-    // Call your API here
-    await MyApi.postRequest(
-      endpoint: 'resendOTP/email',
-      body: {'email': email, 'otp': otp},
-    );
-    startTimer();
-  }
-
-  Future<void> verifyOTP(String enteredOTP, String receivedOTP,
-      BuildContext context, String email) async {
-    if (int.parse(enteredOTP) == int.parse(receivedOTP)) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/ForgotPassword_NewPassword',
-        arguments: {'email': email},
-        ModalRoute.withName('/'),
-      );
-    } else {
-      warningDialog(
-        title: 'Invalid OTP',
-        message: 'The entered OTP is incorrect.',
-      ).showDialogBox(context);
-    }
-  }
+class FreelancerSignup_BasicInfo extends StatefulWidget {
+  const FreelancerSignup_BasicInfo({super.key});
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  State<FreelancerSignup_BasicInfo> createState() =>
+      _FreelancerSignup_BasicInfoState();
 }
 
-class ForgotPassword_VerifyCode extends StatefulWidget {
-  const ForgotPassword_VerifyCode({super.key});
-
-  @override
-  State<ForgotPassword_VerifyCode> createState() =>
-      _ForgotPassword_VerifyCodeState();
-}
-
-class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
-  GlobalKey headerKey = GlobalKey();
+class _FreelancerSignup_BasicInfoState
+    extends State<FreelancerSignup_BasicInfo> {
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _cnicController = TextEditingController();
+  final TextEditingController _portfolioController = TextEditingController();
+  
+  final FocusNode _fullNameFocus = FocusNode();
+  final FocusNode _cnicFocus = FocusNode();
+  final FocusNode _portfolioFocus = FocusNode();
+  
+  final GlobalKey _headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    _initializeUI();
+    _checkForPreviousSignup();
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _cnicController.dispose();
+    _portfolioController.dispose();
+    _fullNameFocus.dispose();
+    _cnicFocus.dispose();
+    _portfolioFocus.dispose();
+    super.dispose();
+  }
+
+  void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
-          setState(() {
-            UI_Management.headerHeight = renderbox.size.height;
-          });
-        },
+        headerKey: _headerKey,
+        callback: _updateHeaderHeight,
       );
-      Provider.of<ForgotPasswordVerifyCodeViewModel>(context, listen: false)
-          .startTimer();
     });
+  }
+
+  void _updateHeaderHeight(RenderBox renderBox) {
+    setState(() {
+      UI_Management.headerHeight = renderBox.size.height;
+    });
+  }
+
+  Future<void> _checkForPreviousSignup() async {
+    final hasPreviousSignup = await MyStorage.exists(MyTokens.bscnic) &&
+        await MyStorage.exists(MyTokens.bsusername) &&
+        await MyStorage.exists(MyTokens.bsname);
+
+    if (hasPreviousSignup && mounted) {
+      _showContinueDialog();
+    }
+  }
+
+  void _showContinueDialog() {
+    warningDialog(
+      title: 'Fresh Start',
+      message: 'We noticed that you had lately attempted to do Freelancer Signup in the app. Do you want to continue where you left or want a Fresh Start?',
+      actions: [
+        ColoredButton(
+          text: 'Fresh Start',
+          onPressed: _handleFreshStart,
+        ),
+        ColoredButton(
+          text: 'Continue',
+          onPressed: _handleContinue,
+        )
+      ],
+    ).showDialogBox(context);
+  }
+
+  void _handleFreshStart() {
+    MyStorage.deleteToken(MyTokens.fscnic);
+    MyStorage.deleteToken(MyTokens.fsname);
+    MyStorage.deleteToken(MyTokens.fsdescription);
+    Navigator.pop(context);
+  }
+
+  Future<void> _handleContinue() async {
+    if (await MyStorage.exists(MyTokens.fsdescription)) {
+      Navigator.pushNamed(context, '/ProfilePictureUpload',
+          arguments: {'type': 'Freelancer'});
+    } else {
+      Navigator.pushNamed(context, '/FreelancerSignup_Description');
+    }
+  }
+
+  Future<void> _handleContinueButton() async {
+    if (_validateInputs()) {
+      await _saveUserData();
+      Navigator.pushNamed(context, '/FreelancerSignup_Description');
+    }
+  }
+
+  bool _validateInputs() {
+    if (_fullNameController.text.isEmpty ||
+        _cnicController.text.isEmpty ||
+        _portfolioController.text.isEmpty) {
+      _showErrorDialog("Please fill all the details", "Invalid Details");
+      return false;
+    }
+
+    final cnicValidation = Validations.validateCNIC(_cnicController.text);
+    if (cnicValidation != 'Ok') {
+      _showErrorDialog(cnicValidation, "Invalid Details");
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showErrorDialog(String message, String title) {
+    warningDialog(
+      message: message,
+      title: title,
+    ).showDialogBox(context);
+  }
+
+  Future<void> _saveUserData() async {
+    await MyStorage.saveToken(_cnicController.text, MyTokens.fscnic);
+    await MyStorage.saveToken(_fullNameController.text, MyTokens.fsname);
+    await MyStorage.saveToken(_portfolioController.text, MyTokens.fsportfolio);
+  }
+
+  Widget _buildInputFields() {
+    return Column(
+      children: [
+        MyTextBox(
+          focusNode: _fullNameFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_cnicFocus),
+          hint: "Enter Business Name",
+          valueController: _fullNameController,
+        ),
+        MyTextBox(
+          focusNode: _cnicFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_portfolioFocus),
+          hint: "Enter CNIC Number",
+          valueController: _cnicController,
+        ),
+        MyTextBox(
+          focusNode: _portfolioFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+          hint: "Enter Portfolio Link",
+          valueController: _portfolioController,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return SizedBox(
+      height: Screen.height(context) * 0.05,
+      child: MyDivider(),
+    );
+  }
+
+  Widget _buildContinueButton() {
+    return ColoredButton(
+      text: "Continue",
+      onPressed: _handleContinueButton,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final email = arguments['email'];
-    final Map<String, dynamic> response = arguments['response'];
-    final viewModel = Provider.of<ForgotPasswordVerifyCodeViewModel>(context);
+    UI_Management.getHeaderHeight(
+      headerKey: _headerKey,
+      callback: _updateHeaderHeight,
+    );
 
     return Scaffold(
       backgroundColor: MyColors.Dark,
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: UI_Management.headerHeight),
-                Container(
-                  margin: EdgeInsets.only(
-                    top: Screen.max(context) * 0.07,
-                    bottom: Screen.max(context) * 0.02,
+            child: Container(
+              width: Screen.width(context),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: (Screen.max(context) * 0.05) +
+                        UI_Management.headerHeight,
                   ),
-                  child: OTPBoxes(
-                    onChanged: (value) {
-                      viewModel.setEnteredOTP(value);
-                    },
-                  ),
-                ),
-                TextButton(
-                  onPressed: viewModel.isResendEnabled
-                      ? () async {
-                          await viewModel.resendOTP(
-                              response['email'], response['otp']);
-                        }
-                      : null,
-                  child: Text(
-                    viewModel.isResendEnabled
-                        ? 'Send Code Again'
-                        : 'Send Code Again in ${viewModel.formatTime(viewModel.remainingTime)}',
-                    style: TextStyle(
-                      color: MyColors.white,
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
-                      decoration: viewModel.isResendEnabled
-                          ? TextDecoration.underline
-                          : null,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: Screen.height(context) * 0.1,
-                  child: const Center(child: MyDivider()),
-                ),
-                ColoredButton(
-                  text: 'Verify Code',
-                  onPressed: () async {
-                    await viewModel.verifyOTP(
-                      viewModel.enteredOTP,
-                      response['otp'],
-                      context,
-                      email,
-                    );
-                  },
-                ),
-              ],
+                  _buildInputFields(),
+                  _buildDivider(),
+                  _buildContinueButton(),
+                ],
+              ),
             ),
           ),
           Positioned(
             top: 0,
             child: Header(
-              key: headerKey,
-              heading: 'Verify Code',
-              para: 'We have sent the code to $email',
+              key: _headerKey,
+              heading: "Create A Freelancer Account",
+              para: "Earn a Soothing Income by Editing Videos or Pictures of Events",
+              image: MyImages.FreelancerSignup,
             ),
           ),
         ],

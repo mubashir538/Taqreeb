@@ -21,7 +21,7 @@ class ForgotPasswordProvider with ChangeNotifier {
 
     if (contact.contains('@')) {
       if (Validations.validateEmail(contact) != "Ok") {
-        MyScaffold(text: Validations.validateEmail(contact)).show(context);
+        MyScaffold(text: 'Invalid Credentials').show(context);
         _isLoading = false;
         notifyListeners();
         return;
@@ -29,7 +29,7 @@ class ForgotPasswordProvider with ChangeNotifier {
       type = 'email';
     } else {
       if (Validations.validateContact(contact) != "Ok") {
-        MyScaffold(text: Validations.validateContact(contact)).show(context);
+        MyScaffold(text: 'Invalid Credentials').show(context);
         _isLoading = false;
         notifyListeners();
         return;

@@ -5,7 +5,7 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class ApiCall {
-static Future<void> fetchAPI(String endpoint,
+  static Future<void> fetchAPI(String endpoint,
       {required Function(String token, Map<String, dynamic> data) onSuccess,
       Function()? onError,
       BuildContext? context,
