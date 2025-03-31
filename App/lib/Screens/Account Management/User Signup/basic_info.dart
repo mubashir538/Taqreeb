@@ -73,7 +73,7 @@ class _BasicSignupState extends State<BasicSignup> {
   }
 
   void _showContinueDialog() {
-    warningDialog(
+    WarningDialog(
       title: 'Fresh Start',
       message: 'We noticed that you had lately attempted to signup the app. '
           'Do you want to continue where you left or want a Fresh Start?',

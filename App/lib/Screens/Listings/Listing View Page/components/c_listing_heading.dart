@@ -158,7 +158,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       if (response['status'] == 'success') {
         Navigator.pop(context);
       } else if (response['status'] == 'BudgetError') {
-        warningDialog(
+        WarningDialog(
           message: 'Event Budget is Exceeding',
           title: 'Budget Exceed',
           actions: [ColoredButton(text: 'Ok')],
@@ -249,7 +249,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Future<void> _deleteListing() async {
-    warningDialog(
+    WarningDialog(
       title: 'Delete',
       message: 'Are you sure you want to delete this Listing?',
       actions: [

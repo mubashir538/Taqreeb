@@ -239,25 +239,31 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
   Widget _buildPackageList() {
     return Column(
-      children: widget.listing['Package'].asMap().entries.map((entry) {
-        final index = entry.key;
-        final package = entry.value;
+      children: widget.listing['Package']
+          .asMap()
+          .entries
+          .map((entry) {
+            final index = entry.key;
+            final package = entry.value;
 
-        return Container(
-          margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (_isBusinessUser) _buildPackageActions(index),
-              PackageBox(
-                packagedetails: package['description'],
-                packageprice: package['price'].toString(),
-                packagename: package['name'],
+            return Container(
+              margin:
+                  EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_isBusinessUser) _buildPackageActions(index),
+                  PackageBox(
+                    packagedetails: package['description'],
+                    packageprice: package['price'].toString(),
+                    packagename: package['name'],
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      }).toList(),
+            );
+          })
+          .cast<Widget>()
+          .toList(),
     );
   }
 

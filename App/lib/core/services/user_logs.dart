@@ -29,9 +29,13 @@ class Logs {
     );
 
     if (!(response['status'] == 'success')) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': ' Failed to log activity: ${response?['message']}'});
+      MyApi.postRequest(endpoint: 'error/application', body: {
+        'error': ' Failed to log activity: ${response?['message']} ${{
+          "user_id": int.parse(userId), // Ensure user ID is an integer
+          "action": action,
+          "metadata": metadata,
+        }}'
+      });
     }
   }
 }

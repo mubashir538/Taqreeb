@@ -30,20 +30,26 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
     return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.focusNode?.dispose();
+    super.dispose();
+  }
+
   void _showColorPicker() {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    double pickerWidth = Screen.width(context) * 0.9;
+    double pickerHeight = Screen.height(context) * 0.7;
 
     Color tempColor = selectedColor;
     _overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        left: offset.dx,
-        top: offset.dy - 300,
-        width: renderBox.size.width,
+      builder: (context) => Center(
         child: Material(
           elevation: 4,
           borderRadius: BorderRadius.circular(10),
           child: Container(
+            width: pickerWidth,
+            height: pickerHeight,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: MyColors.DarkLighter,
@@ -65,7 +71,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                     tempColor = color;
                   },
                   showLabel: false,
-                  pickerAreaHeightPercent: 0.8,
+                  pickerAreaHeightPercent: 0.7,
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(

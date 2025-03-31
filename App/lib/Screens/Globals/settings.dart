@@ -130,14 +130,16 @@ class _SettingsState extends State<Settings> {
                                           ),
                                           Flexible(
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 8.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
                                               child: Text(
                                                 "Business Owner Mode",
                                                 textAlign: TextAlign.center,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      Screen.max(context) * 0.015,
+                                                      Screen.max(context) *
+                                                          0.015,
                                                   fontWeight: FontWeight.w500,
                                                   color:
                                                       themeProvider.themeMode ==
@@ -168,7 +170,8 @@ class _SettingsState extends State<Settings> {
                                                   MyStorage.deleteToken(
                                                       MyTokens.isBusinessOwner);
                                                 }
-                                                Navigator.pushNamedAndRemoveUntil(
+                                                Navigator
+                                                    .pushNamedAndRemoveUntil(
                                                   context,
                                                   '/HomePage',
                                                   ModalRoute.withName('/'),
@@ -185,12 +188,13 @@ class _SettingsState extends State<Settings> {
                                     )
                                   : GuideButton(
                                       onpressed: () {
-                                        Navigator.pushNamed(
-                                            context, '/BusinessSignup_BasicInfo');
+                                        Navigator.pushNamed(context,
+                                            '/BusinessSignup_BasicInfo');
                                       },
                                       text: 'Signup As Business',
                                       leftIcon: Icons.business_rounded,
-                                      rightIcon: Icons.arrow_forward_ios_rounded,
+                                      rightIcon:
+                                          Icons.arrow_forward_ios_rounded,
                                     ),
                               this.types['freelancer']
                                   ? Container(
@@ -223,14 +227,16 @@ class _SettingsState extends State<Settings> {
                                           ),
                                           Flexible(
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 8.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
                                               child: Text(
                                                 "Freelancer Mode",
                                                 textAlign: TextAlign.center,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize:
-                                                      Screen.max(context) * 0.015,
+                                                      Screen.max(context) *
+                                                          0.015,
                                                   fontWeight: FontWeight.w500,
                                                   color:
                                                       themeProvider.themeMode ==
@@ -261,7 +267,8 @@ class _SettingsState extends State<Settings> {
                                                   MyStorage.deleteToken(
                                                       MyTokens.isFreelancer);
                                                 }
-                                                Navigator.pushNamedAndRemoveUntil(
+                                                Navigator
+                                                    .pushNamedAndRemoveUntil(
                                                   context,
                                                   '/HomePage',
                                                   ModalRoute.withName('/'),
@@ -283,11 +290,12 @@ class _SettingsState extends State<Settings> {
                                       },
                                       text: 'Signup As Freelancer',
                                       leftIcon: Icons.work_outline_rounded,
-                                      rightIcon: Icons.arrow_forward_ios_rounded,
+                                      rightIcon:
+                                          Icons.arrow_forward_ios_rounded,
                                     ),
                               GuideButton(
                                 onpressed: () {
-                                  warningDialog(
+                                  WarningDialog(
                                     title: 'Switch Theme',
                                     message: 'Change the theme of the App',
                                     actions: [

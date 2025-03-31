@@ -3,6 +3,7 @@ import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_color_picker.dart';
@@ -56,15 +57,8 @@ class _EventFormData {
     themeColor.dispose();
     guestMin.dispose();
     guestMax.dispose();
-
-    eventNameFocus.dispose();
     typeFocus.dispose();
     dateFocus.dispose();
-    locationFocus.dispose();
-    budgetFocus.dispose();
-    guestMinFocus.dispose();
-    guestMaxFocus.dispose();
-    themeColorFocus.dispose();
   }
 }
 
@@ -73,6 +67,7 @@ class _CreateEventState extends State<CreateEvent> {
   Map<String, dynamic> _eventTypes = {};
   bool _isLoading = true;
   bool _isEditMode = false;
+  bool _isFetched = false;
   String _eventId = "";
 
   @override
@@ -81,61 +76,94 @@ class _CreateEventState extends State<CreateEvent> {
     _initializeFromArguments();
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchEventTypes();
+  }
+
   void _initializeFromArguments() {
     final args = ModalRoute.of(context)?.settings.arguments as String? ?? '';
-    if (args.isNotEmpty) {
+    if (args.isNotEmpty && mounted) {
       setState(() {
         _eventId = args;
         _isEditMode = true;
       });
-      _fetchEventTypes();
-      _fetchEventDetails();
+      if (!_isFetched) {
+        _isFetched = true;
+        _fetchEventDetails();
+      }
     }
   }
 
   Future<void> _fetchEventTypes() async {
+    if (mounted) {
+      setState(() => _isLoading = true);
+    }
     await ApiCall.fetchAPI(
       'getEventTypes/',
       onSuccess: (token, data) {
         if (!mounted) return;
         setState(() {
           _eventTypes = data;
-          print(_eventTypes);
         });
       },
       context: mounted ? context : null,
     );
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _fetchEventDetails() async {
     if (!_isEditMode) return;
-
+    if (mounted) {
+      setState(() => _isLoading = true);
+    }
     await ApiCall.fetchAPI(
       'eventdetails/$_eventId',
       onSuccess: (token, data) {
         if (!mounted) return;
 
         final eventDetail = data['EventDetail'];
-        setState(() {
-          _formData.eventName.text = eventDetail['name'];
-          _formData.type.text = eventDetail['type'];
-          _formData.date.text = eventDetail['date'];
-          _formData.location.text = eventDetail['location'];
-          _formData.description.text = eventDetail['description'];
-          _formData.budget.text = eventDetail['budget'].toString();
-          _formData.themeColor.text = eventDetail['themeColor'];
-          _formData.guestMax.text = eventDetail['guestsmax'].toString();
-          _formData.guestMin.text = eventDetail['guestsmin'].toString();
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _formData.eventName.text = eventDetail['name'];
+            _formData.type.text = eventDetail['type'];
+            _formData.date.text = eventDetail['date'];
+            _formData.location.text = eventDetail['location'];
+            _formData.description.text = eventDetail['description'];
+            _formData.budget.text = eventDetail['budget'].toString();
+            _formData.themeColor.text = eventDetail['themeColor'];
+            _formData.guestMax.text = eventDetail['guestsmax'].toString();
+            _formData.guestMin.text = eventDetail['guestsmin'].toString();
+            _isLoading = false;
+          });
+        }
       },
       context: mounted ? context : null,
     );
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _submitEvent() async {
     if (!_validateForm()) {
       MyScaffold(text: 'Please fill all the fields').show(context);
+      return;
+    }
+
+    if (Validations.validateName(_formData.eventName.text) != 'Ok') {
+      MyScaffold(text: Validations.validateName(_formData.eventName.text))
+          .show(context);
+      return;
+    }
+    if (Validations.validateDescription(_formData.description.text) != 'Ok') {
+      MyScaffold(
+              text: Validations.validateDescription(_formData.description.text))
+          .show(context);
       return;
     }
 
@@ -155,7 +183,9 @@ class _CreateEventState extends State<CreateEvent> {
   Future<Map<String, dynamic>> _sendEventRequest() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    return await MyApi.postRequest(
+    print('type.text: ${_formData.type.text}');
+
+    final response = await MyApi.postRequest(
       endpoint: _isEditMode ? 'EditEvent/' : 'CreateEvent/',
       headers: {
         'Authorization':
@@ -175,6 +205,12 @@ class _CreateEventState extends State<CreateEvent> {
         'guestmax': _formData.guestMax.text,
       },
     );
+    await MyApi.deleteCache('YourEvents/$userId');
+    if (_isEditMode) {
+      await MyApi.deleteCache('eventdetails/$_eventId');
+    }
+
+    return response;
   }
 
   void _handleResponse(Map<String, dynamic> response) {
@@ -239,34 +275,53 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Widget _buildContent() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Headersecondary(
-            heading: _isEditMode ? "Edit Event" : "Create Event",
-            para: "Plan your event effortlessly!",
-            image: MyImages.SingupPng,
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Headersecondary(
+                heading: _isEditMode ? "Edit Event" : "Create Event",
+                para: "Plan your event effortlessly!",
+                image: MyImages.SingupPng,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: Screen.width(context) * 0.05,
+                ),
+                child: Column(
+                  children: [
+                    _buildBasicInfoSection(),
+                    _buildDescriptionSection(),
+                    _buildGuestInfoSection(),
+                    _buildBudgetSection(),
+                    SizedBox(height: Screen.height(context) * 0.1),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: Screen.width(context) * 0.05,
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            width: Screen.width(context),
+            decoration: BoxDecoration(
+              color: MyColors.DarkLighter,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
             ),
-            child: Column(
-              children: [
-                _buildBasicInfoSection(),
-                _buildDescriptionSection(),
-                _buildGuestInfoSection(),
-                _buildBudgetSection(),
-              ],
+            padding: EdgeInsets.all(Screen.max(context) * 0.02),
+            child: ColoredButton(
+              text: _isEditMode ? "Edit Event" : "Create Event",
+              onPressed: _submitEvent,
             ),
           ),
-          ColoredButton(
-            text: _isEditMode ? "Edit Event" : "Create Event",
-            onPressed: _submitEvent,
-          ),
-        ],
-      ),
+        )
+      ],
     );
   }
 
@@ -290,7 +345,12 @@ class _CreateEventState extends State<CreateEvent> {
                   .cast<String>()
                   .toList(),
           labelText: 'Event Type',
-          onChanged: (value) => setState(() => _formData.type.text = value),
+          onChanged: (value) {
+            if (mounted) {
+              setState(() => _formData.type.text = value);
+              print('Event Type: ${_formData.type.text}');
+            }
+          },
         ),
         DateQuestion(
           focusNode: _formData.dateFocus,

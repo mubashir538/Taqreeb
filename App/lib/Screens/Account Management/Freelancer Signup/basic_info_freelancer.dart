@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -25,11 +26,11 @@ class _FreelancerSignup_BasicInfoState
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _cnicController = TextEditingController();
   final TextEditingController _portfolioController = TextEditingController();
-  
+
   final FocusNode _fullNameFocus = FocusNode();
   final FocusNode _cnicFocus = FocusNode();
   final FocusNode _portfolioFocus = FocusNode();
-  
+
   final GlobalKey _headerKey = GlobalKey();
 
   @override
@@ -76,9 +77,10 @@ class _FreelancerSignup_BasicInfoState
   }
 
   void _showContinueDialog() {
-    warningDialog(
+    WarningDialog(
       title: 'Fresh Start',
-      message: 'We noticed that you had lately attempted to do Freelancer Signup in the app. Do you want to continue where you left or want a Fresh Start?',
+      message:
+          'We noticed that you had lately attempted to do Freelancer Signup in the app. Do you want to continue where you left or want a Fresh Start?',
       actions: [
         ColoredButton(
           text: 'Fresh Start',
@@ -133,10 +135,7 @@ class _FreelancerSignup_BasicInfoState
   }
 
   void _showErrorDialog(String message, String title) {
-    warningDialog(
-      message: message,
-      title: title,
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
 
   Future<void> _saveUserData() async {
@@ -150,13 +149,15 @@ class _FreelancerSignup_BasicInfoState
       children: [
         MyTextBox(
           focusNode: _fullNameFocus,
-          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_cnicFocus),
+          onFieldSubmitted: (_) =>
+              FocusScope.of(context).requestFocus(_cnicFocus),
           hint: "Enter Business Name",
           valueController: _fullNameController,
         ),
         MyTextBox(
           focusNode: _cnicFocus,
-          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_portfolioFocus),
+          onFieldSubmitted: (_) =>
+              FocusScope.of(context).requestFocus(_portfolioFocus),
           hint: "Enter CNIC Number",
           valueController: _cnicController,
         ),
@@ -216,7 +217,8 @@ class _FreelancerSignup_BasicInfoState
             child: Header(
               key: _headerKey,
               heading: "Create A Freelancer Account",
-              para: "Earn a Soothing Income by Editing Videos or Pictures of Events",
+              para:
+                  "Earn a Soothing Income by Editing Videos or Pictures of Events",
               image: MyImages.FreelancerSignup,
             ),
           ),

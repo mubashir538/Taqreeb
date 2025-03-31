@@ -223,7 +223,7 @@ def PhotographyPlacesViewPage(request, listingid):
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data,'bookedDates':bookedDatesSerializer.data})
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def DecoratorDetailPage(request,listingId):
     listingDetails = md.Listing.objects.get(id=listingId)
     decoratorDetails = md.Decorators.objects.get(listingId=listingId)

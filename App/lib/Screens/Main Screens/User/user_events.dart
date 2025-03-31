@@ -60,6 +60,11 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Future<void> _fetchData() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
     await ApiCall.fetchAPI('YourEvents/$userId', onSuccess: (token, data) {
       if (mounted) {
@@ -70,6 +75,11 @@ class _YourEventsState extends State<YourEvents> {
         });
       }
     }, context: mounted ? context : null);
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _changeHeight(RenderBox renderbox) {
@@ -89,6 +99,9 @@ class _YourEventsState extends State<YourEvents> {
     );
 
     if (response['status'] == 'success') {
+      final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+      await MyApi.deleteCache('YourEvents/$userId');
+      _fetchData();
       MyScaffold(text: 'Event Deleted Successfully').show(context);
       setState(() {
         _events["Event"].removeAt(index);

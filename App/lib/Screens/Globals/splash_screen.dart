@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -20,21 +21,53 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    // Load theme and check if the user is logged in
     MyColors.getTheme();
     await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
-
-    // Check if the user has an access token
     final bool isLoggedIn = await MyStorage.exists(MyTokens.accessToken);
+    final header = {
+      'Authorization':
+          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+    };
 
-    // Navigate to the appropriate screen after a delay
-    Timer(const Duration(seconds: 3), () {
-      if (isLoggedIn) {
-        Navigator.pushReplacementNamed(context, '/HomePage');
-      } else {
-        Navigator.pushReplacementNamed(context, '/Login');
+    MyApi.cacheManager.emptyCache();
+    final String? userId = await MyStorage.getToken(MyTokens.userId);
+
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
+      bool success = await preApiCall({
+        'header': header,
+        'isLoggedIn': isLoggedIn,
+        'userId': userId,
+      }); // Call your async function
+      if (success) {
+        timer.cancel();
+        Navigator.pushReplacementNamed(
+          context,
+          isLoggedIn ? '/HomePage' : '/Login',
+        ); // Stop the timer if task succeeds
       }
     });
+  }
+
+  Future<bool> preApiCall(Map<String, dynamic> data) async {
+    final Map<String, String> header = Map<String, String>.from(data['header']);
+    final bool isLoggedIn = data['isLoggedIn'];
+    final String? userId = data['userId'];
+
+    await Future.wait([
+      MyApi.getRequest(endpoint: 'home/listings/', headers: header),
+      MyApi.getRequest(endpoint: 'Homepage/DemoImages/', headers: header),
+      MyApi.getRequest(endpoint: 'home/categories/', headers: header),
+      if (isLoggedIn) ...[
+        MyApi.getRequest(endpoint: 'accountInfo/$userId/'),
+        MyApi.getRequest(endpoint: 'YourEvents/$userId'),
+      ],
+    ]).then((_) {
+      return true; // Return success status
+    }).catchError((_) {
+      return false; // Return failure status
+    });
+
+    return true;
   }
 
   @override

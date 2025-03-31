@@ -102,7 +102,7 @@ class _HeaderState extends State<Header> {
   }
 
   void _showLogoutDialog() {
-    warningDialog(
+    WarningDialog(
       title: 'Logout',
       message: 'Are you sure you want to logout?',
       actions: [

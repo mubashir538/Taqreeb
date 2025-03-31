@@ -234,7 +234,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                           ColoredButton(
                             text: 'Save',
                             onPressed: () {
-                              warningDialog(
+                              WarningDialog(
                                 title: 'Save Changes',
                                 message:
                                     'Are you sure you want to save the changes?',

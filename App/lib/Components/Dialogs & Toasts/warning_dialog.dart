@@ -4,11 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class warningDialog extends StatelessWidget {
+class WarningDialog extends StatelessWidget {
   final String title;
   final String message;
   final List<Widget> actions;
-  const warningDialog(
+  const WarningDialog(
       {super.key,
       required this.title,
       required this.message,

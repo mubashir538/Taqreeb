@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -46,12 +45,12 @@ class _SearchServiceState extends State<SearchService> {
       CheckBoxController(selections: []);
   final CheckBoxController _categoryController =
       CheckBoxController(selections: []);
-  final ScrollController _scrollController = ScrollController();
+
   FocusNode searchFocus = FocusNode();
 
   // UI State
   final GlobalKey _headerKey = GlobalKey();
-  DateTime? _entryTime;
+  // DateTime? _entryTime;
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
@@ -61,11 +60,18 @@ class _SearchServiceState extends State<SearchService> {
   @override
   void initState() {
     super.initState();
-    _entryTime = DateTime.now();
+    // _entryTime = DateTime.now();
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         UI_Management.getHeaderHeight(
             headerKey: _headerKey,
             callback: (renderbox) => _updateHeaderHeight(renderbox)));
+  }
+
+  @override
+  void dispose() {
+    print('Listing is Disposed...');
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -76,22 +82,8 @@ class _SearchServiceState extends State<SearchService> {
       if (args != null) {
         _args.addAll(args as Map<String, dynamic>);
       }
+      _isChanged = true;
       _fetchData();
-    }
-  }
-
-  @override
-  void dispose() {
-    _logPageViewDuration();
-    super.dispose();
-  }
-
-  void _logPageViewDuration() {
-    if (_entryTime != null) {
-      final exitTime = DateTime.now();
-      final timeSpent = exitTime.difference(_entryTime!).inSeconds;
-      Logs.logUserActivity(
-          "search_page_view_duration", {"time_spent_seconds": timeSpent});
     }
   }
 
@@ -104,7 +96,6 @@ class _SearchServiceState extends State<SearchService> {
   Future<void> _fetchData() async {
     await _fetchCategories();
     await _fetchListings();
-    _isChanged = true;
   }
 
   Future<void> _fetchCategories() async {
@@ -355,7 +346,9 @@ class _SearchServiceState extends State<SearchService> {
                       .toList();
                 });
                 if (value.isNotEmpty) {
+                  print('searchlog');
                   Logs.logUserActivity("search", {"search_query": value});
+                  print('searchlog');
                 }
               },
             ),
@@ -436,6 +429,7 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void _showFilterPopup(BuildContext context) {
+    final ScrollController _scrollController = ScrollController();
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -444,9 +438,12 @@ class _SearchServiceState extends State<SearchService> {
         final keyboard = MediaQuery.of(context).viewInsets.bottom;
         final isKeyboardVisible = keyboard > 0;
 
-        if (isKeyboardVisible && _scrollController.hasClients) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (isKeyboardVisible && _scrollController.hasClients) {
+            _scrollController
+                .jumpTo(_scrollController.position.maxScrollExtent);
+          }
+        });
 
         return Container(
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
@@ -457,104 +454,112 @@ class _SearchServiceState extends State<SearchService> {
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
           ),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Filter Options",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.03,
-                    fontWeight: FontWeight.bold,
-                    color: MyColors.red,
-                  ),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Filter Options",
+                      style: GoogleFonts.montserrat(
+                        fontSize: Screen.max(context) * 0.03,
+                        fontWeight: FontWeight.bold,
+                        color: MyColors.red,
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Pricing',
+                      child: RangeSliderWidget(
+                        start: 10000,
+                        end: 5000000,
+                        divisions: 500,
+                        controller: _rangeSliderController,
+                        onChanged: (min, max) {
+                          if (!_filtersToApply.contains("Price")) {
+                            _filtersToApply.add("Price");
+                          }
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Ratings',
+                      child: CheckBoxQuestion(
+                        question: '',
+                        options: [
+                          '5 Stars',
+                          '4 Stars',
+                          '3 Stars',
+                          '2 Stars',
+                          '1 Stars'
+                        ],
+                        controller: _ratingController,
+                        onChanged: (_) {
+                          if (!_filtersToApply.contains("Ratings")) {
+                            _filtersToApply.add("Ratings");
+                          }
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Category',
+                      child: CheckBoxQuestion(
+                        question: '',
+                        options: _isLoading
+                            ? []
+                            : _categories['categories']
+                                .map((value) => value['name'].toString())
+                                .cast<String>()
+                                .toList(),
+                        controller: _categoryController,
+                        onChanged: (selections) {
+                          if (!_filtersToApply.contains("Category")) {
+                            _filtersToApply.add("Category");
+                          }
+                          Logs.logUserActivity("category_click",
+                              {"selected_category": selections});
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Location',
+                      child: LocationInputWidget(
+                        locationController: _locationController,
+                        onLocationChanged: (_) {
+                          if (!_filtersToApply.contains("Location")) {
+                            _filtersToApply.add("Location");
+                          }
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Date',
+                      child: DateQuestion(
+                        question: "",
+                        valuecontroller: _dateController,
+                      ),
+                    ),
+                    SizedBox(height: keyboard + Screen.height(context) * 0.1),
+                  ],
                 ),
-                _buildFilterSection(
-                  title: 'Pricing',
-                  child: RangeSliderWidget(
-                    start: 10000,
-                    end: 5000000,
-                    divisions: 500,
-                    controller: _rangeSliderController,
-                    onChanged: (min, max) {
-                      if (!_filtersToApply.contains("Price")) {
-                        _filtersToApply.add("Price");
-                      }
+              ),
+              Positioned(
+                  bottom: 0,
+                  child: ColoredButton(
+                    text: 'Apply Filters',
+                    onPressed: () {
+                      _applyFilters();
+                      Navigator.pop(context);
                     },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Ratings',
-                  child: CheckBoxQuestion(
-                    question: '',
-                    options: [
-                      '5 Stars',
-                      '4 Stars',
-                      '3 Stars',
-                      '2 Stars',
-                      '1 Stars'
-                    ],
-                    controller: _ratingController,
-                    onChanged: (_) {
-                      if (!_filtersToApply.contains("Ratings")) {
-                        _filtersToApply.add("Ratings");
-                      }
-                    },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Category',
-                  child: CheckBoxQuestion(
-                    question: '',
-                    options: _isLoading
-                        ? []
-                        : _categories['categories']
-                            .map((value) => value['name'].toString())
-                            .cast<String>()
-                            .toList(),
-                    controller: _categoryController,
-                    onChanged: (selections) {
-                      if (!_filtersToApply.contains("Category")) {
-                        _filtersToApply.add("Category");
-                      }
-                      Logs.logUserActivity(
-                          "category_click", {"selected_category": selections});
-                    },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Location',
-                  child: LocationInputWidget(
-                    locationController: _locationController,
-                    onLocationChanged: (_) {
-                      if (!_filtersToApply.contains("Location")) {
-                        _filtersToApply.add("Location");
-                      }
-                    },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Date',
-                  child: DateQuestion(
-                    question: "",
-                    valuecontroller: _dateController,
-                  ),
-                ),
-                ColoredButton(
-                  text: 'Apply Filters',
-                  onPressed: () {
-                    _applyFilters();
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(height: keyboard),
-              ],
-            ),
+                  ))
+            ],
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      _scrollController.dispose();
+    });
   }
 
   Widget _buildFilterSection({required String title, required Widget child}) {

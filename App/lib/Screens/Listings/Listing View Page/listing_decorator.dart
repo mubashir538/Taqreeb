@@ -109,7 +109,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
       });
 
       ApiCall.fetchAPI(
-        'decorator/detail/$_listingId',
+        'decorator/detail/$_listingId/',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );

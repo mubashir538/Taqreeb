@@ -33,6 +33,8 @@ def EditEvent(request):
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
     eventId = request.data.get('EventId')
+    print(type)
+    budget = int(budget.replace(",", ""))
     EditEvent = md.Events.objects.get(id=eventId)
     EditEvent.name = name
     EditEvent.guestsmin = guestmin
@@ -57,6 +59,7 @@ def CreateEvent(request):
     description = request.data.get('description')
     themeColor = request.data.get('Theme')
     budget = request.data.get('Budget')
+    budget = int(budget.replace(",", ""))
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
     CreateEvent = md.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)

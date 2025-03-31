@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
@@ -31,6 +33,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   List<Map<String, dynamic>> _userChats = [];
   List<Map<String, dynamic>> _groups = [];
   List<Map<String, dynamic>> _searchedUsers = [];
+  List<Map<String, dynamic>> _searchedGroups = [];
   bool _isLoading = true;
   String _loggedInUserId = "";
   bool _isSearching = false;
@@ -46,12 +49,78 @@ class _ChatsScreenState extends State<ChatsScreen> {
     _fetchChatsAndGroups();
   }
 
+  List<Map<String, dynamic>> convertChatsForJson(
+      List<Map<String, dynamic>> chats) {
+    return chats.map((chat) {
+      return chat.map((key, value) {
+        if (value is Timestamp) {
+          return MapEntry(
+              key, value.toDate().toIso8601String()); // Convert to String
+          // return MapEntry(key, value.millisecondsSinceEpoch); // Convert to int (epoch time)
+        }
+        return MapEntry(key, value);
+      });
+    }).toList();
+  }
+
+  List<Map<String, dynamic>> convertJsonToChats(String jsonString) {
+    List<dynamic> decodedList = json.decode(jsonString);
+
+    return decodedList.map<Map<String, dynamic>>((chat) {
+      return chat.map((key, value) {
+        if (key == 'time' && value is String) {
+          return MapEntry(
+              key,
+              Timestamp.fromDate(
+                  DateTime.parse(value))); // Convert back to Timestamp
+        }
+        return MapEntry(key, value);
+      });
+    }).toList();
+  }
+
   Future<void> _fetchChatsAndGroups() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String cachedData = prefs.getString('cached_chats') ?? "";
+
+      if (cachedData != "") {
+        setState(() {
+          _userChats = (json.decode(cachedData) as List)
+              .map((chat) => Map<String, dynamic>.from(chat).map((key, value) {
+                    if (key == 'time' && value is String) {
+                      return MapEntry(
+                          key, Timestamp.fromDate(DateTime.parse(value)));
+                    }
+                    return MapEntry(key, value);
+                  }))
+              .toList();
+          _isLoading = false;
+        });
+      }
+      cachedData = prefs.getString('cached_groups') ?? "";
+
+      if (cachedData != "") {
+        if (mounted) {
+          setState(() {
+            _groups = (json.decode(cachedData) as List)
+                .map(
+                    (chat) => Map<String, dynamic>.from(chat).map((key, value) {
+                          if (key == 'time' && value is String) {
+                            return MapEntry(
+                                key, Timestamp.fromDate(DateTime.parse(value)));
+                          }
+                          return MapEntry(key, value);
+                        }))
+                .toList();
+          });
+        }
+      }
+
       final chatsSnapshot = await _chatsCollection.get();
 
       final filteredChats =
@@ -101,10 +170,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
         };
       }).toList();
 
-      setState(() {
-        _userChats = chats.cast<Map<String, dynamic>>();
-        _groups = filteredGroups;
-      });
+      if (mounted) {
+        setState(() {
+          _userChats = chats.cast<Map<String, dynamic>>();
+          _groups = filteredGroups;
+        });
+      }
+      prefs.setString(
+          'cached_chats', json.encode(convertChatsForJson(_userChats)));
+      prefs.setString(
+          'cached_groups', json.encode(convertChatsForJson(_groups)));
     } catch (e) {
       MyApi.postRequest(
         endpoint: 'error/application',
@@ -124,11 +199,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
       setState(() {
         _isSearching = false;
         _searchedUsers = [];
+        _searchedGroups = [];
       });
     } else {
       setState(() {
         _isSearching = true;
         _searchedUsers = _userChats
+            .where((chat) =>
+                chat['name'].toLowerCase().contains(query.toLowerCase()))
+            .toList();
+        _searchedGroups = _groups
             .where((chat) =>
                 chat['name'].toLowerCase().contains(query.toLowerCase()))
             .toList();
@@ -173,7 +253,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   : Expanded(
                       child: ListView(
                         children: _isSearching
-                            ? _buildSearchedUsersList()
+                            ? _buildSearchedUsersandGroupsList()
                             : _buildChatsAndGroupsList(),
                       ),
                     ),
@@ -218,17 +298,25 @@ class _ChatsScreenState extends State<ChatsScreen> {
     );
   }
 
-  List<Widget> _buildSearchedUsersList() {
-    return _searchedUsers
-        .map((user) => MessageChatButton(
-              image: user['chatimage'],
-              onpressed: () => _navigateToChatbox(user['userId']),
-              name: user['name'],
-              message: 'Start a conversation',
-              newMessage: 0,
-              time: '',
-            ))
-        .toList();
+  List<Widget> _buildSearchedUsersandGroupsList() {
+    return [
+      ..._searchedUsers.map((user) => MessageChatButton(
+            image: user['chatimage'],
+            onpressed: () => _navigateToChatbox(user['userId']),
+            name: user['name'],
+            message: 'Start a conversation',
+            newMessage: 0,
+            time: '',
+          )),
+      ..._searchedGroups.map((user) => MessageChatButton(
+            image: user['groupImageUrl'],
+            onpressed: () => _navigateToChatbox(user['groupId']),
+            name: user['name'],
+            message: 'Group Chat',
+            newMessage: 0,
+            time: '',
+          ))
+    ];
   }
 
   List<Widget> _buildChatsAndGroupsList() {

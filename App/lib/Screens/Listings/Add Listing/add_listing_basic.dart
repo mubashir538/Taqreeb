@@ -49,7 +49,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   Future<void> _checkPreviousAttempt() async {
     if (await MyStorage.exists(MyTokens.acname)) {
-      warningDialog(
+      WarningDialog(
         title: 'Fresh Start',
         message:
             'We noticed that you had lately attempted to Add a Listing Before. '

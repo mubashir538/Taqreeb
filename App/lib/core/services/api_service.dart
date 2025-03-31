@@ -16,7 +16,6 @@ class MyApi {
     Uri url = Uri.parse('$baseUrl$endpoint');
 
     http.Response response;
-    // final cache = await APICacheManager().isAPICacheKeyExist(endpoint);
     final cache = await cacheManager.getFileFromCache(url.toString());
     if (cache == null) {
       try {
@@ -45,6 +44,10 @@ class MyApi {
       final data = jsonDecode(await cachedData.readAsString());
       return data;
     }
+  }
+
+  static Future<void> deleteCache(String url) async {
+    await DefaultCacheManager().removeFile(baseUrl + url);
   }
 
   static Future<dynamic> postRequest(

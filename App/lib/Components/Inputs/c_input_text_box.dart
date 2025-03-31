@@ -13,8 +13,8 @@ class MyTextBox extends StatefulWidget {
   final bool isNum;
   final bool isPrice;
   final TextEditingController valueController;
-  final String? errorText; // New parameter for error messages
-  final Function(String)? onChanged; // New parameter for onChanged callback
+  final String? errorText;
+  final Function(String)? onChanged;
 
   MyTextBox({
     super.key,
@@ -26,8 +26,8 @@ class MyTextBox extends StatefulWidget {
     this.focusNode,
     this.Value = '',
     required this.valueController,
-    this.errorText, // Optional parameter
-    this.onChanged, // Optional parameter
+    this.errorText,
+    this.onChanged,
   });
 
   @override
@@ -38,12 +38,17 @@ class _MyTextBoxState extends State<MyTextBox> {
   bool _isObscured = true;
   late FocusNode _focusNode;
   bool _isFocused = false;
+  late TextEditingController _controller;
+  String _previousText = '';
 
   @override
   void initState() {
     super.initState();
     _isObscured = widget.isPassword;
     _focusNode = widget.focusNode ?? FocusNode();
+    _controller = widget.valueController;
+    _previousText = _controller.text;
+
     _focusNode.addListener(() {
       if (mounted) {
         setState(() {
@@ -51,6 +56,60 @@ class _MyTextBoxState extends State<MyTextBox> {
         });
       }
     });
+
+    // Add listener to controller for price formatting
+    if (widget.isPrice) {
+      _controller.addListener(_formatPrice);
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.isPrice) {
+      _controller.removeListener(_formatPrice);
+    }
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _formatPrice() {
+    if (!widget.isPrice) return;
+
+    String text = _controller.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    // Don't format if the text hasn't changed (to prevent infinite loops)
+    if (text == _previousText) return;
+
+    _previousText = text;
+
+    if (text.isEmpty) {
+      _controller.text = '';
+      _controller.selection = TextSelection.collapsed(offset: 0);
+      return;
+    }
+
+    // Parse the number
+    int num = int.tryParse(text) ?? 0;
+
+    // Format with commas
+    String formatted = _formatNumberWithCommas(num);
+
+    // Only update if the formatted text is different from the current text
+    if (formatted != _controller.text) {
+      _controller.text = formatted;
+
+      // Move cursor to the end
+      _controller.selection = TextSelection.collapsed(
+        offset: formatted.length,
+      );
+    }
+  }
+
+  String _formatNumberWithCommas(int number) {
+    return number.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
   }
 
   @override
@@ -75,7 +134,7 @@ class _MyTextBoxState extends State<MyTextBox> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withAlpha(102),
                 blurRadius: 4,
                 spreadRadius: 1,
                 offset: Offset(2, 2),
@@ -89,10 +148,17 @@ class _MyTextBoxState extends State<MyTextBox> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: widget.valueController,
+                    controller: _controller,
                     focusNode: _focusNode,
                     onSubmitted: widget.onFieldSubmitted,
-                    onChanged: widget.onChanged, // Pass onChanged callback
+                    onChanged: (value) {
+                      if (widget.onChanged != null) {
+                        // Pass the raw number without commas to the callback
+                        String rawValue =
+                            value.replaceAll(RegExp(r'[^0-9]'), '');
+                        widget.onChanged!(rawValue);
+                      }
+                    },
                     obscureText: widget.isPassword ? _isObscured : false,
                     keyboardType: widget.isNum
                         ? TextInputType.number
@@ -103,9 +169,9 @@ class _MyTextBoxState extends State<MyTextBox> {
                         ? [FilteringTextInputFormatter.digitsOnly]
                         : widget.isPrice
                             ? [
+                                // Allow only digits and commas
                                 FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}'),
-                                ),
+                                    RegExp(r'[0-9,]')),
                               ]
                             : null,
                     style: GoogleFonts.montserrat(
