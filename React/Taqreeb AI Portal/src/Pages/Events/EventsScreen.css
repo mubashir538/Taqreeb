@@ -1,0 +1,132 @@
+.events-container {
+  display: flex;
+  background-color: #1a202c;
+  color: white;
+}
+
+.events-main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.events-header h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.events-header p {
+  font-size: 14px;
+  color: #b0b3b8;
+  margin-bottom: 20px;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.event-card {
+  background: #2d3748;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.event-card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1f2733;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.event-name {
+  font-weight: bold;
+}
+
+.event-user {
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.pending {
+  background-color: #ffc107;
+  color: black;
+}
+
+.status.approved {
+  background-color: #28a745;
+  color: white;
+}
+
+.status.new {
+  background-color: #007bff;
+  color: white;
+}
+
+.status.modified {
+  background-color: #6c757d;
+  color: white;
+}
+
+.see-more {
+  width: 100%;
+  padding: 8px;
+  background-color: #374151;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.stat-box {
+  background: #1f2733;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-box p {
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+.stat-box span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .events-grid {
+      grid-template-columns: 1fr;
+  }
+}
+    

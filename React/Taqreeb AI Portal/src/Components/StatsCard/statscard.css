@@ -1,0 +1,36 @@
+.stats-card {
+    background: #2d3748;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .stats-icon {
+    font-size: 30px;
+    color: #facc15;
+    margin-right: 15px;
+  }
+  
+  .stats-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .stats-label {
+    font-size: 14px;
+    color: #a0aec0;
+  }
+  
+  .stats-value {
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
