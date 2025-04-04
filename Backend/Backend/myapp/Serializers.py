@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from .models import User
+# from .models import User, UserActivity, 
 
 class CustomJWTAuthentication(JWTAuthentication):
     def get_user(self, validated_token):
@@ -59,6 +60,12 @@ class BookingCartSerializer(s.ModelSerializer):
         model = mp.BookingCart
         fields = '__all__'
 
+class WishlistSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.Wishlist
+        fields = '__all__'
+
+
 class PicturesListingSerializers(s.ModelSerializer):
     class Meta:
         model = mp.PicturesListings
@@ -80,10 +87,10 @@ class PackagesSerializer(s.ModelSerializer):
         model = mp.Packages
         fields = '__all__'
         
-class OrdersSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.Orders
-        fields = '__all__'
+# class OrdersSerializer(s.ModelSerializer):
+#     class Meta:
+#         model = mp.Orders
+#         fields = '__all__'
 
 
 class CartSerializer(s.ModelSerializer):
@@ -234,3 +241,14 @@ class CategoriesSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Categories
         fields = '__all__'
+
+class UserActivitySerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.UserActivity
+        fields = '__all__'  # ✅ This includes action, metadata, timestamp, and duration_seconds
+
+
+# class UserEventSerializer(s.ModelSerializer):
+#     class Meta:
+#         model = mp.UserEvent
+#         exclude = ['user']  # ✅ The user is assigned automatically when creating an event

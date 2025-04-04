@@ -1,3 +1,4 @@
+android/
 # Miscellaneous
 *.class
 *.log
@@ -9,6 +10,7 @@
 .history
 .svn/
 migrate_working_dir/
+
 
 # IntelliJ related
 *.iml
@@ -45,3 +47,4 @@ pubspec.lock
 
 
 .env
+android/

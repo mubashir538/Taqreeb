@@ -1,0 +1,81 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/core/utils/color.dart';
+
+class Picture {
+  static Future<void> pickImage(
+    BuildContext context, {
+    required Function(File compressedFile) callback,
+  }) async {
+    try {
+      // 1. Pick image from gallery
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile == null) return;
+
+      // 2. Immediately crop the image
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 90,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: MyColors.red,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(
+            title: 'Crop Image',
+            aspectRatioLockEnabled: false,
+          ),
+        ],
+      );
+
+      if (croppedFile != null) {
+        // 3. Compress and return the file
+        final compressedFile = await compressImage(File(croppedFile.path));
+        callback(compressedFile);
+      }
+    } catch (e) {
+      print('Image processing error: $e');
+      MyScaffold(text: 'Failed to process image. Please try again.')
+          .show(context);
+    }
+  }
+
+  static Future<File> saveCroppedImage(Uint8List croppedBytes) async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    final path = '${directory.path}/cropped_image.png';
+    final croppedFile = File(path);
+    await croppedFile.writeAsBytes(croppedBytes);
+    return croppedFile;
+  }
+
+  static Future<File> compressImage(File file) async {
+    final originalPath = file.path;
+    final compressedPath =
+        originalPath.replaceFirst(RegExp(r'\.\w+$'), '_compressed.jpg');
+
+    final result = await FlutterImageCompress.compressAndGetFile(
+      originalPath,
+      compressedPath,
+      quality: 50,
+    );
+
+    if (result != null) {
+      final FcompressedFile = File(result.path);
+      return FcompressedFile;
+    } else {
+      throw Exception('Image compression failed.');
+    }
+  }
+}

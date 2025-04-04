@@ -1,80 +1,104 @@
-import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:taqreeb/Classes/flutterStorage.dart';
-import 'package:taqreeb/Classes/tokens.dart';
-import 'package:taqreeb/Components/mainScreen.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_AddAddons.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_AddImage.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_AddPackage.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_Addons.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_MoreDetails.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_Packages.dart';
-import 'package:taqreeb/Screens/AddCategory/AddCategory_list.dart';
-import 'package:taqreeb/Screens/BusinessInfoEdit.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_BakerySweet.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Caterers.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Decorator.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_GraphicDesigner.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Parlour.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Photographer.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_PhotographyPlace.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Saloon.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_VideoEditor.dart';
-import 'package:taqreeb/Screens/CreateGroup.dart';
-import 'package:taqreeb/Screens/Dashboard.dart';
-import 'package:taqreeb/Screens/AccountInfoEdit.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_BasicInfo.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_CNICUpload.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/BusinessSignup_Description.dart';
-import 'package:taqreeb/Screens/BusinessSignupScreens/SubmissionSucessful.dart';
-import 'package:taqreeb/Screens/Cart.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_Venue.dart';
-import 'package:taqreeb/Screens/BakerySweet_Products.dart';
-import 'package:taqreeb/Screens/CategoryViewPages/CategoryView_CarRenter.dart';
-import 'package:taqreeb/Screens/ChatBox.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/Create%20AI%20Package/CreateAIPackage.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_AddFamily.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_List.dart';
-import 'package:taqreeb/Screens/Create%20guest%20list/CreateGuestList_AddPerson.dart';
-import 'package:taqreeb/Screens/CreateChecklistItems.dart';
-import 'package:taqreeb/Screens/CreateEvent.dart';
-import 'package:taqreeb/Screens/CreateFunction.dart';
-import 'package:taqreeb/Screens/EventDetails.dart';
-import 'package:taqreeb/Screens/ForgotPassword_EmailorPhoneInput.dart';
-import 'package:taqreeb/Screens/ForgotPassword_NewPassword.dart';
-import 'package:taqreeb/Screens/ForgotPassword_VerifyCode.dart';
-import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_Description.dart';
-import 'package:taqreeb/Screens/Freelancer%20Signup/FreelancerSignup_BasicInfo.dart';
-import 'package:taqreeb/Screens/FunctionDetail.dart';
-import 'package:taqreeb/Screens/Login.dart';
-import 'package:taqreeb/Screens/SearchService.dart';
-import 'package:taqreeb/Screens/Settings.dart';
-import 'package:taqreeb/Screens/SignupScreens/ProfilePictureUpload.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPVerify.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_ContactOTPSend.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_EmailOTPVerify.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_EmailOTPSend.dart';
-import 'package:taqreeb/Screens/SignupScreens/Signup_MoreInfo.dart';
-import 'package:taqreeb/Screens/SignupScreens/basicSignup.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_EventDetail.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/AIPackage_FunctionDetail.dart';
-import 'package:taqreeb/Screens/For%20Fyp2/View%20AI%20Packages/ViewAIPackage.dart';
-import 'package:taqreeb/Screens/groupchats.dart';
-import 'package:taqreeb/Screens/newUserSearch.dart';
-import 'package:taqreeb/Screens/screens%20to%20be%20made/InvitationCardEdit.dart';
-import 'package:taqreeb/Screens/splash%20screen.dart';
-import 'package:taqreeb/firebase_options.dart';
-import 'package:taqreeb/theme/color.dart';
+import 'package:provider/provider.dart';
+import 'package:taqreeb/Screens/AI/event_detail_ai.dart';
+import 'package:taqreeb/Screens/AI/event_packages_ai.dart';
+import 'package:taqreeb/Screens/AI/function_detail_ai.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/basic_info_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/cnic_upload_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/description_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/Business%20Signup/submission_success.dart';
+import 'package:taqreeb/Screens/Account%20Management/Forgot%20Password/input_credentials_forgot.dart';
+import 'package:taqreeb/Screens/Account%20Management/Forgot%20Password/new_password_forgot.dart';
+import 'package:taqreeb/Screens/Account%20Management/Forgot%20Password/verification_forgot.dart';
+import 'package:taqreeb/Screens/Account%20Management/Freelancer%20Signup/basic_info_freelancer.dart';
+import 'package:taqreeb/Screens/Account%20Management/Freelancer%20Signup/description_freelancer.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/basic_info.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/more_info_signup.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/profile_upload.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/send_otp_contact.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/send_otp_email.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/verify_otp_contact.dart';
+import 'package:taqreeb/Screens/Account%20Management/User%20Signup/verify_otp_email.dart';
+import 'package:taqreeb/Screens/Account%20Management/account_info_edit.dart';
+import 'package:taqreeb/Screens/Account%20Management/account_info_edit_business.dart';
+import 'package:taqreeb/Screens/Account%20Management/login.dart';
+import 'package:taqreeb/Screens/Event%20Management/Checklist/checklist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Events/create_event.dart';
+import 'package:taqreeb/Screens/Event%20Management/Events/view_event.dart';
+import 'package:taqreeb/Screens/Event%20Management/Functions/create_function.dart';
+import 'package:taqreeb/Screens/Event%20Management/Functions/view_function.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_family.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
+import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
+import 'package:taqreeb/Screens/Globals/settings.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_image.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_addons.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_basic.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_details.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_video_upload.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_car_renter.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_caterer.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_decorator.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_graphic_designer.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_parlor.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_photographer.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_photography_place.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_salon.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_venue.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_video_editor.dart';
+import 'package:taqreeb/Screens/Listings/review_screen.dart';
+import 'package:taqreeb/Screens/Listings/user_wishlist.dart';
+import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
+import 'package:taqreeb/Screens/Main%20Screens/main_screen.dart';
+import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
+import 'package:taqreeb/Screens/Payments/order_summary.dart';
+import 'package:taqreeb/Screens/Search/listing_search.dart';
+import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
+import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
+import 'package:taqreeb/Screens/chat/chat_box.dart';
+import 'package:taqreeb/Screens/chat/search_new_user.dart';
+import 'package:taqreeb/core/providers/ThemeProvider.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/app_initializer.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/utils/color.dart';
+import 'package:taqreeb/Screens/Globals/splash_screen.dart';
+import 'package:taqreeb/core/utils/themes.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Preserve splash screen with required widgetsBinding parameter
+  FlutterNativeSplash.preserve(
+    widgetsBinding: widgetsBinding,
+  );
 
-  runApp(const MainApp());
+  // Initialize in background
+  final initialization = AppInitializer.init();
+
+  runApp(
+    MultiProvider(
+      providers: AppInitializer.getProviders(),
+      child: FutureBuilder(
+        future: initialization,
+        builder: (context, snapshot) {
+          // Remove splash when done
+          if (snapshot.connectionState == ConnectionState.done) {
+            FlutterNativeSplash.remove();
+            return MainApp();
+          }
+          // Show empty container while loading
+          return const SizedBox.shrink();
+        },
+      ),
+    ),
+  );
 }
 
 class MainApp extends StatefulWidget {
@@ -85,110 +109,122 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  bool isHome = false;
+
   @override
   void initState() {
     super.initState();
+    _initializeApp();
   }
 
-  bool ishome = false;
-
-  void initialize() async {
+  Future<void> _initializeApp() async {
     MyColors.getTheme();
 
-    Timer(Duration(seconds: 3), () async {
-      await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
-      if (await MyStorage.exists(MyTokens.accessToken)) {
-        ishome = true;
-      }
-    });
-    FlutterNativeSplash.remove();
+    // Simulate initialization delay
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Check if the user is logged in
+    if (await MyStorage.exists(MyTokens.accessToken)) {
+      setState(() {
+        isHome = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        '/': (context) => SplashScreen(),
-        '/settings': (context) => Settings(),
-        '/AddCategory_Add_Addons': (context) => AddcategoryAddaddons(),
-        '/AddCategory_AddImage': (context) => AddImage(),
-        '/AddCategory_Addons': (context) => AddcategoryAddons(),
-        '/AddCategory_AddPackage': (context) => AddcategoryAddpackage(),
-        '/AddCategory_List': (context) => AddcategoryList(),
-        '/AddCategory_MoreDetails': (context) => AddcategoryMoredetails(),
-        '/AddCategory_Packages': (context) => AddcategoryPackages(),
-        '/basicSignup': (context) => BasicSignup(),
-        '/Signup_ContactOTPSend': (context) => Signup_ContactOTPSend(),
-        '/Signup_ContactOTPVerify': (context) => SignupContactOTPVerify(),
-        '/Signup_EmailOTPSend': (context) => Signup_EmailOTPSend(),
-        '/Signup_EmailOTPVerify': (context) => SignupEmailOTPVerify(),
-        '/Signup_MoreInfo': (context) => Signup_MoreInfo(),
-        '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
-        '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
-        '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
-        '/BusinessSignup_Description': (context) =>
-            BusinessSignup_Description(),
-        '/SubmissionSucessful': (context) => SubmissionSucessful(),
-        '/HomePage': (context) => MainScreen(index: 0),
-        '/Login': (context) => Login(),
-        '/CreateChecklistItems': (context) => CreateChecklistItems(),
-        '/FreelancerSignup_BasicInfo': (context) =>
-            FreelancerSignup_BasicInfo(),
-        '/FreelancerSignup_Description': (context) =>
-            FreelancerSignup_Description(),
-        '/CreateGroup': (context) => CreateGroupScreen(),
-        '/ForgotPassword_EmailorPhoneInput': (context) =>
-            ForgotPassword_EmailorPhoneInput(),
-        '/ForgotPassword_VerifyCode': (context) => ForgotPassword_VerifyCode(),
-        '/ForgotPassword_NewPassword': (context) =>
-            ForgotPassword_NewPassword(),
-        '/CreateAIPackage': (context) => CreateAIPackage(),
-        '/ViewAIPackage': (context) => ViewAIPackage(),
-        '/AIPackage_EventDetail': (context) => AIPackage_EventDetail(),
-        '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
-        '/ChatsScreen': (context) => MainScreen(index: 1),
-        '/GroupChatBox': (context) => GroupChatScreen(),
-        '/ChatBox': (context) => ChatBox(),
-        '/SearchService': (context) => SearchService(),
-        '/YourListings': (context) => MainScreen(index: 2),
-        '/AccountInfo': (context) => MainScreen(index: 3),
-        '/AccountInfoEdit': (context) => AccountInfoEdit(),
-        '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
-        '/BusinessAccountInfo': (context) => MainScreen(index: 3),
-        '/CreateGuestList': (context) => CreateGuestList(),
-        '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
-        '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),
-        '/CreateGuestList_List': (context) => CreateGuestList_List(),
-        '/CreateFunction': (context) => CreateFunction(),
-        '/EventDetails': (context) => EventDetails(),
-        '/CategoryView_Venue': (context) => CategoryView_Venue(),
-        '/CategoryView_Salon': (context) => CategoryView_Saloon(),
-        '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
-        '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
-        '/CategoryView_Decorator': (context) => CategoryView_Decorator(),
-        '/CategoryView_PhotographyPlace': (context) =>
-            CategoryView_PhotographyPlace(),
-        '/CategoryView_Photographer': (context) => CategoryView_Photographer(),
-        '/CategoryView_BakerySweet': (context) => CategoryView_BakerySweet(),
-        '/CategoryView_GraphicDesigner': (context) =>
-            CategoryView_GraphicDesigner(),
-        '/CategoryView_CarRenter': (context) => CategoryView_CarRenter(),
-        '/FunctionDetail': (context) => FunctionDetail(),
-        '/BakerySweet_Products': (context) => BakerySweet_Products(),
-        '/Cart': (context) => Cart(),
-        '/InvitationCardEdit': (context) => InvitationCardEdit(),
-        '/CreateEvent': (context) => CreateEvent(),
-        '/YourEvents': (context) => MainScreen(index: 2),
-        '/Dashboard': (context) => Dashboard(),
-        '/EditEvent': (context) => CreateEvent(),
-        '/EditFunction': (context) => CreateFunction(),
-        '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
-        '/search_new_user': (context) => NewUserSearch(),
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return PopScope(
+      onPopInvokedWithResult: (didpop, Object? result) async {
+        await MyApi.cacheManager.emptyCache();
       },
-      theme: ThemeData.dark(
-        useMaterial3: true,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppThemes.darkTheme,
+        darkTheme: AppThemes.darkTheme,
+        themeMode: themeProvider.themeMode,
+        initialRoute: '/',
+        routes: _buildRoutes(),
       ),
     );
+  }
+
+  Map<String, WidgetBuilder> _buildRoutes() {
+    return {
+      '/': (context) => SplashScreen(),
+      '/AIPackage_EventDetail': (context) => AiPackageEventDetail(),
+      '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
+      '/AccountInfo': (context) => MainScreen(index: 3),
+      '/AccountInfoEdit': (context) => AccountInfoEdit(),
+      '/Add360video': (context) => Add360Video(),
+      '/AddCategory_Add_Addons': (context) => AddCategoryAddAddons(),
+      '/AddCategory_AddImage': (context) => AddImage(),
+      '/AddCategory_Addons': (context) => AddCategoryAddons(),
+      '/AddCategory_AddPackage': (context) => AddCategoryAddPackage(),
+      '/AddCategory_List': (context) => AddCategoryListing(),
+      '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(),
+      '/AddCategory_Packages': (context) => AddCategoryPackages(),
+      '/BasicSignup': (context) => BasicSignup(),
+      '/BusinessAccountInfo': (context) => MainScreen(index: 3),
+      '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
+      '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
+      '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
+      '/BusinessSignup_Description': (context) => BusinessSignupDescription(),
+      '/CategoryView_CarRenter': (context) => CategoryView_CarRenter(),
+      '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
+      '/CategoryView_Decorator': (context) => CategoryView_Decorator(),
+      '/CategoryView_GraphicDesigner': (context) =>
+          CategoryView_GraphicDesigner(),
+      '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
+      '/CategoryView_Photographer': (context) => CategoryView_Photographer(),
+      '/CategoryView_PhotographyPlace': (context) =>
+          CategoryView_PhotographyPlace(),
+      '/CategoryView_Salon': (context) => CategoryView_Saloon(),
+      '/CategoryView_Venue': (context) => CategoryView_Venue(),
+      '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
+      '/ChatBox': (context) => ChatBox(),
+      '/ChatsScreen': (context) => MainScreen(index: 1),
+      '/CreateAIPackage': (context) => MainScreen(index: 1),
+      '/CreateChecklistItems': (context) => CreateChecklistItems(),
+      '/CreateEvent': (context) => CreateEvent(),
+      '/CreateFunction': (context) => CreateFunction(),
+      '/CreateGroup': (context) => CreateGroupScreen(),
+      '/CreateGuestList': (context) => CreateGuestList(),
+      '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
+      '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),
+      '/CreateGuestList_List': (context) => CreateGuestList_List(),
+      '/Dashboard': (context) => Dashboard(),
+      '/EditEvent': (context) => CreateEvent(),
+      '/EditFunction': (context) => CreateFunction(),
+      '/EventDetails': (context) => EventDetails(),
+      '/ForgotPassword_EmailorPhoneInput': (context) =>
+          ForgotPassword_EmailorPhoneInput(),
+      '/ForgotPassword_NewPassword': (context) => ForgotPassword_NewPassword(),
+      '/ForgotPassword_VerifyCode': (context) => ForgotPassword_VerifyCode(),
+      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignup_BasicInfo(),
+      '/FreelancerSignup_Description': (context) =>
+          FreelancerSignup_Description(),
+      '/FunctionDetail': (context) => FunctionDetail(),
+      '/GroupChatBox': (context) => GroupChatScreen(),
+      '/HomePage': (context) => MainScreen(index: 0),
+      '/Login': (context) => Login(),
+      '/OrderSummary': (context) => OrderSummaryScreen(),
+      '/PaymentDetails': (context) => SecurePaymentScreen(),
+      '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
+      '/ReviewPage': (context) => ReviewScreen(),
+      '/SearchService': (context) => SearchService(),
+      '/Settings': (context) => Settings(),
+      '/Signup_ContactOTPSend': (context) => SignupContactOtpSend(),
+      '/Signup_ContactOTPVerify': (context) => SignupContactOtpVerify(),
+      '/Signup_EmailOTPSend': (context) => SignupEmailOtpSend(),
+      '/Signup_EmailOTPVerify': (context) => SignupEmailOtpVerify(),
+      '/Signup_MoreInfo': (context) => SignupMoreInfo(),
+      '/SubmissionSucessful': (context) => SubmissionSucessful(),
+      '/ViewAIPackage': (context) => ViewAIPackage(),
+      '/Wishlist': (context) => WishlistViewPage(),
+      '/YourEvents': (context) => MainScreen(index: 2),
+      '/YourListings': (context) => MainScreen(index: 2),
+      '/search_new_user': (context) => NewUserSearch(),
+    };
   }
 }

@@ -3,10 +3,13 @@ from . import views
 from .apis import Account_Management as am
 from .apis import View_Pages as vp
 from .apis import chats as c
+from .apis import notifications as n
 from .apis import Event_Management as em
 from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
+from .apis import User_Activity as ua 
+# from .apis import Event_Tracking as et  
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -18,6 +21,9 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
     path('api/token/', TokenObtainPairView.as_view(serializer_class=CustomTokenObtainPairSerializer), name='token_obtain_pair'),
     path('resendOTP/phone',am.resendOTPPhone, name = 'resendOTPPhone'),
+    path('notification/saveFCM',n.saveFCMToken, name = 'saveFCMToken'),
+    path('notification/DeleteFCM',n.DeleteFCMToken, name = 'DeleteFCMToken'),
+    path('notification/sendNotification',n.new_message, name = 'new_message'),
     path('resendOTP/email',am.resendOTPEmail, name = 'resendOTPEmail'),
     path('resendOTP/forgot',am.resendOTP, name = 'resendOTP'),
     path('sendOTP/phone',am.sendOTPPhone,name='sendOTPPhone'), 
@@ -59,6 +65,7 @@ urlpatterns = [
     path('Caterer/viewpage/<int:listingid>',vp.CatererViewPage,name='CatererViewPage'),
     path('Bakers/viewpage/<int:listingid>',vp.BakersViewPage,name='BakersViewPage'),
     path('ViewFunction/<int:FunctionId>',views.ViewFunction,name='ViewFunction'),
+    path('error/application',views.application_errors,name='error'),
     path('videoeditorviewpage/<int:listingid>',vp.VideoEditorViewPage,name='VideoEditorViewPage'),
     path('add/Bookcart/',views.AddtoBookCart,name='AddtoBookCart'),
     path('show/Bookcart/<int:id>',views.showBookCart,name='showBookCart'),
@@ -81,6 +88,11 @@ urlpatterns = [
     path('cartItems/<int:productid>/<int:listingid>/<int:userid>',views.CartItems,name='CartItems'),
     path('graphic/designer/viewpage/<int:listingid>',vp.GraphicDesignerViewPage,name='GraphicDesignerViewPage'),
     path('carrenter/viewpage/<int:listingid>',vp.CarRenterViewPage,name='CarRenterViewPage'),
+    path('log-user-activity/', ua.log_user_activity, name='log-user-activity'),
+    path('wishlist/add',views.addtoWishlist,name='addtoWishlist'),
+    path('wishlist/get/<int:uid>',views.getWishlist,name='getWishlist'),
+    path('wishlist/delete',views.removeFromWishlist,name='removeFromWishlist'),
+    path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     # path('deleteReq/',views.deleteTable,name='deleteReq'),
 ]
 
