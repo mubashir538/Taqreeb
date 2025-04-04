@@ -17,15 +17,20 @@ class RangeSliderController {
 }
 
 class RangeSliderWidget extends StatefulWidget {
-  const RangeSliderWidget({
-    super.key,
-    required this.start,
-    required this.end,
-    required this.divisions,
-    required this.controller,
-    required this.onChanged,
-  });
+  const RangeSliderWidget(
+      {super.key,
+      required this.start,
+      required this.end,
+      required this.divisions,
+      required this.controller,
+      required this.onChanged,
+      this.startLabel = "",
+      this.endLabel = "",
+      this.price = true});
 
+  final String startLabel;
+  final String endLabel;
+  final bool price;
   final double start;
   final double end;
   final int divisions;
@@ -58,7 +63,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               activeTrackColor: MyColors.red,
               inactiveTrackColor: MyColors.whiteDarker,
               thumbColor: MyColors.red,
-              overlayColor: MyColors.red.withOpacity(0.2),
+              overlayColor: MyColors.red.withAlpha(51),
               valueIndicatorTextStyle: GoogleFonts.montserrat(
                 color: Colors.white,
                 fontSize: Screen.max(context) * 0.015,
@@ -69,15 +74,22 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               min: widget.start,
               max: widget.end,
               divisions: widget.divisions,
-              labels: RangeLabels(
-                currentRange.start.round().toString(),
-                currentRange.end.round().toString(),
-              ),
+              labels: widget.price
+                  ? RangeLabels(
+                      currentRange.start.round().toString(),
+                      currentRange.end.round().toString(),
+                    )
+                  : RangeLabels(
+                      currentRange.start.toString(),
+                      currentRange.end.toString(),
+                    ),
               onChanged: (RangeValues newRange) {
                 setState(() {
-                  currentRange = RangeValues(
+                  currentRange = widget.price?RangeValues(
                     (newRange.start / 10000).round() * 10000.toDouble(),
                     (newRange.end / 10000).round() * 10000.toDouble(),
+                  ): RangeValues(
+                    newRange.start,newRange.end
                   );
 
                   widget.controller
@@ -95,11 +107,15 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Rs. ${NumberFormat("#,##0").format(currentRange.start.round())}',
+                  widget.startLabel == ""
+                      ? 'Rs. ${NumberFormat("#,##0").format(currentRange.start.round())}'
+                      : widget.startLabel,
                   style: GoogleFonts.montserrat(color: MyColors.white),
                 ),
                 Text(
-                  'Rs. ${NumberFormat("#,##0").format(currentRange.end.round())}',
+                  widget.endLabel == ""
+                      ? 'Rs. ${NumberFormat("#,##0").format(currentRange.end.round())}'
+                      : widget.endLabel,
                   style: GoogleFonts.montserrat(color: MyColors.white),
                 ),
               ],

@@ -77,14 +77,14 @@ class _CategoryReviewState extends State<CategoryReview> {
       child: Row(
         children: [
           Text(
-            '${widget.listing['reveiewData']['count'].toString()} Reviews',
+            '${widget.listing['Listing']['ratingCount'].toString()} Reviews',
             style: _buildTextStyle(color: MyColors.white),
           ),
           SizedBox(width: Screen.width(context) * 0.02),
           Icon(Icons.star, color: MyColors.Yellow),
           SizedBox(width: Screen.width(context) * 0.02),
           Text(
-            widget.listing['reveiewData']['average'].toString(),
+            widget.listing['Listing']['rating'].toString(),
             style: _buildTextStyle(color: MyColors.white),
           ),
         ],

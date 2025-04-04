@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -76,11 +76,11 @@ class ApiCall {
       }
       values.add(listing['View'][searchValues[i]].toString());
     }
-    starsvalue.add('(${listing['reveiewData']['5'].toString()})');
-    starsvalue.add('(${listing['reveiewData']['4'].toString()})');
-    starsvalue.add('(${listing['reveiewData']['3'].toString()})');
-    starsvalue.add('(${listing['reveiewData']['2'].toString()})');
-    starsvalue.add('(${listing['reveiewData']['1'].toString()})');
+    starsvalue.add('(${listing['reviewData']['s5'].toString()})');
+    starsvalue.add('(${listing['reviewData']['s4'].toString()})');
+    starsvalue.add('(${listing['reviewData']['s3'].toString()})');
+    starsvalue.add('(${listing['reviewData']['s2'].toString()})');
+    starsvalue.add('(${listing['reviewData']['s1'].toString()})');
 
     // Update state
     updateState(false, true); // Set isLoading = false, ischange = true

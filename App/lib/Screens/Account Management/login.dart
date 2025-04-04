@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Buttons/c_icon_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -44,8 +44,6 @@ class _LoginState extends State<Login> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
     super.dispose();
   }
 

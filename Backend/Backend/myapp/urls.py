@@ -74,6 +74,7 @@ urlpatterns = [
     path('home/categories/',views.HomeCategories,name='HomeCategories'),
     path('business/categories/<str:type>',views.BusinessCategories,name='BusinessCategories'),
     path('home/listings/',lm.HomeListings,name='HomeListings'),
+    path('home/listings/views',lm.ListingWithViews,name='ListingWithViews'),
     path('show/guest/',views.ShowGuest,name='ShowGuest'),
     path('Delete/guest/',views.DeleteGuest,name='DeleteGuest'),
     path('show/checklist/<int:eventId>',views.ShowChecklist,name='ShowGuest'),

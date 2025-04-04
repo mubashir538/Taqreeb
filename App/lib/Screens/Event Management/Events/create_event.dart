@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -327,7 +327,7 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildBasicInfoSection() {
     return QuestionGroup(
-      Heading: "Basic Info",
+      heading: "Basic Info",
       questions: [
         MyTextBox(
           focusNode: _formData.eventNameFocus,
@@ -376,7 +376,7 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildDescriptionSection() {
     return QuestionGroup(
-      Heading: "Describe Your Event",
+      heading: "Describe Your Event",
       questions: [
         DescriptionBox(
           focusNode: _formData.descriptionFocus,
@@ -390,7 +390,7 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildGuestInfoSection() {
     return QuestionGroup(
-      Heading: "Guest Info",
+      heading: "Guest Info",
       questions: [
         MyTextBox(
           focusNode: _formData.guestMinFocus,
@@ -412,7 +412,7 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildBudgetSection() {
     return QuestionGroup(
-      Heading: "Budget",
+      heading: "Budget",
       questions: [
         MyTextBox(
           focusNode: _formData.budgetFocus,

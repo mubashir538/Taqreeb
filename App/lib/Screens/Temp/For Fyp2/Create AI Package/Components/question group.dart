@@ -6,23 +6,21 @@ import 'package:taqreeb/core/utils/color.dart';
 
 class QuestionGroup extends StatelessWidget {
   final List<Widget> questions;
-  final String Heading;
+  final String heading;
   const QuestionGroup(
-      {super.key, required this.questions, required this.Heading});
+      {super.key, required this.questions, required this.heading});
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: Screen.max(context) * 0.02, vertical: Screen.max(context) * 0.02),
+              horizontal: Screen.max(context) * 0.02,
+              vertical: Screen.max(context) * 0.02),
           child: Text(
-            Heading,
+            heading,
             style: GoogleFonts.montserrat(
                 color: MyColors.Yellow,
                 fontWeight: FontWeight.w500,

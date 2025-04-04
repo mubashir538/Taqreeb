@@ -20,10 +20,10 @@ class ColoredButton extends StatefulWidget {
   });
 
   @override
-  _ColoredButtonState createState() => _ColoredButtonState();
+  ColoredButtonState createState() => ColoredButtonState();
 }
 
-class _ColoredButtonState extends State<ColoredButton> {
+class ColoredButtonState extends State<ColoredButton> {
   bool _isPressed = false;
 
   void _handleTapDown(TapDownDetails details) {

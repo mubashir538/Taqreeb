@@ -15,10 +15,10 @@ class AutoImageSlider extends StatefulWidget {
   });
 
   @override
-  _AutoImageSliderState createState() => _AutoImageSliderState();
+  AutoImageSliderState createState() => AutoImageSliderState();
 }
 
-class _AutoImageSliderState extends State<AutoImageSlider> {
+class AutoImageSliderState extends State<AutoImageSlider> {
   late PageController _pageController;
   int _currentIndex = 0;
   final Map<int, bool> _imageLoaded = {};

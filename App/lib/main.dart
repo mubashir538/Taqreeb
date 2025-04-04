@@ -181,7 +181,7 @@ class _MainAppState extends State<MainApp> {
           CategoryView_PhotographyPlace(),
       '/CategoryView_Salon': (context) => CategoryView_Saloon(),
       '/CategoryView_Venue': (context) => CategoryView_Venue(),
-      '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
+      '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
       '/ChatBox': (context) => ChatBox(),
       '/ChatsScreen': (context) => MainScreen(index: 1),
       '/CreateAIPackage': (context) => MainScreen(index: 1),
@@ -200,10 +200,10 @@ class _MainAppState extends State<MainApp> {
       '/ForgotPassword_EmailorPhoneInput': (context) =>
           ForgotPassword_EmailorPhoneInput(),
       '/ForgotPassword_NewPassword': (context) => ForgotPassword_NewPassword(),
-      '/ForgotPassword_VerifyCode': (context) => ForgotPassword_VerifyCode(),
+      '/ForgotPassword_VerifyCode': (context) => ForgotPasswordVerifyCode(),
       '/FreelancerSignup_BasicInfo': (context) => FreelancerSignup_BasicInfo(),
       '/FreelancerSignup_Description': (context) =>
-          FreelancerSignup_Description(),
+          FreelancerSignupDescription(),
       '/FunctionDetail': (context) => FunctionDetail(),
       '/GroupChatBox': (context) => GroupChatScreen(),
       '/HomePage': (context) => MainScreen(index: 0),

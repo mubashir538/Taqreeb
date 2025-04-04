@@ -4,7 +4,7 @@ import random as rd
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.apps import apps
 import json
 import os
@@ -166,6 +166,8 @@ def AddListing(request):
                 md.AddOns(perType=i['headtype'],isPer=True,listingId=listingId,name=i['name'],price=i['price']).save()
             else:
                 md.AddOns(isPer=False,listingId=listingId,name=i['name'],price=i['price']).save()
+    rdetails = md.ReviewDetails(listingID=listing)
+    rdetails.save()    
     return Response({'status':'success'})
 
 @api_view(['POST'])
@@ -367,7 +369,77 @@ def updateListing(request):
     return Response({'status':'error'})
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+def ListingWithViews(request):
+    # Get all listings with prefetch_related to optimize queries
+    listings = md.Listing.objects.all().prefetch_related(
+        'pictureslistings_set',
+        'venue_set',
+        'caterers_set',
+        'carrenters_set',
+        'decorators_set',
+        'photographyplaces_set',
+        'photographers_set',
+        'videoeditors_set',
+        'graphicdesigners_set'
+    )
+    
+    listing_serializer = s.ListingSerializer(listings, many=True)
+    listings_data = listing_serializer.data[:]
+    rd.shuffle(listings_data)
+    
+    for listing in listings_data:
+        # Add pictures
+        pictures = md.PicturesListings.objects.filter(listingId=listing['id']).first()
+        listing['pictures'] = s.PicturesListingSerializers(pictures, many=False).data
+        
+        # Add venue data if exists
+        venue = md.Venue.objects.filter(listingID=listing['id']).first()
+        if venue:
+            listing['View'] = s.VenueSerializer(venue).data
+        
+        # Add caterers data if exists
+        caterers = md.Caterers.objects.filter(listingId=listing['id']).first()
+        if caterers:
+            listing['View'] = s.CaterersSerializer(caterers).data
+        
+        # Add car renters data if exists
+        car_renters = md.CarRenters.objects.filter(listingID=listing['id']).first()
+        if car_renters:
+            listing['View'] = s.CarRentersSerializer(car_renters).data
+        
+        # Add decorators data if exists
+        decorators = md.Decorators.objects.filter(listingId=listing['id']).first()
+        if decorators:
+            listing['View'] = s.DecoratorsSerializer(decorators).data
+        
+        # Add photography places data if exists
+        photography_places = md.PhotographyPlaces.objects.filter(listingID=listing['id']).first()
+        if photography_places:
+            listing['View'] = s.PhotographyPlacesSerializer(photography_places).data
+        
+        # Add photographers data if exists
+        photographers = md.Photographers.objects.filter(listingId=listing['id']).first()
+        if photographers:
+            listing['View'] = s.PhotographersSerializer(photographers).data
+        
+        # Add video editors data if exists
+        video_editors = md.VideoEditors.objects.filter(listingId=listing['id']).first()
+        if video_editors:
+            listing['View'] = s.VideoEditorsSerializer(video_editors).data
+        
+        # Add graphic designers data if exists
+        graphic_designers = md.GraphicDesigners.objects.filter(listingId=listing['id']).first()
+        if graphic_designers:
+            listing['View'] = s.GraphicDesignersSerializer(graphic_designers).data
+    
+    return Response({
+        'status': 'success',
+        'listings': listings_data
+    })
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def HomeListings(request):
     Listing= md.Listing.objects.all()
     ListingSerializer= s.ListingSerializer(Listing, many=True)

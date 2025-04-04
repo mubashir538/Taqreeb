@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/validations.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 
 class ForgotPasswordProvider with ChangeNotifier {
   bool _isLoading = false;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -66,6 +66,12 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
   }
 
   @override

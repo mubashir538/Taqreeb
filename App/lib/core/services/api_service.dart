@@ -10,14 +10,17 @@ class MyApi {
   static String baseUrl = AppConfig.baseUrl;
   static DefaultCacheManager cacheManager = DefaultCacheManager();
   static Future<dynamic> getRequest({
+    bool refresh = false,
     required String endpoint,
     Map<String, String>? headers,
   }) async {
     Uri url = Uri.parse('$baseUrl$endpoint');
 
     http.Response response;
+    
+
     final cache = await cacheManager.getFileFromCache(url.toString());
-    if (cache == null) {
+    if (cache == null || refresh) {
       try {
         if (headers != null) {
           response = await http.get(url, headers: headers);

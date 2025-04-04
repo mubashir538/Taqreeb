@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
     };
 
-    MyApi.cacheManager.emptyCache();
+    // MyApi.cacheManager.emptyCache();
     final String? userId = await MyStorage.getToken(MyTokens.userId);
 
     Timer.periodic(const Duration(seconds: 5), (timer) async {
@@ -54,9 +54,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final String? userId = data['userId'];
 
     await Future.wait([
-      MyApi.getRequest(endpoint: 'home/listings/', headers: header),
-      MyApi.getRequest(endpoint: 'Homepage/DemoImages/', headers: header),
-      MyApi.getRequest(endpoint: 'home/categories/', headers: header),
+      MyApi.getRequest(endpoint: 'home/listings/', headers: header,refresh: true),
+      MyApi.getRequest(endpoint: 'Homepage/DemoImages/', headers: header,refresh: true),
+      MyApi.getRequest(endpoint: 'home/categories/', headers: header,refresh: true),
       if (isLoggedIn) ...[
         MyApi.getRequest(endpoint: 'accountInfo/$userId/'),
         MyApi.getRequest(endpoint: 'YourEvents/$userId'),

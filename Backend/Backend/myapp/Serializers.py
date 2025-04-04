@@ -115,6 +115,11 @@ class ReviewSerializer(s.ModelSerializer):
         model = mp.Review
         fields = '__all__'
 
+class ReviewDetailsSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.ReviewDetails
+        fields = '__all__'
+
 class EventsSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Events
@@ -204,10 +209,10 @@ class SalonsSerializer(s.ModelSerializer):
         model = mp.Salons
         fields = '__all__'
 
-class BakersAndSweetsSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.BakersAndSweets
-        fields = '__all__'
+# class BakersAndSweetsSerializer(s.ModelSerializer):
+#     class Meta:
+#         model = mp.BakersAndSweets
+#         fields = '__all__'
 
 class VideoEditorsSerializer(s.ModelSerializer):
     class Meta:
@@ -232,10 +237,10 @@ class FunctionTypeSerializer(s.ModelSerializer):
         fields = '__all__'
 
 
-class DesertItemsSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.DesertItems
-        fields = '__all__'
+# class DesertItemsSerializer(s.ModelSerializer):
+#     class Meta:
+#         model = mp.DesertItems
+#         fields = '__all__'
 
 class CategoriesSerializer(s.ModelSerializer):
     class Meta:

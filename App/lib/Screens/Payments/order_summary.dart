@@ -10,6 +10,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 class OrderSummaryController {
   String listingName = '';
   int listingPrice = 0;
+  int listingId = 0;
   String listingType = '';
   String token = '';
   Map<String, dynamic> user = {};
@@ -33,6 +34,7 @@ class OrderSummaryController {
     listingName = args['Name'] ?? '';
     listingPrice = args['price'] ?? 0;
     listingType = args['type'] ?? '';
+    listingId = args['id'] ?? 0;
   }
 }
 
@@ -55,7 +57,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _controller.setListingDetails(args);
   }
 
@@ -157,8 +160,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         Checkbox(
           value: false,
           onChanged: (value) {
-            // Handle checkbox state
-          },
+           },
         ),
       ],
     );
@@ -169,26 +171,34 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       children: [
         ColoredButton(
           text: "Pay 10% Advance",
-          onPressed: () => _navigateToPayment('/PaymentDetails'),
+          onPressed: () {
+            int payment = (_controller.listingPrice * 0.1).toInt();
+            _navigateToPayment('/PaymentDetails',
+                {'amount': payment, 'listing': _controller.listingId});
+          },
         ),
         _buildVerticalSpace(0.02),
         ColoredButton(
           text: "Pay Full Amount",
-          onPressed: () => _navigateToPayment('/PaymentDetails'),
+          onPressed: () {
+            _navigateToPayment('/PaymentDetails', {
+              'amount': _controller.listingPrice,
+              'listing': _controller.listingId
+            });
+          },
         ),
       ],
     );
   }
 
-  void _navigateToPayment(String route) {
-    Navigator.pushNamed(
-      context,
-      route,
-      arguments: {
-        'amount': _controller.listingPrice,
-        'isFullPayment': route == '/PaymentDetails',
-      },
-    );
+  void _navigateToPayment(String route, Map<String, dynamic> arguments) {
+    Navigator.pushNamed(context, route,
+        // arguments: {
+        //   'amount': _controller.listingPrice,
+        //   'isFullPayment': route == '/PaymentDetails',
+        // },
+
+        arguments: arguments);
   }
 
   Widget _buildSectionTitle(String title) {

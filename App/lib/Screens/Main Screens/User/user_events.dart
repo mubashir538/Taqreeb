@@ -4,7 +4,7 @@ import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';

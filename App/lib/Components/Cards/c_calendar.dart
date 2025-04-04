@@ -11,10 +11,10 @@ class CalendarView extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CalendarViewState createState() => _CalendarViewState();
+  CalendarViewState createState() => CalendarViewState();
 }
 
-class _CalendarViewState extends State<CalendarView> {
+class CalendarViewState extends State<CalendarView> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
