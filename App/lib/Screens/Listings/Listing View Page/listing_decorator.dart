@@ -110,6 +110,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
 
       ApiCall.fetchAPI(
         'decorator/detail/$_listingId/',
+        refresh: true,
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );
@@ -249,9 +250,12 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
-          ),
-          const ChatIcon(),
-        ],
+          ),_isLoading?Container():
+          ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
+          ),],
       ),
     );
   }

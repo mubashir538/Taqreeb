@@ -60,7 +60,9 @@ class _ProductInfoState extends State<ProductInfo> {
                 Icon(Icons.star_half_rounded,
                     color: MyColors.red, size: max * 0.025),
               for (int i = 0;
-                  i < (5 - int.parse(widget.rating.toString()[0]));
+                  i < (5-(widget.rating.toString().length == 1
+                              ? int.parse(widget.rating.toString()[0])
+                              : (int.parse(widget.rating.toString()[0]) + 1)));
                   i++)
                 Icon(Icons.star_border_rounded,
                     color: MyColors.red, size: max * 0.025),

@@ -34,7 +34,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
   late final List<String> _addonsHeadings = [];
   late final List<String> _addonsValues = [];
   late final List<String> _starsValue = [];
-  
+
   int? _listingId;
   DateTime? _selectedDate;
   DateTime? _entryTime;
@@ -43,9 +43,9 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
   final GlobalKey _headerKey = GlobalKey();
 
   static const List<String> _headings = [
-    'Venue Type', 
-    'Catering', 
-    'Staff', 
+    'Venue Type',
+    'Catering',
+    'Staff',
     'Guests'
   ];
   static const List<String> _searchValues = [
@@ -103,15 +103,16 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
 
   void _fetchListingData() {
     if (!_hasChanged) {
-      final args = ModalRoute.of(context)!.settings.arguments 
-          as Map<String, dynamic>;
-      
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
       setState(() {
         _listingId = args['id'];
         _hasChanged = true;
       });
 
       ApiCall.fetchAPI(
+        refresh: true,
         'venueviewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
@@ -124,7 +125,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
       setState(() {
         _listing = listing;
         _isLoading = false;
-        
+
         ApiCall.updateListingDetails(
           listing: listing,
           updateState: _handleListingUpdate,
@@ -160,7 +161,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
     });
   }
 
-    Widget _buildLoadingIndicator() {
+  Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
@@ -204,7 +205,7 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
               ),
               _buildDivider(),
               CategoryReview(
-                listing: _listing, 
+                listing: _listing,
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
@@ -252,7 +253,13 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          const ChatIcon(),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

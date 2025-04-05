@@ -28,8 +28,11 @@ class Function12 extends StatelessWidget {
       required this.seePressed});
 
   bool isColorDark(Color color) {
-    double luminance =
-        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+    double red = color.r;
+    double green = color.g;
+    double blue = color.b;
+
+    double luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
     return luminance < 0.5;
   }
 

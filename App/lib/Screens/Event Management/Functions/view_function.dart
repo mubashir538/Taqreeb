@@ -401,7 +401,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withAlpha(127),
             spreadRadius: 3,
             blurRadius: 4,
             offset: Offset(2, 2),

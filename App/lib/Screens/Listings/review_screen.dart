@@ -6,27 +6,40 @@ import 'package:taqreeb/Components/Rating/c_rating_filter.dart';
 import 'package:taqreeb/Components/Rating/c_review_card.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class ReviewScreen extends StatelessWidget {
+class ReviewScreen extends StatefulWidget {
+  ReviewScreen({super.key});
+
+  @override
+  State<ReviewScreen> createState() => _ReviewScreenState();
+}
+
+class _ReviewScreenState extends State<ReviewScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final List<Map<String, dynamic>> _reviews = [
-    {
-      'name': "Michael Thompson",
-      'profileUrl': "https://picsum.photos/id/30/600/300",
-      'stars': 5,
-      'heading': "Excellent Build Quality and Features",
-      'message':
-          "The smartwatch exceeds expectations in every way. The build quality is premium, and the features are comprehensive. Battery life is impressive, lasting over a week with moderate use. The health tracking features are accurate and the display is bright and responsive.",
-      'days': "2",
-      'pictures': [
-        "https://picsum.photos/id/31/600/300",
-        "https://picsum.photos/id/32/600/300",
-      ],
-    },
-    // Add more reviews here as needed
-  ];
+
+  final Map<String, dynamic> _listing = {};
+  bool isChange = false;
+  bool _isLoading = true;
+  String _currentFilter = 'All Reviews'; // Track current filter
+  List<dynamic> _filteredReviews = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    if (args.isNotEmpty && !isChange) {
+      isChange = true;
+      _listing.addAll(args);
+      _filteredReviews = _listing['Review'] ?? [];
+      getUserInfo();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +77,9 @@ class ReviewScreen extends StatelessWidget {
   }
 
   Widget _buildProductInfo() {
-    return const ProductInfo(
-      rating: 4.5,
-      reviews: 500,
+    return ProductInfo(
+      rating: double.parse(_listing['Listing']['rating']),
+      reviews: _listing['Listing']['ratingCount'],
     );
   }
 
@@ -80,33 +93,133 @@ class ReviewScreen extends StatelessWidget {
   Widget _buildRatingFilter() {
     return RatingFilter(
       controller: _searchController,
+      onChanged: (selectedFilter) {
+        setState(() {
+          _currentFilter = selectedFilter;
+          _applyRatingFilter(selectedFilter);
+        });
+      },
     );
   }
 
-  Widget _buildRatingDistribution() {
-    return RatingDistribution(
-      ratingPercentages: {5: 50, 4: 30, 3: 10, 2: 5, 1: 5},
-    );
+  void _applyRatingFilter(String filter) {
+    if (filter == 'All Reviews') {
+      _filteredReviews = _listing['Review'] ?? [];
+      return;
+    }
+
+    // Extract the star count from the filter text (e.g., "5 Stars" → 5)
+    final starCount = int.parse(filter.split(' ')[0]);
+
+    _filteredReviews = (_listing['Review'] as List).where((review) {
+      final rating = double.parse(review['rating']);
+
+      // For 5 stars: show only 5-star reviews
+      if (starCount == 5) return rating >= 4.5;
+      // For 4 stars: show 4-4.9
+      if (starCount == 4) return rating >= 3.5 && rating < 4.5;
+      // For 3 stars: show 3-3.9
+      if (starCount == 3) return rating >= 2.5 && rating < 3.5;
+      // For 2 stars: show 2-2.9
+      if (starCount == 2) return rating >= 1.5 && rating < 2.5;
+      // For 1 star: show 1-1.9
+      if (starCount == 1) return rating < 1.5;
+
+      return false;
+    }).toList();
   }
 
   Widget _buildReviewsList() {
     return ListView.builder(
       itemBuilder: (context, index) {
-        final review = _reviews[index];
-        return ReviewCard(
-          name: review['name'],
-          profileUrl: review['profileUrl'],
-          stars: review['stars'],
-          heading: review['heading'],
-          message: review['message'],
-          days: review['days'],
-          pictures: review['pictures'],
-        );
+        final review = _filteredReviews[index];
+        return _isLoading
+            ? Container()
+            : ReviewCard(
+                name: review['userName'],
+                profileUrl: review['userpic'],
+                stars: review['rating'],
+                message: review['review'],
+                days: timeAgo(review['date']),
+              );
       },
-      itemCount: _reviews.length,
+      itemCount: _filteredReviews.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
+  }
+
+  Map<int, double> calculateRatingDistribution() {
+    final percentages = {5: 0.0, 4: 0.0, 3: 0.0, 2: 0.0, 1: 0.0};
+    final totalRatings = _listing['Listing']['ratingCount'];
+    if (totalRatings > 0) {
+      percentages[5] = double.parse(
+          ((_listing['reviewData']['s5'] / totalRatings) * 100)
+              .toStringAsFixed(1));
+      percentages[4] = double.parse(
+          ((_listing['reviewData']['s4'] / totalRatings) * 100)
+              .toStringAsFixed(1));
+      percentages[3] = double.parse(
+          ((_listing['reviewData']['s3'] / totalRatings) * 100)
+              .toStringAsFixed(1));
+      percentages[2] = double.parse(
+          ((_listing['reviewData']['s2'] / totalRatings) * 100)
+              .toStringAsFixed(1));
+      percentages[1] = double.parse(
+          ((_listing['reviewData']['s1'] / totalRatings) * 100)
+              .toStringAsFixed(1));
+    }
+    return percentages;
+  }
+
+  Widget _buildRatingDistribution() {
+    return RatingDistribution(
+      ratingPercentages: calculateRatingDistribution(),
+    );
+  }
+
+  void getUserInfo() async {
+    print(_listing['Review'].length);
+    for (int i = 0; i < _listing['Review'].length; i++) {
+      print(_listing['Review'][i]['userID']);
+      final user = await MyApi.getRequest(
+          endpoint: 'basicUserInfo/${_listing['Review'][i]['userID']}/',
+          headers: {
+            'Authorization':
+                'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+          },
+          refresh: true);
+      setState(() {
+        _listing['Review'][i]['userName'] = user['name'];
+        _listing['Review'][i]['userpic'] = user['profilePicture'];
+      });
+      print(_listing['Review']);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  String timeAgo(String dateString) {
+    DateTime inputDate = DateTime.parse(dateString).toLocal();
+    DateTime now = DateTime.now();
+    Duration diff = now.difference(inputDate);
+
+    if (diff.inDays >= 365) {
+      int years = (diff.inDays / 365).floor();
+      return '$years year${years > 1 ? 's' : ''} ago';
+    } else if (diff.inDays >= 30) {
+      int months = (diff.inDays / 30).floor();
+      return '$months month${months > 1 ? 's' : ''} ago';
+    } else if (diff.inDays >= 1) {
+      return '${diff.inDays} day${diff.inDays > 1 ? 's' : ''} ago';
+    } else if (diff.inHours >= 1) {
+      return '${diff.inHours} hour${diff.inHours > 1 ? 's' : ''} ago';
+    } else if (diff.inMinutes >= 1) {
+      return '${diff.inMinutes} minute${diff.inMinutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
   }
 
   Widget _buildLoadMoreButton(BuildContext context) {

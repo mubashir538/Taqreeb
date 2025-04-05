@@ -279,7 +279,7 @@ class _EventDetailsState extends State<EventDetails> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withAlpha(127),
             spreadRadius: 5,
             blurRadius: 4,
             offset: const Offset(2, 2),

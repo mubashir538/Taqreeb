@@ -102,6 +102,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     if (!_hasChanged) {
       ApiCall.fetchAPI(
         'Photographer/viewpage/$_listingId',
+        refresh: true,
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );
@@ -240,8 +241,13 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
+          ),_isLoading?Container():
+           ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
           ),
-          const ChatIcon(),
+        
         ],
       ),
     );

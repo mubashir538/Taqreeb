@@ -260,11 +260,12 @@ def AddReview(request):
     rating = request.data.get('rating')
     listingId = request.data.get('listingId')
     userId = request.data.get('userId')
-    Review = md.Review(listingID = listingId, userID = userId, rating = rating, review = review)
-    Review.save()
     listing = md.Listing.objects.get(id =listingId)
-    newRating = (listing.rating * listing.ratingCount) + rating
-    listing.ratingCount +=1
+    user = md.User.objects.get(id = userId)
+    Review = md.Review(listingID = listing, userID = user, rating = rating, review = review)
+    Review.save()
+    newRating = float(listing.rating * listing.ratingCount) + float(rating)
+    listing.ratingCount += 1
     listing.rating = newRating/listing.ratingCount
     listing.save(update_fields=['ratingCount','rating']) 
     rdetails = md.ReviewDetails.objects.filter(listingID=listing).first()

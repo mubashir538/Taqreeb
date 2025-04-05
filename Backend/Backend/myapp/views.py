@@ -308,9 +308,9 @@ def removeFromWishlist(request):
 @permission_classes([AllowAny])
 def deleteTable(request):
     # md.Listing.objects.filter(ownerID=None).delete()
-    listings = md.Listing.objects.all()
-    for list in listings:
-        md.ReviewDetails(listingID=list).save()
+    # listings = md.Listing.objects.all()
+    # for list in listings:
+    #     md.ReviewDetails(listingID=list).save()
     return Response({'status': 'success'})
 
 @api_view(['POST'])
@@ -332,31 +332,10 @@ def log_user_activity(request):
         user=request.user,
         action=action,
         metadata=metadata,
-        # duration_seconds=duration_seconds,
         timestamp=now()
     )
 
     return Response({'status': 'success', 'message': 'Activity logged successfully'})
-
-# @api_view(['POST', 'GET'])
-# @permission_classes([IsAuthenticated])
-# def user_events(request):
-#     """
-#     Handles user event history for AI recommendations.
-#     - `GET` → Retrieve past events.
-#     - `POST` → Create a new event.
-#     """
-#     if request.method == 'GET':
-#         events = UserEvent.objects.filter(user=request.user)
-#         serializer = UserEventSerializer(events, many=True)
-#         return Response(serializer.data)
-
-#     elif request.method == 'POST':
-#         serializer = UserEventSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save(user=request.user)  # ✅ Auto-assign user
-#             return Response({'status': 'success', 'message': 'Event logged successfully'})
-#         return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

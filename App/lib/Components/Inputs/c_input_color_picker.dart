@@ -27,7 +27,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
   OverlayEntry? _overlayEntry;
 
   String _colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
+    return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
   }
 
   @override
@@ -56,7 +56,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withAlpha(51),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -122,7 +122,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withAlpha(102),
               blurRadius: 4,
               spreadRadius: 1,
               offset: const Offset(2, 2),
@@ -149,7 +149,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                   decoration: InputDecoration(
                     hintText: widget.hint,
                     hintStyle: GoogleFonts.montserrat(
-                      color: MyColors.white.withOpacity(0.6),
+                      color: MyColors.white.withAlpha(153),
                       fontSize: Screen.max(context) * 0.015,
                     ),
                     border: InputBorder.none,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -139,30 +140,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             'Name',
             '${_controller.user['firstName']} ${_controller.user['lastName']}',
           ),
-          _buildDetailRow('Contact', _controller.user['email'] ?? ''),
+          _buildDetailRow('Contact',
+              '${_controller.user['email'].substring(0, 3)}***${_controller.user['email'].substring(_controller.user['email'].length - 4, _controller.user['email'].length)}'),
           _buildDetailRow('Location', 'Karachi, Pakistan'),
-          _buildSecurePaymentCheckbox(),
         ],
       ),
-    );
-  }
-
-  Widget _buildSecurePaymentCheckbox() {
-    return Row(
-      children: [
-        Text(
-          'Secure Payment',
-          style: TextStyle(
-            fontSize: Screen.width(context) * 0.035,
-            color: Colors.grey,
-          ),
-        ),
-        Checkbox(
-          value: false,
-          onChanged: (value) {
-           },
-        ),
-      ],
     );
   }
 
@@ -192,20 +174,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   void _navigateToPayment(String route, Map<String, dynamic> arguments) {
-    Navigator.pushNamed(context, route,
-        // arguments: {
-        //   'amount': _controller.listingPrice,
-        //   'isFullPayment': route == '/PaymentDetails',
-        // },
-
-        arguments: arguments);
+    Navigator.pushNamed(context, route, arguments: arguments);
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
-        fontSize: Screen.width(context) * 0.045,
+      style: GoogleFonts.montserrat(
+        fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
@@ -220,15 +196,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
+            style: GoogleFonts.montserrat(
+              fontSize: Screen.max(context) * 0.015,
               color: Colors.grey,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
+            style: GoogleFonts.montserrat(
+              fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),

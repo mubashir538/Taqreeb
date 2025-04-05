@@ -66,7 +66,7 @@ class _CategoryReviewState extends State<CategoryReview> {
   }
 
   void _navigateToReviewPage() {
-    Navigator.pushNamed(context, '/reviewPage');
+    Navigator.pushNamed(context, '/ReviewPage', arguments: widget.listing);
   }
 
   Widget _buildRatingSummary() {

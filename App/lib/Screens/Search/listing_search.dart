@@ -111,7 +111,7 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   Future<void> _fetchListings() async {
-    await ApiCall.fetchAPI('home/listings/', onSuccess: (_, data) {
+    await ApiCall.fetchAPI('home/listings/views', onSuccess: (_, data) {
       if (mounted) {
         setState(() {
           _listings.addAll(data);
@@ -156,24 +156,26 @@ class _SearchServiceState extends State<SearchService> {
     }
   }
 
-  String _getListingPicture(int listingId, Map<String, dynamic> listing) {
-    for (var pictureGroup in listing['pictures']) {
-      if (pictureGroup.isNotEmpty &&
-          pictureGroup[0]['listingId'] == listingId) {
-        return pictureGroup[0]['picturePath'];
-      }
-    }
-    return '';
+  String _getListingPicture(int index, Map<String, dynamic> listing) {
+    // for (var pictureGroup in listing['listings']['pictures']) {
+    //   if (pictureGroup.isNotEmpty &&
+    //       pictureGroup[0]['listingId'] == listingId) {
+    //     return pictureGroup[0]['picturePath'];
+    //   }
+    // }
+    if (listing['listings'][index]['pictures']['picturePath'] == null)
+      return '';
+    return listing['listings'][index]['pictures']['picturePath'];
   }
 
   void _searchWithFilters() {
     setState(() {
-      _tempListings['HomeListing'] = List.from(_listings['HomeListing']);
+      _tempListings['listings'] = List.from(_listings['listings']);
 
       for (String filter in _appliedFilters) {
         switch (filter) {
           case "Price":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
+            _tempListings['listings'] = _tempListings['listings']
                 .where((element) =>
                     element['basicPrice'] >= _rangeSliderController.minValue &&
                     element['basicPrice'] <= _rangeSliderController.maxValue)
@@ -181,8 +183,8 @@ class _SearchServiceState extends State<SearchService> {
             break;
 
           case "Ratings":
-            _tempListings['HomeListing'] =
-                _tempListings['HomeListing'].where((element) {
+            _tempListings['listings'] =
+                _tempListings['listings'].where((element) {
               final rating = double.parse(element['rating']);
               return rating >= _ratingController.minValue &&
                   rating <= _ratingController.maxValue;
@@ -190,13 +192,13 @@ class _SearchServiceState extends State<SearchService> {
             break;
 
           case "Category":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
+            _tempListings['listings'] = _tempListings['listings']
                 .where((element) => _categoryController.text == element['type'])
                 .toList();
             break;
 
           case "Location":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
+            _tempListings['listings'] = _tempListings['listings']
                 .where((element) => element['location']
                     .toLowerCase()
                     .contains(_locationController.text.toLowerCase()))
@@ -207,16 +209,26 @@ class _SearchServiceState extends State<SearchService> {
 
       // Apply additional filters if they exist
       if (_additionalSelections.isNotEmpty) {
-        _tempListings['HomeListing'] =
-            _tempListings['HomeListing'].where((listing) {
-          return _additionalSelections.entries.every((entry) {
-            if (entry.value.isEmpty) {
-              return true; // No filter applied for this field
-            }
-            if (listing[entry.key] == null) return false;
-            return entry.value.contains(listing[entry.key].toString());
-          });
-        }).toList();
+        setState(() {
+          _tempListings['listings'] =
+              _tempListings['listings'].where((listing) {
+            return _additionalSelections.entries.every((entry) {
+        
+              if (entry.value.isEmpty) {
+                return true; // No filter applied for this field
+              }
+              print('Entry: $entry');
+              print('listing: $listing');
+              print(
+                  'Entry key: ${entry.key} -- ${entry.value} --  ${listing['View'][entry.key]}');
+              if (listing['View'][entry.key] == null) return false;
+              return entry.value
+                  .contains(listing['View'][entry.key].toString());
+            });
+          }).toList();
+
+          print('${_tempListings['listings']}');
+        });
       }
     });
   }
@@ -315,8 +327,8 @@ class _SearchServiceState extends State<SearchService> {
       width: Screen.width(context) * 0.9,
       child: ListView.builder(
         itemBuilder: (context, index) {
-          final service = _tempListings['HomeListing'][index];
-          final imageUrl = _getListingPicture(service['id'], _tempListings);
+          final service = _tempListings['listings'][index];
+          final imageUrl = _getListingPicture(index, _tempListings);
 
           return GestureDetector(
             onTap: () => _navigateToServiceDetails(service),
@@ -332,7 +344,7 @@ class _SearchServiceState extends State<SearchService> {
             ),
           );
         },
-        itemCount: _tempListings['HomeListing'].length,
+        itemCount: _tempListings['listings'].length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       ),
@@ -358,7 +370,7 @@ class _SearchServiceState extends State<SearchService> {
               onChanged: (value) {
                 setState(() {
                   _searchWithFilters();
-                  _tempListings['HomeListing'] = _tempListings['HomeListing']
+                  _tempListings['listings'] = _tempListings['listings']
                       .where((element) => element['name']
                           .toString()
                           .toLowerCase()

@@ -5,7 +5,13 @@ import 'package:taqreeb/core/utils/color.dart';
 
 class RatingFilter extends StatefulWidget {
   final TextEditingController controller;
-  RatingFilter({super.key, required this.controller});
+  final ValueChanged<String>? onChanged; // Add this line
+
+  RatingFilter({
+    super.key,
+    required this.controller,
+    this.onChanged, // Add this parameter
+  });
 
   @override
   State<RatingFilter> createState() => _RatingFilterState();
@@ -34,13 +40,18 @@ class _RatingFilterState extends State<RatingFilter> {
             return FilterButton(label: Filters[index], selected: true);
           } else {
             return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = Filters.indexOf(Filters[index]);
-                    widget.controller.text = Filters[index];
-                  });
-                },
-                child: FilterButton(label: Filters[index], selected: false));
+              onTap: () {
+                setState(() {
+                  selectedIndex = index;
+                  widget.controller.text = Filters[index];
+                });
+                // Call the onChanged callback if it exists
+                if (widget.onChanged != null) {
+                  widget.onChanged!(Filters[index]);
+                }
+              },
+              child: FilterButton(label: Filters[index], selected: false),
+            );
           }
         },
         itemCount: 6,
@@ -49,6 +60,7 @@ class _RatingFilterState extends State<RatingFilter> {
   }
 }
 
+// FilterButton remains the same...
 class FilterButton extends StatelessWidget {
   final String label;
   final bool selected;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -202,7 +202,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         padding: EdgeInsets.all(Screen.width(context) * 0.04),
         decoration: BoxDecoration(
           color:
-              isSelected ? MyColors.red.withOpacity(0.2) : MyColors.DarkLighter,
+              isSelected ? MyColors.red.withAlpha(51) : MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

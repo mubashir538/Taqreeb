@@ -111,6 +111,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
 
       ApiCall.fetchAPI(
         'Caterer/viewpage/$_listingId',
+        refresh: true,
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );
@@ -120,6 +121,7 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   void _handleFetchSuccess(String token, Map<String, dynamic> listing) {
     if (mounted) {
       setState(() {
+        
         _listing = listing;
         _isLoading = false;
 
@@ -151,7 +153,6 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
       });
     }
   }
-
 
   Widget _buildLoadingIndicator() {
     return Center(
@@ -214,7 +215,8 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   }
 
   Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);  }
+    return BookNowButton(context: context, listing: _listing);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -239,7 +241,12 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          const ChatIcon(),
+          _isLoading?Container():
+          ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
+          ),
         ],
       ),
     );

@@ -102,6 +102,7 @@ class _CategoryView_GraphicDesignerState
       });
 
       ApiCall.fetchAPI(
+        refresh: true,
         'graphic/designer/viewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
@@ -230,8 +231,12 @@ class _CategoryView_GraphicDesignerState
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
+          ),_isLoading?Container():
+          ChatIcon(
+            ownerId: _listing['Listing']['freelancerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Freelancer',
           ),
-          const ChatIcon(),
         ],
       ),
     );

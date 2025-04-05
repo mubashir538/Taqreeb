@@ -97,7 +97,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withAlpha(102),
             blurRadius: 4,
             spreadRadius: 1,
             offset: const Offset(2, 2),
@@ -118,7 +118,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintStyle: GoogleFonts.montserrat(
-            color: MyColors.white.withOpacity(0.6),
+            color: MyColors.white.withAlpha(153),
             fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,
           ),

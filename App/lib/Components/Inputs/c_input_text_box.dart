@@ -182,7 +182,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: GoogleFonts.montserrat(
-                        color: MyColors.white.withOpacity(0.6),
+                        color: MyColors.white.withAlpha(153),
                         fontSize: Screen.max(context) * 0.015,
                       ),
                       border: InputBorder.none,
@@ -198,7 +198,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                     },
                     child: Icon(
                       _isObscured ? Icons.visibility_off : Icons.visibility,
-                      color: MyColors.white.withOpacity(0.6),
+                      color: MyColors.white.withAlpha(153),
                     ),
                   ),
               ],

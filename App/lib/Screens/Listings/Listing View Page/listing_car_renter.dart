@@ -100,9 +100,11 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
       });
 
       ApiCall.fetchAPI(
+        refresh: true,
         'carrenter/viewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
+        
       );
     }
   }
@@ -230,7 +232,12 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          const ChatIcon(),
+          _isLoading?Container():
+          ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
+          ),
         ],
       ),
     );

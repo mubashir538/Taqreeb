@@ -357,7 +357,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: MyColors.Dark.withOpacity(0.2),
+                color: MyColors.Dark.withAlpha(51),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),

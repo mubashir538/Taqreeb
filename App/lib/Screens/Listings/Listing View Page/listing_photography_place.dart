@@ -102,6 +102,7 @@ class _CategoryView_PhotographyPlaceState
 
     if (!_hasChanged) {
       ApiCall.fetchAPI(
+        refresh: true,
         'PhotographyPlaces/viewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
@@ -241,8 +242,13 @@ class _CategoryView_PhotographyPlaceState
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
+          ),_isLoading?Container():
+           ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
           ),
-          const ChatIcon(),
+        
         ],
       ),
     );

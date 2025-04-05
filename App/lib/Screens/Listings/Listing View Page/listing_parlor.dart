@@ -18,14 +18,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_Parlour extends StatefulWidget {
-  const CategoryView_Parlour({super.key});
+class CategoryViewParlour extends StatefulWidget {
+  const CategoryViewParlour({super.key});
 
   @override
-  State<CategoryView_Parlour> createState() => _CategoryView_ParlourState();
+  State<CategoryViewParlour> createState() => CategoryViewParlourState();
 }
 
-class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
+class CategoryViewParlourState extends State<CategoryViewParlour> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -49,6 +49,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   }
 
   @override
+
   void dispose() {
     _logViewDuration();
     super.dispose();
@@ -98,6 +99,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
 
       ApiCall.fetchAPI(
         'parlourviewpage/$_listingId',
+        refresh: true,
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );
@@ -225,8 +227,12 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
+          ),_isLoading?Container():
+          ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
           ),
-          const ChatIcon(),
         ],
       ),
     );

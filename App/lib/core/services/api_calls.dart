@@ -9,6 +9,7 @@ class ApiCall {
       {required Function(String token, Map<String, dynamic> data) onSuccess,
       Function()? onError,
       BuildContext? context,
+      bool refresh = false,
       String type = 'get',
       Map<String, dynamic>? body = const {}}) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
@@ -16,6 +17,7 @@ class ApiCall {
     if (type == 'get') {
       data = await MyApi.getRequest(
         endpoint: endpoint,
+        refresh: refresh,
         headers: {'Authorization': 'Bearer $token'},
       );
     } else {

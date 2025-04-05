@@ -175,7 +175,7 @@ class _MainAppState extends State<MainApp> {
       '/CategoryView_Decorator': (context) => CategoryView_Decorator(),
       '/CategoryView_GraphicDesigner': (context) =>
           CategoryView_GraphicDesigner(),
-      '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
+      '/CategoryView_Parlour': (context) => CategoryViewParlour(),
       '/CategoryView_Photographer': (context) => CategoryView_Photographer(),
       '/CategoryView_PhotographyPlace': (context) =>
           CategoryView_PhotographyPlace(),

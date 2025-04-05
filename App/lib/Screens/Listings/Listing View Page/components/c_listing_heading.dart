@@ -343,7 +343,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
               hintText: 'Edit name',
               hintStyle: _buildTextStyle(
                 fontSize: 0.015,
-                color: MyColors.white.withOpacity(0.6),
+                color: MyColors.white.withAlpha(153),
               ),
               border: const OutlineInputBorder(),
             ),
@@ -421,7 +421,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withAlpha(76),
               spreadRadius: 0.5,
               blurRadius: 3,
               blurStyle: BlurStyle.inner,
@@ -464,7 +464,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
             decoration: InputDecoration(
               hintText: 'Edit location...',
               hintStyle:
-                  _buildTextStyle(color: MyColors.white.withOpacity(0.6)),
+                  _buildTextStyle(color: MyColors.white.withAlpha(153)),
               border: const OutlineInputBorder(),
             ),
           ),
@@ -497,7 +497,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       children: [
         Icon(Icons.star, color: MyColors.Yellow),
         Text(
-          "${widget.listing['reveiewData']['average']} (${widget.listing['reveiewData']['count']})",
+          "${widget.listing['Listing']['rating']} (${widget.listing['Listing']['ratingCount']})",
           style: _buildTextStyle(color: MyColors.white),
         ),
       ],

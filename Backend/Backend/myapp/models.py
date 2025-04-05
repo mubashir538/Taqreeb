@@ -90,7 +90,8 @@ class Listing(m.Model):
 class Transaction(m.Model):
     id = m.AutoField(primary_key=True)
     sender = m.ForeignKey(User,on_delete=m.CASCADE,null=True)
-    receiver = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
+    receiverf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
+    receiverb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
     amount = m.IntegerField()
     status = m.TextField(null=True)
     date = m.DateTimeField(auto_now_add=True)
@@ -147,6 +148,7 @@ class Review(m.Model):
     userID = m.ForeignKey(User,on_delete=m.CASCADE)
     rating = m.DecimalField(max_digits=2, decimal_places=1)
     review = m.CharField(max_length=100)
+    date = m.DateTimeField(auto_now_add=True,null=True)
 
 
 class ReviewDetails(m.Model):
