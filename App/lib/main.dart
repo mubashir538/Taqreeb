@@ -32,6 +32,8 @@ import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_family.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/createInvitation.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/viewInvitationCard.dart';
 import 'package:taqreeb/Screens/Globals/settings.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_image.dart';
@@ -192,7 +194,8 @@ class _MainAppState extends State<MainApp> {
       '/CreateGuestList': (context) => CreateGuestList(),
       '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
       '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),
-      '/CreateGuestList_List': (context) => CreateGuestList_List(),
+      '/CreateGuestList_List': (context) => CreateGuestListList(),
+      '/CreateInvitation': (context) => CreateInvitation(),
       '/Dashboard': (context) => Dashboard(),
       '/EditEvent': (context) => CreateEvent(),
       '/EditFunction': (context) => CreateFunction(),
@@ -207,6 +210,7 @@ class _MainAppState extends State<MainApp> {
       '/FunctionDetail': (context) => FunctionDetail(),
       '/GroupChatBox': (context) => GroupChatScreen(),
       '/HomePage': (context) => MainScreen(index: 0),
+      '/InvitationCardView': (context) => ViewInvitationCard(),
       '/Login': (context) => Login(),
       '/OrderSummary': (context) => OrderSummaryScreen(),
       '/PaymentDetails': (context) => SecurePaymentScreen(),

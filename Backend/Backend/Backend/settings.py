@@ -53,6 +53,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 ]
 
+CRON_CLASSES = [
+    "myapp.cron.DeleteOldTempCardsCronJob",
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

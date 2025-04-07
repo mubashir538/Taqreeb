@@ -66,7 +66,8 @@ class _YourEventsState extends State<YourEvents> {
       });
     }
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
-    await ApiCall.fetchAPI('YourEvents/$userId', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('YourEvents/$userId', refresh: true,
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           _events = data;

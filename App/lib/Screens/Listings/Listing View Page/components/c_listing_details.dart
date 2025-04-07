@@ -383,7 +383,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   color: MyColors.white,
                 ),
               )
-            : Container(
+            : SizedBox(
                 width: Screen.width(context) * 0.5,
                 child: Text(
                   widget.values[index],

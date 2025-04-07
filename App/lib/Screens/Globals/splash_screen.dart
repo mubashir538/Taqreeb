@@ -40,10 +40,13 @@ class _SplashScreenState extends State<SplashScreen> {
       }); // Call your async function
       if (success) {
         timer.cancel();
+        if(mounted){
+
         Navigator.pushReplacementNamed(
           context,
           isLoggedIn ? '/HomePage' : '/Login',
         ); // Stop the timer if task succeeds
+        }
       }
     });
   }
@@ -54,12 +57,21 @@ class _SplashScreenState extends State<SplashScreen> {
     final String? userId = data['userId'];
 
     await Future.wait([
-      MyApi.getRequest(endpoint: 'home/listings/', headers: header,refresh: true),
-      MyApi.getRequest(endpoint: 'Homepage/DemoImages/', headers: header,refresh: true),
-      MyApi.getRequest(endpoint: 'home/categories/', headers: header,refresh: true),
+      MyApi.getRequest(
+          endpoint: 'home/listings/', headers: header, refresh: true),
+      MyApi.getRequest(
+          endpoint: 'Homepage/DemoImages/', headers: header, refresh: true),
+      MyApi.getRequest(
+          endpoint: 'home/categories/', headers: header, refresh: true),
       if (isLoggedIn) ...[
-        MyApi.getRequest(endpoint: 'accountInfo/$userId/'),
-        MyApi.getRequest(endpoint: 'YourEvents/$userId'),
+        MyApi.getRequest(
+          endpoint: 'accountInfo/$userId/',
+          headers: header,
+        ),
+        MyApi.getRequest(
+          endpoint: 'YourEvents/$userId',
+          headers: header,
+        ),
       ],
     ]).then((_) {
       return true; // Return success status

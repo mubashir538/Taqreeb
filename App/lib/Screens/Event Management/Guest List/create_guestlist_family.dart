@@ -121,10 +121,9 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
         text: allSuccess ? 'Families Added' : 'Some families not added',
       ).show(context);
 
-      Navigator.pushNamedAndRemoveUntil(
+      Navigator.pushReplacementNamed(
         context,
         '/CreateGuestList_List',
-        ModalRoute.withName('/EventDetails'),
         arguments: _routeArgs,
       );
     }
@@ -134,8 +133,6 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
   void dispose() {
     _familyNameController.dispose();
     _membersController.dispose();
-    _familyNameFocus.dispose();
-    _membersFocus.dispose();
     super.dispose();
   }
 

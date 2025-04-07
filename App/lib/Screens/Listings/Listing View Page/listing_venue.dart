@@ -187,7 +187,6 @@ class _CategoryView_VenueState extends State<CategoryView_Venue> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),

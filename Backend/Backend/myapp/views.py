@@ -44,7 +44,10 @@ def ShowChecklist(request,functionId=None,eventId=None):
 @permission_classes([IsAuthenticated])
 def showBookCart(request,id):
     cart = md.BookingCart.objects.filter(functionId=id,status='Cart')
+    if cart.count() == 0:
+        return Response({'status':'CartEmpty'})
     cartserializer = s.BookingCartSerializer(cart,many=True)
+    print('Cart: ',cartserializer.data)
     items = []
     for i in cart:
         listing = i.listingId
@@ -53,25 +56,25 @@ def showBookCart(request,id):
         pictures = s.PicturesListingSerializers(pictures,many=True).data
         view= None
         if i.type == 'Venue':
-            view = md.Venue.objects.get(listingID=listing.id)
+            view = md.Venue.objects.get(listingId=listing.id)
             view = s.VenueSerializer(view,many=False).data
         elif i.type == 'Salon':
-            view = md.Salons.objects.get(listingID=listing.id)
+            view = md.Salons.objects.get(listingId=listing.id)
             view = s.SalonsSerializer(view,many=False).data
         elif i.type == 'Parlor':
-            view = md.Parlors.objects.get(listingID=listing.id)
+            view = md.Parlors.objects.get(listingId=listing.id)
             view = s.ParlorsSerializer(view,many=False).data
-        elif i.type == 'Baker':
-            view = md.BakersAndSweets.objects.get(listingID=listing.id)
-            view = s.BakersAndSweetsSerializer(view,many=False).data
+        # elif i.type == 'Baker':
+        #     view = md.BakersAndSweets.objects.get(listingID=listing.id)
+        #     view = s.BakersAndSweetsSerializer(view,many=False).data
         elif i.type == 'PhotographyPlace':
-            view = md.PhotographyPlaces.objects.get(listingID=listing.id)
+            view = md.PhotographyPlaces.objects.get(listingId=listing.id)
             view = s.PhotographyPlacesSerializer(view,many=False).data
         elif i.type == 'Decorator':
-            view = md.Decorators.objects.get(listingID=listing.id)
+            view = md.Decorators.objects.get(listingId=listing.id)
             view = s.DecoratorsSerializer(view,many=False).data
         elif i.type == 'Photographer':
-            view = md.Photographers.objects.get(listingID=listing.id)
+            view = md.Photographers.objects.get(listingId=listing.id)
             view = s.PhotographersSerializer(view,many=False).data
         item = {'id':i.id,'listing':listingserializer.data,'type':i.type,'view':view,'pictures':pictures}
         items.append(item)
@@ -140,6 +143,7 @@ def AddGuests(request):
 def EditFunction(request):
     name= request.data.get('Function Name')
     budget = request.data.get('Budget')
+    budget = int(budget.replace(",", ""))
     type = request.data.get('Type')
     date = request.data.get('Date')
     guestsmin = request.data.get('guest min')
@@ -164,6 +168,7 @@ def EditFunction(request):
 def CreateFunction(request):
     name= request.data.get('Function Name')
     budget = request.data.get('Budget')
+    budget = int(budget.replace(",", ""))
     type = request.data.get('Type')
     date = request.data.get('Date')
     guestsmin = request.data.get('guest min')
@@ -184,9 +189,10 @@ def CreateFunction(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def DeleteFunction(request):
-    id = request.data.get('FunctionId')
-    DeleteFunction = md.Functions.objects.get(id=id)
-    DeleteFunction.delete()
+    # id = request.data.get('FunctionId')
+    # DeleteFunction = md.Functions.objects.get(id=id)
+    # DeleteFunction.delete()
+    md.BookingCart.objects.all().delete()
     return Response({'status':'success'})
 
 @api_view(['GET'])

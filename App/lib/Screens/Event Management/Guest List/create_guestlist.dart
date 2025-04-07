@@ -38,7 +38,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                       textSize: maxThing * 0.015,
                       onPressed: () {
                         Navigator.pop(context);
-                        Navigator.pushNamed(
+                        Navigator.pushReplacementNamed(
                             context, '/CreateGuestList_AddPerson',
                             arguments: args);
                       }),
@@ -48,7 +48,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                       textSize: maxThing * 0.015,
                       onPressed: () {
                         Navigator.pop(context);
-                        Navigator.pushNamed(
+                        Navigator.pushReplacementNamed(
                             context, '/CreateGuestList_AddFamily',
                             arguments: args);
                       }),

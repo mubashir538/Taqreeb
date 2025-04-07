@@ -10,7 +10,6 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_description.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_details.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_heading.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_image_slider.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
@@ -49,7 +48,6 @@ class CategoryViewParlourState extends State<CategoryViewParlour> {
   }
 
   @override
-
   void dispose() {
     _logViewDuration();
     super.dispose();
@@ -166,16 +164,10 @@ class CategoryViewParlourState extends State<CategoryViewParlour> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
-              CategoryDetails(
-                listing: _listing,
-                headings: _addonsHeadings,
-                values: _values,
-              ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               _buildDivider(),
@@ -227,12 +219,14 @@ class CategoryViewParlourState extends State<CategoryViewParlour> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
-          ),_isLoading?Container():
-          ChatIcon(
-            ownerId: _listing['Listing']['ownerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Business',
           ),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

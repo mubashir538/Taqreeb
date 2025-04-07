@@ -20,7 +20,7 @@ class FunctionDetail extends StatefulWidget {
 
 class _FunctionDetailState extends State<FunctionDetail> {
   final GlobalKey _headerKey = GlobalKey();
-  final List<Map<String, dynamic>> _bookingList = [];
+  final List<dynamic> _bookingList = [];
 
   String _token = '';
   Map<String, dynamic> _functionDetails = {};
@@ -38,10 +38,12 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   Future<void> _fetchBookings() async {
     await ApiCall.fetchAPI(
+      refresh: true,
       'show/Bookcart/$_functionId',
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
+            print("Cart: ${data['cart']}");
             _bookingList.addAll(data['cart'] ?? []); // Use the stored data
           });
         }
@@ -80,6 +82,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   Future<void> _fetchFunctionDetails() async {
     await ApiCall.fetchAPI(
+      refresh: true,
       'ViewFunction/$_functionId',
       onSuccess: (token, data) {
         if (mounted) {
@@ -379,10 +382,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
         _buildActionButton(
           text: "View CheckList",
           onTap: _navigateToChecklist,
-        ),
-        _buildActionButton(
-          text: "Create Invitation Card",
-          onTap: () => Navigator.pushNamed(context, '/InvitationCardEdit'),
         ),
       ],
     );

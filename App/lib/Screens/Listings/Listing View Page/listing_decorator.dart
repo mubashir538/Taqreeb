@@ -185,7 +185,6 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),

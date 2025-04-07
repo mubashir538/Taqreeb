@@ -11,18 +11,17 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 
-class CreateGuestList_List extends StatefulWidget {
-  const CreateGuestList_List({super.key});
+class CreateGuestListList extends StatefulWidget {
+  const CreateGuestListList({super.key});
 
   @override
-  State<CreateGuestList_List> createState() => _CreateGuestList_ListState();
+  State<CreateGuestListList> createState() => _CreateGuestListListState();
 }
 
-class _CreateGuestList_ListState extends State<CreateGuestList_List> {
+class _CreateGuestListListState extends State<CreateGuestListList> {
   final GlobalKey _headerKey = GlobalKey();
   final Map<String, dynamic> _guests = {};
 
-  
   bool _isFunction = false;
   int _functionId = 0;
   int _eventId = 0;
@@ -148,7 +147,7 @@ class _CreateGuestList_ListState extends State<CreateGuestList_List> {
       textSize: Screen.max(context) * 0.015,
       onPressed: () {
         Navigator.pop(context);
-        Navigator.pushNamed(context, route, arguments: _routeArgs);
+        Navigator.pushReplacementNamed(context, route, arguments: _routeArgs);
       },
     );
   }

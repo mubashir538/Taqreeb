@@ -3,6 +3,7 @@ from . import views
 from .apis import Account_Management as am
 from .apis import View_Pages as vp
 from .apis import chats as c
+from .apis import Invitation as i
 from .apis import notifications as n
 from .apis import Event_Management as em
 from .apis import Payment as p
@@ -56,6 +57,8 @@ urlpatterns = [
     path('CreateEvent/',em.CreateEvent,name='CreateEvent'),
     path('EditEvent/',em.EditEvent,name='EditEvent'),
     path('getEventTypes/',em.getEventType,name='getEventType'),
+    path('Invitation/CardDetails',i.getInvitationDetails,name='getInvitationDetails'),
+    path('Events/getBasics/<int:id>',em.getEventsAndFunctions,name='getEventsAndFunctions'),
     path('getFunctionTypes/<int:id>',views.getFunctionType,name='getFunctionType'),
     path('YourEvents/<int:id>',em.YourEvents,name='YourEvents'),
     path('DeleteEvent/',em.DeleteEvent,name='DeleteEvent'),

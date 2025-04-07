@@ -40,6 +40,7 @@ class _EventDetailsState extends State<EventDetails> {
   Future<void> _fetchEventDetails() async {
     await ApiCall.fetchAPI(
       'eventdetails/${_eventData.eventId}',
+      refresh: true,
       onSuccess: (token, data) {
         if (!mounted) return;
 
@@ -259,8 +260,9 @@ class _EventDetailsState extends State<EventDetails> {
           onTap: () => _navigateToChecklist(),
         ),
         _buildActionButton(
-          text: "View Invitation Card",
-          onTap: () => Navigator.pushNamed(context, '/InvitationCardEdit'),
+          text: "Create Invitation Card",
+          onTap: () => Navigator.pushNamed(context, '/CreateInvitation',
+              arguments: {'type': _eventData.eventDetails['type']}),
         ),
       ],
     );

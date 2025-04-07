@@ -37,10 +37,10 @@ class PaymentController {
   }
 
   bool get isFormValid {
-    return cardNumberError.isEmpty &&
+    return !(cardNumberError.isEmpty &&
         expiryDateError.isEmpty &&
         cvvError.isEmpty &&
-        cardholderNameError.isEmpty;
+        cardholderNameError.isEmpty);
   }
 
   void dispose() {
@@ -349,6 +349,9 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
             'senderId': await MyStorage.getToken(MyTokens.userId),
             'listingId': listingId,
             'amount': price
+          }, headers: {
+            'Authorization':
+                'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
           });
           MyScaffold(
                   text:

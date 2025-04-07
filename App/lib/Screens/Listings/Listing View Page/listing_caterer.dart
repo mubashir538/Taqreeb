@@ -180,7 +180,6 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),

@@ -146,7 +146,7 @@ class Function12 extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ColoredButton(
-                          text: 'Edit $type',
+                          text: 'Edit Function',
                           width: Screen.width(context) * 0.38,
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {

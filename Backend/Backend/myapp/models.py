@@ -1,5 +1,6 @@
 from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+import os
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -45,6 +46,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return str(self.id)
 
+
+class TempInvitationCard(m.Model):
+    file = m.ImageField(upload_to='uploads/tempCards/%Y/%m/%d/')
+    created_at = m.DateTimeField(auto_now_add=True)
+
+    def delete(self, *args, **kwargs):
+        if self.file and os.path.isfile(self.file.path):
+            os.remove(self.file.path)
+        super().delete(*args, **kwargs)
+        
 class BusinessOwner(m.Model):
     id = m.AutoField(primary_key=True)
     cnic = m.TextField(null=True)
@@ -122,8 +133,8 @@ class QuestionOptions(m.Model):
 
 class Events(m.Model):
     id = m.AutoField(primary_key=True)
-    userID=  m.IntegerField()
     name =m.CharField(max_length=100)
+    userID =  m.ForeignKey(User,on_delete= m.CASCADE,null=True)
     type =m.CharField(max_length=100)
     date =m.CharField(max_length=100)
     location =m.CharField(max_length=100)
@@ -132,6 +143,12 @@ class Events(m.Model):
     budget=  m.IntegerField()
     guestsmin = m.IntegerField(null=True)
     guestsmax = m.IntegerField(null=True) 
+
+
+# class InvitationCards(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     path = m.TextField()
+#     type = 
 
 class GuestList(m.Model):
     id = m.AutoField(primary_key=True)

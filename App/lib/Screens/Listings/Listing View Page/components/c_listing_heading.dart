@@ -14,7 +14,6 @@ import 'package:taqreeb/core/utils/color.dart';
 class UpperHeadings extends StatefulWidget {
   final Map<String, dynamic> listing;
   final int? listingId;
-  final Map<String, dynamic> events;
   final DateTime? selectedDate;
 
   const UpperHeadings({
@@ -22,7 +21,6 @@ class UpperHeadings extends StatefulWidget {
     required this.listing,
     required this.listingId,
     required this.selectedDate,
-    required this.events,
   });
 
   @override
@@ -37,6 +35,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Color _wishlistColor = MyColors.white;
   IconData _wishlistIcon = FontAwesomeIcons.heart;
   bool _isBusinessUser = false;
+  Map<String, dynamic> events = {};
 
   @override
   void initState() {
@@ -46,6 +45,22 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     _locationController = TextEditingController(
         text: widget.listing['Listing']['location'] ?? '');
     _checkUserType();
+    fetchEvents();
+  }
+
+  void fetchEvents() async {
+    final userId = await MyStorage.getToken(MyTokens.userId);
+
+    final response = await MyApi.getRequest(
+        endpoint: 'Events/getBasics/$userId',
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        });
+    print(response);
+    setState(() {
+      events = response;
+    });
   }
 
   @override
@@ -94,7 +109,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.events['Event']?.length ?? 0,
+              itemCount: events['Event']?.length ?? 0,
               itemBuilder: (context, index) =>
                   _buildEventItem(index, maxDimension),
             ),
@@ -105,7 +120,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildEventItem(int index, double maxDimension) {
-    final event = widget.events['Event'][index];
+    final event = events['Event'][index];
     return Container(
       margin: EdgeInsets.only(bottom: maxDimension * 0.02),
       decoration: BoxDecoration(
@@ -149,7 +164,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           'fid': function['id'].toString(),
           'uid': await MyStorage.getToken(MyTokens.userId) ?? "",
           'lid': widget.listingId.toString(),
-          'type': 'Venue',
+          'type': widget.listing['Listing']['type'],
         },
       );
 
@@ -161,7 +176,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         WarningDialog(
           message: 'Event Budget is Exceeding',
           title: 'Budget Exceed',
-          actions: [ColoredButton(text: 'Ok')],
+          actions: [ColoredButton(text: 'Ok',onPressed: () => Navigator.pop(context),)],
         ).showDialogBox(context);
       } else {
         MyScaffold(text: 'Something Went Wrong!').show(context);
@@ -463,8 +478,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
             style: _buildTextStyle(color: MyColors.white),
             decoration: InputDecoration(
               hintText: 'Edit location...',
-              hintStyle:
-                  _buildTextStyle(color: MyColors.white.withAlpha(153)),
+              hintStyle: _buildTextStyle(color: MyColors.white.withAlpha(153)),
               border: const OutlineInputBorder(),
             ),
           ),

@@ -44,13 +44,6 @@ class _FunctionFormData {
     date.dispose();
     guestMax.dispose();
     guestMin.dispose();
-
-    nameFocus.dispose();
-    budgetFocus.dispose();
-    typeFocus.dispose();
-    dateFocus.dispose();
-    guestMaxFocus.dispose();
-    guestMinFocus.dispose();
   }
 }
 
@@ -281,6 +274,7 @@ class _CreateFunctionState extends State<CreateFunction> {
               image: MyImages.Function,
             ),
           ),
+          _buildSubmitButton(),
         ],
       ),
     );
@@ -304,9 +298,9 @@ class _CreateFunctionState extends State<CreateFunction> {
                 _buildDateField(),
                 _buildGuestMinField(),
                 _buildGuestMaxField(),
+                SizedBox(height: Screen.height(context) * 0.12),
               ],
             ),
-            _buildSubmitButton(),
           ],
         ),
       ),
@@ -378,9 +372,23 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   Widget _buildSubmitButton() {
-    return ColoredButton(
-      text: _isEditMode ? 'Edit Function' : 'Add Function',
-      onPressed: _submitFunction,
+    return Positioned(
+      bottom: 0,
+      child: Container(
+        width: Screen.width(context),
+        decoration: BoxDecoration(
+          color: MyColors.DarkLighter,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        padding: EdgeInsets.all(Screen.max(context) * 0.02),
+        child: ColoredButton(
+          text: _isEditMode ? 'Edit Function' : 'Add Function',
+          onPressed: _submitFunction,
+        ),
+      ),
     );
   }
 

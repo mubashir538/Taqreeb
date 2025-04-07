@@ -52,7 +52,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   Future<void> _showAddItemDialog() async {
     final maxDimension = Screen.max(context);
-    
+
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -108,13 +108,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   Future<void> _saveChecklist() async {
     final success = await _checklistController.saveChecklist();
     if (!mounted) return;
-    
+
     MyScaffold(
-      text: success 
-          ? 'Checklist Saved successfully' 
-          : 'Failed to save checklist',
+      text:
+          success ? 'Checklist Saved successfully' : 'Failed to save checklist',
     ).show(context);
-    
+
     if (success) {
       Navigator.pop(context);
     }
@@ -128,6 +127,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         children: [
           _buildContent(),
           const Positioned(top: 0, child: Header()),
+          _buildSaveButton(),
         ],
       ),
       floatingActionButton: _buildAddButton(),
@@ -139,12 +139,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       child: Container(
         constraints: BoxConstraints(minHeight: Screen.height(context)),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildChecklistHeader(),
             _buildChecklistItems(),
-            _buildSaveButton(),
+            SizedBox(height: Screen.height(context) * 0.1),
           ],
         ),
       ),
@@ -217,13 +217,22 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildSaveButton() {
-    return Padding(
-      padding: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
-      child: Center(
+    return Positioned(
+      bottom: 0,
+      child: Container(
+        width: Screen.width(context),
+        decoration: BoxDecoration(
+          color: MyColors.DarkLighter,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02,horizontal: Screen.width(context)*0.25),
         child: ColoredButton(
           text: 'Save',
           onPressed: _saveChecklist,
-          width: Screen.width(context) * 0.5,
+          width: Screen.width(context) * 0.2,
         ),
       ),
     );
@@ -266,7 +275,7 @@ class ChecklistController {
         ? 'show/checklist/$eventId/$functionId'
         : 'show/checklist/$eventId';
 
-    await ApiCall.fetchAPI(endpoint, onSuccess: (token, data) {
+    await ApiCall.fetchAPI(endpoint, refresh: true, onSuccess: (token, data) {
       this.token = token;
       if (data['checklist'] != null) {
         items = (data['checklist'] as List)
@@ -287,8 +296,8 @@ class ChecklistController {
   void toggleItem(int index) {
     items[index]["isChecked"] = !items[index]["isChecked"];
 
-    final isNewItem = newItems.any((item) =>
-        item["description"] == items[index]["description"]);
+    final isNewItem = newItems
+        .any((item) => item["description"] == items[index]["description"]);
 
     if (!isNewItem) {
       _updateChangedFields(index);
@@ -298,8 +307,8 @@ class ChecklistController {
   }
 
   void _updateChangedFields(int index) {
-    final existingIndex = changedFields.indexWhere((item) =>
-        item["description"] == items[index]["description"]);
+    final existingIndex = changedFields.indexWhere(
+        (item) => item["description"] == items[index]["description"]);
 
     if (existingIndex == -1) {
       changedFields.add({

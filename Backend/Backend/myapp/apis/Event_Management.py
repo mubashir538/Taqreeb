@@ -1,7 +1,7 @@
 from .. import models as md
 from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 
 @api_view(['GET'])
@@ -85,3 +85,20 @@ def DeleteEvent(request):
     DeleteEvent.delete()
     return Response({'status':'success'})
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getEventsAndFunctions(request, id):
+    user = md.User.objects.get(id=id)
+    events = md.Events.objects.filter(userID=user).values('id', 'name', 'userID')
+    response_data = []
+    for event in events:
+        event_data = {
+            'id': event['id'],
+            'name': event['name'],
+            'userID': event['userID'],
+            'functions': list(md.Functions.objects.filter(eventId=event['id'])
+                             .values('id', 'name', 'eventId'))
+        }
+        response_data.append(event_data)
+    
+    return Response({'status': 'success', 'Event': response_data})

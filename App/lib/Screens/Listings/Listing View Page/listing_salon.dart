@@ -10,7 +10,6 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_description.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_details.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_heading.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_image_slider.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
@@ -164,16 +163,10 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
-              CategoryDetails(
-                listing: _listing,
-                headings: _addonsHeadings,
-                values: _values,
-              ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategoryReview(
@@ -224,13 +217,14 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
-          ),_isLoading?Container():
-          ChatIcon(
-            ownerId: _listing['Listing']['ownerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Business',
           ),
-        
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

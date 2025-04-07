@@ -176,7 +176,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),

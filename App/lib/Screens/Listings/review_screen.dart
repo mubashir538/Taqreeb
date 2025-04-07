@@ -25,7 +25,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final Map<String, dynamic> _listing = {};
   bool isChange = false;
   bool _isLoading = true;
-  String _currentFilter = 'All Reviews'; // Track current filter
   List<dynamic> _filteredReviews = [];
 
   @override
@@ -95,7 +94,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
       controller: _searchController,
       onChanged: (selectedFilter) {
         setState(() {
-          _currentFilter = selectedFilter;
           _applyRatingFilter(selectedFilter);
         });
       },
