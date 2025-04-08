@@ -244,6 +244,7 @@ class _EventDetailsState extends State<EventDetails> {
         'eventid': _eventData.eventId,
         'event': _eventData.eventDetails['name'],
         'fid': _eventData.functions[index]['id'],
+        'type': _eventData.eventDetails['type']
       },
     );
   }

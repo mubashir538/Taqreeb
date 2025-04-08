@@ -176,7 +176,12 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         WarningDialog(
           message: 'Event Budget is Exceeding',
           title: 'Budget Exceed',
-          actions: [ColoredButton(text: 'Ok',onPressed: () => Navigator.pop(context),)],
+          actions: [
+            ColoredButton(
+              text: 'Ok',
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
         ).showDialogBox(context);
       } else {
         MyScaffold(text: 'Something Went Wrong!').show(context);
@@ -288,11 +293,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
               if (!mounted) return;
 
               if (response['status'] == 'success') {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/YourListings',
-                  ModalRoute.withName('/HomePage'),
-                );
+                Navigator.pop(context);
                 MyScaffold(text: 'Listing Deleted Successfully!').show(context);
               } else {
                 MyScaffold(text: 'Something went Wrong!').show(context);

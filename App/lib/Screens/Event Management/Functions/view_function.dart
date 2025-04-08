@@ -27,6 +27,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
   int _functionId = 0;
   int _eventId = 0;
   String _eventName = '';
+  String _eventType = '';
   bool _isLoading = true;
   bool _dataFetched = false;
 
@@ -61,6 +62,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         _functionId = args['fid'];
         _eventName = args['event'];
         _eventId = args['eventid'];
+        _eventType = args['type'];
       });
       _fetchData();
     }
@@ -135,6 +137,17 @@ class _FunctionDetailState extends State<FunctionDetail> {
       arguments: {
         'eventId': _eventId,
         'functionid': _functionId,
+      },
+    );
+  }
+
+  void _navigateToInvitation() {
+    Navigator.pushNamed(
+      context,
+      '/CreateInvitation',
+      arguments: {
+        'type': _eventType,
+        'functionType': _functionDetails['type'],
       },
     );
   }
@@ -382,6 +395,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
         _buildActionButton(
           text: "View CheckList",
           onTap: _navigateToChecklist,
+        ),
+        _buildActionButton(
+          text: "Create Invitation Card",
+          onTap: _navigateToInvitation,
         ),
       ],
     );
