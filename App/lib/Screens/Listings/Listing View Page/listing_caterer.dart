@@ -18,14 +18,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_Caterers extends StatefulWidget {
-  const CategoryView_Caterers({super.key});
+class CategoryViewCaterers extends StatefulWidget {
+  const CategoryViewCaterers({super.key});
 
   @override
-  State<CategoryView_Caterers> createState() => _CategoryView_CaterersState();
+  State<CategoryViewCaterers> createState() => _CategoryViewCaterersState();
 }
 
-class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
+class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -121,7 +121,6 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
   void _handleFetchSuccess(String token, Map<String, dynamic> listing) {
     if (mounted) {
       setState(() {
-        
         _listing = listing;
         _isLoading = false;
 
@@ -240,12 +239,13 @@ class _CategoryView_CaterersState extends State<CategoryView_Caterers> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          _isLoading?Container():
-          ChatIcon(
-            ownerId: _listing['Listing']['ownerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Business',
-          ),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

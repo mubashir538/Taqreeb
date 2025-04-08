@@ -6,8 +6,7 @@ import 'package:taqreeb/core/utils/color.dart';
 class RatingDistribution extends StatelessWidget {
   final Map<int, double> ratingPercentages;
 
-  const RatingDistribution({Key? key, required this.ratingPercentages})
-      : super(key: key);
+  const RatingDistribution({super.key, required this.ratingPercentages});
 
   @override
   Widget build(BuildContext context) {

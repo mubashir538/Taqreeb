@@ -66,6 +66,7 @@ class BusinessOwner(m.Model):
     profilepic = m.CharField(max_length=200,null=True)
     Description = m.CharField(max_length=1100)
     status = m.TextField(null=True)
+    balance = m.IntegerField()
 
 
 class FCMTokens(m.Model):
@@ -82,6 +83,7 @@ class Freelancer(m.Model):
     profilepic = m.CharField(max_length=100,null=True)
     Description = m.CharField(max_length=1100)
     status = m.TextField(null=True)
+    balance = m.IntegerField()
 
 class Listing(m.Model):
     id = m.AutoField(primary_key=True)
@@ -107,7 +109,24 @@ class Transaction(m.Model):
     status = m.TextField(null=True)
     date = m.DateTimeField(auto_now_add=True)
     listing = m.ForeignKey(Listing,on_delete=m.CASCADE,null=True)
-    
+
+class BusinessTransaction(m.Model):
+    id = m.AutoField(primary_key=True)
+    type = m.TextField(null=True)
+    date = m.DateTimeField(auto_now_add=True)
+    ownerf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
+    ownerb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
+    amount = m.IntegerField()
+    info = m.TextField()
+
+class BankDetails(m.Model):
+    id = m.AutoField(primary_key=True)
+    userID = m.ForeignKey(User,on_delete=m.CASCADE)
+    bankName = m.TextField()
+    accountNumber = m.TextField()
+    IBANNumber = m.TextField()
+    accountHolderName = m.TextField()
+
 class PicturesListings(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)

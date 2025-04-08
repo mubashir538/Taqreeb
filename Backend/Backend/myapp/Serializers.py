@@ -184,6 +184,11 @@ class CarsSerializer(s.ModelSerializer):
         model = mp.Cars
         fields = '__all__'
 
+class BusinessTransactionSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.BusinessTransaction
+        fields = '__all__'
+
 class DecoratorsSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Decorators
@@ -213,6 +218,33 @@ class SalonsSerializer(s.ModelSerializer):
 #     class Meta:
 #         model = mp.BakersAndSweets
 #         fields = '__all__'
+
+class BankDetailsSerializer(s.ModelSerializer):
+    masked_account_number = s.SerializerMethodField()
+    
+    class Meta:
+        model = mp.BankDetails
+        fields = [
+            'bankName',
+            'masked_account_number',  # This will show the masked version
+        ]
+        extra_kwargs = {
+            'accountNumber': {'write_only': True}  # Hide original in responses
+        }
+    
+    def get_masked_account_number(self, obj):
+        """Returns the account number with all but last 4 digits masked"""
+        if not obj.accountNumber:
+            return None
+        
+        # Get last 4 digits
+        visible_digits = 4
+        num_length = len(obj.accountNumber)
+        last_digits = obj.accountNumber[-visible_digits:]
+        
+        # Return masked version (e.g., ******1234)
+        return '*' * (num_length - visible_digits) + last_digits
+
 
 class VideoEditorsSerializer(s.ModelSerializer):
     class Meta:

@@ -66,7 +66,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context),
               child: Column(
                 children: [

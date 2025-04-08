@@ -19,14 +19,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_slot.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_Venue extends StatefulWidget {
-  const CategoryView_Venue({super.key});
+class CategoryViewVenue extends StatefulWidget {
+  const CategoryViewVenue({super.key});
 
   @override
-  State<CategoryView_Venue> createState() => _CategoryView_VenueState();
+  State<CategoryViewVenue> createState() => CategoryViewVenueState();
 }
 
-class _CategoryView_VenueState extends State<CategoryView_Venue> {
+class CategoryViewVenueState extends State<CategoryViewVenue> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];

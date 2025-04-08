@@ -7,7 +7,7 @@ class RatingFilter extends StatefulWidget {
   final TextEditingController controller;
   final ValueChanged<String>? onChanged; // Add this line
 
-  RatingFilter({
+  const RatingFilter({
     super.key,
     required this.controller,
     this.onChanged, // Add this parameter
@@ -19,7 +19,7 @@ class RatingFilter extends StatefulWidget {
 
 class _RatingFilterState extends State<RatingFilter> {
   int selectedIndex = 0;
-  List<String> Filters = [
+  List<String> filters = [
     'All Reviews',
     '5 Stars',
     '4 Stars',
@@ -37,20 +37,20 @@ class _RatingFilterState extends State<RatingFilter> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           if (index == selectedIndex) {
-            return FilterButton(label: Filters[index], selected: true);
+            return FilterButton(label: filters[index], selected: true);
           } else {
             return GestureDetector(
               onTap: () {
                 setState(() {
                   selectedIndex = index;
-                  widget.controller.text = Filters[index];
+                  widget.controller.text = filters[index];
                 });
                 // Call the onChanged callback if it exists
                 if (widget.onChanged != null) {
-                  widget.onChanged!(Filters[index]);
+                  widget.onChanged!(filters[index]);
                 }
               },
-              child: FilterButton(label: Filters[index], selected: false),
+              child: FilterButton(label: filters[index], selected: false),
             );
           }
         },
@@ -64,7 +64,7 @@ class _RatingFilterState extends State<RatingFilter> {
 class FilterButton extends StatelessWidget {
   final String label;
   final bool selected;
-  FilterButton({required this.label, required this.selected});
+  const FilterButton({super.key, required this.label, required this.selected});
 
   @override
   Widget build(BuildContext context) {

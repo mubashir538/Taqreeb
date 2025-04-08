@@ -13,7 +13,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class ReviewScreen extends StatefulWidget {
-  ReviewScreen({super.key});
+  const ReviewScreen({super.key});
 
   @override
   State<ReviewScreen> createState() => _ReviewScreenState();
@@ -177,9 +177,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   void getUserInfo() async {
-    print(_listing['Review'].length);
     for (int i = 0; i < _listing['Review'].length; i++) {
-      print(_listing['Review'][i]['userID']);
       final user = await MyApi.getRequest(
           endpoint: 'basicUserInfo/${_listing['Review'][i]['userID']}/',
           headers: {
@@ -191,7 +189,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
         _listing['Review'][i]['userName'] = user['name'];
         _listing['Review'][i]['userpic'] = user['profilePicture'];
       });
-      print(_listing['Review']);
       setState(() {
         _isLoading = false;
       });

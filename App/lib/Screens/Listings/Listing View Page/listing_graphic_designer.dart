@@ -18,16 +18,16 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_GraphicDesigner extends StatefulWidget {
-  const CategoryView_GraphicDesigner({super.key});
+class CategoryViewGraphicDesigner extends StatefulWidget {
+  const CategoryViewGraphicDesigner({super.key});
 
   @override
-  State<CategoryView_GraphicDesigner> createState() =>
-      _CategoryView_GraphicDesignerState();
+  State<CategoryViewGraphicDesigner> createState() =>
+      _CategoryViewGraphicDesignerState();
 }
 
-class _CategoryView_GraphicDesignerState
-    extends State<CategoryView_GraphicDesigner> {
+class _CategoryViewGraphicDesignerState
+    extends State<CategoryViewGraphicDesigner> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -230,12 +230,14 @@ class _CategoryView_GraphicDesignerState
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
-          ),_isLoading?Container():
-          ChatIcon(
-            ownerId: _listing['Listing']['freelancerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Freelancer',
           ),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['freelancerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Freelancer',
+                ),
         ],
       ),
     );

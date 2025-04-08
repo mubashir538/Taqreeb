@@ -57,7 +57,6 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
         });
-    print(response);
     setState(() {
       events = response;
     });
@@ -522,7 +521,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Widget _buildLocationDisplay() {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: Screen.width(context) * 0.6,
           child: Text(
             widget.listing['Listing']['location'],

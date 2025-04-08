@@ -58,7 +58,7 @@ class MessageChatButton extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
+                        SizedBox(
                           width: Screen.width(context) * 0.5,
                           child: Text(
                             name,
@@ -86,7 +86,7 @@ class MessageChatButton extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      SizedBox(
                         width: Screen.width(context) * 0.6,
                         child: Text(
                           message,

@@ -13,13 +13,13 @@ class ReviewCard extends StatelessWidget {
   final String days;
 
   const ReviewCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.profileUrl,
     required this.stars,
     required this.message,
     required this.days,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
