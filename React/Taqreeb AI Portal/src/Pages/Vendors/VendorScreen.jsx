@@ -1,93 +1,109 @@
 import React from "react";
 import "./VendorScreen.css";
-import VendorCard from "../../Components/VendorCard/vendorcard.jsx";
-
 
 const VendorScreen = () => {
   return (
-    <div className="vendor-screen">
+    <div className="vendor-container">
       <div className="vendor-main">
-        <Navbar />
         <div className="vendor-header">
-          <h2>Vendor Management</h2>
-          <p>Monitor and manage vendor activities</p>
+          <h1>Vendor Management</h1>
+          <p>Monitor and manage vendor statistics</p>
         </div>
 
-        <div className="vendor-content">
-          <div className="vendor-stats">
-            <div className="stat-card">
-              <h3>Total Vendors</h3>
-              <p>856</p>
-            </div>
-            <div className="stat-card">
-              <h3>Active Services</h3>
-              <p>2,145</p>
-            </div>
-            <div className="stat-card">
-              <h3>Total Revenue</h3>
-              <p>$458K</p>
-            </div>
-            <div className="stat-card">
-              <h3>Satisfaction Rate</h3>
-              <p>92%</p>
-            </div>
-          </div>
-
-          <div className="vendor-overview">
-            <h3>Vendor Overview</h3>
-            <div className="overview-stats">
-              <div className="overview-card">
-                <h3>Total Services</h3>
-                <p>3,254</p>
-              </div>
-              <div className="overview-card">
-                <h3>New Vendors (Month)</h3>
-                <p>45</p>
-              </div>
-              <div className="overview-card">
-                <h3>Warned Vendors</h3>
-                <p>12</p>
-              </div>
-              <div className="overview-card">
-                <h3>Suspended Vendors</h3>
-                <p>3</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="top-vendors">
+        <div className="vendor-grid">
+          {/* Top Vendors Section */}
+          <div className="vendor-card">
             <h3>Top Vendors</h3>
             <div className="vendor-list">
-              <VendorCard
-                name="Tech Solutions Ltd"
-                service="IT Services - Rating: 4.8"
-                topRated={true}
-              />
-              <VendorCard
-                name="Global Marketing Co"
-                service="Marketing Services - Rating: 4.7"
-                topRated={true}
-              />
-              <VendorCard
-                name="Design Masters Inc"
-                service="Design Services - Rating: 4.6"
-                topRated={true}
-              />
+              <div className="vendor-item">
+                <div>
+                  <p className="vendor-name">Text Solutions Ltd</p>
+                  <p className="vendor-details">IT Services - Rating = 4.5</p>
+                </div>
+                <span className="vendor-status">Top Sales</span>
+              </div>
+              <div className="vendor-item">
+                <div>
+                  <p className="vendor-name">Global Marketing Co</p>
+                  <p className="vendor-details">Marketing Services - Rating = 4.7</p>
+                </div>
+                <span className="vendor-status">Top Sales</span>
+              </div>
+              <div className="vendor-item">
+                <div>
+                  <p className="vendor-name">Design Masters Inc</p>
+                  <p className="vendor-details">Design Sciences - Rating = 4.5</p>
+                </div>
+                <span className="vendor-status">Top Sales</span>
+              </div>
             </div>
-            <button className="view-all">View All Top Vendors</button>
+            <button className="see-more">View All Top Vendors</button>
           </div>
 
-          <div className="recent-activities">
+          {/* Recent Vendor Activities */}
+          <div className="vendor-card">
             <h3>Recent Vendor Activities</h3>
-            <div className="activity-card">
-              <p>New Service Added <br /> By Tech Solutions Ltd</p>
-              <span className="activity-time">Just Now</span>
+            <div className="activity-list">
+              
             </div>
-            <div className="activity-card">
-              <p>Service Updated <br /> By Global Marketing Co</p>
-              <span className="activity-time">5m ago</span>
+            <div className="just-now">
+              <h4>New Service added </h4>
+              <p>by the Business Ltd</p>
+            </div>
+            <div className="just-now">
+              <h5>Service Updated </h5>
+              <p>By Global Marketing Co</p>
             </div>
           </div>
+
+          {/* Vendor Statistics */}
+          <div className="vendor-card">
+            <h3>Vendor Statistics</h3>
+            <div className="stats-grid">
+              <div className="stat-box">
+                <p>Text Investors</p>
+                <span>856</span>
+              </div>
+              <div className="stat-box">
+                <p>Active Services</p>
+                <span>2,145</span>
+              </div>
+              <div className="stat-box">
+                <p>Texti Investors</p>
+                <span>$458K</span>
+              </div>
+              <div className="stat-box">
+                <p>Satisfaction base</p>
+                <span>92%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Vendor Overview */}
+          <div className="vendor-card">
+            <h3>Vendor Overview</h3>
+            <div className="stats-grid">
+              <div className="stat-box">
+                <p>Texti Services</p>
+                <span>3,254</span>
+              </div>
+              <div className="stat-box">
+                <p>New vendors (Vents)</p>
+                <span>45</span>
+              </div>
+              <div className="stat-box">
+                <p>Wanted Vendors</p>
+                <span>12</span>
+              </div>
+              <div className="stat-box">
+                <p>Sustainable Vendors</p>
+                <span>3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="footer">
         </div>
       </div>
     </div>

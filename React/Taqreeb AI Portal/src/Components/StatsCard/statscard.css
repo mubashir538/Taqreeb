@@ -1,12 +1,12 @@
 .stats-card {
     background: #2d3748;
-    display: flex;
+    /* display: flex; */
     align-items: center;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     color: white;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.3s ease;
   }
   
   .stats-card:hover {
