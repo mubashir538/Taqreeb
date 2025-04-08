@@ -4,11 +4,12 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_guest_list_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 
@@ -16,7 +17,8 @@ class CreateGuestList_AddPerson extends StatefulWidget {
   const CreateGuestList_AddPerson({super.key});
 
   @override
-  State<CreateGuestList_AddPerson> createState() => _CreateGuestList_AddPersonState();
+  State<CreateGuestList_AddPerson> createState() =>
+      _CreateGuestList_AddPersonState();
 }
 
 class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
@@ -26,7 +28,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   final TextEditingController _contactController = TextEditingController();
   final FocusNode _personFocus = FocusNode();
   final FocusNode _contactFocus = FocusNode();
-  
+
   bool _isFunction = false;
   int _functionId = 0;
   int _eventId = 0;
@@ -50,9 +52,10 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   }
 
   void _initializeFromArguments() {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _routeArgs = args;
-    
+
     setState(() {
       _isFunction = args['functionid'] != null;
       _functionId = args['functionid'] ?? 0;
@@ -72,11 +75,14 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
       return;
     }
 
+    if (Validations.validateContact(_contactController.text) != "Ok") {
+      MyScaffold(text: Validations.validateContact(_contactController.text))
+          .show(context);
+      return;
+    }
     setState(() {
-      _guestList.add({
-        'name': _personController.text,
-        'contact': _contactController.text
-      });
+      _guestList.add(
+          {'name': _personController.text, 'contact': _contactController.text});
       _personController.clear();
       _contactController.clear();
       _personFocus.requestFocus();
@@ -118,11 +124,10 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
       MyScaffold(
         text: allSuccess ? 'Persons Added' : 'Some persons not added',
       ).show(context);
-      
-      Navigator.pushNamedAndRemoveUntil(
+
+      Navigator.pushReplacementNamed(
         context,
         '/CreateGuestList_List',
-        ModalRoute.withName('//EventDetails'),
         arguments: _routeArgs,
       );
     }
@@ -132,8 +137,6 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   void dispose() {
     _personController.dispose();
     _contactController.dispose();
-    _personFocus.dispose();
-    _contactFocus.dispose();
     super.dispose();
   }
 
@@ -162,7 +165,9 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
         width: Screen.width(context),
         child: Column(
           children: [
-            SizedBox(height: (Screen.height(context) * 0.05) + UI_Management.headerHeight),
+            SizedBox(
+                height: (Screen.height(context) * 0.05) +
+                    UI_Management.headerHeight),
             _buildInputFields(),
             _buildGuestList(),
             SizedBox(height: Screen.height(context) * 0.05),
@@ -178,7 +183,8 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
       children: [
         MyTextBox(
           focusNode: _personFocus,
-          onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_contactFocus),
+          onFieldSubmitted: (_) =>
+              FocusScope.of(context).requestFocus(_contactFocus),
           hint: 'Person Name',
           valueController: _personController,
         ),

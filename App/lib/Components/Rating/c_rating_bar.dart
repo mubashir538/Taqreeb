@@ -49,7 +49,7 @@ class RatingDistribution extends StatelessWidget {
                   Expanded(
                     child: LinearProgressIndicator(
                       minHeight: Screen.height(context) * 0.02,
-                      value: entry.value / 100,
+                      value: entry.value==0?1/100:entry.value / 100,
                       backgroundColor: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
                     ),

@@ -35,7 +35,7 @@ class HomePageProducts extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(25),
               blurRadius: 6,
               offset: Offset(0, 3),
             ),

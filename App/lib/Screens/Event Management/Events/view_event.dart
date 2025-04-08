@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -40,6 +40,7 @@ class _EventDetailsState extends State<EventDetails> {
   Future<void> _fetchEventDetails() async {
     await ApiCall.fetchAPI(
       'eventdetails/${_eventData.eventId}',
+      refresh: true,
       onSuccess: (token, data) {
         if (!mounted) return;
 
@@ -243,6 +244,7 @@ class _EventDetailsState extends State<EventDetails> {
         'eventid': _eventData.eventId,
         'event': _eventData.eventDetails['name'],
         'fid': _eventData.functions[index]['id'],
+        'type': _eventData.eventDetails['type']
       },
     );
   }
@@ -259,8 +261,9 @@ class _EventDetailsState extends State<EventDetails> {
           onTap: () => _navigateToChecklist(),
         ),
         _buildActionButton(
-          text: "View Invitation Card",
-          onTap: () => Navigator.pushNamed(context, '/InvitationCardEdit'),
+          text: "Create Invitation Card",
+          onTap: () => Navigator.pushNamed(context, '/CreateInvitation',
+              arguments: {'type': _eventData.eventDetails['type']}),
         ),
       ],
     );
@@ -279,7 +282,7 @@ class _EventDetailsState extends State<EventDetails> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withAlpha(127),
             spreadRadius: 5,
             blurRadius: 4,
             offset: const Offset(2, 2),

@@ -110,9 +110,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleSearch() {
-    if (_searchController.text.isNotEmpty) {
-      Logs.logUserActivity("search", {"search_query": _searchController.text});
-    }
     Navigator.pushNamed(context, '/SearchService');
   }
 

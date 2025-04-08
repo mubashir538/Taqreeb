@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -10,6 +11,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 class OrderSummaryController {
   String listingName = '';
   int listingPrice = 0;
+  int listingId = 0;
   String listingType = '';
   String token = '';
   Map<String, dynamic> user = {};
@@ -33,6 +35,7 @@ class OrderSummaryController {
     listingName = args['Name'] ?? '';
     listingPrice = args['price'] ?? 0;
     listingType = args['type'] ?? '';
+    listingId = args['id'] ?? 0;
   }
 }
 
@@ -55,7 +58,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _controller.setListingDetails(args);
   }
 
@@ -136,31 +140,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             'Name',
             '${_controller.user['firstName']} ${_controller.user['lastName']}',
           ),
-          _buildDetailRow('Contact', _controller.user['email'] ?? ''),
+          _buildDetailRow('Contact',
+              '${_controller.user['email'].substring(0, 3)}***${_controller.user['email'].substring(_controller.user['email'].length - 4, _controller.user['email'].length)}'),
           _buildDetailRow('Location', 'Karachi, Pakistan'),
-          _buildSecurePaymentCheckbox(),
         ],
       ),
-    );
-  }
-
-  Widget _buildSecurePaymentCheckbox() {
-    return Row(
-      children: [
-        Text(
-          'Secure Payment',
-          style: TextStyle(
-            fontSize: Screen.width(context) * 0.035,
-            color: Colors.grey,
-          ),
-        ),
-        Checkbox(
-          value: false,
-          onChanged: (value) {
-            // Handle checkbox state
-          },
-        ),
-      ],
     );
   }
 
@@ -169,33 +153,35 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       children: [
         ColoredButton(
           text: "Pay 10% Advance",
-          onPressed: () => _navigateToPayment('/PaymentDetails'),
+          onPressed: () {
+            int payment = (_controller.listingPrice * 0.1).toInt();
+            _navigateToPayment('/PaymentDetails',
+                {'amount': payment, 'listing': _controller.listingId});
+          },
         ),
         _buildVerticalSpace(0.02),
         ColoredButton(
           text: "Pay Full Amount",
-          onPressed: () => _navigateToPayment('/PaymentDetails'),
+          onPressed: () {
+            _navigateToPayment('/PaymentDetails', {
+              'amount': _controller.listingPrice,
+              'listing': _controller.listingId
+            });
+          },
         ),
       ],
     );
   }
 
-  void _navigateToPayment(String route) {
-    Navigator.pushNamed(
-      context,
-      route,
-      arguments: {
-        'amount': _controller.listingPrice,
-        'isFullPayment': route == '/PaymentDetails',
-      },
-    );
+  void _navigateToPayment(String route, Map<String, dynamic> arguments) {
+    Navigator.pushNamed(context, route, arguments: arguments);
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
-        fontSize: Screen.width(context) * 0.045,
+      style: GoogleFonts.montserrat(
+        fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
@@ -210,15 +196,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
+            style: GoogleFonts.montserrat(
+              fontSize: Screen.max(context) * 0.015,
               color: Colors.grey,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
+            style: GoogleFonts.montserrat(
+              fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/picture_options.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -7,8 +8,7 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -133,11 +133,10 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
       UI_Management.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
-          if(mounted){
-
-          setState(() {
-            UI_Management.headerHeight = renderbox.size.height;
-          });
+          if (mounted) {
+            setState(() {
+              UI_Management.headerHeight = renderbox.size.height;
+            });
           }
         },
       );
@@ -236,7 +235,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                             ColoredButton(
                               text: 'Save',
                               onPressed: () {
-                                warningDialog(
+                                WarningDialog(
                                   title: 'Save Changes',
                                   message:
                                       'Are you sure you want to save the changes?',

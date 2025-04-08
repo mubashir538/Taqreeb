@@ -7,7 +7,7 @@ import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
@@ -234,7 +234,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                           ColoredButton(
                             text: 'Save',
                             onPressed: () {
-                              warningDialog(
+                              WarningDialog(
                                 title: 'Save Changes',
                                 message:
                                     'Are you sure you want to save the changes?',

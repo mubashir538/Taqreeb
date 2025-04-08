@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';

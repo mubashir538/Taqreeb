@@ -9,15 +9,15 @@ import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class ForgotPassword_VerifyCode extends StatefulWidget {
-  const ForgotPassword_VerifyCode({super.key});
+class ForgotPasswordVerifyCode extends StatefulWidget {
+  const ForgotPasswordVerifyCode({super.key});
 
   @override
-  State<ForgotPassword_VerifyCode> createState() =>
-      _ForgotPassword_VerifyCodeState();
+  State<ForgotPasswordVerifyCode> createState() =>
+      ForgotPasswordVerifyCodeState();
 }
 
-class _ForgotPassword_VerifyCodeState extends State<ForgotPassword_VerifyCode> {
+class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
   GlobalKey headerKey = GlobalKey();
 
   @override

@@ -27,30 +27,36 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
   OverlayEntry? _overlayEntry;
 
   String _colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
+    return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.focusNode?.dispose();
+    super.dispose();
   }
 
   void _showColorPicker() {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    double pickerWidth = Screen.width(context) * 0.9;
+    double pickerHeight = Screen.height(context) * 0.7;
 
     Color tempColor = selectedColor;
     _overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        left: offset.dx,
-        top: offset.dy - 300,
-        width: renderBox.size.width,
+      builder: (context) => Center(
         child: Material(
           elevation: 4,
           borderRadius: BorderRadius.circular(10),
           child: Container(
+            width: pickerWidth,
+            height: pickerHeight,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: MyColors.DarkLighter,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withAlpha(51),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -65,7 +71,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                     tempColor = color;
                   },
                   showLabel: false,
-                  pickerAreaHeightPercent: 0.8,
+                  pickerAreaHeightPercent: 0.7,
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -116,7 +122,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withAlpha(102),
               blurRadius: 4,
               spreadRadius: 1,
               offset: const Offset(2, 2),
@@ -143,7 +149,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                   decoration: InputDecoration(
                     hintText: widget.hint,
                     hintStyle: GoogleFonts.montserrat(
-                      color: MyColors.white.withOpacity(0.6),
+                      color: MyColors.white.withAlpha(153),
                       fontSize: Screen.max(context) * 0.015,
                     ),
                     border: InputBorder.none,

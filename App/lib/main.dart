@@ -32,6 +32,8 @@ import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_family.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/createInvitation.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/viewInvitationCard.dart';
 import 'package:taqreeb/Screens/Globals/settings.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_image.dart';
@@ -175,13 +177,13 @@ class _MainAppState extends State<MainApp> {
       '/CategoryView_Decorator': (context) => CategoryView_Decorator(),
       '/CategoryView_GraphicDesigner': (context) =>
           CategoryView_GraphicDesigner(),
-      '/CategoryView_Parlour': (context) => CategoryView_Parlour(),
+      '/CategoryView_Parlour': (context) => CategoryViewParlour(),
       '/CategoryView_Photographer': (context) => CategoryView_Photographer(),
       '/CategoryView_PhotographyPlace': (context) =>
           CategoryView_PhotographyPlace(),
       '/CategoryView_Salon': (context) => CategoryView_Saloon(),
       '/CategoryView_Venue': (context) => CategoryView_Venue(),
-      '/CategoryView_VideoEditor': (context) => CategoryView_VideoEditor(),
+      '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
       '/ChatBox': (context) => ChatBox(),
       '/ChatsScreen': (context) => MainScreen(index: 1),
       '/CreateAIPackage': (context) => MainScreen(index: 1),
@@ -192,7 +194,8 @@ class _MainAppState extends State<MainApp> {
       '/CreateGuestList': (context) => CreateGuestList(),
       '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
       '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),
-      '/CreateGuestList_List': (context) => CreateGuestList_List(),
+      '/CreateGuestList_List': (context) => CreateGuestListList(),
+      '/CreateInvitation': (context) => CreateInvitation(),
       '/Dashboard': (context) => Dashboard(),
       '/EditEvent': (context) => CreateEvent(),
       '/EditFunction': (context) => CreateFunction(),
@@ -200,13 +203,14 @@ class _MainAppState extends State<MainApp> {
       '/ForgotPassword_EmailorPhoneInput': (context) =>
           ForgotPassword_EmailorPhoneInput(),
       '/ForgotPassword_NewPassword': (context) => ForgotPassword_NewPassword(),
-      '/ForgotPassword_VerifyCode': (context) => ForgotPassword_VerifyCode(),
+      '/ForgotPassword_VerifyCode': (context) => ForgotPasswordVerifyCode(),
       '/FreelancerSignup_BasicInfo': (context) => FreelancerSignup_BasicInfo(),
       '/FreelancerSignup_Description': (context) =>
-          FreelancerSignup_Description(),
+          FreelancerSignupDescription(),
       '/FunctionDetail': (context) => FunctionDetail(),
       '/GroupChatBox': (context) => GroupChatScreen(),
       '/HomePage': (context) => MainScreen(index: 0),
+      '/InvitationCardView': (context) => ViewInvitationCard(),
       '/Login': (context) => Login(),
       '/OrderSummary': (context) => OrderSummaryScreen(),
       '/PaymentDetails': (context) => SecurePaymentScreen(),

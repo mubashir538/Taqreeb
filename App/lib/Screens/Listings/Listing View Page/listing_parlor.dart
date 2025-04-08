@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_description.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_details.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_heading.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_image_slider.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
@@ -18,14 +17,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_Parlour extends StatefulWidget {
-  const CategoryView_Parlour({super.key});
+class CategoryViewParlour extends StatefulWidget {
+  const CategoryViewParlour({super.key});
 
   @override
-  State<CategoryView_Parlour> createState() => _CategoryView_ParlourState();
+  State<CategoryViewParlour> createState() => CategoryViewParlourState();
 }
 
-class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
+class CategoryViewParlourState extends State<CategoryViewParlour> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -33,7 +32,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   late final List<String> _addonsHeadings = [];
   late final List<String> _addonsValues = [];
   late final List<String> _starsValue = [];
-  
+
   int? _listingId;
   DateTime? _selectedDate;
   DateTime? _entryTime;
@@ -88,9 +87,9 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
 
   void _fetchListingData() {
     if (!_hasChanged) {
-      final args = ModalRoute.of(context)!.settings.arguments 
-          as Map<String, dynamic>;
-      
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
       setState(() {
         _listingId = args['id'];
         _hasChanged = true;
@@ -98,6 +97,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
 
       ApiCall.fetchAPI(
         'parlourviewpage/$_listingId',
+        refresh: true,
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );
@@ -109,7 +109,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
       setState(() {
         _listing = listing;
         _isLoading = false;
-        
+
         ApiCall.updateListingDetails(
           listing: listing,
           updateState: _handleListingUpdate,
@@ -135,25 +135,6 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
         _isLoading = isLoading;
         _hasChanged = isChange;
       });
-    }
-  }
-
-  Future<void> _handleBookNow() async {
-    await Logs.logUserActivity(
-      "book_parlour",
-      {"listing_id": _listingId ?? 0}
-    );
-
-    if (mounted) {
-      Navigator.pushNamed(
-        context, 
-        '/OrderSummary',
-        arguments: {
-          'Name': _listing['Listing']['name'],
-          'type': _listing['Listing']['type'],
-          'price': _listing['Listing']['basicPrice'],
-        },
-      );
     }
   }
 
@@ -183,21 +164,15 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
-              CategoryDetails(
-                listing: _listing,
-                headings: _addonsHeadings,
-                values: _values,
-              ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               _buildDivider(),
               CategoryReview(
-                listing: _listing, 
+                listing: _listing,
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
@@ -219,15 +194,7 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
   }
 
   Widget _buildBookNowButton() {
-    return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.03),
-      child: Center(
-        child: ColoredButton(
-          text: 'Book Parlour',
-          onPressed: _handleBookNow,
-        ),
-      ),
-    );
+    return BookNowButton(context: context, listing: _listing);
   }
 
   @override
@@ -253,7 +220,13 @@ class _CategoryView_ParlourState extends State<CategoryView_Parlour> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          const ChatIcon(),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

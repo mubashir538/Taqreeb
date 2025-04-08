@@ -183,6 +183,17 @@ def BusinessOwnerSignup(request):
     owner.CNICFront = filestorage.url(filePath)
     owner.profilepic = filestorage.url(picture)
     owner.save(update_fields=["CNICFront","CNICBack","profilepic"])
+    firebase_user_data = {
+        "businessName": businessName,
+        "profile":picture,
+        "description":description,
+        "userId":userid
+    }
+    try:
+        db.collection("businessUsers").document(str(owner.id)).set(firebase_user_data)
+    except Exception as e:
+        return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
+    
     return Response({'status':'success'})
 
 @api_view(['POST'])
@@ -301,6 +312,13 @@ def AccountInfoPage(request,id):
     serializer = s.UserSerializer(user)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getBasicUserInfo(request,id):
+    userid = id
+    user = md.User.objects.filter(id=userid).first()
+    return Response({'name':f'{user.firstName.capitalize()} {user.lastName.capitalize()}','profilePicture':user.profilePicture})
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -415,6 +433,17 @@ def FreelancerSignup(request):
     owner = md.Freelancer.objects.get(userID=UserId)
     owner.profilepic = filestorage.url(picture)
     owner.save(update_fields=["profilepic"])
+    firebase_user_data = {
+        "businessName": BusinessName,
+        "profile":owner.profilepic,
+        "description":Description,
+        "userId":UserId
+    }
+    try:
+        db.collection("freelanceUsers").document(str(owner.id)).set(firebase_user_data)
+    except Exception as e:
+        return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
+    
     return Response({'status': 'success'})
 
 @api_view(['POST'])

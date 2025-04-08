@@ -4,7 +4,7 @@ import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -60,8 +60,14 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Future<void> _fetchData() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
-    await ApiCall.fetchAPI('YourEvents/$userId', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('YourEvents/$userId', refresh: true,
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           _events = data;
@@ -70,6 +76,11 @@ class _YourEventsState extends State<YourEvents> {
         });
       }
     }, context: mounted ? context : null);
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _changeHeight(RenderBox renderbox) {
@@ -89,6 +100,9 @@ class _YourEventsState extends State<YourEvents> {
     );
 
     if (response['status'] == 'success') {
+      final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+      await MyApi.deleteCache('YourEvents/$userId');
+      _fetchData();
       MyScaffold(text: 'Event Deleted Successfully').show(context);
       setState(() {
         _events["Event"].removeAt(index);

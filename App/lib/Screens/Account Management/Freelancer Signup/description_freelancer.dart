@@ -4,7 +4,7 @@ import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -62,16 +62,16 @@ class FreelancerSignupDescriptionViewModel with ChangeNotifier {
   }
 }
 
-class FreelancerSignup_Description extends StatefulWidget {
-  const FreelancerSignup_Description({super.key});
+class FreelancerSignupDescription extends StatefulWidget {
+  const FreelancerSignupDescription({super.key});
 
   @override
-  State<FreelancerSignup_Description> createState() =>
-      _FreelancerSignup_DescriptionState();
+  State<FreelancerSignupDescription> createState() =>
+      FreelancerSignupDescriptionState();
 }
 
-class _FreelancerSignup_DescriptionState
-    extends State<FreelancerSignup_Description> {
+class FreelancerSignupDescriptionState
+    extends State<FreelancerSignupDescription> {
   GlobalKey headerKey = GlobalKey();
 
   @override
@@ -99,7 +99,7 @@ class _FreelancerSignup_DescriptionState
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context),
               child: Column(
                 children: [

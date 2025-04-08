@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_description.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_details.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_heading.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_image_slider.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
@@ -96,6 +95,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
 
     if (!_hasChanged) {
       ApiCall.fetchAPI(
+        refresh: true,
         'saloonviewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
@@ -137,22 +137,6 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
     }
   }
 
-  Future<void> _handleBookNow() async {
-    await Logs.logUserActivity("book_saloon", {"listing_id": _listingId ?? 0});
-
-    if (mounted) {
-      Navigator.pushNamed(
-        context,
-        '/OrderSummary',
-        arguments: {
-          'Name': _listing['Listing']['name'],
-          'type': _listing['Listing']['type'],
-          'price': _listing['Listing']['basicPrice'],
-        },
-      );
-    }
-  }
-
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -179,16 +163,10 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
-              CategoryDetails(
-                listing: _listing,
-                headings: _addonsHeadings,
-                values: _values,
-              ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategoryReview(
@@ -214,15 +192,7 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
   }
 
   Widget _buildBookNowButton() {
-    return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.03),
-      child: Center(
-        child: ColoredButton(
-          text: 'Book Saloon',
-          onPressed: _handleBookNow,
-        ),
-      ),
-    );
+    return BookNowButton(context: context, listing: _listing);
   }
 
   @override
@@ -248,7 +218,13 @@ class _CategoryView_SaloonState extends State<CategoryView_Saloon> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          const ChatIcon(),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

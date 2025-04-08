@@ -11,7 +11,7 @@ class Productcard extends StatefulWidget {
   final double mywidth;
   final String listingid;
   final String listingType;
-  Productcard({
+  const Productcard({
     this.mywidth = 0,
     this.isBusiness = false,
     required this.listingid,
@@ -86,7 +86,7 @@ class _ProductcardState extends State<Productcard> {
                 height: Screen.height(context) * 0.1,
                 padding: EdgeInsets.all(Screen.max(context) * 0.01),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
+                  color: Colors.black.withAlpha(178),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(15),
                     bottomRight: Radius.circular(15),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
-// import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/phone_auth_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -101,12 +99,8 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
   }
 
   void _showErrorDialog(String title, String message) {
-    warningDialog(
-      title: title,
-      message: message,
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
-
 
   void _navigateToEmailVerification() {
     Navigator.pushReplacementNamed(context, '/Signup_EmailOTPSend');

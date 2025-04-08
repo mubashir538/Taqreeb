@@ -3,8 +3,10 @@ from . import views
 from .apis import Account_Management as am
 from .apis import View_Pages as vp
 from .apis import chats as c
+from .apis import Invitation as i
 from .apis import notifications as n
 from .apis import Event_Management as em
+from .apis import Payment as p
 from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
@@ -35,8 +37,9 @@ urlpatterns = [
     path('saveGroupProfileImage/',c.saveGroupProfile,name='saveGroupProfile'),
     path('user/forgotpassword/phoneorEmail/',am.ForgotPasswordPage,name='ForgotPasswordPage'),
     path('user/forgotpassword/reset-password/',am.ResetPasswordPage,name='ResetPasswordPage'),
-    path('accountInfo/<int:id>',am.AccountInfoPage,name='AccountInfoPage'),
-    path('userChatInfo/<int:id>',c.getUserInfoChat,name='userChatInfo'),
+    path('accountInfo/<int:id>/',am.AccountInfoPage,name='AccountInfoPage'),
+    path('basicUserInfo/<int:id>/',am.getBasicUserInfo,name='getBasicUserInfo'),
+    path('userChatInfo/<int:id>/',c.getUserInfoChat,name='userChatInfo'),
     path('businessowner/listings/<int:id>/',lm.ListingsPage,name='ListingsPage'),
     path('businessowner/addListings/',lm.AddListing,name='AddListing'),
     path('businessowner/updateListings/',lm.updateListing,name='updateListings'),
@@ -54,6 +57,8 @@ urlpatterns = [
     path('CreateEvent/',em.CreateEvent,name='CreateEvent'),
     path('EditEvent/',em.EditEvent,name='EditEvent'),
     path('getEventTypes/',em.getEventType,name='getEventType'),
+    path('Invitation/CardDetails',i.getInvitationDetails,name='getInvitationDetails'),
+    path('Events/getBasics/<int:id>',em.getEventsAndFunctions,name='getEventsAndFunctions'),
     path('getFunctionTypes/<int:id>',views.getFunctionType,name='getFunctionType'),
     path('YourEvents/<int:id>',em.YourEvents,name='YourEvents'),
     path('DeleteEvent/',em.DeleteEvent,name='DeleteEvent'),
@@ -74,6 +79,8 @@ urlpatterns = [
     path('home/categories/',views.HomeCategories,name='HomeCategories'),
     path('business/categories/<str:type>',views.BusinessCategories,name='BusinessCategories'),
     path('home/listings/',lm.HomeListings,name='HomeListings'),
+    path('home/listings/views',lm.ListingWithViews,name='ListingWithViews'),
+    path('Payments/addTransaction',p.addTransaction,name='addTransaction'),
     path('show/guest/',views.ShowGuest,name='ShowGuest'),
     path('Delete/guest/',views.DeleteGuest,name='DeleteGuest'),
     path('show/checklist/<int:eventId>',views.ShowChecklist,name='ShowGuest'),
@@ -92,8 +99,9 @@ urlpatterns = [
     path('wishlist/add',views.addtoWishlist,name='addtoWishlist'),
     path('wishlist/get/<int:uid>',views.getWishlist,name='getWishlist'),
     path('wishlist/delete',views.removeFromWishlist,name='removeFromWishlist'),
+    path('Reviews/add',vp.AddReview,name='addReview'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
-    # path('deleteReq/',views.deleteTable,name='deleteReq'),
+    path('deleteReq/',views.deleteTable,name='deleteReq'),
 ]
 
 if settings.DEBUG:

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -116,7 +116,7 @@ class _AddImageState extends State<AddImage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withAlpha(102),
             blurRadius: 4,
             spreadRadius: 1,
             offset: const Offset(2, 2),
@@ -166,7 +166,7 @@ class _AddImageState extends State<AddImage> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withAlpha(102),
                 blurRadius: 4,
                 spreadRadius: 1,
                 offset: const Offset(2, 2),
@@ -185,7 +185,7 @@ class _AddImageState extends State<AddImage> {
                   height: double.infinity,
                 ),
                 Container(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withAlpha(127),
                 ),
               ],
             ),

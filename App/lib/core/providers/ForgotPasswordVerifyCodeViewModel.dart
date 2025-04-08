@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 
 class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
@@ -42,12 +42,13 @@ class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
   }
 
   Future<void> resendOTP(String email, String otp) async {
-    await MyApi.postRequest(endpoint: 'resendOTP/email', body: {'email': email, 'otp': otp});
+    await MyApi.postRequest(
+        endpoint: 'resendOTP/email', body: {'email': email, 'otp': otp});
     startTimer();
   }
 
-  Future<void> verifyOTP(int enteredOTP, int receivedOTP,
-      BuildContext context, String email) async {
+  Future<void> verifyOTP(int enteredOTP, int receivedOTP, BuildContext context,
+      String email) async {
     if (enteredOTP == receivedOTP) {
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -57,10 +58,7 @@ class ForgotPasswordVerifyCodeViewModel with ChangeNotifier {
       );
     } else {
       // Show error dialog
-      warningDialog(
-        title: 'Invalid OTP',
-        message: 'The entered OTP is incorrect.',
-      ).showDialogBox(context);
+      MyScaffold(text: 'Invalid OTP').show(context);
     }
   }
 

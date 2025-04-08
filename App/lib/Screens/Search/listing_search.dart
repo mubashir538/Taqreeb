@@ -1,11 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
+import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_location.dart';
 import 'package:taqreeb/Components/Inputs/c_input_range_slider.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -42,16 +42,18 @@ class _SearchServiceState extends State<SearchService> {
     minValue: 10000,
     maxValue: 5000000,
   );
-  final CheckBoxController _ratingController =
-      CheckBoxController(selections: []);
-  final CheckBoxController _categoryController =
-      CheckBoxController(selections: []);
-  final ScrollController _scrollController = ScrollController();
+  final RangeSliderController _ratingController = RangeSliderController(
+    minValue: 1,
+    maxValue: 5,
+  );
+  final TextEditingController _categoryController =
+      TextEditingController(text: 'All');
+
   FocusNode searchFocus = FocusNode();
 
   // UI State
   final GlobalKey _headerKey = GlobalKey();
-  DateTime? _entryTime;
+  // DateTime? _entryTime;
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
@@ -61,11 +63,16 @@ class _SearchServiceState extends State<SearchService> {
   @override
   void initState() {
     super.initState();
-    _entryTime = DateTime.now();
+    // _entryTime = DateTime.now();
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         UI_Management.getHeaderHeight(
             headerKey: _headerKey,
             callback: (renderbox) => _updateHeaderHeight(renderbox)));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -76,22 +83,8 @@ class _SearchServiceState extends State<SearchService> {
       if (args != null) {
         _args.addAll(args as Map<String, dynamic>);
       }
+      _isChanged = true;
       _fetchData();
-    }
-  }
-
-  @override
-  void dispose() {
-    _logPageViewDuration();
-    super.dispose();
-  }
-
-  void _logPageViewDuration() {
-    if (_entryTime != null) {
-      final exitTime = DateTime.now();
-      final timeSpent = exitTime.difference(_entryTime!).inSeconds;
-      Logs.logUserActivity(
-          "search_page_view_duration", {"time_spent_seconds": timeSpent});
     }
   }
 
@@ -104,7 +97,6 @@ class _SearchServiceState extends State<SearchService> {
   Future<void> _fetchData() async {
     await _fetchCategories();
     await _fetchListings();
-    _isChanged = true;
   }
 
   Future<void> _fetchCategories() async {
@@ -119,16 +111,17 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   Future<void> _fetchListings() async {
-    await ApiCall.fetchAPI('home/listings/', onSuccess: (_, data) {
+    await ApiCall.fetchAPI('home/listings/views', onSuccess: (_, data) {
       if (mounted) {
         setState(() {
           _listings.addAll(data);
           _tempListings.addAll(Map.from(data));
           if (_args.isNotEmpty) {
             _appliedFilters.add('Category');
-            _categoryController.selections.add(_args['category']);
+            _categoryController.text = _args['category'] ?? 'All';
             _searchWithFilters();
           }
+          _args.clear();
           _isLoading = false;
         });
       }
@@ -163,24 +156,26 @@ class _SearchServiceState extends State<SearchService> {
     }
   }
 
-  String _getListingPicture(int listingId, Map<String, dynamic> listing) {
-    for (var pictureGroup in listing['pictures']) {
-      if (pictureGroup.isNotEmpty &&
-          pictureGroup[0]['listingId'] == listingId) {
-        return pictureGroup[0]['picturePath'];
-      }
-    }
-    return '';
+  String _getListingPicture(int index, Map<String, dynamic> listing) {
+    // for (var pictureGroup in listing['listings']['pictures']) {
+    //   if (pictureGroup.isNotEmpty &&
+    //       pictureGroup[0]['listingId'] == listingId) {
+    //     return pictureGroup[0]['picturePath'];
+    //   }
+    // }
+    if (listing['listings'][index]['pictures']['picturePath'] == null)
+      return '';
+    return listing['listings'][index]['pictures']['picturePath'];
   }
 
   void _searchWithFilters() {
     setState(() {
-      _tempListings['HomeListing'] = List.from(_listings['HomeListing']);
+      _tempListings['listings'] = List.from(_listings['listings']);
 
       for (String filter in _appliedFilters) {
         switch (filter) {
           case "Price":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
+            _tempListings['listings'] = _tempListings['listings']
                 .where((element) =>
                     element['basicPrice'] >= _rangeSliderController.minValue &&
                     element['basicPrice'] <= _rangeSliderController.maxValue)
@@ -188,21 +183,22 @@ class _SearchServiceState extends State<SearchService> {
             break;
 
           case "Ratings":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
-                .where((element) =>
-                    _ratingController.selections.contains(element['rating']))
-                .toList();
+            _tempListings['listings'] =
+                _tempListings['listings'].where((element) {
+              final rating = double.parse(element['rating']);
+              return rating >= _ratingController.minValue &&
+                  rating <= _ratingController.maxValue;
+            }).toList();
             break;
 
           case "Category":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
-                .where((element) =>
-                    _categoryController.selections.contains(element['type']))
+            _tempListings['listings'] = _tempListings['listings']
+                .where((element) => _categoryController.text == element['type'])
                 .toList();
             break;
 
           case "Location":
-            _tempListings['HomeListing'] = _tempListings['HomeListing']
+            _tempListings['listings'] = _tempListings['listings']
                 .where((element) => element['location']
                     .toLowerCase()
                     .contains(_locationController.text.toLowerCase()))
@@ -213,15 +209,26 @@ class _SearchServiceState extends State<SearchService> {
 
       // Apply additional filters if they exist
       if (_additionalSelections.isNotEmpty) {
-        _tempListings['HomeListing'] =
-            _tempListings['HomeListing'].where((listing) {
-          return _additionalSelections.entries.every((entry) {
-            if (entry.value.isEmpty)
-              return true; // No filter applied for this field
-            if (listing[entry.key] == null) return false;
-            return entry.value.contains(listing[entry.key].toString());
-          });
-        }).toList();
+        setState(() {
+          _tempListings['listings'] =
+              _tempListings['listings'].where((listing) {
+            return _additionalSelections.entries.every((entry) {
+        
+              if (entry.value.isEmpty) {
+                return true; // No filter applied for this field
+              }
+              print('Entry: $entry');
+              print('listing: $listing');
+              print(
+                  'Entry key: ${entry.key} -- ${entry.value} --  ${listing['View'][entry.key]}');
+              if (listing['View'][entry.key] == null) return false;
+              return entry.value
+                  .contains(listing['View'][entry.key].toString());
+            });
+          }).toList();
+
+          print('${_tempListings['listings']}');
+        });
       }
     });
   }
@@ -281,6 +288,22 @@ class _SearchServiceState extends State<SearchService> {
                     onTap: () {
                       setState(() {
                         _appliedFilters.remove(filter);
+                        _filtersToApply.remove(filter);
+                        if (filter == "Category") {
+                          _categoryController.text = 'All';
+                        }
+                        if (filter == "Price") {
+                          _rangeSliderController.updateValues(
+                              _rangeSliderController.minValue,
+                              _rangeSliderController.maxValue);
+                        }
+                        if (filter == "Ratings") {
+                          _ratingController.updateValues(
+                              _ratingController.minValue,
+                              _ratingController.maxValue);
+                        }
+                        if (filter == "Location") _locationController.clear();
+                        if (filter == "Date") _dateController.clear();
                         _searchWithFilters();
                       });
                     },
@@ -304,8 +327,8 @@ class _SearchServiceState extends State<SearchService> {
       width: Screen.width(context) * 0.9,
       child: ListView.builder(
         itemBuilder: (context, index) {
-          final service = _tempListings['HomeListing'][index];
-          final imageUrl = _getListingPicture(service['id'], _tempListings);
+          final service = _tempListings['listings'][index];
+          final imageUrl = _getListingPicture(index, _tempListings);
 
           return GestureDetector(
             onTap: () => _navigateToServiceDetails(service),
@@ -321,7 +344,7 @@ class _SearchServiceState extends State<SearchService> {
             ),
           );
         },
-        itemCount: _tempListings['HomeListing'].length,
+        itemCount: _tempListings['listings'].length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
       ),
@@ -347,7 +370,7 @@ class _SearchServiceState extends State<SearchService> {
               onChanged: (value) {
                 setState(() {
                   _searchWithFilters();
-                  _tempListings['HomeListing'] = _tempListings['HomeListing']
+                  _tempListings['listings'] = _tempListings['listings']
                       .where((element) => element['name']
                           .toString()
                           .toLowerCase()
@@ -401,7 +424,7 @@ class _SearchServiceState extends State<SearchService> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -436,6 +459,7 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void _showFilterPopup(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -444,9 +468,11 @@ class _SearchServiceState extends State<SearchService> {
         final keyboard = MediaQuery.of(context).viewInsets.bottom;
         final isKeyboardVisible = keyboard > 0;
 
-        if (isKeyboardVisible && _scrollController.hasClients) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (isKeyboardVisible && scrollController.hasClients) {
+            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+          }
+        });
 
         return Container(
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
@@ -457,104 +483,117 @@ class _SearchServiceState extends State<SearchService> {
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
           ),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Filter Options",
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.03,
-                    fontWeight: FontWeight.bold,
-                    color: MyColors.red,
-                  ),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Filter Options",
+                      style: GoogleFonts.montserrat(
+                        fontSize: Screen.max(context) * 0.03,
+                        fontWeight: FontWeight.bold,
+                        color: MyColors.red,
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Pricing',
+                      child: RangeSliderWidget(
+                        start: 10000,
+                        end: 5000000,
+                        divisions: 500,
+                        controller: _rangeSliderController,
+                        onChanged: (min, max) {
+                          if (!_filtersToApply.contains("Price")) {
+                            _filtersToApply.add("Price");
+                          }
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Ratings',
+                      child: RangeSliderWidget(
+                        start: 1,
+                        end: 5,
+                        divisions: 8,
+                        startLabel: '1 Star',
+                        endLabel: '5 Star',
+                        price: false,
+                        controller: _ratingController,
+                        onChanged: (min, max) {
+                          if (!_filtersToApply.contains("Ratings")) {
+                            _filtersToApply.add("Ratings");
+                          }
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                        title: 'Category',
+                        child: ResponsiveDropdown(
+                          items: _isLoading
+                              ? []
+                              : _categories['categories']
+                                  .map((value) => value['name'].toString())
+                                  .cast<String>()
+                                  .toList(),
+                          labelText: _categoryController.text == 'All'
+                              ? 'Select Category'
+                              : _categoryController.text,
+                          onChanged: (text) {
+                            setState(() {
+                              _categoryController.text = text;
+                            });
+                            if (!_filtersToApply.contains("Category")) {
+                              _filtersToApply.add("Category");
+                            }
+                            if (_categoryController.text == "All" &&
+                                _filtersToApply.contains("Category")) {
+                              _filtersToApply.remove('Category');
+                            }
+                            Logs.logUserActivity(
+                                "category_click", {"selected_category": text});
+                          },
+                        )),
+                    _buildFilterSection(
+                      title: 'Location',
+                      child: LocationInputWidget(
+                        locationController: _locationController,
+                        onLocationChanged: (_) {
+                          if (!_filtersToApply.contains("Location")) {
+                            _filtersToApply.add("Location");
+                          }
+                        },
+                      ),
+                    ),
+                    _buildFilterSection(
+                      title: 'Date',
+                      child: DateQuestion(
+                        question: "",
+                        valuecontroller: _dateController,
+                      ),
+                    ),
+                    SizedBox(height: keyboard + Screen.height(context) * 0.1),
+                  ],
                 ),
-                _buildFilterSection(
-                  title: 'Pricing',
-                  child: RangeSliderWidget(
-                    start: 10000,
-                    end: 5000000,
-                    divisions: 500,
-                    controller: _rangeSliderController,
-                    onChanged: (min, max) {
-                      if (!_filtersToApply.contains("Price")) {
-                        _filtersToApply.add("Price");
-                      }
+              ),
+              Positioned(
+                  bottom: 0,
+                  child: ColoredButton(
+                    text: 'Apply Filters',
+                    onPressed: () {
+                      _applyFilters();
+                      Navigator.pop(context);
                     },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Ratings',
-                  child: CheckBoxQuestion(
-                    question: '',
-                    options: [
-                      '5 Stars',
-                      '4 Stars',
-                      '3 Stars',
-                      '2 Stars',
-                      '1 Stars'
-                    ],
-                    controller: _ratingController,
-                    onChanged: (_) {
-                      if (!_filtersToApply.contains("Ratings")) {
-                        _filtersToApply.add("Ratings");
-                      }
-                    },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Category',
-                  child: CheckBoxQuestion(
-                    question: '',
-                    options: _isLoading
-                        ? []
-                        : _categories['categories']
-                            .map((value) => value['name'].toString())
-                            .cast<String>()
-                            .toList(),
-                    controller: _categoryController,
-                    onChanged: (selections) {
-                      if (!_filtersToApply.contains("Category")) {
-                        _filtersToApply.add("Category");
-                      }
-                      Logs.logUserActivity(
-                          "category_click", {"selected_category": selections});
-                    },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Location',
-                  child: LocationInputWidget(
-                    locationController: _locationController,
-                    onLocationChanged: (_) {
-                      if (!_filtersToApply.contains("Location")) {
-                        _filtersToApply.add("Location");
-                      }
-                    },
-                  ),
-                ),
-                _buildFilterSection(
-                  title: 'Date',
-                  child: DateQuestion(
-                    question: "",
-                    valuecontroller: _dateController,
-                  ),
-                ),
-                ColoredButton(
-                  text: 'Apply Filters',
-                  onPressed: () {
-                    _applyFilters();
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(height: keyboard),
-              ],
-            ),
+                  ))
+            ],
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      scrollController.dispose();
+    });
   }
 
   Widget _buildFilterSection({required String title, required Widget child}) {
@@ -582,17 +621,20 @@ class _SearchServiceState extends State<SearchService> {
 
     // Fetch additional filters when category is selected
     if (_appliedFilters.contains("Category") &&
-        _categoryController.selections.isNotEmpty) {
-      _fetchAdditionalFilters(_categoryController.selections[0]);
+        _categoryController.text != "All") {
+      _fetchAdditionalFilters(_categoryController.text);
     }
 
     final filterData = {
       "applied_filters": _appliedFilters,
       "filter_values": {
         if (_appliedFilters.contains("Ratings"))
-          "Ratings": _ratingController.selections,
+          "Ratings": {
+            "min": _ratingController.minValue,
+            "max": _ratingController.maxValue
+          },
         if (_appliedFilters.contains("Category"))
-          "Category": _categoryController.selections,
+          "Category": _categoryController.text,
         if (_appliedFilters.contains("Price"))
           "Price": {
             "min": _rangeSliderController.minValue,

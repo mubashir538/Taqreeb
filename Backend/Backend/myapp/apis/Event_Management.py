@@ -1,7 +1,7 @@
 from .. import models as md
 from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 
 @api_view(['GET'])
@@ -33,6 +33,8 @@ def EditEvent(request):
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
     eventId = request.data.get('EventId')
+    print(type)
+    budget = int(budget.replace(",", ""))
     EditEvent = md.Events.objects.get(id=eventId)
     EditEvent.name = name
     EditEvent.guestsmin = guestmin
@@ -57,6 +59,7 @@ def CreateEvent(request):
     description = request.data.get('description')
     themeColor = request.data.get('Theme')
     budget = request.data.get('Budget')
+    budget = int(budget.replace(",", ""))
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
     CreateEvent = md.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
@@ -82,3 +85,20 @@ def DeleteEvent(request):
     DeleteEvent.delete()
     return Response({'status':'success'})
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getEventsAndFunctions(request, id):
+    user = md.User.objects.get(id=id)
+    events = md.Events.objects.filter(userID=user).values('id', 'name', 'userID')
+    response_data = []
+    for event in events:
+        event_data = {
+            'id': event['id'],
+            'name': event['name'],
+            'userID': event['userID'],
+            'functions': list(md.Functions.objects.filter(eventId=event['id'])
+                             .values('id', 'name', 'eventId'))
+        }
+        response_data.append(event_data)
+    
+    return Response({'status': 'success', 'Event': response_data})

@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_facebook_auth: ^7.1.1
+  dio: ^5.8.0+1
+  mime: ^2.0.0
   flutter_chat_ui: ^1.6.15
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
@@ -47,6 +49,7 @@ dependencies:
   provider: ^6.1.2
   cached_network_image: ^3.4.1
   flutter_cache_manager: ^3.4.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
@@ -18,14 +18,15 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_VideoEditor extends StatefulWidget {
-  const CategoryView_VideoEditor({Key? key}) : super(key: key);
+class CategoryViewVideoEditor extends StatefulWidget {
+  const CategoryViewVideoEditor({Key? key}) : super(key: key);
 
   @override
-  State<CategoryView_VideoEditor> createState() => _CategoryView_VideoEditorState();
+  State<CategoryViewVideoEditor> createState() =>
+      _CategoryViewVideoEditorState();
 }
 
-class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
+class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -33,7 +34,7 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
   late final List<String> _addonsHeadings = [];
   late final List<String> _addonsValues = [];
   late final List<String> _starsValue = [];
-  
+
   int? _listingId;
   DateTime? _selectedDate;
   DateTime? _entryTime;
@@ -90,15 +91,16 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
   }
 
   void _fetchListingData() {
-    final args = ModalRoute.of(context)!.settings.arguments 
-        as Map<String, dynamic>;
-    
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     setState(() {
       _listingId = args['id'];
     });
 
     if (!_hasChanged) {
       ApiCall.fetchAPI(
+        refresh: true,
         'carrenter/viewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
@@ -111,7 +113,7 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
       setState(() {
         _listing = listing;
         _isLoading = false;
-        
+
         ApiCall.updateListingDetails(
           listing: listing,
           updateState: _handleListingUpdate,
@@ -141,25 +143,6 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
     }
   }
 
-  Future<void> _handleBookNow() async {
-    await Logs.logUserActivity(
-      "book_videoeditor",
-      {"listing_id": _listingId ?? 0}
-    );
-
-    if (mounted) {
-      Navigator.pushNamed(
-        context, 
-        '/OrderSummary',
-        arguments: {
-          'Name': _listing['Listing']['name'],
-          'type': _listing['Listing']['type'],
-          'price': _listing['Listing']['basicPrice'],
-        },
-      );
-    }
-  }
-
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -186,7 +169,6 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
@@ -199,7 +181,7 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategoryReview(
-                listing: _listing, 
+                listing: _listing,
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
@@ -221,15 +203,7 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
   }
 
   Widget _buildBookNowButton() {
-    return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.03),
-      child: Center(
-        child: ColoredButton(
-          text: 'Book Video Editor',
-          onPressed: _handleBookNow,
-        ),
-      ),
-    );
+    return BookNowButton(context: context, listing: _listing);
   }
 
   @override
@@ -255,7 +229,13 @@ class _CategoryView_VideoEditorState extends State<CategoryView_VideoEditor> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          const ChatIcon(),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['freelancerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Freelancer',
+                )
         ],
       ),
     );

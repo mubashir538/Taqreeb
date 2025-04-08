@@ -6,8 +6,7 @@ from django.conf import settings
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.apps import apps
 from rest_framework.response import Response
-
-
+import math
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -24,11 +23,12 @@ def PhotographerViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.PhotographersSerializer( PhotographerView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
     bookedDates = md.BookedSlots.objects.filter(listingId=listingid)
     bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data,'bookedDates':bookedDatesSerializer.data})
 
 @api_view(['GET'])
@@ -48,16 +48,16 @@ def CarRenterViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.CarRentersSerializer(CarRenters, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
                     'cars':CarsSerializer.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def GraphicDesignerViewPage(request, listingid):
-    print('lsiting: ',listingid)
     graphicdesignerid = listingid
     Listing = md.Listing.objects.get(id= graphicdesignerid)
     GraphicDesigners = md.GraphicDesigners.objects.get(listingId = graphicdesignerid)
@@ -71,9 +71,10 @@ def GraphicDesignerViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.GraphicDesignersSerializer(GraphicDesigners,many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
-    return Response({'status': 'success','View': serializer.data,'reveiewData':reviewData, 'Addons':Addonsserializer.data,'Packages':Packageserializer.data,  'Listing':Listingserializer.data, 
-                     'Package': Packageserializer.data, 'Review': Reviewserializer.data,'pictures':pictureSerializer.data})
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
+    return Response({'status': 'success','View': serializer.data, 'reviewData':reviewData.data,'Addons':Addonsserializer.data,'Packages':Packageserializer.data,  'Listing':Listingserializer.data, 
+                    'Package': Packageserializer.data, 'Review': Reviewserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -91,12 +92,13 @@ def CatererViewPage(request,listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.CaterersSerializer( CatererView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
     bookedDates = md.BookedSlots.objects.filter(listingId=listingid)
     bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
     'bookedDates':bookedDatesSerializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
@@ -114,12 +116,13 @@ def VideoEditorViewPage(request, VideoEditorID):
     PackageSerializer = s.PackagesSerializer(Package, many = True)
     ReviewSerializer = s.ReviewSerializer(Review,many=True)
     ListingSerializer = s.ListingSerializer(Listing, many=False)
-    reviewData = CalculateReviews(ReviewSerializer.data)
-    return Response({'status': 'success','View': VideoEditorsSerializer.data,'reveiewData':reviewData, 'Addons':Addonsserializer.data,  'Listing':ListingSerializer.data, 
+    reviewData= md.ReviewDetails.objects.get(listingID=VideoEditorID)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
+    return Response({'status': 'success','View': VideoEditorsSerializer.data,'reviewData':reviewData.data, 'Addons':Addonsserializer.data,  'Listing':ListingSerializer.data, 
                      'Package': PackageSerializer.data, 'Review': ReviewSerializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def VenueViewPage(request, listingid):
     venueId = listingid
     Listing = md.Listing.objects.get(id = venueId)
@@ -134,11 +137,12 @@ def VenueViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.VenueSerializer( VenueView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
     bookedDates = md.BookedSlots.objects.filter(listingId=venueId)
     bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data,'bookedDates':bookedDatesSerializer.data})
 
 @api_view(['GET'])
@@ -156,9 +160,10 @@ def SalonViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.SalonsSerializer( salonView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
@@ -176,9 +181,10 @@ def ParlourViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.ParlorsSerializer(parlorView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
@@ -196,8 +202,9 @@ def BakersViewPage(request, listingid):
     serializer = s.BakersAndSweetsSerializer( bakers, many=False)
     cakeSerializer  = s.DesertItemsSerializer(cakes, many=True)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
-    return Response({'status': 'success','View': serializer.data,'reveiewData':reviewData, 'items':cakeSerializer.data,
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
+    return Response({'status': 'success','View': serializer.data, 'items':cakeSerializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
@@ -215,15 +222,16 @@ def PhotographyPlacesViewPage(request, listingid):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.PhotographyPlacesSerializer( PhotographerView, many=False)
     Listingserializer = s.ListingSerializer (Listing, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
     bookedDates = md.BookedSlots.objects.filter(listingId=listingid)
     bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
+    reviewData= md.ReviewDetails.objects.get(listingID=listingid)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
     return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+                    'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data,'bookedDates':bookedDatesSerializer.data})
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def DecoratorDetailPage(request,listingId):
     listingDetails = md.Listing.objects.get(id=listingId)
     decoratorDetails = md.Decorators.objects.get(listingId=listingId)
@@ -237,12 +245,51 @@ def DecoratorDetailPage(request,listingId):
     Addonsserializer = s.AddOnsSerializer( Addons, many = True)
     serializer = s.DecoratorsSerializer( decoratorDetails, many=False)
     Listingserializer = s.ListingSerializer (listingDetails, many =False)
-    reviewData = CalculateReviews(Reviewserializer.data)
     bookedDates = md.BookedSlots.objects.filter(listingId=listingId)
     bookedDatesSerializer = s.BookedSlotsSerializer(bookedDates, many=True)
-    return Response({'status': 'success','View': serializer.data,
-                    'Addons': Addonsserializer.data,'reveiewData':reviewData,
+    reviewData= md.ReviewDetails.objects.get(listingID=listingId)
+    reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
+    return Response({'status': 'success','View': serializer.data,'reviewData':reviewData.data,
+                    'Addons': Addonsserializer.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data,'bookedDates':bookedDatesSerializer.data})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def AddReview(request):
+    review = request.data.get('review')
+    rating = request.data.get('rating')
+    listingId = request.data.get('listingId')
+    userId = request.data.get('userId')
+    listing = md.Listing.objects.get(id =listingId)
+    user = md.User.objects.get(id = userId)
+    Review = md.Review(listingID = listing, userID = user, rating = rating, review = review)
+    Review.save()
+    newRating = float(listing.rating * listing.ratingCount) + float(rating)
+    listing.ratingCount += 1
+    listing.rating = newRating/listing.ratingCount
+    listing.save(update_fields=['ratingCount','rating']) 
+    rdetails = md.ReviewDetails.objects.filter(listingID=listing).first()
+    rating = math.floor(rating)
+    if not rdetails:
+        rdetails = md.ReviewDetails(listingID=listing)
+        rdetails.save()
+        rdetails = md.ReviewDetails.objects.filter(listingID=listing).first()
+    if rating == 5:
+        rdetails.s5+=1
+        rdetails.save(update_fields=['s5'])
+    elif rating == 4:
+        rdetails.s4+=1
+        rdetails.save(update_fields=['s4'])
+    elif rating == 3:
+        rdetails.s3+=1
+        rdetails.save(update_fields=['s3'])
+    elif rating == 2:
+        rdetails.s2+=1
+        rdetails.save(update_fields=['s2'])
+    elif rating == 1:
+        rdetails.s1+=1
+        rdetails.save(update_fields=['s1'])
+    return Response({'status': 'success'})
 
 def CalculateReviews(data):
     reviewData = {

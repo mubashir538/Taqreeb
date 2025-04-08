@@ -94,15 +94,16 @@ class _HeaderState extends State<Header> {
       MyStorage.deleteToken(MyTokens.userType),
       MyStorage.deleteToken(MyTokens.isBusinessOwner),
     ]);
-
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/Login',
-      (Route<dynamic> route) => false,
-    );
+    if (mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/Login',
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   void _showLogoutDialog() {
-    warningDialog(
+    WarningDialog(
       title: 'Logout',
       message: 'Are you sure you want to logout?',
       actions: [
@@ -160,7 +161,6 @@ class _HeaderState extends State<Header> {
                             Navigator.pop(context);
                           } else {
                             await MyApi.cacheManager.emptyCache();
-                            print('No screen to Pop');
                           }
                         },
                         child: Icon(

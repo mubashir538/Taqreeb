@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-
 import '../../core/services/api_service.dart' show MyApi;
 
 class LocationInputWidget extends StatefulWidget {
@@ -23,13 +22,29 @@ class LocationInputWidget extends StatefulWidget {
 }
 
 class _LocationInputWidgetState extends State<LocationInputWidget> {
+  late TextEditingController _textController;
+  late FocusNode _focusNode;
   String _currentLocation = "Unknown Location";
+
+  @override
+  void initState() {
+    super.initState();
+    _textController =
+        TextEditingController(text: widget.locationController.text);
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    // _focusNode.dispose();
+    super.dispose();
+  }
 
   Future<List<String>> _fetchSuggestions(String query) async {
     if (query.isEmpty) return [];
 
     try {
-      // Replace `YOUR_API_KEY` with your GoMaps Pro API key
       final response = await http.get(
         Uri.parse(
             'https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=$query&key=AlzaSy3NTbKIdIUJGedW-k7yw_9oeQcVTeQgO-T&components=country:pk'),
@@ -37,13 +52,9 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        // Parse suggestions from the API response
-        List<String> suggestions = (data['predictions'] as List)
+        return (data['predictions'] as List)
             .map((prediction) => prediction['description'] as String)
             .toList();
-
-        return suggestions;
       } else {
         throw Exception('Failed to fetch suggestions');
       }
@@ -62,7 +73,7 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
 
       setState(() {
         _currentLocation = "${position.latitude}, ${position.longitude}";
-        widget.locationController.text = _currentLocation;
+        _textController.text = _currentLocation;
         widget.onLocationChanged(_currentLocation);
       });
     } catch (e) {
@@ -83,17 +94,13 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
               Expanded(
                 child: TypeAheadField<String>(
                   builder: (context, controller, focusNode) {
-                    if (widget.locationController.text.isNotEmpty) {
-                      controller.text = widget.locationController.text;
-                    }
                     return MyTextBox(
-                        hint: 'Location',
-                        valueController: controller,
-                        focusNode: focusNode);
+                      hint: 'Location',
+                      valueController: _textController,
+                      focusNode: _focusNode,
+                    );
                   },
-                  suggestionsCallback: (value) async {
-                    return await _fetchSuggestions(value);
-                  },
+                  suggestionsCallback: _fetchSuggestions,
                   itemBuilder: (context, suggestion) {
                     return ListTile(
                       leading: Icon(Icons.location_on),
@@ -102,8 +109,7 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
                   },
                   onSelected: (suggestion) {
                     setState(() {
-                      // Update the controller's text
-                      widget.locationController.text = suggestion;
+                      _textController.text = suggestion;
                       widget.onLocationChanged(suggestion);
                     });
                   },

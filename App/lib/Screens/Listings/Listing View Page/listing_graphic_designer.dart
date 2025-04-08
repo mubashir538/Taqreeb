@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
@@ -22,11 +22,11 @@ class CategoryView_GraphicDesigner extends StatefulWidget {
   const CategoryView_GraphicDesigner({super.key});
 
   @override
-  State<CategoryView_GraphicDesigner> createState() => 
+  State<CategoryView_GraphicDesigner> createState() =>
       _CategoryView_GraphicDesignerState();
 }
 
-class _CategoryView_GraphicDesignerState 
+class _CategoryView_GraphicDesignerState
     extends State<CategoryView_GraphicDesigner> {
   // State variables
   late final Map<String, dynamic> _listing;
@@ -35,7 +35,7 @@ class _CategoryView_GraphicDesignerState
   late final List<String> _addonsHeadings = [];
   late final List<String> _addonsValues = [];
   late final List<String> _starsValue = [];
-  
+
   int? _listingId;
   DateTime? _selectedDate;
   DateTime? _entryTime;
@@ -93,15 +93,16 @@ class _CategoryView_GraphicDesignerState
 
   void _fetchListingData() {
     if (!_hasChanged) {
-      final args = ModalRoute.of(context)!.settings.arguments 
-          as Map<String, dynamic>;
-      
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
       setState(() {
         _listingId = args['id'];
         _hasChanged = true;
       });
 
       ApiCall.fetchAPI(
+        refresh: true,
         'graphic/designer/viewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
@@ -114,7 +115,7 @@ class _CategoryView_GraphicDesignerState
       setState(() {
         _listing = listing;
         _isLoading = false;
-        
+
         ApiCall.updateListingDetails(
           listing: listing,
           updateState: _handleListingUpdate,
@@ -144,25 +145,6 @@ class _CategoryView_GraphicDesignerState
     }
   }
 
-  Future<void> _handleBookNow() async {
-    await Logs.logUserActivity(
-      "book_graphicdesigner",
-      {"listing_id": _listingId ?? 0}
-    );
-
-    if (mounted) {
-      Navigator.pushNamed(
-        context, 
-        '/OrderSummary',
-        arguments: {
-          'Name': _listing['Listing']['name'],
-          'type': _listing['Listing']['type'],
-          'price': _listing['Listing']['basicPrice'],
-        },
-      );
-    }
-  }
-
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -189,7 +171,6 @@ class _CategoryView_GraphicDesignerState
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
@@ -202,7 +183,7 @@ class _CategoryView_GraphicDesignerState
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategoryReview(
-                listing: _listing, 
+                listing: _listing,
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
@@ -224,15 +205,7 @@ class _CategoryView_GraphicDesignerState
   }
 
   Widget _buildBookNowButton() {
-    return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.03),
-      child: Center(
-        child: ColoredButton(
-          text: 'Book Graphic Designer',
-          onPressed: _handleBookNow,
-        ),
-      ),
-    );
+    return BookNowButton(context: context, listing: _listing);
   }
 
   @override
@@ -257,8 +230,12 @@ class _CategoryView_GraphicDesignerState
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
+          ),_isLoading?Container():
+          ChatIcon(
+            ownerId: _listing['Listing']['freelancerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Freelancer',
           ),
-          const ChatIcon(),
         ],
       ),
     );

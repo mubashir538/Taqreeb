@@ -5,12 +5,16 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class ChatIcon extends StatelessWidget {
-  final VoidCallback? onPressed;
+  final int ownerId;
+  final int listingId;
+  final String type;
   final EdgeInsetsGeometry? margin;
-  
+
   const ChatIcon({
     super.key,
-    this.onPressed,
+    required this.ownerId,
+    required this.listingId,
+    required this.type,
     this.margin,
   });
 
@@ -26,7 +30,10 @@ class ChatIcon extends StatelessWidget {
       bottom: Screen.height(context) * 0.05,
       right: Screen.height(context) * 0.03,
       child: GestureDetector(
-        onTap: onPressed,
+        onTap: () {
+          Navigator.pushNamed(context, '/ChatBox',
+              arguments: {'userId': ownerId, 'type': type,'listingId': listingId});
+        },
         child: Container(
           margin: margin,
           decoration: BoxDecoration(
@@ -38,7 +45,7 @@ class ChatIcon extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withAlpha(51),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),

@@ -35,6 +35,24 @@ class Validations {
     return "Ok";
   }
 
+  static String validateDescription(String? value) {
+    value = value?.trim();
+
+    if (value == null || value.isEmpty) {
+      return 'Please fill the Description';
+    }
+    if (value.length > 1100 || value.length < 50) {
+      return 'Description must be between 50 and 1100 characters';
+    }
+
+    RegExp hasLetterRegExp = RegExp(r'[a-zA-Z]');
+    if (!hasLetterRegExp.hasMatch(value)) {
+      return 'Description must contain at least one letter (a-z, A-Z)';
+    }
+
+    return "Ok";
+  }
+
   static String validateIntFields(String? value) {
     value = value?.trim();
 

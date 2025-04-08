@@ -80,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withAlpha(102),
             blurRadius: 4,
             spreadRadius: 1,
             offset: const Offset(2, 2),
@@ -110,7 +110,7 @@ class _DashboardState extends State<Dashboard> {
               Text(
                 "${_userData['listingCount']} Active Listings",
                 style: GoogleFonts.montserrat(
-                  color: MyColors.white.withOpacity(0.7),
+                  color: MyColors.white.withAlpha(172),
                   fontSize: Screen.max(context) * 0.015,
                 ),
               ),
@@ -136,7 +136,7 @@ class _DashboardState extends State<Dashboard> {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withAlpha(102),
               blurRadius: 4,
               spreadRadius: 1,
               offset: const Offset(2, 2),
@@ -184,7 +184,7 @@ class _DashboardState extends State<Dashboard> {
         child: Stack(
           children: [
             if (_isLoading)
-               Center(
+              Center(
                 child: CircularProgressIndicator(
                   color: MyColors.white,
                 ),

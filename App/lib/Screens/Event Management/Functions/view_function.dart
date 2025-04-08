@@ -20,13 +20,14 @@ class FunctionDetail extends StatefulWidget {
 
 class _FunctionDetailState extends State<FunctionDetail> {
   final GlobalKey _headerKey = GlobalKey();
-  final List<Map<String, dynamic>> _bookingList = [];
+  final List<dynamic> _bookingList = [];
 
   String _token = '';
   Map<String, dynamic> _functionDetails = {};
   int _functionId = 0;
   int _eventId = 0;
   String _eventName = '';
+  String _eventType = '';
   bool _isLoading = true;
   bool _dataFetched = false;
 
@@ -38,10 +39,12 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   Future<void> _fetchBookings() async {
     await ApiCall.fetchAPI(
+      refresh: true,
       'show/Bookcart/$_functionId',
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
+            print("Cart: ${data['cart']}");
             _bookingList.addAll(data['cart'] ?? []); // Use the stored data
           });
         }
@@ -59,6 +62,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         _functionId = args['fid'];
         _eventName = args['event'];
         _eventId = args['eventid'];
+        _eventType = args['type'];
       });
       _fetchData();
     }
@@ -80,6 +84,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   Future<void> _fetchFunctionDetails() async {
     await ApiCall.fetchAPI(
+      refresh: true,
       'ViewFunction/$_functionId',
       onSuccess: (token, data) {
         if (mounted) {
@@ -132,6 +137,17 @@ class _FunctionDetailState extends State<FunctionDetail> {
       arguments: {
         'eventId': _eventId,
         'functionid': _functionId,
+      },
+    );
+  }
+
+  void _navigateToInvitation() {
+    Navigator.pushNamed(
+      context,
+      '/CreateInvitation',
+      arguments: {
+        'type': _eventType,
+        'functionType': _functionDetails['type'],
       },
     );
   }
@@ -382,7 +398,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         ),
         _buildActionButton(
           text: "Create Invitation Card",
-          onTap: () => Navigator.pushNamed(context, '/InvitationCardEdit'),
+          onTap: _navigateToInvitation,
         ),
       ],
     );
@@ -401,7 +417,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withAlpha(127),
             spreadRadius: 3,
             blurRadius: 4,
             offset: Offset(2, 2),

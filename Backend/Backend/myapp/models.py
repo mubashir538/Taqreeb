@@ -1,5 +1,6 @@
 from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+import os
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -45,6 +46,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return str(self.id)
 
+
+class TempInvitationCard(m.Model):
+    file = m.ImageField(upload_to='uploads/tempCards/%Y/%m/%d/')
+    created_at = m.DateTimeField(auto_now_add=True)
+
+    def delete(self, *args, **kwargs):
+        if self.file and os.path.isfile(self.file.path):
+            os.remove(self.file.path)
+        super().delete(*args, **kwargs)
+        
 class BusinessOwner(m.Model):
     id = m.AutoField(primary_key=True)
     cnic = m.TextField(null=True)
@@ -81,6 +92,8 @@ class Listing(m.Model):
     priceMax = m.IntegerField() 
     location = m.CharField(max_length=100)
     description = m.CharField(max_length=1100)
+    rating = m.DecimalField(max_digits=2, decimal_places=1,default=0)
+    ratingCount = m.IntegerField(default=0)
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
 
@@ -88,7 +101,8 @@ class Listing(m.Model):
 class Transaction(m.Model):
     id = m.AutoField(primary_key=True)
     sender = m.ForeignKey(User,on_delete=m.CASCADE,null=True)
-    receiver = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
+    receiverf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
+    receiverb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
     amount = m.IntegerField()
     status = m.TextField(null=True)
     date = m.DateTimeField(auto_now_add=True)
@@ -106,15 +120,6 @@ class Packages(m.Model):
     description = m.CharField(max_length=1100)
     price= m.IntegerField()
 
-# class Orders(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     customerID = m.ForeignKey(User,on_delete=m.CASCADE)
-#     ownerID = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
-#     ServiceID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-#     price = m.IntegerField()
-#     packageID = m.ForeignKey(Packages,on_delete=m.CASCADE)
-#     status = m.CharField(max_length=100)
-
 class AIEventQuestions(m.Model):
     id = m.AutoField(primary_key=True)
     question = m.CharField(max_length=100)
@@ -128,8 +133,8 @@ class QuestionOptions(m.Model):
 
 class Events(m.Model):
     id = m.AutoField(primary_key=True)
-    userID=  m.IntegerField()
     name =m.CharField(max_length=100)
+    userID =  m.ForeignKey(User,on_delete= m.CASCADE,null=True)
     type =m.CharField(max_length=100)
     date =m.CharField(max_length=100)
     location =m.CharField(max_length=100)
@@ -138,6 +143,12 @@ class Events(m.Model):
     budget=  m.IntegerField()
     guestsmin = m.IntegerField(null=True)
     guestsmax = m.IntegerField(null=True) 
+
+
+# class InvitationCards(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     path = m.TextField()
+#     type = 
 
 class GuestList(m.Model):
     id = m.AutoField(primary_key=True)
@@ -152,9 +163,19 @@ class Review(m.Model):
     id = m.AutoField(primary_key=True)
     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
     userID = m.ForeignKey(User,on_delete=m.CASCADE)
-    rating = m.DecimalField(max_digits=20,decimal_places=10)
+    rating = m.DecimalField(max_digits=2, decimal_places=1)
     review = m.CharField(max_length=100)
+    date = m.DateTimeField(auto_now_add=True,null=True)
 
+
+class ReviewDetails(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    s5 = m.IntegerField(default=0)
+    s4 = m.IntegerField(default=0)
+    s3 = m.IntegerField(default=0)
+    s2 = m.IntegerField(default=0)
+    s1 = m.IntegerField(default=0)
 
 class Functions(m.Model):
     id = m.AutoField(primary_key=True)
@@ -183,29 +204,12 @@ class AddOns(m.Model):
     perType = m.CharField(max_length=50)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
-# class Caterers(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-#     SERVICE_TYPE = []
-#     CATERING_OPTIONS=[]
-#     STAFF=[('Male','Male'),('Female','Female')]
-#     EXPERTISE=[]
-#     serviceType = m.CharField(max_length=100,choices=SERVICE_TYPE,default='Wedding')
-#     cateringOptions = m.CharField(max_length=100,choices=CATERING_OPTIONS,default='Wedding')
-#     staff = m.CharField(max_length=100,choices=STAFF,default='Wedding')
-#     expertise = m.CharField(max_length=100,choices=EXPERTISE,default='Wedding')
-
 class MenuItems(m.Model):                                                                                                                                                      
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE,null=True)
     name = m.CharField(max_length=100)
     pricePerKg = m.IntegerField()
     picture = m.CharField(max_length=100)
-
-class Photographers(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    portfolioLink = m.CharField(max_length=100)
 
 class Cart(m.Model):
     id = m.AutoField(primary_key=True)
@@ -214,21 +218,6 @@ class Cart(m.Model):
     ownerId = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
     quantity = m.IntegerField()
 
-# class CarRenters(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
-#     serviceType = m.CharField(max_length=100)
-#     drivers = m.IntegerField()
-
-
-# class Decorators(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-#     decorType = m.CharField(max_length=50)
-#     catering = m.CharField(max_length=50)
-#     staff = m.CharField(max_length=50)
-#     slot = m.DateTimeField()
-
 class Parlors(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
@@ -236,11 +225,12 @@ class Parlors(m.Model):
 class Salons(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    
-class BakersAndSweets(m.Model):
-    id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
+class Photographers(m.Model):
+    id = m.AutoField(primary_key=True)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    portfolioLink = m.CharField(max_length=100)
+  
 class VideoEditors(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
@@ -260,14 +250,14 @@ class FunctionType(m.Model):
     name = m.TextField()
     eventtypeid = m.ForeignKey(EventType,on_delete=m.CASCADE,null=True)
 
-class DesertItems(m.Model):
-    id = m.AutoField(primary_key=True)
-    name = m.CharField(max_length=255)
-    bakersId = m.ForeignKey(BakersAndSweets,on_delete=m.CASCADE)
-    price = m.IntegerField()
-    type = m.CharField(max_length=100)
-    description = m.CharField(max_length=500)
-    picture = m.CharField(max_length=255)
+# class DesertItems(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     name = m.CharField(max_length=255)
+#     bakersId = m.ForeignKey(BakersAndSweets,on_delete=m.CASCADE)
+#     price = m.IntegerField()
+#     type = m.CharField(max_length=100)
+#     description = m.CharField(max_length=500)
+#     picture = m.CharField(max_length=255)
 
 class Wishlist(m.Model):
     id = m.AutoField(primary_key=True)
@@ -437,7 +427,6 @@ class Cars(m.Model):
     driver = m.IntegerField()
     picture = m.CharField(max_length=255)
 
-    # User Activity Model to Track User Interactions
 class UserActivity(m.Model):
     ACTIONS = [
         ('search', 'Search Query'),
@@ -457,7 +446,6 @@ class UserActivity(m.Model):
     action = m.CharField(max_length=50, choices=ACTIONS)
     metadata = m.JSONField(null=True, blank=True)
     timestamp = m.DateTimeField(auto_now_add=True)
-    # duration_seconds = m.IntegerField(null=True, blank=True) 
 
     def __str__(self):
         return f"{self.user.username} - {self.action} - {self.timestamp}"
@@ -474,6 +462,39 @@ class UserActivity(m.Model):
 #         ('corporate', 'Corporate'),
 #     ]
 
+# class BakersAndSweets(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+
+
+# class Caterers(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     SERVICE_TYPE = []
+#     CATERING_OPTIONS=[]
+#     STAFF=[('Male','Male'),('Female','Female')]
+#     EXPERTISE=[]
+#     serviceType = m.CharField(max_length=100,choices=SERVICE_TYPE,default='Wedding')
+#     cateringOptions = m.CharField(max_length=100,choices=CATERING_OPTIONS,default='Wedding')
+#     staff = m.CharField(max_length=100,choices=STAFF,default='Wedding')
+#     expertise = m.CharField(max_length=100,choices=EXPERTISE,default='Wedding')
+
+
+# class CarRenters(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     serviceType = m.CharField(max_length=100)
+#     drivers = m.IntegerField()
+
+
+# class Decorators(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     decorType = m.CharField(max_length=50)
+#     catering = m.CharField(max_length=50)
+#     staff = m.CharField(max_length=50)
+#     slot = m.DateTimeField()
+
 #     user = m.ForeignKey(User, on_delete=m.CASCADE)
 #     event_name = m.CharField(max_length=255)
 #     event_type = m.CharField(max_length=50, choices=EVENT_TYPES)
@@ -484,3 +505,13 @@ class UserActivity(m.Model):
 
 #     def __str__(self):
 #         return f"{self.user.username} - {self.event_name} ({self.event_type})"
+
+
+# class Orders(m.Model):
+#     id = m.AutoField(primary_key=True)
+#     customerID = m.ForeignKey(User,on_delete=m.CASCADE)
+#     ownerID = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
+#     ServiceID = m.ForeignKey(Listing,on_delete=m.CASCADE)
+#     price = m.IntegerField()
+#     packageID = m.ForeignKey(Packages,on_delete=m.CASCADE)
+#     status = m.CharField(max_length=100)

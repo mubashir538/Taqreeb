@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -14,7 +14,6 @@ import 'package:taqreeb/core/utils/color.dart';
 class UpperHeadings extends StatefulWidget {
   final Map<String, dynamic> listing;
   final int? listingId;
-  final Map<String, dynamic> events;
   final DateTime? selectedDate;
 
   const UpperHeadings({
@@ -22,7 +21,6 @@ class UpperHeadings extends StatefulWidget {
     required this.listing,
     required this.listingId,
     required this.selectedDate,
-    required this.events,
   });
 
   @override
@@ -37,6 +35,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Color _wishlistColor = MyColors.white;
   IconData _wishlistIcon = FontAwesomeIcons.heart;
   bool _isBusinessUser = false;
+  Map<String, dynamic> events = {};
 
   @override
   void initState() {
@@ -46,6 +45,22 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     _locationController = TextEditingController(
         text: widget.listing['Listing']['location'] ?? '');
     _checkUserType();
+    fetchEvents();
+  }
+
+  void fetchEvents() async {
+    final userId = await MyStorage.getToken(MyTokens.userId);
+
+    final response = await MyApi.getRequest(
+        endpoint: 'Events/getBasics/$userId',
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        });
+    print(response);
+    setState(() {
+      events = response;
+    });
   }
 
   @override
@@ -94,7 +109,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.events['Event']?.length ?? 0,
+              itemCount: events['Event']?.length ?? 0,
               itemBuilder: (context, index) =>
                   _buildEventItem(index, maxDimension),
             ),
@@ -105,7 +120,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildEventItem(int index, double maxDimension) {
-    final event = widget.events['Event'][index];
+    final event = events['Event'][index];
     return Container(
       margin: EdgeInsets.only(bottom: maxDimension * 0.02),
       decoration: BoxDecoration(
@@ -149,7 +164,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           'fid': function['id'].toString(),
           'uid': await MyStorage.getToken(MyTokens.userId) ?? "",
           'lid': widget.listingId.toString(),
-          'type': 'Venue',
+          'type': widget.listing['Listing']['type'],
         },
       );
 
@@ -158,10 +173,15 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       if (response['status'] == 'success') {
         Navigator.pop(context);
       } else if (response['status'] == 'BudgetError') {
-        warningDialog(
+        WarningDialog(
           message: 'Event Budget is Exceeding',
           title: 'Budget Exceed',
-          actions: [ColoredButton(text: 'Ok')],
+          actions: [
+            ColoredButton(
+              text: 'Ok',
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
         ).showDialogBox(context);
       } else {
         MyScaffold(text: 'Something Went Wrong!').show(context);
@@ -249,7 +269,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Future<void> _deleteListing() async {
-    warningDialog(
+    WarningDialog(
       title: 'Delete',
       message: 'Are you sure you want to delete this Listing?',
       actions: [
@@ -273,11 +293,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
               if (!mounted) return;
 
               if (response['status'] == 'success') {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/YourListings',
-                  ModalRoute.withName('/HomePage'),
-                );
+                Navigator.pop(context);
                 MyScaffold(text: 'Listing Deleted Successfully!').show(context);
               } else {
                 MyScaffold(text: 'Something went Wrong!').show(context);
@@ -343,7 +359,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
               hintText: 'Edit name',
               hintStyle: _buildTextStyle(
                 fontSize: 0.015,
-                color: MyColors.white.withOpacity(0.6),
+                color: MyColors.white.withAlpha(153),
               ),
               border: const OutlineInputBorder(),
             ),
@@ -421,7 +437,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withAlpha(76),
               spreadRadius: 0.5,
               blurRadius: 3,
               blurStyle: BlurStyle.inner,
@@ -463,8 +479,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
             style: _buildTextStyle(color: MyColors.white),
             decoration: InputDecoration(
               hintText: 'Edit location...',
-              hintStyle:
-                  _buildTextStyle(color: MyColors.white.withOpacity(0.6)),
+              hintStyle: _buildTextStyle(color: MyColors.white.withAlpha(153)),
               border: const OutlineInputBorder(),
             ),
           ),
@@ -497,7 +512,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       children: [
         Icon(Icons.star, color: MyColors.Yellow),
         Text(
-          "${widget.listing['reveiewData']['average']} (${widget.listing['reveiewData']['count']})",
+          "${widget.listing['Listing']['rating']} (${widget.listing['Listing']['ratingCount']})",
           style: _buildTextStyle(color: MyColors.white),
         ),
       ],

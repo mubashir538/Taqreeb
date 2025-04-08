@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -73,7 +73,7 @@ class _BasicSignupState extends State<BasicSignup> {
   }
 
   void _showContinueDialog() {
-    warningDialog(
+    WarningDialog(
       title: 'Fresh Start',
       message: 'We noticed that you had lately attempted to signup the app. '
           'Do you want to continue where you left or want a Fresh Start?',
@@ -117,7 +117,6 @@ class _BasicSignupState extends State<BasicSignup> {
         await MyStorage.exists(MyTokens.semail)) {
       Navigator.pushNamed(context, '/Signup_MoreInfo');
     } else {
-      print('No previous progress');
       Navigator.pushNamed(context, '/Signup_EmailOTPSend');
     }
   }
@@ -314,7 +313,8 @@ class _BasicSignupState extends State<BasicSignup> {
                   ),
                   const SizedBox(height: 10),
                   InkWell(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/Login'),
+                    onTap: () =>
+                        Navigator.pushReplacementNamed(context, '/Login'),
                     child: Text(
                       "Already a Member? Login",
                       style: TextStyle(color: MyColors.yellowonDark),

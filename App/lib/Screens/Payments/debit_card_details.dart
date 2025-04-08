@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
-
 
 class PaymentController {
   final TextEditingController cardNumberController = TextEditingController();
   final TextEditingController expiryDateController = TextEditingController();
   final TextEditingController cvvController = TextEditingController();
-  final TextEditingController cardholderNameController = TextEditingController();
+  final TextEditingController cardholderNameController =
+      TextEditingController();
 
   final FocusNode cardNumberFocus = FocusNode();
   final FocusNode expiryDateFocus = FocusNode();
@@ -28,14 +32,15 @@ class PaymentController {
     cardNumberError = Validations.validateIntFields(cardNumberController.text);
     expiryDateError = Validations.validateIntFields(expiryDateController.text);
     cvvError = Validations.validateIntFields(cvvController.text);
-    cardholderNameError = Validations.validateName(cardholderNameController.text);
+    cardholderNameError =
+        Validations.validateName(cardholderNameController.text);
   }
 
   bool get isFormValid {
-    return cardNumberError.isEmpty &&
+    return !(cardNumberError.isEmpty &&
         expiryDateError.isEmpty &&
         cvvError.isEmpty &&
-        cardholderNameError.isEmpty;
+        cardholderNameError.isEmpty);
   }
 
   void dispose() {
@@ -43,14 +48,13 @@ class PaymentController {
     expiryDateController.dispose();
     cvvController.dispose();
     cardholderNameController.dispose();
-    
+
     cardNumberFocus.dispose();
     expiryDateFocus.dispose();
     cvvFocus.dispose();
     cardholderNameFocus.dispose();
   }
 }
-
 
 class SecurePaymentScreen extends StatefulWidget {
   const SecurePaymentScreen({super.key});
@@ -61,11 +65,29 @@ class SecurePaymentScreen extends StatefulWidget {
 
 class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   final PaymentController _controller = PaymentController();
-
+  int listingId = 0;
+  int price = 0;
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    listingId = args['listing'] as int;
+    price = args['amount'] as int;
+  }
+
+  String _formatNumberWithCommas(int number) {
+    return number.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
   }
 
   @override
@@ -124,7 +146,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: GoogleFonts.montserrat(
         fontSize: Screen.width(context) * 0.045,
         fontWeight: FontWeight.bold,
         color: Colors.white,
@@ -141,9 +163,14 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
           hint: "1234 5678 9012 3456",
           valueController: _controller.cardNumberController,
           errorText: _controller.cardNumberError,
+          isNum: true,
           onChanged: (value) {
             setState(() {
-              _controller.cardNumberError = Validations.validateIntFields(value);
+              _controller.cardNumberError =
+                  Validations.validateIntFields(value);
+              if (value.length > 16) {
+                _controller.cardNumberController.text = value.substring(0, 16);
+              }
             });
           },
         ),
@@ -170,9 +197,32 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
           hint: "MM/YY",
           valueController: _controller.expiryDateController,
           errorText: _controller.expiryDateError,
+          isNum: true,
           onChanged: (value) {
             setState(() {
-              _controller.expiryDateError = Validations.validateIntFields(value);
+              _controller.expiryDateError =
+                  Validations.validateIntFields(value);
+
+              if (value.length >= 4) {
+                if (int.parse(value.substring(2, 4)) < 25) {
+                  _controller.expiryDateError = "Invalid Date";
+                }
+              } else if (value.length >= 2) {
+                if (int.parse(value.substring(0, 2)) > 12) {
+                  _controller.expiryDateError = "Invalid Date";
+                }
+              }
+
+              if (value.length > 4) {
+                _controller.expiryDateController.text =
+                    '${value.substring(0, 2)}/${value.substring(2, 4)}';
+              } else if (value.length > 2) {
+                if (int.parse(value.substring(0, 2)) > 12) {
+                  _controller.expiryDateError = "Invalid Date";
+                }
+                _controller.expiryDateController.text =
+                    '${value.substring(0, 2)}/${value.substring(2, value.length)}';
+              }
             });
           },
         ),
@@ -187,11 +237,15 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         _buildFieldLabel('CVV'),
         MyTextBox(
           hint: "123",
+          isNum: true,
           valueController: _controller.cvvController,
           errorText: _controller.cvvError,
           onChanged: (value) {
             setState(() {
               _controller.cvvError = Validations.validateIntFields(value);
+              if (value.length > 3) {
+                _controller.cvvController.text = value.substring(0, 3);
+              }
             });
           },
         ),
@@ -221,7 +275,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   Widget _buildFieldLabel(String label) {
     return Text(
       label,
-      style: TextStyle(
+      style: GoogleFonts.montserrat(
         fontSize: Screen.width(context) * 0.035,
         color: Colors.grey,
       ),
@@ -241,25 +295,30 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         children: [
           _buildSectionTitle('Order Summary'),
           _buildVerticalSpace(0.02),
-          _buildOrderDetailRow('Subtotal', '\$129.99'),
+          _buildOrderDetailRow(
+              'Subtotal', 'Rs. ${_formatNumberWithCommas(price)}'),
           _buildVerticalSpace(0.01),
-          _buildOrderDetailRow('Tax', '\$12.99'),
+          _buildOrderDetailRow(
+              'Tax', 'Rs. ${_formatNumberWithCommas((price * 0.02).toInt())}'),
           _buildVerticalSpace(0.03),
           const Divider(thickness: 1, color: Colors.grey),
           _buildVerticalSpace(0.03),
-          _buildOrderDetailRow('Pay', '\$145.97', isTotal: true),
+          _buildOrderDetailRow('Pay',
+              'Rs. ${_formatNumberWithCommas((price * 0.02).toInt() + price)}',
+              isTotal: true),
         ],
       ),
     );
   }
 
-  Widget _buildOrderDetailRow(String label, String value, {bool isTotal = false}) {
+  Widget _buildOrderDetailRow(String label, String value,
+      {bool isTotal = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.montserrat(
             fontSize: Screen.width(context) * (isTotal ? 0.045 : 0.035),
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
             color: isTotal ? Colors.white : Colors.grey,
@@ -267,7 +326,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         ),
         Text(
           value,
-          style: TextStyle(
+          style: GoogleFonts.montserrat(
             fontSize: Screen.width(context) * (isTotal ? 0.045 : 0.04),
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -280,13 +339,25 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   Widget _buildPaymentButton(BuildContext context) {
     return ColoredButton(
       text: 'Pay Now',
-      onPressed: () {
+      onPressed: () async {
         setState(() {
           _controller.validateAllFields();
         });
 
         if (_controller.isFormValid) {
-          // Proceed with payment
+          await MyApi.postRequest(endpoint: 'Payments/addTransaction', body: {
+            'senderId': await MyStorage.getToken(MyTokens.userId),
+            'listingId': listingId,
+            'amount': price
+          }, headers: {
+            'Authorization':
+                'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+          });
+          MyScaffold(
+                  text:
+                      'Payment successful, Business Owner will approve to Payment to Continue Booking Otherwise your payment will be Refunded')
+              .show(context);
+          Navigator.pushNamedAndRemoveUntil(context, '/HomePage', (_) => false);
         } else {
           MyScaffold(text: 'Please fix the errors before proceeding.')
               .show(context);
@@ -299,11 +370,11 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
     return Center(
       child: TextButton(
         onPressed: () {
-          // Handle cancel payment
+          Navigator.pop(context);
         },
         child: Text(
           'Cancel Payment',
-          style: TextStyle(
+          style: GoogleFonts.montserrat(
             color: MyColors.white,
             fontSize: Screen.width(context) * 0.035,
           ),
@@ -318,7 +389,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         Center(
           child: Text(
             'By proceeding, you agree to our Terms and Privacy Policy',
-            style: TextStyle(
+            style: GoogleFonts.montserrat(
               fontSize: Screen.width(context) * 0.03,
               color: Colors.grey,
             ),
@@ -329,7 +400,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         Center(
           child: Text(
             'Secure payment processing by Stripe',
-            style: TextStyle(
+            style: GoogleFonts.montserrat(
               fontSize: Screen.width(context) * 0.03,
               color: Colors.grey,
             ),

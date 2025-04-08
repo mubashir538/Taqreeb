@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
@@ -102,6 +102,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     if (!_hasChanged) {
       ApiCall.fetchAPI(
         'Photographer/viewpage/$_listingId',
+        refresh: true,
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
       );
@@ -149,23 +150,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
     });
   }
 
-  Future<void> _handleBookNow() async {
-    await Logs.logUserActivity(
-        "book_photographer", {"listing_id": _listingId ?? 0});
-
-    if (mounted) {
-      Navigator.pushNamed(
-        context,
-        '/OrderSummary',
-        arguments: {
-          'Name': _listing['Listing']['name'],
-          'type': _listing['Listing']['type'],
-          'price': _listing['Listing']['basicPrice'],
-        },
-      );
-    }
-  }
-
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -192,7 +176,6 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
                 listing: _listing,
                 listingId: _listingId,
                 selectedDate: _selectedDate,
-                events: {},
               ),
               _buildDivider(),
               PricingSection(listing: _listing),
@@ -232,15 +215,7 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
   }
 
   Widget _buildBookNowButton() {
-    return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.03),
-      child: Center(
-        child: ColoredButton(
-          text: 'Book Photographer',
-          onPressed: _handleBookNow,
-        ),
-      ),
-    );
+    return BookNowButton(context: context, listing: _listing);
   }
 
   @override
@@ -265,8 +240,13 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
+          ),_isLoading?Container():
+           ChatIcon(
+            ownerId: _listing['Listing']['ownerID'],
+            listingId: _listing['Listing']['id'],
+            type: 'Business',
           ),
-          const ChatIcon(),
+        
         ],
       ),
     );

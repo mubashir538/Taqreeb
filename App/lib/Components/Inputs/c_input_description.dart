@@ -26,21 +26,55 @@ class DescriptionBox extends StatefulWidget {
 class _DescriptionStateBox extends State<DescriptionBox> {
   late FocusNode _focusNode;
   bool _isFocused = false;
+  bool _isExternalFocusNode = false;
 
   @override
   void initState() {
     super.initState();
+    // Check if an external focus node was provided
+    _isExternalFocusNode = widget.focusNode != null;
     _focusNode = widget.focusNode ?? FocusNode();
-    _focusNode.addListener(() {
+
+    _focusNode.addListener(_handleFocusChange);
+
+    // Initialize controller text if value is provided
+    if (widget.value.isNotEmpty) {
+      widget.valueController.text = widget.value;
+    }
+  }
+
+  void _handleFocusChange() {
+    if (mounted) {
       setState(() {
         _isFocused = _focusNode.hasFocus;
       });
-    });
+    }
+  }
+
+  @override
+  void didUpdateWidget(DescriptionBox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Handle focus node changes if widget is updated
+    if (oldWidget.focusNode != widget.focusNode) {
+      if (_isExternalFocusNode) {
+        _focusNode.removeListener(_handleFocusChange);
+      } else {
+        _focusNode.dispose();
+      }
+
+      _isExternalFocusNode = widget.focusNode != null;
+      _focusNode = widget.focusNode ?? FocusNode();
+      _focusNode.addListener(_handleFocusChange);
+    }
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    _focusNode.removeListener(_handleFocusChange);
+    // Only dispose if we created the focus node ourselves
+    if (!_isExternalFocusNode) {
+      _focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -51,8 +85,9 @@ class _DescriptionStateBox extends State<DescriptionBox> {
       height: Screen.height(context) * 0.3,
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(
-          horizontal: Screen.max(context) * 0.03,
-          vertical: Screen.max(context) * 0.02),
+        horizontal: Screen.max(context) * 0.03,
+        vertical: Screen.max(context) * 0.02,
+      ),
       decoration: BoxDecoration(
         color: MyColors.DarkLighter,
         border: Border.all(
@@ -62,10 +97,10 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withAlpha(102),
             blurRadius: 4,
             spreadRadius: 1,
-            offset: Offset(2, 2),
+            offset: const Offset(2, 2),
           ),
         ],
       ),
@@ -73,7 +108,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         focusNode: _focusNode,
         onSubmitted: widget.onFieldSubmitted,
         controller: widget.valueController,
-        onChanged: (value) => widget.onChanged!(value),
+        onChanged: widget.onChanged,
         maxLines: 50,
         style: GoogleFonts.montserrat(
           color: MyColors.white,
@@ -83,7 +118,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintStyle: GoogleFonts.montserrat(
-            color: MyColors.white.withOpacity(0.6),
+            color: MyColors.white.withAlpha(153),
             fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,
           ),

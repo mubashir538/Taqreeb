@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -112,10 +112,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
   }
 
   void _showErrorDialog(String title, String message) {
-    warningDialog(
-      title: title,
-      message: message,
-    ).showDialogBox(context);
+    MyScaffold(text: message).show(context);
   }
 
   String _formatTime(int seconds) {

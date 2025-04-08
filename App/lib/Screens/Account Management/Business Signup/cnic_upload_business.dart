@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_icon_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -123,11 +123,8 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                 ColoredButton(
                   onPressed: () {
                     if (frontImage == null || backImage == null) {
-                      warningDialog(
-                        message:
-                            'Please upload both front and back of your CNIC',
-                        title: 'Invalid Details',
-                      ).showDialogBox(context);
+                      MyScaffold(text: 'Please upload both front and back')
+                          .show(context);
                     } else {
                       MyStorage.saveToken(frontImage!.path, MyTokens.bsfront);
                       MyStorage.saveToken(backImage!.path, MyTokens.bsback);

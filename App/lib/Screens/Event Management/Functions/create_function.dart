@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
@@ -42,13 +44,6 @@ class _FunctionFormData {
     date.dispose();
     guestMax.dispose();
     guestMin.dispose();
-
-    nameFocus.dispose();
-    budgetFocus.dispose();
-    typeFocus.dispose();
-    dateFocus.dispose();
-    guestMaxFocus.dispose();
-    guestMinFocus.dispose();
   }
 }
 
@@ -56,7 +51,7 @@ class _CreateFunctionState extends State<CreateFunction> {
   final _formData = _FunctionFormData();
   final GlobalKey headerKey = GlobalKey();
   final Map<String, dynamic> _functionTypes = {};
-  
+
   String _token = '';
   String _functionId = '';
   int _eventTypeId = 0;
@@ -74,26 +69,28 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   void _initializeFromArguments() {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+            {};
     _routeArgs = args;
-    
+
     setState(() {
       _isEditMode = args['functionId'] != null;
       _functionId = args['functionId'] ?? '';
       _eventId = int.parse(args['eventId']?.toString() ?? '0');
     });
-    
+
     _fetchInitialData();
   }
 
   Future<void> _fetchInitialData() async {
     await _fetchEventTypes();
     await _fetchFunctionTypes();
-    
+
     if (_isEditMode) {
       await _fetchFunctionDetails();
     }
-    
+
     if (mounted) {
       setState(() => _isLoading = false);
     }
@@ -131,25 +128,26 @@ class _CreateFunctionState extends State<CreateFunction> {
     );
   }
 
-Future<void> _fetchFunctionDetails() async {
-  await ApiCall.fetchAPI(
-    'ViewFunction/$_functionId',
-    onSuccess: (token, data) {
-      if (!mounted) return;
-      
-      setState(() {
-        _functionDetails = data; // Store the complete response
-        _token = token;
-        
-        if (!_hasChanges) {
-          _populateFormData(_functionDetails['Fuctions']); // Use the stored data
-          _hasChanges = true;
-        }
-      });
-    },
-    context: mounted ? context : null,
-  );
-}
+  Future<void> _fetchFunctionDetails() async {
+    await ApiCall.fetchAPI(
+      'ViewFunction/$_functionId',
+      onSuccess: (token, data) {
+        if (!mounted) return;
+
+        setState(() {
+          _functionDetails = data; // Store the complete response
+          _token = token;
+
+          if (!_hasChanges) {
+            _populateFormData(
+                _functionDetails['Fuctions']); // Use the stored data
+            _hasChanges = true;
+          }
+        });
+      },
+      context: mounted ? context : null,
+    );
+  }
 
   void _populateFormData(Map<String, dynamic> function) {
     _formData.name.text = function['name'];
@@ -216,13 +214,20 @@ Future<void> _fetchFunctionDetails() async {
 
   void _showSuccessMessage() {
     MyScaffold(
-      text: _isEditMode 
-          ? 'Function Updated Successfully' 
+      text: _isEditMode
+          ? 'Function Updated Successfully'
           : 'Function Added Successfully',
     ).show(context);
   }
 
-  void _navigateAfterSubmit() {
+  void _navigateAfterSubmit() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+
+    await MyApi.deleteCache('YourEvents/$userId');
+
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/YourEvents',
       (route) => route.isFirst,
@@ -230,7 +235,7 @@ Future<void> _fetchFunctionDetails() async {
   }
 
   void _showBudgetWarning() {
-    warningDialog(
+    WarningDialog(
       message: 'Event Budget is Exceeding',
       title: 'Budget Exceed',
       actions: [ColoredButton(text: 'Ok')],
@@ -239,9 +244,7 @@ Future<void> _fetchFunctionDetails() async {
 
   void _showErrorMessage() {
     MyScaffold(
-      text: _isEditMode 
-          ? 'Error Updating Function' 
-          : 'Error Creating Function',
+      text: _isEditMode ? 'Error Updating Function' : 'Error Creating Function',
     ).show(context);
   }
 
@@ -271,6 +274,7 @@ Future<void> _fetchFunctionDetails() async {
               image: MyImages.Function,
             ),
           ),
+          _buildSubmitButton(),
         ],
       ),
     );
@@ -294,9 +298,9 @@ Future<void> _fetchFunctionDetails() async {
                 _buildDateField(),
                 _buildGuestMinField(),
                 _buildGuestMaxField(),
+                SizedBox(height: Screen.height(context) * 0.12),
               ],
             ),
-            _buildSubmitButton(),
           ],
         ),
       ),
@@ -368,9 +372,23 @@ Future<void> _fetchFunctionDetails() async {
   }
 
   Widget _buildSubmitButton() {
-    return ColoredButton(
-      text: _isEditMode ? 'Edit Function' : 'Add Function',
-      onPressed: _submitFunction,
+    return Positioned(
+      bottom: 0,
+      child: Container(
+        width: Screen.width(context),
+        decoration: BoxDecoration(
+          color: MyColors.DarkLighter,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        padding: EdgeInsets.all(Screen.max(context) * 0.02),
+        child: ColoredButton(
+          text: _isEditMode ? 'Edit Function' : 'Add Function',
+          onPressed: _submitFunction,
+        ),
+      ),
     );
   }
 

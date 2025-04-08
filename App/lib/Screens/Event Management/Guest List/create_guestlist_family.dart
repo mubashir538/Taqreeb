@@ -4,7 +4,7 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_guest_list_card.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/Scaffold.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -121,10 +121,9 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
         text: allSuccess ? 'Families Added' : 'Some families not added',
       ).show(context);
 
-      Navigator.pushNamedAndRemoveUntil(
+      Navigator.pushReplacementNamed(
         context,
         '/CreateGuestList_List',
-        ModalRoute.withName('/EventDetails'),
         arguments: _routeArgs,
       );
     }
@@ -134,8 +133,6 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
   void dispose() {
     _familyNameController.dispose();
     _membersController.dispose();
-    _familyNameFocus.dispose();
-    _membersFocus.dispose();
     super.dispose();
   }
 

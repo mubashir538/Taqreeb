@@ -15,25 +15,43 @@ class AutoImageSlider extends StatefulWidget {
   });
 
   @override
-  _AutoImageSliderState createState() => _AutoImageSliderState();
+  AutoImageSliderState createState() => AutoImageSliderState();
 }
 
-class _AutoImageSliderState extends State<AutoImageSlider> {
+class AutoImageSliderState extends State<AutoImageSlider> {
   late PageController _pageController;
   int _currentIndex = 0;
   final Map<int, bool> _imageLoaded = {};
+  bool _initialLoadComplete = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-    _preloadImages();
+
     _startAutoSlide();
   }
 
-  void _preloadImages() {
-    for (int i = 0; i < widget.imageUrls.length; i++) {
-      _preloadImage(i);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _preloadInitialImages().then((_) {
+      if (mounted) {
+        setState(() => _initialLoadComplete = true);
+      }
+    });
+  }
+
+  Future<void> _preloadInitialImages() async {
+    // Preload first image immediately
+    await _preloadImage(0);
+
+    // Preload next images in background
+    if (widget.imageUrls.length > 1) {
+      _preloadImage(1);
+    }
+    if (widget.imageUrls.length > 2) {
+      _preloadImage(2);
     }
   }
 
@@ -60,11 +78,7 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
       if (!mounted || !_pageController.hasClients) return;
 
       final nextIndex = (_currentIndex + 1) % widget.imageUrls.length;
-
-      // Preload next image before showing
-      if (!_imageLoaded.containsKey(nextIndex)) {
-        _preloadImage(nextIndex);
-      }
+      _preloadImage(nextIndex);
 
       _pageController
           .animateToPage(
@@ -85,33 +99,40 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.height,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: widget.imageUrls.length,
-        onPageChanged: (index) {
-          if (mounted) {
-            setState(() => _currentIndex = index);
-          }
-          // Preload adjacent images when manually swiped
-          _preloadImage((index + 1) % widget.imageUrls.length);
-          _preloadImage((index - 1) % widget.imageUrls.length);
-        },
-        itemBuilder: (context, index) {
-          return _imageLoaded[index] == true
-              ? CachedNetworkImage(
+      child: _initialLoadComplete
+          ? PageView.builder(
+              controller: _pageController,
+              itemCount: widget.imageUrls.length,
+              onPageChanged: (index) {
+                if (mounted) {
+                  setState(() => _currentIndex = index);
+                }
+                _preloadImage((index + 1) % widget.imageUrls.length);
+                _preloadImage((index - 1) % widget.imageUrls.length);
+              },
+              itemBuilder: (context, index) {
+                return CachedNetworkImage(
                   imageUrl: widget.imageUrls[index],
                   fit: BoxFit.cover,
                   width: double.infinity,
                   placeholder: (context, url) => Container(
                     color: Colors.grey[200],
+                    child: Center(child: CircularProgressIndicator()),
                   ),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[200],
+                    child: Icon(Icons.error),
+                  ),
                 );
-        },
-      ),
+              },
+            )
+          : Center(child: CircularProgressIndicator()),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }
