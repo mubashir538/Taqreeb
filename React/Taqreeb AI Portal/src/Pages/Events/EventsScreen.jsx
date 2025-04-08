@@ -6,7 +6,7 @@ const EventsScreen = () => {
     <div className="events-container">
       <div className="events-main">
         <div className="events-header">
-          <h2>Event Management</h2>
+          <h1>Event Management</h1>
           <p>Monitor and manage AI event requests</p>
         </div>
 
@@ -18,26 +18,48 @@ const EventsScreen = () => {
               <div className="event-item">
                 <div>
                   <p className="event-name">Birthday Celebration</p>
-                  <p className="event-user">by John Doe - 2 hours ago</p>
+                  <p className="event-user">by John Fox - 2 hours ago</p>
                 </div>
                 <span className="status pending">Pending</span>
               </div>
               <div className="event-item">
                 <div>
                   <p className="event-name">Corporate Meeting</p>
-                  <p className="event-user">by Sarah Smith - 5 hours ago</p>
+                  <p className="event-user">by Sarah Smith - 3 hours ago</p>
                 </div>
                 <span className="status approved">Approved</span>
               </div>
               <div className="event-item">
                 <div>
                   <p className="event-name">Wedding Anniversary</p>
-                  <p className="event-user">by Mike Johnson - 1 day ago</p>
+                  <p className="event-user">by Max Johnson - 1 day ago</p>
                 </div>
                 <span className="status pending">Pending</span>
               </div>
             </div>
+            <div className="divider"></div>
             <button className="see-more">See More</button>
+          </div>
+
+          {/* Recent Event Requests */}
+          <div className="event-card">
+            <h3>Recent Event Requests</h3>
+            <div className="event-list">
+              <div className="event-item">
+                <div>
+                  <p className="event-name">Birthday Party Planning</p>
+                  <p className="event-user">Repeated by John Fox</p>
+                </div>
+                <span className="status pending">Pending</span>
+              </div>
+              <div className="event-item">
+                <div>
+                  <p className="event-name">Corporate Event</p>
+                  <p className="event-user">Repeated by Jane Smith</p>
+                </div>
+                <span className="status approved">Approved</span>
+              </div>
+            </div>
           </div>
 
           {/* AI Suggested Plans */}
@@ -47,7 +69,7 @@ const EventsScreen = () => {
               <div className="event-item">
                 <div>
                   <p className="event-name">Outdoor Summer Party</p>
-                  <p className="event-user">Suggested for Birthday Celebration</p>
+                  <p className="event-user">Suggested for birthday celebration</p>
                 </div>
                 <span className="status new">New</span>
               </div>
@@ -69,27 +91,6 @@ const EventsScreen = () => {
             <button className="see-more">See More</button>
           </div>
 
-          {/* Recent Event Requests */}
-          <div className="event-card">
-            <h3>Recent Event Requests</h3>
-            <div className="event-list">
-              <div className="event-item">
-                <div>
-                  <p className="event-name">Birthday Party Planning</p>
-                  <p className="event-user">Requested by John Doe</p>
-                </div>
-                <span className="status pending">Pending</span>
-              </div>
-              <div className="event-item">
-                <div>
-                  <p className="event-name">Corporate Event</p>
-                  <p className="event-user">Requested by Jane Smith</p>
-                </div>
-                <span className="status approved">Approved</span>
-              </div>
-            </div>
-          </div>
-
           {/* Event Statistics */}
           <div className="event-card">
             <h3>Event Statistics</h3>
@@ -99,12 +100,12 @@ const EventsScreen = () => {
                 <span>254</span>
               </div>
               <div className="stat-box">
-                <p>Pending Approval</p>
-                <span>28</span>
-              </div>
-              <div className="stat-box">
                 <p>Approved</p>
                 <span>198</span>
+              </div>
+              <div className="stat-box">
+                <p>Pending Approval</p>
+                <span>28</span>
               </div>
               <div className="stat-box">
                 <p>Rejected</p>
@@ -112,6 +113,11 @@ const EventsScreen = () => {
               </div>
             </div>
           </div>
+        </div>
+        
+        <div className="footer">
+          <p>visionna Khan</p>
+          <p>admin@zjstl</p>
         </div>
       </div>
     </div>
