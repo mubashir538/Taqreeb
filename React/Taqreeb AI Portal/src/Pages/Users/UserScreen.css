@@ -1,0 +1,97 @@
+.user-screen {
+  display: flex;
+  background-color: #0e1624;
+  color: white;
+  padding: 20px;
+  overflow-x: hidden; /*Added */
+  width: 100%; /*Added */
+}
+
+.user-main {
+  flex: 1;
+}
+
+.user-header h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.user-header p {
+  margin-bottom: 20px;
+}
+
+.date-display {
+  font-size: 14px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #1a2235;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.warned-users .user-warning {
+  margin-bottom: 15px;
+}
+
+.warning-badge {
+  color: red;
+  font-size: 10px;
+}
+
+.view-all {
+  background: #374151;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.stats-grid, .overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.stat-box, .overview-box {
+  background: #141c2f;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.stat-box p, .overview-box p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.stat-box span, .overview-box span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.recent-activities .activity-item {
+  margin-bottom: 10px;
+}
+
+.activity-time {
+  color: #a0aec0;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

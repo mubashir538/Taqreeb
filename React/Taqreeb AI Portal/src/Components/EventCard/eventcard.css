@@ -1,0 +1,44 @@
+.event-card {
+    background: #2d3748;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    color: white;
+    max-width: 400px;
+  }
+  
+  .event-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .event-icon {
+    font-size: 32px;
+    color: #facc15;
+    margin-right: 15px;
+  }
+  
+  .event-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .event-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .event-date {
+    font-size: 14px;
+    color: #a0aec0;
+  }
+  
+  .event-description {
+    font-size: 14px;
+    color: #cbd5e0;
+    margin-top: 5px;
+  }
+  

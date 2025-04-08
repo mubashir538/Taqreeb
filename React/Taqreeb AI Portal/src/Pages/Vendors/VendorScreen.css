@@ -1,0 +1,87 @@
+.vendor-screen {
+  display: flex;
+  height: 100vh;
+  background-color: #1a202c;
+  color: white;
+  padding: 20px;
+}
+
+.vendor-main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.vendor-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.vendor-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background-color: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  flex: 1;
+  margin: 0 10px;
+}
+
+.vendor-overview {
+  background-color: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.overview-stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.overview-card {
+  text-align: center;
+  flex: 1;
+  margin: 0 10px;
+}
+
+.top-vendors {
+  background-color: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.vendor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.view-all {
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.recent-activities {
+  background-color: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.activity-card {
+  background-color: #4a5568;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
