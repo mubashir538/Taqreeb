@@ -103,12 +103,16 @@ class _YourEventsState extends State<YourEvents> {
       final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
       await MyApi.deleteCache('YourEvents/$userId');
       _fetchData();
-      MyScaffold(text: 'Event Deleted Successfully').show(context);
+      if (mounted) {
+        MyScaffold(text: 'Event Deleted Successfully').show(context);
+      }
       setState(() {
         _events["Event"].removeAt(index);
       });
     } else {
-      MyScaffold(text: 'Something Went Wrong!').show(context);
+      if (mounted) {
+        MyScaffold(text: 'Something Went Wrong!').show(context);
+      }
     }
   }
 

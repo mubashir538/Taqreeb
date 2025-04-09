@@ -7,8 +7,7 @@ class ProductInfo extends StatefulWidget {
   final double rating;
   final int reviews;
 
-  const ProductInfo({Key? key, required this.rating, required this.reviews})
-      : super(key: key);
+  const ProductInfo({super.key, required this.rating, required this.reviews});
   @override
   State<ProductInfo> createState() => _ProductInfoState();
 }

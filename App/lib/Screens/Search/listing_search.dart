@@ -163,8 +163,9 @@ class _SearchServiceState extends State<SearchService> {
     //     return pictureGroup[0]['picturePath'];
     //   }
     // }
-    if (listing['listings'][index]['pictures']['picturePath'] == null)
+    if (listing['listings'][index]['pictures']['picturePath'] == null) {
       return '';
+    }
     return listing['listings'][index]['pictures']['picturePath'];
   }
 
@@ -213,21 +214,14 @@ class _SearchServiceState extends State<SearchService> {
           _tempListings['listings'] =
               _tempListings['listings'].where((listing) {
             return _additionalSelections.entries.every((entry) {
-        
               if (entry.value.isEmpty) {
                 return true; // No filter applied for this field
               }
-              print('Entry: $entry');
-              print('listing: $listing');
-              print(
-                  'Entry key: ${entry.key} -- ${entry.value} --  ${listing['View'][entry.key]}');
               if (listing['View'][entry.key] == null) return false;
               return entry.value
                   .contains(listing['View'][entry.key].toString());
             });
           }).toList();
-
-          print('${_tempListings['listings']}');
         });
       }
     });

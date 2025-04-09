@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0; // Local state variable for managing the selected index
   final controller = YourListingsController();
 
-  void InitializeController() async {
+  void initializeController() async {
     await controller.fetchData();
   }
 
@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _initializePages() {
-    InitializeController();
+    initializeController();
     _pages = [
       const HomePage(),
       const ChatsScreen(),

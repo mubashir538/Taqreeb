@@ -19,7 +19,7 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/core/utils/color.dart';
 
 class CategoryViewVideoEditor extends StatefulWidget {
-  const CategoryViewVideoEditor({Key? key}) : super(key: key);
+  const CategoryViewVideoEditor({super.key});
 
   @override
   State<CategoryViewVideoEditor> createState() =>

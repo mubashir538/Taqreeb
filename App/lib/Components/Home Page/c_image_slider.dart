@@ -8,6 +8,7 @@ class AutoImageSlider extends StatefulWidget {
   final Duration preloadDuration;
 
   const AutoImageSlider({
+    super.key,
     required this.imageUrls,
     required this.height,
     this.slideDuration = const Duration(seconds: 3),

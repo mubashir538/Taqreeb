@@ -196,7 +196,7 @@ class _SettingsState extends State<Settings> {
                                       rightIcon:
                                           Icons.arrow_forward_ios_rounded,
                                     ),
-                              this.types['freelancer']
+                              types['freelancer']
                                   ? Container(
                                       height: (Screen.max(context) * 0.08)
                                           .clamp(60, 80.0),

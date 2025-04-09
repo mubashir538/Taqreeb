@@ -19,15 +19,15 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_slot.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_Photographer extends StatefulWidget {
-  const CategoryView_Photographer({super.key});
+class CategoryViewPhotographer extends StatefulWidget {
+  const CategoryViewPhotographer({super.key});
 
   @override
-  State<CategoryView_Photographer> createState() =>
-      _CategoryView_PhotographerState();
+  State<CategoryViewPhotographer> createState() =>
+      _CategoryViewPhotographerState();
 }
 
-class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
+class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -240,13 +240,14 @@ class _CategoryView_PhotographerState extends State<CategoryView_Photographer> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
-          ),_isLoading?Container():
-           ChatIcon(
-            ownerId: _listing['Listing']['ownerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Business',
           ),
-        
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listingId: _listing['Listing']['id'],
+                  type: 'Business',
+                ),
         ],
       ),
     );

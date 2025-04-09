@@ -18,10 +18,10 @@ class LocationInputWidget extends StatefulWidget {
   });
 
   @override
-  _LocationInputWidgetState createState() => _LocationInputWidgetState();
+  LocationInputWidgetState createState() => LocationInputWidgetState();
 }
 
-class _LocationInputWidgetState extends State<LocationInputWidget> {
+class LocationInputWidgetState extends State<LocationInputWidget> {
   late TextEditingController _textController;
   late FocusNode _focusNode;
   String _currentLocation = "Unknown Location";
