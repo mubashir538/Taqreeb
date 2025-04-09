@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Screens/AI/chatbot.dart';
 import 'package:taqreeb/Screens/AI/event_detail_ai.dart';
 import 'package:taqreeb/Screens/AI/event_packages_ai.dart';
 import 'package:taqreeb/Screens/AI/function_detail_ai.dart';
@@ -130,7 +131,7 @@ class _MainAppState extends State<MainApp> {
       setState(() {
         isHome = true;
       });
-    }
+    } 
   }
 
   @override
@@ -145,8 +146,9 @@ class _MainAppState extends State<MainApp> {
         theme: AppThemes.darkTheme,
         darkTheme: AppThemes.darkTheme,
         themeMode: themeProvider.themeMode,
-        initialRoute: '/',
-        routes: _buildRoutes(),
+        // initialRoute: '/',
+        // routes: _buildRoutes(),
+        home: EventPlanningChatbot(),
       ),
     );
   }
