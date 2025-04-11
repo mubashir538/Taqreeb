@@ -310,7 +310,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   ),
                 ],
               );
-            }).toList(),
+            }),
             if (programDetails.length < 3)
               Align(
                 alignment: Alignment.centerRight,
@@ -374,7 +374,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     ),
                 ],
               );
-            }).toList(),
+            }),
             if (contactInfo.length < 3)
               Align(
                 alignment: Alignment.centerRight,

@@ -103,7 +103,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -235,7 +235,7 @@ class _CategoryViewGraphicDesignerState
               ? Container()
               : ChatIcon(
                   ownerId: _listing['Listing']['freelancerID'],
-                  listingId: _listing['Listing']['id'],
+                  listing: _listing,
                   type: 'Freelancer',
                 ),
         ],

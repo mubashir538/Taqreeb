@@ -234,7 +234,7 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
               ? Container()
               : ChatIcon(
                   ownerId: _listing['Listing']['ownerID'],
-                  listingId: _listing['Listing']['id'],
+                  listing: _listing,
                   type: 'Business',
                 ),
         ],

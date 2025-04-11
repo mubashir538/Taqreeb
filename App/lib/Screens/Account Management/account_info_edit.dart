@@ -60,7 +60,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
 
   void fetchData() async {
     final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
-    this.userId = userid;
+    userId = userid;
     await ApiCall.fetchAPI('accountInfo/$userid', onSuccess: (token, data) {
       if (mounted) {
         setState(() {

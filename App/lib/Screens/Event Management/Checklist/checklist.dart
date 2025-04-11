@@ -12,7 +12,7 @@ import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
 class CreateChecklistItems extends StatefulWidget {
-  const CreateChecklistItems({Key? key}) : super(key: key);
+  const CreateChecklistItems({super.key});
 
   @override
   State<CreateChecklistItems> createState() => _CreateChecklistItemsState();

@@ -125,13 +125,13 @@ class Add360Video extends StatelessWidget {
 
   ButtonStyle _skipButtonStyle(BuildContext context) {
     return ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.grey[800]),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      backgroundColor: WidgetStateProperty.all(Colors.grey[800]),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
         ),
       ),
-      padding: MaterialStateProperty.all(
+      padding: WidgetStateProperty.all(
         EdgeInsets.symmetric(vertical: Screen.height(context) * 0.02),
       ),
     );

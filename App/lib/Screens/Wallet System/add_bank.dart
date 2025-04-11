@@ -85,6 +85,8 @@ class _AddBankState extends State<AddBank> {
                             'United Bank Limited',
                             'Allied Bank',
                             'MCB Bank',
+                            'NayaPay',
+                            'SadaPay',
                           ],
                           labelText: "Select Bank",
                           onChanged: (value) {

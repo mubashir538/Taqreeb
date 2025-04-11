@@ -82,10 +82,23 @@ class ListingSerializer(s.ModelSerializer):
         model = mp.Listing
         fields = '__all__'
 
+class PicturesPackagesSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.PicturesPackages
+        fields = ['picturePath']  # Only include the picturePath field
+
+
 class PackagesSerializer(s.ModelSerializer):
+    pictures = PicturesPackagesSerializer(
+        many=True,
+        read_only=True,
+        source='picturespackages_set'  # This is the default related_name for reverse FK
+    )
+    
     class Meta:
         model = mp.Packages
-        fields = '__all__'
+        fields = ['id', 'name', 'listingId', 'description', 'price', 'pictures']
+
         
 # class OrdersSerializer(s.ModelSerializer):
 #     class Meta:

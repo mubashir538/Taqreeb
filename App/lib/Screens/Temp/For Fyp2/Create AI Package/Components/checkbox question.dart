@@ -14,7 +14,7 @@ class CheckBoxController {
 }
 
 class CheckBoxQuestion extends StatefulWidget {
-  CheckBoxQuestion({
+  const CheckBoxQuestion({
     super.key,
     required this.question,
     required this.options,

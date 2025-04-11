@@ -379,7 +379,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
+              SizedBox(
                 width: Screen.width(context) * 0.6,
                 child: Text(
                   widget.listing['Listing']['name'],

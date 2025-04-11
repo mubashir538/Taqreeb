@@ -233,7 +233,7 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
               ? Container()
               : ChatIcon(
                   ownerId: _listing['Listing']['freelancerID'],
-                  listingId: _listing['Listing']['id'],
+                  listing: _listing,
                   type: 'Freelancer',
                 )
         ],

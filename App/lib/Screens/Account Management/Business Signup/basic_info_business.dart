@@ -49,7 +49,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

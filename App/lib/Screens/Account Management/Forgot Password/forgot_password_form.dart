@@ -8,7 +8,7 @@ class ForgotPasswordForm extends StatelessWidget {
   final TextEditingController contactController;
   final VoidCallback onSendCode;
 
-  const ForgotPasswordForm({
+  const ForgotPasswordForm({super.key, 
     required this.contactController,
     required this.onSendCode,
   });
