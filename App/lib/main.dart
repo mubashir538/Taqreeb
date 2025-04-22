@@ -61,6 +61,9 @@ import 'package:taqreeb/Screens/Main%20Screens/main_screen.dart';
 import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
 import 'package:taqreeb/Screens/Payments/order_summary.dart';
 import 'package:taqreeb/Screens/Search/listing_search.dart';
+import 'package:taqreeb/Screens/Wallet%20System/add_bank.dart';
+import 'package:taqreeb/Screens/Wallet%20System/see_all_transactions.dart';
+import 'package:taqreeb/Screens/Wallet%20System/wallet_screen.dart';
 import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
 import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
 import 'package:taqreeb/Screens/chat/chat_box.dart';
@@ -131,7 +134,7 @@ class _MainAppState extends State<MainApp> {
       setState(() {
         isHome = true;
       });
-    } 
+    }
   }
 
   @override
@@ -147,6 +150,7 @@ class _MainAppState extends State<MainApp> {
         darkTheme: AppThemes.darkTheme,
         themeMode: themeProvider.themeMode,
         // initialRoute: '/',
+        // home: WalletScreen(),
         // routes: _buildRoutes(),
         home: EventPlanningChatbot(),
       ),
@@ -168,23 +172,25 @@ class _MainAppState extends State<MainApp> {
       '/AddCategory_List': (context) => AddCategoryListing(),
       '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(),
       '/AddCategory_Packages': (context) => AddCategoryPackages(),
+      '/AllTransactions': (context) => AllTransactions(),
+      '/AddBank': (context) => AddBank(),
       '/BasicSignup': (context) => BasicSignup(),
       '/BusinessAccountInfo': (context) => MainScreen(index: 3),
       '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
       '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
       '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
       '/BusinessSignup_Description': (context) => BusinessSignupDescription(),
-      '/CategoryView_CarRenter': (context) => CategoryView_CarRenter(),
-      '/CategoryView_Caterers': (context) => CategoryView_Caterers(),
-      '/CategoryView_Decorator': (context) => CategoryView_Decorator(),
+      '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),
+      '/CategoryView_Caterers': (context) => CategoryViewCaterers(),
+      '/CategoryView_Decorator': (context) => CategoryViewDecorator(),
       '/CategoryView_GraphicDesigner': (context) =>
-          CategoryView_GraphicDesigner(),
+          CategoryViewGraphicDesigner(),
       '/CategoryView_Parlour': (context) => CategoryViewParlour(),
-      '/CategoryView_Photographer': (context) => CategoryView_Photographer(),
+      '/CategoryView_Photographer': (context) => CategoryViewPhotographer(),
       '/CategoryView_PhotographyPlace': (context) =>
-          CategoryView_PhotographyPlace(),
-      '/CategoryView_Salon': (context) => CategoryView_Saloon(),
-      '/CategoryView_Venue': (context) => CategoryView_Venue(),
+          CategoryViewPhotographyPlace(),
+      '/CategoryView_Salon': (context) => CategoryViewSaloon(),
+      '/CategoryView_Venue': (context) => CategoryViewVenue(),
       '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
       '/ChatBox': (context) => ChatBox(),
       '/ChatsScreen': (context) => MainScreen(index: 1),
@@ -227,6 +233,7 @@ class _MainAppState extends State<MainApp> {
       '/Signup_MoreInfo': (context) => SignupMoreInfo(),
       '/SubmissionSucessful': (context) => SubmissionSucessful(),
       '/ViewAIPackage': (context) => ViewAIPackage(),
+      '/WalletScreen': (context) => WalletScreen(),
       '/Wishlist': (context) => WishlistViewPage(),
       '/YourEvents': (context) => MainScreen(index: 2),
       '/YourListings': (context) => MainScreen(index: 2),
