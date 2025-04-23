@@ -10,19 +10,23 @@ from rest_framework.response import Response
 @permission_classes([IsAuthenticated])
 def addTransaction(request):
     senderId = request.data.get('senderId')
-    listingId = request.data.get('listingId')
+    packageId = request.data.get('packageId')
     amount = request.data.get('amount')
     
     user = md.User.objects.get(id = senderId)
-    listing = md.Listing.objects.get(id = listingId)
+    package = md.Packages.objects.get(id = packageId)
+    listing = md.Listing.objects.get(id = package.listingId)
     if listing.ownerID:
         owner = md.BusinessOwner.objects.get(id = listing.ownerID)
-        md.Transaction(sender = user, receiverb = owner, amount = amount, listing = listing,status='Pending').save()
+        md.Transaction(sender = user, receiverb = owner, amount = amount, package = package,status='Pending').save()
     
     else:
         owner = md.Freelancer.objects.get(id = listing.freelancerID)
-        md.Transaction(sender = user, receiverf = owner, amount = amount, listing = listing,status='Pending').save()
+        md.Transaction(sender = user, receiverf = owner, amount = amount, package = package,status='Pending').save()
     return Response({'status':'success'})
+
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -60,12 +64,41 @@ def WithdrawBalance(request):
 def getTransactions(request,id,type):
     userID = md.User.objects.get(id=id)
     if type == 'freelancer':
-        transactions = md.BusinessTransaction.objects.filter(ownerf=userID)
+        transactions = md.BusinessTransaction.objects.filter(ownerf=userID,status='Completed')
     else:
-        transactions = md.BusinessTransaction.objects.filter(ownerb=userID)
+        transactions = md.BusinessTransaction.objects.filter(ownerb=userID,status='Completed')
 
     transactionSerializer = s.BusinessTransactionSerializer(transactions,many=True)
     return Response({'status':'success','data':transactionSerializer.data})    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def approveBooking(request):
+    bookingId = request.data.get('bookingId')
+    transactionId = request.data.get('transactionId')
+    transaction = md.Transaction.objects.get(id=transactionId)
+    transaction.status = 'Completed'
+    transaction.save(update_fields=['status'])
+    # md.Orders(userId=,package=bookingId=bookingId,transactionId=transactionId).save()
+    return Response({'status':'success'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def rejectBooking(request):
+    pass
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def getBookings(request):
+    pass
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def getPendingBookings(request):
+    pass
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -74,10 +107,10 @@ def getTransactionsRecent(request,id,type):
     now = datetime.datetime.now()
     if type == 'freelancer':
         transactions = md.BusinessTransaction.objects.filter(ownerf=userID,date__year=now.year,
-    date__month=now.month)
+    date__month=now.month,status='Completed')
     else:
         transactions = md.BusinessTransaction.objects.filter(ownerb=userID,date__year=now.year,
-    date__month=now.month)
+    date__month=now.month,status='Completed')
 
     transactionSerializer = s.BusinessTransactionSerializer(transactions,many=True)
     return Response({'status':'success','data':transactionSerializer.data})    
@@ -102,5 +135,4 @@ def getBank(request,id):
     bank = md.BankDetails.objects.filter(userID=userID)
     bankSerializer = s.BankDetailsSerializer(bank,many=True)
     return Response({'status':'success','data':bankSerializer.data})
-
 

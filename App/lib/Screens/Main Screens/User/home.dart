@@ -7,6 +7,8 @@ import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
@@ -65,6 +67,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchCategories() async {
+    print(await MyStorage.getToken(MyTokens.accessToken));
     await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {

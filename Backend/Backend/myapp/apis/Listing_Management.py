@@ -369,7 +369,7 @@ def updateListing(request):
     return Response({'status':'error'})
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def ListingWithViews(request):
     # Get all listings with prefetch_related to optimize queries
     listings = md.Listing.objects.all().prefetch_related(
@@ -439,7 +439,7 @@ def ListingWithViews(request):
     })
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def HomeListings(request):
     Listing= md.Listing.objects.all()
     ListingSerializer= s.ListingSerializer(Listing, many=True)
