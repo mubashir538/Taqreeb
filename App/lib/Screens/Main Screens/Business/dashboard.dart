@@ -212,13 +212,22 @@ class _DashboardState extends State<Dashboard> {
                             onTap: () {},
                           ),
                           _buildDashboardOption(
+                            title: "My Wallet",
+                            icon: Icons.calendar_today,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/WalletScreen',
+                              );
+                            },
+                          ),
+                          _buildDashboardOption(
                             title: "My Messages",
                             icon: Icons.message,
                             onTap: () {
-                              Navigator.pushNamedAndRemoveUntil(
+                              Navigator.pushNamed(
                                 context,
                                 '/ChatsScreen',
-                                ModalRoute.withName('/'),
                               );
                             },
                           ),
@@ -235,7 +244,7 @@ class _DashboardState extends State<Dashboard> {
                             onTap: () {
                               Navigator.pushNamed(
                                 context,
-                                '/BusinessAccountInfo',
+                                '/BusinessInfoEdit',
                               );
                             },
                           ),

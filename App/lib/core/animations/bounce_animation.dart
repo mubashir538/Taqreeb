@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BounceAnimation extends StatefulWidget {
   final Widget child;
 
-  const BounceAnimation({Key? key, required this.child}) : super(key: key);
+  const BounceAnimation({super.key, required this.child});
 
   @override
   _BounceAnimationState createState() => _BounceAnimationState();

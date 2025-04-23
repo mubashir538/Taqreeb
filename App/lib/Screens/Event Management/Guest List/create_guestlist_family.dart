@@ -157,7 +157,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
 
   Widget _buildContent() {
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         width: Screen.width(context),
         child: Column(
           children: [

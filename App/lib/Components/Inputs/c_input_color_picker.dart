@@ -32,7 +32,6 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     widget.focusNode?.dispose();
     super.dispose();
   }
@@ -70,7 +69,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                   onColorChanged: (Color color) {
                     tempColor = color;
                   },
-                  showLabel: false,
+                  // showLabel: false,
                   pickerAreaHeightPercent: 0.7,
                 ),
                 const SizedBox(height: 10),

@@ -19,14 +19,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_slot.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_Decorator extends StatefulWidget {
-  const CategoryView_Decorator({super.key});
+class CategoryViewDecorator extends StatefulWidget {
+  const CategoryViewDecorator({super.key});
 
   @override
-  State<CategoryView_Decorator> createState() => _CategoryView_DecoratorState();
+  State<CategoryViewDecorator> createState() => _CategoryViewDecoratorState();
 }
 
-class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
+class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -158,7 +158,6 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
     });
   }
 
-  
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -224,7 +223,7 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
   }
 
   Widget _buildBookNowButton() {
-   return BookNowButton(context: context, listing: _listing);
+    return BookNowButton(context: context, listing: _listing);
   }
 
   @override
@@ -249,12 +248,15 @@ class _CategoryView_DecoratorState extends State<CategoryView_Decorator> {
           Positioned(
             top: 0,
             child: Header(key: _headerKey),
-          ),_isLoading?Container():
-          ChatIcon(
-            ownerId: _listing['Listing']['ownerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Business',
-          ),],
+          ),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listing: _listing,
+                  type: 'Business',
+                ),
+        ],
       ),
     );
   }

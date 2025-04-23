@@ -6,7 +6,7 @@ import 'package:taqreeb/core/utils/color.dart';
 
 class MyTextBox extends StatefulWidget {
   final String hint;
-  final String Value;
+  final String value;
   final bool isPassword;
   final Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
@@ -16,7 +16,7 @@ class MyTextBox extends StatefulWidget {
   final String? errorText;
   final Function(String)? onChanged;
 
-  MyTextBox({
+  const MyTextBox({
     super.key,
     this.isPrice = false,
     this.isNum = false,
@@ -24,7 +24,7 @@ class MyTextBox extends StatefulWidget {
     required this.hint,
     this.onFieldSubmitted,
     this.focusNode,
-    this.Value = '',
+    this.value = '',
     required this.valueController,
     this.errorText,
     this.onChanged,

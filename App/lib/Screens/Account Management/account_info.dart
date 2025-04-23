@@ -22,7 +22,7 @@ class AccountInfo extends StatefulWidget {
 class _AccountInfoState extends State<AccountInfo> {
   Map<String, dynamic> _user = {};
   bool _isLoading = true;
-  GlobalKey _headerKey = GlobalKey();
+  final GlobalKey _headerKey = GlobalKey();
 
   @override
   void initState() {

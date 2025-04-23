@@ -7,8 +7,7 @@ class CalendarView extends StatefulWidget {
   final List<DateTime> bookedDates;
   final Function(DateTime) onDateSelected;
   const CalendarView(
-      {Key? key, required this.bookedDates, required this.onDateSelected})
-      : super(key: key);
+      {super.key, required this.bookedDates, required this.onDateSelected});
 
   @override
   CalendarViewState createState() => CalendarViewState();

@@ -32,10 +32,16 @@ class _ChatBoxState extends State<ChatBox> {
   String? _chatUserImage;
   bool _isLoading = true;
   bool _isMessageSent = true;
+  Map<String, dynamic> _listing = {};
+  String _messageCollection = '';
+  String _type = '';
+  bool _isChanged = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_isChanged) return;
+    _isChanged = true;
     _initializeChatData();
   }
 
@@ -52,8 +58,19 @@ class _ChatBoxState extends State<ChatBox> {
       _handleError('Missing chat user ID in route arguments');
       return;
     }
+    if (_type == 'Business') {
+      _messageCollection = 'BusinessChats';
+    } else if (_type == 'Freelancer') {
+      _messageCollection = 'FreelancerChats';
+    } else {
+      _messageCollection = 'chats';
+    }
 
     setState(() {
+      if (args.containsKey('type')) {
+        _type = args['type'];
+        _listing = args['listing'];
+      }
       _chatUserId = args['userId'];
       _isLoading = true;
     });
@@ -75,17 +92,26 @@ class _ChatBoxState extends State<ChatBox> {
 
   Future<void> _fetchChatUserDetails() async {
     try {
+      String collectionName = "";
+      if (_type == 'Business') {
+        collectionName = 'businessUsers';
+      } else if (_type == "Freelancer") {
+        collectionName = 'freelanceUsers';
+      } else {
+        collectionName = 'users';
+      }
       final userDoc =
-          await _firestore.collection('users').doc(_chatUserId).get();
+          await _firestore.collection(collectionName).doc(_chatUserId).get();
 
       if (!mounted) return;
 
       setState(() {
-        _chatName =
-            _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
-        _chatUserName = userDoc['username'] ?? 'Unknown User';
+        _chatName = _type != ''
+            ? _capitalizeName(userDoc['businessName'])
+            : _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
+        _chatUserName = userDoc['username'] ?? _type;
         _chatUserImage =
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture']}';
+            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type == '' ? 'profilePicture' : 'profile']}';
       });
     } catch (e) {
       _handleError('Error fetching chat user details: $e');
@@ -106,7 +132,6 @@ class _ChatBoxState extends State<ChatBox> {
     if (_currentUserId == null || text.isEmpty) return;
 
     setState(() => _isMessageSent = false);
-
     try {
       final chatId = _getChatId();
       final messageData = {
@@ -117,15 +142,26 @@ class _ChatBoxState extends State<ChatBox> {
         'type': 'text',
       };
 
+      // Add listing data if available
+      if (_listing.isNotEmpty) {
+        messageData['listing'] = {
+          'id': _listing['id'],
+          'name': _listing['name'],
+          'description': _listing['description'],
+          'picture': _listing['picture'],
+        };
+        messageData['type'] = 'listing';
+      }
+
       // Add message to chat collection
       await _firestore
-          .collection('chats')
+          .collection(_messageCollection)
           .doc(chatId)
           .collection('messages')
           .add(messageData);
 
       // Update chat metadata
-      await _firestore.collection('chats').doc(chatId).set({
+      await _firestore.collection(_messageCollection).doc(chatId).set({
         'chatId': chatId,
         'lastMessage': text,
         'lastMessageTime': FieldValue.serverTimestamp(),
@@ -150,6 +186,12 @@ class _ChatBoxState extends State<ChatBox> {
       );
 
       _messageController.clear();
+      // Clear listing after sending
+      if (_listing.isNotEmpty) {
+        setState(() {
+          _listing = {};
+        });
+      }
     } catch (e) {
       _handleError('Failed to send message: $e');
     } finally {
@@ -177,7 +219,7 @@ class _ChatBoxState extends State<ChatBox> {
 
       final chatId = _getChatId();
       await _firestore
-          .collection('chats')
+          .collection(_messageCollection)
           .doc(chatId)
           .collection('messages')
           .add({
@@ -188,7 +230,7 @@ class _ChatBoxState extends State<ChatBox> {
         'type': 'image',
       });
 
-      await _firestore.collection('chats').doc(chatId).set({
+      await _firestore.collection(_messageCollection).doc(chatId).set({
         'chatId': chatId,
         'lastMessage': 'Image sent',
         'lastMessageTime': FieldValue.serverTimestamp(),
@@ -247,6 +289,19 @@ class _ChatBoxState extends State<ChatBox> {
       return isSentByMe
           ? SendMessage(text: '', time: time, imageUrl: imageUrl)
           : RecieveMessage(text: '', time: time, imageUrl: imageUrl);
+    } else if (messageType == 'listing') {
+      final listing = doc['listing'] ?? {};
+      return isSentByMe
+          ? SendMessage(
+              text: message,
+              time: time,
+              listing: listing,
+            )
+          : RecieveMessage(
+              text: message,
+              time: time,
+              listing: listing,
+            );
     }
     return const SizedBox.shrink();
   }
@@ -265,7 +320,7 @@ class _ChatBoxState extends State<ChatBox> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 width: Screen.width(context) * 0.6,
                 child: Text(
                   _chatName ?? '',
@@ -295,40 +350,10 @@ class _ChatBoxState extends State<ChatBox> {
     );
   }
 
-  Widget _buildChatInput() {
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(Icons.image, color: MyColors.Yellow),
-          onPressed: _sendImage,
-        ),
-        Expanded(
-          child: TextField(
-            controller: _messageController,
-            decoration: InputDecoration(
-              hintText: "Type a message",
-              fillColor: MyColors.DarkLighter,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            onSubmitted: _sendMessage,
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.send, color: MyColors.white),
-          onPressed: () => _sendMessage(_messageController.text),
-        ),
-      ],
-    );
-  }
-
   Widget _buildMessagesList() {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
-          .collection('chats')
+          .collection(_messageCollection)
           .doc(_getChatId())
           .collection('messages')
           .orderBy('timestamp', descending: true)
@@ -388,6 +413,118 @@ class _ChatBoxState extends State<ChatBox> {
     MyApi.postRequest(
       endpoint: 'error/application',
       body: {'error': error},
+    );
+  }
+
+  Widget _buildListingPreview() {
+    if (_listing.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: MyColors.DarkLighter,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Listing Image
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              image: DecorationImage(
+                image: NetworkImage(
+                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['picture'] ?? ''}'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          // Listing Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _listing['name'] ?? '',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  _listing['description'] ?? '',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: MyColors.white.withOpacity(0.7),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'www.taqreeb.com', // Replace with your actual domain
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    color: MyColors.Yellow,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Close button
+          IconButton(
+            icon: Icon(Icons.close, size: 20, color: MyColors.white),
+            onPressed: () {
+              setState(() {
+                _listing = {};
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatInput() {
+    return Column(
+      children: [
+        if (_listing.isNotEmpty) _buildListingPreview(),
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.image, color: MyColors.Yellow),
+              onPressed: _sendImage,
+            ),
+            Expanded(
+              child: TextField(
+                controller: _messageController,
+                decoration: InputDecoration(
+                  hintText: "Type a message",
+                  fillColor: MyColors.DarkLighter,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                onSubmitted: _sendMessage,
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.send, color: MyColors.white),
+              onPressed: () => _sendMessage(_messageController.text),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

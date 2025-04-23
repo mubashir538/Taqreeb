@@ -11,19 +11,19 @@ class ResponsiveDropdown extends StatefulWidget {
   final FocusNode? focusNode;
 
   const ResponsiveDropdown({
-    Key? key,
+    super.key,
     this.onFieldSubmitted,
     this.focusNode,
     required this.items,
     required this.labelText,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
-  _ResponsiveDropdownState createState() => _ResponsiveDropdownState();
+  ResponsiveDropdownState createState() => ResponsiveDropdownState();
 }
 
-class _ResponsiveDropdownState extends State<ResponsiveDropdown> {
+class ResponsiveDropdownState extends State<ResponsiveDropdown> {
   String? selectedItem;
 
   @override

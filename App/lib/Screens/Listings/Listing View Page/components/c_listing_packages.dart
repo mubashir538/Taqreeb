@@ -133,7 +133,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   }
 
   void _showSuccessMessage(String action) {
-    MyScaffold(text: 'Package ${action} Successfully!').show(context);
+    MyScaffold(text: 'Package $action Successfully!').show(context);
   }
 
   void _showErrorMessage() {

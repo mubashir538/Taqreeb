@@ -174,7 +174,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
     }
 
     if (_userType == 'Freelancer' || _userType == 'Business') {
-      MyTokens.DeleteSignupTokens(_userType);
+      MyTokens.deleteSignupTokens(_userType);
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/SubmissionSucessful',

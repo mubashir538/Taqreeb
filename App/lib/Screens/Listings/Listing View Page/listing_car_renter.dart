@@ -18,14 +18,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryView_CarRenter extends StatefulWidget {
-  const CategoryView_CarRenter({super.key});
+class CategoryViewCarRenter extends StatefulWidget {
+  const CategoryViewCarRenter({super.key});
 
   @override
-  State<CategoryView_CarRenter> createState() => _CategoryView_CarRenterState();
+  State<CategoryViewCarRenter> createState() => _CategoryViewCarRenterState();
 }
 
-class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
+class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
   // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
@@ -104,7 +104,6 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
         'carrenter/viewpage/$_listingId',
         onSuccess: _handleFetchSuccess,
         onError: _handleFetchError,
-        
       );
     }
   }
@@ -231,12 +230,13 @@ class _CategoryView_CarRenterState extends State<CategoryView_CarRenter> {
             top: 0,
             child: Header(key: _headerKey),
           ),
-          _isLoading?Container():
-          ChatIcon(
-            ownerId: _listing['Listing']['ownerID'],
-            listingId: _listing['Listing']['id'],
-            type: 'Business',
-          ),
+          _isLoading
+              ? Container()
+              : ChatIcon(
+                  ownerId: _listing['Listing']['ownerID'],
+                  listing: _listing,
+                  type: 'Business',
+                ),
         ],
       ),
     );

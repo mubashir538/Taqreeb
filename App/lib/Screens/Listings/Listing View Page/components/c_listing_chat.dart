@@ -6,14 +6,14 @@ import 'package:taqreeb/core/utils/color.dart';
 
 class ChatIcon extends StatelessWidget {
   final int ownerId;
-  final int listingId;
+  final Map<String, dynamic> listing;
   final String type;
   final EdgeInsetsGeometry? margin;
 
   const ChatIcon({
     super.key,
     required this.ownerId,
-    required this.listingId,
+    required this.listing,
     required this.type,
     this.margin,
   });
@@ -32,7 +32,7 @@ class ChatIcon extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, '/ChatBox',
-              arguments: {'userId': ownerId, 'type': type,'listingId': listingId});
+              arguments: {'userId': ownerId, 'type': type, 'listing': listing});
         },
         child: Container(
           margin: margin,

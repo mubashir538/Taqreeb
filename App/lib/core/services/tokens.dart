@@ -44,14 +44,16 @@ class MyTokens {
 
     if (await MyStorage.exists(MyTokens.isBusinessOwner)) {
       type = 'businessowner';
-    } else {
+    } else if (await MyStorage.exists(MyTokens.isFreelancer)) {
       type = 'freelancer';
+    } else {
+      type = 'user';
     }
 
     return type;
   }
 
-  static void DeleteSignupTokens(String type) {
+  static void deleteSignupTokens(String type) {
     if (type == 'Freelancer') {
       MyStorage.deleteToken(MyTokens.fscnic);
       MyStorage.deleteToken(MyTokens.fsname);

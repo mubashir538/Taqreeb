@@ -241,7 +241,7 @@ def HomeCategories(request):
     return Response({'status': 'success','categories': CategoriesSerializer.data})
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def BusinessCategories(request,type):
     if type == 'freelancer':
         categories = md.Categories.objects.filter(type='freelancer')
@@ -277,7 +277,7 @@ def get_business_usernames(request):
         return Response({'status':'success','businessUsernames': usernames_list})
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def getWishlist(request,uid):
     uid = md.User.objects.get(id=uid)
     list = md.Wishlist.objects.filter(user=uid)
