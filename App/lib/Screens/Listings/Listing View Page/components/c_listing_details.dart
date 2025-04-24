@@ -85,11 +85,12 @@ class _CategoryDetailsState extends State<CategoryDetails> {
 
   Future<void> _fetchListingDetails() async {
     try {
+      final token = await MyStorage.getToken(MyTokens.accessToken);
       final response = await MyApi.getRequest(
         endpoint: 'getListingDetails/${widget.listing['Listing']['type']}',
         headers: {
           'Authorization':
-              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+              'Bearer $token'
         },
       );
 

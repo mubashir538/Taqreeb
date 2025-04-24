@@ -13,6 +13,7 @@ class ApiCall {
       String type = 'get',
       Map<String, dynamic>? body = const {}}) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    print('Your Tokens in Api Call $token');
     final data;
     if (type == 'get') {
       data = await MyApi.getRequest(
@@ -28,12 +29,14 @@ class ApiCall {
       );
     }
     if (data == null || data['status'] == 'error') {
-      onError?.call() ??
-          () {
-            if (context!.mounted) {
-              MyScaffold(text: 'Something Went Wrong!').show(context);
-            }
-          };
+      if (token.isEmpty) {
+        if (onError != null) {
+          onError();
+        } else if (context?.mounted == true) {
+          MyScaffold(text: 'You are not logged in!').show(context!);
+        }
+        return;
+      }
     } else {
       onSuccess(token, data);
     }

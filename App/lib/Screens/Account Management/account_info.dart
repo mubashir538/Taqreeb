@@ -44,7 +44,7 @@ class _AccountInfoState extends State<AccountInfo> {
 
   Future<void> _fetchData() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
-    await ApiCall.fetchAPI('accountInfo/$userId', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('accountInfo/$userId/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           _user = data;
