@@ -102,10 +102,7 @@ const VendorScreen = () => {
             </div>
           </div>
         </div>
-        
-        <div className="footer">
-        </div>
-      </div>
+  </div>
     </div>
   );
 };

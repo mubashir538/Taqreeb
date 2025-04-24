@@ -15,26 +15,26 @@ const UserScreen = () => {
           {/* Warned Users Section */}
           <div className="card warned-users">
             <h3>Warned Users</h3>
-            <div className="user-warning">
             <div className="stat-box">
+              <div>
               <p><strong>Ali Khan</strong></p>
               <p>Improvement content: 2 days ago</p>
+              </div>
               <span className="warning-badge">Warning</span>
               </div>
-            </div>
             <div className="stat-box">
-            <div className="user-warning">
+              <div>
               <p><strong>Fatima Zahra</strong></p>
               <p>Spam activity: 1 day ago</p>
+              </div>
               <span className="warning-badge">Warning</span>
-            </div>
             </div>
             <div className="stat-box">
-            <div className="user-warning">
+              <div>
               <p><strong>Hassan Abdullah</strong></p>
               <p>Terms violation: 3 hours ago</p>
+              </div>
               <span className="warning-badge">Warning</span>
-            </div>
             </div>
             <button className="view-all">View All Warned Users</button>
           </div>

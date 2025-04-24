@@ -37,7 +37,6 @@ const EventsScreen = () => {
                 <span className="status pending">Pending</span>
               </div>
             </div>
-            <div className="divider"></div>
             <button className="see-more">See More</button>
           </div>
 
@@ -113,11 +112,6 @@ const EventsScreen = () => {
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="footer">
-          <p>visionna Khan</p>
-          <p>admin@zjstl</p>
         </div>
       </div>
     </div>
