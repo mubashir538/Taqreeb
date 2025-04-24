@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
+import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Home%20Page/c_image_slider.dart';
 import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
@@ -67,7 +67,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchCategories() async {
-    print(await MyStorage.getToken(MyTokens.accessToken));
     await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
@@ -152,7 +151,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           if (UI_Management.headerHeight > 0)
@@ -233,10 +232,10 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   'Browse Categories',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.Yellow,
+                    fontWeight: FontWeight.w700,
+                    color: MyColors.white,
                   ),
                 ),
               ],
@@ -266,6 +265,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildAIPackageButton() {
     return Center(
       child: ColoredButton(
+        icon: FontAwesomeIcons.wandMagicSparkles,
         onPressed: () {
           Navigator.pushNamed(context, '/CreateAIPackage');
         },
@@ -277,25 +277,11 @@ class _HomePageState extends State<HomePage> {
   Widget _buildForYouSection() {
     return Column(
       children: [
-        Center(
-          child: Container(
-            width: Screen.width(context) * 0.95,
-            margin:
-                EdgeInsets.symmetric(vertical: Screen.height(context) * 0.015),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'For You',
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.Yellow,
-                  ),
-                ),
-              ],
-            ),
-          ),
+        CustomTabBar(
+          tabs: const ["Listings", "Packages", "Products"],
+          onTabChanged: (index) {
+            print("Tab changed to index $index");
+          },
         ),
         Center(
           child: SizedBox(
@@ -317,12 +303,13 @@ class _HomePageState extends State<HomePage> {
 
                 return GestureDetector(
                   onTap: () => _handleServiceClick(serviceId, serviceName),
-                  child: Productcard(
+                  child: ProductCard(
                     listingType:
                         listings['HomeListing'][index]['type'].toString(),
                     listingid: listings['HomeListing'][index]['id'].toString(),
                     imageUrl: imageUrl,
                     venueName: serviceName,
+                    rating: listings['HomeListing'][index]['rating'].toString(),
                     location: listings['HomeListing'][index]['location'],
                     type: listings['HomeListing'][index]['type'].toString(),
                   ),

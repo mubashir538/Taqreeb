@@ -81,7 +81,7 @@ class _AddImageState extends State<AddImage> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           Positioned(
@@ -112,7 +112,7 @@ class _AddImageState extends State<AddImage> {
       height: Screen.height(context) * 0.2,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -128,7 +128,7 @@ class _AddImageState extends State<AddImage> {
         child: Center(
           child: CircleAvatar(
             radius: 30,
-            backgroundColor: MyColors.DarkLighter,
+            backgroundColor: MyColors.darkLighter,
             child: Image.asset(
               MyIcons.add,
               color: MyColors.white,
@@ -162,7 +162,7 @@ class _AddImageState extends State<AddImage> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(

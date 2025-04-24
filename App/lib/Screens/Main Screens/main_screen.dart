@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
         _isBusinessOwner || _isFreelancer ? _businessPages : _pages;
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -101,12 +101,12 @@ class _MainScreenState extends State<MainScreen> {
                       : '/CreateEvent',
                 );
               },
-              backgroundColor: MyColors.Yellow,
+              backgroundColor: MyColors.red,
               shape: const CircleBorder(),
               child: Icon(
                 Icons.add,
                 size: Screen.max(context) * 0.04,
-                color: MyColors.Dark,
+                color: MyColors.white,
               ),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

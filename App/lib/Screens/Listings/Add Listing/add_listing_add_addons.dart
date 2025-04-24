@@ -75,7 +75,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

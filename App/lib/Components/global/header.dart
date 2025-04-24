@@ -171,7 +171,7 @@ class _HeaderState extends State<Header> {
                       ),
                 Text(
                   'Taqreeb',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.pacifico(
                     fontSize: Screen.max(context) * 0.03,
                     fontWeight: FontWeight.w500,
                     color: MyColors.redonWhite,
@@ -202,10 +202,10 @@ class _HeaderState extends State<Header> {
             Text(
               widget.heading,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w700,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             SizedBox(
@@ -219,7 +219,7 @@ class _HeaderState extends State<Header> {
             Text(
               widget.para,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.013,
                 fontWeight: FontWeight.w400,
                 color: MyColors.white,

@@ -42,7 +42,7 @@ class YourListingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildMainContent(context),
@@ -75,10 +75,10 @@ class YourListingsScreen extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     return Text(
       "Your Listings",
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.025,
         fontWeight: FontWeight.w700,
-        color: MyColors.Yellow,
+        color: MyColors.yellow,
       ),
     );
   }
@@ -92,7 +92,8 @@ class YourListingsScreen extends StatelessWidget {
         final listing = controller.listings['YourListings'][index];
         final pictures = controller.listings['pictures'][index];
 
-        return Productcard(
+        return ProductCard(
+          rating: listing['rating'].toString(),
           isBusiness: true,
           listingType: listing['type'],
           listingid: listing['id'].toString(),

@@ -36,7 +36,7 @@ class _AddBankState extends State<AddBank> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -52,7 +52,7 @@ class _AddBankState extends State<AddBank> {
                     width: Screen.width(context) * 0.9,
                     padding: EdgeInsets.all(Screen.max(context) * 0.03),
                     decoration: BoxDecoration(
-                      color: MyColors.DarkLighter,
+                      color: MyColors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -68,7 +68,7 @@ class _AddBankState extends State<AddBank> {
                       children: [
                         Text(
                           "Add Bank Account",
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                             fontSize: Screen.max(context) * 0.025,
                             fontWeight: FontWeight.w700,
                             color: MyColors.white,

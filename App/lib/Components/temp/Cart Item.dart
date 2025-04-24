@@ -26,7 +26,7 @@ class _CartItemsState extends State<CartItems> {
           vertical: Screen.max(context) * 0.02,
           horizontal: Screen.max(context) * 0.01),
       decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           border: Border.all(
             color: MyColors.white,
           ),
@@ -39,9 +39,9 @@ class _CartItemsState extends State<CartItems> {
             padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             child: Text(
               widget.name,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.02,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -65,7 +65,7 @@ class _CartItemsState extends State<CartItems> {
                     children: [
                       Text(
                         widget.name,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.02,
                           fontWeight: FontWeight.w300,
                         ),
@@ -75,7 +75,7 @@ class _CartItemsState extends State<CartItems> {
                       ),
                       Text(
                         "Rs, ${widget.price}",
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w300,
                         ),
@@ -86,7 +86,7 @@ class _CartItemsState extends State<CartItems> {
                     height: Screen.height(context) * 0.04,
                     width: Screen.width(context) * 0.25,
                     decoration: BoxDecoration(
-                        color: MyColors.Dark,
+                        color: MyColors.dark,
                         border: Border.all(
                           color: MyColors.white,
                         ),

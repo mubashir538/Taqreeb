@@ -47,7 +47,7 @@ class _ProductInfoState extends State<ProductInfo> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: max * 0.015),
                 child: Text("${widget.rating}",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         color: MyColors.white,
                         fontSize: max * 0.03,
                         fontWeight: FontWeight.w700)),
@@ -59,7 +59,9 @@ class _ProductInfoState extends State<ProductInfo> {
                 Icon(Icons.star_half_rounded,
                     color: MyColors.red, size: max * 0.025),
               for (int i = 0;
-                  i < (5-(widget.rating.toString().length == 1
+                  i <
+                      (5 -
+                          (widget.rating.toString().length == 1
                               ? int.parse(widget.rating.toString()[0])
                               : (int.parse(widget.rating.toString()[0]) + 1)));
                   i++)
@@ -68,7 +70,7 @@ class _ProductInfoState extends State<ProductInfo> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: max * 0.015),
                 child: Text("(${formatNumber(widget.reviews)} reviews)",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         color: MyColors.whiteDarker,
                         fontSize: max * 0.015,
                         fontWeight: FontWeight.w500)),

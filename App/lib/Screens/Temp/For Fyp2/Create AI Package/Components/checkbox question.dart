@@ -34,9 +34,6 @@ class CheckBoxQuestion extends StatefulWidget {
 class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
@@ -47,7 +44,8 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
           widget.question == ""
               ? Container()
               : Padding(
-                  padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Screen.max(context) * 0.01),
                   child: Text(widget.question,
                       style: GoogleFonts.montserrat(
                           color: MyColors.white,
@@ -74,7 +72,7 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
                     widget.onChanged(widget.controller.selections);
                   });
                 },
-                activeColor: MyColors.Yellow,
+                activeColor: MyColors.yellow,
                 checkColor: Colors.black,
               );
             }).toList(),

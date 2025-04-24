@@ -67,7 +67,7 @@ class ChatIcon extends StatelessWidget {
               SizedBox(width: spacing),
               Text(
                 'Chat',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: fontSize,
                   fontWeight: FontWeight.w500,

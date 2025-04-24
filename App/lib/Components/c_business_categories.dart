@@ -29,7 +29,7 @@ class ChecklistItemsAdder extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(text,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w500,
                       color: MyColors.whiteDarker)),

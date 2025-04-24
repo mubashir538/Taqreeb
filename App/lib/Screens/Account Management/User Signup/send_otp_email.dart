@@ -109,7 +109,7 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -144,7 +144,7 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
                         child: Text(
                           'Use Contact to Verify Instead',
                           style: TextStyle(
-                            color: MyColors.Yellow,
+                            color: MyColors.yellow,
                             fontSize: Screen.max(context) * _textSizeFactor,
                           ),
                         ),

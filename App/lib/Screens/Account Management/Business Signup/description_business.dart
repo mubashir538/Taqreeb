@@ -15,7 +15,8 @@ class BusinessSignupDescription extends StatefulWidget {
   const BusinessSignupDescription({super.key});
 
   @override
-  State<BusinessSignupDescription> createState() => _BusinessSignupDescriptionState();
+  State<BusinessSignupDescription> createState() =>
+      _BusinessSignupDescriptionState();
 }
 
 class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
@@ -60,13 +61,11 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
     if (!_validateDescription()) return;
 
     await MyStorage.saveToken(
-      _descriptionController.text, 
-      MyTokens.bsdescription
-    );
-    
+        _descriptionController.text, MyTokens.bsdescription);
+
     if (mounted) {
       Navigator.pushNamed(
-        context, 
+        context,
         '/ProfilePictureUpload',
         arguments: {'type': 'Business'},
       );
@@ -122,7 +121,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                           children: [
                             Text(
                               "$_charactersLeft characters left",
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.roboto(
                                 color: MyColors.white,
                                 fontSize: Screen.max(context) * 0.018,
                                 fontWeight: FontWeight.w300,

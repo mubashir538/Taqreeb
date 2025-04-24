@@ -81,12 +81,12 @@ class FilterButton extends StatelessWidget {
             color: selected ? Colors.transparent : MyColors.whiteDarker,
             width: 1),
         borderRadius: BorderRadius.circular(10),
-        color: selected ? MyColors.DarkLighter : Colors.transparent,
+        color: selected ? MyColors.darkLighter : Colors.transparent,
       ),
       child: Center(
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
               fontSize: max * 0.015,
               fontWeight: FontWeight.w400,
               color: selected ? MyColors.white : MyColors.whiteDarker),

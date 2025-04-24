@@ -35,7 +35,7 @@ class _RecentTransactionsState extends State<RecentTransactions> {
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text("Recent Transactions",
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.02,
                       fontWeight: FontWeight.w700,
                       color: MyColors.white)),
@@ -44,7 +44,7 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                   Navigator.pushNamed(context, "/AllTransactions");
                 },
                 child: Text("See All",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.w400,
                         color: MyColors.red)),

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-
 class SlidingRow extends StatelessWidget {
   final String title;
   final List<String> images;
@@ -23,15 +22,15 @@ class SlidingRow extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: MyColors.Yellow,
+                  color: MyColors.yellow,
                 ),
               ),
               Text(
                 "see all",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,

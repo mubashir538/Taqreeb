@@ -247,7 +247,7 @@ class _BasicSignupState extends State<BasicSignup> {
         height: Screen.height(context) * 0.06,
         width: Screen.height(context) * 0.06,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(50),
         ),
         child: Center(
@@ -264,7 +264,7 @@ class _BasicSignupState extends State<BasicSignup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

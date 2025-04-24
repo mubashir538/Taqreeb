@@ -15,6 +15,21 @@ class MyTextBox extends StatefulWidget {
   final TextEditingController valueController;
   final String? errorText;
   final Function(String)? onChanged;
+  final IconData? prefixIcon; // New parameter for prefix icon
+  final Color? prefixIconColor; // Color for prefix icon
+  final double? prefixIconSize; // Size for prefix icon
+  final EdgeInsetsGeometry? contentPadding; // Custom padding
+  final Color? backgroundColor; // Background color
+  final double? borderRadius; // Border radius
+  final Color? borderColor; // Border color
+  final Color? focusedBorderColor; // Focused border color
+  final Color? errorBorderColor; // Error border color
+  final Color? textColor; // Text color
+  final Color? hintColor; // Hint text color
+  final TextStyle? textStyle; // Custom text style
+  final TextStyle? hintStyle; // Custom hint style
+  final TextStyle? errorStyle; // Custom error style
+  final BoxShadow? boxShadow; // Custom shadow
 
   const MyTextBox({
     super.key,
@@ -28,6 +43,21 @@ class MyTextBox extends StatefulWidget {
     required this.valueController,
     this.errorText,
     this.onChanged,
+    this.prefixIcon,
+    this.prefixIconColor,
+    this.prefixIconSize,
+    this.contentPadding,
+    this.backgroundColor,
+    this.borderRadius,
+    this.borderColor,
+    this.focusedBorderColor,
+    this.errorBorderColor,
+    this.textColor,
+    this.hintColor,
+    this.textStyle,
+    this.hintStyle,
+    this.errorStyle,
+    this.boxShadow,
   });
 
   @override
@@ -57,7 +87,6 @@ class _MyTextBoxState extends State<MyTextBox> {
       }
     });
 
-    // Add listener to controller for price formatting
     if (widget.isPrice) {
       _controller.addListener(_formatPrice);
     }
@@ -77,7 +106,6 @@ class _MyTextBoxState extends State<MyTextBox> {
 
     String text = _controller.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-    // Don't format if the text hasn't changed (to prevent infinite loops)
     if (text == _previousText) return;
 
     _previousText = text;
@@ -88,17 +116,11 @@ class _MyTextBoxState extends State<MyTextBox> {
       return;
     }
 
-    // Parse the number
     int num = int.tryParse(text) ?? 0;
-
-    // Format with commas
     String formatted = _formatNumberWithCommas(num);
 
-    // Only update if the formatted text is different from the current text
     if (formatted != _controller.text) {
       _controller.text = formatted;
-
-      // Move cursor to the end
       _controller.selection = TextSelection.collapsed(
         offset: formatted.length,
       );
@@ -114,6 +136,15 @@ class _MyTextBoxState extends State<MyTextBox> {
 
   @override
   Widget build(BuildContext context) {
+    final defaultBorderColor = widget.borderColor ?? Colors.transparent;
+    final focusedBorderColor = widget.focusedBorderColor ?? MyColors.red;
+    final errorBorderColor = widget.errorBorderColor ?? MyColors.red;
+    final currentBorderColor = _isFocused
+        ? focusedBorderColor
+        : (widget.errorText != null && widget.errorText!.isNotEmpty
+            ? errorBorderColor
+            : defaultBorderColor);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -122,30 +153,40 @@ class _MyTextBoxState extends State<MyTextBox> {
           height: Screen.height(context) * 0.06,
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
-            borderRadius: BorderRadius.circular(10),
+            color: widget.backgroundColor ?? MyColors.darkLighter,
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 10),
             border: Border.all(
-              color: _isFocused
-                  ? MyColors.red
-                  : (widget.errorText != null && widget.errorText!.isNotEmpty
-                      ? MyColors.red
-                      : Colors.transparent),
+              color: currentBorderColor,
               width: 2,
             ),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(102),
-                blurRadius: 4,
-                spreadRadius: 1,
-                offset: Offset(2, 2),
-              ),
+              widget.boxShadow ??
+                  BoxShadow(
+                    color: Colors.black.withAlpha(102),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                    offset: const Offset(2, 2),
+                  ),
             ],
           ),
           child: Padding(
-            padding:
+            padding: widget.contentPadding ??
                 EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
             child: Row(
               children: [
+                // Prefix icon
+                if (widget.prefixIcon != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Icon(
+                      widget.prefixIcon,
+                      color: widget.prefixIconColor ??
+                          MyColors.white.withAlpha(153),
+                      size:
+                          widget.prefixIconSize ?? Screen.max(context) * 0.025,
+                    ),
+                  ),
+
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -153,7 +194,6 @@ class _MyTextBoxState extends State<MyTextBox> {
                     onSubmitted: widget.onFieldSubmitted,
                     onChanged: (value) {
                       if (widget.onChanged != null) {
-                        // Pass the raw number without commas to the callback
                         String rawValue =
                             value.replaceAll(RegExp(r'[^0-9]'), '');
                         widget.onChanged!(rawValue);
@@ -169,22 +209,24 @@ class _MyTextBoxState extends State<MyTextBox> {
                         ? [FilteringTextInputFormatter.digitsOnly]
                         : widget.isPrice
                             ? [
-                                // Allow only digits and commas
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[0-9,]')),
                               ]
                             : null,
-                    style: GoogleFonts.montserrat(
-                      fontSize: Screen.max(context) * 0.018,
-                      fontWeight: FontWeight.w400,
-                      color: MyColors.white,
-                    ),
+                    style: widget.textStyle ??
+                        GoogleFonts.roboto(
+                          fontSize: Screen.max(context) * 0.018,
+                          fontWeight: FontWeight.w400,
+                          color: widget.textColor ?? MyColors.white,
+                        ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
-                      hintStyle: GoogleFonts.montserrat(
-                        color: MyColors.white.withAlpha(153),
-                        fontSize: Screen.max(context) * 0.015,
-                      ),
+                      hintStyle: widget.hintStyle ??
+                          GoogleFonts.roboto(
+                            color: widget.hintColor ??
+                                MyColors.white.withAlpha(153),
+                            fontSize: Screen.max(context) * 0.015,
+                          ),
                       border: InputBorder.none,
                     ),
                   ),
@@ -210,10 +252,11 @@ class _MyTextBoxState extends State<MyTextBox> {
             padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
             child: Text(
               widget.errorText!,
-              style: GoogleFonts.montserrat(
-                color: MyColors.red,
-                fontSize: Screen.max(context) * 0.015,
-              ),
+              style: widget.errorStyle ??
+                  GoogleFonts.roboto(
+                    color: errorBorderColor,
+                    fontSize: Screen.max(context) * 0.015,
+                  ),
             ),
           ),
       ],

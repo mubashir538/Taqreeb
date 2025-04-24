@@ -70,20 +70,20 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.dark(
-              primary: MyColors.Yellow,
-              onPrimary: MyColors.Dark,
-              surface: MyColors.DarkLighter,
+              primary: MyColors.yellow,
+              onPrimary: MyColors.dark,
+              surface: MyColors.darkLighter,
               onSurface: MyColors.white,
             ),
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: MyColors.DarkLighter,
+              backgroundColor: MyColors.darkLighter,
               hourMinuteTextColor: MyColors.white,
               dayPeriodTextColor: MyColors.white,
-              dialHandColor: MyColors.Yellow,
-              dialBackgroundColor: MyColors.Dark.withAlpha(127),
-              hourMinuteColor: MyColors.Dark.withAlpha(127),
-              dayPeriodColor: MyColors.Dark.withAlpha(127),
-              entryModeIconColor: MyColors.Yellow,
+              dialHandColor: MyColors.yellow,
+              dialBackgroundColor: MyColors.dark.withAlpha(127),
+              hourMinuteColor: MyColors.dark.withAlpha(127),
+              dayPeriodColor: MyColors.dark.withAlpha(127),
+              entryModeIconColor: MyColors.yellow,
             ),
           ),
           child: child!,
@@ -117,11 +117,11 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
           vertical: maxDimension * 0.015,
         ),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: widget.focusNode?.hasFocus ?? false
-                ? MyColors.Yellow
+                ? MyColors.yellow
                 : MyColors.whiteDarker,
             width: 1,
           ),
@@ -133,7 +133,7 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
                   _selectedTime != null
                       ? _formatTime(_selectedTime!)
                       : widget.hint,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: maxDimension * 0.015,
                     fontWeight: FontWeight.w400,
                     color: _selectedTime != null
@@ -143,7 +143,7 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
             ),
             Icon(
               Icons.access_time,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
               size: maxDimension * 0.02,
             ),
           ],

@@ -263,7 +263,7 @@ class _CreateEventState extends State<CreateEvent> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: MyColors.Dark,
+        backgroundColor: MyColors.dark,
         body: Stack(
           children: [
             _buildContent(),
@@ -308,7 +308,7 @@ class _CreateEventState extends State<CreateEvent> {
           child: Container(
             width: Screen.width(context),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),

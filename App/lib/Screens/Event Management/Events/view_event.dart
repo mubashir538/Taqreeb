@@ -103,7 +103,7 @@ class _EventDetailsState extends State<EventDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -155,10 +155,10 @@ class _EventDetailsState extends State<EventDetails> {
   Widget _buildEventHeader() {
     return Text(
       _eventData.eventDetails['name'],
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.03,
         fontWeight: FontWeight.w700,
-        color: MyColors.Yellow,
+        color: MyColors.yellow,
       ),
     );
   }
@@ -278,7 +278,7 @@ class _EventDetailsState extends State<EventDetails> {
         horizontal: Screen.width(context) * 0.03,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -322,10 +322,10 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   TextStyle _buildTextStyle({required FontWeight fontWeight}) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * 0.017,
       fontWeight: fontWeight,
-      color: fontWeight == FontWeight.w600 ? MyColors.Yellow : MyColors.white,
+      color: fontWeight == FontWeight.w600 ? MyColors.yellow : MyColors.white,
     );
   }
 }

@@ -93,7 +93,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -125,7 +125,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.all(Screen.width(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
       ),
       child: Column(
@@ -146,7 +146,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.width(context) * 0.045,
         fontWeight: FontWeight.bold,
         color: Colors.white,
@@ -275,7 +275,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   Widget _buildFieldLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.width(context) * 0.035,
         color: Colors.grey,
       ),
@@ -287,7 +287,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.all(Screen.width(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
       ),
       child: Column(
@@ -318,7 +318,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             fontSize: Screen.width(context) * (isTotal ? 0.045 : 0.035),
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
             color: isTotal ? Colors.white : Colors.grey,
@@ -326,7 +326,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         ),
         Text(
           value,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             fontSize: Screen.width(context) * (isTotal ? 0.045 : 0.04),
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -374,7 +374,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         },
         child: Text(
           'Cancel Payment',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: MyColors.white,
             fontSize: Screen.width(context) * 0.035,
           ),
@@ -389,7 +389,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         Center(
           child: Text(
             'By proceeding, you agree to our Terms and Privacy Policy',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.width(context) * 0.03,
               color: Colors.grey,
             ),
@@ -400,7 +400,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         Center(
           child: Text(
             'Secure payment processing by Stripe',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.width(context) * 0.03,
               color: Colors.grey,
             ),

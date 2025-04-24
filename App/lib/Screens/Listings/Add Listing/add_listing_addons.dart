@@ -68,7 +68,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -103,10 +103,10 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
         "Add-Ons",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );
@@ -121,7 +121,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
         vertical: Screen.height(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -154,10 +154,10 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
               Expanded(
                 child: Text(
                   addon['name'],
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ),
@@ -165,7 +165,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
                 addon['perhead'].toLowerCase() == 'yes'
                     ? '${addon['price']}/${addon['headtype']}'
                     : addon['price'],
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
@@ -205,11 +205,11 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   Widget _buildAddButton() {
     return FloatingActionButton(
-      backgroundColor: MyColors.Yellow,
+      backgroundColor: MyColors.yellow,
       onPressed: _navigateToAddAddon,
       child: Icon(
         Icons.add,
-        color: MyColors.Dark,
+        color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),
     );

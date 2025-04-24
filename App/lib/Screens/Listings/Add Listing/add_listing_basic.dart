@@ -149,7 +149,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -163,7 +163,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
     return RefreshIndicator(
       color: MyColors.red,
       displacement: Screen.height(context) * 0.2,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       onRefresh: _handleRefresh,
       child: SingleChildScrollView(
         child: Column(
@@ -212,7 +212,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
         children: [
           Text(
             "${_formController.charactersLeft} characters left",
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: MyColors.white,
               fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.w300,

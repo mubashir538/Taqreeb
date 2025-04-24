@@ -67,7 +67,7 @@ class _WalletScreenState extends State<WalletScreen> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _isLoading

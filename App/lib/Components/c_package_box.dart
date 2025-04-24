@@ -32,7 +32,7 @@ class _PackageBoxState extends State<PackageBox> {
           height: isCollapsed ? Screen.height(context) * 0.07 : null,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               boxShadow: [BoxShadow(color: Colors.black, blurRadius: 5)]),
           child: Column(
               mainAxisAlignment: isCollapsed
@@ -46,7 +46,7 @@ class _PackageBoxState extends State<PackageBox> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(widget.packagename,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: MyColors.white)),
@@ -74,7 +74,7 @@ class _PackageBoxState extends State<PackageBox> {
                           Container(
                             margin: EdgeInsets.all(Screen.max(context) * 0.02),
                             child: Text(widget.packagedetails,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w300,
                                     color: MyColors.white)),
@@ -85,10 +85,10 @@ class _PackageBoxState extends State<PackageBox> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(widget.packageprice,
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.roboto(
                                         fontSize: Screen.max(context) * 0.02,
                                         fontWeight: FontWeight.w600,
-                                        color: MyColors.Yellow)),
+                                        color: MyColors.yellow)),
                               ],
                             ),
                           )

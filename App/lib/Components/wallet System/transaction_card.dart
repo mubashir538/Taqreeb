@@ -29,7 +29,7 @@ class _TransactionCardState extends State<TransactionCard> {
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -60,7 +60,7 @@ class _TransactionCardState extends State<TransactionCard> {
                   children: [
                     Text(
                       widget.paidBy,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.017,
                         fontWeight: FontWeight.w400,
                         color: MyColors.white,
@@ -68,7 +68,7 @@ class _TransactionCardState extends State<TransactionCard> {
                     ),
                     Text(
                       widget.date,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.013,
                         fontWeight: FontWeight.w300,
                         color: MyColors.white,
@@ -80,7 +80,7 @@ class _TransactionCardState extends State<TransactionCard> {
             ),
             Text(
               (widget.type == "Deposit" ? "-" : "+") + widget.amount,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.017,
                 fontWeight: FontWeight.w400,
                 color: widget.type == "Deposit" ? MyColors.red : MyColors.green,

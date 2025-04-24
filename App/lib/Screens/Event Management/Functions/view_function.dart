@@ -164,7 +164,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -227,10 +227,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
       padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
       child: Text(
         _eventName,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.03,
           fontWeight: FontWeight.w700,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );
@@ -245,7 +245,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
       width: Screen.width(context) * 0.9,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(16)),
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
       ),
       child: Column(
         children: [
@@ -270,7 +270,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
       child: Center(
         child: Text(
           function['type'] ?? '',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             fontSize: Screen.max(context) * 0.02,
             fontWeight: FontWeight.w600,
             color: MyColors.white,
@@ -284,7 +284,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     return Container(
       width: Screen.width(context) * 0.9,
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(16),
           bottomRight: Radius.circular(16),
@@ -337,7 +337,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
               heading,
               style: _buildTextStyle(
                 fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             Text(
@@ -356,17 +356,18 @@ class _FunctionDetailState extends State<FunctionDetail> {
         children: [
           Text(
             booking['type'].toString(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w600,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
-          Productcard(
-            mywidth: Screen.width(context) * 0.85,
+          ProductCard(
+            myWidth: Screen.width(context) * 0.85,
             listingType: booking['listing']?['type']?.toString() ?? '',
             listingid: booking['listing']?['id']?.toString() ?? '',
             imageUrl: _getBookingImageUrl(booking),
+            rating: booking['listing']?['rating'] ?? '',
             venueName: booking['listing']?['name'] ?? '',
             location: booking['listing']?['location'] ?? '',
             type: booking['listing']?['type']?.toString() ?? '',
@@ -413,7 +414,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         horizontal: Screen.width(context) * 0.03,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -443,7 +444,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     required FontWeight fontWeight,
     Color color = Colors.white, // Use Flutter's built-in Colors.white
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize:
           Screen.max(context) * (fontWeight == FontWeight.w600 ? 0.02 : 0.015),
       fontWeight: fontWeight,

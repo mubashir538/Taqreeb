@@ -51,10 +51,10 @@ class _HeadersecondaryState extends State<Headersecondary> {
                   Text(
                     widget.heading,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w700,
-                        color: MyColors.Yellow),
+                        color: MyColors.yellow),
                   ),
                   SizedBox(
                       height: widget.para.isNotEmpty || widget.image.isNotEmpty
@@ -68,7 +68,7 @@ class _HeadersecondaryState extends State<Headersecondary> {
                   Text(
                     widget.para,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.013,
                         fontWeight: FontWeight.w400,
                         color: MyColors.white),

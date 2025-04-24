@@ -315,7 +315,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(Icons.add_circle, color: MyColors.Yellow),
+                  icon: Icon(Icons.add_circle, color: MyColors.yellow),
                   onPressed: addProgramDetail,
                 ),
               ),
@@ -379,7 +379,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(Icons.add_circle, color: MyColors.Yellow),
+                  icon: Icon(Icons.add_circle, color: MyColors.yellow),
                   onPressed: addContactInfo,
                 ),
               ),
@@ -403,7 +403,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       margin: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -411,10 +411,10 @@ class _CreateInvitationState extends State<CreateInvitation> {
         children: [
           Text(
             title,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
           SizedBox(height: 10),

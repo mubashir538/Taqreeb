@@ -29,7 +29,7 @@ class SearchBox extends StatelessWidget {
         height: Screen.height(context) * 0.07,
         width: width == 0 ? Screen.width(context) * 0.8 : width,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
@@ -50,7 +50,7 @@ class SearchBox extends StatelessWidget {
                     onTap: onclick,
                     controller: controller,
                     onChanged: onChanged,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
@@ -58,7 +58,7 @@ class SearchBox extends StatelessWidget {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: hint,
-                      hintStyle: GoogleFonts.montserrat(
+                      hintStyle: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.015,
                         color: MyColors.whiteDarker,
                       ),

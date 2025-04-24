@@ -107,13 +107,13 @@ class _CategoryAddonsState extends State<CategoryAddons> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            backgroundColor: MyColors.Dark,
+            backgroundColor: MyColors.dark,
             title: Text(
               'Add Add-Ons',
               style: _buildTextStyle(
                 fontSize: 0.02,
                 fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             content: Column(
@@ -280,7 +280,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     FontWeight fontWeight = FontWeight.w400,
     required Color color,
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -303,7 +303,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             style: _buildTextStyle(
               fontSize: 0.025,
               fontWeight: FontWeight.w600,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
           Padding(
@@ -343,7 +343,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
           'Add-On ${index + 1}',
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         _buildEditableField(

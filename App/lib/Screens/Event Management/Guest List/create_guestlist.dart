@@ -22,7 +22,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         return Container(
           padding: EdgeInsets.all(maxThing * 0.02),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius:
                 BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
           ),
@@ -76,7 +76,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         ? Screen.width(context)
         : Screen.height(context);
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Row(
         children: [
           SingleChildScrollView(
@@ -96,11 +96,11 @@ class _CreateGuestListState extends State<CreateGuestList> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: MyColors.Yellow,
+        backgroundColor: MyColors.yellow,
         onPressed: () => _showOptions(context, maxThing, Screen.width(context)),
         child: Icon(
           Icons.add,
-          color: MyColors.Dark,
+          color: MyColors.dark,
           size: maxThing * 0.04,
         ),
       ),

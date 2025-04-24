@@ -9,14 +9,14 @@ class RadioButtonQuestion extends StatefulWidget {
     super.key,
     required this.options,
     required this.question,
-    required this.myValue, 
-    required this.onChanged, 
+    required this.myValue,
+    required this.onChanged,
   });
 
   final String question;
   final List<String> options;
-  String? myValue; 
-  final Function(String?) onChanged; 
+  String? myValue;
+  final Function(String?) onChanged;
 
   @override
   State<RadioButtonQuestion> createState() => _RadioButtonQuestionState();
@@ -25,9 +25,6 @@ class RadioButtonQuestion extends StatefulWidget {
 class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
@@ -38,7 +35,8 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
           widget.question == ''
               ? Container()
               : Padding(
-                  padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Screen.max(context) * 0.01),
                   child: Text(widget.question,
                       style: GoogleFonts.montserrat(
                           color: MyColors.white,
@@ -64,7 +62,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                           });
                           widget.onChanged(value);
                         },
-                        activeColor: MyColors.Yellow,
+                        activeColor: MyColors.yellow,
                       ),
                   ],
                 )
@@ -85,9 +83,9 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                             setState(() {
                               widget.myValue = value;
                             });
-                            widget.onChanged(value); 
+                            widget.onChanged(value);
                           },
-                          activeColor: MyColors.Yellow,
+                          activeColor: MyColors.yellow,
                         ),
                       ),
                   ],

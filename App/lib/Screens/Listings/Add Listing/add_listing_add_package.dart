@@ -62,7 +62,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -71,7 +71,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: (Screen.height(context) * 0.03) + 
+                    height: (Screen.height(context) * 0.03) +
                         UI_Management.headerHeight,
                   ),
                   _buildNameField(),
@@ -142,18 +142,18 @@ class PackageFormController {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  
+
   final FocusNode nameFocus = FocusNode();
   final FocusNode detailsFocus = FocusNode();
   final FocusNode priceFocus = FocusNode();
-  
+
   Map<String, dynamic> args = {};
 
   void addPackage() {
     if (!args.containsKey('packages')) {
       args['packages'] = [];
     }
-    
+
     args['packages'].add({
       'name': _capitalize(nameController.text),
       'details': _capitalize(detailsController.text),

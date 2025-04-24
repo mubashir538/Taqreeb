@@ -41,11 +41,11 @@ class CalendarViewState extends State<CalendarView> {
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
               shape: BoxShape.rectangle,
             ),
-            defaultTextStyle: GoogleFonts.montserrat(color: MyColors.white),
-            weekendTextStyle: GoogleFonts.montserrat(color: MyColors.red),
+            defaultTextStyle: GoogleFonts.roboto(color: MyColors.white),
+            weekendTextStyle: GoogleFonts.roboto(color: MyColors.red),
           ),
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
@@ -53,7 +53,7 @@ class CalendarViewState extends State<CalendarView> {
             leftChevronIcon: Icon(Icons.chevron_left, color: MyColors.white),
             rightChevronIcon: Icon(Icons.chevron_right, color: MyColors.white),
             titleTextStyle:
-                GoogleFonts.montserrat(color: MyColors.white, fontSize: 20),
+                GoogleFonts.roboto(color: MyColors.white, fontSize: 20),
           ),
           calendarBuilders: CalendarBuilders(
             defaultBuilder: (context, day, focusedDay) {
@@ -70,7 +70,7 @@ class CalendarViewState extends State<CalendarView> {
                     child: Center(
                       child: Text(
                         '${day.day}',
-                        style: GoogleFonts.montserrat(color: MyColors.white),
+                        style: GoogleFonts.roboto(color: MyColors.white),
                       ),
                     ),
                   ),

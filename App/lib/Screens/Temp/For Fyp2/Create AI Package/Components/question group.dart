@@ -22,7 +22,7 @@ class QuestionGroup extends StatelessWidget {
           child: Text(
             heading,
             style: GoogleFonts.montserrat(
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
                 fontWeight: FontWeight.w500,
                 fontSize: Screen.max(context) * 0.02),
           ),

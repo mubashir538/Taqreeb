@@ -95,7 +95,7 @@ class FreelancerSignupDescriptionState
         Provider.of<FreelancerSignupDescriptionViewModel>(context);
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -120,7 +120,7 @@ class FreelancerSignupDescriptionState
                       children: [
                         Text(
                           "${viewModel.charactersLeft.toString()} characters left",
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                             color: MyColors.white,
                             fontSize: Screen.max(context) * 0.018,
                             fontWeight: FontWeight.w300,

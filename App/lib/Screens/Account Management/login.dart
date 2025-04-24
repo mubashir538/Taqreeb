@@ -215,7 +215,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           if (UI_Management.headerHeight > 0)
@@ -258,10 +258,10 @@ class _LoginState extends State<Login> {
                                 onTap: _navigateToForgotPassword,
                                 child: Text(
                                   "Forgot Password?",
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.012,
                                     fontWeight: FontWeight.w300,
-                                    color: MyColors.Yellow,
+                                    color: MyColors.yellow,
                                   ),
                                 ),
                               ),

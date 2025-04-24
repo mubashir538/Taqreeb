@@ -9,6 +9,14 @@ class ColoredButton extends StatefulWidget {
   final double width;
   final VoidCallback? onPressed;
   final double textSize;
+  final IconData? icon; // New parameter for icon
+  final double? iconSize;
+  final Color? iconColor;
+  final double gapBetweenIconAndText; // Space between icon and text
+  final Gradient? gradient; // Gradient background
+  final Color? buttonColor; // Solid color (overrides gradient if both provided)
+  final BoxBorder? border;
+  final BorderRadius? borderRadius;
 
   const ColoredButton({
     required this.text,
@@ -17,6 +25,14 @@ class ColoredButton extends StatefulWidget {
     this.height = 0,
     this.width = 0,
     this.onPressed,
+    this.icon,
+    this.iconSize,
+    this.iconColor,
+    this.gapBetweenIconAndText = 8.0,
+    this.gradient,
+    this.buttonColor,
+    this.border,
+    this.borderRadius,
   });
 
   @override
@@ -27,11 +43,10 @@ class ColoredButtonState extends State<ColoredButton> {
   bool _isPressed = false;
 
   void _handleTapDown(TapDownDetails details) {
-    if(mounted){
-
-    setState(() {
-      _isPressed = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isPressed = true;
+      });
     }
   }
 
@@ -52,6 +67,10 @@ class ColoredButtonState extends State<ColoredButton> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = widget.buttonColor ?? MyColors.red;
+    final pressedColor = effectiveColor.withAlpha(204);
+    final defaultBorderRadius = widget.borderRadius ?? BorderRadius.circular(10);
+    
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: _handleTapUp,
@@ -67,8 +86,21 @@ class ColoredButtonState extends State<ColoredButton> {
             (widget.width != 0 ? widget.width : Screen.width(context) * 0.9) *
                 (_isPressed ? 0.95 : 1.0),
         decoration: BoxDecoration(
-          color: _isPressed ? MyColors.red.withAlpha(204) : MyColors.red,
-          borderRadius: BorderRadius.circular(10),
+          color: widget.gradient == null
+              ? (_isPressed ? pressedColor : effectiveColor)
+              : null,
+          gradient: widget.gradient != null
+              ? (_isPressed 
+                  ? LinearGradient(
+                      colors: [
+                        pressedColor.withOpacity(0.8),
+                        pressedColor.withOpacity(0.9),
+                      ],
+                    )
+                  : widget.gradient)
+              : null,
+          borderRadius: defaultBorderRadius,
+          border: widget.border,
           boxShadow: _isPressed
               ? []
               : [
@@ -80,15 +112,28 @@ class ColoredButtonState extends State<ColoredButton> {
                 ],
         ),
         child: Center(
-          child: Text(
-            widget.text,
-            style: GoogleFonts.montserrat(
-              fontSize: widget.textSize == 0
-                  ? Screen.max(context) * 0.018
-                  : widget.textSize,
-              fontWeight: FontWeight.w500,
-              color: MyColors.redonWhite,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (widget.icon != null) ...[
+                Icon(
+                  widget.icon,
+                  size: widget.iconSize ?? Screen.max(context) * 0.022,
+                  color: widget.iconColor ?? MyColors.redonWhite,
+                ),
+                SizedBox(width: widget.gapBetweenIconAndText),
+              ],
+              Text(
+                widget.text,
+                style: GoogleFonts.roboto(
+                  fontSize: widget.textSize == 0
+                      ? Screen.max(context) * 0.018
+                      : widget.textSize,
+                  fontWeight: FontWeight.w500,
+                  color: MyColors.redonWhite,
+                ),
+              ),
+            ],
           ),
         ),
       ),

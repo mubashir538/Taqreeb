@@ -77,7 +77,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Future<void> _showEventSelectionDialog() async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       builder: (context) => _buildEventSelectionDialog(),
     );
   }
@@ -87,7 +87,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     return Container(
       padding: EdgeInsets.all(maxDimension * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.Dark,
+        color: MyColors.dark,
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(maxDimension * 0.05)),
       ),
@@ -122,14 +122,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(width: 1, color: MyColors.red),
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
       ),
       child: ExpansionTile(
         collapsedShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: MyColors.red,
-        collapsedBackgroundColor: MyColors.DarkLighter,
+        collapsedBackgroundColor: MyColors.darkLighter,
         title: Text(
           event['name'],
           style: _buildTextStyle(fontSize: 0.015, color: MyColors.white),
@@ -313,7 +313,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     FontWeight fontWeight = FontWeight.w400,
     required Color color,
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -418,7 +418,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           onTap: _showEventSelectionDialog,
           child: Icon(
             Icons.add,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
             size: Screen.max(context) * 0.05,
           ),
         ),
@@ -506,7 +506,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Widget _buildRatingDisplay() {
     return Row(
       children: [
-        Icon(Icons.star, color: MyColors.Yellow),
+        Icon(Icons.star, color: MyColors.yellow),
         Text(
           "${widget.listing['Listing']['rating']} (${widget.listing['Listing']['ratingCount']})",
           style: _buildTextStyle(color: MyColors.white),

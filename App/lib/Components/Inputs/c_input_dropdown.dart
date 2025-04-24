@@ -36,7 +36,7 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
         onSaved: (value) => widget.onFieldSubmitted,
         decoration: InputDecoration(
           labelText: widget.labelText,
-          labelStyle: GoogleFonts.montserrat(
+          labelStyle: GoogleFonts.roboto(
             color: Colors.white,
             fontSize: Screen.width(context) * 0.03,
           ),
@@ -49,10 +49,10 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
             borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
-          fillColor: MyColors.DarkLighter,
+          fillColor: MyColors.darkLighter,
         ),
-        dropdownColor: MyColors.DarkLighter,
-        style: GoogleFonts.montserrat(
+        dropdownColor: MyColors.darkLighter,
+        style: GoogleFonts.roboto(
           color: MyColors.white,
           fontSize: Screen.width(context) * 0.035,
         ),

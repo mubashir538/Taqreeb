@@ -326,7 +326,7 @@ class _ChatBoxState extends State<ChatBox> {
                   _chatName ?? '',
                   softWrap: true,
                   maxLines: 2,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.w600,
                   ),
@@ -334,7 +334,7 @@ class _ChatBoxState extends State<ChatBox> {
               ),
               Text(
                 _chatUserName ?? '',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w400,
                 ),
@@ -385,7 +385,7 @@ class _ChatBoxState extends State<ChatBox> {
                     children: [
                       Text(
                         _formatDate(messageDate),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.01,
                           fontWeight: FontWeight.w500,
                         ),
@@ -423,7 +423,7 @@ class _ChatBoxState extends State<ChatBox> {
       margin: EdgeInsets.only(bottom: 8.0),
       padding: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
@@ -450,7 +450,7 @@ class _ChatBoxState extends State<ChatBox> {
               children: [
                 Text(
                   _listing['name'] ?? '',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: MyColors.white,
@@ -461,7 +461,7 @@ class _ChatBoxState extends State<ChatBox> {
                 SizedBox(height: 4),
                 Text(
                   _listing['description'] ?? '',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: 14,
                     color: MyColors.white.withOpacity(0.7),
                   ),
@@ -471,9 +471,9 @@ class _ChatBoxState extends State<ChatBox> {
                 SizedBox(height: 4),
                 Text(
                   'www.taqreeb.com', // Replace with your actual domain
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: 12,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ],
@@ -500,7 +500,7 @@ class _ChatBoxState extends State<ChatBox> {
         Row(
           children: [
             IconButton(
-              icon: Icon(Icons.image, color: MyColors.Yellow),
+              icon: Icon(Icons.image, color: MyColors.yellow),
               onPressed: _sendImage,
             ),
             Expanded(
@@ -508,7 +508,7 @@ class _ChatBoxState extends State<ChatBox> {
                 controller: _messageController,
                 decoration: InputDecoration(
                   hintText: "Type a message",
-                  fillColor: MyColors.DarkLighter,
+                  fillColor: MyColors.darkLighter,
                   filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -531,7 +531,7 @@ class _ChatBoxState extends State<ChatBox> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           if (_isLoading)

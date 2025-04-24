@@ -43,14 +43,14 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     final user = viewModel.user;
     final items = viewModel.items;
 
-    TextStyle style = GoogleFonts.montserrat(
+    TextStyle style = GoogleFonts.roboto(
       fontSize: Screen.max(context) * 0.015,
       fontWeight: FontWeight.w300,
       color: MyColors.white,
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -73,7 +73,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                       SizedBox(height: Screen.max(context) * 0.02),
                       Text(
                         user['businessInfo']['businessName'],
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontWeight: FontWeight.w500,
                           fontSize: Screen.max(context) * 0.03,
@@ -159,7 +159,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           children: [
                             Text(
                               "Category",
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.roboto(
                                 color: MyColors.white,
                                 fontWeight: FontWeight.w500,
                                 fontSize: Screen.max(context) * 0.02,

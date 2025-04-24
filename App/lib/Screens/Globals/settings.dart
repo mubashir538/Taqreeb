@@ -78,7 +78,7 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       backgroundColor: themeProvider.themeMode == ThemeMode.dark
-          ? MyColors.Dark
+          ? MyColors.dark
           : MyColors.white, // Use theme-based colors
       body: Stack(
         children: [
@@ -107,13 +107,13 @@ class _SettingsState extends State<Settings> {
                                       decoration: BoxDecoration(
                                         color: themeProvider.themeMode ==
                                                 ThemeMode.dark
-                                            ? MyColors.DarkLighter
+                                            ? MyColors.darkLighter
                                             : MyColors.whiteDarker,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.DarkLighter
+                                                ? MyColors.darkLighter
                                                 : MyColors.whiteDarker),
                                       ),
                                       child: Row(
@@ -125,7 +125,7 @@ class _SettingsState extends State<Settings> {
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
-                                                : MyColors.Dark,
+                                                : MyColors.dark,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -136,7 +136,7 @@ class _SettingsState extends State<Settings> {
                                               child: Text(
                                                 "Business Owner Mode",
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.montserrat(
+                                                style: GoogleFonts.roboto(
                                                   fontSize:
                                                       Screen.max(context) *
                                                           0.015,
@@ -145,7 +145,7 @@ class _SettingsState extends State<Settings> {
                                                       themeProvider.themeMode ==
                                                               ThemeMode.dark
                                                           ? MyColors.white
-                                                          : MyColors.Dark,
+                                                          : MyColors.dark,
                                                 ),
                                               ),
                                             ),
@@ -204,13 +204,13 @@ class _SettingsState extends State<Settings> {
                                       decoration: BoxDecoration(
                                         color: themeProvider.themeMode ==
                                                 ThemeMode.dark
-                                            ? MyColors.DarkLighter
+                                            ? MyColors.darkLighter
                                             : MyColors.whiteDarker,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.DarkLighter
+                                                ? MyColors.darkLighter
                                                 : MyColors.whiteDarker),
                                       ),
                                       child: Row(
@@ -222,7 +222,7 @@ class _SettingsState extends State<Settings> {
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
-                                                : MyColors.Dark,
+                                                : MyColors.dark,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -233,7 +233,7 @@ class _SettingsState extends State<Settings> {
                                               child: Text(
                                                 "Freelancer Mode",
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.montserrat(
+                                                style: GoogleFonts.roboto(
                                                   fontSize:
                                                       Screen.max(context) *
                                                           0.015,
@@ -242,7 +242,7 @@ class _SettingsState extends State<Settings> {
                                                       themeProvider.themeMode ==
                                                               ThemeMode.dark
                                                           ? MyColors.white
-                                                          : MyColors.Dark,
+                                                          : MyColors.dark,
                                                 ),
                                               ),
                                             ),

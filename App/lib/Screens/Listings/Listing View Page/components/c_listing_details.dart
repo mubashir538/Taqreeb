@@ -88,10 +88,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
       final token = await MyStorage.getToken(MyTokens.accessToken);
       final response = await MyApi.getRequest(
         endpoint: 'getListingDetails/${widget.listing['Listing']['type']}',
-        headers: {
-          'Authorization':
-              'Bearer $token'
-        },
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (mounted) {
@@ -166,7 +163,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     FontWeight fontWeight = FontWeight.w400,
     required Color color,
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -217,7 +214,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           widget.headings[index],
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         _isEditing[index]
@@ -292,7 +289,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           label,
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         isEditing
@@ -372,7 +369,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           widget.headings[index],
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         widget.headings[index] == 'portfolio Link'

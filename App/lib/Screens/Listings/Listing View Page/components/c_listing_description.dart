@@ -96,7 +96,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
     FontWeight fontWeight = FontWeight.w300,
     required Color color,
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -127,7 +127,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
         style: _buildTextStyle(
           fontSize: 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );

@@ -64,7 +64,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               inactiveTrackColor: MyColors.whiteDarker,
               thumbColor: MyColors.red,
               overlayColor: MyColors.red.withAlpha(51),
-              valueIndicatorTextStyle: GoogleFonts.montserrat(
+              valueIndicatorTextStyle: GoogleFonts.roboto(
                 color: Colors.white,
                 fontSize: Screen.max(context) * 0.015,
               ),
@@ -85,12 +85,12 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
                     ),
               onChanged: (RangeValues newRange) {
                 setState(() {
-                  currentRange = widget.price?RangeValues(
-                    (newRange.start / 10000).round() * 10000.toDouble(),
-                    (newRange.end / 10000).round() * 10000.toDouble(),
-                  ): RangeValues(
-                    newRange.start,newRange.end
-                  );
+                  currentRange = widget.price
+                      ? RangeValues(
+                          (newRange.start / 10000).round() * 10000.toDouble(),
+                          (newRange.end / 10000).round() * 10000.toDouble(),
+                        )
+                      : RangeValues(newRange.start, newRange.end);
 
                   widget.controller
                       .updateValues(currentRange.start, currentRange.end);
@@ -110,13 +110,13 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
                   widget.startLabel == ""
                       ? 'Rs. ${NumberFormat("#,##0").format(currentRange.start.round())}'
                       : widget.startLabel,
-                  style: GoogleFonts.montserrat(color: MyColors.white),
+                  style: GoogleFonts.roboto(color: MyColors.white),
                 ),
                 Text(
                   widget.endLabel == ""
                       ? 'Rs. ${NumberFormat("#,##0").format(currentRange.end.round())}'
                       : widget.endLabel,
-                  style: GoogleFonts.montserrat(color: MyColors.white),
+                  style: GoogleFonts.roboto(color: MyColors.white),
                 ),
               ],
             ),

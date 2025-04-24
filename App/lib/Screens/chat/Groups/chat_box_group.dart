@@ -183,7 +183,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   children: [
                     Text(
                       senderName,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         color: MyColors.red,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -195,12 +195,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color:
-                              isSentByMe ? MyColors.red : MyColors.DarkLighter,
+                              isSentByMe ? MyColors.red : MyColors.darkLighter,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           messageText,
-                          style: GoogleFonts.montserrat(color: MyColors.white),
+                          style: GoogleFonts.roboto(color: MyColors.white),
                         ),
                       ),
                     if (messageType == 'image')
@@ -216,7 +216,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                             return Container(
                               height: 150,
                               width: 200,
-                              color: MyColors.DarkLighter,
+                              color: MyColors.darkLighter,
                               child: const Center(
                                   child: CircularProgressIndicator()),
                             );
@@ -225,7 +225,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                             return Container(
                               height: 150,
                               width: 200,
-                              color: MyColors.DarkLighter,
+                              color: MyColors.darkLighter,
                               child: const Icon(Icons.error, color: Colors.red),
                             );
                           },
@@ -236,8 +236,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
                           _formatTimestamp(timestamp),
-                          style: GoogleFonts.montserrat(
-                            color: MyColors.DarkLighter,
+                          style: GoogleFonts.roboto(
+                            color: MyColors.darkLighter,
                             fontSize: 12,
                           ),
                         ),
@@ -258,7 +258,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.image, color: MyColors.Yellow),
+            icon: Icon(Icons.image, color: MyColors.yellow),
             onPressed: _sendImage,
           ),
           Expanded(
@@ -266,7 +266,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               controller: _messageController,
               decoration: InputDecoration(
                 hintText: "Type a message",
-                fillColor: MyColors.DarkLighter,
+                fillColor: MyColors.darkLighter,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -303,7 +303,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               const SizedBox(width: 15),
               Text(
                 _groupName!,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -331,13 +331,13 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: MyColors.Dark,
+        backgroundColor: MyColors.dark,
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         children: [
           const Header(),

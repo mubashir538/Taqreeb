@@ -29,7 +29,7 @@ class SendMessage extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -38,7 +38,7 @@ class SendMessage extends StatelessWidget {
           // Listing name
           Text(
             listing!['name'] ?? '',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: MyColors.white,
@@ -67,7 +67,7 @@ class SendMessage extends StatelessWidget {
               listing!['description'].toString().isNotEmpty)
             Text(
               listing!['description'] ?? '',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: 14,
                 color: MyColors.white.withAlpha(178),
               ),
@@ -80,9 +80,9 @@ class SendMessage extends StatelessWidget {
           // Website link
           Text(
             'www.taqreeb.com', // Replace with your actual domain
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: 12,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ],
@@ -101,7 +101,7 @@ class SendMessage extends StatelessWidget {
         children: [
           Text(
             time,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontWeight: FontWeight.w300,
               fontSize: Screen.max(context) * 0.013,
             ),
@@ -137,7 +137,7 @@ class SendMessage extends StatelessWidget {
                     text,
                     softWrap: true,
                     textAlign: TextAlign.end,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
@@ -151,7 +151,7 @@ class SendMessage extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         "Voice Note",
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontSize: Screen.max(context) * 0.015,
                         ),

@@ -12,10 +12,10 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       appBar: AppBar(
         title: const Text('Add Product'),
-        backgroundColor: MyColors.Dark,
+        backgroundColor: MyColors.dark,
         elevation: 0,
       ),
       body: const Center(

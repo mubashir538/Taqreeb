@@ -60,7 +60,7 @@ class MembersScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
       ),
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
@@ -78,7 +78,7 @@ class MembersScreen extends StatelessWidget {
             child: Text(
               member['name'],
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: textSize,
                 fontWeight: FontWeight.w500,
@@ -98,7 +98,7 @@ class MembersScreen extends StatelessWidget {
     return Center(
       child: Text(
         "Failed to load members",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.red,
           fontSize: 16,
         ),
@@ -121,7 +121,7 @@ class MembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         children: [
           const Header(heading: 'Group Members'),

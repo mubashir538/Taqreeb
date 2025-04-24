@@ -27,7 +27,7 @@ class IconedButton extends StatelessWidget {
           padding:
               EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -45,7 +45,7 @@ class IconedButton extends StatelessWidget {
             ),
             Text(
               text,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.015,
                 fontWeight: FontWeight.w200,
                 color: Colors.white,

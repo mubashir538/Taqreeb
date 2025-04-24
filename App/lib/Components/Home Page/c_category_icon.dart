@@ -45,8 +45,8 @@ class CategoryIcon extends StatelessWidget {
                 softWrap: true,
                 maxLines: 2,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: Screen.max(context) * 0.013,
+                style: GoogleFonts.roboto(
+                  fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w300,
                   color: MyColors.white,
                 ),

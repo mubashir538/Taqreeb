@@ -21,7 +21,7 @@ class _BalanceCardState extends State<BalanceCard> {
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         margin: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -37,14 +37,14 @@ class _BalanceCardState extends State<BalanceCard> {
           children: [
             Text(
               "Available Balance",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w400),
             ),
             Text(
               "Rs. ${widget.balance}",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: Screen.max(context) * 0.03,
                   fontWeight: FontWeight.w600),

@@ -49,7 +49,7 @@ class CakeBox extends StatelessWidget {
                   ),
                   Text(
                     "Choco - Nutela ",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: Color(0xffEDF2F4)),
@@ -60,7 +60,7 @@ class CakeBox extends StatelessWidget {
                   Text(
                     "A Luscious dessert, perfect for chocolate lovers. Densely chocolatey lava,along with a..... ",
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                         fontSize: 8,
                         fontWeight: FontWeight.w300,
                         color: Color(0xffEDF2F4)),

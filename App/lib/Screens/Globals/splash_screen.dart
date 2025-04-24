@@ -62,15 +62,9 @@ class _SplashScreenState extends State<SplashScreen> {
         MyApi.getRequest(
             endpoint: 'home/categories/', headers: header, refresh: true),
         MyApi.getRequest(
-          endpoint: 'accountInfo/$userId/',
-          headers: header,
-          refresh: true
-        ),
+            endpoint: 'accountInfo/$userId/', headers: header, refresh: true),
         MyApi.getRequest(
-          endpoint: 'YourEvents/$userId',
-          headers: header,
-          refresh: true
-        ),
+            endpoint: 'YourEvents/$userId', headers: header, refresh: true),
       ]).then((_) {
         return true; // Return success status
       }).catchError((_) {
@@ -83,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Center(
         child: Image.asset(
           MyImages.Logo,

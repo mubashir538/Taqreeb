@@ -15,11 +15,11 @@ class AIFunctions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle heading = GoogleFonts.montserrat(
+    TextStyle heading = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w500,
         color: MyColors.white);
-    TextStyle body = GoogleFonts.montserrat(
+    TextStyle body = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w400,
         color: MyColors.white);
@@ -33,7 +33,7 @@ class AIFunctions extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            color: MyColors.DarkLighter),
+            color: MyColors.darkLighter),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

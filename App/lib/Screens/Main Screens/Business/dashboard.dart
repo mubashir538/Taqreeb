@@ -76,7 +76,7 @@ class _DashboardState extends State<Dashboard> {
         vertical: Screen.max(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -100,8 +100,8 @@ class _DashboardState extends State<Dashboard> {
             children: [
               Text(
                 _userData['businessInfo']['businessName'],
-                style: GoogleFonts.montserrat(
-                  color: MyColors.Yellow,
+                style: GoogleFonts.roboto(
+                  color: MyColors.yellow,
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w700,
                 ),
@@ -109,7 +109,7 @@ class _DashboardState extends State<Dashboard> {
               SizedBox(height: Screen.height(context) * 0.01),
               Text(
                 "${_userData['listingCount']} Active Listings",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.white.withAlpha(172),
                   fontSize: Screen.max(context) * 0.015,
                 ),
@@ -132,7 +132,7 @@ class _DashboardState extends State<Dashboard> {
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
@@ -157,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(width: Screen.width(context) * 0.05),
             Text(
               title,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.w500,
@@ -178,7 +178,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: Stack(

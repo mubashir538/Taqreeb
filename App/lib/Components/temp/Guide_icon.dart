@@ -25,9 +25,9 @@ class GuideIcon extends StatelessWidget {
         height: containerHeight.clamp(200.0, 300.0),
         width: containerWidth.clamp(150.0, 250.0),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: MyColors.DarkLighter),
+          border: Border.all(color: MyColors.darkLighter),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -47,7 +47,7 @@ class GuideIcon extends StatelessWidget {
               child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: fontSize.clamp(14.0, 20.0),
                   fontWeight: FontWeight.w500,
                   color: MyColors.white,

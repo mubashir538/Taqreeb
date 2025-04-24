@@ -29,7 +29,7 @@ class RecieveMessage extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -38,7 +38,7 @@ class RecieveMessage extends StatelessWidget {
           // Listing name
           Text(
             listing!['name'] ?? '',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: MyColors.white,
@@ -67,7 +67,7 @@ class RecieveMessage extends StatelessWidget {
               listing!['description'].toString().isNotEmpty)
             Text(
               listing!['description'] ?? '',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: 14,
                 color: MyColors.white.withAlpha(178),
               ),
@@ -80,9 +80,9 @@ class RecieveMessage extends StatelessWidget {
           // Website link
           Text(
             'www.taqreeb.com', // Replace with your actual domain
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: 12,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ],
@@ -103,7 +103,7 @@ class RecieveMessage extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
             padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(0),
                 bottomLeft: Radius.circular(15),
@@ -129,7 +129,7 @@ class RecieveMessage extends StatelessWidget {
                     text,
                     softWrap: true,
                     textAlign: TextAlign.start,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
@@ -142,7 +142,7 @@ class RecieveMessage extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         "Voice Note",
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontSize: Screen.max(context) * 0.015,
                         ),
@@ -155,7 +155,7 @@ class RecieveMessage extends StatelessWidget {
           SizedBox(width: 15),
           Text(
             time,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontWeight: FontWeight.w300,
               fontSize: Screen.max(context) * 0.013,
             ),

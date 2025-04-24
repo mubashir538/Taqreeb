@@ -47,7 +47,7 @@ class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
     final viewModel = Provider.of<ForgotPasswordVerifyCodeViewModel>(context);
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

@@ -7,10 +7,10 @@ import 'package:taqreeb/core/utils/color.dart';
 class CategorySlots extends StatefulWidget {
   final Function(DateTime) onDateSelected;
   final Map listing;
-  
+
   const CategorySlots({
-    super.key, 
-    required this.listing, 
+    super.key,
+    required this.listing,
     required this.onDateSelected,
   });
 
@@ -26,10 +26,10 @@ class _CategorySlotsState extends State<CategorySlots> {
   }
 
   TextStyle _buildTitleStyle() {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * 0.025,
       fontWeight: FontWeight.w600,
-      color: MyColors.Yellow,
+      color: MyColors.yellow,
     );
   }
 

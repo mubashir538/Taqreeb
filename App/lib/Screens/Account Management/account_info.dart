@@ -77,7 +77,7 @@ class _AccountInfoState extends State<AccountInfo> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -110,7 +110,7 @@ class _AccountInfoState extends State<AccountInfo> {
       child: Text(
         "Here is the account information for your profile, please review and ensure all details are accurate for a seamless experience.",
         textAlign: TextAlign.center,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w400,
           color: MyColors.white,
@@ -163,7 +163,7 @@ class _AccountInfoState extends State<AccountInfo> {
                   "${_capitalize(_user['firstName'])} ${_capitalize(_user['lastName'])}",
                   softWrap: true,
                   maxLines: 3,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600,
                     color: MyColors.white,
@@ -177,10 +177,10 @@ class _AccountInfoState extends State<AccountInfo> {
                   _user['username'],
                   softWrap: true,
                   maxLines: 3,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ),
@@ -206,10 +206,10 @@ class _AccountInfoState extends State<AccountInfo> {
           child: Text(
             'Gender',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ),
@@ -230,7 +230,7 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Text(
                   _user['gender'],
                   textAlign: TextAlign.start,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w200,
                     color: MyColors.white,
@@ -253,10 +253,10 @@ class _AccountInfoState extends State<AccountInfo> {
           child: Text(
             'Phone',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ),
@@ -276,7 +276,7 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Text(
                   _user['contactNumber'],
                   textAlign: TextAlign.start,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w200,
                     color: MyColors.white,
@@ -299,10 +299,10 @@ class _AccountInfoState extends State<AccountInfo> {
           child: Text(
             'Email',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ),
@@ -323,7 +323,7 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Text(
                   _user['email'],
                   textAlign: TextAlign.start,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w200,
                     color: MyColors.white,
@@ -346,10 +346,10 @@ class _AccountInfoState extends State<AccountInfo> {
           child: Text(
             'Location',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ),
@@ -369,7 +369,7 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Text(
                   _user['city'],
                   textAlign: TextAlign.start,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w200,
                     color: MyColors.white,

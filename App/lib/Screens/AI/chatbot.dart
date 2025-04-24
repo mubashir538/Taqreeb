@@ -58,7 +58,8 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
     Future.delayed(Duration(seconds: 1), () {
       if (text.toLowerCase().contains('anniversary')) {
         _handleAnniversaryEvent();
-      } else if (text.toLowerCase().contains('venue') && _currentEventPlan != null) {
+      } else if (text.toLowerCase().contains('venue') &&
+          _currentEventPlan != null) {
         _show360VenuePreview();
       } else {
         _addBotMessage(
@@ -128,7 +129,7 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
                 if (_showVenueCard && index == _messages.length) {
                   return _buildEventPlanCard();
                 }
-                final message = _messages[_showVenueCard 
+                final message = _messages[_showVenueCard
                     ? (index >= _messages.length ? index - 1 : index)
                     : index];
                 return message['isUser']
@@ -136,7 +137,8 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
                         text: message['text'],
                         time: message['time'],
                       )
-                  : RecieveMessage(  // Corrected spelling
+                    : RecieveMessage(
+                        // Corrected spelling
                         text: message['text'],
                         time: message['time'],
                         imageUrl: message['imageUrl'],
@@ -171,7 +173,7 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
         children: [
           Text(
             'Event Plan Summary',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.deepPurple,
@@ -185,18 +187,18 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
           _buildDetailRow('Venue:', _currentEventPlan!['venue']),
           _buildDetailRow('Venue Price:', _currentEventPlan!['venuePrice']),
           _buildDetailRow('Catering:', _currentEventPlan!['catering']),
-          _buildDetailRow('Catering Price:', _currentEventPlan!['cateringPrice']),
+          _buildDetailRow(
+              'Catering Price:', _currentEventPlan!['cateringPrice']),
           Divider(),
-          _buildDetailRow('Total Budget:', _currentEventPlan!['totalBudget'], isBold: true),
+          _buildDetailRow('Total Budget:', _currentEventPlan!['totalBudget'],
+              isBold: true),
           SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ColoredButton(text: 'Save Event Plan', onPressed: _saveEventPlan),
-            
               SizedBox(width: 10),
               BorderButton(text: 'Modify Details', onPressed: _modifyDetails),
-             
             ],
           ),
         ],
@@ -211,7 +213,7 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontWeight: FontWeight.w500,
               color: Colors.grey[700],
             ),
@@ -220,7 +222,7 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
                 color: Colors.black,
               ),
@@ -247,7 +249,8 @@ class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
                 ),
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               ),
             ),
           ),

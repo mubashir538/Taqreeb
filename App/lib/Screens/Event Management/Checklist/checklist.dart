@@ -56,13 +56,13 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.Dark,
+        backgroundColor: MyColors.dark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
         title: Text(
           "Add Checklist Item",
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -77,7 +77,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancel",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.red,
                 fontSize: maxDimension * 0.015,
                 fontWeight: FontWeight.w500,
@@ -93,7 +93,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             },
             child: Text(
               "Add",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: maxDimension * 0.015,
                 color: MyColors.red,
                 fontWeight: FontWeight.w500,
@@ -122,7 +122,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -188,7 +188,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         horizontal: Screen.max(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: MyColors.red,
@@ -204,7 +204,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           ),
           Text(
             item["description"],
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: Colors.white,
               decoration: item["isChecked"]
                   ? TextDecoration.lineThrough
@@ -222,13 +222,15 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       child: Container(
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
           ),
         ),
-        padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02,horizontal: Screen.width(context)*0.25),
+        padding: EdgeInsets.symmetric(
+            vertical: Screen.max(context) * 0.02,
+            horizontal: Screen.width(context) * 0.25),
         child: ColoredButton(
           text: 'Save',
           onPressed: _saveChecklist,

@@ -135,7 +135,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           changeHeight(renderbox);
         });
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -182,13 +182,13 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                       child: Text(
                                         "Change Profile Picture",
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat(
+                                        style: GoogleFonts.roboto(
                                             decoration:
                                                 TextDecoration.underline,
                                             fontSize:
                                                 Screen.max(context) * 0.015,
                                             fontWeight: FontWeight.w400,
-                                            color: MyColors.Yellow),
+                                            color: MyColors.yellow),
                                       ),
                                     ),
                                   ),

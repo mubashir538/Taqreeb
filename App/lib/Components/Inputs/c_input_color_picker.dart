@@ -51,7 +51,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
             height: pickerHeight,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -117,7 +117,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
         height: Screen.height(context) * 0.06,
         width: Screen.width(context) * 0.9,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -140,14 +140,14 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                   onSubmitted: widget.onFieldSubmitted,
                   controller: widget.valueController,
                   readOnly: true,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.018,
                     fontWeight: FontWeight.w400,
                     color: MyColors.white,
                   ),
                   decoration: InputDecoration(
                     hintText: widget.hint,
-                    hintStyle: GoogleFonts.montserrat(
+                    hintStyle: GoogleFonts.roboto(
                       color: MyColors.white.withAlpha(153),
                       fontSize: Screen.max(context) * 0.015,
                     ),

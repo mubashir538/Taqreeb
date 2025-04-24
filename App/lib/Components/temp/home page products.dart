@@ -31,7 +31,7 @@ class HomePageProducts extends StatelessWidget {
         height: Screen.height(context) * 0.2,
         width: Screen.width(context) * 0.4,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -55,7 +55,7 @@ class HomePageProducts extends StatelessWidget {
             ),
             Text(
               name,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w500),
             ),

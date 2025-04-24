@@ -23,7 +23,7 @@ class FAQQuestion extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -35,8 +35,8 @@ class FAQQuestion extends StatelessWidget {
                 Expanded(
                   child: Text(
                     question,
-                    style: GoogleFonts.montserrat(
-                      color: MyColors.Yellow,
+                    style: GoogleFonts.roboto(
+                      color: MyColors.yellow,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -55,7 +55,7 @@ class FAQQuestion extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
                   answer,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.white,
                     fontSize: 16,
                   ),

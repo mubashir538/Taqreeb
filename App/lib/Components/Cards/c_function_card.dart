@@ -44,7 +44,7 @@ class Function12 extends StatelessWidget {
         width: Screen.width(context) * 0.9,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20)),
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
         ),
         child: Column(
           children: [
@@ -66,7 +66,7 @@ class Function12 extends StatelessWidget {
                   Center(
                     child: Text(
                       name,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.02,
                           fontWeight: FontWeight.w600,
                           color: isColorDark(color)
@@ -101,14 +101,14 @@ class Function12 extends StatelessWidget {
                       children: [
                         Text(
                           head,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: MyColors.white),
                         ),
                         Text(
                           budget,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: MyColors.white),
@@ -125,14 +125,14 @@ class Function12 extends StatelessWidget {
                         children: [
                           Text(
                             items,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.roboto(
                                 fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
                                 color: MyColors.white),
                           ),
                           Text(
                             values[headings.indexOf(items)],
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.roboto(
                                 fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
                                 color: MyColors.white),

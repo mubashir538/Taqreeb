@@ -11,7 +11,7 @@ class ViewAIPackage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -20,7 +20,7 @@ class ViewAIPackage extends StatelessWidget {
           Text(
             'Your Suggested Packages',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: Colors.yellow),

@@ -272,8 +272,8 @@ class _SearchServiceState extends State<SearchService> {
                 children: [
                   Text(
                     filter,
-                    style: GoogleFonts.montserrat(
-                      color: MyColors.Dark,
+                    style: GoogleFonts.roboto(
+                      color: MyColors.dark,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -304,7 +304,7 @@ class _SearchServiceState extends State<SearchService> {
                     child: Icon(
                       Icons.close,
                       size: 16,
-                      color: MyColors.Dark,
+                      color: MyColors.dark,
                     ),
                   ),
                 ],
@@ -326,7 +326,8 @@ class _SearchServiceState extends State<SearchService> {
 
           return GestureDetector(
             onTap: () => _navigateToServiceDetails(service),
-            child: Productcard(
+            child: ProductCard(
+              rating: service['rating'].toString(),
               listingType: service['type'].toString(),
               listingid: service['id'].toString(),
               imageUrl: imageUrl.isEmpty
@@ -413,7 +414,7 @@ class _SearchServiceState extends State<SearchService> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -472,7 +473,7 @@ class _SearchServiceState extends State<SearchService> {
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           constraints: BoxConstraints(maxHeight: Screen.max(context) * 0.8),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
@@ -486,7 +487,7 @@ class _SearchServiceState extends State<SearchService> {
                   children: [
                     Text(
                       "Filter Options",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.03,
                         fontWeight: FontWeight.bold,
                         color: MyColors.red,
@@ -596,10 +597,10 @@ class _SearchServiceState extends State<SearchService> {
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             fontSize: Screen.max(context) * 0.02,
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         child,
@@ -647,7 +648,7 @@ class _SearchServiceState extends State<SearchService> {
   void _showAdditionalFilterPopup(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -661,10 +662,10 @@ class _SearchServiceState extends State<SearchService> {
                 children: [
                   Text(
                     'Additional Filters',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: MyColors.Yellow,
+                      color: MyColors.yellow,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -676,10 +677,10 @@ class _SearchServiceState extends State<SearchService> {
                           children: [
                             Text(
                               entry.key,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.roboto(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: MyColors.Yellow,
+                                color: MyColors.yellow,
                               ),
                             ),
                             CheckBoxQuestion(

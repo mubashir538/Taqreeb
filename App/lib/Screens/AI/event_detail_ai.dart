@@ -11,7 +11,7 @@ class AiPackageEventDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -20,7 +20,7 @@ class AiPackageEventDetail extends StatelessWidget {
           Text(
             'Package Details',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: Colors.yellow),
@@ -32,12 +32,12 @@ class AiPackageEventDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Budget',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
                   Text("100,000",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w500,
                           color: Colors.white)),
@@ -50,12 +50,12 @@ class AiPackageEventDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('No. of Events',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
                   Text("5",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w500,
                           color: Colors.white)),

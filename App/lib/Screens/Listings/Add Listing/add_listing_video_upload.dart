@@ -10,7 +10,7 @@ class Add360Video extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         children: [
           const Header(heading: "Add Service Listing"),
@@ -34,7 +34,7 @@ class Add360Video extends StatelessWidget {
 
   Widget _buildVideoCard(BuildContext context) {
     return Card(
-      color: MyColors.DarkLighter,
+      color: MyColors.darkLighter,
       child: Padding(
         padding: EdgeInsets.all(Screen.width(context) * 0.04),
         child: SizedBox(
@@ -93,7 +93,7 @@ class Add360Video extends StatelessWidget {
         horizontal: Screen.width(context) * 0.04,
         vertical: Screen.height(context) * 0.02,
       ),
-      color: MyColors.Dark,
+      color: MyColors.dark,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

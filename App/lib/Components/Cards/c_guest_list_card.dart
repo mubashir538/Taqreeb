@@ -33,7 +33,7 @@ class Guests extends StatelessWidget {
             vertical: Screen.max(context) * 0.02),
         width: mywidth == 0 ? Screen.width(context) * 0.9 : mywidth,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -75,7 +75,7 @@ class Guests extends StatelessWidget {
                         children: [
                           Text(
                             name,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: Colors.white,
@@ -95,7 +95,7 @@ class Guests extends StatelessWidget {
                   ),
                   Text(
                     contact,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.whiteDarker,

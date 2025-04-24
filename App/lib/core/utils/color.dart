@@ -3,12 +3,13 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class MyColors {
-  static Color red = Color(0xffef233c);
-  static Color white = Color(0xffedf2f4);
-  static Color whiteDarker = Color(0xffd9d9d9);
-  static Color Dark = Color(0xff18191A);
-  static Color DarkLighter = Color(0xff242526);
-  static Color Yellow = Color(0xffffbe0b);
+  static Color red = Color(0xffF13F5A);
+  static Color white = Color(0xffffff);
+  static Color whiteDarker = Color(0xffe5e5e5);
+  static Color dark = Color(0xff121212);
+  static Color darkLighter = Color(0xff1e1e1e);
+  static Color ligthDark = Color(0xff2d2d2d);
+  static Color yellow = Color(0xffFFC107);
   static Color green = Color(0xff7ae582);
   static Color redonWhite = Color(0xffedf2f4);
   static Color yellowonDark = Color(0xffffbe0b);
@@ -19,14 +20,14 @@ class MyColors {
       await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
       MyColors.white = Color(0xffedf2f4);
       MyColors.whiteDarker = Color(0xffd9d9d9);
-      MyColors.Dark = Color(0xff18191A);
-      MyColors.DarkLighter = Color(0xff242526);
+      MyColors.dark = Color(0xff18191A);
+      MyColors.darkLighter = Color(0xff242526);
       MyColors.yellowonDark = Color(0xffffbe0b);
     } else {
       await MyStorage.saveToken(MyTokens.Light, MyTokens.theme);
-      MyColors.Dark = Color(0xffE0E1DD);
+      MyColors.dark = Color(0xffE0E1DD);
       MyColors.yellowonDark = Color(0xffef233c);
-      MyColors.DarkLighter = Color(0xffffffff);
+      MyColors.darkLighter = Color(0xffffffff);
       MyColors.white = Color(0xff18191A);
       MyColors.whiteDarker = Color(0xff242526);
     }
@@ -35,16 +36,16 @@ class MyColors {
   static void getTheme() async {
     final theme = await MyStorage.getToken(MyTokens.theme) ?? "";
     if (theme == MyTokens.Light) {
-      MyColors.Dark = Color(0xffE0E1DD);
+      MyColors.dark = Color(0xffE0E1DD);
       MyColors.yellowonDark = Color(0xffef233c);
-      MyColors.DarkLighter = Color(0xffffffff);
+      MyColors.darkLighter = Color(0xffffffff);
       MyColors.white = Color(0xff18191A);
       MyColors.whiteDarker = Color(0xff242526);
     } else {
       MyColors.white = Color(0xffedf2f4);
       MyColors.whiteDarker = Color(0xffd9d9d9);
-      MyColors.Dark = Color(0xff18191A);
-      MyColors.DarkLighter = Color(0xff242526);
+      MyColors.dark = Color(0xff18191A);
+      MyColors.darkLighter = Color(0xff242526);
       MyColors.yellowonDark = Color(0xffffbe0b);
     }
   }

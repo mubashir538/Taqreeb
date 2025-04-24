@@ -123,7 +123,7 @@ class _AllTransactionsState extends State<AllTransactions> {
     return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
       Text(
         title,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.red,
           fontSize: Screen.max(context) * 0.02,
           fontWeight: FontWeight.w600,

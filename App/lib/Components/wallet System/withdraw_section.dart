@@ -47,7 +47,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Withdraw Money",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w700,
                     color: MyColors.white)),
@@ -58,7 +58,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
                 width: Screen.width(context) * 0.9,
                 padding: EdgeInsets.all(Screen.max(context) * 0.02),
                 decoration: BoxDecoration(
-                    color: MyColors.DarkLighter,
+                    color: MyColors.darkLighter,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(

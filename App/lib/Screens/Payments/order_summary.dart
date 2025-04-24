@@ -71,7 +71,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: _controller.isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildContent(),
@@ -107,7 +107,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.all(Screen.width(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
       ),
       child: Column(
@@ -128,7 +128,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.all(Screen.width(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(Screen.width(context) * 0.02),
       ),
       child: Column(
@@ -180,7 +180,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.bold,
         color: Colors.white,
@@ -196,14 +196,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.015,
               color: Colors.grey,
             ),
           ),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.bold,
               color: Colors.white,

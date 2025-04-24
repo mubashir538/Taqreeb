@@ -111,7 +111,7 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
         return Container(
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
@@ -155,7 +155,7 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -224,11 +224,11 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
 
   Widget _buildFloatingActionButton() {
     return FloatingActionButton(
-      backgroundColor: MyColors.Yellow,
+      backgroundColor: MyColors.yellow,
       onPressed: _showAddGuestOptions,
       child: Icon(
         Icons.add,
-        color: MyColors.Dark,
+        color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),
     );

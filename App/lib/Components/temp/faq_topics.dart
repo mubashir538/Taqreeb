@@ -19,7 +19,7 @@ class VenueSelection extends StatelessWidget {
         height: 60,
         width: 400,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -36,7 +36,7 @@ class VenueSelection extends StatelessWidget {
             SizedBox(width: 20),
             Text(
               text,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Color(0xffEDF2F4),

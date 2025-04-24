@@ -96,7 +96,7 @@ class _ForgotPassword_NewPasswordState
     _email = args['email'].toString();
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -177,7 +177,7 @@ class _ForgotPassword_NewPasswordState
         ),
         Text(
           text,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,
             color: isValid ? Colors.green : Colors.red,

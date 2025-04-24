@@ -67,7 +67,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -87,7 +87,8 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
         child: Column(
           children: [
             SizedBox(
-              height: (Screen.height(context) * 0.03) + UI_Management.headerHeight,
+              height:
+                  (Screen.height(context) * 0.03) + UI_Management.headerHeight,
             ),
             _buildTitle(),
             _buildPackagesList(),
@@ -102,10 +103,10 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
         "Packages",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );
@@ -155,11 +156,11 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
 
   Widget _buildAddButton() {
     return FloatingActionButton(
-      backgroundColor: MyColors.Yellow,
+      backgroundColor: MyColors.yellow,
       onPressed: _navigateToAddPackage,
       child: Icon(
         Icons.add,
-        color: MyColors.Dark,
+        color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),
     );
