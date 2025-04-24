@@ -33,10 +33,10 @@ def addTransaction(request):
 def getWalletBalance(request,id,type):
     userID = md.User.objects.get(id=id)
     if type == 'freelancer':
-        Freelancer = md.BankDetails.objects.filter(userID=userID)
+        Freelancer = md.Freelancer.objects.get(userID=userID)
         return Response({'status':'success','balance':Freelancer.balance})
     else:
-        BusinessOwner = md.BankDetails.objects.filter(userID=userID)
+        BusinessOwner = md.BusinessOwner.objects.get(userID=userID)
         return Response({'status':'success','balance':BusinessOwner.balance})
     
 @api_view(['POST'])

@@ -24,10 +24,8 @@ class _SplashScreenState extends State<SplashScreen> {
     MyColors.getTheme();
     await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
     final bool isLoggedIn = await MyStorage.exists(MyTokens.accessToken);
-    final header = {
-      'Authorization':
-          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-    };
+    final token = await MyStorage.getToken(MyTokens.accessToken);
+    final header = {'Authorization': 'Bearer $token'};
 
     // MyApi.cacheManager.emptyCache();
     final String? userId = await MyStorage.getToken(MyTokens.userId);
@@ -40,12 +38,11 @@ class _SplashScreenState extends State<SplashScreen> {
       }); // Call your async function
       if (success) {
         timer.cancel();
-        if(mounted){
-
-        Navigator.pushReplacementNamed(
-          context,
-          isLoggedIn ? '/HomePage' : '/Login',
-        ); // Stop the timer if task succeeds
+        if (mounted) {
+          Navigator.pushReplacementNamed(
+            context,
+            isLoggedIn ? '/HomePage' : '/Login',
+          ); // Stop the timer if task succeeds
         }
       }
     });
@@ -55,30 +52,31 @@ class _SplashScreenState extends State<SplashScreen> {
     final Map<String, String> header = Map<String, String>.from(data['header']);
     final bool isLoggedIn = data['isLoggedIn'];
     final String? userId = data['userId'];
-
-    await Future.wait([
-      MyApi.getRequest(
-          endpoint: 'home/listings/', headers: header, refresh: true),
-      MyApi.getRequest(
-          endpoint: 'Homepage/DemoImages/', headers: header, refresh: true),
-      MyApi.getRequest(
-          endpoint: 'home/categories/', headers: header, refresh: true),
-      if (isLoggedIn) ...[
+    if (isLoggedIn) {
+      MyApi.cacheManager.emptyCache();
+      await Future.wait([
+        MyApi.getRequest(
+            endpoint: 'home/listings/', headers: header, refresh: true),
+        MyApi.getRequest(
+            endpoint: 'Homepage/DemoImages/', headers: header, refresh: true),
+        MyApi.getRequest(
+            endpoint: 'home/categories/', headers: header, refresh: true),
         MyApi.getRequest(
           endpoint: 'accountInfo/$userId/',
           headers: header,
+          refresh: true
         ),
         MyApi.getRequest(
           endpoint: 'YourEvents/$userId',
           headers: header,
+          refresh: true
         ),
-      ],
-    ]).then((_) {
-      return true; // Return success status
-    }).catchError((_) {
-      return false; // Return failure status
-    });
-
+      ]).then((_) {
+        return true; // Return success status
+      }).catchError((_) {
+        return false; // Return failure status
+      });
+    }
     return true;
   }
 

@@ -177,12 +177,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   void getUserInfo() async {
+    final token = await MyStorage.getToken(MyTokens.accessToken);
     for (int i = 0; i < _listing['Review'].length; i++) {
       final user = await MyApi.getRequest(
           endpoint: 'basicUserInfo/${_listing['Review'][i]['userID']}/',
           headers: {
             'Authorization':
-                'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                'Bearer $token'
           },
           refresh: true);
       setState(() {

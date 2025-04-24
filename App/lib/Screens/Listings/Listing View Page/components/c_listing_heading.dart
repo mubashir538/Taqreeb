@@ -50,13 +50,10 @@ class _UpperHeadingsState extends State<UpperHeadings> {
 
   void fetchEvents() async {
     final userId = await MyStorage.getToken(MyTokens.userId);
-
+    final token = await MyStorage.getToken(MyTokens.accessToken);
     final response = await MyApi.getRequest(
         endpoint: 'Events/getBasics/$userId',
-        headers: {
-          'Authorization':
-              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-        });
+        headers: {'Authorization': 'Bearer $token'});
     setState(() {
       events = response;
     });
