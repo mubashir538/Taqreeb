@@ -14,12 +14,12 @@ import inspect
 
 def get_variable_name(var):
     callers_local_vars = inspect.currentframe().f_back.f_locals.items()
-    list = [name for name, value in callers_local_vars if value is var]
-    return list[0]
+    listing = [name for name, value in callers_local_vars if value is var]
+    return listing[0]
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getListingDetails(request, type):
+def get_listing_details(request, type):
     model_mapping = {
         'Venue': 'Venue',
         'Salon': 'Salons',
@@ -58,12 +58,12 @@ def getListingDetails(request, type):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def AddListItem(request):
+def add_list_item(request):
     if request.data.get('functionId') != 'None':
-        functionId = request.data.get('functionId')
-        function = md.Functions.objects.get(id=functionId)
-    eventId = request.data.get('eventId')
-    event = md.Events.objects.get(id=eventId)
+        function_id = request.data.get('functionId')
+        function = md.Functions.objects.get(id=function_id)
+    event_id = request.data.get('eventId')
+    event = md.Events.objects.get(id=event_id)
     item = request.data.get('item')
     ischecked = request.data.get('ischecked')
     if request.data.get('functionId') != 'None':
@@ -75,11 +75,11 @@ def AddListItem(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def UpdateListItem(request):
+def update_list_item(request):
     item = request.data.get('item')
     ischecked = request.data.get('ischecked')
-    id = request.data.get('id')
-    checklist = md.CheckList.objects.get(id=id)
+    lid = request.data.get('id')
+    checklist = md.CheckList.objects.get(id=lid)
     checklist.isChecked = ischecked
     checklist.description = item
     checklist.save(update_fields=['isChecked','description'])
@@ -87,98 +87,205 @@ def UpdateListItem(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def ListingsPage(request,id):
+def listings_page(request,id):
     listings = md.Listing.objects.filter(BusinessOwnerID=id)
     serializer = s.ListingSerializer(listings,many=True)
     return Response({'status':'success','listings':serializer.data})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def AddListing(request):
-    type = request.data.get('type')
-    userid = request.data.get('userid')
-    name = request.data.get('name')
-    description = request.data.get('description')
-    category = str(request.data.get('category'))
-    location = request.data.get('location')
-    pricemin = request.data.get('priceMin')
-    print(request.data)
-    pricemax = request.data.get('priceMax')
-    pictures = request.FILES.getlist('pictures')
-    packages = request.data.get('packages')
-    addons = request.data.get('addons')
-    user = md.User.objects.get(id=userid)
-    avgprice = (int(pricemax)+int(pricemin))/2
-    if type == 'freelancer':
-        userid = md.Freelancer.objects.get(userID=userid)
-        listing = md.Listing(freelancerID=userid,name=name,description=description,type=category,location=location,priceMin=pricemin,priceMax=pricemax,basicPrice=avgprice)
-    else:
-        userid = md.BusinessOwner.objects.get(userID=user)
-        listing = md.Listing(ownerID=userid,name=name,description=description,type=category,location=location,priceMin=pricemin,priceMax=pricemax,basicPrice=avgprice)
-    listingId = listing.save()
-    if type == 'freelancer':
-        listingId = md.Listing.objects.filter(freelancerID=userid).last().id
-    else:
-        listingId = md.Listing.objects.filter(ownerID=userid).last().id
-    listingId = md.Listing.objects.get(id=listingId)
-    category = category.replace(' ','')
-    if category == 'Venue':
-        view = md.Venue(catering=request.data.get('catering'),guestminAllowed=request.data.get('guestminAllowed'),guestmaxAllowed=request.data.get('guestmaxAllowed'),staff=request.data.get('staff'),venueType=request.data.get('venueType'),listingID=listingId)
-    elif category == 'Salon':
-        view = md.Salons(listingId=listingId)
-    elif category == 'Parlour':
-        view = md.Parlors(listingId=listingId)
-    elif category == 'PhotographyPlace':
-        view = md.PhotographyPlaces(listingID=listingId,type=request.data.get('type'))
-    elif category == 'Decorator':
-        view = md.Decorators(listingId=listingId,decorType=request.data.get('decorType'),catering=request.data.get('catering'),staff=request.data.get('staff'))
-    elif category == 'Photographer':
-        view = md.Photographers(listingId=listingId,portfolioLink=request.data.get('portfolioLink'))
-    elif category == 'Caterer':
-        view = md.Caterers(listingId=listingId,serviceType=request.data.get('serviceType'),cateringOptions=request.data.get('cateringOptions'),staff=request.data.get('staff'),expertise=request.data.get('expertise'))
-    elif category == 'CarRenter':
-        view = md.CarRenters(listingID=listingId,serviceType=request.data.get('serviceType'))
-        # cars = request.data.get('cars')
-        # for i in cars:
-    elif category == 'BakerandSweet':
-        view = md.BakersAndSweets(listingID=listingId)
-    elif category == 'VideoEditor':
-        view = md.VideoEditors(listingId=listingId,portfolioLink=request.data.get('portfolioLink'))
-    elif category == 'GraphicDesigner':
-        view = md.GraphicDesigners(listingId=listingId,portfolioLink=request.data.get('portfolioLink'))
-    view.save()
+def add_listing(request):
+    try:
+        data = request.data
+        listing_type = data.get('type')
+        user_id = data.get('userid')
+        category = str(data.get('category')).replace(' ', '')
+        view_data = data.get('viewData', {})
+
+        # Validate required fields
+        required = ['userid', 'name', 'description', 'category', 'location', 'priceMin', 'priceMax']
+        if not all([data.get(field) for field in required]):
+            return Response({'status': 'error', 'message': 'Missing required fields'}, status=400)
+
+        # Get user
+        user = md.User.objects.get(id=user_id)
+
+        # Create listing
+        listing = create_listing(data, user, listing_type, category)
+
+        # Create category-specific view
+        create_view_for_category(category, view_data, listing)
+
+        # Save pictures
+        save_listing_pictures(category, listing, request.FILES.getlist('pictures'))
+
+        # Save packages, products, addons
+        save_packages(listing, data.get('packages'))
+        save_products(listing, data.get('products'))
+        save_addons(listing, data.get('addons'))
+
+        # Create review details
+        md.ReviewDetails(listingID=listing).save()
+
+        return Response({'status': 'success', 'listing_id': listing.id})
+
+    except json.JSONDecodeError:
+        return Response({'status': 'error', 'message': 'Invalid JSON data'}, status=400)
+    except md.User.DoesNotExist:
+        return Response({'status': 'error', 'message': 'User not found'}, status=404)
+    except Exception as e:
+        return Response({'status': 'error', 'message': str(e)}, status=500)
     
-    listId = listingId.id
-    count = 0
-    for i in pictures:
-        count += 1
-        filestorage = FileSystemStorage()
-        filePath = filestorage.save(f'uploads/listings/{category}/{listId}-{count}.png', i)
-        md.PicturesListings(listingId=listingId,picturePath=filestorage.url(filePath)).save()            
-    packages = json.loads(packages) if packages else []
-    if packages:
-        for i in packages:
-            md.Packages(listingId=listingId,name=i['name'],price=i['price'],description=i['details']).save()
-    addons = json.loads(addons) if addons else []
-    if addons:
-        for i in addons:
-            if i['perhead'] == "Yes":
-                md.AddOns(perType=i['headtype'],isPer=True,listingId=listingId,name=i['name'],price=i['price']).save()
-            else:
-                md.AddOns(isPer=False,listingId=listingId,name=i['name'],price=i['price']).save()
-    rdetails = md.ReviewDetails(listingID=listing)
-    rdetails.save()    
-    return Response({'status':'success'})
+def create_listing(data, user, listing_type, category):
+    avg_price = (int(data['priceMin']) + int(data['priceMax'])) / 2
+    listing_kwargs = {
+        'name': data['name'],
+        'description': data['description'],
+        'type': category,
+        'location': data['location'],
+        'priceMin': data['priceMin'],
+        'priceMax': data['priceMax'],
+        'basicPrice': avg_price
+    }
+
+    if listing_type == 'freelancer':
+        freelancer = md.Freelancer.objects.get(userID=user.id)
+        listing_kwargs['freelancerID'] = freelancer
+    else:
+        owner = md.BusinessOwner.objects.get(userID=user)
+        listing_kwargs['ownerID'] = owner
+
+    listing = md.Listing(**listing_kwargs)
+    listing.save()
+    return listing
+
+
+def create_view_for_category(category, view_data, listing):
+    view_models = {
+        'Venue': (md.Venue, {
+            'catering': view_data.get('catering'),
+            'guestminAllowed': view_data.get('guestminAllowed'),
+            'guestmaxAllowed': view_data.get('guestmaxAllowed'),
+            'staff': view_data.get('staff'),
+            'venueType': view_data.get('venueType'),
+            'listingID': listing
+        }),
+        'PhotographyPlace': (md.PhotographyPlaces, {
+            'type': view_data.get('type'),
+            'listingID': listing
+        }),
+        'Decorator': (md.Decorators, {
+            'decorType': view_data.get('decorType'),
+            'catering': view_data.get('catering'),
+            'staff': view_data.get('staff'),
+            'listingId': listing
+        }),
+        'Photographer': (md.Photographers, {
+            'portfolioLink': view_data.get('portfolioLink'),
+            'listingId': listing
+        }),
+        'Caterer': (md.Caterers, {
+            'serviceType': view_data.get('serviceType'),
+            'cateringOptions': view_data.get('cateringOptions'),
+            'staff': view_data.get('staff'),
+            'expertise': view_data.get('expertise'),
+            'listingId': listing
+        }),
+        'CarRenter': (md.CarRenters, {
+            'serviceType': view_data.get('serviceType'),
+            'listingID': listing
+        }),
+        'VideoEditor': (md.VideoEditors, {
+            'portfolioLink': view_data.get('portfolioLink'),
+            'listingId': listing
+        }),
+        'GraphicDesigner': (md.GraphicDesigners, {
+            'portfolioLink': view_data.get('portfolioLink'),
+            'listingId': listing
+        })
+    }
+
+    if category in view_models:
+        model_class, fields = view_models[category]
+        view_instance = model_class(**fields)
+        view_instance.save()
+
+
+def save_listing_pictures(category, listing, pictures):
+    storage = FileSystemStorage()
+    for count, picture in enumerate(pictures, start=1):
+        path = storage.save(f'uploads/listings/{category}/{listing.id}-{count}.png', picture)
+        md.PicturesListings(
+            listingId=listing,
+            picturePath=storage.url(path)
+        ).save()
+
+
+def save_packages(listing, packages):
+    if not packages:
+        return
+    try:
+        package_list = json.loads(packages)
+        for pkg in package_list:
+            package_obj = md.Packages(
+                listingId=listing,
+                name=pkg.get('name'),
+                price=pkg.get('price'),
+                description=pkg.get('details')
+            )
+            package_obj.save()
+            for image in pkg.get('images', []):
+                md.PicturesPackages(packageId=package_obj, picturePath=image).save()
+    except Exception as e:
+        raise Exception(f"Package saving error: {e}")
+
+
+def save_products(listing, products):
+    if not products:
+        return
+    try:
+        product_list = json.loads(products)
+        for prod in product_list:
+            product_obj = md.Product(
+                listingId=listing,
+                name=prod.get('name'),
+                description=prod.get('description'),
+                price=prod.get('price'),
+                quantity=prod.get('quantity', 1)
+            )
+            product_obj.save()
+            if 'image' in prod:
+                md.PicturesProducts(productId=product_obj, picturePath=prod['image']).save()
+    except Exception as e:
+        raise Exception(f"Product saving error: {e}")
+
+
+def save_addons(listing, addons):
+    if not addons:
+        return
+    try:
+        addon_list = json.loads(addons)
+        for addon in addon_list:
+            md.AddOns(
+                listingId=listing,
+                name=addon.get('name'),
+                price=addon.get('price'),
+                isPer=addon.get('perhead') == "Yes",
+                perType=addon.get('headtype') if addon.get('perhead') == "Yes" else None
+            ).save()
+    except Exception as e:
+        raise Exception(f"Addon saving error: {e}")
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def deleteListing(request):
-    id = request.data.get('id')
-    for i in md.PicturesListings.objects.filter(listingId=id):
+def delete_listing(request):
+    lid = request.data.get('id')
+    for i in md.PicturesListings.objects.filter(listingId=lid):
         full_path = os.path.join(settings.MEDIA_ROOT, i.picturePath)
         if os.path.exists(full_path):
             os.remove(full_path)
-    listing = md.Listing.objects.get(id=id).delete()
+    md.Listing.objects.get(id=lid).delete()
     return Response({'status':'success'})
 
 @api_view(['POST'])

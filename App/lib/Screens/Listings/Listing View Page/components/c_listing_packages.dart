@@ -179,7 +179,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   ) {
     return AlertDialog(
       scrollable: true,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       title: Text(
         index == null ? 'Add Package' : 'Edit Package',
         style: GoogleFonts.montserrat(

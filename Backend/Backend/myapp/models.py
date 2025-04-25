@@ -62,6 +62,7 @@ class BusinessOwner(m.Model):
     Description = m.CharField(max_length=1100)
     status = m.TextField(null=True)
     balance = m.IntegerField(default=0)
+
 class FCMTokens(m.Model):
     id = m.AutoField(primary_key=True)
     token = m.TextField()
@@ -121,15 +122,6 @@ class Packages(m.Model):
     description = m.CharField(max_length=1100)
     price= m.IntegerField()
 
-
-# class Orders(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     Transaction = m.ForeignKey(User,on_delete=m.CASCADE)
-#     package = m.ForeignKey(Packages,delete=m.CASCADE)
-#     receiverf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
-#     receiverb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
-#     date = m.DateTimeField(auto_now_add=True)
-
 class Transaction(m.Model):
     id = m.AutoField(primary_key=True)
     sender = m.ForeignKey(User,on_delete=m.CASCADE,null=True)
@@ -144,17 +136,6 @@ class PicturesPackages(m.Model):
     id = m.AutoField(primary_key=True)
     packageId = m.ForeignKey(Packages,on_delete=m.CASCADE)
     picturePath = m.CharField(max_length=100)
-
-class AIEventQuestions(m.Model):
-    id = m.AutoField(primary_key=True)
-    question = m.CharField(max_length=100)
-    questionType = m.CharField(max_length=50)
-
-class QuestionOptions(m.Model):
-    id = m.AutoField(primary_key=True)
-    questionId = m.ForeignKey(AIEventQuestions,on_delete= m.CASCADE)
-    optionType = m.TextField()
-    name = m.TextField() 
 
 class Events(m.Model):
     id = m.AutoField(primary_key=True)
@@ -219,21 +200,6 @@ class AddOns(m.Model):
     isPer = m.BooleanField()
     perType = m.CharField(max_length=50)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-
-class MenuItems(m.Model):                                                                                                                                                      
-    id = m.AutoField(primary_key=True)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE,null=True)
-    name = m.CharField(max_length=100)
-    pricePerKg = m.IntegerField()
-    picture = m.CharField(max_length=100)
-
-class Cart(m.Model):
-    id = m.AutoField(primary_key=True)
-    userId = m.ForeignKey(User,on_delete=m.CASCADE)
-    productId = m.ForeignKey(MenuItems,on_delete=m.CASCADE)
-    ownerId = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
-    quantity = m.IntegerField()
-    
     
 class Parlors(m.Model):
     id = m.AutoField(primary_key=True)
@@ -323,15 +289,6 @@ class BookedSlots(m.Model):
     id = m.AutoField(primary_key=True)
     slot = m.DateField()
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-
-class BookingCart(m.Model):
-    id = m.AutoField(primary_key=True)
-    userId = m.ForeignKey(User,on_delete=m.CASCADE)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
-    slot = m.DateTimeField(null=True)
-    type = m.CharField(max_length=100,null=True)
-    status = m.CharField(max_length=100)
 
 class HomePageImages(m.Model):
     id = m.AutoField(primary_key=True)
@@ -424,16 +381,6 @@ class PhotographyPlaces(m.Model):
 
     type = m.CharField(max_length=100, choices=TYPE_CHOICES, default='Studio')
 
-class Cars(m.Model):
-    id = m.AutoField(primary_key=True)
-    carRenterId = m.ForeignKey(CarRenters,on_delete=m.CASCADE)
-    pricePerDay = m.IntegerField()
-    name = m.CharField(max_length=255)
-    type = m.CharField(max_length=100)
-    seats = m.IntegerField()
-    driver = m.IntegerField()
-    picture = m.CharField(max_length=255)
-
 class UserActivity(m.Model):
     ACTIONS = [
         ('search', 'Search Query'),
@@ -457,3 +404,24 @@ class UserActivity(m.Model):
     def __str__(self):
         return f"{self.user.username} - {self.action} - {self.timestamp}"
 
+class Product(m.Model):
+    id = m.AutoField(primary_key=True)
+    name = m.CharField(max_length=100)
+    description = m.TextField()
+    price = m.DecimalField(max_digits=10, decimal_places=2)
+    quantity = m.PositiveIntegerField(null=True)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+
+class PicturesProducts(m.Model):
+    id = m.AutoField(primary_key=True)
+    productId = m.ForeignKey(Product,on_delete=m.CASCADE)
+    picturePath = m.CharField(max_length=100)
+
+class BookingCart(m.Model):
+    id = m.AutoField(primary_key=True)
+    userId = m.ForeignKey(User,on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
+    slot = m.DateTimeField(null=True)
+    type = m.CharField(max_length=100,null=True)
+    status = m.CharField(max_length=100)

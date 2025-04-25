@@ -87,6 +87,10 @@ class PicturesPackagesSerializer(s.ModelSerializer):
         model = mp.PicturesPackages
         fields = ['picturePath']  # Only include the picturePath field
 
+class PicturesProductsSerializer(s.ModelSerializer):
+    class Meta:
+        model = mp.PicturesProducts
+        fields = ['picturePath']  # Only include the picturePath field
 
 class PackagesSerializer(s.ModelSerializer):
     pictures = PicturesPackagesSerializer(
@@ -99,29 +103,16 @@ class PackagesSerializer(s.ModelSerializer):
         model = mp.Packages
         fields = ['id', 'name', 'listingId', 'description', 'price', 'pictures']
 
-        
-# class OrdersSerializer(s.ModelSerializer):
-#     class Meta:
-#         model = mp.Orders
-#         fields = '__all__'
-
-
-class CartSerializer(s.ModelSerializer):
+class ProductsSerializer(s.ModelSerializer):
+    pictures = PicturesProductsSerializer(
+        many=True,
+        read_only=True,
+        source='picturesproducts_set'  # This is the default related_name for reverse FK
+    )
+    
     class Meta:
-        model = mp.Cart
-        fields = '__all__'
-
-
-class AIEventQuestionsSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.AIEventQuestions
-        fields = '__all__'
-
-
-class QuestionOptionsSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.QuestionOptions
-        fields = '__all__'
+        model = mp.Product
+        fields = ['id', 'name', 'listingId', 'description', 'price', 'pictures']
 
 class ReviewSerializer(s.ModelSerializer):
     class Meta:
@@ -153,14 +144,10 @@ class CheckListSerializer(s.ModelSerializer):
     class Meta:
         model = mp.CheckList
         fields = '__all__'
-
-
 class VenueSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Venue
         fields = '__all__'
-
-
 
 class AddOnsSerializer(s.ModelSerializer):
     class Meta:
@@ -172,14 +159,6 @@ class CaterersSerializer(s.ModelSerializer):
         model = mp.Caterers
         fields = '__all__'
 
-
-class MenuItemsSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.MenuItems
-        fields = '__all__'
-
-
-
 class PhotographersSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Photographers
@@ -189,12 +168,6 @@ class PhotographersSerializer(s.ModelSerializer):
 class CarRentersSerializer(s.ModelSerializer):
     class Meta:
         model = mp.CarRenters
-        fields = '__all__'
-
-
-class CarsSerializer(s.ModelSerializer):
-    class Meta:
-        model = mp.Cars
         fields = '__all__'
 
 class BusinessTransactionSerializer(s.ModelSerializer):
@@ -226,11 +199,6 @@ class SalonsSerializer(s.ModelSerializer):
     class Meta:
         model = mp.Salons
         fields = '__all__'
-
-# class BakersAndSweetsSerializer(s.ModelSerializer):
-#     class Meta:
-#         model = mp.BakersAndSweets
-#         fields = '__all__'
 
 class BankDetailsSerializer(s.ModelSerializer):
     masked_account_number = s.SerializerMethodField()
@@ -280,12 +248,6 @@ class FunctionTypeSerializer(s.ModelSerializer):
     class Meta:
         model = mp.FunctionType
         fields = '__all__'
-
-
-# class DesertItemsSerializer(s.ModelSerializer):
-#     class Meta:
-#         model = mp.DesertItems
-#         fields = '__all__'
 
 class CategoriesSerializer(s.ModelSerializer):
     class Meta:

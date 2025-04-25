@@ -45,7 +45,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final maxDimension = _calculateMaxDimension(context);
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: _buildScreenContent(context, maxDimension),
     );
   }
@@ -181,10 +181,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     for (int i = 0; i < _listing['Review'].length; i++) {
       final user = await MyApi.getRequest(
           endpoint: 'basicUserInfo/${_listing['Review'][i]['userID']}/',
-          headers: {
-            'Authorization':
-                'Bearer $token'
-          },
+          headers: {'Authorization': 'Bearer $token'},
           refresh: true);
       setState(() {
         _listing['Review'][i]['userName'] = user['name'];

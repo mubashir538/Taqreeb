@@ -36,7 +36,7 @@ class ReviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(max * 0.01),
         boxShadow: [
           BoxShadow(
-            color: MyColors.Dark.withAlpha(25),
+            color: MyColors.dark.withAlpha(25),
             blurRadius: 5,
             offset: Offset(0, 2),
           ),

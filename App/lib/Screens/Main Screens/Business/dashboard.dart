@@ -178,7 +178,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: Stack(

@@ -13,6 +13,7 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class AddCategoryListing extends StatefulWidget {
@@ -123,6 +124,20 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       return;
     }
 
+    String nameValidation =
+        Validations.validateName(_formController.nameController.text);
+    if (nameValidation != 'Ok') {
+      MyScaffold(text: nameValidation).show(context);
+      return;
+    }
+    String descriptionValidation =
+        Validations.validateName(_formController.descriptionController.text);
+
+    if (descriptionValidation != 'Ok') {
+      MyScaffold(text: descriptionValidation).show(context);
+      return;
+    }
+
     if (_formController.charactersLeft > 1050) {
       MyScaffold(text: 'Description is too Short').show(context);
       return;
@@ -149,7 +164,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -163,7 +178,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
     return RefreshIndicator(
       color: MyColors.red,
       displacement: Screen.height(context) * 0.2,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       onRefresh: _handleRefresh,
       child: SingleChildScrollView(
         child: Column(
@@ -328,9 +343,7 @@ class ListingFormController {
   }
 
   bool categoryRequiresAddons() {
-    return typeController.text == 'Salon' ||
-        typeController.text == 'Parlour' ||
-        typeController.text == 'Baker and Sweet';
+    return typeController.text == 'Salon' || typeController.text == 'Parlour';
   }
 
   void dispose() {

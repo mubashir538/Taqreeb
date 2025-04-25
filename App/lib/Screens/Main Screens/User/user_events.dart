@@ -126,7 +126,7 @@ class _YourEventsState extends State<YourEvents> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

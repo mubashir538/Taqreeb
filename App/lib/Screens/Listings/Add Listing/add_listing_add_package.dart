@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -18,13 +20,15 @@ class AddCategoryAddPackage extends StatefulWidget {
 class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
   final _formController = PackageFormController();
   final GlobalKey _headerKey = GlobalKey();
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> _selectedImages = [];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)?.settings.arguments;
-    if (args != null) {
-      _formController.args = args as Map<String, dynamic>;
+    if (args != null && args is Map<String, dynamic>) {
+      _formController.args = args;
     }
   }
 
@@ -39,14 +43,55 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
     });
   }
 
+  @override
+  void dispose() {
+    _formController.dispose();
+    super.dispose();
+  }
+
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
       UI_Management.headerHeight = renderbox.size.height;
     });
   }
 
+  Future<void> _pickImage() async {
+    if (_selectedImages.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You can only select up to 3 images')),
+      );
+      return;
+    }
+
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() {
+          _selectedImages.add(image);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error selecting image: ${e.toString()}')),
+      );
+    }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
   void _submitForm() {
-    _formController.addPackage();
+    if (_formController.nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a package name')),
+      );
+      return;
+    }
+
+    _formController.addPackage(images: _selectedImages);
     Navigator.pushNamed(
       context,
       '/AddCategory_Packages',
@@ -62,7 +107,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -71,17 +116,19 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: (Screen.height(context) * 0.03) + 
+                    height: (Screen.height(context) * 0.03) +
                         UI_Management.headerHeight,
                   ),
                   _buildNameField(),
                   _buildDetailsField(),
                   _buildPriceField(),
+                  _buildImageUploadSection(),
                   SizedBox(
                     height: Screen.height(context) * 0.1,
                     child: const Center(child: MyDivider()),
                   ),
                   _buildSubmitButton(),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -130,10 +177,94 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
     );
   }
 
+  Widget _buildImageUploadSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Add Images (Max 3)',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          if (_selectedImages.isNotEmpty)
+            SizedBox(
+              height: 100,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _selectedImages.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: FileImage(
+                                    File(_selectedImages[index].path)),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 5,
+                            right: 5,
+                            child: GestureDetector(
+                              onTap: () => _removeImage(index),
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+            ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: _pickImage,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MyColors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Select Images',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSubmitButton() {
-    return ColoredButton(
-      text: 'Add Package',
-      onPressed: _submitForm,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ColoredButton(
+        text: 'Add Package',
+        onPressed: _submitForm,
+      ),
     );
   }
 }
@@ -142,23 +273,31 @@ class PackageFormController {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  
+
   final FocusNode nameFocus = FocusNode();
   final FocusNode detailsFocus = FocusNode();
   final FocusNode priceFocus = FocusNode();
-  
+
   Map<String, dynamic> args = {};
 
-  void addPackage() {
+  void addPackage({List<XFile> images = const []}) {
     if (!args.containsKey('packages')) {
       args['packages'] = [];
     }
-    
-    args['packages'].add({
+
+    final newPackage = {
       'name': _capitalize(nameController.text),
       'details': _capitalize(detailsController.text),
       'price': _capitalize(priceController.text),
-    });
+      'images': images.map((image) => image.path).toList(),
+    };
+
+    args['packages'].add(newPackage);
+
+    // Clear form after submission
+    nameController.clear();
+    detailsController.clear();
+    priceController.clear();
   }
 
   String _capitalize(String input) {

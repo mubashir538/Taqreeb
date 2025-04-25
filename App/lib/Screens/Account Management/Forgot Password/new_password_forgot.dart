@@ -96,7 +96,7 @@ class _ForgotPassword_NewPasswordState
     _email = args['email'].toString();
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(

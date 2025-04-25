@@ -77,7 +77,7 @@ class _AccountInfoState extends State<AccountInfo> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

@@ -47,7 +47,7 @@ class Validations {
 
     RegExp hasLetterRegExp = RegExp(r'[a-zA-Z]');
     if (!hasLetterRegExp.hasMatch(value)) {
-      return 'Description must contain at least one letter (a-z, A-Z)';
+      return 'Description is Invalid';
     }
 
     return "Ok";

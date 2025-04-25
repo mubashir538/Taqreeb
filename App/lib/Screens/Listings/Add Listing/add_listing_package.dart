@@ -67,7 +67,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -87,7 +87,8 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
         child: Column(
           children: [
             SizedBox(
-              height: (Screen.height(context) * 0.03) + UI_Management.headerHeight,
+              height:
+                  (Screen.height(context) * 0.03) + UI_Management.headerHeight,
             ),
             _buildTitle(),
             _buildPackagesList(),
@@ -159,7 +160,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
       onPressed: _navigateToAddPackage,
       child: Icon(
         Icons.add,
-        color: MyColors.Dark,
+        color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),
     );

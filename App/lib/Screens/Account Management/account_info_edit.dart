@@ -135,7 +135,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           changeHeight(renderbox);
         });
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

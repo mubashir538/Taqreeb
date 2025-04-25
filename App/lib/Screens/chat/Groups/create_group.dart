@@ -201,8 +201,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         ),
         padding: EdgeInsets.all(Screen.width(context) * 0.04),
         decoration: BoxDecoration(
-          color:
-              isSelected ? MyColors.red.withAlpha(51) : MyColors.DarkLighter,
+          color: isSelected ? MyColors.red.withAlpha(51) : MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -225,7 +224,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           Column(

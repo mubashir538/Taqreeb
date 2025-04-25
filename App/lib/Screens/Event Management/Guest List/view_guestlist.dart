@@ -155,7 +155,7 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -228,7 +228,7 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
       onPressed: _showAddGuestOptions,
       child: Icon(
         Icons.add,
-        color: MyColors.Dark,
+        color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),
     );

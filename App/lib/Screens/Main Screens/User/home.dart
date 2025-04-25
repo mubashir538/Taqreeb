@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           if (UI_Management.headerHeight > 0)

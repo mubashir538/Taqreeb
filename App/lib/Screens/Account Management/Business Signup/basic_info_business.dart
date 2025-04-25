@@ -45,7 +45,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

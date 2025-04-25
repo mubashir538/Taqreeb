@@ -71,7 +71,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: _controller.isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildContent(),

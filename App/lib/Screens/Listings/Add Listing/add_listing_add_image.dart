@@ -28,8 +28,10 @@ class _AddImageState extends State<AddImage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)?.settings.arguments;
-    if (args != null && _imageController.args.isEmpty) {
-      _imageController.args = args as Map<String, dynamic>;
+    if (args != null &&
+        args is Map<String, dynamic> &&
+        _imageController.args.isEmpty) {
+      _imageController.args = Map.from(args);
     }
   }
 
@@ -45,18 +47,28 @@ class _AddImageState extends State<AddImage> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
-    });
+    if (mounted) {
+      setState(() => UI_Management.headerHeight = renderbox.size.height);
+    }
   }
 
   Future<void> _pickImage() async {
-    await Picture.pickImage(context, callback: (file) {
-      setState(() => _imageController.addImage(file.path));
-    });
+    await Picture.pickImage(
+      context,
+      callback: (file) {
+        if (mounted) {
+          setState(() => _imageController.addImage(file.path));
+        }
+      },
+    );
   }
 
   Future<void> _submitService() async {
+    if (_imageController.images.isEmpty) {
+      MyScaffold(text: 'Please add at least one image').show(context);
+      return;
+    }
+
     final response = await _imageController.submitService();
 
     if (!mounted) return;
@@ -68,7 +80,7 @@ class _AddImageState extends State<AddImage> {
         ModalRoute.withName('/'),
       );
     } else {
-      MyScaffold(text: 'Failed to add service. Please try again.')
+      MyScaffold(text: response['message'] ?? 'Failed to add service')
           .show(context);
     }
   }
@@ -81,7 +93,7 @@ class _AddImageState extends State<AddImage> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           Positioned(
@@ -94,10 +106,14 @@ class _AddImageState extends State<AddImage> {
           ),
           Column(
             children: [
-              SizedBox(height: UI_Management.headerHeight),
+              SizedBox(
+                  height: UI_Management.headerHeight +
+                      Screen.height(context) * 0.02),
               _buildImageUploadButton(),
               const SizedBox(height: 10),
               _buildImageGrid(),
+              SizedBox(
+                  height: Screen.height(context) * 0.1), // Space for button
             ],
           ),
           _buildSubmitButton(),
@@ -107,31 +123,34 @@ class _AddImageState extends State<AddImage> {
   }
 
   Widget _buildImageUploadButton() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
-      height: Screen.height(context) * 0.2,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(102),
-            blurRadius: 4,
-            spreadRadius: 1,
-            offset: const Offset(2, 2),
-          ),
-        ],
-      ),
-      child: InkWell(
-        onTap: _pickImage,
-        child: Center(
-          child: CircleAvatar(
-            radius: 30,
-            backgroundColor: MyColors.DarkLighter,
-            child: Image.asset(
-              MyIcons.add,
-              color: MyColors.white,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+      child: Container(
+        height: Screen.height(context) * 0.2,
+        decoration: BoxDecoration(
+          color: MyColors.DarkLighter,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: _pickImage,
+          child: Center(
+            child: CircleAvatar(
+              radius: 30,
+              backgroundColor: MyColors.DarkLighter,
+              child: Image.asset(
+                MyIcons.add,
+                color: MyColors.white,
+                width: 30,
+                height: 30,
+              ),
             ),
           ),
         ),
@@ -150,9 +169,7 @@ class _AddImageState extends State<AddImage> {
           childAspectRatio: 1,
         ),
         itemCount: _imageController.images.length,
-        itemBuilder: (context, index) {
-          return _buildImageItem(index);
-        },
+        itemBuilder: (context, index) => _buildImageItem(index),
       ),
     );
   }
@@ -162,44 +179,42 @@ class _AddImageState extends State<AddImage> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(102),
+                color: Colors.black.withOpacity(0.4),
                 blurRadius: 4,
-                spreadRadius: 1,
                 offset: const Offset(2, 2),
               ),
             ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.file(
-                  File(_imageController.images[index]),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-                Container(
-                  color: Colors.black.withAlpha(127),
-                ),
-              ],
+            child: Image.file(
+              File(_imageController.images[index]),
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
           ),
         ),
-        Center(
-          child: IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: MyColors.white,
-              size: 30,
+        Positioned(
+          top: 8,
+          right: 8,
+          child: GestureDetector(
+            onTap: () => setState(() => _imageController.removeImage(index)),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
-            onPressed: () =>
-                setState(() => _imageController.removeImage(index)),
           ),
         ),
       ],
@@ -208,7 +223,7 @@ class _AddImageState extends State<AddImage> {
 
   Widget _buildSubmitButton() {
     return Positioned(
-      bottom: Screen.max(context) * 0.02,
+      bottom: Screen.height(context) * 0.02,
       left: Screen.width(context) * 0.25,
       right: Screen.width(context) * 0.25,
       child: ColoredButton(
@@ -229,64 +244,80 @@ class ImageController {
   }
 
   void removeImage(int index) {
-    images.removeAt(index);
+    if (index >= 0 && index < images.length) {
+      images.removeAt(index);
+    }
   }
 
   Future<Map<String, dynamic>> submitService() async {
-    final data = {
-      'userid': await MyStorage.getToken(MyTokens.userId) ?? "",
-      'name': args['name'],
-      'type': await MyTokens.getBusinessType(),
-      'description': args['description'],
-      'category': args['category'],
-      'location': args['location'],
-      'priceMin': args['pricemin'],
-      'priceMax': args['pricemax'],
-      'packages':
-          args['packages'] != null ? jsonEncode(args['packages']) : null,
-      'addons': args['addons'] != null ? jsonEncode(args['addons']) : null,
-    };
+    try {
+      final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
+      final businessType = await MyTokens.getBusinessType();
 
-    _addCategorySpecificData(data);
+      final data = {
+        'userid': userId,
+        'name': args['name'] ?? '',
+        'type': businessType,
+        'description': args['description'] ?? '',
+        'category': args['category'] ?? '',
+        'location': args['location'] ?? '',
+        'priceMin': args['pricemin'] ?? '',
+        'priceMax': args['pricemax'] ?? '',
+        'products': _safeJsonEncode(args['products']),
+        'packages': _safeJsonEncode(args['packages']),
+        'addons': _safeJsonEncode(args['addons']),
+        'viewData': _safeJsonEncode(args['viewData']), // Added viewData
+      };
 
-    return await MyApi.postMultipartRequest(
-      endpoint: 'businessowner/addListings/',
-      body: data,
-      files: {'pictures': images},
-    );
+      _addCategorySpecificData(data);
+
+      final response = await MyApi.postMultipartRequest(
+        endpoint: 'businessowner/addListings/',
+        body: data,
+        files: {'pictures': images},
+      );
+
+      return response ??
+          {'status': 'error', 'message': 'No response from server'};
+    } catch (e) {
+      return {'status': 'error', 'message': e.toString()};
+    }
+  }
+
+  String? _safeJsonEncode(dynamic data) {
+    try {
+      return data != null ? jsonEncode(data) : null;
+    } catch (e) {
+      return null;
+    }
   }
 
   void _addCategorySpecificData(Map<String, dynamic> data) {
-    switch (args['category']) {
-      case 'Venue':
-        data['venueType'] = args['venueType'];
-        data['staff'] = args['staff'];
-        data['guestmaxAllowed'] = args['guestmaxAllowed'];
-        data['guestminAllowed'] = args['guestminAllowed'];
-        data['catering'] = args['catering'];
-        break;
-      case 'Photography Place':
-        data['type'] = args['type'];
-        break;
-      case 'Decorator':
-        data['decorType'] = args['decorType'];
-        data['catering'] = args['catering'];
-        data['staff'] = args['staff'];
-        break;
-      case 'Photographer':
-      case 'Graphic Designer':
-      case 'Video Editor':
-        data['portfolioLink'] = args['portfolioLink'];
-        break;
-      case 'Caterer':
-        data['serviceType'] = args['serviceType'];
-        data['cateringOptions'] = args['cateringOptions'];
-        data['staff'] = args['staff'];
-        data['expertise'] = args['expertise'];
-        break;
-      case 'Car Renter':
-        data['serviceType'] = args['serviceType'];
-        break;
+    final category = args['category']?.toString() ?? '';
+
+    final categoryFields = {
+      'Venue': [
+        'venueType',
+        'staff',
+        'guestmaxAllowed',
+        'guestminAllowed',
+        'catering'
+      ],
+      'Photography Place': ['type'],
+      'Decorator': ['decorType', 'catering', 'staff'],
+      'Photographer': ['portfolioLink'],
+      'Graphic Designer': ['portfolioLink'],
+      'Video Editor': ['portfolioLink'],
+      'Caterer': ['serviceType', 'cateringOptions', 'staff', 'expertise'],
+      'Car Renter': ['serviceType'],
+    };
+
+    if (categoryFields.containsKey(category)) {
+      for (final field in categoryFields[category]!) {
+        if (args[field] != null) {
+          data[field] = args[field];
+        }
+      }
     }
   }
 }

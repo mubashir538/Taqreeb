@@ -93,7 +93,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: SingleChildScrollView(
         child: Column(
           children: [

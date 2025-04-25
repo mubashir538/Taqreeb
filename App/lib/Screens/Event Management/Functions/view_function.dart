@@ -164,7 +164,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),

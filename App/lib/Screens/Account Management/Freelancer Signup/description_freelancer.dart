@@ -95,7 +95,7 @@ class FreelancerSignupDescriptionState
         Provider.of<FreelancerSignupDescriptionViewModel>(context);
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

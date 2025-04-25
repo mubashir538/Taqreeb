@@ -19,7 +19,7 @@ class WarningDialog extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              backgroundColor: MyColors.Dark,
+              backgroundColor: MyColors.dark,
               title: Text(
                 title,
                 style: GoogleFonts.montserrat(

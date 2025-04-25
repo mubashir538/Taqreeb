@@ -71,7 +71,7 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.dark(
               primary: MyColors.Yellow,
-              onPrimary: MyColors.Dark,
+              onPrimary: MyColors.dark,
               surface: MyColors.DarkLighter,
               onSurface: MyColors.white,
             ),
@@ -80,9 +80,9 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
               hourMinuteTextColor: MyColors.white,
               dayPeriodTextColor: MyColors.white,
               dialHandColor: MyColors.Yellow,
-              dialBackgroundColor: MyColors.Dark.withAlpha(127),
-              hourMinuteColor: MyColors.Dark.withAlpha(127),
-              dayPeriodColor: MyColors.Dark.withAlpha(127),
+              dialBackgroundColor: MyColors.dark.withAlpha(127),
+              hourMinuteColor: MyColors.dark.withAlpha(127),
+              dayPeriodColor: MyColors.dark.withAlpha(127),
               entryModeIconColor: MyColors.Yellow,
             ),
           ),

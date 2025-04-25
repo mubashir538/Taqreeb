@@ -172,7 +172,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
         ImageSliderCategory(imageUrls: _imageUrls),
         Container(
           width: Screen.width(context),
-          color: MyColors.Dark,
+          color: MyColors.dark,
           padding: EdgeInsets.symmetric(
             horizontal: Screen.width(context) * 0.04,
             vertical: Screen.height(context) * 0.01,
@@ -234,7 +234,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

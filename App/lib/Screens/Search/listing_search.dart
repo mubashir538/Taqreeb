@@ -273,7 +273,7 @@ class _SearchServiceState extends State<SearchService> {
                   Text(
                     filter,
                     style: GoogleFonts.montserrat(
-                      color: MyColors.Dark,
+                      color: MyColors.dark,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -304,7 +304,7 @@ class _SearchServiceState extends State<SearchService> {
                     child: Icon(
                       Icons.close,
                       size: 16,
-                      color: MyColors.Dark,
+                      color: MyColors.dark,
                     ),
                   ),
                 ],
@@ -413,7 +413,7 @@ class _SearchServiceState extends State<SearchService> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -647,7 +647,7 @@ class _SearchServiceState extends State<SearchService> {
   void _showAdditionalFilterPopup(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

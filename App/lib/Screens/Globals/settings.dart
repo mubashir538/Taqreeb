@@ -78,7 +78,7 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       backgroundColor: themeProvider.themeMode == ThemeMode.dark
-          ? MyColors.Dark
+          ? MyColors.dark
           : MyColors.white, // Use theme-based colors
       body: Stack(
         children: [
@@ -125,7 +125,7 @@ class _SettingsState extends State<Settings> {
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
-                                                : MyColors.Dark,
+                                                : MyColors.dark,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -145,7 +145,7 @@ class _SettingsState extends State<Settings> {
                                                       themeProvider.themeMode ==
                                                               ThemeMode.dark
                                                           ? MyColors.white
-                                                          : MyColors.Dark,
+                                                          : MyColors.dark,
                                                 ),
                                               ),
                                             ),
@@ -222,7 +222,7 @@ class _SettingsState extends State<Settings> {
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
-                                                : MyColors.Dark,
+                                                : MyColors.dark,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -242,7 +242,7 @@ class _SettingsState extends State<Settings> {
                                                       themeProvider.themeMode ==
                                                               ThemeMode.dark
                                                           ? MyColors.white
-                                                          : MyColors.Dark,
+                                                          : MyColors.dark,
                                                 ),
                                               ),
                                             ),

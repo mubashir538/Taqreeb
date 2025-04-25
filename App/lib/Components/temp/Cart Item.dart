@@ -86,7 +86,7 @@ class _CartItemsState extends State<CartItems> {
                     height: Screen.height(context) * 0.04,
                     width: Screen.width(context) * 0.25,
                     decoration: BoxDecoration(
-                        color: MyColors.Dark,
+                        color: MyColors.dark,
                         border: Border.all(
                           color: MyColors.white,
                         ),

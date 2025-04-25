@@ -109,7 +109,7 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
