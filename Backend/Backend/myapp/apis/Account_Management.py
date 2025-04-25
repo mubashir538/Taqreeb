@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
-from myapp import models as md
+from myapp import models as m
 from django.core.files.storage import FileSystemStorage
 from myapp import Serializers as s
 from twilio.rest import Client
@@ -37,22 +37,22 @@ def AccountSignupPage(request):
     password = hashed.decode()
     if contactType=='email':
         contact = request.data.get('email')
-        user = md.User.objects.filter(email=contact).first()
+        user = m.User.objects.filter(email=contact).first()
         if user:
             return Response({'status':'error', 'message': 'Email Already Exists'})
-        user = md.User(firstName=firstName,lastName=lastName,password=password,email=contact,city=city,gender=gender,age=age,username=username)
+        user = m.User(firstName=firstName,lastName=lastName,password=password,email=contact,city=city,gender=gender,age=age,username=username)
     else:
         contact = request.data.get('contactNumber')
-        user = md.User.objects.filter(contactNumber=contact).first()
+        user = m.User.objects.filter(contactNumber=contact).first()
         if user:
             return Response({'status':'error', 'message': 'Contact Already Exists'})
 
-        user = md.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
+        user = m.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
     if contactType=='email':
-        user = md.User.objects.filter(email=contact).first()
+        user = m.User.objects.filter(email=contact).first()
     else:
-        user = md.User.objects.filter(contactNumber=contact).first()
+        user = m.User.objects.filter(contactNumber=contact).first()
 
     if profilePicture:
             filestorage = FileSystemStorage()
@@ -143,7 +143,7 @@ def sendOTPPhone(request):
 @permission_classes([AllowAny])
 def sendOTPEmail(request):
     email = request.data.get('email')
-    if not md.User.objects.filter(email=email).exists():
+    if not m.User.objects.filter(email=email).exists():
         otp = rd.randint(1000,9999)
         subject = 'The OTP for Taqreeb'
         message = f''' The Otp for your Taqreeb App is
@@ -169,16 +169,16 @@ def BusinessOwnerSignup(request):
     cnicBack = request.FILES.get('cnicBack')
     description = request.data.get('description')
     profile = request.FILES.get('profilePicture')
-    user = md.User.objects.get(id=userid)
-    if md.BusinessOwner.objects.filter(userID=userid).exists():
+    user = m.User.objects.get(id=userid)
+    if m.BusinessOwner.objects.filter(userID=userid).exists():
         return Response({'status':'error', 'message': 'Business Owner Already Exists'}) 
-    owner = md.BusinessOwner(userID=user,businessName=businessName,Description=description,cnic=cnic,status='Pending')
+    owner = m.BusinessOwner(userID=user,businessName=businessName,Description=description,cnic=cnic,status='Pending')
     owner.save()
     filestorage = FileSystemStorage()
     filePath = filestorage.save(f'uploads/Business/cnic/Approval/Front/{userid}.png', cnicFront)
     filePath2 = filestorage.save(f'uploads/Business/cnic/Approval/Back/{userid}.png', cnicBack)
     picture = filestorage.save(f'uploads/Business/profilePicture/{userid}.png', profile)
-    owner = md.BusinessOwner.objects.get(userID=userid)
+    owner = m.BusinessOwner.objects.get(userID=userid)
     owner.CNICBack = filestorage.url(filePath2)
     owner.CNICFront = filestorage.url(filePath)
     owner.profilepic = filestorage.url(picture)
@@ -206,7 +206,7 @@ def ForgotPasswordPage(request):
         contact = request.data.get('phone')
     otp = rd.randint(1000,9999)
     if str(contact).find('@') != -1:
-        user = md.User.objects.filter(email=contact).first()
+        user = m.User.objects.filter(email=contact).first()
         otp = rd.randint(1000,9999)
         subject = 'Password Reset OTP for Taqreeb'
         message = f''' The Passowrd Reset Otp for your Taqreeb App is
@@ -220,7 +220,7 @@ def ForgotPasswordPage(request):
             print(e)
             return Response({'status': 'error'})
     else:
-        user = md.User.objects.filter(contactNumber=contact).first()
+        user = m.User.objects.filter(contactNumber=contact).first()
         # OTP Send Contact Number
     if user != None:
         return Response({'status':'error', 'message': 'Enter a Valid Email or Phone Number'})
@@ -257,13 +257,13 @@ def googleAuth(request):
     phone = request.data.get('phone')
     gender = request.data.get('gender')
     age = request.data.get('age')
-    if not md.User.objects.filter(email=email).exists():
+    if not m.User.objects.filter(email=email).exists():
         firstName = name.split(' ')[0]
         lastName = name.split(' ')[1]
         username = generateUsername(firstName,lastName)
-        if not md.User.objects.filter(email=email).exists():
-            md.User(firstName=firstName,lastName=lastName,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
-            user = md.User.objects.filter(email=email).first()
+        if not m.User.objects.filter(email=email).exists():
+            m.User(firstName=firstName,lastName=lastName,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
+            user = m.User.objects.filter(email=email).first()
             firebase_user_data = {
                 "firstName": firstName,
                 "lastName": lastName,
@@ -283,7 +283,7 @@ def googleAuth(request):
         id = user.id    
         return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
     else:
-        user = md.User.objects.filter(email=email).first()
+        user = m.User.objects.filter(email=email).first()
         refresh = RefreshToken.for_user(user)
         id = user.id
         return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
@@ -297,9 +297,9 @@ def ResetPasswordPage(request):
     password = hashed.decode() 
     id = request.data.get('contact')
     if str(id).find('@') != -1:
-        user = md.User.objects.get(email=id)
+        user = m.User.objects.get(email=id)
     else:
-        user = md.User.objects.get(contactNumber=id)
+        user = m.User.objects.get(contactNumber=id)
     user.password = password
     user.save(update_fields=["password"])
     return Response({'status':'success'})
@@ -308,7 +308,7 @@ def ResetPasswordPage(request):
 @permission_classes([IsAuthenticated])
 def AccountInfoPage(request,id):
     userid = id
-    user = md.User.objects.filter(id=userid).first()
+    user = m.User.objects.filter(id=userid).first()
     serializer = s.UserSerializer(user)
     return Response(serializer.data)
 
@@ -316,7 +316,7 @@ def AccountInfoPage(request,id):
 @permission_classes([IsAuthenticated])
 def getBasicUserInfo(request,id):
     userid = id
-    user = md.User.objects.filter(id=userid).first()
+    user = m.User.objects.filter(id=userid).first()
     return Response({'name':f'{user.firstName.capitalize()} {user.lastName.capitalize()}','profilePicture':user.profilePicture})
 
 
@@ -324,20 +324,20 @@ def getBasicUserInfo(request,id):
 @permission_classes([IsAuthenticated])
 def BusinessAccountInfoPage(request,id,type):
     userid = id
-    user = md.User.objects.filter(id=userid).first()
+    user = m.User.objects.filter(id=userid).first()
     if type == 'freelancer':
-        businessInfo = md.Freelancer.objects.get(userID=id)
+        businessInfo = m.Freelancer.objects.get(userID=id)
         BusinessSerializer = s.FreelancerSerializer(businessInfo,many=False)
     else:
-        businessInfo = md.BusinessOwner.objects.get(userID=id)
+        businessInfo = m.BusinessOwner.objects.get(userID=id)
         BusinessSerializer = s.BusinessOwnerSerializer(businessInfo,many=False)
     serializer = s.UserSerializer(user,many=False)
     if type == 'freelancer':
-        types = list(md.Listing.objects.filter(freelancerID=businessInfo.id).values_list('type', flat=True).distinct())
-        listing = md.Listing.objects.filter(freelancerID=businessInfo.id).count()
+        types = list(m.Listing.objects.filter(freelancerID=businessInfo.id).values_list('type', flat=True).distinct())
+        listing = m.Listing.objects.filter(freelancerID=businessInfo.id).count()
     else:
-        types = list(md.Listing.objects.filter(ownerID=businessInfo.id).values_list('type', flat=True).distinct())
-        listing = md.Listing.objects.filter(ownerID=businessInfo.id).count()
+        types = list(m.Listing.objects.filter(ownerID=businessInfo.id).values_list('type', flat=True).distinct())
+        listing = m.Listing.objects.filter(ownerID=businessInfo.id).count()
     return Response({'status':'success','businessInfo':BusinessSerializer.data,'userinfo':serializer.data,'categories':list(types),'listingCount':listing})
 
 @api_view(['POST'])
@@ -349,7 +349,7 @@ def EditAccountInfoPage(request):
     gender = request.data.get('gender')
     city = request.data.get('city')
     lastname = request.data.get('lastName')
-    user = md.User.objects.get(id=userid)
+    user = m.User.objects.get(id=userid)
     user.firstName = firstName
     user.lastName = lastname
     user.gender = gender
@@ -364,7 +364,7 @@ def EditAccountInfoPage(request):
         user.save(update_fields=["profilePicture",'firstName','lastName','gender','city'])
     else:
         user.save(update_fields=['firstName','lastName','gender','city'])
-    user = md.User.objects.get(id=userid)
+    user = m.User.objects.get(id=userid)
     firebase_user_data = {
         "firstName": user.firstName,
         "lastName": user.lastName,
@@ -391,11 +391,11 @@ def editBusinessInfo(request):
     businessName = request.data.get('name')
     Description = request.data.get('description')
     type = request.data.get('type')
-    user = md.User.objects.get(id=userid)
+    user = m.User.objects.get(id=userid)
     if type == 'freelancer':
-        business = md.Freelancer.objects.get(userID=user)
+        business = m.Freelancer.objects.get(userID=user)
     else:
-        business = md.BusinessOwner.objects.get(userID=user)
+        business = m.BusinessOwner.objects.get(userID=user)
     business.businessName = businessName
     business.Description = Description
     profilePicture = request.FILES.get('profilePicture')
@@ -425,12 +425,12 @@ def FreelancerSignup(request):
     Picture = request.FILES.get('profilePicture')
     UserId = request.data.get('UserId')
     cnic = request.data.get('cnic')
-    user = md.User.objects.get(id=UserId)
-    Freelancer = md.Freelancer(userID = user,businessName = BusinessName,cnic=cnic,portfolioLink = PortfolioLink,Description = Description,status='Pending')
+    user = m.User.objects.get(id=UserId)
+    Freelancer = m.Freelancer(userID = user,businessName = BusinessName,cnic=cnic,portfolioLink = PortfolioLink,Description = Description,status='Pending')
     Freelancer.save()
     filestorage = FileSystemStorage()
     picture = filestorage.save(f'uploads/Freelancer/profilePicture/{UserId}.png',Picture)
-    owner = md.Freelancer.objects.get(userID=UserId)
+    owner = m.Freelancer.objects.get(userID=UserId)
     owner.profilepic = filestorage.url(picture)
     owner.save(update_fields=["profilepic"])
     firebase_user_data = {
@@ -456,9 +456,9 @@ def UserLogin(request):
     # hashed = bcrypt.hashpw(str(password).encode(),salt)
     # password = hashed.decode()
     if contact.find('@') != -1:
-        user = md.User.objects.filter(email=contact).first()
+        user = m.User.objects.filter(email=contact).first()
     else:
-        user = md.User.objects.filter(contactNumber=contact).first()
+        user = m.User.objects.filter(contactNumber=contact).first()
     if(user):
         if bcrypt.checkpw(password.encode(), user.password.encode()):
             refresh = RefreshToken.for_user(user)
@@ -469,7 +469,7 @@ def UserLogin(request):
 
 def generateUsername(firstName,lastName):
     characters = firstName.lower() + lastName.lower()
-    while md.User.objects.filter(username=characters).exists():
+    while m.User.objects.filter(username=characters).exists():
         options = rd.randint(0, 2)
         if options == 0:
             characters = firstName.lower() + '_' + lastName.lower()

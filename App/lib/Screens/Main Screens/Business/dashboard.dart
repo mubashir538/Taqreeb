@@ -232,6 +232,16 @@ class _DashboardState extends State<Dashboard> {
                             },
                           ),
                           _buildDashboardOption(
+                            title: "Manage Slots",
+                            icon: Icons.message,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/UpdateBookedSlots',
+                              );
+                            },
+                          ),
+                          _buildDashboardOption(
                             title: "Manage Listings",
                             icon: Icons.business,
                             onTap: () {

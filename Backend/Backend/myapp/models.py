@@ -1,6 +1,9 @@
 from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import os
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -92,15 +95,8 @@ class Listing(m.Model):
     ratingCount = m.IntegerField(default=0)
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
-
-class BusinessTransaction(m.Model):
-    id = m.AutoField(primary_key=True)
-    type = m.TextField(null=True)
-    date = m.DateTimeField(auto_now_add=True)
-    ownerf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
-    ownerb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
-    amount = m.IntegerField()
-    info = m.TextField()
+    status = m.CharField(max_length=20)
+    booked_dates = m.JSONField(default=list)
 
 class BankDetails(m.Model):
     id = m.AutoField(primary_key=True)
@@ -121,16 +117,6 @@ class Packages(m.Model):
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
     description = m.CharField(max_length=1100)
     price= m.IntegerField()
-
-class Transaction(m.Model):
-    id = m.AutoField(primary_key=True)
-    sender = m.ForeignKey(User,on_delete=m.CASCADE,null=True)
-    receiverf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
-    receiverb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
-    amount = m.IntegerField()
-    status = m.TextField(null=True)
-    date = m.DateTimeField(auto_now_add=True)
-    package = m.ForeignKey(Packages,on_delete=m.CASCADE,null=True)
 
 class PicturesPackages(m.Model):
     id = m.AutoField(primary_key=True)
@@ -425,3 +411,99 @@ class BookingCart(m.Model):
     slot = m.DateTimeField(null=True)
     type = m.CharField(max_length=100,null=True)
     status = m.CharField(max_length=100)
+
+User = get_user_model()
+
+class Cart(m.Model):
+    user = m.OneToOneField(User, on_delete=m.CASCADE, related_name='cart')
+    created_at = m.DateTimeField(auto_now_add=True)
+    updated_at = m.DateTimeField(auto_now=True)
+
+class CartItem(m.Model):
+    CART_ITEM_TYPES = (
+        ('listing', 'Listing'),
+        ('product', 'Product'),
+        ('package', 'Package'),
+    )
+    
+    cart = m.ForeignKey(Cart, on_delete=m.CASCADE, related_name='items')
+    item_type = m.CharField(max_length=10, choices=CART_ITEM_TYPES)
+    item_id = m.PositiveIntegerField()
+    quantity = m.PositiveIntegerField(default=1)
+    added_at = m.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('cart', 'item_type', 'item_id')
+
+class Booking(m.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+    )
+    
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    listing = m.ForeignKey(Listing, on_delete=m.CASCADE, null=True, blank=True)
+    product = m.ForeignKey(Product, on_delete=m.CASCADE, null=True, blank=True)
+    package = m.ForeignKey(Packages, on_delete=m.CASCADE, null=True, blank=True)
+    booking_date = m.DateTimeField()
+    status = m.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = m.DateTimeField(auto_now_add=True)
+    payment_amount = m.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = m.CharField(max_length=20, default='pending')
+    additional_info = m.JSONField(default=dict)
+    has_reviewed = m.BooleanField(default=False)
+
+class Order(m.Model):
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    cart = m.ForeignKey(Cart, on_delete=m.SET_NULL, null=True)
+    total_amount = m.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = m.CharField(max_length=20, default='pending')
+    status = m.CharField(max_length=20, default='processing')
+    created_at = m.DateTimeField(auto_now_add=True)
+    booking_info = m.JSONField(default=dict)  # Stores dates and other booking details
+
+class Transaction(m.Model):
+    id = m.AutoField(primary_key=True)
+    sender = m.ForeignKey(User, on_delete=m.CASCADE, null=True)
+    receiverf = m.ForeignKey(Freelancer, on_delete=m.CASCADE, null=True)
+    receiverb = m.ForeignKey(BusinessOwner, on_delete=m.CASCADE, null=True)
+    amount = m.IntegerField()
+    status = m.CharField(max_length=20, default='Completed')  # Updated to use consistent status
+    date = m.DateTimeField(auto_now_add=True)
+    package = m.ForeignKey(Packages, on_delete=m.CASCADE, null=True)
+    order = m.ForeignKey(Order, on_delete=m.SET_NULL, null=True, blank=True)  # Added order reference
+    booking = m.ForeignKey(Booking, on_delete=m.SET_NULL, null=True, blank=True)  # Added booking reference
+
+class BusinessTransaction(m.Model):
+    id = m.AutoField(primary_key=True)
+    type = m.TextField(blank=True)
+    date = m.DateTimeField(auto_now_add=True)
+    ownerf = m.ForeignKey(Freelancer, on_delete=m.CASCADE, null=True)
+    ownerb = m.ForeignKey(BusinessOwner, on_delete=m.CASCADE, null=True)
+    amount = m.IntegerField()
+    info = m.TextField()
+    status = m.CharField(max_length=20, default='Completed')  # Added status field
+    order = m.ForeignKey(Order, on_delete=m.SET_NULL, null=True, blank=True)  # Added order reference
+
+
+# models.py
+class Payment(m.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+        ('refunded', 'Refunded'),
+    )
+    
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    order = m.ForeignKey(Order, on_delete=m.CASCADE, null=True, blank=True)
+    booking = m.ForeignKey(Booking, on_delete=m.CASCADE, null=True, blank=True)
+    amount = m.DecimalField(max_digits=10, decimal_places=2)
+    transaction_id = m.CharField(max_length=100, unique=True)
+    payment_method = m.CharField(max_length=50)
+    status = m.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = m.DateTimeField(auto_now_add=True)
+    updated_at = m.DateTimeField(auto_now=True)
+    payment_details = m.JSONField(default=dict)  # Stores raw payment processor response

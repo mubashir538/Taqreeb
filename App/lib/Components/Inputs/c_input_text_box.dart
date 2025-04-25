@@ -15,6 +15,7 @@ class MyTextBox extends StatefulWidget {
   final TextEditingController valueController;
   final String? errorText;
   final Function(String)? onChanged;
+  final int? maxLength; // New parameter for max length
 
   const MyTextBox({
     super.key,
@@ -28,6 +29,7 @@ class MyTextBox extends StatefulWidget {
     required this.valueController,
     this.errorText,
     this.onChanged,
+    this.maxLength, // Added maxLength parameter
   });
 
   @override
@@ -152,10 +154,23 @@ class _MyTextBoxState extends State<MyTextBox> {
                     focusNode: _focusNode,
                     onSubmitted: widget.onFieldSubmitted,
                     onChanged: (value) {
+                      // Enforce max length if specified
+                      if (widget.maxLength != null &&
+                          value.length > widget.maxLength!) {
+                        _controller.text = _previousText;
+                        _controller.selection = TextSelection.collapsed(
+                          offset: _previousText.length,
+                        );
+                        return;
+                      }
+
+                      _previousText = value;
+
                       if (widget.onChanged != null) {
                         // Pass the raw number without commas to the callback
-                        String rawValue =
-                            value.replaceAll(RegExp(r'[^0-9]'), '');
+                        String rawValue = widget.isPrice
+                            ? value.replaceAll(RegExp(r'[^0-9]'), '')
+                            : value;
                         widget.onChanged!(rawValue);
                       }
                     },
@@ -165,15 +180,13 @@ class _MyTextBoxState extends State<MyTextBox> {
                         : widget.isPrice
                             ? TextInputType.numberWithOptions(decimal: true)
                             : TextInputType.text,
-                    inputFormatters: widget.isNum
-                        ? [FilteringTextInputFormatter.digitsOnly]
-                        : widget.isPrice
-                            ? [
-                                // Allow only digits and commas
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9,]')),
-                              ]
-                            : null,
+                    inputFormatters: [
+                      if (widget.isNum) FilteringTextInputFormatter.digitsOnly,
+                      if (widget.isPrice)
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
+                      if (widget.maxLength != null)
+                        LengthLimitingTextInputFormatter(widget.maxLength),
+                    ],
                     style: GoogleFonts.montserrat(
                       fontSize: Screen.max(context) * 0.018,
                       fontWeight: FontWeight.w400,
@@ -186,7 +199,9 @@ class _MyTextBoxState extends State<MyTextBox> {
                         fontSize: Screen.max(context) * 0.015,
                       ),
                       border: InputBorder.none,
+                      counterText: '', // Remove default counter
                     ),
+                    maxLength: widget.maxLength, // Set max length
                   ),
                 ),
                 if (widget.isPassword)
@@ -213,6 +228,18 @@ class _MyTextBoxState extends State<MyTextBox> {
               style: GoogleFonts.montserrat(
                 color: MyColors.red,
                 fontSize: Screen.max(context) * 0.015,
+              ),
+            ),
+          ),
+        // Show remaining characters counter if maxLength is specified
+        if (widget.maxLength != null)
+          Padding(
+            padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
+            child: Text(
+              '${_controller.text.length}/${widget.maxLength}',
+              style: GoogleFonts.montserrat(
+                color: MyColors.white.withAlpha(153),
+                fontSize: Screen.max(context) * 0.012,
               ),
             ),
           ),

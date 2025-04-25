@@ -16,7 +16,6 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_pricing.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_slot.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class CategoryViewDecorator extends StatefulWidget {
@@ -195,10 +194,6 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
               ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
-              CategorySlots(
-                listing: _listing,
-                onDateSelected: _handleDateSelection,
-              ),
               _buildDivider(),
               CategoryReview(
                 listing: _listing,

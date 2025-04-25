@@ -1,9 +1,10 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 from .apis import Account_Management as am
 from .apis import View_Pages as vp
 from .apis import chats as c
 from .apis import Invitation as i
+from .apis import cart
 from .apis import notifications as n
 from .apis import Event_Management as em
 from .apis import Payment as p
@@ -17,6 +18,11 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .Serializers import CustomTokenObtainPairSerializer
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'cart', cart.CartViewSet, basename='cart')
+router.register(r'cart/items', cart.CartItemViewSet, basename='cart-items')
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -79,8 +85,12 @@ urlpatterns = [
     path('home/categories/',views.HomeCategories,name='HomeCategories'),
     path('business/categories/<str:type>',views.BusinessCategories,name='BusinessCategories'),
     path('home/listings/',lm.HomeListings,name='HomeListings'),
-    path('home/listings/views',lm.ListingWithViews,name='ListingWithViews'),
+    path('home/packages/', lm.home_packages, name='home-packages'),
+    path('home/products/', lm.home_products, name='home-products'),
+    path('home/listings/views',lm.listing_with_views,name='ListingWithViews'),
     path('Payments/addTransaction',p.addTransaction,name='addTransaction'),
+    path('create_order/',cart.create_order,name='create_order'),
+    path('process_payment/',p.process_payment,name='process_payment'),
     path('Payments/getWalletBalance/<int:id>/<str:type>',p.getWalletBalance,name='getWalletBalance'),
     path('Payments/WithdrawBalance',p.WithdrawBalance,name='WithdrawBalance'),
     path('Payments/getTransactions/<int:id>/<str:type>',p.getTransactions,name='getTransactions'),
@@ -106,8 +116,17 @@ urlpatterns = [
     path('wishlist/get/<int:uid>',views.getWishlist,name='getWishlist'),
     path('wishlist/delete',views.removeFromWishlist,name='removeFromWishlist'),
     path('Reviews/add',vp.AddReview,name='addReview'),
+    path('user/bookings',cart.user_bookings,name='userBookings'),
+    path('business/bookings',cart.business_bookings,name='business_bookings'),
+    path('update_booking_status/',cart.update_booking_status,name='update_booking_status'),
+    path('update_order_status/',p.update_order_status,name='update_order_status'),
+    path('cancel_booking/',cart.cancel_booking,name='cancel_booking'),
+    path('Reviews/MarkBooking',p.mark_booking_reviewed,name='mark_booking_reviewed'),
+    path('health-check/',views.health_check,name='health-check'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     path('deleteReq/',views.deleteTable,name='deleteReq'),
+    path('', include(router.urls)),
+
 ]
 
 if settings.DEBUG:

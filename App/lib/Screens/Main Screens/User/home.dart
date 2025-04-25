@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchListings() async {
-    await ApiCall.fetchAPI('home/listings/', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('home/listings/?page=1&page_size=10', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           listings = data;

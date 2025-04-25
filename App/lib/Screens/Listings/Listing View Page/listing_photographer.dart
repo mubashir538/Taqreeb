@@ -188,7 +188,9 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategorySlots(
-                listing: _listing,
+                bookedDates: (_listing['booked_dates'] as List)
+                    .map((dateStr) => DateTime.parse(dateStr))
+                    .toList(),
                 onDateSelected: _handleDateSelection,
               ),
               _buildDivider(),
