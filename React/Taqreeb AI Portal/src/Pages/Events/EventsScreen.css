@@ -1,6 +1,6 @@
 .events-container {
   display: flex;
-  background-color: #1a202c;
+  background-color: #0e1626;
   color: white;
   min-height: 100vh;
 }
@@ -32,7 +32,7 @@
 }
 
 .event-card {
-  background: #2d3748;
+  background: #1a2235;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1f2733;
+  background: #374151;
   padding: 12px;
   border-radius: 8px;
 }
@@ -137,18 +137,6 @@
   /* color: #f7fafc; */
 }
 
-.footer {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: space-between;
-  color: #a0aec0;
-  font-size: 12px;
-  padding-top: 20px;
-  border-top: 1px solid #4a5568;
-}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
