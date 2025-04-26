@@ -27,10 +27,12 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
   Future<void> _loadBookings() async {
     _token = await MyStorage.getToken(MyTokens.accessToken);
     try {
-      final response =
-          await MyApi.getRequest(endpoint: 'business/bookings', headers: {
-        'Authorization': 'Bearer $_token',
-      });
+      final response = await MyApi.getRequest(
+          context: context,
+          endpoint: 'business/bookings',
+          headers: {
+            'Authorization': 'Bearer $_token',
+          });
       setState(() {
         _bookings = response['bookings'];
         _isLoading = false;

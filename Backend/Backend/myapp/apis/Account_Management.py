@@ -314,7 +314,7 @@ def AccountInfoPage(request,id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getBasicUserInfo(request,id):
+def get_basic_userinfo(request,id):
     userid = id
     user = m.User.objects.filter(id=userid).first()
     return Response({'name':f'{user.firstName.capitalize()} {user.lastName.capitalize()}','profilePicture':user.profilePicture})

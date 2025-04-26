@@ -46,18 +46,22 @@ class _WalletScreenState extends State<WalletScreen> {
           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
     };
     _balance = (await MyApi.getRequest(
+            context: context,
             endpoint: 'Payments/getWalletBalance/$userId/$type',
             headers: headers))
         .toString();
 
     final response = await MyApi.getRequest(
-        endpoint: 'Payments/getBank/$userId', headers: headers);
+        context: context,
+        endpoint: 'Payments/getBank/$userId',
+        headers: headers);
     if (response['status'] == 'success') {
       _banks = response['data'];
     } else {
       MyScaffold(text: 'Something went wrong!').show(context);
     }
     final response2 = await MyApi.getRequest(
+        context: context,
         endpoint: 'Payments/getTransactions/Recent/$userId/$type',
         headers: headers);
     if (response2['status'] == 'success') {

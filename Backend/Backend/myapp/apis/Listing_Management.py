@@ -41,21 +41,22 @@ def get_listing_details(request, type):
         return Response({"error": "Invalid type provided"})
 
     try:
-        # Get the model dynamically
         model = apps.get_model('myapp', model_name)
-
-        # Fetch all field names and their choices if available
         field_data = []
+        
         for field in model._meta.get_fields():
             if field.name not in ['id', 'listingID','listingId','cars']:
-                field_info = {"name": field.name}
+                field_info = {"name": field.name, "type": field.get_internal_type()}
+                
                 if hasattr(field, 'choices') and field.choices:
-                    # Extract only keys from choices as a list
                     field_info["choices"] = [choice[0] for choice in field.choices]
+                
                 field_data.append(field_info)
+                
         return Response({"fields": field_data})
     except LookupError:
         return Response({"error": "Model not found"})
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -536,6 +537,89 @@ def get_view_data(listing_id):
             return serializer_class(obj).data
 
     return None
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def unified_search(request):
+    # Get query parameters
+    search_query = request.GET.get('q', '')
+    category = request.GET.get('category', 'All')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    min_rating = request.GET.get('min_rating')
+    max_rating = request.GET.get('max_rating')
+    location = request.GET.get('location')
+    date = request.GET.get('date')
+    content_type = request.GET.get('type', 'listings')  # listings, packages, products
+    
+    # Base querysets
+    if content_type == 'listings':
+        queryset = m.Listing.objects.all().prefetch_related(
+            'pictureslistings_set',
+            'venue_set',
+            'caterers_set',
+            'carrenters_set',
+            'decorators_set',
+            'photographyplaces_set',
+            'photographers_set',
+            'videoeditors_set',
+            'graphicdesigners_set'
+        )
+        
+        # Apply filters
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+        if category != 'All':
+            queryset = queryset.filter(type=category)
+        if location:
+            queryset = queryset.filter(location__icontains=location)
+        if min_price and max_price:
+            queryset = queryset.filter(basicPrice__range=(min_price, max_price))
+        
+        # Serialize and add view data
+        serializer = s.ListingSerializer(queryset, many=True)
+        results = serializer.data
+        for listing in results:
+            listing_id = listing['id']
+            listing['pictures'] = get_picture(listing_id)
+            view_data = get_view_data(listing_id)
+            if view_data:
+                listing['View'] = view_data
+    
+    elif content_type == 'packages':
+        queryset = m.Packages.objects.all().prefetch_related('picturespackages_set')
+        
+        # Apply filters
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+        if min_price and max_price:
+            queryset = queryset.filter(price__range=(min_price, max_price))
+        if category != 'All':
+            queryset = queryset.filter(listingId__type=category)
+        
+        serializer = s.PackagesSerializer(queryset, many=True)
+        results = serializer.data
+    
+    elif content_type == 'products':
+        queryset = m.Product.objects.all().prefetch_related('picturesproducts_set')
+        
+        # Apply filters
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+        if min_price and max_price:
+            queryset = queryset.filter(price__range=(min_price, max_price))
+        if category != 'All':
+            queryset = queryset.filter(listingId__type=category)
+        
+        serializer = s.ProductsSerializer(queryset, many=True)
+        results = serializer.data
+    
+    return Response({
+        'status': 'success',
+        'results': results,
+        'count': len(results)
+    })
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

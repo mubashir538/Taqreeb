@@ -1,9 +1,8 @@
 from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import os
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
+from .React.react_models import ReactUser 
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -45,6 +44,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
     def __str__(self):
         return str(self.id)
+    # Add these lines to customize related_name
+    groups = m.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        related_name="flutter_user_set",  # Unique related_name
+        related_query_name="flutter_user",
+    )
+    user_permissions = m.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_name="flutter_user_set",  # Unique related_name
+        related_query_name="flutter_user",
+    )
+
 
 class TempInvitationCard(m.Model):
     file = m.ImageField(upload_to='uploads/tempCards/%Y/%m/%d/')
@@ -95,7 +112,7 @@ class Listing(m.Model):
     ratingCount = m.IntegerField(default=0)
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
-    status = m.CharField(max_length=20)
+    status = m.CharField(max_length=20,default='active')
     booked_dates = m.JSONField(default=list)
 
 class BankDetails(m.Model):

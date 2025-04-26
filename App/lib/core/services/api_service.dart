@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as https;
 import 'package:http/http.dart' as http;
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/config/config.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -11,14 +13,43 @@ import 'package:taqreeb/core/services/tokens.dart';
 class MyApi {
   static String baseUrl = AppConfig.baseUrl;
   static DefaultCacheManager cacheManager = DefaultCacheManager();
+
+  // Add this static method to check internet connectivity
+  static Future<bool> hasInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
   static Future<dynamic> getRequest({
     bool refresh = false,
     required String endpoint,
     Map<String, String>? headers,
-    Duration timeout =
-        const Duration(seconds: 10), // Default timeout of 10 seconds
+    Map<String, dynamic>? params, // Add params parameter
+    BuildContext? context,
+    Duration timeout = const Duration(seconds: 10),
   }) async {
-    final Uri url = Uri.parse('$baseUrl$endpoint');
+    // First check internet connection
+    final hasInternet = await hasInternetConnection();
+    if (!hasInternet) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
+    }
+
+    // Build URI with parameters
+    final Uri url = Uri.parse('$baseUrl$endpoint').replace(
+      queryParameters:
+          params?.map((key, value) => MapEntry(key, value.toString())),
+    );
+
     final String cacheKey = url.toString();
 
     try {
@@ -27,14 +58,12 @@ class MyApi {
       } else {
         headers = {'Content-Type': 'application/json'};
       }
-
       // Try loading from cache first (if not refresh)
       if (!refresh) {
         try {
           final cachedFile = await cacheManager
               .getSingleFile(cacheKey, headers: headers)
-              .timeout(
-                  const Duration(seconds: 2)); // Short timeout for cache access
+              .timeout(const Duration(seconds: 2));
 
           if (await cachedFile.exists()) {
             final cachedData = await cachedFile.readAsString();
@@ -48,6 +77,10 @@ class MyApi {
       // Network request with timeout
       final response =
           await http.get(url, headers: headers).timeout(timeout, onTimeout: () {
+        if (context != null) {
+          MyScaffold(text: 'Request timed out. Please try again.')
+              .show(context);
+        }
         throw TimeoutException(
             'The request timed out after ${timeout.inSeconds} seconds');
       });
@@ -63,31 +96,43 @@ class MyApi {
         return jsonDecode(response.body);
       } else {
         // Server returned an error status code
+        if (context != null) {
+          MyScaffold(text: 'Server error. Please try again later.')
+              .show(context);
+        }
         throw HttpException(
             'Server responded with status code ${response.statusCode}');
       }
     } on TimeoutException catch (e) {
-      // Handle timeout specifically
-      return _handleTimeoutError(cacheKey, e.toString());
+      return _handleTimeoutError(cacheKey, e.toString(), context);
     } on SocketException catch (e) {
-      // Handle network connectivity issues
-      return _handleNetworkError(cacheKey, e.toString());
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return _handleNetworkError(cacheKey, e.toString(), context);
     } on HttpException catch (e) {
-      // Handle HTTP errors
-      return _handleHttpError(cacheKey, e.toString());
+      if (context != null) {
+        MyScaffold(
+                text: 'Server is not working. Please try again after sometime.')
+            .show(context);
+      }
+      return _handleHttpError(cacheKey, e.toString(), context);
     } catch (e, stackTrace) {
-      // Generic error handling
-      return _handleGenericError(cacheKey, e, stackTrace, endpoint);
+      return _handleGenericError(cacheKey, e, stackTrace, endpoint, context);
     }
   }
 
-// Helper methods for different error scenarios
+  // Updated helper methods with context parameter
   static Future<Map<String, dynamic>> _handleTimeoutError(
-      String cacheKey, String error) async {
+      String cacheKey, String error, BuildContext? context) async {
     try {
       final cachedFile = await cacheManager.getSingleFile(cacheKey);
       if (await cachedFile.exists()) {
         final fallbackData = await cachedFile.readAsString();
+        if (context != null) {
+          MyScaffold(text: 'Request timed out. Showing cached data.')
+              .show(context);
+        }
         return {
           ...jsonDecode(fallbackData),
           'cache': true,
@@ -105,11 +150,15 @@ class MyApi {
   }
 
   static Future<Map<String, dynamic>> _handleNetworkError(
-      String cacheKey, String error) async {
+      String cacheKey, String error, BuildContext? context) async {
     try {
       final cachedFile = await cacheManager.getSingleFile(cacheKey);
       if (await cachedFile.exists()) {
         final fallbackData = await cachedFile.readAsString();
+        if (context != null) {
+          MyScaffold(text: 'Network unavailable. Showing cached data.')
+              .show(context);
+        }
         return {
           ...jsonDecode(fallbackData),
           'cache': true,
@@ -117,6 +166,10 @@ class MyApi {
         };
       }
     } catch (_) {}
+
+    if (context != null) {
+      Navigator.pushNamed(context, '/NoInternet');
+    }
 
     return {
       "status": "error",
@@ -126,11 +179,14 @@ class MyApi {
   }
 
   static Future<Map<String, dynamic>> _handleHttpError(
-      String cacheKey, String error) async {
+      String cacheKey, String error, BuildContext? context) async {
     try {
       final cachedFile = await cacheManager.getSingleFile(cacheKey);
       if (await cachedFile.exists()) {
         final fallbackData = await cachedFile.readAsString();
+        if (context != null) {
+          MyScaffold(text: 'Server error. Showing cached data.').show(context);
+        }
         return {
           ...jsonDecode(fallbackData),
           'cache': true,
@@ -138,6 +194,12 @@ class MyApi {
         };
       }
     } catch (_) {}
+
+    if (context != null) {
+      MyScaffold(
+              text: 'Server is not working. Please try again after sometime.')
+          .show(context);
+    }
 
     return {
       "status": "error",
@@ -151,6 +213,7 @@ class MyApi {
     dynamic error,
     StackTrace stackTrace,
     String endpoint,
+    BuildContext? context,
   ) async {
     // Log the error to your backend (non-blocking)
     unawaited(MyApi.postRequest(
@@ -167,6 +230,10 @@ class MyApi {
       final cachedFile = await cacheManager.getSingleFile(cacheKey);
       if (await cachedFile.exists()) {
         final fallbackData = await cachedFile.readAsString();
+        if (context != null) {
+          MyScaffold(text: 'Showing cached data due to an error.')
+              .show(context);
+        }
         return {
           ...jsonDecode(fallbackData),
           'cache': true,
@@ -175,6 +242,10 @@ class MyApi {
       }
     } catch (_) {}
 
+    if (context != null) {
+      MyScaffold(text: 'Something went wrong. Please try again.').show(context);
+    }
+
     return {
       "status": "error",
       "message": "Something went wrong. Please try again.",
@@ -182,14 +253,25 @@ class MyApi {
     };
   }
 
-  static Future<void> deleteCache(String url) async {
-    await DefaultCacheManager().removeFile(baseUrl + url);
-  }
+  // Update all other methods similarly with context parameter and error handling
+  static Future<dynamic> postRequest({
+    required String endpoint,
+    Map<String, String>? headers,
+    required dynamic body,
+    BuildContext? context,
+  }) async {
+    // Check internet first
+    final hasInternet = await hasInternetConnection();
+    if (!hasInternet) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
+    }
 
-  static Future<dynamic> postRequest(
-      {required String endpoint,
-      Map<String, String>? headers,
-      required dynamic body}) async {
     Uri url = Uri.parse('$baseUrl$endpoint');
 
     if (headers == null) {
@@ -202,94 +284,210 @@ class MyApi {
 
     http.Response response;
     try {
-      response = await http.post(url, headers: headers, body: jsonEncode(body));
+      response = await http
+          .post(url, headers: headers, body: jsonEncode(body))
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        if (context != null) {
+          MyScaffold(text: 'Request timed out. Please try again.')
+              .show(context);
+        }
+        throw TimeoutException('Request timed out');
+      });
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return jsonDecode(response.body);
       } else {
-        return {"status": "error", "message": "Something went wrong"};
+        if (context != null) {
+          MyScaffold(text: 'Server error. Please try again later.')
+              .show(context);
+        }
+        return {
+          "status": "error",
+          "message": "Server error: ${response.statusCode}"
+        };
       }
+    } on SocketException catch (_) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
     } catch (e) {
-      MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error: $e'});
+      if (context != null) {
+        MyScaffold(text: 'Something went wrong. Please try again.')
+            .show(context);
+      }
+      unawaited(MyApi.postRequest(
+          context: context,
+          endpoint: 'error/application',
+          body: {'error': 'Error: $e'}));
+      return {
+        "status": "error",
+        "message": "Something went wrong",
+        "error": e.toString(),
+      };
     }
   }
 
-  static Future<dynamic> postMultipartRequest(
-      {required String endpoint,
-      bool token = true,
-      Map<String, String>? headers,
-      required dynamic body,
-      required Map<String, dynamic> files}) async {
+  // Similarly update postMultipartRequest, deleteRequest, and putRequest methods
+  static Future<dynamic> postMultipartRequest({
+    required String endpoint,
+    bool token = true,
+    Map<String, String>? headers,
+    required dynamic body,
+    required Map<String, dynamic> files,
+    BuildContext? context,
+  }) async {
+    // Check internet first
+    final hasInternet = await hasInternetConnection();
+    if (!hasInternet) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
+    }
+
     final request =
         https.MultipartRequest('POST', Uri.parse(MyApi.baseUrl + endpoint));
 
-    for (int i = 0; i < files.length; i++) {
-      request.files.add(await https.MultipartFile.fromPath(
-        files.keys.toList()[i],
-        files.values.toList()[i],
-      ));
-    }
-    if (token) {
-      final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-      request.headers.addAll({
-        'Authorization': 'Bearer $token',
-      });
-    }
-
-    for (int i = 0; i < body.length; i++) {
-      request.fields[body.keys.toList()[i]] = body.values.toList()[i];
-    }
-    final response = await request.send();
     try {
+      for (int i = 0; i < files.length; i++) {
+        request.files.add(await https.MultipartFile.fromPath(
+          files.keys.toList()[i],
+          files.values.toList()[i],
+        ));
+      }
+
+      if (token) {
+        final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+        request.headers.addAll({
+          'Authorization': 'Bearer $token',
+        });
+      }
+
+      for (int i = 0; i < body.length; i++) {
+        request.fields[body.keys.toList()[i]] = body.values.toList()[i];
+      }
+
+      final response = await request.send().timeout(const Duration(seconds: 30),
+          onTimeout: () {
+        if (context != null) {
+          MyScaffold(text: 'Request timed out. Please try again.')
+              .show(context);
+        }
+        throw TimeoutException('Request timed out');
+      });
+
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return jsonResponse;
       } else {
-        return {"status": "error", "message": "Something went wrong"};
+        if (context != null) {
+          MyScaffold(text: 'Server error. Please try again later.')
+              .show(context);
+        }
+        return {
+          "status": "error",
+          "message": "Server error: ${response.statusCode}"
+        };
       }
+    } on SocketException catch (_) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
     } catch (e) {
-      MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error: $e'});
+      if (context != null) {
+        MyScaffold(text: 'Something went wrong. Please try again.')
+            .show(context);
+      }
+      unawaited(MyApi.postRequest(
+          context: context,
+          endpoint: 'error/application',
+          body: {'error': 'Error: $e'}));
+      return {
+        "status": "error",
+        "message": "Something went wrong",
+        "error": e.toString(),
+      };
     }
   }
 
   static Future<dynamic> deleteRequest({
     required String endpoint,
     Map<String, String>? headers,
+    BuildContext? context,
   }) async {
+    // Check internet first
+    final hasInternet = await hasInternetConnection();
+    if (!hasInternet) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
+    }
+
     final Uri url = Uri.parse('$baseUrl$endpoint');
 
     try {
-      // Add default headers if needed
       final requestHeaders = headers ?? {};
       requestHeaders['Content-Type'] = 'application/json';
 
       final response = await http
           .delete(
-            url,
-            headers: requestHeaders,
-          )
-          .timeout(const Duration(seconds: 10));
+        url,
+        headers: requestHeaders,
+      )
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        if (context != null) {
+          MyScaffold(text: 'Request timed out. Please try again.')
+              .show(context);
+        }
+        throw TimeoutException('Request timed out');
+      });
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        // For DELETE, often the response body is empty on success
         return response.body.isNotEmpty
             ? jsonDecode(response.body)
             : {"status": "success", "message": "Item deleted successfully"};
       } else {
+        if (context != null) {
+          MyScaffold(text: 'Server error. Please try again later.')
+              .show(context);
+        }
         return {
           "status": "error",
           "message": "Server error: ${response.statusCode}",
           "error": response.body,
         };
       }
+    } on SocketException catch (_) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
     } catch (e, stackTrace) {
-      // Log the error (non-blocking)
+      if (context != null) {
+        MyScaffold(text: 'Something went wrong. Please try again.')
+            .show(context);
+      }
       unawaited(_logError(e, stackTrace, endpoint, 'DELETE'));
-
       return {
         "status": "error",
         "message": "Failed to delete item. Please try again.",
@@ -302,35 +500,67 @@ class MyApi {
     required String endpoint,
     Map<String, String>? headers,
     required Map<String, dynamic> body,
+    BuildContext? context,
   }) async {
+    // Check internet first
+    final hasInternet = await hasInternetConnection();
+    if (!hasInternet) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
+    }
+
     final Uri url = Uri.parse('$baseUrl$endpoint');
 
     try {
-      // Add default headers if needed
       final requestHeaders = headers ?? {};
       requestHeaders['Content-Type'] = 'application/json';
 
       final response = await http
           .put(
-            url,
-            headers: requestHeaders,
-            body: jsonEncode(body),
-          )
-          .timeout(const Duration(seconds: 10));
+        url,
+        headers: requestHeaders,
+        body: jsonEncode(body),
+      )
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        if (context != null) {
+          MyScaffold(text: 'Request timed out. Please try again.')
+              .show(context);
+        }
+        throw TimeoutException('Request timed out');
+      });
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return jsonDecode(response.body);
       } else {
+        if (context != null) {
+          MyScaffold(text: 'Server error. Please try again later.')
+              .show(context);
+        }
         return {
           "status": "error",
           "message": "Server error: ${response.statusCode}",
           "error": response.body,
         };
       }
+    } on SocketException catch (_) {
+      if (context != null) {
+        Navigator.pushNamed(context, '/NoInternet');
+      }
+      return {
+        "status": "error",
+        "message": "No internet connection",
+      };
     } catch (e, stackTrace) {
-      // Log the error (non-blocking)
+      if (context != null) {
+        MyScaffold(text: 'Something went wrong. Please try again.')
+            .show(context);
+      }
       unawaited(_logError(e, stackTrace, endpoint, 'PUT'));
-
       return {
         "status": "error",
         "message": "Failed to update item. Please try again.",
@@ -346,8 +576,6 @@ class MyApi {
     String method,
   ) async {
     try {
-      // You can implement your error logging mechanism here
-      // For example, send to your backend error tracking system
       await MyApi.postRequest(
         endpoint: 'error/log',
         body: {
@@ -358,8 +586,10 @@ class MyApi {
           'timestamp': DateTime.now().toIso8601String(),
         },
       );
-    } catch (_) {
-      // Silently fail if error logging fails
-    }
+    } catch (_) {}
+  }
+
+  static Future<void> deleteCache(String url) async {
+    await DefaultCacheManager().removeFile(baseUrl + url);
   }
 }

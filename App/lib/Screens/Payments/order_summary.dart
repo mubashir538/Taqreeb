@@ -36,6 +36,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<Map<String, dynamic>> _fetchUserData() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
     final response = await MyApi.getRequest(
+        context: context,
         endpoint: 'accountInfo/$userId',
         headers: {
           'Authorization':

@@ -123,13 +123,13 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   Widget _buildPackageItem(Map<String, dynamic> package) {
-    return PackageBox(
-      packageId: package['id'],
-      imageUrls: package['pictures'],
-      packagedetails: package['details'],
-      packageprice: package['price'],
-      packagename: package['name'],
-    );
+      return PackageBox(
+        packageId: package['id'],
+        imageUrls: package['pictures'],
+        packagedetails: package['details'],
+        packageprice: package['price'],
+        packagename: package['name'],
+      );
   }
 
   Widget _buildContinueButton() {

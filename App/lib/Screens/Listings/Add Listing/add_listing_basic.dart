@@ -91,6 +91,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
       final type = await MyTokens.getBusinessType();
       final response = await MyApi.getRequest(
+        context: context,
         endpoint: 'business/categories/$type',
         headers: {'Authorization': 'Bearer $token'},
       );

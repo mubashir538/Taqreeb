@@ -158,6 +158,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'myapp.authentication.CustomJWTAuthentication',  # Flutter backend
+    'myapp.react_authentication.ReactJWTAuthentication',  # React backend
+]
+
 from datetime import timedelta
 
 SIMPLE_JWT = {

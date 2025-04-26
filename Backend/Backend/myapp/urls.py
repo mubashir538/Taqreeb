@@ -12,6 +12,7 @@ from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
 from .apis import User_Activity as ua 
+from .React import react_api as react
 # from .apis import Event_Tracking as et  
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -19,12 +20,21 @@ from rest_framework_simplejwt.views import (
 )
 from .Serializers import CustomTokenObtainPairSerializer
 from rest_framework.routers import DefaultRouter
+from .React.react_api import ReactUserLogin, create_react_user
+
 
 router = DefaultRouter()
 router.register(r'cart', cart.CartViewSet, basename='cart')
 router.register(r'cart/items', cart.CartItemViewSet, basename='cart-items')
 
 urlpatterns = [
+    # path('api/react/', include('myapp.react.react_urls')),
+    
+    path('profile/', react.react_user_profile, name='react_user_profile'),
+    path('api/react/login/', react.ReactUserLogin, name='react_user_login'),
+    path('api/react/token/refresh/', TokenRefreshView.as_view(), name='react_token_refresh'),
+    path('api/react/users/create/', react.create_react_user, name='create_react_user'),
+    path('unified_search/', lm.unified_search, name='unified_search'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
     path('api/token/', TokenObtainPairView.as_view(serializer_class=CustomTokenObtainPairSerializer), name='token_obtain_pair'),
@@ -44,7 +54,7 @@ urlpatterns = [
     path('user/forgotpassword/phoneorEmail/',am.ForgotPasswordPage,name='ForgotPasswordPage'),
     path('user/forgotpassword/reset-password/',am.ResetPasswordPage,name='ResetPasswordPage'),
     path('accountInfo/<int:id>/',am.AccountInfoPage,name='AccountInfoPage'),
-    path('basicUserInfo/<int:id>/',am.getBasicUserInfo,name='getBasicUserInfo'),
+    path('basicUserInfo/<int:id>/',am.get_basic_userinfo,name='getBasicUserInfo'),
     path('userChatInfo/<int:id>/',c.getUserInfoChat,name='userChatInfo'),
     path('businessowner/listings/<int:id>/',lm.listings_page,name='ListingsPage'),
     path('businessowner/addListings/',lm.add_listing,name='AddListing'),

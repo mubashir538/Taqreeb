@@ -57,6 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       // Simple request to check server availability
       await MyApi.getRequest(
+        context: context,
         endpoint:
             'health-check/', // Create a simple endpoint that just returns 200 OK
         headers: {},
@@ -116,30 +117,35 @@ class _SplashScreenState extends State<SplashScreen> {
         MyApi.cacheManager.emptyCache();
         await Future.wait([
           MyApi.getRequest(
+            context: context,
             endpoint: 'home/listings/?page=1&page_size=10',
             headers: header,
             refresh: true,
             timeout: Duration(seconds: 10),
           ),
           MyApi.getRequest(
+            context: context,
             endpoint: 'Homepage/DemoImages/',
             headers: header,
             refresh: true,
             timeout: Duration(seconds: 10),
           ),
           MyApi.getRequest(
+            context: context,
             endpoint: 'home/categories/',
             headers: header,
             refresh: true,
             timeout: Duration(seconds: 10),
           ),
           MyApi.getRequest(
+            context: context,
             endpoint: 'accountInfo/$userId/',
             headers: header,
             refresh: true,
             timeout: Duration(seconds: 10),
           ),
           MyApi.getRequest(
+            context: context,
             endpoint: 'YourEvents/$userId',
             headers: header,
             refresh: true,

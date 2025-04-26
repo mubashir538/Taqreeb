@@ -87,11 +87,9 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     try {
       final token = await MyStorage.getToken(MyTokens.accessToken);
       final response = await MyApi.getRequest(
+        context: context,
         endpoint: 'getListingDetails/${widget.listing['Listing']['type']}',
-        headers: {
-          'Authorization':
-              'Bearer $token'
-        },
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (mounted) {
