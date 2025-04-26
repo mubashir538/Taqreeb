@@ -53,7 +53,7 @@ class _SearchServiceState extends State<SearchService> {
 
   // UI State
   final GlobalKey _headerKey = GlobalKey();
-  // DateTime? _entryTime;
+  DateTime? _entryTime;
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
@@ -63,7 +63,9 @@ class _SearchServiceState extends State<SearchService> {
   @override
   void initState() {
     super.initState();
-    // _entryTime = DateTime.now();
+    _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered ListingsSearch at $_entryTime");
+
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         UI_Management.getHeaderHeight(
             headerKey: _headerKey,
@@ -72,6 +74,13 @@ class _SearchServiceState extends State<SearchService> {
 
   @override
   void dispose() {
+    if (_entryTime != null) {
+    final duration = DateTime.now().difference(_entryTime!).inSeconds;
+    print("🚪 [DEBUG] Exited ListingsSearch. Duration: $duration seconds");
+    Logs.logUserActivity("listing_search_view_duration", {
+      "time_spent_seconds": duration,
+    });
+  }
     super.dispose();
   }
 
@@ -231,6 +240,7 @@ class _SearchServiceState extends State<SearchService> {
     final entryTime = DateTime.now();
     final serviceId = service['id'];
     final serviceName = service['name'];
+print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
 
     Logs.logUserActivity("service_click",
         {"service_id": serviceId, "service_name": serviceName});
@@ -245,6 +255,8 @@ class _SearchServiceState extends State<SearchService> {
       },
     ).then((_) {
       final duration = DateTime.now().difference(entryTime).inSeconds;
+      print("📊 [DEBUG] Time spent on $serviceName: $duration seconds");
+
       Logs.logUserActivity("service_view_duration", {
         "service_id": serviceId,
         "service_name": serviceName,
@@ -372,6 +384,8 @@ class _SearchServiceState extends State<SearchService> {
                       .toList();
                 });
                 if (value.isNotEmpty) {
+                    print("🔍 [DEBUG] User searched: $value");
+
                   Logs.logUserActivity("search", {"search_query": value});
                 }
               },
@@ -641,6 +655,8 @@ class _SearchServiceState extends State<SearchService> {
     };
 
     Logs.logUserActivity("filter", filterData);
+    print("🎯 [DEBUG] Applied filters: $filterData");
+
     _searchWithFilters();
   }
 

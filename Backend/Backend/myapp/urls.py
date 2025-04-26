@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .apis import react
 from .apis import Account_Management as am
 from .apis import View_Pages as vp
 from .apis import chats as c
@@ -11,7 +12,7 @@ from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
 from .apis import User_Activity as ua 
-# from .apis import Event_Tracking as et  
+from .apis import admin_dashboard as ad
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -108,6 +109,14 @@ urlpatterns = [
     path('Reviews/add',vp.AddReview,name='addReview'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     path('deleteReq/',views.deleteTable,name='deleteReq'),
+    path('dashboard/categories/', ad.get_all_categories, name='dashboard-categories'),
+    path('dashboard/listings/', ad.get_home_listings, name='dashboard-listings'),
+    path('dashboard/activities/', ad.get_user_activities, name='dashboard-activities'),
+    path('api/dashboard/events/', react.get_event_dashboard_data, name='event-dashboard'),
+    # path('register/', react.ReactUserRegisterView.as_view(), name='react_user_register'),
+    # path('api/react/login', react.react_login_view),
+    # path('api/user/login/', am.UserLogin, name='user_login'),
+    # path('api/react/token/refresh/', react.ReactTokenRefreshView.as_view(), name='react_token_refresh'),
 ]
 
 if settings.DEBUG:

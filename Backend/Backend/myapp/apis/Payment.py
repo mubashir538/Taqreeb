@@ -4,6 +4,9 @@ from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
+from myapp.models import UserActivity
+from django.utils.timezone import now
+
 
 
 @api_view(['POST'])
@@ -19,10 +22,34 @@ def addTransaction(request):
     if listing.ownerID:
         owner = md.BusinessOwner.objects.get(id = listing.ownerID)
         md.Transaction(sender = user, receiverb = owner, amount = amount, package = package,status='Pending').save()
+        UserActivity.objects.create(
+        user=user,
+        action='vendor_revenue',
+        metadata={
+            'receiver_type': 'business_owner',
+            'receiver_id': owner.id,
+            'amount': amount,
+            'package_id': package.id,
+            'listing_id': listing.id
+        },
+        timestamp=now()
+    )
     
     else:
         owner = md.Freelancer.objects.get(id = listing.freelancerID)
         md.Transaction(sender = user, receiverf = owner, amount = amount, package = package,status='Pending').save()
+        UserActivity.objects.create(
+        user=user,
+        action='vendor_revenue',
+        metadata={
+            'receiver_type': 'freelancer',
+            'receiver_id': owner.id,
+            'amount': amount,
+            'package_id': package.id,
+            'listing_id': listing.id
+        },
+        timestamp=now()
+    )
     return Response({'status':'success'})
 
 

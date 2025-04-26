@@ -55,8 +55,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final Map<String, String> header = Map<String, String>.from(data['header']);
     final bool isLoggedIn = data['isLoggedIn'];
     final String? userId = data['userId'];
-
-    await Future.wait([
+    if (isLoggedIn) {
+MyApi.cacheManager.emptyCache();  
+  await Future.wait([
       MyApi.getRequest(
           endpoint: 'home/listings/', headers: header, refresh: true),
       MyApi.getRequest(
@@ -77,8 +78,8 @@ class _SplashScreenState extends State<SplashScreen> {
       return true; // Return success status
     }).catchError((_) {
       return false; // Return failure status
-    });
-
+    });   
+    }
     return true;
   }
 

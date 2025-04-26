@@ -13,6 +13,7 @@ class ApiCall {
       String type = 'get',
       Map<String, dynamic>? body = const {}}) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    print('Your Tokens in Api Call $token');
     final data;
     if (type == 'get') {
       data = await MyApi.getRequest(

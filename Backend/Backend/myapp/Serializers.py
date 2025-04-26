@@ -295,7 +295,7 @@ class CategoriesSerializer(s.ModelSerializer):
 class UserActivitySerializer(s.ModelSerializer):
     class Meta:
         model = mp.UserActivity
-        fields = '__all__'  # ✅ This includes action, metadata, timestamp, and duration_seconds
+        fields = '__all__' 
 
 
 # class UserEventSerializer(s.ModelSerializer):

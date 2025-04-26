@@ -47,7 +47,8 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
   @override
   void initState() {
     super.initState();
-    _entryTime = DateTime.now();
+_entryTime = DateTime.now();
+print("📍 [DEBUG] Entered Car Renter View at $_entryTime");
     _initializeUI();
   }
 
@@ -80,6 +81,8 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
+          print("🚪 [DEBUG] Exited Car Renter View. Duration: $duration seconds");
+
     }
   }
 

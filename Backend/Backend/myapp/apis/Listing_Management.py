@@ -10,6 +10,8 @@ import json
 import os
 from rest_framework.response import Response
 import inspect
+from myapp.models import UserActivity
+from django.utils.timezone import now
 
 
 def get_variable_name(var):
@@ -168,6 +170,17 @@ def AddListing(request):
                 md.AddOns(isPer=False,listingId=listingId,name=i['name'],price=i['price']).save()
     rdetails = md.ReviewDetails(listingID=listing)
     rdetails.save()    
+    UserActivity.objects.create(
+    user=request.user,
+    action='vendor_add_service',
+    metadata={
+        'listing_id': listing.id,
+        'listing_name': listing.name,
+        'listing_type': listing.type
+    },
+    timestamp=now()
+)
+
     return Response({'status':'success'})
 
 @api_view(['POST'])
@@ -364,7 +377,18 @@ def updateListing(request):
                 pack.description = description
                 pack.price = price
                 pack.save(update_fields=['name','description','price'])
+                
                 return Response({'status':'success'})
+            UserActivity.objects.create(
+    user=request.user,
+    action='content_updated',
+    metadata={
+        'listing_id': listing.id,
+        'listing_name': listing.name,
+        'listing_type': listing.type,
+    },
+    timestamp=now()
+)
         
     return Response({'status':'error'})
 

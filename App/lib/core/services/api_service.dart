@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as https;
@@ -14,38 +15,71 @@ class MyApi {
     required String endpoint,
     Map<String, String>? headers,
   }) async {
-    Uri url = Uri.parse('$baseUrl$endpoint');
+    final Uri url = Uri.parse('$baseUrl$endpoint');
+    final String cacheKey = url.toString();
 
-    http.Response response;
-    
-
-    final cache = await cacheManager.getFileFromCache(url.toString());
-    if (cache == null || refresh) {
-      try {
-        if (headers != null) {
-          response = await http.get(url, headers: headers);
-        } else {
-          response = await http.get(url);
-        }
-        await cacheManager.putFile(url.toString(), response.bodyBytes,
-            fileExtension: 'json', maxAge: const Duration(hours: 1));
-
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-          return jsonDecode(response.body);
-        } else {
-          return {"status": "error", "message": "Something went wrong"};
-        }
-      } catch (e) {
-        MyApi.postRequest(
-            endpoint: 'error/application', body: {'error': 'Error: $e'});
+    try {
+      if (headers != null) {
+        headers['Content-Type'] = 'application/json';
+      } else {
+        headers = {'Content-Type': 'application/json'};
       }
-    } else {
-      final cachedData = await cacheManager.getSingleFile(
-        url.toString(),
-        headers: headers,
-      );
-      final data = jsonDecode(await cachedData.readAsString());
-      return data;
+
+      // Try loading from cache first (if not refresh)
+      if (!refresh) {
+        final cachedFile =
+            await cacheManager.getSingleFile(cacheKey, headers: headers);
+        if (cachedFile.existsSync()) {
+          final cachedData = await cachedFile.readAsString();
+          return jsonDecode(cachedData);
+        }
+      }
+      // Cache not found or refresh requested — fetch from network
+      final response = await http.get(url, headers: headers);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        // Save to cache
+        await cacheManager.putFile(
+          cacheKey,
+          response.bodyBytes,
+          fileExtension: 'json',
+          maxAge: const Duration(hours: 1),
+        );
+        return jsonDecode(response.body);
+      } else {
+        // Server returned an error status code
+        return {
+          "status": "error",
+          "message": "Server error: ${response.statusCode}",
+        };
+      }
+    } catch (e, stackTrace) {
+      // Log the error to your backend (non-blocking)
+      unawaited(MyApi.postRequest(
+        endpoint: 'error/application',
+        body: {
+          'error': e.toString(),
+          'stack': stackTrace.toString(),
+          'endpoint': endpoint,
+        },
+      ));
+
+      // Try to load from cache as a fallback
+      try {
+        final cachedFile = await cacheManager.getSingleFile(cacheKey);
+        if (cachedFile.existsSync()) {
+          final fallbackData = await cachedFile.readAsString();
+          return jsonDecode(fallbackData);
+        }
+      } catch (_) {
+        // fallback cache also failed
+      }
+
+      // If everything fails
+      return {
+        "status": "error",
+        "message": "Something went wrong. Please try again.",
+      };
     }
   }
 
@@ -108,7 +142,6 @@ class MyApi {
       request.fields[body.keys.toList()[i]] = body.values.toList()[i];
     }
     final response = await request.send();
-    print('executed');
     try {
       final responseBody = await response.stream.bytesToString();
       final Map<String, dynamic> jsonResponse = jsonDecode(responseBody);

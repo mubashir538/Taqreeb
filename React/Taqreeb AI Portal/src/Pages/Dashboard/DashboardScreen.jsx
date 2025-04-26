@@ -64,3 +64,80 @@ const DashboardScreen = () => {
 };
 
 export default DashboardScreen;
+
+
+// import React, { useEffect, useState } from "react";
+// import "./DashboardScreen.css";
+// import StatsCard from "../../Components/StatsCard/statscard.jsx";
+// import Chart from "../../Components/Chart/chart.jsx";
+// import VendorCard from "../../Components/VendorCard/vendorcard.jsx";
+// import EventCard from "../../Components/EventCard/eventcard.jsx";
+// import { getDashboardData } from "../../api/dashboardApi";
+
+// import { FaUsers, FaClock, FaClipboardList } from "react-icons/fa";
+
+// const DashboardScreen = () => {
+//   const [data, setData] = useState(null);
+
+//   useEffect(() => {
+//     getDashboardData().then(setData).catch(console.error);
+//   }, []);
+
+//   if (!data) return <div className="dashboard-container">Loading...</div>;
+
+//   const {
+//     top_categories,
+//     home_listings,
+//     user_activities
+//   } = data;
+
+//   return (
+//     <div className="dashboard-container">
+//       <div className="dashboard-main">
+//         <div className="dashboard-content">
+//           <h2 className="dashboard-title">Welcome back, Wishma</h2>
+
+//           <div className="stats-section">
+//             <StatsCard icon={<FaUsers />} label="Total Listings" value={home_listings.length} />
+//             <StatsCard icon={<FaClock />} label="Recent Activity" value={user_activities.length} />
+//             <StatsCard icon={<FaClipboardList />} label="Categories" value={top_categories.length} />
+//           </div>
+
+//           <div className="charts-section">
+//             <Chart
+//               title="Top Categories"
+//               data={top_categories.map(cat => ({
+//                 name: cat.category,
+//                 value: cat.count
+//               }))}
+//             />
+
+//             <Chart
+//               title="Recent Listings"
+//               data={home_listings.map((item, index) => ({
+//                 name: item.name || `Listing ${index + 1}`,
+//                 value: item.basicPrice
+//               }))}
+//             />
+//           </div>
+
+//           <div className="lists-section">
+//             <div className="list-card">
+//               <h3>Recent User Activities</h3>
+//               <ul>
+//                 {user_activities.slice(0, 5).map((activity, index) => (
+//                   <li key={index}>
+//                     <strong>{activity.action}</strong> - {activity.timestamp}
+//                   </li>
+//                 ))}
+//               </ul>
+//             </div>
+//           </div>
+
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default DashboardScreen;

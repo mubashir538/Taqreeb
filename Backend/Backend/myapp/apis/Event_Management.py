@@ -3,6 +3,9 @@ from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
+from myapp.models import UserActivity
+from django.utils.timezone import now
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -18,6 +21,17 @@ def EventDetails(request,eventId):
     serializer = s.EventsSerializer(EventDetail,many=False)
     Function = md.Functions.objects.filter(eventId=eventId)
     serializer2 = s.FunctionsSerializer(Function,many=True)
+    UserActivity.objects.create(
+        user=request.user,
+        action='event_view',
+        metadata={
+            'event_id': eventId,
+            'event_name': EventDetail.name,
+            'event_type': EventDetail.type
+        },
+        timestamp=now()
+    )
+
     return Response({'status':'success','EventDetail':serializer.data,'Functions':serializer2.data})
 
 @api_view(['POST'])
@@ -46,6 +60,17 @@ def EditEvent(request):
     EditEvent.themeColor = themeColor
     EditEvent.budget = budget
     EditEvent.save(update_fields=['name','guestsmin','guestsmax','type','date','location','description','themeColor','budget'])
+    UserActivity.objects.create(
+        user=request.user,
+        action='event_edit',
+        metadata={
+            'event_id': eventId,
+            'updated_name': name,
+            'updated_location': location
+        },
+        timestamp=now()
+    )
+
     return Response({'status': 'success'})
 
 @api_view(['POST'])
@@ -64,6 +89,18 @@ def CreateEvent(request):
     guestmax = request.data.get('guestmax')
     CreateEvent = md.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
     CreateEvent.save()
+    UserActivity.objects.create(
+        user=request.user,
+        action='event_create',
+        metadata={
+            'event_name': name,
+            'event_type': type,
+            'location': location,
+            'budget': budget
+        },
+        timestamp=now()
+    )
+
     return Response({'status': 'success'})
 
 @api_view(['GET'])

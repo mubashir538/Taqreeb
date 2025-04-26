@@ -1,6 +1,8 @@
 from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import os
+from django.contrib.auth.hashers import make_password, check_password
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -37,6 +39,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     age = m.IntegerField(null=True)
     gender = m.CharField(max_length=6,null=True)
     profilePicture = m.CharField(max_length=100)
+    warning_reason = m.CharField(max_length=255, null=True, blank=True)
+    warned_at = m.DateTimeField(null=True, blank=True)
+    is_banned = m.BooleanField(default=False)
     objects = CustomUserManager()
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
@@ -447,7 +452,9 @@ class UserActivity(m.Model):
         ('service_view_duration', 'Time Spent on Service Page'),
         ('category_view_duration', 'Time Spent on Category Page'),
         ('book_venue', 'Booked Venue'),  # ✅ NEW ACTION ADDED
-
+        ('homepage_view_duration', 'Time Spent on Home Page'),
+        ('ai_package_button_click', 'AI Package Button Clicked'),
+        ('user_register', 'User Registered'),
     ]
     user = m.ForeignKey(User, on_delete=m.CASCADE)
     action = m.CharField(max_length=50, choices=ACTIONS)
@@ -456,4 +463,22 @@ class UserActivity(m.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.action} - {self.timestamp}"
+
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, name, email, password=None):
+        if not email:
+            raise ValueError("Users must have an email address")
+        email = self.normalize_email(email)
+        user = self.model(username=username, name=name, email=email)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, name, email, password):
+        user = self.create_user(username, name, email, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 

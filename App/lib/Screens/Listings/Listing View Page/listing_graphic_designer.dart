@@ -50,6 +50,8 @@ class _CategoryViewGraphicDesignerState
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+    print("📍 [DEBUG] Entered Graphic Designer View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -82,6 +84,8 @@ class _CategoryViewGraphicDesignerState
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
+          print("🚪 [DEBUG] Exited Graphic Designer View. Duration: $duration seconds");
+
     }
   }
 

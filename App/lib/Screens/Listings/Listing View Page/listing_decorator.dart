@@ -57,6 +57,8 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered Decorator View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -89,6 +91,8 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
+          print("🚪 [DEBUG] Exited Decorator View. Duration: $duration seconds");
+
     }
   }
 
