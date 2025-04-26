@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/wallet%20System/balance_card.dart';
 import 'package:taqreeb/Components/wallet%20System/recent_transactions.dart';
@@ -20,8 +21,8 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   final GlobalKey headerKey = GlobalKey();
   String _balance = "";
-  List<Map<String, dynamic>> _banks = [];
-  List<Map<String, dynamic>> _transactions = [];
+  List<dynamic> _banks = [];
+  List<dynamic> _transactions = [];
   bool _isLoading = true;
 
   void _updateHeaderHeight(RenderBox renderBox) {
@@ -45,14 +46,29 @@ class _WalletScreenState extends State<WalletScreen> {
           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
     };
     _balance = (await MyApi.getRequest(
+            context: context,
             endpoint: 'Payments/getWalletBalance/$userId/$type',
             headers: headers))
         .toString();
-    _banks = await MyApi.getRequest(
-        endpoint: 'Payments/getBank/$userId', headers: headers);
-    _transactions = await MyApi.getRequest(
+
+    final response = await MyApi.getRequest(
+        context: context,
+        endpoint: 'Payments/getBank/$userId',
+        headers: headers);
+    if (response['status'] == 'success') {
+      _banks = response['data'];
+    } else {
+      MyScaffold(text: 'Something went wrong!').show(context);
+    }
+    final response2 = await MyApi.getRequest(
+        context: context,
         endpoint: 'Payments/getTransactions/Recent/$userId/$type',
         headers: headers);
+    if (response2['status'] == 'success') {
+      _transactions = response2['data'];
+    } else {
+      MyScaffold(text: 'Something went wrong!').show(context);
+    }
 
     setState(() {
       _isLoading = false;
@@ -67,7 +83,7 @@ class _WalletScreenState extends State<WalletScreen> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _isLoading
@@ -84,10 +100,11 @@ class _WalletScreenState extends State<WalletScreen> {
                             balance: _balance,
                           ),
                           WithDrawSection(
-                            banks: _banks,
+                            banks: _banks as List<Map<String, dynamic>>,
                           ),
                           RecentTransactions(
-                            transactions: _transactions,
+                            transactions:
+                                _transactions as List<Map<String, dynamic>>,
                           ),
                         ],
                       )),

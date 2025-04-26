@@ -150,7 +150,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
     final viewModel = Provider.of<BusinessInfoEditViewModel>(context);
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

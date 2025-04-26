@@ -263,7 +263,7 @@ class _CreateEventState extends State<CreateEvent> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: MyColors.Dark,
+        backgroundColor: MyColors.dark,
         body: Stack(
           children: [
             _buildContent(),

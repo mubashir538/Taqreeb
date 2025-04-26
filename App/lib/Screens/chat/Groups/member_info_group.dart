@@ -121,7 +121,7 @@ class MembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         children: [
           const Header(heading: 'Group Members'),

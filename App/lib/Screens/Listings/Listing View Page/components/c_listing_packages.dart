@@ -179,7 +179,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   ) {
     return AlertDialog(
       scrollable: true,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       title: Text(
         index == null ? 'Add Package' : 'Edit Package',
         style: GoogleFonts.montserrat(
@@ -254,6 +254,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                 children: [
                   if (_isBusinessUser) _buildPackageActions(index),
                   PackageBox(
+                    packageId: package['id'],
+                    imageUrls: package['pictures'],
                     packagedetails: package['description'],
                     packageprice: package['price'].toString(),
                     packagename: package['name'],

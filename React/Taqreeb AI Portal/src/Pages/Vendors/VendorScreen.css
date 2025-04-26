@@ -32,7 +32,7 @@
 }
 
 .vendor-card {
-  background: #2d3748;
+  background: #1a2235;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1f2733;
+  background: #2d3748;
   padding: 12px;
   border-radius: 8px;
 }
@@ -84,7 +84,7 @@
 }
 
 .activity-item {
-  background: #1f2733;
+  background: #374151;
   padding: 12px;
   border-radius: 8px;
 }
@@ -130,10 +130,15 @@
 }
 
 .stat-box {
-  background: #1f2733;
+  background: #374151;
   padding: 12px;
   border-radius: 8px;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: space-between;
+  margin: 1rem;
 }
 
 .stat-box p {
@@ -147,18 +152,6 @@
   font-weight: bold;
 }
 
-.footer {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: space-between;
-  color: #a0aec0;
-  font-size: 12px;
-  padding-top: 20px;
-  border-top: 1px solid #4a5568;
-}
 
 /* Responsive Styles */
 @media (max-width: 768px) {

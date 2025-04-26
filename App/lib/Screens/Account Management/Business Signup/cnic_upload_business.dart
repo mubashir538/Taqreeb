@@ -52,7 +52,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
           changeHeight(renderbox);
         });
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

@@ -112,7 +112,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
 
   void _showErrorDialog(String title, String message) {
     MyScaffold(text: message).show(context);
-    }
+  }
 
   String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
@@ -135,7 +135,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
     }
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

@@ -4,7 +4,6 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-
 class ImageSliderCategory extends StatefulWidget {
   final List<String> imageUrls;
 
@@ -62,7 +61,7 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
         height: Screen.max(context) * 0.05,
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.Dark,
+          color: MyColors.dark,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10),
             topRight: Radius.circular(10),

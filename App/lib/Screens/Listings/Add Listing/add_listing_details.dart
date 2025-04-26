@@ -28,8 +28,10 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)?.settings.arguments;
-    if (args != null && !_formController.isInitialized) {
-      _formController.args = args as Map<String, dynamic>;
+    if (args != null &&
+        args is Map<String, dynamic> &&
+        !_formController.isInitialized) {
+      _formController.initialize(args);
       _fetchDetails();
     }
   }
@@ -53,41 +55,42 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() => UI_Management.headerHeight = renderbox.size.height);
+    if (mounted) {
+      setState(() => UI_Management.headerHeight = renderbox.size.height);
+    }
   }
 
   Future<void> _fetchDetails() async {
     final category = _formController.args['category']
-        .toString()
-        .replaceAll(RegExp(r'\s+'), '');
+            ?.toString()
+            .replaceAll(RegExp(r'\s+'), '') ??
+        '';
+    if (category.isEmpty) return;
+
     await ApiCall.fetchAPI(
       'getListingDetails/$category',
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
-            _formController.token = token;
-            _formController.textfields = data;
-            _formController.initializeControllers();
-            _formController.isLoading = false;
-            _formController.isInitialized = true;
+            _formController.handleSuccessResponse(token, data);
           });
         }
       },
-      context: mounted ? context : null,
+      context: context,
     );
   }
 
   Future<void> _submitForm() async {
-    final isValid = await _formController.validateForm(context);
-    if (!isValid) {
-      return;
-    }
+    if (!await _formController.validateForm(context)) return;
 
-    _formController.updateArgsWithFieldValues();
+    final viewData = _formController.prepareViewData();
     Navigator.pushNamed(
       context,
       '/AddCategory_Addons',
-      arguments: _formController.args,
+      arguments: {
+        ..._formController.args,
+        'viewData': viewData, // Add viewData as a separate key
+      },
     );
   }
 
@@ -99,11 +102,18 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
-          _buildHeader(),
+          Positioned(
+            top: 0,
+            child: Header(
+              key: _headerKey,
+              heading: 'Details of Service',
+              para: 'Add the Specific Details for your Service',
+            ),
+          ),
         ],
       ),
     );
@@ -121,27 +131,42 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
               : _buildFormFields(),
           _buildDivider(),
           _buildContinueButton(),
+          SizedBox(height: Screen.height(context) * 0.1), // Bottom padding
         ],
       ),
     );
   }
 
   Widget _buildLoadingIndicator() {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+    return SizedBox(
+      height: Screen.height(context) * 0.5,
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        ),
       ),
     );
   }
 
   Widget _buildFormFields() {
     return Column(
-      children: _formController.textfields['fields'].map<Widget>((field) {
-        final index = _formController.textfields['fields'].indexOf(field);
-        return field['choices'] != null
-            ? _buildDropdownField(field, index)
-            : _buildTextField(field, index);
-      }).toList(),
+      children: List.generate(
+        _formController.textfields['fields']?.length ?? 0,
+        (index) => _buildField(index),
+      ),
+    );
+  }
+
+  Widget _buildField(int index) {
+    final field = _formController.textfields['fields'][index];
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: Screen.width(context) * 0.05,
+        vertical: Screen.height(context) * 0.01,
+      ),
+      child: field['choices'] != null
+          ? _buildDropdownField(field, index)
+          : _buildTextField(field, index),
     );
   }
 
@@ -149,11 +174,11 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
     return ResponsiveDropdown(
       focusNode: _formController.focusNodes[index],
       onFieldSubmitted: (_) => _focusNextField(index),
-      items: field['choices']
-          .map((e) => _formController.capitalize(e))
-          .cast<String>()
-          .toList(),
-      labelText: _formController.capitalize(field['name']),
+      items: (field['choices'] as List<dynamic>?)
+              ?.map((e) => _formController.capitalize(e.toString()))
+              .toList() ??
+          [],
+      labelText: _formController.capitalize(field['name']?.toString() ?? ''),
       onChanged: (value) => _formController.controllers[index].text = value,
     );
   }
@@ -162,7 +187,7 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
     return MyTextBox(
       focusNode: _formController.focusNodes[index],
       onFieldSubmitted: (_) => _focusNextField(index),
-      hint: _formController.capitalize(field['name']),
+      hint: _formController.capitalize(field['name']?.toString() ?? ''),
       valueController: _formController.controllers[index],
     );
   }
@@ -177,26 +202,18 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
   }
 
   Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.1,
-      child: const Center(child: MyDivider()),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: MyDivider(),
     );
   }
 
   Widget _buildContinueButton() {
-    return ColoredButton(
-      text: 'Continue',
-      onPressed: _submitForm,
-    );
-  }
-
-  Widget _buildHeader() {
-    return Positioned(
-      top: 0,
-      child: Header(
-        key: _headerKey,
-        heading: 'Details of Service',
-        para: 'Add the Specific Details for your Service',
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.1),
+      child: ColoredButton(
+        text: 'Continue',
+        onPressed: _submitForm,
       ),
     );
   }
@@ -205,7 +222,7 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
 class MoreDetailsFormController {
   // State
   String token = '';
-  Map<String, dynamic> textfields = {};
+  Map<String, dynamic> textfields = {'fields': []};
   Map<String, dynamic> args = {};
   bool isLoading = true;
   bool isInitialized = false;
@@ -214,23 +231,52 @@ class MoreDetailsFormController {
   final List<TextEditingController> controllers = [];
   final List<FocusNode> focusNodes = [];
 
+  void initialize(Map<String, dynamic> initialArgs) {
+    args = Map.from(initialArgs);
+    isInitialized = true;
+  }
+
+  void handleSuccessResponse(String newToken, dynamic data) {
+    token = newToken;
+    textfields = data is Map<String, dynamic> ? data : {'fields': []};
+    initializeControllers();
+    isLoading = false;
+  }
+
   void initializeControllers() {
-    for (int i = 0; i < textfields['fields'].length; i++) {
+    // Clear existing controllers
+    for (final controller in controllers) {
+      controller.dispose();
+    }
+    for (final focusNode in focusNodes) {
+      focusNode.dispose();
+    }
+
+    controllers.clear();
+    focusNodes.clear();
+
+    // Initialize new ones
+    for (int i = 0; i < (textfields['fields']?.length ?? 0); i++) {
       controllers.add(TextEditingController());
       focusNodes.add(FocusNode());
     }
   }
 
   Future<bool> validateForm(BuildContext context) async {
+    if (textfields['fields'] == null) return false;
+
     for (int i = 0; i < textfields['fields'].length; i++) {
-      if (controllers[i].text.isEmpty) {
-        MyScaffold(text: 'Please fill all the fields').show(context);
+      final field = textfields['fields'][i];
+      final controller = controllers[i];
+
+      if (controller.text.isEmpty) {
+        MyScaffold(text: 'Please fill all fields').show(context);
         return false;
       }
 
-      if (textfields['fields'][i]['name'] == 'portfolioLink') {
+      if (field['name'] == 'portfolioLink') {
         final validationResult =
-            await Validations.validatePortfolio(controllers[i].text);
+            await Validations.validatePortfolio(controller.text);
         if (validationResult != 'Ok') {
           MyScaffold(text: 'Invalid Portfolio Link').show(context);
           return false;
@@ -240,17 +286,20 @@ class MoreDetailsFormController {
     return true;
   }
 
-  void updateArgsWithFieldValues() {
-    final fieldValues = <String, String>{};
-    for (int i = 0; i < textfields['fields'].length; i++) {
-      fieldValues[textfields['fields'][i]['name']] = controllers[i].text;
+  Map<String, dynamic> prepareViewData() {
+    final viewData = <String, dynamic>{};
+
+    for (int i = 0; i < (textfields['fields']?.length ?? 0); i++) {
+      final field = textfields['fields'][i];
+      viewData[field['name']] = controllers[i].text;
     }
-    args.addAll(fieldValues);
+
+    return viewData;
   }
 
   String capitalize(String str) {
     if (str.isEmpty) return str;
-    return str[0].toUpperCase() + str.substring(1);
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
   }
 
   void dispose() {

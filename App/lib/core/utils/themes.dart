@@ -11,7 +11,7 @@ class AppThemes {
       secondary: MyColors.Yellow,
     ),
     textTheme: TextTheme(
-      displayMedium: TextStyle(color: MyColors.Dark),
+      displayMedium: TextStyle(color: MyColors.dark),
       displaySmall: TextStyle(color: MyColors.DarkLighter),
     ),
   );
@@ -19,7 +19,7 @@ class AppThemes {
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: MyColors.DarkLighter,
-    scaffoldBackgroundColor: MyColors.Dark,
+    scaffoldBackgroundColor: MyColors.dark,
     colorScheme: ColorScheme.dark(
       primary: MyColors.red,
       secondary: MyColors.Yellow,

@@ -68,7 +68,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -209,7 +209,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
       onPressed: _navigateToAddAddon,
       child: Icon(
         Icons.add,
-        color: MyColors.Dark,
+        color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),
     );

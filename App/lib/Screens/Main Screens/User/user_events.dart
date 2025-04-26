@@ -92,6 +92,7 @@ class _YourEventsState extends State<YourEvents> {
   Future<void> _deleteEvent(int eventId, int index) async {
     final response = await MyApi.postRequest(
       endpoint: 'DeleteEvent/',
+      context: mounted ? context : null,
       headers: {
         'Authorization':
             'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
@@ -126,7 +127,7 @@ class _YourEventsState extends State<YourEvents> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

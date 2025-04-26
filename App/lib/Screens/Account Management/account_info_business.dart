@@ -50,7 +50,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

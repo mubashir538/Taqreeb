@@ -107,7 +107,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            backgroundColor: MyColors.Dark,
+            backgroundColor: MyColors.dark,
             title: Text(
               'Add Add-Ons',
               style: _buildTextStyle(

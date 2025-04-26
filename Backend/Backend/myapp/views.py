@@ -1,8 +1,6 @@
-from . import models as md
+from . import models as m
 from . import Serializers as s
-import random as rd
 from rest_framework.decorators import api_view, permission_classes
-from django.core.files.storage import FileSystemStorage
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from datetime import datetime
 import requests as rq
@@ -14,18 +12,18 @@ from django.utils.timezone import now
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getFunctionType(request,id):
-    functionTypes = md.FunctionType.objects.filter(eventtypeid=id)
+    functionTypes = m.FunctionType.objects.filter(eventtypeid=id)
     serializer = s.FunctionTypeSerializer(functionTypes,many=True)
     return Response({'status':'success','functionTypes':serializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def searchType(request,userid):
-    business = md.BusinessOwner.objects.filter(userID=userid,status='Approved')
+    business = m.BusinessOwner.objects.filter(userID=userid,status='Approved')
     response = {'status':'success','business':False,'freelancer':False}
     if business:
         response['business'] = True
-    freelancer = md.Freelancer.objects.filter(userID=userid,status='Approved')
+    freelancer = m.Freelancer.objects.filter(userID=userid,status='Approved')
     if freelancer:
         response['freelancer'] = True
     return Response(response)
@@ -34,16 +32,16 @@ def searchType(request,userid):
 @permission_classes([IsAuthenticated])
 def ShowChecklist(request,functionId=None,eventId=None):
     if request.GET.get('functionId'):
-        checklist = md.CheckList.objects.filter(functionId=functionId,eventId=eventId)
+        checklist = m.CheckList.objects.filter(functionId=functionId,eventId=eventId)
     else:
-        checklist = md.CheckList.objects.filter(eventId=eventId,functionId__isnull=True)
+        checklist = m.CheckList.objects.filter(eventId=eventId,functionId__isnull=True)
     serializer = s.CheckListSerializer(checklist,many=True)
     return Response({'status':'success','checklist':serializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def showBookCart(request,id):
-    cart = md.BookingCart.objects.filter(functionId=id,status='Cart')
+    cart = m.BookingCart.objects.filter(functionId=id,status='Cart')
     if cart.count() == 0:
         return Response({'status':'CartEmpty'})
     cartserializer = s.BookingCartSerializer(cart,many=True)
@@ -52,29 +50,29 @@ def showBookCart(request,id):
     for i in cart:
         listing = i.listingId
         listingserializer = s.ListingSerializer(listing,many=False)
-        pictures = md.PicturesListings.objects.filter(listingId=listing.id)
+        pictures = m.PicturesListings.objects.filter(listingId=listing.id)
         pictures = s.PicturesListingSerializers(pictures,many=True).data
         view= None
         if i.type == 'Venue':
-            view = md.Venue.objects.get(listingId=listing.id)
+            view = m.Venue.objects.get(listingId=listing.id)
             view = s.VenueSerializer(view,many=False).data
         elif i.type == 'Salon':
-            view = md.Salons.objects.get(listingId=listing.id)
+            view = m.Salons.objects.get(listingId=listing.id)
             view = s.SalonsSerializer(view,many=False).data
         elif i.type == 'Parlor':
-            view = md.Parlors.objects.get(listingId=listing.id)
+            view = m.Parlors.objects.get(listingId=listing.id)
             view = s.ParlorsSerializer(view,many=False).data
         # elif i.type == 'Baker':
         #     view = md.BakersAndSweets.objects.get(listingID=listing.id)
         #     view = s.BakersAndSweetsSerializer(view,many=False).data
         elif i.type == 'PhotographyPlace':
-            view = md.PhotographyPlaces.objects.get(listingId=listing.id)
+            view = m.PhotographyPlaces.objects.get(listingId=listing.id)
             view = s.PhotographyPlacesSerializer(view,many=False).data
         elif i.type == 'Decorator':
-            view = md.Decorators.objects.get(listingId=listing.id)
+            view = m.Decorators.objects.get(listingId=listing.id)
             view = s.DecoratorsSerializer(view,many=False).data
         elif i.type == 'Photographer':
-            view = md.Photographers.objects.get(listingId=listing.id)
+            view = m.Photographers.objects.get(listingId=listing.id)
             view = s.PhotographersSerializer(view,many=False).data
         item = {'id':i.id,'listing':listingserializer.data,'type':i.type,'view':view,'pictures':pictures}
         items.append(item)
@@ -88,16 +86,16 @@ def AddtoBookCart(request):
     uid = request.data.get('uid')
     type = request.data.get('type')
     slot = request.data.get('slot')
-    function = md.Functions.objects.get(id=fid)
-    listing = md.Listing.objects.get(id=lid)
-    user = md.User.objects.get(id=uid)
+    function = m.Functions.objects.get(id=fid)
+    listing = m.Listing.objects.get(id=lid)
+    user = m.User.objects.get(id=uid)
     if slot:
         if slot.find(' ') != -1:
             slot = slot[:-1]
             slot = datetime.strptime(slot, "%Y-%m-%d %H:%M:%S.%f").date()
-        cart = md.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart',slot=slot)
+        cart = m.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart',slot=slot)
     else:
-        cart = md.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart')
+        cart = m.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart')
     cart.save()
     if function.budget < listing.basicPrice:
         return Response({'status':'BudgetError','message':'Budget not enough'})
@@ -106,7 +104,7 @@ def AddtoBookCart(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getHomeImages(request):
-    images = md.HomePageImages.objects.all()
+    images = m.HomePageImages.objects.all()
     serializer = s.HomePageImagesSerializer(images,many=True)
     return Response({'status':'success','images':serializer.data})
 
@@ -115,26 +113,26 @@ def getHomeImages(request):
 def AddGuests(request):
     guesttype = request.data.get('guesttype')
     eid = request.data.get('eid')
-    event = md.Events.objects.get(id=eid)
+    event = m.Events.objects.get(id=eid)
     if request.data.get('fid') != 'None':
         fid = request.data.get('fid')
-        function = md.Functions.objects.get(id=fid)
+        function = m.Functions.objects.get(id=fid)
     else:
         fid = None
     if guesttype=='Family':
         FamilyName = request.data.get('FamilyName')
         member = request.data.get('member')
         if fid:
-            GuestList = md.GuestList(name=FamilyName,members=member,type=guesttype,eventId=event,functionId=function)
+            GuestList = m.GuestList(name=FamilyName,members=member,type=guesttype,eventId=event,functionId=function)
         else:
-            GuestList = md.GuestList(name=FamilyName,members=member,type=guesttype,eventId=event)
+            GuestList = m.GuestList(name=FamilyName,members=member,type=guesttype,eventId=event)
     else:   
         PersonName = request.data.get('PersonName')
         PersonContact = request.data.get('PersonContact')
         if fid:
-            GuestList = md.GuestList(name=PersonName,phone=PersonContact,type=guesttype,eventId=event,functionId=function)
+            GuestList = m.GuestList(name=PersonName,phone=PersonContact,type=guesttype,eventId=event,functionId=function)
         else:
-            GuestList = md.GuestList(name=PersonName,phone=PersonContact,type=guesttype,eventId=event)
+            GuestList = m.GuestList(name=PersonName,phone=PersonContact,type=guesttype,eventId=event)
     GuestList.save()
     return Response({'status':'success'})
 
@@ -149,7 +147,7 @@ def EditFunction(request):
     guestsmin = request.data.get('guest min')
     guestsmax = request.data.get('guest max')
     functionId = int(request.data.get('Function Id'))
-    function = md.Functions.objects.get(id=functionId)
+    function = m.Functions.objects.get(id=functionId)
     try:
         function.name = name
         function.type = type
@@ -174,9 +172,9 @@ def CreateFunction(request):
     guestsmin = request.data.get('guest min')
     guestsmax = request.data.get('guest max')
     EventId = request.data.get('Event Id')
-    event = md.Events.objects.get(id=EventId)
+    event = m.Events.objects.get(id=EventId)
     try:
-        CreateFunction = md.Functions(name=name, eventId = event, type=type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
+        CreateFunction = m.Functions(name=name, eventId = event, type=type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
         CreateFunction.save()
         if int(budget) > event.budget:
             return Response({'status':'BudgetError','message':'Budget Exceeded'}) 
@@ -192,16 +190,16 @@ def DeleteFunction(request):
     # id = request.data.get('FunctionId')
     # DeleteFunction = md.Functions.objects.get(id=id)
     # DeleteFunction.delete()
-    md.BookingCart.objects.all().delete()
+    m.BookingCart.objects.all().delete()
     return Response({'status':'success'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def YourEventsandFunctions(request,id):
-    YourEvent = md.Events.objects.filter(userID=id)
+    YourEvent = m.Events.objects.filter(userID=id)
     serializer = s.EventsSerializer(YourEvent,many=True)
     for event in serializer.data:
-        functions = md.Functions.objects.filter(eventId=event['id'])
+        functions = m.Functions.objects.filter(eventId=event['id'])
         event['functions'] = s.FunctionsSerializer(functions,many=True).data
     return Response({'status':'success','Event':serializer.data})
 
@@ -209,13 +207,13 @@ def YourEventsandFunctions(request,id):
 @permission_classes([IsAuthenticated])
 def ShowGuest(request):
     EventId = request.data.get('EventId')
-    event = md.Events.objects.get(id=EventId)
+    event = m.Events.objects.get(id=EventId)
     if request.data.get('FunctionID') == 'None':
         functionid = None
-        Guests = md.GuestList.objects.filter(eventId=event,functionId__isnull=True)
+        Guests = m.GuestList.objects.filter(eventId=event,functionId__isnull=True)
     else:
         functionid= request.data.get('FunctionID')
-        Guests = md.GuestList.objects.filter(eventId=event,functionId=functionid)
+        Guests = m.GuestList.objects.filter(eventId=event,functionId=functionid)
     GuestListSerializer = s.GuestListSerializer(Guests,many=True)
     return Response({'status': 'success', 'Guests':GuestListSerializer.data})
 
@@ -223,20 +221,20 @@ def ShowGuest(request):
 @permission_classes([IsAuthenticated])
 def DeleteGuest(request):
     guestId = request.data.get('guestId')
-    guest = md.GuestList.objects.get(id=guestId).delete()
+    guest = m.GuestList.objects.get(id=guestId).delete()
     return Response({'status': 'success'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def ViewFunction(request, FunctionId):
-    Functions = md.Functions.objects.get(id = FunctionId)
+    Functions = m.Functions.objects.get(id = FunctionId)
     FunctionsSerializer = s.FunctionsSerializer(Functions, many=False)
     return Response ({'status':'success', 'Fuctions':FunctionsSerializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def HomeCategories(request):
-    categories = md.Categories.objects.all()
+    categories = m.Categories.objects.all()
     CategoriesSerializer = s.CategoriesSerializer(categories,many = True)
     return Response({'status': 'success','categories': CategoriesSerializer.data})
 
@@ -244,17 +242,17 @@ def HomeCategories(request):
 @permission_classes([IsAuthenticated])
 def BusinessCategories(request,type):
     if type == 'freelancer':
-        categories = md.Categories.objects.filter(type='freelancer')
+        categories = m.Categories.objects.filter(type='freelancer')
     else:
-        categories = md.Categories.objects.filter(type='business')
+        categories = m.Categories.objects.filter(type='business')
     CategoriesSerializer = s.CategoriesSerializer(categories,many = True)
     return Response({'status': 'success','categories': CategoriesSerializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def CartItems(request, CartItemsID):
-    Listing = md.Listing.objects.get(id = CartItemsID)
-    CartItems = md.CartItems.objects.get(CartItemsID = CartItemsID)
+    Listing = m.Listing.objects.get(id = CartItemsID)
+    CartItems = m.CartItems.objects.get(CartItemsID = CartItemsID)
     ListingSerializer = s.ListingSerializer(Listing, many=True)
     CartItemsSerializer = s.CartItemsSerializer(CartItems, many = True)
     return Response({'Status': 'Success', 'Listing': ListingSerializer.data, 'Cartitems': CartItemsSerializer.data})
@@ -272,21 +270,21 @@ def urlShortener(url):
 @permission_classes([IsAuthenticated])
 def get_business_usernames(request):
     if request.method == 'GET':
-        business_usernames = md.BusinessOwner.objects.values_list('businessUsername', flat=True)
+        business_usernames = m.BusinessOwner.objects.values_list('businessUsername', flat=True)
         usernames_list = list(business_usernames)
         return Response({'status':'success','businessUsernames': usernames_list})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getWishlist(request,uid):
-    uid = md.User.objects.get(id=uid)
-    list = md.Wishlist.objects.filter(user=uid)
-    list = md.Listing.objects.filter(id__in=list.values_list('listing', flat=True))
+    uid = m.User.objects.get(id=uid)
+    list = m.Wishlist.objects.filter(user=uid)
+    list = m.Listing.objects.filter(id__in=list.values_list('listing', flat=True))
     ListingSerializer = s.ListingSerializer(list, many=True)
     Pictures = []
     Listings = ListingSerializer.data[:]
     for i in Listings:
-        pic = md.PicturesListings.objects.filter(listingId=i['id'])
+        pic = m.PicturesListings.objects.filter(listingId=i['id'])
         serializer = s.PicturesListingSerializers(pic, many=True)
         Pictures.append(serializer.data)
     return Response({'status':'success', 'list':Listings, 'pictures':Pictures})
@@ -295,9 +293,9 @@ def getWishlist(request,uid):
 def addtoWishlist(request):
     userid = request.data.get('userid')
     listing = request.data.get('listing')
-    listing = md.Listing.objects.get(id=listing)
-    userid = md.User.objects.get(id=userid)
-    md.Wishlist(user=userid,listing=listing).save()
+    listing = m.Listing.objects.get(id=listing)
+    userid = m.User.objects.get(id=userid)
+    m.Wishlist(user=userid,listing=listing).save()
     return Response({'status':'success'}) 
 
 @api_view(['POST'])
@@ -305,9 +303,9 @@ def addtoWishlist(request):
 def removeFromWishlist(request):
     userid = request.data.get('userid')
     listing = request.data.get('listing')
-    listing = md.Listing.objects.get(id=listing)
-    userid = md.User.objects.get(id=userid)
-    md.Wishlist.objects.filter(user=userid,listing=listing).delete()
+    listing = m.Listing.objects.get(id=listing)
+    userid = m.User.objects.get(id=userid)
+    m.Wishlist.objects.filter(user=userid,listing=listing).delete()
     return Response({'status':'success'}) 
 
 @api_view(['GET'])
@@ -349,3 +347,7 @@ def application_errors(request):
     error = request.data.get('error')
     print('App Error: ', error)
     return Response({'status': 'success'})
+
+@api_view(['GET'])
+def health_check(request):
+    return Response({'status': 'ok'}, status=200)
