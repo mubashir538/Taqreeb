@@ -1,6 +1,5 @@
 from django.urls import path,include
 from . import views
-from .apis import react
 from .apis import Account_Management as am
 from .apis import View_Pages as vp
 from .apis import chats as c
@@ -21,7 +20,7 @@ from rest_framework_simplejwt.views import (
 )
 from .Serializers import CustomTokenObtainPairSerializer
 from rest_framework.routers import DefaultRouter
-from .React.react_api import ReactUserLogin, create_react_user
+# from .React.react_api import 
 
 
 router = DefaultRouter()
@@ -29,7 +28,6 @@ router.register(r'cart', cart.CartViewSet, basename='cart')
 router.register(r'cart/items', cart.CartItemViewSet, basename='cart-items')
 
 urlpatterns = [
-    # path('api/react/', include('myapp.react.react_urls')),
     
     path('profile/', react.react_user_profile, name='react_user_profile'),
     path('api/react/login/', react.ReactUserLogin, name='react_user_login'),
@@ -136,10 +134,20 @@ urlpatterns = [
     path('health-check/',views.health_check,name='health-check'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     path('deleteReq/',views.deleteTable,name='deleteReq'),
-    path('dashboard/categories/', ad.get_all_categories, name='dashboard-categories'),
-    path('dashboard/listings/', ad.get_home_listings, name='dashboard-listings'),
-    path('dashboard/activities/', ad.get_user_activities, name='dashboard-activities'),
-    path('api/dashboard/events/', react.get_event_dashboard_data, name='event-dashboard'),
+    # path('dashboard/categories/', ad.get_all_categories, name='dashboard-categories'),
+    # path('dashboard/listings/', ad.get_home_listings, name='dashboard-listings'),
+    # path('dashboard/activities/', ad.get_user_activities, name='dashboard-activities'),
+    # path('api/react/dashboard/events/', react.get_event_dashboard_data, name='event-dashboard'),
+    # 🆕 Dashboard APIs for React HomeScreen
+path('api/react/dashboard_most_searched/', react.dashboard_most_searched, name='dashboard_most_searched'),
+path('api/react/dashboard_most_used_services/', react.dashboard_most_used_services, name='dashboard_most_used_services'),
+path('api/react/dashboard_top_categories/', react.dashboard_top_categories, name='dashboard_top_categories'),
+path('api/react/dashboard_recent_activity/', react.dashboard_recent_activity, name='dashboard_recent_activity'),
+path('api/react/dashboard_top_search_terms/', react.dashboard_top_search_terms, name='dashboard_top_search_terms'),
+    path('api/react/dashboard-statistics/', react.dashboard_statistics, name='dashboard_statistics'),
+
+
+
     path('', include(router.urls)),
 
 ]

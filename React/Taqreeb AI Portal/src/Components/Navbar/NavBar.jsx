@@ -1,30 +1,48 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./NavBar.css";
-import { FaBell, FaUserCircle } from "react-icons/fa";
+import { FaBell, FaUserCircle, FaCheckCircle } from "react-icons/fa";
 
 const NavBar = () => {
+  const location = useLocation();
+  
+  // Function to format the current date
+  const getCurrentDate = () => {
+    const options = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    return new Date().toLocaleDateString('en-US', options);
+  };
+
+  // Function to check if a route is active
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-logo">
-          <img src="C:\Users\hp\Desktop\7th Semester\FYP2" alt="Logo" />
+          <img src="/logo.png" alt="Logo" />
         </Link>
       </div>
 
       <div className="navbar-center">
         <ul className="nav-links">
-          <li>
-            <Link to="/">Home</Link>
+          <li className={isActive("/home") ? "active" : ""}>
+            <Link to="/home">Home</Link>
           </li>
-          <li>
-            <Link to="/events">Events</Link>
+          <li className={isActive("/statistics") ? "active" : ""}>
+            <Link to="/statistics">Statistics</Link>
           </li>
-          <li>
-            <Link to="/users">Users</Link>
-          </li>
-          <li>
-            <Link to="/vendors">Vendors</Link>
+          <li className={isActive("/approvals") ? "active" : ""}>
+            <Link to="/approvals">
+              <FaCheckCircle className="nav-icon" />
+              Approvals
+            </Link>
           </li>
         </ul>
       </div>
@@ -32,7 +50,7 @@ const NavBar = () => {
       <div className="navbar-right">
         <FaBell className="icon notification-icon" />
         <div className="profile">
-          <div className="date-display">Today’s Date: Friday, March 7, 2025</div>
+          <div className="date-display">Today's Date: {getCurrentDate()}</div>
         </div>
       </div>
     </nav>

@@ -285,7 +285,7 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
                   Text(
                     filter,
                     style: GoogleFonts.montserrat(
-                      color: MyColors.Dark,
+                      color: MyColors.dark,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -316,7 +316,7 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
                     child: Icon(
                       Icons.close,
                       size: 16,
-                      color: MyColors.Dark,
+                      color: MyColors.dark,
                     ),
                   ),
                 ],
@@ -427,7 +427,7 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -663,7 +663,7 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
   void _showAdditionalFilterPopup(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

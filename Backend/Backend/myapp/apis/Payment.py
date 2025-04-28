@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from myapp.models import UserActivity
 from django.utils.timezone import now
+from django.db.models import Sum
 
 
 
@@ -307,6 +308,17 @@ def process_payment(request):
         # Update all bookings in this order
         bookings = m.Booking.objects.filter(order=order)
         bookings.update(status='confirmed')
+        UserActivity.objects.create(
+            user=request.user,
+            action='book_venue',
+            metadata={
+                'order_id': order.id,
+                'amount': amount,
+                'payment_status': order.payment_status
+            },
+            timestamp=now()
+        )
+
         
         return Response({
             'status': 'success',
@@ -379,7 +391,28 @@ def update_order_status(request):
             # Update all related bookings
             bookings = order.bookings.all()
             bookings.update(status=new_status)
-            
+            # Log user activity after status update
+            if new_status == 'completed':
+                UserActivity.objects.create(
+                    user=request.user,
+                    action='order_completed',
+                    metadata={
+                        'order_id': order.id,
+                        'status': new_status
+                    },
+                    timestamp=now()
+                )
+            elif new_status == 'cancelled':
+                UserActivity.objects.create(
+                    user=request.user,
+                    action='order_cancelled',
+                    metadata={
+                        'order_id': order.id,
+                        'status': new_status
+                    },
+                    timestamp=now()
+                )
+
             # If cancelling, handle refunds and availability
             if new_status == 'cancelled':
                 for booking in bookings:

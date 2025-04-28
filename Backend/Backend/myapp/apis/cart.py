@@ -107,8 +107,19 @@ def create_order(request):
         
         order_serializer = s.OrderSerializer(data=order_data)
         if order_serializer.is_valid():
-            order_serializer.save()
+            order = order_serializer.save()
             
+                # Log user activity: Booked Venue
+            m.UserActivity.objects.create(
+            user=user,
+            action='book_venue',
+            metadata={
+                'order_id': order.id,
+                'total_amount': total_amount,
+                'item_count': cart_items.count()
+            }
+        )
+
             # Create bookings for each item
             for item in cart_items:
                 booking_data = {

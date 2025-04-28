@@ -1,0 +1,156 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #0d1623;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.grid-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+/* Card Styling */
+.chart-card {
+  background: #182133;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* only for charts */
+}
+
+.list-card {
+  background: #182133;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* new: add vertical space between title and list items */
+}
+
+
+/* Title Styling */
+.chart-title, .list-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #e2e8f0;
+}
+
+/* Chart container inside the cards */
+.chart-card canvas {
+  flex-grow: 1;
+  height: 230px !important;
+}
+
+/* Bar Chart Manual (for fallback non-chartjs bar) */
+.bar-chart {
+  height: 220px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.bar {
+  width: 20px;
+  background-color: #ff4d4f;
+  border-radius: 4px 4px 0 0;
+  transition: 0.3s;
+}
+
+.bar-value {
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #cbd5e0;
+}
+
+.bar-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+/* Pie chart container */
+.pie-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+/* Recent Activity List */
+.recent-activity-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recent-activity-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #334155;
+  font-size: 14px;
+}
+
+.recent-activity-item:last-child {
+  border-bottom: none;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #334155;
+  font-size: 14px;
+}
+
+/* Percentage in tables */
+.percentage {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+/* Legends for Pie chart */
+.legend {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 3px;
+}

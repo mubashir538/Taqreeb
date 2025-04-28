@@ -29,16 +29,18 @@ def get_user_activities(request):
     serializer = s.UserActivitySerializer(recent, many=True)
     return Response({'status': 'success', 'activities': serializer.data})
 
-def warn_user(request):
-    user_id = request.data.get('user_id')
-    reason = request.data.get('reason')
+# @api_view(['POST'])  # Added @api_view for POST request
+# @permission_classes([IsAuthenticated])  # Added permission class
+# def warn_user(request):
+#     user_id = request.data.get('user_id')
+#     reason = request.data.get('reason')
 
-    try:
-        user = md.User.objects.get(id=user_id)
-        user.warning_reason = reason
-        user.warned_at = now()
-        user.save(update_fields=['warning_reason', 'warned_at'])
+#     try:
+#         user = md.User.objects.get(id=user_id)
+#         user.warning_reason = reason
+#         user.warned_at = now()
+#         user.save(update_fields=['warning_reason', 'warned_at'])
 
-        return Response({'status': 'success', 'message': 'User warned'})
-    except md.User.DoesNotExist:
-        return Response({'status': 'error', 'message': 'User not found'})
+#         return Response({'status': 'success', 'message': 'User warned'})
+#     except md.User.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'User not found'})

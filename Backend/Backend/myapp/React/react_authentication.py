@@ -6,8 +6,8 @@ from rest_framework.exceptions import AuthenticationFailed
 class ReactJWTAuthentication(JWTAuthentication):
     def get_user(self, validated_token):
         try:
-            print(validated_token.get('user_id'))
-            print(validated_token.get('email'))
+            # print(validated_token.get('user_id'))
+            # print(validated_token.get('email'))
             user_id = validated_token.get('user_id')
             email = validated_token.get('email')
             

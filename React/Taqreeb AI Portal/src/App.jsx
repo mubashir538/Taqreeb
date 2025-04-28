@@ -10,34 +10,57 @@ import {
 import Sidebar from "./Components/Sidebar/sidebar.jsx";
 import Navbar from "./Components/NavBar/NavBar.jsx";
 import Login from "./Pages/Login/login.jsx";
-import Dashboard from "./Pages/Dashboard/DashboardScreen.jsx";
-import Events from "./Pages/Events/EventsScreen.jsx";
-import Users from "./Pages/Users/UserScreen.jsx";
-import Vendors from "./Pages/Vendors/VendorScreen.jsx";
+import Home from "./Pages/Home/HomeScreen.jsx"; // You'll need to create this or rename your Dashboard
+import Statistics from "./Pages/Statistics/StatisticsScreen.jsx"; // You'll need to create this
+import Approvals from "./Pages/Approvals/ApprovalsPage.jsx";
 import "./styles/global.css";
 
 // Auth context to manage authentication state
 const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+  const [authState, setAuthState] = useState(() => {
+    // Initialize state from localStorage if available
     const accessToken = localStorage.getItem('access');
-    return !!accessToken;
+    const refreshToken = localStorage.getItem('refresh');
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    return {
+      isAuthenticated: !!accessToken,
+      accessToken,
+      refreshToken,
+      user
+    };
   });
 
-  const login = (token) => {
-    localStorage.setItem('access', token);
-    setIsAuthenticated(true);
+  const login = (data) => {
+    localStorage.setItem('access', data.accessToken);
+    localStorage.setItem('refresh', data.refreshToken);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    
+    setAuthState({
+      isAuthenticated: true,
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      user: data.user
+    });
   };
 
   const logout = () => {
     localStorage.removeItem('access');
     localStorage.removeItem('refresh');
-    setIsAuthenticated(false);
+    localStorage.removeItem('user');
+    
+    setAuthState({
+      isAuthenticated: false,
+      accessToken: null,
+      refreshToken: null,
+      user: null
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ ...authState, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -63,7 +86,7 @@ const PublicRoute = ({ children }) => {
   const location = useLocation();
 
   if (isAuthenticated) {
-    const from = location.state?.from?.pathname || '/dashboard';
+    const from = location.state?.from?.pathname || '/home';
     return <Navigate to={from} replace />;
   }
 
@@ -73,6 +96,7 @@ const PublicRoute = ({ children }) => {
 const AppContent = () => {
   const location = useLocation();
   const isAuthPage = ['/login', '/'].includes(location.pathname);
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="app-container">
@@ -89,14 +113,13 @@ const AppContent = () => {
             
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/vendor" element={<Vendors />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/statistics" element={<Statistics />} />
+              <Route path="/approvals" element={<Approvals />} /> 
             </Route>
             
             {/* Catch-all route */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} />
           </Routes>
         </div>
       </div>

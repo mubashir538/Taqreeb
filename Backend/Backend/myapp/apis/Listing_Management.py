@@ -568,6 +568,14 @@ def get_view_data(listing_id):
 def unified_search(request):
     # Get query parameters
     search_query = request.GET.get('q', '')
+    if search_query:
+            UserActivity.objects.create(
+            user=request.user,
+            action='search',
+            metadata={'search_query': search_query},
+            timestamp=now()
+        )
+
     category = request.GET.get('category', 'All')
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')

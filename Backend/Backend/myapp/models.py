@@ -38,11 +38,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = m.CharField(max_length=50,null=True)
     age = m.IntegerField(null=True)
     gender = m.CharField(max_length=6,null=True)
-    profilePicture = m.CharField(max_length=100)
-    warning_reason = m.CharField(max_length=255, null=True, blank=True)
-    warned_at = m.DateTimeField(null=True, blank=True)
-    is_banned = m.BooleanField(default=False)
-    objects = CustomUserManager()
+    date_joined = m.DateTimeField(auto_now_add=True, null=True)
+    # profilePicture = m.CharField(max_length=100)
+    # warning_reason = m.CharField(max_length=255, null=True, blank=True)
+    # warned_at = m.DateTimeField(null=True, blank=True)
+    # is_banned = m.BooleanField(default=False)
+    # objects = CustomUserManager()
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
     def __str__(self):
@@ -393,16 +394,16 @@ class UserActivity(m.Model):
         ('category_click', 'Clicked Category'),
         ('service_click', 'Clicked Service'),
         ('filter', 'Applied Filter'),
-        ('event_create', 'Created Event'),
-        ('event_edit', 'Edited Event'),
-        ('event_view', 'Viewed Event'),
-        ('invite_card_view', 'Viewed Invitation Card'),
-        ('service_view_duration', 'Time Spent on Service Page'),
-        ('category_view_duration', 'Time Spent on Category Page'),
-        ('book_venue', 'Booked Venue'),  # ✅ NEW ACTION ADDED
-        ('homepage_view_duration', 'Time Spent on Home Page'),
-        ('ai_package_button_click', 'AI Package Button Clicked'),
-        ('user_register', 'User Registered'),
+        # ('event_create', 'Created Event'),
+        # ('event_edit', 'Edited Event'),
+        # ('event_view', 'Viewed Event'),
+        # ('invite_card_view', 'Viewed Invitation Card'),
+        # ('service_view_duration', 'Time Spent on Service Page'),
+        # ('category_view_duration', 'Time Spent on Category Page'),
+        # ('book_venue', 'Booked Venue'),  # ✅ NEW ACTION ADDED
+        # ('homepage_view_duration', 'Time Spent on Home Page'),
+        # ('ai_package_button_click', 'AI Package Button Clicked'),
+        # ('user_register', 'User Registered'),
     ]
     user = m.ForeignKey(User, on_delete=m.CASCADE)
     action = m.CharField(max_length=50, choices=ACTIONS)
@@ -528,4 +529,4 @@ class Payment(m.Model):
     status = m.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = m.DateTimeField(auto_now_add=True)
     updated_at = m.DateTimeField(auto_now=True)
-    payment_details = m.JSONField(default=dict)  # Stores raw payment processor response
+    payment_details = m.JSONField(default=dict)  

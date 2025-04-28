@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../App";
-import { loginUser } from "../../api/eventApi";
+import apiService from "../../api/api";
 
 const LoginScreen = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -18,11 +18,19 @@ const LoginScreen = () => {
     setIsLoading(true);
 
     try {
-      const data = await authAPI.login(email, password);
-      login(data.tokens.access);
-      navigate("/dashboard", { replace: true });
+      const response = await apiService.login(email, password);
+      
+      // Assuming your useAuth hook expects user data and tokens
+      login({
+        user: response.user,
+        accessToken: response.access,
+        refreshToken: response.refresh
+      });
+      
+      // Redirect to dashboard or home page after successful login
+      navigate("/dashboard");
     } catch (error) {
-      setErrorMsg(error.response?.data?.message || "Login failed");
+      setErrorMsg(error.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -64,8 +72,8 @@ const LoginScreen = () => {
             </div>
             <a href="/forgot-password">Forgot password?</a>
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="login-btn"
             disabled={isLoading}
           >

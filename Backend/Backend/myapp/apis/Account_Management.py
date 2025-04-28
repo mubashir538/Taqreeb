@@ -52,6 +52,20 @@ def AccountSignupPage(request):
 
         user = m.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
+    # After user.save()
+    UserActivity.objects.create(
+        user=user,
+        action='user_register',
+        metadata={
+            'firstName': user.firstName,
+            'lastName': user.lastName,
+            'email': user.email,
+            'city': user.city,
+            'gender': user.gender,
+        },
+        timestamp=now()
+    )
+
     if contactType=='email':
         user = m.User.objects.filter(email=contact).first()
     else:
@@ -379,7 +393,7 @@ def EditAccountInfoPage(request):
         user.save(update_fields=["profilePicture",'firstName','lastName','gender','city'])
     else:
         user.save(update_fields=['firstName','lastName','gender','city'])
-    user = md.User.objects.get(id=userid)
+    user = m.User.objects.get(id=userid)
     UserActivity.objects.create(
     user=user,
     action='profile_update',
