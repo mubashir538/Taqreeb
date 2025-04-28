@@ -61,7 +61,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   void fetchData() async {
     final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
     userId = userid;
-    await ApiCall.fetchAPI('accountInfo/$userid', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('accountInfo/$userid/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           this.token = token;
@@ -135,7 +135,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
           changeHeight(renderbox);
         });
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

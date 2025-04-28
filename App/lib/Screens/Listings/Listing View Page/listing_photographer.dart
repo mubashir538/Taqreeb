@@ -164,7 +164,7 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
         ImageSliderCategory(imageUrls: _imageUrls),
         Container(
           width: Screen.width(context),
-          color: MyColors.Dark,
+          color: MyColors.dark,
           padding: EdgeInsets.symmetric(
             horizontal: Screen.width(context) * 0.04,
             vertical: Screen.height(context) * 0.01,
@@ -188,7 +188,9 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategorySlots(
-                listing: _listing,
+                bookedDates: (_listing['booked_dates'] as List)
+                    .map((dateStr) => DateTime.parse(dateStr))
+                    .toList(),
                 onDateSelected: _handleDateSelection,
               ),
               _buildDivider(),
@@ -226,7 +228,7 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

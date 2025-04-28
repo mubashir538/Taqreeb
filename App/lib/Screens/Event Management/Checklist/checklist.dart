@@ -56,7 +56,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.Dark,
+        backgroundColor: MyColors.dark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
@@ -122,7 +122,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -228,7 +228,9 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             topRight: Radius.circular(16),
           ),
         ),
-        padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02,horizontal: Screen.width(context)*0.25),
+        padding: EdgeInsets.symmetric(
+            vertical: Screen.max(context) * 0.02,
+            horizontal: Screen.width(context) * 0.25),
         child: ColoredButton(
           text: 'Save',
           onPressed: _saveChecklist,

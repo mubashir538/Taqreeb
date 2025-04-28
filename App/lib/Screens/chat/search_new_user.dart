@@ -113,7 +113,7 @@ class _NewUserSearchState extends State<NewUserSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

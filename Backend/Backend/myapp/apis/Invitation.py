@@ -1,4 +1,4 @@
-from .. import models as md
+from .. import models as m
 from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
@@ -688,6 +688,6 @@ class DeleteOldTempCardsCronJob(CronJobBase):
 
     def do(self):
         cutoff = timezone.now() - timedelta(hours=24)
-        old_cards = md.TempInvitationCard.objects.filter(created_at__lt=cutoff)
+        old_cards = m.TempInvitationCard.objects.filter(created_at__lt=cutoff)
         for card in old_cards:
             card.delete()

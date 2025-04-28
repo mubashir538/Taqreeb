@@ -372,7 +372,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final double max = Screen.max(context);
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           Column(
@@ -497,7 +497,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: MyColors.Dark.withAlpha(51),
+                color: MyColors.dark.withAlpha(51),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),

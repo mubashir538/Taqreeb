@@ -18,10 +18,11 @@ class YourListingsController {
 
   Future<void> fetchData() async {
     isLoading = true;
-
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
-
+    if (type == 'user') {
+      return;
+    }
     await ApiCall.fetchAPI('YourListing/$id/$type', onSuccess: (token, data) {
       this.token = token;
       listings = data;
@@ -41,7 +42,7 @@ class YourListingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           _buildMainContent(context),

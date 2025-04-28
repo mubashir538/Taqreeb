@@ -34,14 +34,17 @@ import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
 import 'package:taqreeb/Screens/Event%20Management/Invitation/createInvitation.dart';
 import 'package:taqreeb/Screens/Event%20Management/Invitation/viewInvitationCard.dart';
+import 'package:taqreeb/Screens/Globals/no_internet.dart';
 import 'package:taqreeb/Screens/Globals/settings.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_image.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_product.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_addons.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_basic.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_details.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_product.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_video_upload.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_car_renter.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_caterer.dart';
@@ -55,11 +58,14 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_venue.dar
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_video_editor.dart';
 import 'package:taqreeb/Screens/Listings/review_screen.dart';
 import 'package:taqreeb/Screens/Listings/user_wishlist.dart';
+import 'package:taqreeb/Screens/Main%20Screens/Business/business_bookings.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
+import 'package:taqreeb/Screens/Main%20Screens/User/user_bookings.dart';
 import 'package:taqreeb/Screens/Main%20Screens/main_screen.dart';
 import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
 import 'package:taqreeb/Screens/Payments/order_summary.dart';
 import 'package:taqreeb/Screens/Search/listing_search.dart';
+import 'package:taqreeb/Screens/Slots/update_booked_slots.dart';
 import 'package:taqreeb/Screens/Wallet%20System/add_bank.dart';
 import 'package:taqreeb/Screens/Wallet%20System/see_all_transactions.dart';
 import 'package:taqreeb/Screens/Wallet%20System/wallet_screen.dart';
@@ -167,13 +173,16 @@ class _MainAppState extends State<MainApp> {
       '/AddCategory_AddImage': (context) => AddImage(),
       '/AddCategory_Addons': (context) => AddCategoryAddons(),
       '/AddCategory_AddPackage': (context) => AddCategoryAddPackage(),
+      '/AddCategory_AddProduct': (context) => AddCategoryAddProduct(),
       '/AddCategory_List': (context) => AddCategoryListing(),
       '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(),
       '/AddCategory_Packages': (context) => AddCategoryPackages(),
       '/AllTransactions': (context) => AllTransactions(),
+      '/AddCategoryProducts': (context) => AddCategoryProducts(),
       '/AddBank': (context) => AddBank(),
       '/BasicSignup': (context) => BasicSignup(),
       '/BusinessAccountInfo': (context) => MainScreen(index: 3),
+      '/BusinessBookings': (context) => BusinessBookingsScreen(),
       '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
       '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
       '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
@@ -218,8 +227,9 @@ class _MainAppState extends State<MainApp> {
       '/HomePage': (context) => MainScreen(index: 0),
       '/InvitationCardView': (context) => ViewInvitationCard(),
       '/Login': (context) => Login(),
-      '/OrderSummary': (context) => OrderSummaryScreen(),
-      '/PaymentDetails': (context) => SecurePaymentScreen(),
+      '/NoInternet': (context) => NoInternetScreen(),
+      // '/OrderSummary': (context) => OrderSummaryScreen(),
+      // '/PaymentDetails': (context) => SecurePaymentScreen(),
       '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
       '/ReviewPage': (context) => ReviewScreen(),
       '/SearchService': (context) => SearchService(),
@@ -230,6 +240,8 @@ class _MainAppState extends State<MainApp> {
       '/Signup_EmailOTPVerify': (context) => SignupEmailOtpVerify(),
       '/Signup_MoreInfo': (context) => SignupMoreInfo(),
       '/SubmissionSucessful': (context) => SubmissionSucessful(),
+      '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(),
+      '/UserBookings': (context) => UserBookingsScreen(),
       '/ViewAIPackage': (context) => ViewAIPackage(),
       '/WalletScreen': (context) => WalletScreen(),
       '/Wishlist': (context) => WishlistViewPage(),

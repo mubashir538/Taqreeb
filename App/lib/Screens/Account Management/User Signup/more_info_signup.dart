@@ -125,7 +125,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

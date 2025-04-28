@@ -50,13 +50,11 @@ class _UpperHeadingsState extends State<UpperHeadings> {
 
   void fetchEvents() async {
     final userId = await MyStorage.getToken(MyTokens.userId);
-
+    final token = await MyStorage.getToken(MyTokens.accessToken);
     final response = await MyApi.getRequest(
+        context: context,
         endpoint: 'Events/getBasics/$userId',
-        headers: {
-          'Authorization':
-              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-        });
+        headers: {'Authorization': 'Bearer $token'});
     setState(() {
       events = response;
     });
@@ -80,7 +78,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Future<void> _showEventSelectionDialog() async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       builder: (context) => _buildEventSelectionDialog(),
     );
   }
@@ -90,7 +88,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     return Container(
       padding: EdgeInsets.all(maxDimension * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.Dark,
+        color: MyColors.dark,
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(maxDimension * 0.05)),
       ),

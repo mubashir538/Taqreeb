@@ -76,7 +76,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         ? Screen.width(context)
         : Screen.height(context);
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Row(
         children: [
           SingleChildScrollView(
@@ -100,7 +100,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         onPressed: () => _showOptions(context, maxThing, Screen.width(context)),
         child: Icon(
           Icons.add,
-          color: MyColors.Dark,
+          color: MyColors.dark,
           size: maxThing * 0.04,
         ),
       ),

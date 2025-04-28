@@ -5,20 +5,26 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class ApiCall {
-  static Future<void> fetchAPI(String endpoint,
-      {required Function(String token, Map<String, dynamic> data) onSuccess,
-      Function()? onError,
-      BuildContext? context,
-      bool refresh = false,
-      String type = 'get',
-      Map<String, dynamic>? body = const {}}) async {
+  static Future<void> fetchAPI(
+    String endpoint, {
+    required Function(String token, Map<String, dynamic> data) onSuccess,
+    Function()? onError,
+    BuildContext? context,
+    bool refresh = false,
+    String type = 'get',
+    Map<String, dynamic>? body = const {},
+    Map<String, dynamic>? params, // Add params parameter
+  }) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
+    print('Your Tokens in Api Call $token');
     final data;
     if (type == 'get') {
       data = await MyApi.getRequest(
         endpoint: endpoint,
+        context: context,
         refresh: refresh,
         headers: {'Authorization': 'Bearer $token'},
+        params: params, // Pass params to getRequest
       );
     } else {
       data = await MyApi.postRequest(
@@ -28,12 +34,14 @@ class ApiCall {
       );
     }
     if (data == null || data['status'] == 'error') {
-      onError?.call() ??
-          () {
-            if (context!.mounted) {
-              MyScaffold(text: 'Something Went Wrong!').show(context);
-            }
-          };
+      if (token.isEmpty) {
+        if (onError != null) {
+          onError();
+        } else if (context?.mounted == true) {
+          MyScaffold(text: 'You are not logged in!').show(context!);
+        }
+        return;
+      }
     } else {
       onSuccess(token, data);
     }

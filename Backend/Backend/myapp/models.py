@@ -1,6 +1,8 @@
 from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import os
+from django.contrib.auth import get_user_model
+from .React.react_models import ReactUser 
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -42,6 +44,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
     def __str__(self):
         return str(self.id)
+    # Add these lines to customize related_name
+    groups = m.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        related_name="flutter_user_set",  # Unique related_name
+        related_query_name="flutter_user",
+    )
+    user_permissions = m.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_name="flutter_user_set",  # Unique related_name
+        related_query_name="flutter_user",
+    )
+
 
 class TempInvitationCard(m.Model):
     file = m.ImageField(upload_to='uploads/tempCards/%Y/%m/%d/')
@@ -62,6 +82,7 @@ class BusinessOwner(m.Model):
     Description = m.CharField(max_length=1100)
     status = m.TextField(null=True)
     balance = m.IntegerField(default=0)
+
 class FCMTokens(m.Model):
     id = m.AutoField(primary_key=True)
     token = m.TextField()
@@ -91,15 +112,8 @@ class Listing(m.Model):
     ratingCount = m.IntegerField(default=0)
     basicPrice = m.IntegerField()
     type = m.TextField(null=True)
-
-class BusinessTransaction(m.Model):
-    id = m.AutoField(primary_key=True)
-    type = m.TextField(null=True)
-    date = m.DateTimeField(auto_now_add=True)
-    ownerf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
-    ownerb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
-    amount = m.IntegerField()
-    info = m.TextField()
+    status = m.CharField(max_length=20,default='active')
+    booked_dates = m.JSONField(default=list)
 
 class BankDetails(m.Model):
     id = m.AutoField(primary_key=True)
@@ -121,40 +135,10 @@ class Packages(m.Model):
     description = m.CharField(max_length=1100)
     price= m.IntegerField()
 
-
-# class Orders(m.Model):
-#     id = m.AutoField(primary_key=True)
-#     Transaction = m.ForeignKey(User,on_delete=m.CASCADE)
-#     package = m.ForeignKey(Packages,delete=m.CASCADE)
-#     receiverf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
-#     receiverb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
-#     date = m.DateTimeField(auto_now_add=True)
-
-class Transaction(m.Model):
-    id = m.AutoField(primary_key=True)
-    sender = m.ForeignKey(User,on_delete=m.CASCADE,null=True)
-    receiverf = m.ForeignKey(Freelancer,on_delete=m.CASCADE,null=True)
-    receiverb = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE,null=True)
-    amount = m.IntegerField()
-    status = m.TextField(null=True)
-    date = m.DateTimeField(auto_now_add=True)
-    package = m.ForeignKey(Packages,on_delete=m.CASCADE,null=True)
-
 class PicturesPackages(m.Model):
     id = m.AutoField(primary_key=True)
     packageId = m.ForeignKey(Packages,on_delete=m.CASCADE)
     picturePath = m.CharField(max_length=100)
-
-class AIEventQuestions(m.Model):
-    id = m.AutoField(primary_key=True)
-    question = m.CharField(max_length=100)
-    questionType = m.CharField(max_length=50)
-
-class QuestionOptions(m.Model):
-    id = m.AutoField(primary_key=True)
-    questionId = m.ForeignKey(AIEventQuestions,on_delete= m.CASCADE)
-    optionType = m.TextField()
-    name = m.TextField() 
 
 class Events(m.Model):
     id = m.AutoField(primary_key=True)
@@ -219,21 +203,6 @@ class AddOns(m.Model):
     isPer = m.BooleanField()
     perType = m.CharField(max_length=50)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-
-class MenuItems(m.Model):                                                                                                                                                      
-    id = m.AutoField(primary_key=True)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE,null=True)
-    name = m.CharField(max_length=100)
-    pricePerKg = m.IntegerField()
-    picture = m.CharField(max_length=100)
-
-class Cart(m.Model):
-    id = m.AutoField(primary_key=True)
-    userId = m.ForeignKey(User,on_delete=m.CASCADE)
-    productId = m.ForeignKey(MenuItems,on_delete=m.CASCADE)
-    ownerId = m.ForeignKey(BusinessOwner,on_delete=m.CASCADE)
-    quantity = m.IntegerField()
-    
     
 class Parlors(m.Model):
     id = m.AutoField(primary_key=True)
@@ -323,15 +292,6 @@ class BookedSlots(m.Model):
     id = m.AutoField(primary_key=True)
     slot = m.DateField()
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-
-class BookingCart(m.Model):
-    id = m.AutoField(primary_key=True)
-    userId = m.ForeignKey(User,on_delete=m.CASCADE)
-    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
-    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
-    slot = m.DateTimeField(null=True)
-    type = m.CharField(max_length=100,null=True)
-    status = m.CharField(max_length=100)
 
 class HomePageImages(m.Model):
     id = m.AutoField(primary_key=True)
@@ -424,16 +384,6 @@ class PhotographyPlaces(m.Model):
 
     type = m.CharField(max_length=100, choices=TYPE_CHOICES, default='Studio')
 
-class Cars(m.Model):
-    id = m.AutoField(primary_key=True)
-    carRenterId = m.ForeignKey(CarRenters,on_delete=m.CASCADE)
-    pricePerDay = m.IntegerField()
-    name = m.CharField(max_length=255)
-    type = m.CharField(max_length=100)
-    seats = m.IntegerField()
-    driver = m.IntegerField()
-    picture = m.CharField(max_length=255)
-
 class UserActivity(m.Model):
     ACTIONS = [
         ('search', 'Search Query'),
@@ -457,3 +407,120 @@ class UserActivity(m.Model):
     def __str__(self):
         return f"{self.user.username} - {self.action} - {self.timestamp}"
 
+class Product(m.Model):
+    id = m.AutoField(primary_key=True)
+    name = m.CharField(max_length=100)
+    description = m.TextField()
+    price = m.DecimalField(max_digits=10, decimal_places=2)
+    quantity = m.PositiveIntegerField(null=True)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+
+class PicturesProducts(m.Model):
+    id = m.AutoField(primary_key=True)
+    productId = m.ForeignKey(Product,on_delete=m.CASCADE)
+    picturePath = m.CharField(max_length=100)
+
+class BookingCart(m.Model):
+    id = m.AutoField(primary_key=True)
+    userId = m.ForeignKey(User,on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
+    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
+    slot = m.DateTimeField(null=True)
+    type = m.CharField(max_length=100,null=True)
+    status = m.CharField(max_length=100)
+
+User = get_user_model()
+
+class Cart(m.Model):
+    user = m.OneToOneField(User, on_delete=m.CASCADE, related_name='cart')
+    created_at = m.DateTimeField(auto_now_add=True)
+    updated_at = m.DateTimeField(auto_now=True)
+
+class CartItem(m.Model):
+    CART_ITEM_TYPES = (
+        ('listing', 'Listing'),
+        ('product', 'Product'),
+        ('package', 'Package'),
+    )
+    
+    cart = m.ForeignKey(Cart, on_delete=m.CASCADE, related_name='items')
+    item_type = m.CharField(max_length=10, choices=CART_ITEM_TYPES)
+    item_id = m.PositiveIntegerField()
+    quantity = m.PositiveIntegerField(default=1)
+    added_at = m.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('cart', 'item_type', 'item_id')
+
+class Booking(m.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+    )
+    
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    listing = m.ForeignKey(Listing, on_delete=m.CASCADE, null=True, blank=True)
+    product = m.ForeignKey(Product, on_delete=m.CASCADE, null=True, blank=True)
+    package = m.ForeignKey(Packages, on_delete=m.CASCADE, null=True, blank=True)
+    booking_date = m.DateTimeField()
+    status = m.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = m.DateTimeField(auto_now_add=True)
+    payment_amount = m.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = m.CharField(max_length=20, default='pending')
+    additional_info = m.JSONField(default=dict)
+    has_reviewed = m.BooleanField(default=False)
+
+class Order(m.Model):
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    cart = m.ForeignKey(Cart, on_delete=m.SET_NULL, null=True)
+    total_amount = m.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = m.CharField(max_length=20, default='pending')
+    status = m.CharField(max_length=20, default='processing')
+    created_at = m.DateTimeField(auto_now_add=True)
+    booking_info = m.JSONField(default=dict)  # Stores dates and other booking details
+
+class Transaction(m.Model):
+    id = m.AutoField(primary_key=True)
+    sender = m.ForeignKey(User, on_delete=m.CASCADE, null=True)
+    receiverf = m.ForeignKey(Freelancer, on_delete=m.CASCADE, null=True)
+    receiverb = m.ForeignKey(BusinessOwner, on_delete=m.CASCADE, null=True)
+    amount = m.IntegerField()
+    status = m.CharField(max_length=20, default='Completed')  # Updated to use consistent status
+    date = m.DateTimeField(auto_now_add=True)
+    package = m.ForeignKey(Packages, on_delete=m.CASCADE, null=True)
+    order = m.ForeignKey(Order, on_delete=m.SET_NULL, null=True, blank=True)  # Added order reference
+    booking = m.ForeignKey(Booking, on_delete=m.SET_NULL, null=True, blank=True)  # Added booking reference
+
+class BusinessTransaction(m.Model):
+    id = m.AutoField(primary_key=True)
+    type = m.TextField(blank=True)
+    date = m.DateTimeField(auto_now_add=True)
+    ownerf = m.ForeignKey(Freelancer, on_delete=m.CASCADE, null=True)
+    ownerb = m.ForeignKey(BusinessOwner, on_delete=m.CASCADE, null=True)
+    amount = m.IntegerField()
+    info = m.TextField()
+    status = m.CharField(max_length=20, default='Completed')  # Added status field
+    order = m.ForeignKey(Order, on_delete=m.SET_NULL, null=True, blank=True)  # Added order reference
+
+
+# models.py
+class Payment(m.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+        ('refunded', 'Refunded'),
+    )
+    
+    user = m.ForeignKey(User, on_delete=m.CASCADE)
+    order = m.ForeignKey(Order, on_delete=m.CASCADE, null=True, blank=True)
+    booking = m.ForeignKey(Booking, on_delete=m.CASCADE, null=True, blank=True)
+    amount = m.DecimalField(max_digits=10, decimal_places=2)
+    transaction_id = m.CharField(max_length=100, unique=True)
+    payment_method = m.CharField(max_length=50)
+    status = m.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = m.DateTimeField(auto_now_add=True)
+    updated_at = m.DateTimeField(auto_now=True)
+    payment_details = m.JSONField(default=dict)  # Stores raw payment processor response

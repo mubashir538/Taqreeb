@@ -11,7 +11,7 @@ class AIPackage_FunctionDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

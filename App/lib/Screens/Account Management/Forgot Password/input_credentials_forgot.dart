@@ -42,7 +42,8 @@ class _ForgotPassword_EmailorPhoneInputState
   Future<void> _sendCode() async {
     final forgotPasswordProvider =
         Provider.of<ForgotPasswordProvider>(context, listen: false);
-    await forgotPasswordProvider.sendCode(_contactController.text.trim(), context);
+    await forgotPasswordProvider.sendCode(
+        _contactController.text.trim(), context);
   }
 
   @override
@@ -57,7 +58,7 @@ class _ForgotPassword_EmailorPhoneInputState
     );
 
     return Scaffold(
-      backgroundColor: MyColors.Dark,
+      backgroundColor: MyColors.dark,
       body: forgotPasswordProvider.isLoading
           ? Center(
               child: CircularProgressIndicator(
