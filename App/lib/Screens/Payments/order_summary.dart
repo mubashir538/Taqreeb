@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -10,14 +9,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class OrderSummaryScreen extends StatefulWidget {
-  final Cart cart;
-  final Map<String, dynamic> bookingInfo;
-
-  const OrderSummaryScreen({
-    super.key,
-    required this.cart,
-    required this.bookingInfo,
-  });
+  const OrderSummaryScreen({super.key});
 
   @override
   State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();
@@ -26,11 +18,27 @@ class OrderSummaryScreen extends StatefulWidget {
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   late Future<Map<String, dynamic>> _userFuture;
   bool _isLoading = false;
+  Cart? _cart;
+  Map<String, dynamic>? _bookingInfo;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchRouteArguments();
     _userFuture = _fetchUserData();
+  }
+
+  void _fetchRouteArguments() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map<String, dynamic>) {
+      _cart = args['cart'] as Cart;
+      _bookingInfo = args['bookingInfo'] as Map<String, dynamic>;
+    } else {
+      // Handle error or navigate back
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pop();
+      });
+    }
   }
 
   Future<Map<String, dynamic>> _fetchUserData() async {
@@ -46,8 +54,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   double get _totalAmount {
+    if (_cart == null) return 0;
+
     double total = 0;
-    for (var item in widget.cart.items) {
+    for (var item in _cart!.items) {
       if (item.itemType == 'listing') {
         total += (item.itemDetails['priceMin'] ?? 0).toDouble();
       } else if (item.itemType == 'product') {
@@ -60,6 +70,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   Future<void> _proceedToPayment(bool isFullPayment) async {
+    if (_cart == null || _bookingInfo == null) return;
+
     setState(() => _isLoading = true);
 
     try {
@@ -69,9 +81,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       final orderResponse = await MyApi.postRequest(
         endpoint: 'create_order/',
         body: {
-          'booking_info': widget.bookingInfo,
-          'booking_date': widget.bookingInfo['selected_dates']
-              [0], // Use first date
+          'booking_info': _bookingInfo,
+          'booking_date': _bookingInfo!['selected_dates'][0], // Use first date
         },
         headers: {
           'Authorization':
@@ -80,15 +91,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       );
 
       if (orderResponse['status'] == 'success') {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => SecurePaymentScreen(
-              orderId: orderResponse['order']['id'],
-              amount: paymentAmount.toInt(),
-              isFullPayment: isFullPayment,
-            ),
-          ),
+          '/PaymentDetails',
+          arguments: {
+            'orderId': orderResponse['order']['id'],
+            'amount': paymentAmount.toInt(),
+            'isFullPayment': isFullPayment,
+          },
         );
       } else {
         throw Exception(orderResponse['message'] ?? 'Failed to create order');
@@ -104,6 +114,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_cart == null || _bookingInfo == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Summary'),
@@ -135,7 +149,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-                ...widget.cart.items.map((item) => _buildOrderItem(item)),
+                ..._cart!.items.map((item) => _buildOrderItem(item)),
                 SizedBox(height: Screen.height(context) * 0.03),
                 Text(
                   'Booking Dates',
@@ -146,7 +160,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-                ...widget.bookingInfo['selected_dates'].map<Widget>((dateStr) {
+                ..._bookingInfo!['selected_dates'].map<Widget>((dateStr) {
                   final date = DateTime.parse(dateStr);
                   return Padding(
                     padding:
@@ -169,12 +183,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-                _buildInfoRow(
-                    'Name', widget.bookingInfo['customer_info']['name']),
-                _buildInfoRow(
-                    'Email', widget.bookingInfo['customer_info']['email']),
-                _buildInfoRow(
-                    'Phone', widget.bookingInfo['customer_info']['phone']),
+                _buildInfoRow('Name', _bookingInfo!['customer_info']['name']),
+                _buildInfoRow('Email', _bookingInfo!['customer_info']['email']),
+                _buildInfoRow('Phone', _bookingInfo!['customer_info']['phone']),
                 SizedBox(height: Screen.height(context) * 0.03),
                 Container(
                   padding: EdgeInsets.all(Screen.width(context) * 0.04),

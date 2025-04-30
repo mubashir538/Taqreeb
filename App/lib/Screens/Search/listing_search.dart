@@ -239,8 +239,8 @@ class _SearchServiceState extends State<SearchService>
           "Category": _categoryController.text,
         if (_appliedFilters.contains("Price"))
           "Price": {
-            "min": _rangeSliderController.minValue,
-            "max": _rangeSliderController.maxValue
+            "min": _rangeSliderController.minValue.toInt(),
+            "max": _rangeSliderController.maxValue.toInt()
           },
         if (_appliedFilters.contains("Location"))
           "Location": _locationController.text,
@@ -425,10 +425,11 @@ class _SearchServiceState extends State<SearchService>
               final package = _searchResults['packages'][index];
               return PackageBox(
                 packageId: package['id'].toString(),
-                imageUrls: package['pictures']
-                        ?.map((p) => p['picturePath'])
-                        .toList() ??
-                    [],
+                imageUrls: package['pictures'].length != 0
+                    ? package['pictures']
+                        ?.map((p) => p['picturePath'].toString())
+                        .toList()
+                    : [],
                 packagedetails: package['description'],
                 packageprice: package['price'].toString(),
                 packagename: package['name'],

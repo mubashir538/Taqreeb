@@ -11,16 +11,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class SecurePaymentScreen extends StatefulWidget {
-  final int orderId;
-  final int amount;
-  final bool isFullPayment;
-
-  const SecurePaymentScreen({
-    super.key,
-    required this.orderId,
-    required this.amount,
-    required this.isFullPayment,
-  });
+  const SecurePaymentScreen({super.key});
 
   @override
   State<SecurePaymentScreen> createState() => _SecurePaymentScreenState();
@@ -29,17 +20,44 @@ class SecurePaymentScreen extends StatefulWidget {
 class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   final PaymentController _controller = PaymentController();
   bool _isProcessing = false;
+  int? _orderId;
+  int? _amount;
+  bool? _isFullPayment;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchRouteArguments();
+  }
+
+  void _fetchRouteArguments() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map<String, dynamic>) {
+      setState(() {
+        _orderId = args['orderId'] as int;
+        _amount = args['amount'] as int;
+        _isFullPayment = args['isFullPayment'] as bool;
+      });
+    } else {
+      // Handle error or navigate back
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pop();
+      });
+    }
+  }
 
   Future<void> _processPayment() async {
+    if (_orderId == null || _amount == null || _isFullPayment == null) return;
+
     setState(() => _isProcessing = true);
 
     try {
       // Process payment with your payment gateway
       final paymentResponse =
           await MyApi.postRequest(endpoint: 'process_payment/', body: {
-        'order_id': widget.orderId,
-        'amount': widget.amount,
-        'is_full_payment': widget.isFullPayment,
+        'order_id': _orderId,
+        'amount': _amount,
+        'is_full_payment': _isFullPayment,
         'card_number': _controller.cardNumberController.text,
         'expiry_date': _controller.expiryDateController.text,
         'cvv': _controller.cvvController.text,
@@ -52,10 +70,9 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
       if (paymentResponse['status'] == 'success') {
         // Update order status
         await MyApi.postRequest(endpoint: 'update_order_status/', body: {
-          'order_id': widget.orderId,
+          'order_id': _orderId,
           'status': 'paid',
-          'payment_status':
-              widget.isFullPayment ? 'paid_in_full' : 'deposit_paid',
+          'payment_status': _isFullPayment! ? 'paid_in_full' : 'deposit_paid',
         }, headers: {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
@@ -77,6 +94,12 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_orderId == null || _amount == null || _isFullPayment == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Secure Payment'),
@@ -89,7 +112,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Payment Amount: \$${widget.amount.toStringAsFixed(2)}',
+              'Payment Amount: \$${_amount!.toStringAsFixed(2)}',
               style: GoogleFonts.montserrat(
                 color: MyColors.white,
                 fontSize: Screen.max(context) * 0.025,
@@ -170,6 +193,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
   }
 }
 
+// PaymentController remains unchanged from your original implementation
 class PaymentController {
   final TextEditingController cardNumberController = TextEditingController();
   final TextEditingController expiryDateController = TextEditingController();

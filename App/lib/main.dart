@@ -62,6 +62,8 @@ import 'package:taqreeb/Screens/Main%20Screens/Business/business_bookings.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
 import 'package:taqreeb/Screens/Main%20Screens/User/user_bookings.dart';
 import 'package:taqreeb/Screens/Main%20Screens/main_screen.dart';
+import 'package:taqreeb/Screens/Payments/booking_information_screen.dart';
+import 'package:taqreeb/Screens/Payments/cart_screen.dart';
 import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
 import 'package:taqreeb/Screens/Payments/order_summary.dart';
 import 'package:taqreeb/Screens/Search/listing_search.dart';
@@ -187,6 +189,7 @@ class _MainAppState extends State<MainApp> {
       '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
       '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
       '/BusinessSignup_Description': (context) => BusinessSignupDescription(),
+      '/CartScreen': (context) => CartScreen(),
       '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),
       '/CategoryView_Caterers': (context) => CategoryViewCaterers(),
       '/CategoryView_Decorator': (context) => CategoryViewDecorator(),
@@ -228,8 +231,8 @@ class _MainAppState extends State<MainApp> {
       '/InvitationCardView': (context) => ViewInvitationCard(),
       '/Login': (context) => Login(),
       '/NoInternet': (context) => NoInternetScreen(),
-      // '/OrderSummary': (context) => OrderSummaryScreen(),
-      // '/PaymentDetails': (context) => SecurePaymentScreen(),
+      '/OrderSummary': (context) => OrderSummaryScreen(),
+      '/PaymentDetails': (context) => SecurePaymentScreen(),
       '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
       '/ReviewPage': (context) => ReviewScreen(),
       '/SearchService': (context) => SearchService(),

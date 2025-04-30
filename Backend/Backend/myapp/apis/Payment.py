@@ -124,11 +124,11 @@ def getTransactions(request, id, type):
         return Response({'status': 'error', 'message': str(e)}, status=400)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def getTransactionsRecent(request, id, type):
     try:
         user = m.User.objects.get(id=id)
-        now = datetime.timezone.now()
+        now = datetime.datetime.now()
         
         if type == 'freelancer':
             freelancer = m.Freelancer.objects.get(userID=user)

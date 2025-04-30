@@ -47,7 +47,8 @@ class CartItemViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_booking(request):
