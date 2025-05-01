@@ -171,9 +171,8 @@ class _ChatBoxState extends State<ChatBox> {
         },
       }, SetOptions(merge: true));
 
-      // Send notification
       await MyApi.postRequest(
-        endpoint: 'notification/sendNotification',
+        endpoint: 'notification/sendNotification', // Match your Django endpoint
         body: {
           'recv': _chatUserId,
           'send': _currentUserId,

@@ -207,7 +207,7 @@ class _EventDetailsState extends State<EventDetails> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _eventData.functions.length,
-      itemBuilder: (context, index) => Function12(
+      itemBuilder: (context, index) => FunctionCard(
         delete: () => _deleteFunction(index),
         color: Color(int.parse(
           '0xff${_eventData.eventDetails["themeColor"].substring(1)}',

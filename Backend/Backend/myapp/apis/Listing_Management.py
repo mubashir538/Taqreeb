@@ -538,9 +538,8 @@ def get_view_data(listing_id):
 
     return None
 
-
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def unified_search(request):
     # Get query parameters
     search_query = request.GET.get('q', '')

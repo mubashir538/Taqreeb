@@ -184,7 +184,7 @@ class _YourEventsState extends State<YourEvents> {
       itemCount: _filteredEvents.length,
       itemBuilder: (context, index) {
         final event = _filteredEvents[index];
-        return Function12(
+        return FunctionCard(
           delete: () => _deleteEvent(event["id"], index),
           color: Color(int.parse(
               '0xff${event["themeColor"].substring(1, event["themeColor"].length)}')),

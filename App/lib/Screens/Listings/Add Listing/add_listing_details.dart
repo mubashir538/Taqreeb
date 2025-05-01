@@ -278,7 +278,7 @@ class MoreDetailsFormController {
         final validationResult =
             await Validations.validatePortfolio(controller.text);
         if (validationResult != 'Ok') {
-          MyScaffold(text: 'Invalid Portfolio Link').show(context);
+          MyScaffold(text: validationResult).show(context);
           return false;
         }
       }
