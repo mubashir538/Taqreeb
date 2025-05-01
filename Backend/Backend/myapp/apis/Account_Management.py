@@ -386,6 +386,7 @@ def EditAccountInfoPage(request):
 def editBusinessInfo(request):
     userid = request.data.get('userid')
     businessName = request.data.get('name')
+    print(businessName)
     Description = request.data.get('description')
     type = request.data.get('type')
     user = m.User.objects.get(id=userid)

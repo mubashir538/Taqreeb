@@ -27,9 +27,55 @@ class Validations {
     if (value == null || value.isEmpty) {
       return 'Please enter a name';
     }
-    RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
-    if (!regex.hasMatch(value)) {
-      return 'Name can only contain letters and spaces';
+
+    if (value.length < 3) {
+      return 'Name is too short';
+    }
+
+    if (value.length > 50) {
+      return 'Name is too long';
+    }
+
+    // Only letters, spaces, dots, apostrophes, and hyphens
+    RegExp validChars = RegExp(r"^[a-zA-Z\s\.\'\-]+$");
+    if (!validChars.hasMatch(value)) {
+      return 'Name can only contain letters, spaces, dots, apostrophes, or hyphens';
+    }
+
+    // Avoid consecutive special characters
+    RegExp repeatedSpecials = RegExp(r"[\.\'\-]{2,}");
+    if (repeatedSpecials.hasMatch(value)) {
+      return 'Name contains repeated special characters';
+    }
+
+    return "Ok";
+  }
+
+  static String validateServiceName(String? value) {
+    value = value?.trim();
+
+    if (value == null || value.isEmpty) {
+      return 'Please enter a service name';
+    }
+
+    if (value.length < 3) {
+      return 'Service name is too short';
+    }
+
+    if (value.length > 60) {
+      return 'Service name is too long';
+    }
+
+    // Allow letters, numbers, spaces, and common service name characters
+    RegExp validChars = RegExp(r"^[a-zA-Z0-9\s\.\'\-\&\#]+$");
+    if (!validChars.hasMatch(value)) {
+      return 'Service name contains invalid characters';
+    }
+
+    // Prevent repeated special characters
+    RegExp repeatedSpecials = RegExp(r"[\'\.\-\&\#]{2,}");
+    if (repeatedSpecials.hasMatch(value)) {
+      return 'Service name has repeated special characters';
     }
 
     return "Ok";
@@ -41,16 +87,55 @@ class Validations {
     if (value == null || value.isEmpty) {
       return 'Please fill the Description';
     }
-    if (value.length > 1100 || value.length < 50) {
+
+    if (value.length < 50 || value.length > 1100) {
       return 'Description must be between 50 and 1100 characters';
     }
 
+    // Must contain at least one letter
     RegExp hasLetterRegExp = RegExp(r'[a-zA-Z]');
     if (!hasLetterRegExp.hasMatch(value)) {
-      return 'Description is Invalid';
+      return 'Description must contain letters';
     }
 
-    return "Ok";
+    // Avoid descriptions with only symbols or numbers
+    RegExp onlySymbolsOrNumbers = RegExp(r'^[^a-zA-Z]+$');
+    if (onlySymbolsOrNumbers.hasMatch(value)) {
+      return 'Description must contain meaningful text';
+    }
+
+    // Avoid excessive repeated characters (e.g., "aaaaaa")
+    RegExp repeatedChar = RegExp(r'(.)\1{5,}');
+    if (repeatedChar.hasMatch(value)) {
+      return 'Description contains excessive repeated characters';
+    }
+
+    // Avoid spammy patterns like 'Lorem ipsum'
+    if (value.toLowerCase().contains('lorem ipsum')) {
+      return 'Description seems to be placeholder text';
+    }
+
+    // Basic profanity blacklist (example words)
+    List<String> blacklist = ['shit', 'fuck', 'bitch', 'asshole'];
+    for (String word in blacklist) {
+      if (value.toLowerCase().contains(word)) {
+        return 'Inappropriate content detected';
+      }
+    }
+
+    // Too many newline characters
+    if ('\n'.allMatches(value).length > 20) {
+      return 'Description has too many newlines';
+    }
+
+    // Optional: avoid too many special characters
+    RegExp excessiveSymbols =
+        RegExp(r'[!@#\$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]{10,}');
+    if (excessiveSymbols.hasMatch(value)) {
+      return 'Too many special characters in description';
+    }
+
+    return 'Ok';
   }
 
   static String validateIntFields(String? value) {
@@ -86,10 +171,37 @@ class Validations {
 
     if (value == null || value.isEmpty) {
       return 'Please enter a link';
-    } else if (!(await canLaunchUrl(Uri.parse(value)))) {
-      return "Invalid Link";
     }
-    return "Ok";
+
+    // Basic format and characters check
+    if (value.length < 5 || !value.contains('.')) {
+      return 'Link seems too short or invalid';
+    }
+
+    Uri? uri;
+    try {
+      uri = Uri.parse(value);
+    } catch (e) {
+      return 'Link format is incorrect';
+    }
+
+    // Scheme check (http or https)
+    if (!(uri.scheme == 'http' || uri.scheme == 'https')) {
+      return 'Link must start with http:// or https://';
+    }
+
+    // Avoid javascript or other unsafe protocols
+    if (uri.scheme.contains('javascript') ||
+        value.toLowerCase().contains('javascript:')) {
+      return 'Link contains unsafe content';
+    }
+
+    // URL launchable check
+    if (!(await canLaunchUrl(uri))) {
+      return 'Invalid or unreachable link';
+    }
+
+    return 'Ok';
   }
 
   static String validatePassword(String? value) {

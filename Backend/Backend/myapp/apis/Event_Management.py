@@ -62,7 +62,9 @@ def CreateEvent(request):
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
     userId= m.User.objects.get(id=userId)
-    CreateEvent = m.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
+    CreateEvent = m.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,themeColor=themeColor,budget=budget)
+    if description != None:
+        CreateEvent.description = description
     CreateEvent.save()
     return Response({'status': 'success'})
 

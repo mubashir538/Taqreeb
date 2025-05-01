@@ -6,7 +6,7 @@ import 'package:taqreeb/core/utils/color.dart';
 import '../../core/services/screen_size.dart';
 
 class RecentTransactions extends StatefulWidget {
-  final List<Map<String, dynamic>> transactions;
+  final List<dynamic> transactions;
   const RecentTransactions({super.key, required this.transactions});
 
   @override
@@ -60,7 +60,7 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                   final transact = widget.transactions[index];
                   return TransactionCard(
                     type: transact["type"],
-                    amount: _formatNumberWithCommas(transact["amount"]),
+                    amount: _formatNumberWithCommas(transact["amount"].toString()),
                     paidBy: transact['info'],
                     date: formatDate(transact['date']),
                   );

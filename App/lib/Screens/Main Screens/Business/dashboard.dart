@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/models/business_data_model.dart';
+import 'package:taqreeb/core/providers/businessEditInfoViewModel.dart';
+import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -18,15 +22,15 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final GlobalKey _headerKey = GlobalKey();
-  Map<String, dynamic> _userData = {};
   bool _isLoading = true;
-  String _businessType = '';
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeaderHeight());
-    _fetchData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _measureHeaderHeight();
+      _loadInitialData();
+    });
   }
 
   void _measureHeaderHeight() {
@@ -42,33 +46,31 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Future<void> _fetchData() async {
-    final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
-    _businessType = await MyTokens.getBusinessType();
-
-    ApiCall.fetchAPI(
-      'businessowner/accountInfo/$userId/$_businessType',
-      onSuccess: (token, data) {
-        if (mounted) {
-          setState(() {
-            _userData = data;
-            _isLoading = false;
-          });
-        }
-      },
-      context: mounted ? context : null,
-    );
+  Future<void> _loadInitialData() async {
+    final viewModel =
+        Provider.of<BusinessAccountInfoViewModel>(context, listen: false);
+    await viewModel.fetch(context);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _refreshData() async {
     setState(() => _isLoading = true);
-    await _fetchData();
+    await Provider.of<BusinessAccountInfoViewModel>(context, listen: false)
+        .fetch(context);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
-  Widget _buildProfileCard() {
-    final profileImage = _businessType == 'freelancer'
-        ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_userData['businessInfo']['profilePic']}'
-        : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_userData['businessInfo']['profilepic']}';
+  Widget _buildProfileCard(BusinessData businessData) {
+    final businessInfo = businessData.businessInfo;
+    final listingCount = businessData.businessInfo['listingCount'] ?? 0;
+
+    final profileImage = businessData.profileImageUrl != null
+        ? NetworkImage(businessData.profileImageUrl!)
+        : const AssetImage('assets/default_profile.png') as ImageProvider;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -84,7 +86,7 @@ class _DashboardState extends State<Dashboard> {
             blurRadius: 4,
             spreadRadius: 1,
             offset: const Offset(2, 2),
-          ),
+          )
         ],
       ),
       child: Row(
@@ -92,14 +94,14 @@ class _DashboardState extends State<Dashboard> {
           CircleAvatar(
             backgroundColor: MyColors.red,
             radius: Screen.height(context) * 0.05,
-            backgroundImage: NetworkImage(profileImage),
+            backgroundImage: profileImage,
           ),
           SizedBox(width: Screen.width(context) * 0.05),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _userData['businessInfo']['businessName'],
+                businessInfo['businessName'] ?? 'No Business Name',
                 style: GoogleFonts.montserrat(
                   color: MyColors.Yellow,
                   fontSize: Screen.max(context) * 0.02,
@@ -108,7 +110,7 @@ class _DashboardState extends State<Dashboard> {
               ),
               SizedBox(height: Screen.height(context) * 0.01),
               Text(
-                "${_userData['listingCount']} Active Listings",
+                "$listingCount Active Listings",
                 style: GoogleFonts.montserrat(
                   color: MyColors.white.withAlpha(172),
                   fontSize: Screen.max(context) * 0.015,
@@ -200,7 +202,10 @@ class _DashboardState extends State<Dashboard> {
                         height: (Screen.height(context) * 0.02) +
                             UI_Management.headerHeight,
                       ),
-                      _buildProfileCard(),
+                      Consumer2<BusinessInfoEditViewModel, BusinessData>(
+                          builder: (context, viewModel, businessData, child) {
+                        return _buildProfileCard(businessData);
+                      }),
                       SizedBox(height: Screen.height(context) * 0.01),
                       ListView(
                         shrinkWrap: true,
@@ -209,54 +214,38 @@ class _DashboardState extends State<Dashboard> {
                           _buildDashboardOption(
                             title: "My Bookings",
                             icon: Icons.calendar_today,
-                            onTap: () {},
+                            onTap: () => Navigator.pushNamed(
+                                context, '/BusinessBookings'),
                           ),
                           _buildDashboardOption(
                             title: "My Wallet",
-                            icon: Icons.calendar_today,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/WalletScreen',
-                              );
-                            },
+                            icon: Icons.wallet,
+                            onTap: () =>
+                                Navigator.pushNamed(context, '/WalletScreen'),
                           ),
                           _buildDashboardOption(
                             title: "My Messages",
                             icon: Icons.message,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/ChatsScreen',
-                              );
-                            },
+                            onTap: () =>
+                                Navigator.pushNamed(context, '/ChatsScreen'),
                           ),
                           _buildDashboardOption(
                             title: "Manage Slots",
-                            icon: Icons.message,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/UpdateBookedSlots',
-                              );
-                            },
+                            icon: Icons.access_time,
+                            onTap: () => Navigator.pushNamed(
+                                context, '/UpdateBookedSlots'),
                           ),
                           _buildDashboardOption(
                             title: "Manage Listings",
                             icon: Icons.business,
-                            onTap: () {
-                              Navigator.pushNamed(context, '/YourListings');
-                            },
+                            onTap: () =>
+                                Navigator.pushNamed(context, '/YourListings'),
                           ),
                           _buildDashboardOption(
                             title: "Profile Settings",
                             icon: Icons.settings,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/BusinessInfoEdit',
-                              );
-                            },
+                            onTap: () => Navigator.pushNamed(
+                                context, '/BusinessInfoEdit'),
                           ),
                         ],
                       ),

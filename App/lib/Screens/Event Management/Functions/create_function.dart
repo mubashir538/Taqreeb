@@ -10,6 +10,7 @@ import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
@@ -168,6 +169,19 @@ class _CreateFunctionState extends State<CreateFunction> {
   Future<void> _submitFunction() async {
     if (!_validateForm()) {
       MyScaffold(text: 'Please fill all the fields').show(context);
+      return;
+    }
+
+    String nameValidation =
+        Validations.validateServiceName(_formData.name.text);
+    if (nameValidation != 'Ok') {
+      MyScaffold(text: nameValidation).show(context);
+      return;
+    }
+    if (int.parse(_formData.guestMin.text) >
+        int.parse(_formData.guestMax.text)) {
+      MyScaffold(text: 'Minimum Guests should be less than Maximum Guests')
+          .show(context);
       return;
     }
 

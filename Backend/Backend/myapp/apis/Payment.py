@@ -183,7 +183,7 @@ def getWalletBalance(request,id,type):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def WithdrawBalance(request):
-    amount = request.data.get('amount')
+    amount = int(request.data.get('amount'))
     userID = request.data.get('userID')
     type = request.data.get('type')
     userID = m.User.objects.get(id=userID)

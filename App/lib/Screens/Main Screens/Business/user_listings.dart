@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -10,49 +11,58 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
 import 'package:taqreeb/core/services/api_service.dart';
 
-class YourListingsController {
+class YourListingsController with ChangeNotifier {
   Map<String, dynamic> listings = {};
   String token = '';
   String type = "";
-  bool isLoading = true;
+  bool _isLoading = true;
+
+  bool get isLoading => _isLoading;
 
   Future<void> fetchData() async {
-    isLoading = true;
+    _isLoading = true;
+    notifyListeners(); // Notify listeners when loading starts
+
+    print('Fetching data...');
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
+
     if (type == 'user') {
+      _isLoading = false;
+      notifyListeners();
       return;
     }
+
     await ApiCall.fetchAPI('YourListing/$id/$type', onSuccess: (token, data) {
       this.token = token;
       listings = data;
-      isLoading = false;
+      _isLoading = false;
+      notifyListeners(); // Notify listeners when data is loaded
     });
   }
 }
 
 class YourListingsScreen extends StatelessWidget {
-  final YourListingsController controller;
-
   const YourListingsScreen({
     super.key,
-    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<YourListingsController>();
     return Scaffold(
       backgroundColor: MyColors.dark,
       body: Stack(
         children: [
-          _buildMainContent(context),
+          _buildMainContent(context, controller),
           const Positioned(top: 0, child: Header()),
         ],
       ),
     );
   }
 
-  Widget _buildMainContent(BuildContext context) {
+  Widget _buildMainContent(
+      BuildContext context, YourListingsController controller) {
     if (controller.isLoading) {
       return Center(
         child: CircularProgressIndicator(
@@ -66,7 +76,7 @@ class YourListingsScreen extends StatelessWidget {
         children: [
           SizedBox(height: Screen.height(context) * 0.14),
           _buildTitle(context),
-          _buildListings(),
+          _buildListings(controller),
         ],
       ),
     );
@@ -83,7 +93,7 @@ class YourListingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListings() {
+  Widget _buildListings(YourListingsController controller) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

@@ -331,7 +331,6 @@ class MyApi {
     }
   }
 
-  // Similarly update postMultipartRequest, deleteRequest, and putRequest methods
   static Future<dynamic> postMultipartRequest({
     required String endpoint,
     bool token = true,
@@ -354,13 +353,29 @@ class MyApi {
 
     final request =
         https.MultipartRequest('POST', Uri.parse(MyApi.baseUrl + endpoint));
-
     try {
-      for (int i = 0; i < files.length; i++) {
-        request.files.add(await https.MultipartFile.fromPath(
-          files.keys.toList()[i],
-          files.values.toList()[i],
-        ));
+      // Handle files - updated to support both single files and lists of files
+      for (final entry in files.entries) {
+        final key = entry.key;
+        final value = entry.value;
+
+        if (value is List) {
+          // Handle list of files (like your 'pictures' case)
+          for (final filePath in value) {
+            if (filePath is String) {
+              request.files.add(await https.MultipartFile.fromPath(
+                key,
+                filePath,
+              ));
+            }
+          }
+        } else if (value is String) {
+          // Handle single file
+          request.files.add(await https.MultipartFile.fromPath(
+            key,
+            value,
+          ));
+        }
       }
 
       if (token) {
@@ -370,8 +385,10 @@ class MyApi {
         });
       }
 
-      for (int i = 0; i < body.length; i++) {
-        request.fields[body.keys.toList()[i]] = body.values.toList()[i];
+      if (body is Map) {
+        for (final entry in body.entries) {
+          request.fields[entry.key] = entry.value.toString();
+        }
       }
 
       final response = await request.send().timeout(const Duration(seconds: 30),

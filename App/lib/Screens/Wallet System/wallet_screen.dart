@@ -46,13 +46,15 @@ class _WalletScreenState extends State<WalletScreen> {
           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
     };
     _balance = (await MyApi.getRequest(
+            refresh: true,
             context: context,
             endpoint: 'Payments/getWalletBalance/$userId/$type',
-            headers: headers))
+            headers: headers))['balance']
         .toString();
 
     final response = await MyApi.getRequest(
         context: context,
+        refresh: true,
         endpoint: 'Payments/getBank/$userId',
         headers: headers);
     if (response['status'] == 'success') {
@@ -62,6 +64,7 @@ class _WalletScreenState extends State<WalletScreen> {
     }
     final response2 = await MyApi.getRequest(
         context: context,
+        refresh: true,
         endpoint: 'Payments/getTransactions/Recent/$userId/$type',
         headers: headers);
     if (response2['status'] == 'success') {
@@ -98,13 +101,14 @@ class _WalletScreenState extends State<WalletScreen> {
                                   Screen.height(context) * 0.01),
                           BalanceCard(
                             balance: _balance,
+                            onpopped: fetchData,
                           ),
                           WithDrawSection(
-                            banks: _banks as List<Map<String, dynamic>>,
+                            banks: _banks,
+                            balance: int.parse(_balance),
                           ),
                           RecentTransactions(
-                            transactions:
-                                _transactions as List<Map<String, dynamic>>,
+                            transactions: _transactions,
                           ),
                         ],
                       )),

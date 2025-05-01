@@ -5,5 +5,5 @@ def get_public_ip():
     return response.json()['ip']
 
 # ip = 'https://cb23-202-47-47-248.ngrok-free.app'.strip()
-ip = 'http://192.168.100.135'
+ip = 'http://192.168.0.105'
 

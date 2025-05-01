@@ -253,7 +253,6 @@ class ImageController {
     try {
       final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
       final businessType = await MyTokens.getBusinessType();
-
       final data = {
         'userid': userId,
         'name': args['name'] ?? '',
@@ -276,6 +275,7 @@ class ImageController {
         body: data,
         files: {'pictures': images},
       );
+      print('Executed... $response');
 
       return response ??
           {'status': 'error', 'message': 'No response from server'};
@@ -293,6 +293,7 @@ class ImageController {
   }
 
   void _addCategorySpecificData(Map<String, dynamic> data) {
+    
     final category = args['category']?.toString() ?? '';
 
     final categoryFields = {
@@ -311,6 +312,7 @@ class ImageController {
       'Caterer': ['serviceType', 'cateringOptions', 'staff', 'expertise'],
       'Car Renter': ['serviceType'],
     };
+
 
     if (categoryFields.containsKey(category)) {
       for (final field in categoryFields[category]!) {
