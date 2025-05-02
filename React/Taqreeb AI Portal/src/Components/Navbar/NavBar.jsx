@@ -40,7 +40,6 @@ const NavBar = () => {
           </li>
           <li className={isActive("/approvals") ? "active" : ""}>
             <Link to="/approvals">
-              <FaCheckCircle className="nav-icon" />
               Approvals
             </Link>
           </li>
@@ -50,7 +49,7 @@ const NavBar = () => {
       <div className="navbar-right">
         <FaBell className="icon notification-icon" />
         <div className="profile">
-          <div className="date-display">Today's Date: {getCurrentDate()}</div>
+          <div className="date-display"> {getCurrentDate()}</div>
         </div>
       </div>
     </nav>
