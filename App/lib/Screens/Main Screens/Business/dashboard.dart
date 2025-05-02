@@ -5,11 +5,7 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/providers/businessEditInfoViewModel.dart';
 import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
-import 'package:taqreeb/core/services/api_calls.dart';
-import 'package:taqreeb/core/services/api_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -68,6 +64,7 @@ class _DashboardState extends State<Dashboard> {
     final businessInfo = businessData.businessInfo;
     final listingCount = businessData.businessInfo['listingCount'] ?? 0;
 
+    print('Profile Image: ${businessData.profileImageUrl}');
     final profileImage = businessData.profileImageUrl != null
         ? NetworkImage(businessData.profileImageUrl!)
         : const AssetImage('assets/default_profile.png') as ImageProvider;

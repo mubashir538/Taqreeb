@@ -60,9 +60,10 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                   final transact = widget.transactions[index];
                   return TransactionCard(
                     type: transact["type"],
-                    amount: _formatNumberWithCommas(transact["amount"].toString()),
+                    amount:
+                        _formatNumberWithCommas(transact["amount"].toString()),
                     paidBy: transact['info'],
-                    date: formatDate(transact['date']),
+                    date: formatDate(DateTime.parse(transact['date'])),
                   );
                 },
                 itemCount: widget.transactions.length)

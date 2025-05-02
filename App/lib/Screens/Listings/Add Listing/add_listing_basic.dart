@@ -139,6 +139,15 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       return;
     }
 
+    if (int.parse(
+            _formController.priceminController.text.replaceAll(',', '')) >=
+        int.parse(
+            _formController.pricemaxController.text.replaceAll(',', ''))) {
+      MyScaffold(text: 'Minimum Price should be less than Maximum Price')
+          .show(context);
+      return;
+    }
+
     if (_formController.charactersLeft > 1050) {
       MyScaffold(text: 'Description is too Short').show(context);
       return;

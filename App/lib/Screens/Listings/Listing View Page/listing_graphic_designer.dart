@@ -187,7 +187,6 @@ class _CategoryViewGraphicDesignerState
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),
@@ -204,9 +203,6 @@ class _CategoryViewGraphicDesignerState
     );
   }
 
-  Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);
-  }
 
   @override
   Widget build(BuildContext context) {

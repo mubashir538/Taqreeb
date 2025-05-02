@@ -111,13 +111,13 @@ class _FreelancerSignup_BasicInfoState
   }
 
   Future<void> _handleContinueButton() async {
-    if (_validateInputs()) {
+    if (await _validateInputs()) {
       await _saveUserData();
       Navigator.pushNamed(context, '/FreelancerSignup_Description');
     }
   }
 
-  bool _validateInputs() {
+  Future<bool> _validateInputs() async {
     if (_fullNameController.text.isEmpty ||
         _cnicController.text.isEmpty ||
         _portfolioController.text.isEmpty) {
@@ -125,9 +125,22 @@ class _FreelancerSignup_BasicInfoState
       return false;
     }
 
+    final fullNameValidation =
+        Validations.validateServiceName(_fullNameController.text);
+    if (fullNameValidation != 'Ok') {
+      _showErrorDialog(fullNameValidation, "Invalid Details");
+      return false;
+    }
+
     final cnicValidation = Validations.validateCNIC(_cnicController.text);
     if (cnicValidation != 'Ok') {
       _showErrorDialog(cnicValidation, "Invalid Details");
+      return false;
+    }
+
+    final linkValidation = Validations.validateLink(_portfolioController.text);
+    if (linkValidation != 'Ok') {
+      _showErrorDialog(await linkValidation, "Invalid Details");
       return false;
     }
 

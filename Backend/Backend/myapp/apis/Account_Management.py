@@ -352,7 +352,9 @@ def EditAccountInfoPage(request):
     user.gender = gender
     user.city = city
     if profilePicture:
-        full_path = os.path.join(settings.MEDIA_ROOT, user.profilePicture)
+        relative_path = user.profilePicture.replace('/media/', '', 1) 
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
@@ -386,7 +388,6 @@ def EditAccountInfoPage(request):
 def editBusinessInfo(request):
     userid = request.data.get('userid')
     businessName = request.data.get('name')
-    print(businessName)
     Description = request.data.get('description')
     type = request.data.get('type')
     user = m.User.objects.get(id=userid)
@@ -399,7 +400,9 @@ def editBusinessInfo(request):
     profilePicture = request.FILES.get('profilePicture')
     
     if profilePicture:
-        full_path = os.path.join(settings.MEDIA_ROOT, business.profilepic)
+        relative_path = business.profilepic.replace('/media/', '', 1) 
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
@@ -412,7 +415,7 @@ def editBusinessInfo(request):
     else:
         business.save(update_fields=['businessName','Description'])
     
-    return Response({'status':'success'})
+    return Response({'status':'success','profilepic':business.profilepic})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -1,6 +1,5 @@
 from datetime import timezone
-
-from sympy import Q
+from django.db.models import Q
 from .. import models as m
 from .. import Serializers as s
 import random as rd
@@ -183,13 +182,16 @@ def cancel_booking(request, booking_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def business_bookings(request):
-    # Get listings owned by this business owner
     listings = m.Listing.objects.filter(ownerID__userID=request.user)
-    # Get packages for these listings
-    packages = m.Packages.objects.filter(listingId__in=listings)
-    # Get products for these listings
-    products = m.Product.objects.filter(listingId__in=listings)
+    print(listings)  # Verify this works
     
+    packages = m.Packages.objects.filter(listingId__in=listings)
+    print(packages)  # Verify this works
+    
+    products = m.Product.objects.filter(listingId__in=listings)
+    print(products)  # Verify this works
+
+# Then try each Q object separately
     bookings = m.Booking.objects.filter(
         Q(listing__in=listings) | 
         Q(package__in=packages) | 

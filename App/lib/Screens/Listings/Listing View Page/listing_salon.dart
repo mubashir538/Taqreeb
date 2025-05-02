@@ -174,7 +174,6 @@ class _CategoryViewSaloonState extends State<CategoryViewSaloon> {
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class Validations {
@@ -11,14 +12,6 @@ class Validations {
     }
 
     return "Ok";
-  }
-
-  static Future<String> validatePortfolio(String portfolio) async {
-    if (await canLaunchUrl(Uri.parse(portfolio))) {
-      return 'Ok';
-    } else {
-      return 'Enter a Valid Portfolio';
-    }
   }
 
   static String validateName(String? value) {
@@ -197,11 +190,17 @@ class Validations {
     }
 
     // URL launchable check
-    if (!(await canLaunchUrl(uri))) {
-      return 'Invalid or unreachable link';
+    try {
+      final response = await http.head(uri).timeout(Duration(seconds: 5));
+      if (response.statusCode >= 200 && response.statusCode < 400) {
+        return 'Ok';
+      } else {
+        return 'Link exists but is returning error ${response.statusCode}';
+      }
+    } catch (e) {
+      return 'Link is not reachable';
     }
 
-    return 'Ok';
   }
 
   static String validatePassword(String? value) {

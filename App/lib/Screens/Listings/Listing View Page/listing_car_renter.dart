@@ -186,7 +186,6 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),
@@ -201,10 +200,6 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
         child: MyDivider(width: Screen.width(context) * 0.85),
       ),
     );
-  }
-
-  Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);
   }
 
   @override

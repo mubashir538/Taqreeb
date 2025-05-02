@@ -199,7 +199,6 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),

@@ -12,14 +12,14 @@ class ProductBox extends StatefulWidget {
   final String productDescription;
   final String productPrice;
   final String? productImage;
-  final String productId; // Required for cart operations
+  final String? productId; // Now optional (nullable)
 
   const ProductBox({
     super.key,
     required this.productName,
     required this.productDescription,
     required this.productPrice,
-    required this.productId,
+    this.productId, // No longer required
     this.productImage,
   });
 
@@ -31,7 +31,7 @@ class _ProductBoxState extends State<ProductBox> {
   bool _isAddingToCart = false;
 
   Future<void> _addToCart() async {
-    if (_isAddingToCart) return;
+    if (_isAddingToCart || widget.productId == null) return;
 
     setState(() {
       _isAddingToCart = true;
@@ -42,7 +42,7 @@ class _ProductBoxState extends State<ProductBox> {
       if (token == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please login to add items to cart')),
+            const SnackBar(content: Text('Please login to add items to cart')),
           );
           Navigator.pushNamed(context, '/Login');
         }
@@ -52,13 +52,13 @@ class _ProductBoxState extends State<ProductBox> {
       await CartService.addToCart(
         token: token,
         itemType: 'product',
-        itemId: widget.productId,
+        itemId: widget.productId!,
         quantity: 1,
       );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Product added to cart')),
+          const SnackBar(content: Text('Product added to cart')),
         );
       }
     } catch (e) {
@@ -120,13 +120,15 @@ class _ProductBoxState extends State<ProductBox> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: Screen.width(context) * 0.25,
-                      child: ColoredButton(
-                        text: _isAddingToCart ? 'Adding...' : 'Add to Cart',
-                        onPressed: _isAddingToCart ? null : _addToCart,
+                    // Conditionally show "Add to Cart" button
+                    if (widget.productId != null)
+                      SizedBox(
+                        width: Screen.width(context) * 0.25,
+                        child: ColoredButton(
+                          text: _isAddingToCart ? 'Adding...' : 'Add to Cart',
+                          onPressed: _isAddingToCart ? null : _addToCart,
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 SizedBox(height: Screen.max(context) * 0.01),

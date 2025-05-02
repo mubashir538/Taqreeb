@@ -81,13 +81,6 @@ class _UserBookingsState extends State<UserBookings> {
     }
   }
 
-  // String _formatNumberWithCommas(String number) {
-  //   return number.toString().replaceAllMapped(
-  //         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-  //         (Match m) => '${m[1]},',
-  //       );
-  // }
-
   String formatDate(DateTime date) {
     final formatter = DateFormat('MMM d,yyyy');
     return formatter.format(date);

@@ -134,8 +134,9 @@ class BusinessInfoEditViewModel with ChangeNotifier {
       _userId = await MyStorage.getToken(MyTokens.userId) ?? "";
       _type = await MyTokens.getBusinessType();
 
+      final response;
       if (_selectedImage != null) {
-        final response = await MyApi.postMultipartRequest(
+        response = await MyApi.postMultipartRequest(
           endpoint: 'editBusinessInfo/',
           body: {
             'userid': _userId,
@@ -145,32 +146,40 @@ class BusinessInfoEditViewModel with ChangeNotifier {
           },
           files: {'profilePicture': _selectedImage!.path},
         );
+      } else {
+        response =
+            await MyApi.postRequest(endpoint: 'editBusinessInfo/', body: {
+          'userid': _userId,
+          'name': _nameController.text,
+          'description': _descriptionController.text,
+          'type': _type,
+        }, headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        });
+      }
+      if (response['status'] == 'success') {
+        final newImageUrl = response['profilepic'] != null
+            ? "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${response['profilepic']}"
+            : null;
 
-        if (response['status'] == 'success') {
-          final newImageUrl = response['profilepic'] != null
-              ? "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${response['profilepic']}"
-              : null;
+        // Explicitly update the profile image
+        businessData.updateBusinessInfo(
+          {
+            ...businessData.businessInfo,
+            'businessName': _nameController.text,
+            'Description': _descriptionController.text,
+          },
+          imageUrl: newImageUrl,
+        );
 
-          // Explicitly update the profile image
-          businessData.updateBusinessInfo(
-            {
-              ...businessData.businessInfo,
-              'businessName': _nameController.text,
-              'Description': _descriptionController.text,
-            },
-            imageUrl: newImageUrl,
-          );
+        // Clear the selected image after successful upload
+        _selectedImage = null;
+        notifyListeners();
 
-          // Clear the selected image after successful upload
-          _selectedImage = null;
-          notifyListeners();
-
-          MyScaffold(text: 'Profile Updated Successfully').show(context);
-          if (Navigator.of(context).canPop()) {
-            Navigator.pop(context);
-          }
-        } else {
-          MyScaffold(text: 'Failed to update profile').show(context);
+        MyScaffold(text: 'Profile Updated Successfully').show(context);
+        if (Navigator.of(context).canPop()) {
+          Navigator.pop(context);
         }
       } else {
         MyScaffold(text: 'Failed to update profile').show(context);

@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -46,7 +47,6 @@ class YourListingsScreen extends StatelessWidget {
   const YourListingsScreen({
     super.key,
   });
-
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<YourListingsController>();
@@ -71,6 +71,16 @@ class YourListingsScreen extends StatelessWidget {
       );
     }
 
+    // Check if user is not a business
+    if (controller.type == 'user') {
+      return _buildNoBusinessContent(context);
+    }
+
+    // Check if there are no listings
+    if (controller.listings['YourListings']?.isEmpty ?? true) {
+      return _buildNoListingsContent(context);
+    }
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -89,6 +99,62 @@ class YourListingsScreen extends StatelessWidget {
         fontSize: Screen.max(context) * 0.025,
         fontWeight: FontWeight.w700,
         color: MyColors.Yellow,
+      ),
+    );
+  }
+
+  Widget _buildNoListingsContent(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: Screen.height(context) * 0.3),
+          Text(
+            'You currently don\'t have any listings',
+            style: GoogleFonts.montserrat(
+              fontSize: Screen.max(context) * 0.02,
+              fontWeight: FontWeight.w400,
+              color: MyColors.white,
+            ),
+          ),
+          SizedBox(height: Screen.height(context) * 0.03),
+          ColoredButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/AddCategory_List');
+            },
+            text: 'Add your first listing',
+            width: Screen.width(context) * 0.5,
+            textSize: Screen.max(context) * 0.015,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoBusinessContent(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: Screen.height(context) * 0.3),
+          Text(
+            'You need a business account to create listings',
+            style: GoogleFonts.montserrat(
+              fontSize: Screen.max(context) * 0.02,
+              fontWeight: FontWeight.w400,
+              color: MyColors.white,
+            ),
+          ),
+          SizedBox(height: Screen.height(context) * 0.03),
+          ColoredButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/BusinessSignup');
+            },
+            text: 'Create Business Account',
+            width: Screen.width(context) * 0.6,
+            textSize: Screen.max(context) * 0.015,
+          ),
+        ],
       ),
     );
   }

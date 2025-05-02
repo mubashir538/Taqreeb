@@ -387,9 +387,11 @@ class MyApi {
 
       if (body is Map) {
         for (final entry in body.entries) {
-          request.fields[entry.key] = entry.value.toString();
+          request.fields[entry.key] = entry.value;
         }
       }
+
+      print('request fields; ${request.fields}');
 
       final response = await request.send().timeout(const Duration(seconds: 30),
           onTimeout: () {

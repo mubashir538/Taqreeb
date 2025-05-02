@@ -21,6 +21,7 @@ from django.utils import timezone
 @permission_classes([IsAuthenticated])
 def getInvitationDetails(request):
     data = request.data
+    template_id = data.get('templateId')  
     userId = data['uid']
     Eventtype = data['eventType']
     date = data['basicInfo']['date']
@@ -57,15 +58,41 @@ def getInvitationDetails(request):
     if data['venueName']:
         data2['venueName'] = data['venueName']
 
-    
-    generator = InvitationGenerator(data2)
+    generator = InvitationGenerator(data2, template_id)  # Pass template_id to generator
     cardurl = generator.generate_invitation()
 
     return Response({'status':'success','TempCard':cardurl})
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAvailableTemplates(request):
+    event_type = request.GET.get('eventType', 'Wedding')
+    bg_dir = os.path.join(settings.MEDIA_ROOT, 'InvitationBackground', event_type)
+    
+    templates = []
+    if os.path.exists(bg_dir):
+        # Get all PNG files
+        png_files = [f for f in os.listdir(bg_dir) if f.lower().endswith('.png')]
+        
+        for png_file in png_files:
+            base_name = os.path.splitext(png_file)[0]
+            json_file = f"{base_name}.json"
+            
+            # Check if JSON exists
+            json_exists = os.path.exists(os.path.join(bg_dir, json_file))
+            
+            templates.append({
+                'id': base_name,
+                'imageUrl': os.path.join(settings.MEDIA_URL, 'InvitationBackground', event_type, png_file),
+                'hasConfig': json_exists
+            })
+    
+    return Response({'status': 'success', 'templates': templates})
+
 class InvitationGenerator:
-    def __init__(self, data):
+    def __init__(self, data,template_id=None):
         self.data = data
+        self.template_id = template_id 
         media_storage = FileSystemStorage(location=settings.MEDIA_ROOT)
         self.backgrounds_dir = os.path.join(media_storage.location, 'InvitationBackground')
         self.fonts_dir = os.path.join(media_storage.location, 'FontStyles')
@@ -177,16 +204,27 @@ class InvitationGenerator:
         event_type = self.data.get('eventType', 'Wedding')
         bg_dir = os.path.join(self.backgrounds_dir, event_type)
         
-        images = [f for f in os.listdir(bg_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        selected_image = random.choice(images)
-        image_path = os.path.join(bg_dir, selected_image)
+        if self.template_id:
+            # Use the specified template
+            image_path = os.path.join(bg_dir, f"{self.template_id}.png")
+            if not os.path.exists(image_path):
+                raise FileNotFoundError(f"Template {self.template_id} not found")
+                
+            json_path = os.path.join(bg_dir, f"{self.template_id}.json")
+            template_config = self._load_template_config(json_path)
+            return image_path, template_config
+        else:
+            # Original random selection logic
+            images = [f for f in os.listdir(bg_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+            selected_image = random.choice(images)
+            image_path = os.path.join(bg_dir, selected_image)
+            
+            base_name = os.path.splitext(selected_image)[0]
+            json_path = os.path.join(bg_dir, f"{base_name}.json")
+            template_config = self._load_template_config(json_path)
+            
+            return image_path, template_config
         
-        base_name = os.path.splitext(selected_image)[0]
-        json_path = os.path.join(bg_dir, f"{base_name}.json")
-        template_config = self._load_template_config(json_path)
-        
-        return image_path, template_config
-
     def _calculate_text_block_height(self, text, font_style, max_width, img_width):
         """Calculate the height needed for a block of text"""
         font = self._get_font(font_style)

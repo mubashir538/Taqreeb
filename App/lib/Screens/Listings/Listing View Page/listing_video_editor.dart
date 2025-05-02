@@ -185,7 +185,6 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),

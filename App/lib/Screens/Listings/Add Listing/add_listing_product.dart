@@ -54,7 +54,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
   void _navigateToNextStep() {
     Navigator.pushNamed(
       context,
-      '/AddCategory_NextStep', // Adjust this to your navigation flow
+      '/AddCategory_AddImage', // Adjust this to your navigation flow
       arguments: _args,
     );
   }
@@ -124,11 +124,10 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
 
   Widget _buildProductItem(Map<String, dynamic> product) {
     return ProductBox(
-      productId: product['id'], // Required for cart functionality
       productName: product['name'],
       productDescription: product['description'],
       productPrice: product['price'],
-      productImage: product['imagePath'], // Optional
+      productImage: product['image'],
     );
   }
 

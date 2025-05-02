@@ -14,17 +14,31 @@ class Header extends StatefulWidget {
   final IconData icon;
   final String para;
   final String image;
+  final List<HeaderIcon>? additionalIcons;
 
   const Header({
     this.icon = Icons.settings,
     this.heading = '',
     this.para = '',
     this.image = '',
+    this.additionalIcons,
     super.key,
   });
 
   @override
   State<Header> createState() => _HeaderState();
+}
+
+class HeaderIcon {
+  final IconData icon;
+  final VoidCallback onPressed;
+  final Color? color;
+
+  HeaderIcon({
+    required this.icon,
+    required this.onPressed,
+    this.color,
+  });
 }
 
 class _HeaderState extends State<Header> {
@@ -132,6 +146,7 @@ class _HeaderState extends State<Header> {
         widget.para.isNotEmpty ||
         widget.image.isNotEmpty;
     final isSvg = widget.image.endsWith('.svg');
+    final additionalIcons = widget.additionalIcons?.take(2).toList() ?? [];
 
     return Container(
       height: hasContent ? null : Screen.height(context) * 0.1,
@@ -177,9 +192,26 @@ class _HeaderState extends State<Header> {
                     color: MyColors.redonWhite,
                   ),
                 ),
-                _noSettings
-                    ? const SizedBox.shrink()
-                    : InkWell(
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Additional icons (up to 2)
+                    if (additionalIcons.isNotEmpty)
+                      ...additionalIcons.map((headerIcon) => Padding(
+                            padding: EdgeInsets.only(
+                                right: Screen.width(context) * 0.02),
+                            child: InkWell(
+                              onTap: headerIcon.onPressed,
+                              child: Icon(
+                                headerIcon.icon,
+                                color: headerIcon.color ?? MyColors.redonWhite,
+                                size: Screen.max(context) * 0.03,
+                              ),
+                            ),
+                          )),
+                    // Settings icon (if not in noSettingsRoutes)
+                    if (!_noSettings)
+                      InkWell(
                         onTap: () {
                           if (ModalRoute.of(context)?.settings.name ==
                               '/Settings') {
@@ -194,6 +226,8 @@ class _HeaderState extends State<Header> {
                           size: Screen.max(context) * 0.03,
                         ),
                       ),
+                  ],
+                ),
               ],
             ),
           ),
