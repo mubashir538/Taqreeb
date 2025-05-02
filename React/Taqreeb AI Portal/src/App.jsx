@@ -10,17 +10,15 @@ import {
 import Sidebar from "./Components/Sidebar/sidebar.jsx";
 import Navbar from "./Components/NavBar/NavBar.jsx";
 import Login from "./Pages/Login/login.jsx";
-import Home from "./Pages/Home/HomeScreen.jsx"; // You'll need to create this or rename your Dashboard
-import Statistics from "./Pages/Statistics/StatisticsScreen.jsx"; // You'll need to create this
+import Home from "./Pages/Home/HomeScreen.jsx";
+import Statistics from "./Pages/Statistics/StatisticsScreen.jsx";
 import Approvals from "./Pages/Approvals/ApprovalsPage.jsx";
 import "./styles/global.css";
 
-// Auth context to manage authentication state
 const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState(() => {
-    // Initialize state from localStorage if available
     const accessToken = localStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -86,8 +84,7 @@ const PublicRoute = ({ children }) => {
   const location = useLocation();
 
   if (isAuthenticated) {
-    const from = location.state?.from?.pathname || '/home';
-    return <Navigate to={from} replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return children ? children : <Outlet />;
@@ -95,20 +92,19 @@ const PublicRoute = ({ children }) => {
 
 const AppContent = () => {
   const location = useLocation();
-  const isAuthPage = ['/login', '/'].includes(location.pathname);
+  const isAuthPage = location.pathname === '/login';
   const { isAuthenticated } = useAuth();
 
   return (
     <div className="app-container">
-      {!isAuthPage && <Sidebar />}
+      {isAuthenticated && !isAuthPage && <Sidebar />}
       <div className="main-content">
-        {!isAuthPage && <Navbar />}
+        {isAuthenticated && !isAuthPage && <Navbar />}
         <div className="page-content">
           <Routes>
             {/* Public routes */}
             <Route element={<PublicRoute />}>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Navigate to="/login" replace />} />
             </Route>
             
             {/* Protected routes */}
@@ -119,7 +115,10 @@ const AppContent = () => {
             </Route>
             
             {/* Catch-all route */}
-            <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+            
+            {/* Root path redirects to login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
       </div>

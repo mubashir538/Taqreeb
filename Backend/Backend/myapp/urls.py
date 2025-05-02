@@ -134,17 +134,17 @@ urlpatterns = [
     path('health-check/',views.health_check,name='health-check'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     path('deleteReq/',views.deleteTable,name='deleteReq'),
-    # path('dashboard/categories/', ad.get_all_categories, name='dashboard-categories'),
-    # path('dashboard/listings/', ad.get_home_listings, name='dashboard-listings'),
-    # path('dashboard/activities/', ad.get_user_activities, name='dashboard-activities'),
-    # path('api/react/dashboard/events/', react.get_event_dashboard_data, name='event-dashboard'),
-    # 🆕 Dashboard APIs for React HomeScreen
-path('api/react/dashboard_most_searched/', react.dashboard_most_searched, name='dashboard_most_searched'),
-path('api/react/dashboard_most_used_services/', react.dashboard_most_used_services, name='dashboard_most_used_services'),
-path('api/react/dashboard_top_categories/', react.dashboard_top_categories, name='dashboard_top_categories'),
-path('api/react/dashboard_recent_activity/', react.dashboard_recent_activity, name='dashboard_recent_activity'),
-path('api/react/dashboard_top_search_terms/', react.dashboard_top_search_terms, name='dashboard_top_search_terms'),
+    path('api/react/dashboard_most_searched/', react.dashboard_most_searched, name='dashboard_most_searched'),
+    path('api/react/dashboard_most_used_services/', react.dashboard_most_used_services, name='dashboard_most_used_services'),
+    path('api/react/dashboard_top_categories/', react.dashboard_top_categories, name='dashboard_top_categories'),
+    path('api/react/dashboard_recent_activity/', react.dashboard_recent_activity, name='dashboard_recent_activity'),
+    path('api/react/dashboard_top_search_terms/', react.dashboard_top_search_terms, name='dashboard_top_search_terms'),
     path('api/react/dashboard-statistics/', react.dashboard_statistics, name='dashboard_statistics'),
+    path('api/approvals/stats/', react.pending_approvals_stats, name='pending-stats'),
+    path('api/approvals/listings/', react.pending_listings, name='pending-listings'),
+    path('api/approvals/listings/<int:pk>/', react.pending_listing_detail, name='pending-listing-detail'),
+    path('api/approvals/listings/<int:pk>/status/', react.update_listing_status, name='update-listing-status'),
+    path('api/approvals/bulk-status/', react.bulk_update_listing_status, name='bulk-update-status'),
 
 
 

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 import os
 from django.contrib.auth import get_user_model
 from .React.react_models import ReactUser 
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, id, password=None, **extra_fields):
@@ -118,6 +119,7 @@ class Listing(m.Model):
     type = m.TextField(null=True)
     status = m.CharField(max_length=20,default='active')
     booked_dates = m.JSONField(default=list)
+    created_at = m.DateTimeField(default=timezone.now)
 
 class BankDetails(m.Model):
     id = m.AutoField(primary_key=True)

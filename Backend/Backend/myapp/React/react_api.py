@@ -9,7 +9,6 @@ from .react_serializer import ReactUserSerializer, ReactUserCreateSerializer
 from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from .. import models as m
-from django.utils import timezone
 from ..models import UserActivity, Order,Review,User,Review,BusinessOwner,Freelancer,Listing,Payment,Events
 from django.utils.timezone import make_aware
 from datetime import time, timedelta, date
@@ -18,6 +17,10 @@ from django.db.models import Avg, Count, Sum
 from datetime import datetime, date
 from django.utils import timezone
 import pytz
+from django.core.paginator import Paginator,EmptyPage
+from ..Serializers import ListingSerializer,VenueSerializer,CaterersSerializer,PackagesSerializer,ProductsSerializer,AddOnsSerializer,PicturesListingSerializers
+from ..models import Venue,Caterers,Packages,Product,AddOns,PicturesListings
+from django.db.models import Q
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -264,4 +267,178 @@ def dashboard_statistics(request):
             'activeServices': active_services,
             'satisfactionRate': f"{satisfaction_rate}%",
         }
+    })
+
+@api_view(['GET'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def pending_approvals_stats(request):
+    # Count all pending listings
+    total_pending = Listing.objects.filter(status='pending').count()
+    
+    # Count by category/type
+    pending_by_type = Listing.objects.filter(status='pending').values('type').annotate(count=Count('id'))
+    
+    # Recent pending (last 7 days)
+    week_ago = timezone.now() - timezone.timedelta(days=7)
+    recent_pending = Listing.objects.filter(
+        status='pending', 
+        created_at__gte=week_ago
+    ).count()
+    
+    # Oldest pending (older than 30 days)
+    month_ago = timezone.now() - timezone.timedelta(days=30)
+    oldest_pending = Listing.objects.filter(
+        status='pending', 
+        created_at__lte=month_ago
+    ).count()
+    
+    return Response({
+        'pendingStats': {
+            'totalPending': total_pending,
+            'pendingByType': {item['type']: item['count'] for item in pending_by_type},
+            'recentPending': recent_pending,
+            'oldestPending': oldest_pending,
+        }
+    })
+
+@api_view(['GET'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def pending_listings(request):
+    # Get query parameters
+    listing_type = request.query_params.get('type', None)
+    search_query = request.query_params.get('search', None)
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 10))
+    
+    # Base queryset
+    queryset = Listing.objects.filter(status='pending').select_related('ownerID', 'freelancerID')
+    
+    # Apply filters
+    if listing_type:
+        queryset = queryset.filter(type=listing_type)
+    
+    if search_query:
+        queryset = queryset.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(location__icontains=search_query)
+        )
+    
+    # Pagination
+    paginator = Paginator(queryset, page_size)
+    try:
+        listings = paginator.page(page)
+    except EmptyPage:
+        listings = paginator.page(paginator.num_pages)
+    
+    serializer = ListingSerializer(listings, many=True)
+    
+    return Response({
+        'listings': serializer.data,
+        'pagination': {
+            'total': paginator.count,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': paginator.num_pages,
+        }
+    })
+
+@api_view(['GET'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def pending_listing_detail(request, pk):
+    try:
+        listing = Listing.objects.get(pk=pk, status='pending')
+    except Listing.DoesNotExist:
+        return Response({'error': 'Listing not found'}, status=404)
+    
+    # Get the base listing data
+    listing_serializer = ListingSerializer(listing)
+    
+    # Get service-specific details based on type
+    service_details = None
+    if listing.type == 'Venue':
+        service_details = Venue.objects.filter(listingID=listing).first()
+    elif listing.type == 'Caterers':
+        service_details = Caterers.objects.filter(listingId=listing).first()
+    # Add other service types...
+    
+    # Serialize service details if they exist
+    service_serializer = None
+    if service_details:
+        if listing.type == 'Venue':
+            service_serializer = VenueSerializer(service_details)
+        elif listing.type == 'Caterers':
+            service_serializer = CaterersSerializer(service_details)
+        # Add other serializers...
+    
+    # Get packages and products
+    packages = Packages.objects.filter(listingId=listing)
+    products = Product.objects.filter(listingId=listing)
+    
+    return Response({
+        'listing': listing_serializer.data,
+        'serviceDetails': service_serializer.data if service_serializer else None,
+        'packages': PackagesSerializer(packages, many=True).data,
+        'products': ProductsSerializer(products, many=True).data,
+        'addOns': AddOnsSerializer(AddOns.objects.filter(listingId=listing), many=True).data,
+        'images': PicturesListingSerializers(
+            PicturesListings.objects.filter(listingId=listing), 
+            many=True
+        ).data,
+    })
+
+@api_view(['POST'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def update_listing_status(request, pk):
+    try:
+        listing = Listing.objects.get(pk=pk, status='pending')
+    except Listing.DoesNotExist:
+        return Response({'error': 'Listing not found'}, status=404)
+    
+    new_status = request.data.get('status')
+    if new_status not in ['active', 'rejected']:
+        return Response({'error': 'Invalid status'}, status=400)
+    
+    # Update status
+    listing.status = new_status
+    listing.save()
+    
+    # If approved, you might want to do additional actions here
+    if new_status == 'active':
+        # Example: Send notification to owner
+        pass
+    
+    return Response({
+        'success': True,
+        'message': f'Listing status updated to {new_status}',
+        'newStatus': new_status
+    })
+
+@api_view(['POST'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def bulk_update_listing_status(request):
+    listing_ids = request.data.get('ids', [])
+    new_status = request.data.get('status')
+    
+    if not listing_ids:
+        return Response({'error': 'No listings selected'}, status=400)
+    
+    if new_status not in ['active', 'rejected']:
+        return Response({'error': 'Invalid status'}, status=400)
+    
+    # Update all listings
+    updated = Listing.objects.filter(
+        pk__in=listing_ids,
+        status='pending'
+    ).update(status=new_status)
+    
+    return Response({
+        'success': True,
+        'message': f'Updated {updated} listings to {new_status}',
+        'count': updated
     })
