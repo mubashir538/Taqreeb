@@ -14,7 +14,6 @@ from django.utils.timezone import now
 from django.db.models import Sum
 
 
-
 # views.py
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
