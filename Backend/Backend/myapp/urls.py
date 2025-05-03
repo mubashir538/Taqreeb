@@ -12,15 +12,15 @@ from .apis import Listing_Management as lm
 from django.conf.urls.static import static
 from django.conf import settings
 from .apis import User_Activity as ua 
+from .apis import admin_dashboard as ad
 from .React import react_api as react
-# from .apis import Event_Tracking as et  
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 from .Serializers import CustomTokenObtainPairSerializer
 from rest_framework.routers import DefaultRouter
-from .React.react_api import ReactUserLogin, create_react_user
+# from .React.react_api import 
 
 
 router = DefaultRouter()
@@ -28,7 +28,6 @@ router.register(r'cart', cart.CartViewSet, basename='cart')
 router.register(r'cart/items', cart.CartItemViewSet, basename='cart-items')
 
 urlpatterns = [
-    # path('api/react/', include('myapp.react.react_urls')),
     
     path('profile/', react.react_user_profile, name='react_user_profile'),
     path('api/react/login/', react.ReactUserLogin, name='react_user_login'),
@@ -135,6 +134,20 @@ urlpatterns = [
     path('health-check/',views.health_check,name='health-check'),
     path('Login/googleAuthentication',am.googleAuth,name='googleAuth'),
     path('deleteReq/',views.deleteTable,name='deleteReq'),
+    path('api/react/dashboard_most_searched/', react.dashboard_most_searched, name='dashboard_most_searched'),
+    path('api/react/dashboard_most_used_services/', react.dashboard_most_used_services, name='dashboard_most_used_services'),
+    path('api/react/dashboard_top_categories/', react.dashboard_top_categories, name='dashboard_top_categories'),
+    path('api/react/dashboard_recent_activity/', react.dashboard_recent_activity, name='dashboard_recent_activity'),
+    path('api/react/dashboard_top_search_terms/', react.dashboard_top_search_terms, name='dashboard_top_search_terms'),
+    path('api/react/dashboard-statistics/', react.dashboard_statistics, name='dashboard_statistics'),
+    path('api/approvals/stats/', react.pending_approvals_stats, name='pending-stats'),
+    path('api/approvals/listings/', react.pending_listings, name='pending-listings'),
+    path('api/approvals/listings/<int:pk>/', react.pending_listing_detail, name='pending-listing-detail'),
+    path('api/approvals/listings/<int:pk>/status/', react.update_listing_status, name='update-listing-status'),
+    path('api/approvals/bulk-status/', react.bulk_update_listing_status, name='bulk-update-status'),
+
+
+
     path('', include(router.urls)),
 
 ]

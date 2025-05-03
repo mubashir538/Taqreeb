@@ -49,6 +49,8 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered Video Editor View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -76,6 +78,8 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+          print("🚪 [DEBUG] Exited Video Editor View. Duration: $duration seconds");
+
       Logs.logUserActivity("category_view_duration", {
         "category": "Video Editor",
         "listing_id": _listingId!,

@@ -13,6 +13,9 @@ import requests as rq
 from firebase_admin import credentials, firestore, initialize_app,messaging
 import os
 from django.conf import settings
+from myapp.models import UserActivity
+from django.utils.timezone import now
+
 
 
 cred = credentials.Certificate(os.getenv('firebase_PATH'))
@@ -49,6 +52,20 @@ def AccountSignupPage(request):
 
         user = m.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
+    # After user.save()
+    UserActivity.objects.create(
+        user=user,
+        action='user_register',
+        metadata={
+            'firstName': user.firstName,
+            'lastName': user.lastName,
+            'email': user.email,
+            'city': user.city,
+            'gender': user.gender,
+        },
+        timestamp=now()
+    )
+
     if contactType=='email':
         user = m.User.objects.filter(email=contact).first()
     else:
@@ -310,6 +327,18 @@ def AccountInfoPage(request,id):
     userid = id
     user = m.User.objects.filter(id=userid).first()
     serializer = s.UserSerializer(user)
+    UserActivity.objects.create(
+        user=user,
+        action='profile_updated',
+        metadata={
+            'firstName': user.firstName,
+            'lastName': user.lastName,
+            'city': user.city,
+            'gender': user.gender,
+        },
+        timestamp=now()
+    )
+    
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -365,6 +394,18 @@ def EditAccountInfoPage(request):
     else:
         user.save(update_fields=['firstName','lastName','gender','city'])
     user = m.User.objects.get(id=userid)
+    UserActivity.objects.create(
+    user=user,
+    action='profile_update',
+    metadata={
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'gender': user.gender,
+        'city': user.city
+    },
+    timestamp=now()
+)
+
     firebase_user_data = {
         "firstName": user.firstName,
         "lastName": user.lastName,

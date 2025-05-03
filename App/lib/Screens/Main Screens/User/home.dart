@@ -22,6 +22,7 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
+DateTime? entryTime; // ⏱️ Track view duration
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
@@ -37,6 +38,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    entryTime = DateTime.now();
+  print("🕒 [DEBUG] User entered HomePage at: $entryTime");
     _initializeHeaderHeight();
     _fetchData();
   }
@@ -113,10 +116,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleSearch() {
+     final query = _searchController.text.trim();
+  if (query.isNotEmpty) {
+    print("🔍 [DEBUG] User searched: $query");
+    Logs.logUserActivity("search", {"search_query": query});
+  }
     Navigator.pushNamed(context, '/SearchService');
   }
 
   void _handleCategoryClick(String categoryName) {
+      print("📂 [DEBUG] Category clicked: $categoryName");
+
     Logs.logUserActivity("category_click", {"category": categoryName});
     Navigator.pushNamed(
       context,
@@ -126,6 +136,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleServiceClick(int serviceId, String serviceName) {
+      print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
+
     Logs.logUserActivity("service_click", {
       "service_id": serviceId,
       "service_name": serviceName,
@@ -267,6 +279,9 @@ class _HomePageState extends State<HomePage> {
     return Center(
       child: ColoredButton(
         onPressed: () {
+              print("🤖 [DEBUG] AI Package Button Clicked");
+    Logs.logUserActivity("ai_package_button_click", {});
+
           Navigator.pushNamed(context, '/CreateAIPackage');
         },
         text: 'Create Package with AI',
@@ -334,4 +349,19 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+  @override
+void dispose() {
+  if (entryTime != null) {
+    final exitTime = DateTime.now();
+    final duration = exitTime.difference(entryTime!).inSeconds;
+    print("⏳ [DEBUG] User exited HomePage at: $exitTime");
+    print("📊 [DEBUG] Time spent on HomePage: $duration seconds");
+
+    Logs.logUserActivity("homepage_view_duration", {
+      "time_spent_seconds": duration,
+    });
+  }
+  super.dispose();
+}
+
 }

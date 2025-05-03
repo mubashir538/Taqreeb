@@ -1,0 +1,26 @@
+.approvals-tabs {
+  display: flex;
+  border-bottom: 1px solid #2d3748;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a0aec0;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #e2e8f0;
+}
+
+.tab.active {
+  color: #1976D2;
+  border-bottom-color: #1976D2;
+}

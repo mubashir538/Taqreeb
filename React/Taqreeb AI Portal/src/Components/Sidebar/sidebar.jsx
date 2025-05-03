@@ -1,12 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
-import { FaHome, FaUser, FaUsers, FaClipboardList, FaBars, FaTimes } from "react-icons/fa";
+import { FaHome, FaChartBar, FaBars, FaTimes, FaCheckCircle } from "react-icons/fa"; // Added FaCheckCircle for Approvals icon
 
 const Sidebar = () => {
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const backendBaseUrl = "http://127.0.0.1:8000/app/";
+
+  useEffect(() => {
+    // Update active state when location changes
+    setActive(location.pathname);
+  }, [location]);
+
+  useEffect(() => {
+    // Fetch user data from localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setUserData(user);
+    }
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -21,39 +36,54 @@ const Sidebar = () => {
         <>
           <div className="logo">
             <img src="/logo.png" alt="Logo" />
+            <div className="logo-text"></div>
+            <div className="logo-subtext"></div>
           </div>
           <ul className="sidebar-menu">
-            <li className={active === "/" ? "active" : ""}>
-              <Link to="/" onClick={() => setActive("/")}>
+            <li className={active === "/home" ? "active" : ""}>
+              <Link to="/home" onClick={() => setActive("/home")}>
                 <FaHome className="icon" />
                 Home
               </Link>
             </li>
-            <li className={active === "/events" ? "active" : ""}>
-              <Link to="/events" onClick={() => setActive("/events")}>
-                <FaClipboardList className="icon" />
-                Events
+            <li className={active === "/statistics" ? "active" : ""}>
+              <Link to="/statistics" onClick={() => setActive("/statistics")}>
+                <FaChartBar className="icon" />
+                Statistics
               </Link>
             </li>
-            <li className={active === "/users" ? "active" : ""}>
-              <Link to="/users" onClick={() => setActive("/users")}>
-                <FaUser className="icon" />
-                Users
-              </Link>
-            </li>
-            <li className={active === "/vendors" ? "active" : ""}>
-              <Link to="/vendors" onClick={() => setActive("/vendors")}>
-                <FaUsers className="icon" />
-                Vendors
+            <li className={active === "/approvals" ? "active" : ""}>
+              <Link to="/approvals" onClick={() => setActive("/approvals")}>
+                <FaCheckCircle className="icon" />
+                Approvals
               </Link>
             </li>
           </ul>
           <div className="user-profile">
-            <img src="/user-avatar.png" alt="User" />
-            <div className="user-info">
-              <p>Wishma Khan</p>
-              <span>Administrator</span>
-            </div>
+            {userData ? (
+              <>
+                <img 
+                  src={`${backendBaseUrl}${userData.profilePicturePath}`} 
+                  alt={userData.name} 
+                  onError={(e) => {
+                    e.target.onerror = null; 
+                    e.target.src = "/user-avatar.png"
+                  }}
+                />
+                <div className="user-info">
+                  <p>{userData.name}</p>
+                  <span>@{userData.username}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <img src="/user-avatar.png" alt="User" />
+                <div className="user-info">
+                  <p>Loading...</p>
+                  <span>User</span>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}

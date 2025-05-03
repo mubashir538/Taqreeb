@@ -50,6 +50,8 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+    print("📍 [DEBUG] Entered Photographer View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -77,6 +79,8 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+          print("🚪 [DEBUG] Exited Photographer View. Duration: $duration seconds");
+
       Logs.logUserActivity("category_view_duration", {
         "category": "Photographer",
         "listing_id": _listingId!,
