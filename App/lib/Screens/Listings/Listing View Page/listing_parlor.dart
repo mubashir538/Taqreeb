@@ -180,7 +180,6 @@ class CategoryViewParlourState extends State<CategoryViewParlour> {
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),

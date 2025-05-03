@@ -51,6 +51,58 @@ class Picture {
     }
   }
 
+  static Future<List<File>> pickMultipleImages(
+    BuildContext context, {
+    int maxImages = 10,
+  }) async {
+    try {
+      final List<XFile> pickedFiles = await ImagePicker().pickMultiImage(
+        maxWidth: 2000,
+        maxHeight: 2000,
+        imageQuality: 90,
+      );
+
+      if (pickedFiles.isEmpty) return [];
+
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final List<File> processedImages = [];
+
+      for (final pickedFile in pickedFiles) {
+        try {
+          // Skip cropping, just compress the original image
+          final compressedFile = await compressImage(File(pickedFile.path));
+          processedImages.add(compressedFile);
+        } catch (e) {
+          print('Error processing image ${pickedFile.path}: $e');
+          // If compression fails, add the original file as fallback
+          processedImages.add(File(pickedFile.path));
+        }
+      }
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      return processedImages;
+    } catch (e) {
+      print('Multiple image processing error: $e');
+      if (context.mounted) {
+        MyScaffold(text: 'Failed to process images. Please try again.')
+            .show(context);
+      }
+      return [];
+    }
+  }
+
   static Future<File> saveCroppedImage(Uint8List croppedBytes) async {
     final directory = await getApplicationDocumentsDirectory();
 

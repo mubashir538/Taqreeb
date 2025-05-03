@@ -282,6 +282,7 @@ class Venue(m.Model):
     STAFF_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),
+        ('Both', 'Both'),
     ]
     staff = m.CharField(
         max_length=10,

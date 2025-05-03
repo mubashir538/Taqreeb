@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
     await ApiCall.fetchAPI('home/listings/?page=1&page_size=10', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          listings = data;
+          listings = data['results'];
         });
       }
     }, context: mounted ? context : null);

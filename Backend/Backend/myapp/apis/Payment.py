@@ -139,11 +139,11 @@ def getTransactions(request, id, type):
         return Response({'status': 'error', 'message': str(e)}, status=400)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def getTransactionsRecent(request, id, type):
     try:
         user = m.User.objects.get(id=id)
-        now = datetime.timezone.now()
+        now = datetime.datetime.now()
         
         if type == 'freelancer':
             freelancer = m.Freelancer.objects.get(userID=user)
@@ -198,7 +198,7 @@ def getWalletBalance(request,id,type):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def WithdrawBalance(request):
-    amount = request.data.get('amount')
+    amount = int(request.data.get('amount'))
     userID = request.data.get('userID')
     type = request.data.get('type')
     userID = m.User.objects.get(id=userID)

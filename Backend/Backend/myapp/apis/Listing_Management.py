@@ -89,10 +89,17 @@ def update_list_item(request):
     checklist.save(update_fields=['isChecked','description'])
     return Response({'status':'success'})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_list_item(request):
+    lid = request.data.get('id')
+    checklist = m.CheckList.objects.get(id=lid).delete()
+    return Response({'status':'success'})
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def listings_page(request,id):
-    listings = m.Listing.objects.filter(BusinessOwnerID=id)
+    listings = m.Listing.objects.filter(BusinessOwnerID=id,status='active')
     serializer = s.ListingSerializer(listings,many=True)
     return Response({'status':'success','listings':serializer.data})
 
@@ -104,8 +111,10 @@ def add_listing(request):
         listing_type = data.get('type')
         user_id = data.get('userid')
         category = str(data.get('category')).replace(' ', '')
-        view_data = data.get('viewData', {})
-
+        view_data = json.loads(data.get('viewData')) if data.get('viewData') else data.get('viewData', {})
+        print(data)
+        print(view_data)
+        print(view_data['venueType'])
         # Validate required fields
         required = ['userid', 'name', 'description', 'category', 'location', 'priceMin', 'priceMax']
         if not all([data.get(field) for field in required]):
@@ -113,19 +122,21 @@ def add_listing(request):
 
         # Get user
         user = m.User.objects.get(id=user_id)
-
         # Create listing
         listing = create_listing(data, user, listing_type, category)
+
 
         # Create category-specific view
         create_view_for_category(category, view_data, listing)
 
         # Save pictures
         save_listing_pictures(category, listing, request.FILES.getlist('pictures'))
-
+        
         # Save packages, products, addons
         save_packages(listing, data.get('packages'))
+        
         save_products(listing, data.get('products'))
+        
         save_addons(listing, data.get('addons'))
 
         # Create review details
@@ -149,9 +160,12 @@ def add_listing(request):
     except m.User.DoesNotExist:
         return Response({'status': 'error', 'message': 'User not found'}, status=404)
     except Exception as e:
+        print(e)
         return Response({'status': 'error', 'message': str(e)}, status=500)
     
 def create_listing(data, user, listing_type, category):
+    data['priceMin'] = str(data['priceMin']).replace(',', '')
+    data['priceMax'] = str(data['priceMax']).replace(',', '')
     avg_price = (int(data['priceMin']) + int(data['priceMax'])) / 2
     listing_kwargs = {
         'name': data['name'],
@@ -261,6 +275,8 @@ def save_products(listing, products):
         return
     try:
         product_list = json.loads(products)
+        product_list = products
+
         for prod in product_list:
             product_obj = m.Product(
                 listingId=listing,
@@ -308,7 +324,7 @@ def delete_listing(request):
 @permission_classes([IsAuthenticated])
 def updateListing(request):
     id = request.data.get('id')
-    listing = m.Listing.objects.get(id=id)
+    listing = m.Listing.objects.get(id=id,status='active')
     name = request.data.get('name')
     location = request.data.get('location')
     priceMin = request.data.get('priceMin')
@@ -505,7 +521,7 @@ def updateListing(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def listing_with_views(request):
-    listings = m.Listing.objects.all().prefetch_related(
+    listings = m.Listing.objects.filter(status='active').prefetch_related(
         'pictureslistings_set',
         'venue_set',
         'caterers_set',
@@ -562,9 +578,8 @@ def get_view_data(listing_id):
 
     return None
 
-
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def unified_search(request):
     # Get query parameters
     search_query = request.GET.get('q', '')
@@ -587,7 +602,7 @@ def unified_search(request):
     
     # Base querysets
     if content_type == 'listings':
-        queryset = m.Listing.objects.all().prefetch_related(
+        queryset = m.Listing.objects.filter(status='active').prefetch_related(
             'pictureslistings_set',
             'venue_set',
             'caterers_set',
@@ -659,7 +674,7 @@ def HomeListings(request):
     paginator = PageNumberPagination()
     paginator.page_size = request.GET.get('page_size', 10)  # Default to 10
     
-    listings = m.Listing.objects.all().order_by('?')  # Random ordering instead of shuffle
+    listings = m.Listing.objects.filter(status='active').order_by('?')  # Random ordering instead of shuffle
     result_page = paginator.paginate_queryset(listings, request)
     
     serializer = s.ListingSerializer(result_page, many=True)
@@ -720,10 +735,10 @@ def home_products(request):
 def YourListings(request,id,type):
     if type == 'freelancer':
         user = m.Freelancer.objects.get(userID=id)
-        Listing= m.Listing.objects.filter(freelancerID = user)
+        Listing= m.Listing.objects.filter(freelancerID = user,status='active')
     else:
         user = m.BusinessOwner.objects.get(userID=id)
-        Listing= m.Listing.objects.filter(ownerID = user)
+        Listing= m.Listing.objects.filter(ownerID = user,status='active')
     ListingSerializer= s.ListingSerializer(Listing, many=True)
     Pictures = []
     for i in Listing:
@@ -737,7 +752,7 @@ def YourListings(request,id,type):
 @permission_classes([IsAuthenticated])
 def update_booked_dates(request, listing_id):
     try:
-        listing = m.Listing.objects.get(id=listing_id)
+        listing = m.Listing.objects.get(id=listing_id,status='active')
         # Verify the requesting user owns this listing
         if request.user.id != listing.ownerID.userID.id:
             return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)

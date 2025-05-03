@@ -5,13 +5,13 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/services/cart_service.dart'; // Import your CartService
-import 'package:taqreeb/core/services/flutter_storage.dart'; // For getting token
+import 'package:taqreeb/core/services/cart_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
 
 class PackageBox extends StatefulWidget {
   final String packagename, packageprice, packagedetails;
-  final String packageId; // Add package ID for cart operations
-  final List<String> imageUrls;
+  final String? packageId; // Now optional
+  final List<dynamic> imageUrls;
 
   const PackageBox({
     super.key,
@@ -19,7 +19,7 @@ class PackageBox extends StatefulWidget {
     required this.packageprice,
     required this.packagename,
     required this.imageUrls,
-    required this.packageId, // Add this required parameter
+    this.packageId, // No longer required
   });
 
   @override
@@ -34,7 +34,7 @@ class _PackageBoxState extends State<PackageBox> {
   bool _isAddingToCart = false;
 
   Future<void> _addToCart() async {
-    if (_isAddingToCart) return;
+    if (_isAddingToCart || widget.packageId == null) return;
 
     setState(() {
       _isAddingToCart = true;
@@ -43,10 +43,9 @@ class _PackageBoxState extends State<PackageBox> {
     try {
       final token = await MyStorage.getToken(MyTokens.accessToken);
       if (token == null) {
-        // Handle case when user is not logged in
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please login to add items to cart')),
+            const SnackBar(content: Text('Please login to add items to cart')),
           );
           Navigator.pushNamed(context, '/Login');
         }
@@ -56,13 +55,13 @@ class _PackageBoxState extends State<PackageBox> {
       await CartService.addToCart(
         token: token,
         itemType: 'package',
-        itemId: widget.packageId,
+        itemId: widget.packageId!,
         quantity: 1,
       );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Package added to cart')),
+          const SnackBar(content: Text('Package added to cart')),
         );
       }
     } catch (e) {
@@ -95,9 +94,9 @@ class _PackageBoxState extends State<PackageBox> {
         width: Screen.width(context) * 0.9,
         height: isCollapsed ? Screen.height(context) * 0.07 : null,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           color: MyColors.DarkLighter,
-          boxShadow: [BoxShadow(color: Colors.black, blurRadius: 5)],
+          boxShadow: [const BoxShadow(color: Colors.black, blurRadius: 5)],
         ),
         child: Column(
           mainAxisAlignment:
@@ -181,7 +180,8 @@ class _PackageBoxState extends State<PackageBox> {
                             child: Container(
                               width: 8.0,
                               height: 8.0,
-                              margin: EdgeInsets.symmetric(horizontal: 4.0),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: _currentImageIndex == entry.key
@@ -206,7 +206,7 @@ class _PackageBoxState extends State<PackageBox> {
                         fontWeight: FontWeight.w300,
                         color: MyColors.white)),
               ),
-              // Package price and Add to Cart button
+              // Package price and (conditionally) Add to Cart button
               Container(
                 margin: EdgeInsets.all(Screen.max(context) * 0.02),
                 child: Row(
@@ -217,13 +217,15 @@ class _PackageBoxState extends State<PackageBox> {
                             fontSize: Screen.max(context) * 0.02,
                             fontWeight: FontWeight.w600,
                             color: MyColors.Yellow)),
-                    SizedBox(
-                      width: Screen.width(context) * 0.3,
-                      child: ColoredButton(
-                        text: _isAddingToCart ? 'Adding...' : 'Add to Cart',
-                        onPressed: _isAddingToCart ? null : _addToCart,
+                    // Only show if packageId exists
+                    if (widget.packageId != null)
+                      SizedBox(
+                        width: Screen.width(context) * 0.3,
+                        child: ColoredButton(
+                          text: _isAddingToCart ? 'Adding...' : 'Add to Cart',
+                          onPressed: _isAddingToCart ? null : _addToCart,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

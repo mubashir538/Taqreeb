@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -77,7 +78,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         : Screen.height(context);
     return Scaffold(
       backgroundColor: MyColors.dark,
-      body: Row(
+      body: Stack(
         children: [
           SingleChildScrollView(
             child: Container(
@@ -89,20 +90,57 @@ class _CreateGuestListState extends State<CreateGuestList> {
                     heading: 'Create Guest List',
                     image: MyImages.GuestList,
                   ),
+                  Container(
+                      margin: EdgeInsets.all(maxThing * 0.02),
+                      height: Screen.height(context) * 0.5,
+                      child: Center(
+                        child: Text(
+                          'No Guests Added yet',
+                          style: GoogleFonts.roboto(
+                              color: MyColors.white, fontSize: maxThing * 0.02),
+                        ),
+                      )),
                 ],
               ),
             ),
           ),
+          Positioned(
+            bottom: maxThing * 0.02,
+            right: maxThing * 0.02,
+            child: GestureDetector(
+              onTap: () =>
+                  _showOptions(context, maxThing, Screen.width(context)),
+              child: Container(
+                padding: EdgeInsets.all(maxThing * 0.02),
+                decoration: BoxDecoration(
+                  color: MyColors.red,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(maxThing * 0.05),
+                    topRight: Radius.circular(maxThing * 0.05),
+                    bottomLeft: Radius.circular(maxThing * 0.05),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add,
+                      color: MyColors.white,
+                      size: maxThing * 0.035,
+                    ),
+                    SizedBox(
+                      width: Screen.max(context) * 0.01,
+                    ),
+                    Text(
+                      'Add First Guest',
+                      style: GoogleFonts.roboto(
+                          color: MyColors.white, fontSize: maxThing * 0.015),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: MyColors.Yellow,
-        onPressed: () => _showOptions(context, maxThing, Screen.width(context)),
-        child: Icon(
-          Icons.add,
-          color: MyColors.dark,
-          size: maxThing * 0.04,
-        ),
       ),
     );
   }

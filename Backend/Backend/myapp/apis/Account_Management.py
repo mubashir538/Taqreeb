@@ -7,9 +7,8 @@ from rest_framework.permissions import AllowAny,IsAuthenticated
 from myapp import models as m
 from django.core.files.storage import FileSystemStorage
 from myapp import Serializers as s
-from twilio.rest import Client
+import re
 import random as rd
-import requests as rq
 from firebase_admin import credentials, firestore, initialize_app,messaging
 import os
 from django.conf import settings
@@ -29,7 +28,6 @@ def AccountSignupPage(request):
     lastName = request.data.get('lastName')
     password = request.data.get('password')
     age = request.data.get('age')
-    print('age: ',age)
     contactType = request.data.get('contactType')
     city = request.data.get('city')
     gender = request.data.get('gender')
@@ -76,7 +74,6 @@ def AccountSignupPage(request):
             filePath = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profilePicture)
             user.profilePicture = filestorage.url(filePath)   
             user.save(update_fields=["profilePicture"])
-            
     
     firebase_user_data = {
         "firstName": firstName,
@@ -384,7 +381,9 @@ def EditAccountInfoPage(request):
     user.gender = gender
     user.city = city
     if profilePicture:
-        full_path = os.path.join(settings.MEDIA_ROOT, user.profilePicture)
+        relative_path = user.profilePicture.replace('/media/', '', 1) 
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
@@ -442,7 +441,9 @@ def editBusinessInfo(request):
     profilePicture = request.FILES.get('profilePicture')
     
     if profilePicture:
-        full_path = os.path.join(settings.MEDIA_ROOT, business.profilepic)
+        relative_path = business.profilepic.replace('/media/', '', 1) 
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
@@ -455,7 +456,7 @@ def editBusinessInfo(request):
     else:
         business.save(update_fields=['businessName','Description'])
     
-    return Response({'status':'success'})
+    return Response({'status':'success','profilepic':business.profilepic})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -493,9 +494,6 @@ def UserLogin(request):
     contact = request.data.get('contact')
     password = request.data.get('password')
     print('pass: ',password)
-    # salt = bcrypt.gensalt()
-    # hashed = bcrypt.hashpw(str(password).encode(),salt)
-    # password = hashed.decode()
     if contact.find('@') != -1:
         user = m.User.objects.filter(email=contact).first()
     else:
@@ -507,17 +505,32 @@ def UserLogin(request):
     
     return Response({'status': 'error', 'message': 'Invalid Credentials'})
 
+def clean_name(name):
+    # Remove characters that are not letters or numbers
+    return re.sub(r'[^a-zA-Z0-9]', '', name.lower())
 
-def generateUsername(firstName,lastName):
-    characters = firstName.lower() + lastName.lower()
-    while m.User.objects.filter(username=characters).exists():
-        options = rd.randint(0, 2)
-        if options == 0:
-            characters = firstName.lower() + '_' + lastName.lower()
-        elif options == 1:
-            characters = firstName.lower() + '_' + lastName.lower().substring(0, 1)
-        else:
-            characters = firstName.lower().substring(0, 1) + '_' + lastName.lower().substring(0, 1)
-        characters += str(rd.randint(0, 100))
-    return characters
+def generate_username(first_name, last_name):
+    first = clean_name(first_name)
+    last = clean_name(last_name)
+
+    # Try base variations
+    base_variants = [
+        f"{first}{last}",
+        f"{first}_{last}",
+        f"{first}_{last[:1]}",
+        f"{first[:1]}_{last}",
+        f"{first[:1]}_{last[:1]}"
+    ]
+
+    # Try each variant first
+    for variant in base_variants:
+        if not m.User.objects.filter(username=variant).exists():
+            return variant
+
+    # Fallback: add numbers until a unique one is found
+    while True:
+        variant = f"{first}_{last}_{rd.randint(100, 9999)}"
+        if not m.User.objects.filter(username=variant).exists():
+            return variant
+
 

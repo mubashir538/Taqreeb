@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/c_business_categories.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
-import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -18,29 +18,52 @@ class BusinessAccountInfo extends StatefulWidget {
 }
 
 class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
-  GlobalKey headerKey = GlobalKey();
+  final GlobalKey headerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
-        headerKey: headerKey,
-        callback: (renderbox) {
+      _measureHeaderHeight();
+      _loadInitialData();
+    });
+  }
+
+  void _measureHeaderHeight() {
+    UI_Management.getHeaderHeight(
+      headerKey: headerKey,
+      callback: (renderbox) {
+        if (mounted) {
           setState(() {
             UI_Management.headerHeight = renderbox.size.height;
           });
-        },
-      );
-      Provider.of<BusinessAccountInfoViewModel>(context, listen: false)
-          .fetch(context);
-    });
+        }
+      },
+    );
+  }
+
+  Future<void> _loadInitialData() async {
+    final viewModel =
+        Provider.of<BusinessAccountInfoViewModel>(context, listen: false);
+    // Only fetch if we don't have data
+    if (viewModel.userInfo.isEmpty) {
+      try {
+        await viewModel.fetch(context);
+      } catch (e) {
+        if (mounted) setState(() {});
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<BusinessAccountInfoViewModel>(context);
-    final user = viewModel.user;
+    final businessData = Provider.of<BusinessData>(context);
+    print("Current loading state: ${viewModel.isLoading}");
+
+    // Safely get data with null checks
+    final userInfo = viewModel.userInfo ?? {};
+    final businessInfo = businessData.businessInfo;
     final items = viewModel.items;
 
     TextStyle style = GoogleFonts.montserrat(
@@ -53,135 +76,124 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
       backgroundColor: MyColors.dark,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: viewModel.isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-                    ),
-                  )
-                : Column(
-                    children: [
-                      SizedBox(height: UI_Management.headerHeight),
-                      SizedBox(height: Screen.height(context) * 0.04),
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['businessInfo']['profilepic']}',
-                        ),
-                      ),
-                      SizedBox(height: Screen.max(context) * 0.02),
-                      Text(
-                        user['businessInfo']['businessName'],
-                        style: GoogleFonts.montserrat(
-                          color: MyColors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: Screen.max(context) * 0.03,
-                        ),
-                      ),
-                      MyDivider(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Screen.width(context) * 0.04,
-                        ),
-                        child: Text(
-                          user['businessInfo']['Description'],
-                          style: style,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(
-                        height: Screen.height(context) * 0.04,
-                        child: Center(child: MyDivider()),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(Screen.max(context) * 0.03),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.location_on_outlined),
-                                SizedBox(width: Screen.width(context) * 0.02),
-                                Text(
-                                  '${user['userinfo']['city']},Pakistan',
-                                  style: style,
-                                ),
-                              ],
-                            ),
-                            if (user['userinfo']['email'] != null)
-                              Column(
-                                children: [
-                                  SizedBox(
-                                      height: Screen.height(context) * 0.015),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.mail, color: MyColors.white),
-                                      SizedBox(
-                                          width: Screen.width(context) * 0.02),
-                                      Text(user['userinfo']['email'],
-                                          style: style),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            if (user['userinfo']['contactNumber'] != null)
-                              Column(
-                                children: [
-                                  SizedBox(
-                                      height: Screen.height(context) * 0.015),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.phone, color: MyColors.white),
-                                      SizedBox(
-                                          width: Screen.width(context) * 0.02),
-                                      Text(
-                                        user['userinfo']['contactNumber']
-                                            .toString(),
-                                        style: style,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: Screen.height(context) * 0.02,
-                        child: Center(child: MyDivider()),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: Screen.max(context) * 0.03,
-                          left: Screen.max(context) * 0.03,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Category",
-                              style: GoogleFonts.montserrat(
-                                color: MyColors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: Screen.max(context) * 0.02,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: Screen.height(context) * 0.1,
-                        child: ListView.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            return ChecklistItemsAdder(text: items[index]);
-                          },
-                          scrollDirection: Axis.horizontal,
-                        ),
-                      ),
-                      SizedBox(height: Screen.height(context) * 0.05),
-                    ],
+          if (viewModel.isLoading)
+            Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+              ),
+            )
+          else
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: Screen.height(context) * 0.04),
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: businessData.profileImageUrl != null
+                        ? NetworkImage(businessData.profileImageUrl!)
+                        : const AssetImage('assets/default_profile.png')
+                            as ImageProvider,
                   ),
-          ),
+                  SizedBox(height: Screen.max(context) * 0.02),
+                  Text(
+                    businessInfo['businessName'] ?? 'No Business Name',
+                    style: GoogleFonts.montserrat(
+                      color: MyColors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: Screen.max(context) * 0.03,
+                    ),
+                  ),
+                  const MyDivider(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Screen.width(context) * 0.04),
+                    child: Text(
+                      businessInfo['Description'] ?? 'No Description',
+                      style: style,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(
+                    height: Screen.height(context) * 0.04,
+                    child: const Center(child: MyDivider()),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(Screen.max(context) * 0.03),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on_outlined),
+                            SizedBox(width: Screen.width(context) * 0.02),
+                            Text(
+                              '${userInfo['city'] ?? 'Unknown City'}, Pakistan',
+                              style: style,
+                            ),
+                          ],
+                        ),
+                        if (userInfo['email'] != null) ...[
+                          SizedBox(height: Screen.height(context) * 0.015),
+                          Row(
+                            children: [
+                              Icon(Icons.mail, color: MyColors.white),
+                              SizedBox(width: Screen.width(context) * 0.02),
+                              Text(userInfo['email'], style: style),
+                            ],
+                          ),
+                        ],
+                        if (userInfo['contactNumber'] != null) ...[
+                          SizedBox(height: Screen.height(context) * 0.015),
+                          Row(
+                            children: [
+                              Icon(Icons.phone, color: MyColors.white),
+                              SizedBox(width: Screen.width(context) * 0.02),
+                              Text(
+                                userInfo['contactNumber'].toString(),
+                                style: style,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: Screen.height(context) * 0.02,
+                    child: const Center(child: MyDivider()),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: Screen.max(context) * 0.03,
+                      left: Screen.max(context) * 0.03,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Category",
+                          style: GoogleFonts.montserrat(
+                            color: MyColors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Screen.max(context) * 0.02,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: Screen.height(context) * 0.1,
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        return ChecklistItemsAdder(text: items[index]);
+                      },
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
+                  SizedBox(height: Screen.height(context) * 0.05),
+                ],
+              ),
+            ),
           Positioned(
             top: 0,
             child: Header(

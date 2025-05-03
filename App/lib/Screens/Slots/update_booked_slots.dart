@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_calendar.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -36,7 +37,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
       final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
       final type = await MyTokens.getBusinessType();
 
-      await ApiCall.fetchAPI('YourListings/$userId/$type',
+      await ApiCall.fetchAPI('YourListing/$userId/$type',
           onSuccess: (token, data) {
         setState(() {
           listings = data['YourListings'];
@@ -54,7 +55,11 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
   }
 
   Future<void> _saveBookedDates() async {
-    if (selectedListing == null) return;
+    if (selectedListing == null) {
+      MyScaffold(text: 'Please select a listing').show(context);
+      return;
+    }
+    ;
 
     setState(() {
       isSaving = true;

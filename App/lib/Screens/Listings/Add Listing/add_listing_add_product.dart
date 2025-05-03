@@ -6,6 +6,7 @@ import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class AddCategoryAddProduct extends StatefulWidget {
@@ -28,6 +29,10 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
     if (args != null && args is Map<String, dynamic>) {
       _formController.args = args;
     }
+  }
+
+  void _updateHeaderHeight(RenderBox renderbox) {
+    setState(() => UI_Management.headerHeight = renderbox.size.height);
   }
 
   @override
@@ -75,13 +80,17 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
     _formController.addProduct(image: _selectedImage!);
     Navigator.pushNamed(
       context,
-      '/AddCategory_Products', // Adjust this route name as needed
+      '/AddCategoryProducts', // Adjust this route name as needed
       arguments: _formController.args,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    UI_Management.getHeaderHeight(
+      headerKey: _headerKey,
+      callback: _updateHeaderHeight,
+    );
     return Scaffold(
       backgroundColor: MyColors.dark,
       body: Stack(
@@ -91,7 +100,9 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
               width: Screen.max(context),
               child: Column(
                 children: [
-                  SizedBox(height: Screen.max(context) * 0.02),
+                  SizedBox(
+                      height: Screen.max(context) * 0.02 +
+                          UI_Management.headerHeight),
                   _buildNameField(),
                   _buildDescriptionField(),
                   _buildPriceField(),
@@ -116,50 +127,41 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
   }
 
   Widget _buildNameField() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.05),
-      child: MyTextBox(
-        focusNode: _formController.nameFocus,
-        onFieldSubmitted: (_) {
-          FocusScope.of(context).requestFocus(_formController.descriptionFocus);
-        },
-        hint: 'Product Name',
-        valueController: _formController.nameController,
-      ),
+    return MyTextBox(
+      focusNode: _formController.nameFocus,
+      onFieldSubmitted: (_) {
+        FocusScope.of(context).requestFocus(_formController.descriptionFocus);
+      },
+      hint: 'Product Name',
+      valueController: _formController.nameController,
     );
   }
 
   Widget _buildDescriptionField() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.05),
-      child: DescriptionBox(
-        valueController: _formController.descriptionController,
-        focusNode: _formController.descriptionFocus,
-        onFieldSubmitted: (_) {
-          FocusScope.of(context).requestFocus(_formController.priceFocus);
-        },
-      ),
+    return DescriptionBox(
+      valueController: _formController.descriptionController,
+      focusNode: _formController.descriptionFocus,
+      onFieldSubmitted: (_) {
+        FocusScope.of(context).requestFocus(_formController.priceFocus);
+      },
     );
   }
 
   Widget _buildPriceField() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.05),
-      child: MyTextBox(
-        focusNode: _formController.priceFocus,
-        onFieldSubmitted: (_) => _formController.priceFocus.unfocus(),
-        hint: 'Price',
-        isNum: true,
-        isPrice: true,
-        valueController: _formController.priceController,
-      ),
+    return MyTextBox(
+      focusNode: _formController.priceFocus,
+      onFieldSubmitted: (_) => _formController.priceFocus.unfocus(),
+      hint: 'Price',
+      isNum: true,
+      isPrice: true,
+      valueController: _formController.priceController,
     );
   }
 
   Widget _buildImageUploadSection() {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: Screen.max(context) * 0.05,
+        horizontal: Screen.max(context) * 0.02,
         vertical: Screen.max(context) * 0.03,
       ),
       child: Column(
@@ -224,12 +226,9 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
   }
 
   Widget _buildSubmitButton() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.05),
-      child: ColoredButton(
-        text: 'Add Product',
-        onPressed: _submitForm,
-      ),
+    return ColoredButton(
+      text: 'Add Product',
+      onPressed: _submitForm,
     );
   }
 }

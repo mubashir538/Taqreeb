@@ -16,7 +16,6 @@ class ApiCall {
     Map<String, dynamic>? params, // Add params parameter
   }) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    print('Your Tokens in Api Call $token');
     final data;
     if (type == 'get') {
       data = await MyApi.getRequest(

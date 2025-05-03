@@ -288,6 +288,31 @@ def getWishlist(request,uid):
         serializer = s.PicturesListingSerializers(pic, many=True)
         Pictures.append(serializer.data)
     return Response({'status':'success', 'list':Listings, 'pictures':Pictures})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def checkWishlist(request):
+    userid = request.query_params.get('userid')
+    listing_id = request.query_params.get('listing')
+    
+    try:
+        # Check if the wishlist entry exists
+        exists = m.Wishlist.objects.filter(
+            user_id=userid, 
+            listing_id=listing_id
+        ).exists()
+        
+        return Response({
+            'status': 'success',
+            'is_in_wishlist': exists
+        })
+        
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+    
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def addtoWishlist(request):
@@ -349,5 +374,6 @@ def application_errors(request):
     return Response({'status': 'success'})
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def health_check(request):
     return Response({'status': 'ok'}, status=200)

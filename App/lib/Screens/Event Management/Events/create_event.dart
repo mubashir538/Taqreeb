@@ -155,17 +155,29 @@ class _CreateEventState extends State<CreateEvent> {
       return;
     }
 
-    if (Validations.validateName(_formData.eventName.text) != 'Ok') {
-      MyScaffold(text: Validations.validateName(_formData.eventName.text))
-          .show(context);
-      return;
-    }
-    if (Validations.validateDescription(_formData.description.text) != 'Ok') {
+    if (Validations.validateServiceName(_formData.eventName.text) != 'Ok') {
       MyScaffold(
-              text: Validations.validateDescription(_formData.description.text))
+              text: Validations.validateServiceName(_formData.eventName.text))
           .show(context);
       return;
     }
+    if (_formData.description.text.isNotEmpty) {
+      if (Validations.validateDescription(_formData.description.text) != 'Ok') {
+        MyScaffold(
+                text:
+                    Validations.validateDescription(_formData.description.text))
+            .show(context);
+        return;
+      }
+    }
+
+    if (int.parse(_formData.guestMin.text) >
+        int.parse(_formData.guestMax.text)) {
+      MyScaffold(text: 'Minimum Guests should be less than Maximum Guests')
+          .show(context);
+      return;
+    }
+    
 
     final response = await _sendEventRequest();
     _handleResponse(response);
@@ -176,7 +188,6 @@ class _CreateEventState extends State<CreateEvent> {
         _formData.type.text.isNotEmpty &&
         _formData.date.text.isNotEmpty &&
         _formData.location.text.isNotEmpty &&
-        _formData.description.text.isNotEmpty &&
         _formData.budget.text.isNotEmpty;
   }
 
@@ -197,7 +208,8 @@ class _CreateEventState extends State<CreateEvent> {
         'Event Type': _formData.type.text,
         'Date': _formData.date.text,
         'Location': _formData.location.text,
-        'description': _formData.description.text,
+        if (_formData.description.text.isNotEmpty)
+          'description': _formData.description.text,
         'Theme': _formData.themeColor.text,
         'Budget': _formData.budget.text,
         'EventId': _eventId,

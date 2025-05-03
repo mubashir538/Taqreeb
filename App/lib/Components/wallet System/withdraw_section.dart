@@ -12,8 +12,10 @@ import 'package:taqreeb/core/utils/color.dart';
 import '../../core/services/screen_size.dart';
 
 class WithDrawSection extends StatefulWidget {
-  final List<Map<String, dynamic>> banks;
-  const WithDrawSection({super.key, required this.banks});
+  final List<dynamic> banks;
+  final int balance;
+  const WithDrawSection(
+      {super.key, required this.banks, required this.balance});
 
   @override
   State<WithDrawSection> createState() => _WithDrawSectionState();
@@ -86,6 +88,19 @@ class _WithDrawSectionState extends State<WithDrawSection> {
                     ColoredButton(
                       text: "Withdraw",
                       onPressed: () async {
+                        if (amountController.text.isEmpty) {
+                          MyScaffold(text: 'Please Enter Amount').show(context);
+                          return;
+                        }
+                        if (bankController.text.isEmpty) {
+                          MyScaffold(text: 'Please Select Bank').show(context);
+                          return;
+                        }
+                        if (int.parse(amountController.text) > widget.balance) {
+                          MyScaffold(text: 'Insufficient Balance')
+                              .show(context);
+                          return;
+                        }
                         final response = await MyApi.postRequest(
                             endpoint: 'Payments/WithdrawBalance',
                             body: {

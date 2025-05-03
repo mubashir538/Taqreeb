@@ -178,43 +178,25 @@ class _SearchServiceState extends State<SearchService> {
     return listing['listings'][index]['pictures']['picturePath'];
   }
 
-  void _searchWithFilters() {
-    setState(() {
-      _tempListings['listings'] = List.from(_listings['listings']);
+    final filterData = {
+      "applied_filters": _appliedFilters,
+      "filter_values": {
+        if (_appliedFilters.contains("Ratings"))
+          "Ratings": {
+            "min": _ratingController.minValue,
+            "max": _ratingController.maxValue
+          },
+        if (_appliedFilters.contains("Category"))
+          "Category": _categoryController.text,
+        if (_appliedFilters.contains("Price"))
+          "Price": {
+            "min": _rangeSliderController.minValue.toInt(),
+            "max": _rangeSliderController.maxValue.toInt()
+          },
+        if (_appliedFilters.contains("Location"))
+          "Location": _locationController.text,
+        if (_appliedFilters.contains("Date")) "Date": _dateController.text,
 
-      for (String filter in _appliedFilters) {
-        switch (filter) {
-          case "Price":
-            _tempListings['listings'] = _tempListings['listings']
-                .where((element) =>
-                    element['basicPrice'] >= _rangeSliderController.minValue &&
-                    element['basicPrice'] <= _rangeSliderController.maxValue)
-                .toList();
-            break;
-
-          case "Ratings":
-            _tempListings['listings'] =
-                _tempListings['listings'].where((element) {
-              final rating = double.parse(element['rating']);
-              return rating >= _ratingController.minValue &&
-                  rating <= _ratingController.maxValue;
-            }).toList();
-            break;
-
-          case "Category":
-            _tempListings['listings'] = _tempListings['listings']
-                .where((element) => _categoryController.text == element['type'])
-                .toList();
-            break;
-
-          case "Location":
-            _tempListings['listings'] = _tempListings['listings']
-                .where((element) => element['location']
-                    .toLowerCase()
-                    .contains(_locationController.text.toLowerCase()))
-                .toList();
-            break;
-        }
       }
 
       // Apply additional filters if they exist
@@ -419,12 +401,86 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-      headerKey: _headerKey,
-      callback: (renderbox) => _updateHeaderHeight(renderbox),
-    );
+  Widget _buildContent() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        ),
+      );
+    }
+
+    switch (_tabController.index) {
+      case 0:
+        return _buildListingsTab();
+      case 1:
+        return _buildPackagesTab();
+      case 2:
+        return _buildProductsTab();
+      default:
+        return _buildListingsTab();
+    }
+  }
+
+  Widget _buildListingsTab() {
+    return _searchResults['listings'].isEmpty
+        ? _buildEmptyState()
+        : ListView.builder(
+            itemCount: _searchResults['listings'].length,
+            itemBuilder: (context, index) {
+              final listing = _searchResults['listings'][index];
+              return Productcard(
+                listingType: listing['type'].toString(),
+                listingid: listing['id'].toString(),
+                imageUrl: listing['pictures']?['picturePath'] ??
+                    "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+                venueName: listing['name'],
+                location: listing['location'],
+                type: listing['type'].toString(),
+              );
+            },
+          );
+  }
+
+  Widget _buildPackagesTab() {
+    return _searchResults['packages'].isEmpty
+        ? _buildEmptyState()
+        : ListView.builder(
+            itemCount: _searchResults['packages'].length,
+            itemBuilder: (context, index) {
+              final package = _searchResults['packages'][index];
+              return PackageBox(
+                packageId: package['id'].toString(),
+                imageUrls: package['pictures'].length != 0
+                    ? package['pictures']
+                        ?.map((p) => p['picturePath'].toString())
+                        .toList()
+                    : [],
+                packagedetails: package['description'],
+                packageprice: package['price'].toString(),
+                packagename: package['name'],
+              );
+            },
+          );
+  }
+
+  Widget _buildProductsTab() {
+    return _searchResults['products'].isEmpty
+        ? _buildEmptyState()
+        : ListView.builder(
+            itemCount: _searchResults['products'].length,
+            itemBuilder: (context, index) {
+              final product = _searchResults['products'][index];
+              return ProductBox(
+                productId: product['id'].toString(),
+                productName: product['name'],
+                productDescription: product['description'],
+                productPrice: product['price'].toString(),
+                productImage: product['pictures']?[0]['picturePath'] ?? '',
+              );
+            },
+          );
+  }
 
     return Scaffold(
       backgroundColor: MyColors.dark,

@@ -276,9 +276,9 @@ class MoreDetailsFormController {
 
       if (field['name'] == 'portfolioLink') {
         final validationResult =
-            await Validations.validatePortfolio(controller.text);
+            await Validations.validateLink(controller.text);
         if (validationResult != 'Ok') {
-          MyScaffold(text: 'Invalid Portfolio Link').show(context);
+          MyScaffold(text: validationResult).show(context);
           return false;
         }
       }
@@ -293,7 +293,7 @@ class MoreDetailsFormController {
       final field = textfields['fields'][i];
       viewData[field['name']] = controllers[i].text;
     }
-
+    // print(viewData);
     return viewData;
   }
 

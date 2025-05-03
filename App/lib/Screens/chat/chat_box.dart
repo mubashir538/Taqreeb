@@ -58,20 +58,23 @@ class _ChatBoxState extends State<ChatBox> {
       _handleError('Missing chat user ID in route arguments');
       return;
     }
-    if (_type == 'Business') {
-      _messageCollection = 'BusinessChats';
-    } else if (_type == 'Freelancer') {
-      _messageCollection = 'FreelancerChats';
-    } else {
-      _messageCollection = 'chats';
-    }
 
     setState(() {
       if (args.containsKey('type')) {
         _type = args['type'];
         _listing = args['listing'];
+        print('${_listing['Listing']}');
       }
-      _chatUserId = args['userId'];
+      if (_type.toLowerCase() == 'Business'.toLowerCase()) {
+        _messageCollection = 'BusinessChats';
+      } else if (_type.toLowerCase() == 'Freelancer'.toLowerCase()) {
+        _messageCollection = 'FreelancerChats';
+      } else {
+        print(_type.toLowerCase());
+        _messageCollection = 'chats';
+      }
+
+      _chatUserId = args['userId'].toString();
       _isLoading = true;
     });
 
@@ -93,9 +96,9 @@ class _ChatBoxState extends State<ChatBox> {
   Future<void> _fetchChatUserDetails() async {
     try {
       String collectionName = "";
-      if (_type == 'Business') {
+      if (_type.toLowerCase() == 'Business'.toLowerCase()) {
         collectionName = 'businessUsers';
-      } else if (_type == "Freelancer") {
+      } else if (_type.toLowerCase() == "Freelancer".toLowerCase()) {
         collectionName = 'freelanceUsers';
       } else {
         collectionName = 'users';
@@ -109,9 +112,9 @@ class _ChatBoxState extends State<ChatBox> {
         _chatName = _type != ''
             ? _capitalizeName(userDoc['businessName'])
             : _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
-        _chatUserName = userDoc['username'] ?? _type;
+        _chatUserName = _type != '' ? _type : userDoc['username'];
         _chatUserImage =
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type == '' ? 'profilePicture' : 'profile']}';
+            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type != '' ? 'profile' : 'profilePicture']}';
       });
     } catch (e) {
       _handleError('Error fetching chat user details: $e');
@@ -145,14 +148,15 @@ class _ChatBoxState extends State<ChatBox> {
       // Add listing data if available
       if (_listing.isNotEmpty) {
         messageData['listing'] = {
-          'id': _listing['id'],
-          'name': _listing['name'],
-          'description': _listing['description'],
-          'picture': _listing['picture'],
+          'id': _listing['Listing']['id'],
+          'name': _listing['Listing']['name'],
+          'description': _listing['Listing']['description'],
+          'picture': _listing['pictures'][0]['picturePath'],
         };
-        messageData['type'] = 'listing';
+        messageData['type'] = _listing['Listing']['type'];
       }
 
+      print(_messageCollection);
       // Add message to chat collection
       await _firestore
           .collection(_messageCollection)
@@ -171,9 +175,8 @@ class _ChatBoxState extends State<ChatBox> {
         },
       }, SetOptions(merge: true));
 
-      // Send notification
       await MyApi.postRequest(
-        endpoint: 'notification/sendNotification',
+        endpoint: 'notification/sendNotification', // Match your Django endpoint
         body: {
           'recv': _chatUserId,
           'send': _currentUserId,
@@ -351,6 +354,8 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
   Widget _buildMessagesList() {
+    print('_message Collection: ${_messageCollection}');
+    print('messages: ${_getChatId()}');
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection(_messageCollection)
@@ -359,6 +364,7 @@ class _ChatBoxState extends State<ChatBox> {
           .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
+        print(snapshot.data!.docs);
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -437,7 +443,7 @@ class _ChatBoxState extends State<ChatBox> {
               borderRadius: BorderRadius.circular(8.0),
               image: DecorationImage(
                 image: NetworkImage(
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['picture'] ?? ''}'),
+                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['pictures'][0]['picturePath'] ?? ''}'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -449,7 +455,7 @@ class _ChatBoxState extends State<ChatBox> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _listing['name'] ?? '',
+                  _listing['Listing']['name'] ?? '',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -460,7 +466,7 @@ class _ChatBoxState extends State<ChatBox> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  _listing['description'] ?? '',
+                  _listing['Listing']['description'] ?? '',
                   style: GoogleFonts.montserrat(
                     fontSize: 14,
                     color: MyColors.white.withOpacity(0.7),
@@ -470,7 +476,8 @@ class _ChatBoxState extends State<ChatBox> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'www.taqreeb.com', // Replace with your actual domain
+                  _listing['Listing']['type'] ??
+                      '', // Replace with your actual domain
                   style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: MyColors.Yellow,

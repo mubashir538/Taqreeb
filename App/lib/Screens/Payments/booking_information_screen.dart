@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_calendar.dart';
-import 'package:taqreeb/Screens/Payments/order_summary.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -95,14 +94,13 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
       };
 
       // Navigate to order summary with the booking info
-      Navigator.push(
+      Navigator.pushNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => OrderSummaryScreen(
-            cart: widget.cart,
-            bookingInfo: bookingInfo,
-          ),
-        ),
+        '/OrderSummary',
+        arguments: {
+          'cart': widget.cart,
+          'bookingInfo': bookingInfo,
+        },
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -232,6 +230,6 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
     _phoneController.dispose();
     _idNumberController.dispose();
     _notesController.dispose();
-  super.dispose();
+    super.dispose();
   }
 }

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class Function12 extends StatelessWidget {
+class FunctionCard extends StatelessWidget {
   final String name, head, budget;
   final List<String> headings;
   final List<String> values;
@@ -14,7 +14,7 @@ class Function12 extends StatelessWidget {
   final Color color;
   final VoidCallback? delete;
 
-  const Function12(
+  const FunctionCard(
       {super.key,
       required this.delete,
       required this.color,
@@ -146,7 +146,9 @@ class Function12 extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ColoredButton(
-                          text: 'Edit Function',
+                          text: type.toLowerCase() == 'event'
+                              ? 'Edit Event'
+                              : 'Edit Function',
                           width: Screen.width(context) * 0.38,
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {

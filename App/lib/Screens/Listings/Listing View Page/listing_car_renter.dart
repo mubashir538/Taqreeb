@@ -189,7 +189,6 @@ print("📍 [DEBUG] Entered Car Renter View at $_entryTime");
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),
@@ -204,10 +203,6 @@ print("📍 [DEBUG] Entered Car Renter View at $_entryTime");
         child: MyDivider(width: Screen.width(context) * 0.85),
       ),
     );
-  }
-
-  Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);
   }
 
   @override

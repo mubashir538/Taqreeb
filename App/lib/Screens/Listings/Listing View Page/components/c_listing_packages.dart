@@ -254,7 +254,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                 children: [
                   if (_isBusinessUser) _buildPackageActions(index),
                   PackageBox(
-                    packageId: package['id'],
+                    packageId: package['id'].toString(),
                     imageUrls: package['pictures'],
                     packagedetails: package['description'],
                     packageprice: package['price'].toString(),

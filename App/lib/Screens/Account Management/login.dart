@@ -98,7 +98,7 @@ class _LoginState extends State<Login> {
     if (_emailController.text.contains("@")) {
       final emailValidation = Validations.validateEmail(_emailController.text);
       if (emailValidation != "Ok") {
-        _showErrorDialog("", 'Invalid Credentials');
+        _showErrorDialog("", 'Invalid Email');
         return false;
       }
     } else {

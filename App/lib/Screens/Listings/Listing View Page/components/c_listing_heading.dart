@@ -45,6 +45,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     _locationController = TextEditingController(
         text: widget.listing['Listing']['location'] ?? '');
     _checkUserType();
+    _checkWishList();
     fetchEvents();
   }
 
@@ -538,5 +539,27 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           ),
       ],
     );
+  }
+
+  void _checkWishList() async {
+    final response = await MyApi.getRequest(
+        refresh: true,
+        endpoint: 'wishlist/check',
+        params: {
+          'userid': await MyStorage.getToken(MyTokens.userId),
+          'listing': widget.listingId
+        },
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        });
+    if (response['status'] == 'success') {
+      if (response['is_in_wishlist']) {
+        setState(() {
+          _wishlistColor = MyColors.red;
+          _wishlistIcon = FontAwesomeIcons.solidHeart;
+        });
+      }
+    }
   }
 }

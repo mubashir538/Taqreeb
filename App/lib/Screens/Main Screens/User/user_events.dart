@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -144,6 +147,13 @@ class _YourEventsState extends State<YourEvents> {
             child: Header(
               key: _headerKey,
               heading: 'Your Events',
+              additionalIcons: [
+                HeaderIcon(
+                    icon: FontAwesomeIcons.heart,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/Wishlist');
+                    })
+              ],
             ),
           ),
         ],
@@ -178,13 +188,69 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildEventList() {
+    if (_filteredEvents.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: Screen.height(context) * 0.1),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Screen.width(context) * 0.02),
+              child: Text(
+                'No Events Found',
+                style: GoogleFonts.montserrat(
+                  fontSize: Screen.max(context) * 0.02,
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_events["Event"].length == 0) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: Screen.height(context) * 0.1),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Screen.width(context) * 0.02),
+              child: Text(
+                'You currently don\'t have any events for this Name',
+                style: GoogleFonts.montserrat(
+                  fontSize: Screen.max(context) * 0.02,
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white,
+                ),
+              ),
+            ),
+            SizedBox(height: Screen.height(context) * 0.03),
+            ColoredButton(
+              onPressed: () {
+                // Navigate to the screen where user can add a new event
+                Navigator.pushNamed(context, '/AddEvent');
+              },
+              text: 'Add your first event',
+              width: Screen.width(context) * 0.5,
+              textSize: Screen.max(context) * 0.015,
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _filteredEvents.length,
       itemBuilder: (context, index) {
         final event = _filteredEvents[index];
-        return Function12(
+        return FunctionCard(
           delete: () => _deleteEvent(event["id"], index),
           color: Color(int.parse(
               '0xff${event["themeColor"].substring(1, event["themeColor"].length)}')),

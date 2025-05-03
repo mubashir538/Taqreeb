@@ -52,15 +52,13 @@ class _AddImageState extends State<AddImage> {
     }
   }
 
-  Future<void> _pickImage() async {
-    await Picture.pickImage(
-      context,
-      callback: (file) {
-        if (mounted) {
-          setState(() => _imageController.addImage(file.path));
-        }
-      },
-    );
+  Future<void> _pickMultipleImages() async {
+    final images = await Picture.pickMultipleImages(context);
+    if (images.isNotEmpty && mounted) {
+      setState(() {
+        _imageController.images.addAll(images.map((file) => file.path));
+      });
+    }
   }
 
   Future<void> _submitService() async {
@@ -138,21 +136,34 @@ class _AddImageState extends State<AddImage> {
             ),
           ],
         ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: _pickImage,
-          child: Center(
-            child: CircleAvatar(
-              radius: 30,
-              backgroundColor: MyColors.DarkLighter,
-              child: Image.asset(
-                MyIcons.add,
-                color: MyColors.white,
-                width: 30,
-                height: 30,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: _pickMultipleImages,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                      width: Screen.width(context) * 0.9,
+                      padding: EdgeInsets.all(Screen.max(context) * 0.02),
+                      decoration: BoxDecoration(
+                        color: MyColors.DarkLighter,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.add_photo_alternate,
+                        color: MyColors.white,
+                        size: Screen.max(context) * 0.03,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -253,7 +264,6 @@ class ImageController {
     try {
       final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
       final businessType = await MyTokens.getBusinessType();
-
       final data = {
         'userid': userId,
         'name': args['name'] ?? '',
@@ -268,14 +278,16 @@ class ImageController {
         'addons': _safeJsonEncode(args['addons']),
         'viewData': _safeJsonEncode(args['viewData']), // Added viewData
       };
+      print(_safeJsonEncode(args['viewData']));
 
-      _addCategorySpecificData(data);
+      // _addCategorySpecificData(data);
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'businessowner/addListings/',
         body: data,
         files: {'pictures': images},
       );
+      print('Executed... $response');
 
       return response ??
           {'status': 'error', 'message': 'No response from server'};

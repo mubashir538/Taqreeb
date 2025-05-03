@@ -126,16 +126,25 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
     }
 
     String nameValidation =
-        Validations.validateName(_formController.nameController.text);
+        Validations.validateServiceName(_formController.nameController.text);
     if (nameValidation != 'Ok') {
       MyScaffold(text: nameValidation).show(context);
       return;
     }
-    String descriptionValidation =
-        Validations.validateName(_formController.descriptionController.text);
+    String descriptionValidation = Validations.validateDescription(
+        _formController.descriptionController.text);
 
     if (descriptionValidation != 'Ok') {
       MyScaffold(text: descriptionValidation).show(context);
+      return;
+    }
+
+    if (int.parse(
+            _formController.priceminController.text.replaceAll(',', '')) >=
+        int.parse(
+            _formController.pricemaxController.text.replaceAll(',', ''))) {
+      MyScaffold(text: 'Minimum Price should be less than Maximum Price')
+          .show(context);
       return;
     }
 

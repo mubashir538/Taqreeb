@@ -78,12 +78,23 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
             timePickerTheme: TimePickerThemeData(
               backgroundColor: MyColors.DarkLighter,
               hourMinuteTextColor: MyColors.white,
-              dayPeriodTextColor: MyColors.white,
               dialHandColor: MyColors.Yellow,
               dialBackgroundColor: MyColors.dark.withAlpha(127),
               hourMinuteColor: MyColors.dark.withAlpha(127),
-              dayPeriodColor: MyColors.dark.withAlpha(127),
               entryModeIconColor: MyColors.Yellow,
+
+              // ✅ Highlight selected AM/PM
+              dayPeriodColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return MyColors.red; // <-- highlight selected
+                }
+                return MyColors.dark.withAlpha(127); // unselected
+              }),
+              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
+                return states.contains(MaterialState.selected)
+                    ? Colors.white
+                    : Colors.grey[300]!;
+              }),
             ),
           ),
           child: child!,

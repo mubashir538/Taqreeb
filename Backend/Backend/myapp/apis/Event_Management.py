@@ -47,7 +47,6 @@ def EditEvent(request):
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
     eventId = request.data.get('EventId')
-    print(type)
     budget = int(budget.replace(",", ""))
     EditEvent = m.Events.objects.get(id=eventId)
     EditEvent.name = name
@@ -87,7 +86,10 @@ def CreateEvent(request):
     budget = int(budget.replace(",", ""))
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
-    CreateEvent = m.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,description=description,themeColor=themeColor,budget=budget)
+    userId= m.User.objects.get(id=userId)
+    CreateEvent = m.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,themeColor=themeColor,budget=budget)
+    if description != None:
+        CreateEvent.description = description
     CreateEvent.save()
     UserActivity.objects.create(
         user=request.user,
