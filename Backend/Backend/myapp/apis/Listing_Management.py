@@ -11,6 +11,8 @@ from rest_framework.pagination import PageNumberPagination
 import os
 from rest_framework.response import Response
 import inspect
+from myapp.models import UserActivity
+from django.utils.timezone import now
 
 
 def get_variable_name(var):
@@ -139,6 +141,17 @@ def add_listing(request):
 
         # Create review details
         m.ReviewDetails(listingID=listing).save()
+
+        UserActivity.objects.create(
+        user=request.user,
+        action='vendor_add_service',
+        metadata={
+            'listing_id': listing.id,
+            'listing_name': listing.name,
+            'listing_type': listing.type
+        },
+        timestamp=now()
+    )
 
         return Response({'status': 'success', 'listing_id': listing.id})
 
@@ -490,7 +503,18 @@ def updateListing(request):
                 pack.description = description
                 pack.price = price
                 pack.save(update_fields=['name','description','price'])
+                
                 return Response({'status':'success'})
+            UserActivity.objects.create(
+    user=request.user,
+    action='content_updated',
+    metadata={
+        'listing_id': listing.id,
+        'listing_name': listing.name,
+        'listing_type': listing.type,
+    },
+    timestamp=now()
+)
         
     return Response({'status':'error'})
 
@@ -559,6 +583,14 @@ def get_view_data(listing_id):
 def unified_search(request):
     # Get query parameters
     search_query = request.GET.get('q', '')
+    if search_query:
+            UserActivity.objects.create(
+            user=request.user,
+            action='search',
+            metadata={'search_query': search_query},
+            timestamp=now()
+        )
+
     category = request.GET.get('category', 'All')
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')

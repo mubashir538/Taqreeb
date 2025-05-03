@@ -51,6 +51,8 @@ class _CategoryViewPhotographyPlaceState
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+    print("📍 [DEBUG] Entered PhotographyPlace View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -78,6 +80,8 @@ class _CategoryViewPhotographyPlaceState
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+          print("🚪 [DEBUG] Exited PhotographyPlace View. Duration: $duration seconds");
+
       Logs.logUserActivity("category_view_duration", {
         "category": "PhotographyPlace",
         "listing_id": _listingId!,
