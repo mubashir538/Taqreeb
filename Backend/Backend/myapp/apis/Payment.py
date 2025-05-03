@@ -1,4 +1,5 @@
 import datetime
+from datetime import timezone
 from decimal import Decimal
 from django.shortcuts import get_object_or_404
 from sympy import Q
@@ -8,7 +9,9 @@ from django.db import transaction
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
-from django.utils import timezone
+from myapp.models import UserActivity
+from django.utils.timezone import now
+from django.db.models import Sum
 
 
 # views.py
@@ -76,6 +79,18 @@ def addTransaction(request):
                 status='Completed',
                 booking=booking
             )
+            UserActivity.objects.create(
+            user=user,
+            action='vendor_revenue',
+            metadata={
+                'receiver_type': 'freelancer',
+                'receiver_id': owner.id,
+                'amount': amount,
+                'package_id': package.id,
+                'listing_id': listing.id
+            },
+            timestamp=now()
+        )
         
         return Response({'status':'success', 'booking_id': booking.id})
     
@@ -292,6 +307,17 @@ def process_payment(request):
         # Update all bookings in this order
         bookings = m.Booking.objects.filter(order=order)
         bookings.update(status='confirmed')
+        UserActivity.objects.create(
+            user=request.user,
+            action='book_venue',
+            metadata={
+                'order_id': order.id,
+                'amount': amount,
+                'payment_status': order.payment_status
+            },
+            timestamp=now()
+        )
+
         
         return Response({
             'status': 'success',
@@ -364,7 +390,28 @@ def update_order_status(request):
             # Update all related bookings
             bookings = order.bookings.all()
             bookings.update(status=new_status)
-            
+            # Log user activity after status update
+            if new_status == 'completed':
+                UserActivity.objects.create(
+                    user=request.user,
+                    action='order_completed',
+                    metadata={
+                        'order_id': order.id,
+                        'status': new_status
+                    },
+                    timestamp=now()
+                )
+            elif new_status == 'cancelled':
+                UserActivity.objects.create(
+                    user=request.user,
+                    action='order_cancelled',
+                    metadata={
+                        'order_id': order.id,
+                        'status': new_status
+                    },
+                    timestamp=now()
+                )
+
             # If cancelling, handle refunds and availability
             if new_status == 'cancelled':
                 for booking in bookings:

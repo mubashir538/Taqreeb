@@ -44,6 +44,8 @@ class CategoryViewParlourState extends State<CategoryViewParlour> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+    print("📍 [DEBUG] Entered Parlour View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -71,6 +73,8 @@ class CategoryViewParlourState extends State<CategoryViewParlour> {
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+          print("🚪 [DEBUG] Exited Parlour View. Duration: $duration seconds");
+
       Logs.logUserActivity("category_view_duration", {
         "category": "Parlour",
         "listing_id": _listingId!,
