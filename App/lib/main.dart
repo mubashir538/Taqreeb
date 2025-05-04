@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Screens/AI/event_detail_ai.dart';
@@ -75,6 +76,7 @@ import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
 import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
 import 'package:taqreeb/Screens/chat/chat_box.dart';
 import 'package:taqreeb/Screens/chat/search_new_user.dart';
+import 'package:taqreeb/core/config/config.dart';
 import 'package:taqreeb/core/providers/ThemeProvider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/app_initializer.dart';
@@ -86,7 +88,7 @@ import 'package:taqreeb/core/utils/themes.dart';
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-
+  AppConfig.fetchIp();
   // Preserve splash screen with required widgetsBinding parameter
   FlutterNativeSplash.preserve(
     widgetsBinding: widgetsBinding,
@@ -253,6 +255,4 @@ class _MainAppState extends State<MainApp> {
       '/search_new_user': (context) => NewUserSearch(),
     };
   }
-
-
 }

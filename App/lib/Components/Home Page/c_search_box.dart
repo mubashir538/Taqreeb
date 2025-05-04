@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class SearchBox extends StatelessWidget {
+class SearchBox extends StatefulWidget {
   final TextEditingController controller;
   final double width;
   final VoidCallback? onclick;
@@ -11,23 +13,50 @@ class SearchBox extends StatelessWidget {
   final String hint;
   final FocusNode focusNode;
   final Function(String) onChanged;
-  const SearchBox(
-      {super.key,
-      this.isHome = false,
-      required this.onChanged,
-      required this.hint,
-      required this.controller,
-      required this.focusNode,
-      this.width = 0,
-      this.onclick});
+  final Duration debounceDuration;
+
+  const SearchBox({
+    super.key,
+    this.isHome = false,
+    required this.onChanged,
+    required this.hint,
+    required this.controller,
+    required this.focusNode,
+    this.width = 0,
+    this.onclick,
+    this.debounceDuration = const Duration(seconds: 1),
+  });
+
+  @override
+  State<SearchBox> createState() => _SearchBoxState();
+}
+
+class _SearchBoxState extends State<SearchBox> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    // Cancel any previous debounce timer
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+
+    // Start a new debounce timer
+    _debounce = Timer(widget.debounceDuration, () {
+      widget.onChanged(query);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onclick,
+      onTap: widget.onclick,
       child: Container(
         height: Screen.height(context) * 0.07,
-        width: width == 0 ? Screen.width(context) * 0.8 : width,
+        width: widget.width == 0 ? Screen.width(context) * 0.8 : widget.width,
         decoration: BoxDecoration(
           color: MyColors.DarkLighter,
           borderRadius: BorderRadius.circular(20),
@@ -43,13 +72,18 @@ class SearchBox extends StatelessWidget {
                 margin: EdgeInsets.only(left: Screen.max(context) * 0.02),
                 width: Screen.width(context) * 0.5,
                 child: GestureDetector(
-                  onTap: onclick,
+                  onTap: widget.onclick,
                   child: TextField(
-                    readOnly: isHome ? true : false,
-                    focusNode: focusNode,
-                    onTap: onclick,
-                    controller: controller,
-                    onChanged: onChanged,
+                    readOnly: widget.isHome ? true : false,
+                    focusNode: widget.focusNode,
+                    onTap: widget.onclick,
+                    controller: widget.controller,
+                    onChanged: _onSearchChanged,
+                    onSubmitted: (value) {
+                      // Cancel debounce timer if user presses enter/submit
+                      _debounce?.cancel();
+                      widget.onChanged(value);
+                    },
                     style: GoogleFonts.montserrat(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
@@ -57,7 +91,7 @@ class SearchBox extends StatelessWidget {
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: hint,
+                      hintText: widget.hint,
                       hintStyle: GoogleFonts.montserrat(
                         fontSize: Screen.max(context) * 0.015,
                         color: MyColors.whiteDarker,

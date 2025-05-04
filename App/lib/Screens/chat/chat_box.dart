@@ -142,7 +142,7 @@ class _ChatBoxState extends State<ChatBox> {
         'receiverId': _chatUserId,
         'message': text,
         'timestamp': FieldValue.serverTimestamp(),
-        'type': 'text',
+        'mtype': 'text',
       };
 
       // Add listing data if available
@@ -152,8 +152,9 @@ class _ChatBoxState extends State<ChatBox> {
           'name': _listing['Listing']['name'],
           'description': _listing['Listing']['description'],
           'picture': _listing['pictures'][0]['picturePath'],
+          'type': _listing['Listing']['type']
         };
-        messageData['type'] = _listing['Listing']['type'];
+        messageData['mtype'] = 'listing';
       }
 
       print(_messageCollection);
@@ -230,7 +231,7 @@ class _ChatBoxState extends State<ChatBox> {
         'receiverId': _chatUserId,
         'message': response['path'],
         'timestamp': FieldValue.serverTimestamp(),
-        'type': 'image',
+        'mtype': 'image',
       });
 
       await _firestore.collection(_messageCollection).doc(chatId).set({
@@ -277,7 +278,7 @@ class _ChatBoxState extends State<ChatBox> {
 
   Widget _buildMessageTile(DocumentSnapshot doc) {
     final isSentByMe = doc['senderId'] == _currentUserId;
-    final messageType = doc['type'];
+    final messageType = doc['mtype'];
     final message = doc['message'];
     final timestamp = doc['timestamp'] as Timestamp?;
     final time = timestamp != null ? _formatTimestamp(timestamp) : '';
@@ -364,11 +365,10 @@ class _ChatBoxState extends State<ChatBox> {
           .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        print(snapshot.data!.docs);
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-
+        
         final messages = snapshot.data!.docs;
         final messageWidgets = <Widget>[];
         DateTime? lastMessageDate;
@@ -402,7 +402,7 @@ class _ChatBoxState extends State<ChatBox> {
               ),
             );
           }
-
+          print('widgets : ${messageWidgets.length}');
           messageWidgets.add(_buildMessageTile(message));
           lastMessageDate = messageDate;
         }
