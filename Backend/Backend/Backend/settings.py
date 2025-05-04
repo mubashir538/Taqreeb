@@ -12,18 +12,31 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from config import ip
+from corsheaders.defaults import default_headers
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-CSRFToken",
+]
+
+# Optional: if you're not using CSRF, this disables the check for testing
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
+
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
     "http://127.0.0.1:8000", 
     "http://localhost",       
     "http://10.0.2.2",
     "http://192.168.0.104",
     "http://192.168.0.104:8000",
+    "http://127.0.0.1:8000",
     ip
     ,ip+':8000'     
 ]
@@ -51,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',
     'rest_framework_simplejwt',
+    'django_extensions',
 ]
 
 CRON_CLASSES = [
@@ -171,6 +185,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 AUTH_USER_MODEL = 'myapp.User'
@@ -200,3 +215,7 @@ TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER') 
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # keep this if you still want username auth
+    'myapp.backends.EmailAuthBackend',
+]

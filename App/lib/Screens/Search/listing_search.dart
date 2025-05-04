@@ -4,12 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_location.dart';
 import 'package:taqreeb/Components/Inputs/c_input_range_slider.dart';
-import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
@@ -27,18 +25,12 @@ class SearchService extends StatefulWidget {
   State<SearchService> createState() => _SearchServiceState();
 }
 
-class _SearchServiceState extends State<SearchService>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
+class _SearchServiceState extends State<SearchService> {
   // Data State
   final Map<String, dynamic> _args = {};
   final Map<String, dynamic> _categories = {};
-  final Map<String, dynamic> _searchResults = {
-    'listings': [],
-    'packages': [],
-    'products': [],
-  };
+  final Map<String, dynamic> _listings = {};
+  final Map<String, dynamic> _tempListings = {};
   final Map<String, dynamic> _additionalFilters = {};
   final Map<String, dynamic> _additionalSelections = {};
 
@@ -61,6 +53,7 @@ class _SearchServiceState extends State<SearchService>
 
   // UI State
   final GlobalKey _headerKey = GlobalKey();
+  DateTime? _entryTime;
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
@@ -70,17 +63,8 @@ class _SearchServiceState extends State<SearchService>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      length: 3,
-      vsync: this,
-      initialIndex: 0,
-    );
-
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        _performSearch();
-      }
-    });
+    _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered ListingsSearch at $_entryTime");
 
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         UI_Management.getHeaderHeight(
@@ -90,12 +74,13 @@ class _SearchServiceState extends State<SearchService>
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _searchController.dispose();
-    _locationController.dispose();
-    _dateController.dispose();
-    _categoryController.dispose();
-    searchFocus.dispose();
+    if (_entryTime != null) {
+    final duration = DateTime.now().difference(_entryTime!).inSeconds;
+    print("🚪 [DEBUG] Exited ListingsSearch. Duration: $duration seconds");
+    Logs.logUserActivity("listing_search_view_duration", {
+      "time_spent_seconds": duration,
+    });
+  }
     super.dispose();
   }
 
@@ -120,7 +105,7 @@ class _SearchServiceState extends State<SearchService>
 
   Future<void> _fetchData() async {
     await _fetchCategories();
-    await _performSearch();
+    await _fetchListings();
   }
 
   Future<void> _fetchCategories() async {
@@ -134,63 +119,28 @@ class _SearchServiceState extends State<SearchService>
     }, context: mounted ? context : null);
   }
 
-  Future<void> _performSearch() async {
-    setState(() => _isLoading = true);
-
-    final params = {
-      if (_searchController.text.isNotEmpty) 'q': _searchController.text,
-      if (_categoryController.text != 'All')
-        'category': _categoryController.text,
-      if (_locationController.text.isNotEmpty)
-        'location': _locationController.text,
-      if (_dateController.text.isNotEmpty) 'date': _dateController.text,
-      if (_appliedFilters.contains('Price'))
-        'min_price': _rangeSliderController.minValue.toString(),
-      if (_appliedFilters.contains('Price'))
-        'max_price': _rangeSliderController.maxValue.toString(),
-      if (_appliedFilters.contains('Ratings'))
-        'min_rating': _ratingController.minValue.toString(),
-      if (_appliedFilters.contains('Ratings'))
-        'max_rating': _ratingController.maxValue.toString(),
-      'type': _getCurrentTabType(),
-    };
-
-    // Add additional filters if they exist
-    _additionalSelections.forEach((key, value) {
-      if (value.isNotEmpty) {
-        params[key] = value.join(',');
-      }
-    });
-
-    await ApiCall.fetchAPI('unified_search/', params: params,
-        onSuccess: (_, data) {
+  Future<void> _fetchListings() async {
+    await ApiCall.fetchAPI('home/listings/views', onSuccess: (_, data) {
       if (mounted) {
         setState(() {
-          _searchResults[_getCurrentTabType()] = data['results'];
+          _listings.addAll(data);
+          _tempListings.addAll(Map.from(data));
+          if (_args.isNotEmpty) {
+            _appliedFilters.add('Category');
+            _categoryController.text = _args['category'] ?? 'All';
+            _searchWithFilters();
+          }
+          _args.clear();
           _isLoading = false;
         });
       }
     }, context: mounted ? context : null);
   }
 
-  String _getCurrentTabType() {
-    switch (_tabController.index) {
-      case 0:
-        return 'listings';
-      case 1:
-        return 'packages';
-      case 2:
-        return 'products';
-      default:
-        return 'listings';
-    }
-  }
-
   Future<void> _fetchAdditionalFilters(String categoryType) async {
     setState(() => _isLoading = true);
 
     final response = await MyApi.getRequest(
-      context: context,
       endpoint: 'getListingDetails/$categoryType',
       headers: {'Authorization': 'Bearer $_token'},
     );
@@ -215,17 +165,18 @@ class _SearchServiceState extends State<SearchService>
     }
   }
 
-  void _applyFilters() {
-    setState(() {
-      _appliedFilters.clear();
-      _appliedFilters.addAll(_filtersToApply);
-      _filtersToApply.clear();
-    });
-
-    if (_appliedFilters.contains("Category") &&
-        _categoryController.text != "All") {
-      _fetchAdditionalFilters(_categoryController.text);
+  String _getListingPicture(int index, Map<String, dynamic> listing) {
+    // for (var pictureGroup in listing['listings']['pictures']) {
+    //   if (pictureGroup.isNotEmpty &&
+    //       pictureGroup[0]['listingId'] == listingId) {
+    //     return pictureGroup[0]['picturePath'];
+    //   }
+    // }
+    if (listing['listings'][index]['pictures']['picturePath'] == null) {
+      return '';
     }
+    return listing['listings'][index]['pictures']['picturePath'];
+  }
 
     final filterData = {
       "applied_filters": _appliedFilters,
@@ -245,28 +196,55 @@ class _SearchServiceState extends State<SearchService>
         if (_appliedFilters.contains("Location"))
           "Location": _locationController.text,
         if (_appliedFilters.contains("Date")) "Date": _dateController.text,
-      }
-    };
 
-    Logs.logUserActivity("filter", filterData);
-    _performSearch();
+      }
+
+      // Apply additional filters if they exist
+      if (_additionalSelections.isNotEmpty) {
+        setState(() {
+          _tempListings['listings'] =
+              _tempListings['listings'].where((listing) {
+            return _additionalSelections.entries.every((entry) {
+              if (entry.value.isEmpty) {
+                return true; // No filter applied for this field
+              }
+              if (listing['View'][entry.key] == null) return false;
+              return entry.value
+                  .contains(listing['View'][entry.key].toString());
+            });
+          }).toList();
+        });
+      }
+    });
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      margin: EdgeInsets.only(top: Screen.max(context) * 0.02),
-      child: TabBar(
-        controller: _tabController,
-        indicatorColor: MyColors.red,
-        labelColor: MyColors.white,
-        unselectedLabelColor: MyColors.whiteDarker,
-        tabs: const [
-          Tab(text: 'Listings'),
-          Tab(text: 'Packages'),
-          Tab(text: 'Products'),
-        ],
-      ),
-    );
+  void _navigateToServiceDetails(Map<String, dynamic> service) {
+    final entryTime = DateTime.now();
+    final serviceId = service['id'];
+    final serviceName = service['name'];
+print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
+
+    Logs.logUserActivity("service_click",
+        {"service_id": serviceId, "service_name": serviceName});
+
+    Navigator.pushNamed(
+      context,
+      '/SearchServiceDetails',
+      arguments: {
+        "id": serviceId,
+        "service_name": serviceName,
+        "entry_time": entryTime.toIso8601String(),
+      },
+    ).then((_) {
+      final duration = DateTime.now().difference(entryTime).inSeconds;
+      print("📊 [DEBUG] Time spent on $serviceName: $duration seconds");
+
+      Logs.logUserActivity("service_view_duration", {
+        "service_id": serviceId,
+        "service_name": serviceName,
+        "duration_seconds": duration
+      });
+    });
   }
 
   Widget _buildFilterChips() {
@@ -298,6 +276,7 @@ class _SearchServiceState extends State<SearchService>
                     onTap: () {
                       setState(() {
                         _appliedFilters.remove(filter);
+                        _filtersToApply.remove(filter);
                         if (filter == "Category") {
                           _categoryController.text = 'All';
                         }
@@ -313,7 +292,7 @@ class _SearchServiceState extends State<SearchService>
                         }
                         if (filter == "Location") _locationController.clear();
                         if (filter == "Date") _dateController.clear();
-                        _performSearch();
+                        _searchWithFilters();
                       });
                     },
                     child: Icon(
@@ -331,6 +310,35 @@ class _SearchServiceState extends State<SearchService>
     );
   }
 
+  Widget _buildServiceList() {
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          final service = _tempListings['listings'][index];
+          final imageUrl = _getListingPicture(index, _tempListings);
+
+          return GestureDetector(
+            onTap: () => _navigateToServiceDetails(service),
+            child: Productcard(
+              listingType: service['type'].toString(),
+              listingid: service['id'].toString(),
+              imageUrl: imageUrl.isEmpty
+                  ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                  : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$imageUrl',
+              venueName: service['name'],
+              location: service['location'],
+              type: service['type'].toString(),
+            ),
+          );
+        },
+        itemCount: _tempListings['listings'].length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+      ),
+    );
+  }
+
   Widget _buildSearchBar() {
     return Container(
       margin: EdgeInsets.only(top: Screen.max(context) * 0.05),
@@ -341,11 +349,28 @@ class _SearchServiceState extends State<SearchService>
           children: [
             SearchBox(
               focusNode: searchFocus,
-              onclick: () => searchFocus.requestFocus(),
+              onclick: () {
+                searchFocus.requestFocus();
+              },
               hint: 'Start typing to search',
               controller: _searchController,
               width: Screen.width(context) * 0.75,
-              onChanged: (value) => _performSearch(),
+              onChanged: (value) {
+                setState(() {
+                  _searchWithFilters();
+                  _tempListings['listings'] = _tempListings['listings']
+                      .where((element) => element['name']
+                          .toString()
+                          .toLowerCase()
+                          .contains(value.toLowerCase()))
+                      .toList();
+                });
+                if (value.isNotEmpty) {
+                    print("🔍 [DEBUG] User searched: $value");
+
+                  Logs.logUserActivity("search", {"search_query": value});
+                }
+              },
             ),
             Column(
               children: [
@@ -357,6 +382,7 @@ class _SearchServiceState extends State<SearchService>
                     color: MyColors.white,
                   ),
                 ),
+                // Only show additional filters button if we have additional filters
                 if (_appliedFilters.contains("Category") &&
                     _additionalFilters.isNotEmpty)
                   IconButton(
@@ -456,14 +482,42 @@ class _SearchServiceState extends State<SearchService>
           );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Text(
-        'No results found',
-        style: GoogleFonts.montserrat(
-          color: MyColors.white,
-          fontSize: 18,
-        ),
+    return Scaffold(
+      backgroundColor: MyColors.dark,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: SizedBox(
+              width: Screen.width(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: UI_Management.headerHeight),
+                  _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              MyColors.white,
+                            ),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            _buildSearchBar(),
+                            if (_appliedFilters.isNotEmpty) _buildFilterChips(),
+                            _buildServiceList(),
+                          ],
+                        ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Header(key: _headerKey),
+          ),
+        ],
       ),
     );
   }
@@ -475,6 +529,15 @@ class _SearchServiceState extends State<SearchService>
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        final keyboard = MediaQuery.of(context).viewInsets.bottom;
+        final isKeyboardVisible = keyboard > 0;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (isKeyboardVisible && scrollController.hasClients) {
+            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+          }
+        });
+
         return Container(
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           constraints: BoxConstraints(maxHeight: Screen.max(context) * 0.8),
@@ -553,6 +616,8 @@ class _SearchServiceState extends State<SearchService>
                                 _filtersToApply.contains("Category")) {
                               _filtersToApply.remove('Category');
                             }
+                            Logs.logUserActivity(
+                                "category_click", {"selected_category": text});
                           },
                         )),
                     _buildFilterSection(
@@ -573,20 +638,19 @@ class _SearchServiceState extends State<SearchService>
                         valuecontroller: _dateController,
                       ),
                     ),
-                    SizedBox(height: Screen.height(context) * 0.1),
+                    SizedBox(height: keyboard + Screen.height(context) * 0.1),
                   ],
                 ),
               ),
               Positioned(
-                bottom: 0,
-                child: ColoredButton(
-                  text: 'Apply Filters',
-                  onPressed: () {
-                    _applyFilters();
-                    Navigator.pop(context);
-                  },
-                ),
-              )
+                  bottom: 0,
+                  child: ColoredButton(
+                    text: 'Apply Filters',
+                    onPressed: () {
+                      _applyFilters();
+                      Navigator.pop(context);
+                    },
+                  ))
             ],
           ),
         );
@@ -611,6 +675,45 @@ class _SearchServiceState extends State<SearchService>
         child,
       ],
     );
+  }
+
+  void _applyFilters() {
+    setState(() {
+      _appliedFilters.clear();
+      _appliedFilters.addAll(_filtersToApply);
+    });
+
+    // Fetch additional filters when category is selected
+    if (_appliedFilters.contains("Category") &&
+        _categoryController.text != "All") {
+      _fetchAdditionalFilters(_categoryController.text);
+    }
+
+    final filterData = {
+      "applied_filters": _appliedFilters,
+      "filter_values": {
+        if (_appliedFilters.contains("Ratings"))
+          "Ratings": {
+            "min": _ratingController.minValue,
+            "max": _ratingController.maxValue
+          },
+        if (_appliedFilters.contains("Category"))
+          "Category": _categoryController.text,
+        if (_appliedFilters.contains("Price"))
+          "Price": {
+            "min": _rangeSliderController.minValue,
+            "max": _rangeSliderController.maxValue
+          },
+        if (_appliedFilters.contains("Location"))
+          "Location": _locationController.text,
+        if (_appliedFilters.contains("Date")) "Date": _dateController.text,
+      }
+    };
+
+    Logs.logUserActivity("filter", filterData);
+    print("🎯 [DEBUG] Applied filters: $filterData");
+
+    _searchWithFilters();
   }
 
   void _showAdditionalFilterPopup(BuildContext context) {
@@ -674,7 +777,7 @@ class _SearchServiceState extends State<SearchService>
                   ColoredButton(
                     text: 'Apply Filters',
                     onPressed: () {
-                      _performSearch();
+                      setState(() => _searchWithFilters());
                       Navigator.pop(context);
                     },
                   )
@@ -684,33 +787,6 @@ class _SearchServiceState extends State<SearchService>
           },
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
-      headerKey: _headerKey,
-      callback: (renderbox) => _updateHeaderHeight(renderbox),
-    );
-
-    return Scaffold(
-      backgroundColor: MyColors.dark,
-      body: Column(
-        children: [
-          Header(key: _headerKey),
-          Expanded(
-            child: Column(
-              children: [
-                _buildSearchBar(),
-                _buildTabBar(),
-                if (_appliedFilters.isNotEmpty) _buildFilterChips(),
-                Expanded(child: _buildContent()),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

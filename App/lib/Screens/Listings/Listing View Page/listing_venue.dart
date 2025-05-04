@@ -60,6 +60,8 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered Venue View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -87,6 +89,8 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+          print("🚪 [DEBUG] Exited Venue View. Duration: $duration seconds");
+
       Logs.logUserActivity("category_view_duration", {
         "category": "Venue",
         "listing_id": _listingId!,

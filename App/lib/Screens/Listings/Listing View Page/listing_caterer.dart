@@ -58,6 +58,8 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered Caterers View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -90,6 +92,8 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
+          print("🚪 [DEBUG] Exited Caterers View. Duration: $duration seconds");
+
     }
   }
 
