@@ -148,11 +148,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         await _uploadGroupImage();
       }
 
+      final currentUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
+
       await FirebaseFirestore.instance.collection('groups').add({
         'groupName': _groupNameController.text,
         'participants': _selectedUsers.map((u) => u['userId']).toList(),
         'groupImageUrl': _groupImageUrl ?? '',
         'createdAt': FieldValue.serverTimestamp(),
+        'adminId': currentUserId, // Set creator as admin
       });
 
       if (mounted) {
