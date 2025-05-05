@@ -44,6 +44,8 @@ class _CategoryViewSaloonState extends State<CategoryViewSaloon> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+      print("📍 [DEBUG] Entered Saloon View at $_entryTime");
+
     _initializeUI();
   }
 
@@ -71,6 +73,8 @@ class _CategoryViewSaloonState extends State<CategoryViewSaloon> {
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+          print("🚪 [DEBUG] Exited Saloon View. Duration: $duration seconds");
+
       Logs.logUserActivity("category_view_duration", {
         "category": "Saloon",
         "listing_id": _listingId!,
