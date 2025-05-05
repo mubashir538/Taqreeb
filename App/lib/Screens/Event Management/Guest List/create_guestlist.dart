@@ -23,7 +23,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         return Container(
           padding: EdgeInsets.all(maxThing * 0.02),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius:
                 BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
           ),
@@ -88,7 +88,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                 children: [
                   Header(
                     heading: 'Create Guest List',
-                    image: MyImages.GuestList,
+                    image: MyImages.guestList,
                   ),
                   Container(
                       margin: EdgeInsets.all(maxThing * 0.02),

@@ -34,7 +34,7 @@ class Add360Video extends StatelessWidget {
 
   Widget _buildVideoCard(BuildContext context) {
     return Card(
-      color: MyColors.DarkLighter,
+      color: MyColors.darkLighter,
       child: Padding(
         padding: EdgeInsets.all(Screen.width(context) * 0.04),
         child: SizedBox(

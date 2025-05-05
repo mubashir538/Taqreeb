@@ -16,7 +16,7 @@ class ProgressBar extends StatelessWidget {
       MyColors.whiteDarker
     ];
     for (int i = 0; i < progress; i++) {
-      c[i] = MyColors.Yellow;
+      c[i] = MyColors.yellow;
     }
 
     return Container(

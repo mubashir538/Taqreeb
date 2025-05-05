@@ -113,7 +113,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
               style: _buildTextStyle(
                 fontSize: 0.02,
                 fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             content: Column(
@@ -303,7 +303,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             style: _buildTextStyle(
               fontSize: 0.025,
               fontWeight: FontWeight.w600,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
           Padding(
@@ -343,7 +343,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
           'Add-On ${index + 1}',
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         _buildEditableField(

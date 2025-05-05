@@ -15,7 +15,8 @@ class BusinessSignupDescription extends StatefulWidget {
   const BusinessSignupDescription({super.key});
 
   @override
-  State<BusinessSignupDescription> createState() => _BusinessSignupDescriptionState();
+  State<BusinessSignupDescription> createState() =>
+      _BusinessSignupDescriptionState();
 }
 
 class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
@@ -38,12 +39,12 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -60,13 +61,11 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
     if (!_validateDescription()) return;
 
     await MyStorage.saveToken(
-      _descriptionController.text, 
-      MyTokens.bsdescription
-    );
-    
+        _descriptionController.text, MyTokens.bsdescription);
+
     if (mounted) {
       Navigator.pushNamed(
-        context, 
+        context,
         '/ProfilePictureUpload',
         arguments: {'type': 'Business'},
       );
@@ -110,7 +109,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: UI_Management.headerHeight),
+                      SizedBox(height: UImanagement.headerHeight),
                       DescriptionBox(
                         valueController: _descriptionController,
                         onChanged: _updateCharacterCount,

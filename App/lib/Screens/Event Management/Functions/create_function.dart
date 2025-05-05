@@ -162,7 +162,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
@@ -270,7 +270,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
@@ -285,7 +285,7 @@ class _CreateFunctionState extends State<CreateFunction> {
             child: Header(
               key: headerKey,
               heading: _isEditMode ? 'Edit Function' : 'Create Function',
-              image: MyImages.Function,
+              image: MyImages.function,
             ),
           ),
           _buildSubmitButton(),
@@ -302,7 +302,7 @@ class _CreateFunctionState extends State<CreateFunction> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             Column(
               children: [
                 SizedBox(height: Screen.height(context) * 0.04),
@@ -391,7 +391,7 @@ class _CreateFunctionState extends State<CreateFunction> {
       child: Container(
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),

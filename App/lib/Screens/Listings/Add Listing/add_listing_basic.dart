@@ -36,7 +36,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   void _initializeScreen() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -45,7 +45,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() => UI_Management.headerHeight = renderbox.size.height);
+    setState(() => UImanagement.headerHeight = renderbox.size.height);
   }
 
   Future<void> _checkPreviousAttempt() async {
@@ -168,7 +168,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -193,7 +193,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             _buildNameField(),
             _buildDescriptionField(),
             _buildCharacterCounter(),

@@ -61,7 +61,7 @@ class _CategoryViewGraphicDesignerState
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -70,7 +70,7 @@ class _CategoryViewGraphicDesignerState
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
@@ -82,7 +82,6 @@ class _CategoryViewGraphicDesignerState
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
-
     }
   }
 
@@ -204,10 +203,9 @@ class _CategoryViewGraphicDesignerState
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -219,7 +217,7 @@ class _CategoryViewGraphicDesignerState
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

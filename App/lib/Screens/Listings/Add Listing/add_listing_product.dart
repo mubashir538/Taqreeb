@@ -32,7 +32,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -40,7 +40,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() => UI_Management.headerHeight = renderbox.size.height);
+    setState(() => UImanagement.headerHeight = renderbox.size.height);
   }
 
   void _navigateToAddProduct() {
@@ -61,7 +61,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -88,7 +88,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
           children: [
             SizedBox(
               height:
-                  (Screen.height(context) * 0.03) + UI_Management.headerHeight,
+                  (Screen.height(context) * 0.03) + UImanagement.headerHeight,
             ),
             _buildTitle(),
             _buildProductsList(),
@@ -106,7 +106,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
         style: GoogleFonts.montserrat(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );
@@ -157,7 +157,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
 
   Widget _buildAddButton() {
     return FloatingActionButton(
-      backgroundColor: MyColors.Yellow,
+      backgroundColor: MyColors.yellow,
       onPressed: _navigateToAddProduct,
       child: Icon(
         Icons.add,

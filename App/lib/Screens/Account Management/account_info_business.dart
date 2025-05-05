@@ -30,12 +30,12 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderbox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderbox.size.height;
+            UImanagement.headerHeight = renderbox.size.height;
           });
         }
       },
@@ -85,7 +85,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   SizedBox(height: Screen.height(context) * 0.04),
                   CircleAvatar(
                     radius: 50,

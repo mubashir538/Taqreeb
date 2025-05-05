@@ -44,7 +44,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
-            print("Cart: ${data['cart']}");
             _bookingList.addAll(data['cart'] ?? []); // Use the stored data
           });
         }
@@ -100,7 +99,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
@@ -158,7 +157,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -173,7 +172,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
             child: Header(
               key: _headerKey,
               heading: "Your Function Details",
-              image: MyImages.CheckList,
+              image: MyImages.checkList,
             ),
           ),
         ],
@@ -187,7 +186,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         width: Screen.width(context),
         child: Column(
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             _isLoading ? _buildLoadingIndicator() : _buildFunctionDetails(),
           ],
         ),
@@ -230,7 +229,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         style: GoogleFonts.montserrat(
           fontSize: Screen.max(context) * 0.03,
           fontWeight: FontWeight.w700,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );
@@ -245,7 +244,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
       width: Screen.width(context) * 0.9,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(16)),
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
       ),
       child: Column(
         children: [
@@ -284,7 +283,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     return Container(
       width: Screen.width(context) * 0.9,
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(16),
           bottomRight: Radius.circular(16),
@@ -337,7 +336,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
               heading,
               style: _buildTextStyle(
                 fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             Text(
@@ -359,7 +358,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
             style: GoogleFonts.montserrat(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w600,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
           Productcard(
@@ -413,7 +412,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         horizontal: Screen.width(context) * 0.03,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(

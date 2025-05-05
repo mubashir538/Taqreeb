@@ -29,7 +29,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
   bool _isGenerating = false;
   bool _isLoadingTemplates = false;
   final Map<String, dynamic> data = {};
-  String CardUrl = '';
+  String cardUrl = '';
   List<Map<String, dynamic>> templates = [];
   String? selectedTemplateId;
 
@@ -174,7 +174,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
         return;
       }
       setState(() {
-        CardUrl = MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+        cardUrl = MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
             response['TempCard'];
         if (templateId != null) {
           selectedTemplateId = templateId;
@@ -215,7 +215,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                       child: Stack(
                         children: [
                           CachedNetworkImage(
-                            imageUrl: CardUrl,
+                            imageUrl: cardUrl,
                             placeholder: (context, url) => const Center(
                               child: CircularProgressIndicator(),
                             ),
@@ -312,7 +312,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                               onPressed: _isSaving
                                   ? null
                                   : () => downloadImage(
-                                      CardUrl, 'Taqreeb Invitation Card.png'),
+                                      cardUrl, 'Taqreeb Invitation Card.png'),
                             ),
                             if (_isSaving)
                               const CircularProgressIndicator(
@@ -328,7 +328,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                               width: Screen.width(context) * 0.45,
                               onPressed: _isSharing
                                   ? null
-                                  : () => shareImageFromUrl(CardUrl),
+                                  : () => shareImageFromUrl(cardUrl),
                             ),
                             if (_isSharing)
                               const CircularProgressIndicator(

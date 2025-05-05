@@ -32,7 +32,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() => UI_Management.headerHeight = renderbox.size.height);
+    setState(() => UImanagement.headerHeight = renderbox.size.height);
   }
 
   @override
@@ -87,7 +87,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -102,7 +102,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
                 children: [
                   SizedBox(
                       height: Screen.max(context) * 0.02 +
-                          UI_Management.headerHeight),
+                          UImanagement.headerHeight),
                   _buildNameField(),
                   _buildDescriptionField(),
                   _buildPriceField(),

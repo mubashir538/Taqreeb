@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -25,7 +27,9 @@ class FirebaseService {
       await _setupTokenHandling();
       _initialized = true;
     } catch (e) {
-      print('FirebaseService initialization failed: $e');
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'FirebaseService initialization failed: $e'}));
       // Consider adding error reporting here
     }
   }
@@ -114,7 +118,9 @@ class FirebaseService {
         );
       }
     } catch (e) {
-      print('Error saving FCM token to backend: $e');
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error saving FCM token to backend: $e'}));
     }
   }
 
@@ -190,7 +196,9 @@ class FirebaseService {
       await _messaging.deleteToken();
       _fcmToken = null;
     } catch (e) {
-      print('Error deleting FCM token: $e');
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error deleting FCM token: $e'}));
     }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -49,7 +48,6 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-      print("📍 [DEBUG] Entered Video Editor View at $_entryTime");
 
     _initializeUI();
   }
@@ -62,7 +60,7 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -71,14 +69,13 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
-          print("🚪 [DEBUG] Exited Video Editor View. Duration: $duration seconds");
 
       Logs.logUserActivity("category_view_duration", {
         "category": "Video Editor",
@@ -205,13 +202,9 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
     );
   }
 
-  Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);
-  }
-
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -223,7 +216,7 @@ class _CategoryViewVideoEditorState extends State<CategoryViewVideoEditor> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

@@ -34,7 +34,7 @@ class MessageChatButton extends StatelessWidget {
             vertical: Screen.max(context) * 0.02),
         width: mywidth == 0 ? Screen.width(context) * 0.9 : mywidth,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(

@@ -30,12 +30,12 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -64,7 +64,6 @@ class _DashboardState extends State<Dashboard> {
     final businessInfo = businessData.businessInfo;
     final listingCount = businessData.businessInfo['listingCount'] ?? 0;
 
-    print('Profile Image: ${businessData.profileImageUrl}');
     final profileImage = businessData.profileImageUrl != null
         ? NetworkImage(businessData.profileImageUrl!)
         : const AssetImage('assets/default_profile.png') as ImageProvider;
@@ -75,7 +74,7 @@ class _DashboardState extends State<Dashboard> {
         vertical: Screen.max(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -100,7 +99,7 @@ class _DashboardState extends State<Dashboard> {
               Text(
                 businessInfo['businessName'] ?? 'No Business Name',
                 style: GoogleFonts.montserrat(
-                  color: MyColors.Yellow,
+                  color: MyColors.yellow,
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w700,
                 ),
@@ -131,7 +130,7 @@ class _DashboardState extends State<Dashboard> {
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
@@ -197,7 +196,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       SizedBox(
                         height: (Screen.height(context) * 0.02) +
-                            UI_Management.headerHeight,
+                            UImanagement.headerHeight,
                       ),
                       Consumer2<BusinessInfoEditViewModel, BusinessData>(
                           builder: (context, viewModel, businessData, child) {

@@ -7,8 +7,6 @@ import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
@@ -22,6 +20,7 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 DateTime? entryTime; // ⏱️ Track view duration
 
 class _HomePageState extends State<HomePage> {
@@ -39,14 +38,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     entryTime = DateTime.now();
-  print("🕒 [DEBUG] User entered HomePage at: $entryTime");
     _initializeHeaderHeight();
     _fetchData();
   }
 
   void _initializeHeaderHeight() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           _changeHeight(renderbox);
@@ -70,7 +68,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchCategories() async {
-    print(await MyStorage.getToken(MyTokens.accessToken));
     await ApiCall.fetchAPI('home/categories/', onSuccess: (token, data) {
       if (mounted) {
         setState(() {
@@ -92,7 +89,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchListings() async {
-    await ApiCall.fetchAPI('home/listings/?page=1&page_size=10', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('home/listings/?page=1&page_size=10',
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
           listings = data['results'];
@@ -111,22 +109,19 @@ class _HomePageState extends State<HomePage> {
 
   void _changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
   void _handleSearch() {
-     final query = _searchController.text.trim();
-  if (query.isNotEmpty) {
-    print("🔍 [DEBUG] User searched: $query");
-    Logs.logUserActivity("search", {"search_query": query});
-  }
+    final query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      Logs.logUserActivity("search", {"search_query": query});
+    }
     Navigator.pushNamed(context, '/SearchService');
   }
 
   void _handleCategoryClick(String categoryName) {
-      print("📂 [DEBUG] Category clicked: $categoryName");
-
     Logs.logUserActivity("category_click", {"category": categoryName});
     Navigator.pushNamed(
       context,
@@ -136,8 +131,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleServiceClick(int serviceId, String serviceName) {
-      print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
-
     Logs.logUserActivity("service_click", {
       "service_id": serviceId,
       "service_name": serviceName,
@@ -156,7 +149,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderbox) {
         _changeHeight(renderbox);
@@ -167,12 +160,12 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: MyColors.dark,
       body: Stack(
         children: [
-          if (UI_Management.headerHeight > 0)
+          if (UImanagement.headerHeight > 0)
             SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   _buildSearchBox(),
                   _isLoading
                       ? _buildLoadingIndicator()
@@ -248,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                   style: GoogleFonts.montserrat(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ],
@@ -279,8 +272,7 @@ class _HomePageState extends State<HomePage> {
     return Center(
       child: ColoredButton(
         onPressed: () {
-              print("🤖 [DEBUG] AI Package Button Clicked");
-    Logs.logUserActivity("ai_package_button_click", {});
+          Logs.logUserActivity("ai_package_button_click", {});
 
           Navigator.pushNamed(context, '/CreateAIPackage');
         },
@@ -305,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                   style: GoogleFonts.montserrat(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ],
@@ -349,19 +341,17 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+
   @override
-void dispose() {
-  if (entryTime != null) {
-    final exitTime = DateTime.now();
-    final duration = exitTime.difference(entryTime!).inSeconds;
-    print("⏳ [DEBUG] User exited HomePage at: $exitTime");
-    print("📊 [DEBUG] Time spent on HomePage: $duration seconds");
+  void dispose() {
+    if (entryTime != null) {
+      final exitTime = DateTime.now();
+      final duration = exitTime.difference(entryTime!).inSeconds;
 
-    Logs.logUserActivity("homepage_view_duration", {
-      "time_spent_seconds": duration,
-    });
+      Logs.logUserActivity("homepage_view_duration", {
+        "time_spent_seconds": duration,
+      });
+    }
+    super.dispose();
   }
-  super.dispose();
-}
-
 }

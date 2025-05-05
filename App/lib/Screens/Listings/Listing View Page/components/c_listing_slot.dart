@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -25,11 +24,10 @@ class _CategorySlotsState extends State<CategorySlots> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-@override
-void initState() {
-  super.initState();
-}
-
+  @override
+  void initState() {
+    super.initState();
+  }
 
   bool _isBooked(DateTime day) {
     return widget.bookedDates.any((date) =>
@@ -49,9 +47,9 @@ void initState() {
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: isBooked
-            ? MyColors.Yellow.withOpacity(0.3)
+            ? MyColors.yellow.withOpacity(0.3)
             : isSelected
-                ? MyColors.Yellow.withOpacity(0.6)
+                ? MyColors.yellow.withOpacity(0.6)
                 : Colors.transparent,
         shape: BoxShape.circle,
       ),
@@ -76,27 +74,27 @@ void initState() {
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
         titleTextStyle: GoogleFonts.montserrat(
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           fontSize: Screen.max(context) * 0.025,
         ),
         leftChevronIcon: Icon(
           Icons.chevron_left,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           size: Screen.max(context) * 0.04,
         ),
         rightChevronIcon: Icon(
           Icons.chevron_right,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           size: Screen.max(context) * 0.04,
         ),
       ),
       daysOfWeekStyle: DaysOfWeekStyle(
         weekdayStyle: GoogleFonts.montserrat(
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           fontSize: Screen.max(context) * 0.02,
         ),
         weekendStyle: GoogleFonts.montserrat(
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           fontSize: Screen.max(context) * 0.02,
         ),
       ),
@@ -115,11 +113,11 @@ void initState() {
           shape: BoxShape.circle,
         ),
         selectedDecoration: BoxDecoration(
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           shape: BoxShape.circle,
         ),
         markerDecoration: BoxDecoration(
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
           shape: BoxShape.circle,
         ),
         // dayDecoration: (date, isSelected, isToday, isBooked) {
@@ -134,7 +132,6 @@ void initState() {
         //                 : Colors.transparent,
         //   );
         // },
-      
       ),
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);

@@ -153,7 +153,7 @@ class _PricingSectionState extends State<PricingSection> {
           style: _buildTextStyle(
             fontSize: 0.015,
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         const SizedBox(height: 4),
@@ -206,7 +206,7 @@ class _PricingSectionState extends State<PricingSection> {
           style: _buildTextStyle(
             fontSize: 0.015,
             fontWeight: FontWeight.w500,
-            color: isYellow ? MyColors.Yellow : MyColors.white,
+            color: isYellow ? MyColors.yellow : MyColors.white,
           ),
         ),
         Text(

@@ -29,7 +29,7 @@ class RecieveMessage extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -82,7 +82,7 @@ class RecieveMessage extends StatelessWidget {
             'www.taqreeb.com', // Replace with your actual domain
             style: GoogleFonts.montserrat(
               fontSize: 12,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ],
@@ -103,7 +103,7 @@ class RecieveMessage extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
             padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(0),
                 bottomLeft: Radius.circular(15),

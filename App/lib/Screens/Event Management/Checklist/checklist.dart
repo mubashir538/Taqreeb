@@ -266,7 +266,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     return Headersecondary(
       heading: "Create CheckList",
       para: "From to-do to done one check at a time!",
-      image: MyImages.CheckList,
+      image: MyImages.checkList,
     );
   }
 
@@ -359,7 +359,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             horizontal: Screen.max(context) * 0.02,
           ),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: MyColors.red,

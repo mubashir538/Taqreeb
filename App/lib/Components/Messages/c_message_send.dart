@@ -29,7 +29,7 @@ class SendMessage extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -82,7 +82,7 @@ class SendMessage extends StatelessWidget {
             'www.taqreeb.com', // Replace with your actual domain
             style: GoogleFonts.montserrat(
               fontSize: 12,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ],

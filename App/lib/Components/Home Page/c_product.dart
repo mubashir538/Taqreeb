@@ -85,7 +85,7 @@ class _ProductBoxState extends State<ProductBox> {
       ),
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -145,7 +145,7 @@ class _ProductBoxState extends State<ProductBox> {
                 Text(
                   widget.productPrice,
                   style: TextStyle(
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                     fontSize: Screen.max(context) * 0.022,
                     fontWeight: FontWeight.bold,
                   ),

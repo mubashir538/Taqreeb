@@ -9,15 +9,15 @@ import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
-class BusinessSignup_BasicInfo extends StatefulWidget {
-  const BusinessSignup_BasicInfo({super.key});
+class BusinessSignupBasicInfo extends StatefulWidget {
+  const BusinessSignupBasicInfo({super.key});
 
   @override
-  State<BusinessSignup_BasicInfo> createState() =>
-      _BusinessSignup_BasicInfoState();
+  State<BusinessSignupBasicInfo> createState() =>
+      _BusinessSignupBasicInfoState();
 }
 
-class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
+class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
   GlobalKey headerKey = GlobalKey();
 
   @override
@@ -27,7 +27,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
       final provider =
           Provider.of<BusinessSignupProvider>(context, listen: false);
       provider.checkPreviousSignup(context);
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
@@ -38,7 +38,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
 
   void changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -56,7 +56,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
                 children: [
                   SizedBox(
                     height: (Screen.height(context) * 0.05) +
-                        UI_Management.headerHeight,
+                        UImanagement.headerHeight,
                   ),
                   Consumer<BusinessSignupProvider>(
                     builder: (context, provider, child) {
@@ -101,7 +101,7 @@ class _BusinessSignup_BasicInfoState extends State<BusinessSignup_BasicInfo> {
               heading: 'Sign Up',
               para:
                   'Unlock Success with Just One Click - Join Our Community Today!',
-              image: MyImages.BusinessSignup,
+              image: MyImages.businessSignup,
             ),
           ),
         ],
