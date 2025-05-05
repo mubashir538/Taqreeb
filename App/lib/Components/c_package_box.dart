@@ -186,7 +186,7 @@ class _PackageBoxState extends State<PackageBox> {
                                 shape: BoxShape.circle,
                                 color: _currentImageIndex == entry.key
                                     ? MyColors.yellow
-                                    : Colors.white.withOpacity(0.4),
+                                    : Colors.white.withAlpha(102),
                               ),
                             ),
                           );

@@ -84,14 +84,14 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
               entryModeIconColor: MyColors.yellow,
 
               // ✅ Highlight selected AM/PM
-              dayPeriodColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              dayPeriodColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return MyColors.red; // <-- highlight selected
                 }
                 return MyColors.dark.withAlpha(127); // unselected
               }),
-              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
-                return states.contains(MaterialState.selected)
+              dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
+                return states.contains(WidgetState.selected)
                     ? Colors.white
                     : Colors.grey[300]!;
               }),
