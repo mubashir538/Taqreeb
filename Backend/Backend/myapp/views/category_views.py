@@ -1,5 +1,4 @@
 import os
-from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from firebase_admin import credentials, firestore, initialize_app
 from .. import models as m
