@@ -10,10 +10,11 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from firebase_admin import credentials, firestore, initialize_app
 
-
 cred = credentials.Certificate(os.getenv('firebase_PATH'))
+print(cred)
 firebase_app = initialize_app(cred)
 db = firestore.client()
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

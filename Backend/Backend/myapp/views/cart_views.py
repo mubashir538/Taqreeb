@@ -1,7 +1,6 @@
 import os
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
-from firebase_admin import credentials, firestore, initialize_app
 from .. import models as m
 from .. import Serializers as s
 from datetime import datetime
@@ -9,10 +8,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, permissions, status
-
-cred = credentials.Certificate(os.getenv('firebase_PATH'))
-firebase_app = initialize_app(cred)
-db = firestore.client()
 
 
 @api_view(['GET'])
@@ -79,9 +74,9 @@ def AddtoBookCart(request):
 @permission_classes([IsAuthenticated])
 def CartItems(request, CartItemsID):
     Listing = m.Listing.objects.get(id = CartItemsID)
-    CartItems = m.CartItems.objects.get(CartItemsID = CartItemsID)
+    CartItems = m.CartItem.objects.get(CartItemsID = CartItemsID)
     ListingSerializer = s.ListingSerializer(Listing, many=True)
-    CartItemsSerializer = s.CartItemsSerializer(CartItems, many = True)
+    CartItemsSerializer = s.CartItemSerializer(CartItems, many = True)
     return Response({'Status': 'Success', 'Listing': ListingSerializer.data, 'Cartitems': CartItemsSerializer.data})
 
 class CartViewSet(viewsets.ModelViewSet):
