@@ -13,11 +13,9 @@ class BusinessInfoEditViewModel with ChangeNotifier {
   File? _selectedImage;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String _token = '';
   String _userId = '';
   bool _isLoading = true;
   String _type = '';
-  bool _hasError = false;
 
   BusinessInfoEditViewModel(this.businessData) {
     initializeWithBusinessData();
@@ -65,7 +63,6 @@ class BusinessInfoEditViewModel with ChangeNotifier {
   Future<void> fetchData(BuildContext context) async {
     if (!_isLoading) {
       _isLoading = true;
-      _hasError = false;
       notifyListeners();
     }
 
@@ -76,7 +73,6 @@ class BusinessInfoEditViewModel with ChangeNotifier {
       await ApiCall.fetchAPI(
         'businessowner/accountInfo/$_userId/$_type',
         onSuccess: (token, data) {
-          _token = token;
           if (data['businessInfo'] != null) {
             businessData.updateBusinessInfo(
               data['businessInfo'],
@@ -89,12 +85,10 @@ class BusinessInfoEditViewModel with ChangeNotifier {
                 data['businessInfo']['Description'] ?? '';
           }
           _isLoading = false;
-          _hasError = false;
           notifyListeners();
         },
         onError: () {
           _isLoading = false;
-          _hasError = true;
           notifyListeners();
           if (Navigator.of(context).mounted) {
             MyScaffold(text: 'Failed to load business info').show(context);
@@ -104,7 +98,6 @@ class BusinessInfoEditViewModel with ChangeNotifier {
       );
     } catch (e) {
       _isLoading = false;
-      _hasError = true;
       notifyListeners();
       if (Navigator.of(context).mounted) {
         MyScaffold(text: 'Error: ${e.toString()}').show(context);

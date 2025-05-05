@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -50,7 +49,6 @@ class _CategoryViewGraphicDesignerState
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-    print("📍 [DEBUG] Entered Graphic Designer View at $_entryTime");
 
     _initializeUI();
   }
@@ -84,7 +82,6 @@ class _CategoryViewGraphicDesignerState
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
-          print("🚪 [DEBUG] Exited Graphic Designer View. Duration: $duration seconds");
 
     }
   }

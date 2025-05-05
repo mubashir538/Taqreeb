@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taqreeb/core/providers/forgotPasswordProvider.dart';
+import 'package:taqreeb/core/providers/forgot_password_provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';

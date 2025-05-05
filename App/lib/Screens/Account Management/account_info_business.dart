@@ -5,7 +5,7 @@ import 'package:taqreeb/Components/c_business_categories.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
-import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
+import 'package:taqreeb/core/providers/business_info_view_model.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -59,10 +59,9 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<BusinessAccountInfoViewModel>(context);
     final businessData = Provider.of<BusinessData>(context);
-    print("Current loading state: ${viewModel.isLoading}");
 
     // Safely get data with null checks
-    final userInfo = viewModel.userInfo ?? {};
+    final userInfo = viewModel.userInfo;
     final businessInfo = businessData.businessInfo;
     final items = viewModel.items;
 

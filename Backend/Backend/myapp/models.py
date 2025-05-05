@@ -40,11 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     age = m.IntegerField(null=True)
     gender = m.CharField(max_length=6,null=True)
     date_joined = m.DateTimeField(auto_now_add=True, null=True)
-    # profilePicture = m.CharField(max_length=100)
-    # warning_reason = m.CharField(max_length=255, null=True, blank=True)
-    # warned_at = m.DateTimeField(null=True, blank=True)
-    # is_banned = m.BooleanField(default=False)
-    # objects = CustomUserManager()
+
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
     def __str__(self):
@@ -78,14 +74,14 @@ class TempInvitationCard(m.Model):
 
 class BusinessOwner(m.Model):
     id = m.AutoField(primary_key=True)
-    cnic = m.TextField(null=True)
+    cnic = m.TextField(blank=True)
     userID = m.ForeignKey(User,on_delete=m.CASCADE)
-    CNICFront = m.CharField(max_length=100,null=True)
-    CNICBack = m.CharField(max_length=100,null=True)
+    CNICFront = m.CharField(max_length=100,blank=True)
+    CNICBack = m.CharField(max_length=100,blank=True)
     businessName = m.CharField(max_length=100)
-    profilepic = m.CharField(max_length=200,null=True)
+    profilepic = m.CharField(max_length=200,blank=True)
     Description = m.CharField(max_length=1100)
-    status = m.TextField(null=True)
+    status = m.TextField(blank=True)
     balance = m.IntegerField(default=0)
 
 class FCMTokens(m.Model):
@@ -96,12 +92,12 @@ class FCMTokens(m.Model):
 class Freelancer(m.Model):
     id = m.AutoField(primary_key=True)
     userID = m.ForeignKey(User,on_delete=m.CASCADE)
-    businessName = m.CharField(max_length=100,null=True)
+    businessName = m.CharField(max_length=100,blank=True)
     portfolioLink= m.CharField(max_length=100)
-    cnic = m.CharField(max_length=50,null=True)
-    profilepic = m.CharField(max_length=100,null=True)
+    cnic = m.CharField(max_length=50,blank=True)
+    profilepic = m.CharField(max_length=100,blank=True)
     Description = m.CharField(max_length=1100)
-    status = m.TextField(null=True)
+    status = m.TextField(blank=True)
     balance = m.IntegerField(default=0)
 
 class Listing(m.Model):
@@ -116,7 +112,7 @@ class Listing(m.Model):
     rating = m.DecimalField(max_digits=2, decimal_places=1,default=0)
     ratingCount = m.IntegerField(default=0)
     basicPrice = m.IntegerField()
-    type = m.TextField(null=True)
+    type = m.TextField(blank=True)
     status = m.CharField(max_length=20,default='active')
     booked_dates = m.JSONField(default=list)
     created_at = m.DateTimeField(default=timezone.now)
@@ -164,7 +160,7 @@ class GuestList(m.Model):
     type = m.CharField(max_length=100)
     name = m.CharField(max_length=100)
     members = m.IntegerField(null=True)
-    phone = m.CharField(max_length=100,null=True)
+    phone = m.CharField(max_length=100,blank=True)
     eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
     functionId = m.IntegerField(null=True)
 
@@ -352,6 +348,7 @@ class CarRenters(m.Model):
     ]
     serviceType = m.CharField(max_length=100, choices=SERVICE_TYPE_CHOICES, default='Economy')
 
+from .constants.model_constants import not_provided
 class Decorators(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing, on_delete=m.CASCADE)
@@ -365,7 +362,7 @@ class Decorators(m.Model):
     ]
     CATERING_CHOICES = [
         ('Provided', 'Provided'),
-        ('Not Provided', 'Not Provided'),
+        (not_provided, not_provided),
     ]
     STAFF_CHOICES = [
         ('Male', 'Male'),
@@ -397,16 +394,6 @@ class UserActivity(m.Model):
         ('category_click', 'Clicked Category'),
         ('service_click', 'Clicked Service'),
         ('filter', 'Applied Filter'),
-        # ('event_create', 'Created Event'),
-        # ('event_edit', 'Edited Event'),
-        # ('event_view', 'Viewed Event'),
-        # ('invite_card_view', 'Viewed Invitation Card'),
-        # ('service_view_duration', 'Time Spent on Service Page'),
-        # ('category_view_duration', 'Time Spent on Category Page'),
-        # ('book_venue', 'Booked Venue'),  # ✅ NEW ACTION ADDED
-        # ('homepage_view_duration', 'Time Spent on Home Page'),
-        # ('ai_package_button_click', 'AI Package Button Clicked'),
-        # ('user_register', 'User Registered'),
     ]
     user = m.ForeignKey(User, on_delete=m.CASCADE)
     action = m.CharField(max_length=50, choices=ACTIONS)
@@ -435,7 +422,7 @@ class BookingCart(m.Model):
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
     functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
     slot = m.DateTimeField(null=True)
-    type = m.CharField(max_length=100,null=True)
+    type = m.CharField(max_length=100,blank=True)
     status = m.CharField(max_length=100)
 
 User = get_user_model()

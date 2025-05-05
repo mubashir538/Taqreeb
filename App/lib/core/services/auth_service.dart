@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taqreeb/core/services/api_service.dart' show MyApi;
-import 'package:taqreeb/firebase_options.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -103,7 +102,6 @@ class AuthService {
           'user_location'
         ],
       );
-      print('executed');
 
       if (result.status == LoginStatus.success) {
         final OAuthCredential credential =
@@ -118,7 +116,8 @@ class AuthService {
       }
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Facebook login error: $e'});
+          endpoint: 'error/application',
+          body: {'error': 'Facebook login error: $e'});
     }
     return null;
   }
@@ -129,7 +128,8 @@ class AuthService {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error logging out: $e'});
+          endpoint: 'error/application',
+          body: {'error': 'Error logging out: $e'});
     }
   }
 

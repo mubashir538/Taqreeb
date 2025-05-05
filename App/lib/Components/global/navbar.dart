@@ -86,7 +86,6 @@ class _NavbarState extends State<Navbar> {
           icon,
           width: size,
           height: size,
-          color: widget.selectedIndex == index ? Colors.yellow : Colors.white,
         ),
       ),
     );
