@@ -43,12 +43,12 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           if (mounted) {
             setState(() {
-              UI_Management.headerHeight = renderbox.size.height;
+              UImanagement.headerHeight = renderbox.size.height;
             });
           }
         },
@@ -81,7 +81,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: UI_Management.headerHeight),
+                    SizedBox(height: UImanagement.headerHeight),
                     if (!_initialLoadComplete)
                       Center(
                           child:
@@ -136,7 +136,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                       decoration: TextDecoration.underline,
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.Yellow,
+                      color: MyColors.yellow,
                     ),
                   ),
                 ),

@@ -44,7 +44,7 @@ class FunctionCard extends StatelessWidget {
         width: Screen.width(context) * 0.9,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20)),
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
         ),
         child: Column(
           children: [

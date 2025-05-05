@@ -5,8 +5,8 @@ import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class AIPackage_FunctionDetail extends StatelessWidget {
-  const AIPackage_FunctionDetail({super.key});
+class AIPackageFunctionDetail extends StatelessWidget {
+  const AIPackageFunctionDetail({super.key});
 
   @override
   Widget build(BuildContext context) {

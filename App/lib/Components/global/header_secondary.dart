@@ -54,7 +54,7 @@ class _HeadersecondaryState extends State<Headersecondary> {
                     style: GoogleFonts.montserrat(
                         fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w700,
-                        color: MyColors.Yellow),
+                        color: MyColors.yellow),
                   ),
                   SizedBox(
                       height: widget.para.isNotEmpty || widget.image.isNotEmpty

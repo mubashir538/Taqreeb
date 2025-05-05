@@ -78,7 +78,6 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchEventTypes();
   }
@@ -177,7 +176,6 @@ class _CreateEventState extends State<CreateEvent> {
           .show(context);
       return;
     }
-    
 
     final response = await _sendEventRequest();
     _handleResponse(response);
@@ -194,7 +192,6 @@ class _CreateEventState extends State<CreateEvent> {
   Future<Map<String, dynamic>> _sendEventRequest() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    print('type.text: ${_formData.type.text}');
 
     final response = await MyApi.postRequest(
       endpoint: _isEditMode ? 'EditEvent/' : 'CreateEvent/',
@@ -296,7 +293,7 @@ class _CreateEventState extends State<CreateEvent> {
               Headersecondary(
                 heading: _isEditMode ? "Edit Event" : "Create Event",
                 para: "Plan your event effortlessly!",
-                image: MyImages.SingupPng,
+                image: MyImages.singupPng,
               ),
               Container(
                 margin: EdgeInsets.symmetric(
@@ -320,7 +317,7 @@ class _CreateEventState extends State<CreateEvent> {
           child: Container(
             width: Screen.width(context),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -360,7 +357,6 @@ class _CreateEventState extends State<CreateEvent> {
           onChanged: (value) {
             if (mounted) {
               setState(() => _formData.type.text = value);
-              print('Event Type: ${_formData.type.text}');
             }
           },
         ),

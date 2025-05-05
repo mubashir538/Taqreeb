@@ -123,7 +123,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         title: Text('Order Summary'),
         backgroundColor: MyColors.dark,
       ),
-      backgroundColor: MyColors.DarkLighter,
+      backgroundColor: MyColors.darkLighter,
       body: FutureBuilder<Map<String, dynamic>>(
         future: _userFuture,
         builder: (context, snapshot) {
@@ -266,7 +266,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Text(
                   '\$${_getItemPrice(item).toStringAsFixed(2)}',
                   style: GoogleFonts.montserrat(
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -332,7 +332,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           Text(
             '\$${amount.toStringAsFixed(2)}',
             style: GoogleFonts.montserrat(
-              color: isTotal ? MyColors.Yellow : MyColors.white,
+              color: isTotal ? MyColors.yellow : MyColors.white,
               fontSize: isTotal
                   ? Screen.max(context) * 0.02
                   : Screen.max(context) * 0.018,

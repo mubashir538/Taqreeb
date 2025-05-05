@@ -156,7 +156,7 @@ class _EventDetailsState extends State<EventDetails> {
         children: [
           const Headersecondary(
             heading: "Your Event Details",
-            image: MyImages.EventDetails,
+            image: MyImages.eventDetails,
           ),
           SizedBox(height: Screen.height(context) * 0.03),
           _isLoading ? _buildLoadingIndicator() : _buildEventContent(),
@@ -193,7 +193,7 @@ class _EventDetailsState extends State<EventDetails> {
       style: GoogleFonts.montserrat(
         fontSize: Screen.max(context) * 0.03,
         fontWeight: FontWeight.w700,
-        color: MyColors.Yellow,
+        color: MyColors.yellow,
       ),
     );
   }
@@ -319,7 +319,7 @@ class _EventDetailsState extends State<EventDetails> {
         horizontal: Screen.width(context) * 0.03,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -352,7 +352,7 @@ class _EventDetailsState extends State<EventDetails> {
     return GoogleFonts.montserrat(
       fontSize: Screen.max(context) * 0.017,
       fontWeight: fontWeight,
-      color: fontWeight == FontWeight.w600 ? MyColors.Yellow : MyColors.white,
+      color: fontWeight == FontWeight.w600 ? MyColors.yellow : MyColors.white,
     );
   }
 }

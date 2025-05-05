@@ -75,7 +75,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: MyColors.DarkLighter,
+      color: MyColors.darkLighter,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -129,7 +129,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                                   index < _selectedRatings[booking['id']]!
                               ? Icons.star
                               : Icons.star_border,
-                          color: MyColors.Yellow,
+                          color: MyColors.yellow,
                         ),
                         onPressed: () => _setRating(booking['id'], index + 1),
                       );
@@ -154,7 +154,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                 padding: EdgeInsets.only(top: 8),
                 child: Text(
                   'Thanks for your review!',
-                  style: TextStyle(color: MyColors.Yellow),
+                  style: TextStyle(color: MyColors.yellow),
                 ),
               ),
           ],
@@ -170,7 +170,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
       case 'cancelled':
         return MyColors.red;
       case 'pending':
-        return MyColors.Yellow;
+        return MyColors.yellow;
       default:
         return MyColors.white;
     }

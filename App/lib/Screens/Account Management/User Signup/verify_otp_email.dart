@@ -41,12 +41,12 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -150,7 +150,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                     children: [
                       SizedBox(
                           height: (MediaQuery.of(context).size.height * 0.1) +
-                              UI_Management.headerHeight),
+                              UImanagement.headerHeight),
                       OTPBoxes(
                         onChanged: (otp) => _enteredOTP = otp,
                       ),

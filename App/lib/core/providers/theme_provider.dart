@@ -9,7 +9,7 @@ class ThemeProvider with ChangeNotifier {
 
   Future<void> loadTheme() async {
     final theme = await MyStorage.getToken(MyTokens.theme) ?? "";
-    if (theme == MyTokens.Light) {
+    if (theme == MyTokens.light) {
       _themeMode = ThemeMode.light;
     } else {
       _themeMode = ThemeMode.dark;
@@ -20,7 +20,7 @@ class ThemeProvider with ChangeNotifier {
   Future<void> switchTheme() async {
     if (_themeMode == ThemeMode.dark) {
       _themeMode = ThemeMode.light;
-      await MyStorage.saveToken(MyTokens.Light, MyTokens.theme);
+      await MyStorage.saveToken(MyTokens.light, MyTokens.theme);
     } else {
       _themeMode = ThemeMode.dark;
       await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);

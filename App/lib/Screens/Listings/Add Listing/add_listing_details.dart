@@ -47,7 +47,7 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -56,7 +56,7 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderbox.size.height);
+      setState(() => UImanagement.headerHeight = renderbox.size.height);
     }
   }
 
@@ -96,7 +96,7 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -125,7 +125,7 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
         children: [
           SizedBox(
               height:
-                  (Screen.height(context) * 0.04) + UI_Management.headerHeight),
+                  (Screen.height(context) * 0.04) + UImanagement.headerHeight),
           _formController.isLoading
               ? _buildLoadingIndicator()
               : _buildFormFields(),

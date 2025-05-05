@@ -29,7 +29,7 @@ class _TransactionCardState extends State<TransactionCard> {
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(

@@ -102,7 +102,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
                 height: Screen.height(context) * 0.07,
                 width: Screen.height(context) * 0.07,
                 decoration: BoxDecoration(
-                  color: MyColors.DarkLighter,
+                  color: MyColors.darkLighter,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: _focusNodes[index].hasFocus

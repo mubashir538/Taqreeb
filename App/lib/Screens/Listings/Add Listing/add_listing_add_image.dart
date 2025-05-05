@@ -38,7 +38,7 @@ class _AddImageState extends State<AddImage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -47,7 +47,7 @@ class _AddImageState extends State<AddImage> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderbox.size.height);
+      setState(() => UImanagement.headerHeight = renderbox.size.height);
     }
   }
 
@@ -84,7 +84,7 @@ class _AddImageState extends State<AddImage> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -104,7 +104,7 @@ class _AddImageState extends State<AddImage> {
           Column(
             children: [
               SizedBox(
-                  height: UI_Management.headerHeight +
+                  height: UImanagement.headerHeight +
                       Screen.height(context) * 0.02),
               _buildImageUploadButton(),
               const SizedBox(height: 10),
@@ -125,7 +125,7 @@ class _AddImageState extends State<AddImage> {
       child: Container(
         height: Screen.height(context) * 0.2,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -149,7 +149,7 @@ class _AddImageState extends State<AddImage> {
                       width: Screen.width(context) * 0.9,
                       padding: EdgeInsets.all(Screen.max(context) * 0.02),
                       decoration: BoxDecoration(
-                        color: MyColors.DarkLighter,
+                        color: MyColors.darkLighter,
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Icon(

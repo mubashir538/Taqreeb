@@ -9,16 +9,15 @@ import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class ForgotPassword_NewPassword extends StatefulWidget {
-  const ForgotPassword_NewPassword({super.key});
+class ForgotPasswordNewPassword extends StatefulWidget {
+  const ForgotPasswordNewPassword({super.key});
 
   @override
-  State<ForgotPassword_NewPassword> createState() =>
-      _ForgotPassword_NewPasswordState();
+  State<ForgotPasswordNewPassword> createState() =>
+      _ForgotPasswordNewPasswordState();
 }
 
-class _ForgotPassword_NewPasswordState
-    extends State<ForgotPassword_NewPassword> {
+class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();

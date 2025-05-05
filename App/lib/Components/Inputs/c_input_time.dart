@@ -70,18 +70,18 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.dark(
-              primary: MyColors.Yellow,
+              primary: MyColors.yellow,
               onPrimary: MyColors.dark,
-              surface: MyColors.DarkLighter,
+              surface: MyColors.darkLighter,
               onSurface: MyColors.white,
             ),
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: MyColors.DarkLighter,
+              backgroundColor: MyColors.darkLighter,
               hourMinuteTextColor: MyColors.white,
-              dialHandColor: MyColors.Yellow,
+              dialHandColor: MyColors.yellow,
               dialBackgroundColor: MyColors.dark.withAlpha(127),
               hourMinuteColor: MyColors.dark.withAlpha(127),
-              entryModeIconColor: MyColors.Yellow,
+              entryModeIconColor: MyColors.yellow,
 
               // ✅ Highlight selected AM/PM
               dayPeriodColor: MaterialStateColor.resolveWith((states) {
@@ -128,11 +128,11 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
           vertical: maxDimension * 0.015,
         ),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: widget.focusNode?.hasFocus ?? false
-                ? MyColors.Yellow
+                ? MyColors.yellow
                 : MyColors.whiteDarker,
             width: 1,
           ),
@@ -154,7 +154,7 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
             ),
             Icon(
               Icons.access_time,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
               size: maxDimension * 0.02,
             ),
           ],

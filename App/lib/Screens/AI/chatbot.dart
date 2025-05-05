@@ -9,10 +9,10 @@ class EventPlanningChatbot extends StatefulWidget {
   const EventPlanningChatbot({super.key});
 
   @override
-  _EventPlanningChatbotState createState() => _EventPlanningChatbotState();
+  EventPlanningChatbotState createState() => EventPlanningChatbotState();
 }
 
-class _EventPlanningChatbotState extends State<EventPlanningChatbot> {
+class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
   bool _showVenueCard = false;

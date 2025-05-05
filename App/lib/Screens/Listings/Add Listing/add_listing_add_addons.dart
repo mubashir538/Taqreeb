@@ -33,7 +33,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -42,7 +42,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -69,7 +69,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -81,7 +81,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _buildNameField(),
                 _buildPriceField(),
                 _buildPerHeadQuestion(),

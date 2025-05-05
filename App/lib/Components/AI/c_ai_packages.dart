@@ -41,7 +41,7 @@ class AIPackage extends StatelessWidget {
                 spreadRadius: 1,
                 offset: Offset(2, 2))
           ],
-          color: MyColors.DarkLighter),
+          color: MyColors.darkLighter),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

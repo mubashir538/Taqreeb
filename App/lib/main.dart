@@ -33,7 +33,7 @@ import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
 import 'package:taqreeb/Screens/Event%20Management/Invitation/createInvitation.dart';
-import 'package:taqreeb/Screens/Event%20Management/Invitation/viewInvitationCard.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/view_invitation_card.dart';
 import 'package:taqreeb/Screens/Globals/no_internet.dart';
 import 'package:taqreeb/Screens/Globals/settings.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
@@ -166,7 +166,7 @@ class _MainAppState extends State<MainApp> {
     return {
       '/': (context) => SplashScreen(),
       '/AIPackage_EventDetail': (context) => AiPackageEventDetail(),
-      '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
+      '/AIPackage_FunctionDetail': (context) => AIPackageFunctionDetail(),
       '/AccountInfo': (context) => MainScreen(index: 3),
       '/AccountInfoEdit': (context) => AccountInfoEdit(),
       '/Add360video': (context) => Add360Video(),
@@ -185,8 +185,8 @@ class _MainAppState extends State<MainApp> {
       '/BusinessAccountInfo': (context) => MainScreen(index: 3),
       '/BusinessBookings': (context) => BusinessBookingsScreen(),
       '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
-      '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
-      '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
+      '/BusinessSignup_BasicInfo': (context) => BusinessSignupBasicInfo(),
+      '/BusinessSignup_CNICUpload': (context) => BusinessSignupCNICUpload(),
       '/BusinessSignup_Description': (context) => BusinessSignupDescription(),
       '/CartScreen': (context) => CartScreen(),
       '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),
@@ -209,8 +209,8 @@ class _MainAppState extends State<MainApp> {
       '/CreateFunction': (context) => CreateFunction(),
       '/CreateGroup': (context) => CreateGroupScreen(),
       '/CreateGuestList': (context) => CreateGuestList(),
-      '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
-      '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),
+      '/CreateGuestList_AddFamily': (context) => CreateGuestListAddFamily(),
+      '/CreateGuestList_AddPerson': (context) => CreateGuestListAddPerson(),
       '/CreateGuestList_List': (context) => CreateGuestListList(),
       '/CreateInvitation': (context) => CreateInvitation(),
       '/Dashboard': (context) => Dashboard(),
@@ -218,10 +218,10 @@ class _MainAppState extends State<MainApp> {
       '/EditFunction': (context) => CreateFunction(),
       '/EventDetails': (context) => EventDetails(),
       '/ForgotPassword_EmailorPhoneInput': (context) =>
-          ForgotPassword_EmailorPhoneInput(),
-      '/ForgotPassword_NewPassword': (context) => ForgotPassword_NewPassword(),
+          ForgotPasswordEmailorPhoneInput(),
+      '/ForgotPassword_NewPassword': (context) => ForgotPasswordNewPassword(),
       '/ForgotPassword_VerifyCode': (context) => ForgotPasswordVerifyCode(),
-      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignup_BasicInfo(),
+      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignupBasicInfo(),
       '/FreelancerSignup_Description': (context) =>
           FreelancerSignupDescription(),
       '/FunctionDetail': (context) => FunctionDetail(),
@@ -252,6 +252,4 @@ class _MainAppState extends State<MainApp> {
       '/search_new_user': (context) => NewUserSearch(),
     };
   }
-
-
 }

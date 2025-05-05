@@ -34,7 +34,7 @@ class BookingStatusChip extends StatelessWidget {
       case 'cancelled':
         return MyColors.red;
       case 'pending':
-        return MyColors.Yellow;
+        return MyColors.yellow;
       case 'completed':
         return MyColors.green;
       default:

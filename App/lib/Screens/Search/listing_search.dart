@@ -66,7 +66,7 @@ class _SearchServiceState extends State<SearchService> {
     _entryTime = DateTime.now();
 
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        UI_Management.getHeaderHeight(
+        UImanagement.getHeaderHeight(
             headerKey: _headerKey,
             callback: (renderbox) => _updateHeaderHeight(renderbox)));
   }
@@ -97,7 +97,7 @@ class _SearchServiceState extends State<SearchService> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -488,7 +488,7 @@ class _SearchServiceState extends State<SearchService> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   _isLoading
                       ? Center(
                           child: CircularProgressIndicator(
@@ -537,7 +537,7 @@ class _SearchServiceState extends State<SearchService> {
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           constraints: BoxConstraints(maxHeight: Screen.max(context) * 0.8),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
@@ -664,7 +664,7 @@ class _SearchServiceState extends State<SearchService> {
           style: GoogleFonts.montserrat(
             fontSize: Screen.max(context) * 0.02,
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         child,
@@ -730,7 +730,7 @@ class _SearchServiceState extends State<SearchService> {
                     style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: MyColors.Yellow,
+                      color: MyColors.yellow,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -745,7 +745,7 @@ class _SearchServiceState extends State<SearchService> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: MyColors.Yellow,
+                                color: MyColors.yellow,
                               ),
                             ),
                             CheckBoxQuestion(

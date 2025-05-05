@@ -33,7 +33,7 @@ class AIFunctions extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            color: MyColors.DarkLighter),
+            color: MyColors.darkLighter),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

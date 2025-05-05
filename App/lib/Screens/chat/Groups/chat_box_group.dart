@@ -195,7 +195,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color:
-                              isSentByMe ? MyColors.red : MyColors.DarkLighter,
+                              isSentByMe ? MyColors.red : MyColors.darkLighter,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -216,7 +216,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                             return Container(
                               height: 150,
                               width: 200,
-                              color: MyColors.DarkLighter,
+                              color: MyColors.darkLighter,
                               child: const Center(
                                   child: CircularProgressIndicator()),
                             );
@@ -225,7 +225,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                             return Container(
                               height: 150,
                               width: 200,
-                              color: MyColors.DarkLighter,
+                              color: MyColors.darkLighter,
                               child: const Icon(Icons.error, color: Colors.red),
                             );
                           },
@@ -237,7 +237,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         child: Text(
                           _formatTimestamp(timestamp),
                           style: GoogleFonts.montserrat(
-                            color: MyColors.DarkLighter,
+                            color: MyColors.darkLighter,
                             fontSize: 12,
                           ),
                         ),
@@ -258,7 +258,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.image, color: MyColors.Yellow),
+            icon: Icon(Icons.image, color: MyColors.yellow),
             onPressed: _sendImage,
           ),
           Expanded(
@@ -266,7 +266,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               controller: _messageController,
               decoration: InputDecoration(
                 hintText: "Type a message",
-                fillColor: MyColors.DarkLighter,
+                fillColor: MyColors.darkLighter,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),

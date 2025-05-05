@@ -63,14 +63,12 @@ class _ChatBoxState extends State<ChatBox> {
       if (args.containsKey('type')) {
         _type = args['type'];
         _listing = args['listing'];
-        print('${_listing['Listing']}');
       }
       if (_type.toLowerCase() == 'Business'.toLowerCase()) {
         _messageCollection = 'BusinessChats';
       } else if (_type.toLowerCase() == 'Freelancer'.toLowerCase()) {
         _messageCollection = 'FreelancerChats';
       } else {
-        print(_type.toLowerCase());
         _messageCollection = 'chats';
       }
 
@@ -156,7 +154,6 @@ class _ChatBoxState extends State<ChatBox> {
         messageData['type'] = _listing['Listing']['type'];
       }
 
-      print(_messageCollection);
       // Add message to chat collection
       await _firestore
           .collection(_messageCollection)
@@ -354,8 +351,6 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
   Widget _buildMessagesList() {
-    print('_message Collection: ${_messageCollection}');
-    print('messages: ${_getChatId()}');
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection(_messageCollection)
@@ -364,7 +359,6 @@ class _ChatBoxState extends State<ChatBox> {
           .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        print(snapshot.data!.docs);
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -429,7 +423,7 @@ class _ChatBoxState extends State<ChatBox> {
       margin: EdgeInsets.only(bottom: 8.0),
       padding: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
@@ -480,7 +474,7 @@ class _ChatBoxState extends State<ChatBox> {
                       '', // Replace with your actual domain
                   style: GoogleFonts.montserrat(
                     fontSize: 12,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ],
@@ -507,7 +501,7 @@ class _ChatBoxState extends State<ChatBox> {
         Row(
           children: [
             IconButton(
-              icon: Icon(Icons.image, color: MyColors.Yellow),
+              icon: Icon(Icons.image, color: MyColors.yellow),
               onPressed: _sendImage,
             ),
             Expanded(
@@ -515,7 +509,7 @@ class _ChatBoxState extends State<ChatBox> {
                 controller: _messageController,
                 decoration: InputDecoration(
                   hintText: "Type a message",
-                  fillColor: MyColors.DarkLighter,
+                  fillColor: MyColors.darkLighter,
                   filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),

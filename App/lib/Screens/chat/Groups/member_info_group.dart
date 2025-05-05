@@ -60,7 +60,7 @@ class MembersScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
       ),
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),

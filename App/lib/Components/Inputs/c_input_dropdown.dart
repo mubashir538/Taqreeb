@@ -49,9 +49,9 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
             borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
-          fillColor: MyColors.DarkLighter,
+          fillColor: MyColors.darkLighter,
         ),
-        dropdownColor: MyColors.DarkLighter,
+        dropdownColor: MyColors.darkLighter,
         style: GoogleFonts.montserrat(
           color: MyColors.white,
           fontSize: Screen.width(context) * 0.035,

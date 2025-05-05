@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknow_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -60,7 +60,6 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-      print("📍 [DEBUG] Entered Venue View at $_entryTime");
 
     _initializeUI();
   }
@@ -73,7 +72,7 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -82,14 +81,13 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
-          print("🚪 [DEBUG] Exited Venue View. Duration: $duration seconds");
 
       Logs.logUserActivity("category_view_duration", {
         "category": "Venue",
@@ -237,7 +235,7 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -249,7 +247,7 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -105,7 +104,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         title: Text('Secure Payment'),
         backgroundColor: MyColors.dark,
       ),
-      backgroundColor: MyColors.DarkLighter,
+      backgroundColor: MyColors.darkLighter,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(Screen.width(context) * 0.05),
         child: Column(
