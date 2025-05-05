@@ -1,3 +1,9 @@
+from .. import models as m
+from .. import Serializers as s
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def CreateFunction(request):
@@ -49,9 +55,6 @@ def EditFunction(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def DeleteFunction(request):
-    # id = request.data.get('FunctionId')
-    # DeleteFunction = md.Functions.objects.get(id=id)
-    # DeleteFunction.delete()
     m.BookingCart.objects.all().delete()
     return Response({'status':'success'})
 

@@ -1,3 +1,10 @@
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .. import models as m
+from firebase_admin import messaging
+
 def send_notification(token, title, body,image):
     print(token)
     print(title)
@@ -19,34 +26,28 @@ def send_notification(request):
         if not all([receiver_id, sender_id, message]):
             return Response({'status': 'error', 'message': 'Missing required fields'}, status=400)
         
-        # Get sender info
         try:
             sender = m.User.objects.get(id=sender_id)
             sender_name = f"{sender.firstName} {sender.lastName}".strip()
         except m.User.DoesNotExist:
             return Response({'status': 'error', 'message': 'Sender not found'}, status=404)
         
-        # Get receiver tokens
         receiver_tokens = m.FCMTokens.objects.filter(userid=receiver_id)
         if not receiver_tokens.exists():
             return Response({'status': 'success', 'message': 'No tokens found for receiver'})
         
-        # Send notifications
         success_count = 0
         for token in receiver_tokens:
             try:
-                # Validate token format before sending
-                if not token.token or len(token.token) < 50:  # Basic validation
+                if not token.token or len(token.token) < 50: 
                     continue
                     
-                # Create notification
                 notification = messaging.Notification(
                     title=sender_name,
                     body=message,
                     image=sender.profilePicture if sender.profilePicture else None
                 )
                 
-                # Create message
                 message = messaging.Message(
                     notification=notification,
                     token=token.token,
@@ -58,15 +59,12 @@ def send_notification(request):
                     }
                 )
                 
-                # Send message
                 response = messaging.send(message)
                 success_count += 1
                 print(f"Notification sent to {token.token}: {response}")
                 
             except Exception as e:
                 print(f"Failed to send notification to {token.token}: {str(e)}")
-                # Optionally remove invalid tokens
-                # token.delete()
         
         return Response({
             'status': 'success',

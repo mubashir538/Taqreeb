@@ -1,3 +1,17 @@
+import datetime
+from django.db import transaction
+from django.db.models import Sum
+from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from .. import models as m
+from .. import Serializers as s
+from myapp.models import UserActivity
+from django.db.models import Q
+from datetime import timezone
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def addTransaction(request):
@@ -11,7 +25,6 @@ def addTransaction(request):
         package = m.Packages.objects.get(id=packageId)
         listing = m.Listing.objects.get(id=package.listingId)
         
-        # Create booking if bookingId not provided
         booking = None
         if bookingId:
             booking = m.Booking.objects.get(id=bookingId)
@@ -26,7 +39,6 @@ def addTransaction(request):
         
         if listing.ownerID:
             owner = m.BusinessOwner.objects.get(id=listing.ownerID)
-            # Create business transaction
             m.BusinessTransaction.objects.create(
                 ownerb=owner,
                 amount=amount,
@@ -34,7 +46,6 @@ def addTransaction(request):
                 info=f"Payment for package #{package.id}",
                 status='Completed'
             )
-            # Create user transaction
             m.Transaction.objects.create(
                 sender=user,
                 receiverb=owner,
@@ -45,7 +56,6 @@ def addTransaction(request):
             )
         else:
             owner = m.Freelancer.objects.get(id=listing.freelancerID)
-            # Create business transaction
             m.BusinessTransaction.objects.create(
                 ownerf=owner,
                 amount=amount,
@@ -53,7 +63,6 @@ def addTransaction(request):
                 info=f"Payment for package #{package.id}",
                 status='Completed'
             )
-            # Create user transaction
             m.Transaction.objects.create(
                 sender=user,
                 receiverf=owner,
@@ -100,7 +109,6 @@ def getTransactions(request, id, type):
                 status='Completed'
             ).order_by('-date')
         
-        # Calculate totals
         total_amount = transactions.aggregate(Sum('amount'))['amount__sum'] or 0
         monthly_amount = transactions.filter(
             date__year=now.year,
@@ -231,7 +239,6 @@ def mark_booking_reviewed(request):
     except m.Booking.DoesNotExist:
         return Response({'status': 'error', 'message': 'Booking not found'}, status=404)
 
-# views.py
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def process_payment(request):
@@ -244,21 +251,17 @@ def process_payment(request):
         if not all([order_id, amount]):
             return Response({'status': 'error', 'message': 'Missing required fields'}, status=400)
         
-        # Get the order
         order = m.Order.objects.get(id=order_id, user=request.user)
         
-        # Create transaction records
         if order.listing:
             listing = order.listing
             if listing.ownerID:
-                # Business owner transaction
                 m.BusinessTransaction.objects.create(
                     ownerb=listing.ownerID,
                     amount=amount,
                     type='booking_payment',
                     info=f"Payment for order #{order.id}"
                 )
-                # User transaction
                 m.Transaction.objects.create(
                     sender=request.user,
                     receiverb=listing.ownerID,
@@ -267,7 +270,6 @@ def process_payment(request):
                     package=order.package if order.package else None
                 )
             else:
-                # Freelancer transaction
                 m.BusinessTransaction.objects.create(
                     ownerf=listing.freelancerID,
                     amount=amount,
@@ -282,12 +284,10 @@ def process_payment(request):
                     package=order.package if order.package else None
                 )
         
-        # Update order status
         order.payment_status = 'paid_in_full' if is_full_payment else 'deposit_paid'
         order.status = 'confirmed'
         order.save()
         
-        # Update all bookings in this order
         bookings = m.Booking.objects.filter(order=order)
         bookings.update(status='confirmed')
         UserActivity.objects.create(
@@ -317,32 +317,26 @@ def process_payment(request):
 @permission_classes([IsAuthenticated])
 def update_order_status(request):
     try:
-        # Get request data
         order_id = request.data.get('order_id')
         new_status = request.data.get('status')
         
-        # Validate required fields
         if not all([order_id, new_status]):
             return Response({'status': 'error', 'message': 'Missing order_id or status'}, status=400)
         
-        # Get the order with related bookings
         order = get_object_or_404(
             m.Order.objects.select_related('cart').prefetch_related('bookings'),
             id=order_id
         )
         
-        # Verify ownership (business owner or freelancer)
         is_owner = False
         if request.user.is_authenticated:
             if hasattr(request.user, 'businessowner'):
-                # Check if any booking belongs to this business owner
                 is_owner = order.bookings.filter(
                     Q(listing__ownerID__userID=request.user) |
                     Q(package__listingId__ownerID__userID=request.user) |
                     Q(product__listingId__ownerID__userID=request.user)
                 ).exists()
             elif hasattr(request.user, 'freelancer'):
-                # Check if any booking belongs to this freelancer
                 is_owner = order.bookings.filter(
                     Q(listing__freelancerID__userID=request.user) |
                     Q(package__listingId__freelancerID__userID=request.user) |
@@ -352,28 +346,22 @@ def update_order_status(request):
         if not is_owner and order.user != request.user:
             return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
         
-        # Validate status transition
         valid_statuses = ['pending', 'confirmed', 'completed', 'cancelled']
         if new_status not in valid_statuses:
             return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
         
-        # Prevent invalid transitions
         if order.status == 'completed' and new_status != 'completed':
             return Response({'status': 'error', 'message': 'Completed orders cannot be modified'}, status=400)
         
         if order.status == 'cancelled' and new_status != 'cancelled':
             return Response({'status': 'error', 'message': 'Cancelled orders cannot be modified'}, status=400)
         
-        # Process the update
         with transaction.atomic():
-            # Update order status
             order.status = new_status
             order.save(update_fields=['status'])
             
-            # Update all related bookings
             bookings = order.bookings.all()
             bookings.update(status=new_status)
-            # Log user activity after status update
             if new_status == 'completed':
                 UserActivity.objects.create(
                     user=request.user,
@@ -395,20 +383,16 @@ def update_order_status(request):
                     timestamp=now()
                 )
 
-            # If cancelling, handle refunds and availability
             if new_status == 'cancelled':
                 for booking in bookings:
-                    # Free up booked dates if this was a listing
                     if booking.listing and booking.booking_date:
                         booking_date_str = booking.booking_date.isoformat()
                         if booking_date_str in booking.listing.booked_dates:
                             booking.listing.booked_dates.remove(booking_date_str)
                             booking.listing.save()
             
-            # If completing, create transactions for business owners/freelancers
             elif new_status == 'completed':
                 for booking in bookings:
-                    # Determine the recipient (business owner or freelancer)
                     recipient = None
                     if booking.listing:
                         recipient = booking.listing.ownerID or booking.listing.freelancerID
@@ -418,7 +402,6 @@ def update_order_status(request):
                         recipient = booking.product.listingId.ownerID or booking.product.listingId.freelancerID
                     
                     if recipient:
-                        # Create business transaction
                         if hasattr(recipient, 'businessowner'):
                             m.BusinessTransaction.objects.create(
                                 ownerb=recipient,

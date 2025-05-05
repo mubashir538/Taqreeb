@@ -1,13 +1,13 @@
-from datetime import timezone
-from django.db.models import Q
-from .. import models as m
-from .. import Serializers as s
-import random as rd
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import viewsets, permissions, status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+# from datetime import timezone
+# from django.db.models import Q
+# from .. import models as m
+# from .. import Serializers as s
+# import random as rd
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.response import Response
+# from rest_framework import viewsets, permissions, status
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.response import Response
 
 
 # class CartViewSet(viewsets.ModelViewSet):
@@ -215,24 +215,24 @@ from rest_framework.response import Response
 # @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 # def update_booking_status(request, booking_id):
-    try:
-        booking = m.Booking.objects.get(id=booking_id)
+#     try:
+#         booking = m.Booking.objects.get(id=booking_id)
         
-        # Verify the requesting user owns the listing/product/package
-        if not (
-            (booking.listing and booking.listing.ownerID.userID == request.user) or
-            (booking.package and booking.package.listingId.ownerID.userID == request.user) or
-            (booking.product and booking.product.listingId.ownerID.userID == request.user)
-        ):
-            return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
+#         # Verify the requesting user owns the listing/product/package
+#         if not (
+#             (booking.listing and booking.listing.ownerID.userID == request.user) or
+#             (booking.package and booking.package.listingId.ownerID.userID == request.user) or
+#             (booking.product and booking.product.listingId.ownerID.userID == request.user)
+#         ):
+#             return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
             
-        new_status = request.data.get('status')
-        if new_status not in [choice[0] for choice in m.Booking.STATUS_CHOICES]:
-            return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
+#         new_status = request.data.get('status')
+#         if new_status not in [choice[0] for choice in m.Booking.STATUS_CHOICES]:
+#             return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
             
-        booking.status = new_status
-        booking.save()
+#         booking.status = new_status
+#         booking.save()
         
-        return Response({'status': 'success'})
-    except m.Booking.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Booking not found'}, status=404)
+#         return Response({'status': 'success'})
+#     except m.Booking.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'Booking not found'}, status=404)

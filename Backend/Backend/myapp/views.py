@@ -1,12 +1,12 @@
-from . import models as m
-from . import Serializers as s
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated,AllowAny
-from datetime import datetime
-import requests as rq
-from rest_framework.response import Response
-from .models import UserActivity
-from django.utils.timezone import now
+# from . import models as m
+# from . import Serializers as s
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.permissions import IsAuthenticated,AllowAny
+# from datetime import datetime
+# import requests as rq
+# from rest_framework.response import Response
+# from .models import UserActivity
+# from django.utils.timezone import now
 
 # @api_view(['GET'])
 # @permission_classes([IsAuthenticated])

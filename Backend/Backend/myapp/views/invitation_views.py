@@ -1,3 +1,20 @@
+import json
+import os
+import difflib
+import random
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from PIL import Image, ImageDraw, ImageFont
+from django_cron import CronJobBase, Schedule
+from datetime import timedelta
+from django.utils import timezone
+from datetime import datetime
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def getInvitationDetails(request):
@@ -39,7 +56,7 @@ def getInvitationDetails(request):
     if data['venueName']:
         data2['venueName'] = data['venueName']
 
-    generator = InvitationGenerator(data2, template_id)  # Pass template_id to generator
+    generator = InvitationGenerator(data2, template_id) 
     cardurl = generator.generate_invitation()
 
     return Response({'status':'success','TempCard':cardurl})
@@ -52,14 +69,12 @@ def getAvailableTemplates(request):
     
     templates = []
     if os.path.exists(bg_dir):
-        # Get all PNG files
         png_files = [f for f in os.listdir(bg_dir) if f.lower().endswith('.png')]
         
         for png_file in png_files:
             base_name = os.path.splitext(png_file)[0]
             json_file = f"{base_name}.json"
             
-            # Check if JSON exists
             json_exists = os.path.exists(os.path.join(bg_dir, json_file))
             
             templates.append({
@@ -77,10 +92,7 @@ class InvitationGenerator:
         media_storage = FileSystemStorage(location=settings.MEDIA_ROOT)
         self.backgrounds_dir = os.path.join(media_storage.location, 'InvitationBackground')
         self.fonts_dir = os.path.join(media_storage.location, 'FontStyles')
-        # self.backgrounds_dir = "InvitationBackground"
-        # self.fonts_dir = "FontStyles"
 
-        # Initialize fonts dictionary with larger sizes
         self.fonts = {
             'bold1': {'size': 54, 'fonts': [], 'selected_font': None},
             'bold2': {'size': 44, 'fonts': [], 'selected_font': None, 'extra_space': 10},
@@ -88,10 +100,8 @@ class InvitationGenerator:
             'script': {'size': 92, 'fonts': [], 'selected_font': None}
         }
         
-        # Load all available fonts from the organized folder structure
         self._load_fonts_from_structure()
         
-        # Select random fonts for each category that will be used throughout
         self._select_fonts_for_categories()
 
     def _load_fonts_from_structure(self):
@@ -114,7 +124,6 @@ class InvitationGenerator:
                         except Exception as e:
                             print(f"Failed to load font {font_path}: {str(e)}")
             
-            # Fallback to Arial if no custom fonts loaded
             if not self.fonts[style]['fonts']:
                 fallback_font = "arialbd.ttf" if 'bold' in style else "arial.ttf"
                 self.fonts[style]['fonts'].append({
@@ -161,14 +170,12 @@ class InvitationGenerator:
         with open(json_path, 'r') as f:
             try:
                 config = json.load(f)
-                if 'color' in config:  # Handle old format
+                if 'color' in config: 
                     config['color1'] = config['color']
                     config['color2'] = config['color']
                 
-                # Convert safe zones to absolute values if they exist
                 if 'safe_zones' in config:
                     safe_zones = config['safe_zones']
-                    # Ensure all safe zone values are present
                     for key in ['xStart', 'xEnd', 'yStart', 'yEnd']:
                         if key not in safe_zones:
                             safe_zones[key] = default_config['safe_zones'][key]
@@ -186,7 +193,6 @@ class InvitationGenerator:
         bg_dir = os.path.join(self.backgrounds_dir, event_type)
         
         if self.template_id:
-            # Use the specified template
             image_path = os.path.join(bg_dir, f"{self.template_id}.png")
             if not os.path.exists(image_path):
                 raise FileNotFoundError(f"Template {self.template_id} not found")
@@ -195,7 +201,6 @@ class InvitationGenerator:
             template_config = self._load_template_config(json_path)
             return image_path, template_config
         else:
-            # Original random selection logic
             images = [f for f in os.listdir(bg_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             selected_image = random.choice(images)
             image_path = os.path.join(bg_dir, selected_image)
@@ -245,12 +250,10 @@ class InvitationGenerator:
         font = self._get_font(font_style)
         lines = text.split('\n')
         
-        # Convert safe zone percentages to absolute values
         safe_left = safe_zones['xStart'] * img_width
         safe_right = safe_zones['xEnd'] * img_width
         safe_width = safe_right - safe_left
         
-        # Use the smaller of max_width or safe_width
         available_width = min(max_width, safe_width) if max_width else safe_width
         
         for line in lines:
@@ -290,7 +293,6 @@ class InvitationGenerator:
                 draw.text((x_position, y_position), line, fill=color, font=font)
                 y_position += int(font.size * 1.5)
                 
-            # Add extra space below bold2 text
             if font_style == 'bold2' and 'extra_space' in self.fonts[font_style]:
                 y_position += self.fonts[font_style]['extra_space']
                 
@@ -307,8 +309,7 @@ class InvitationGenerator:
             secondary_color = template_config['color2']
             safe_zones = template_config['safe_zones']
 
-            # Convert safe zone percentages to absolute values with padding
-            padding = width * 0.03  # 3% padding from safe zone edges
+            padding = width * 0.03 
             safe_left = safe_zones['xStart'] * width + padding
             safe_right = safe_zones['xEnd'] * width - padding
             safe_top = safe_zones['yStart'] * height + padding
@@ -316,12 +317,10 @@ class InvitationGenerator:
             safe_width = safe_right - safe_left
             safe_height = safe_bottom - safe_top
 
-            # Calculate total content height for vertical centering
             event_type = self.data.get('eventType', 'Wedding')
             function_type = self.data.get('functionType', 'Wedding')
             basic_info = self.data.get('basicInfo', {})
 
-            # First calculate all content height
             sections = []
 
             if event_type == 'Wedding':
@@ -405,14 +404,12 @@ class InvitationGenerator:
                 ]
             sections.extend(main_sections)
 
-            # Calculate total height of main content
             main_content_height = 0
             for text, font_style, _ in main_sections:
                 main_content_height += self._calculate_text_block_height(
                     text, font_style, safe_width, width
                 )
 
-            # Calculate program and contact sections height
             program_details = self.data.get('programDetails', [])
             contact_info = self.data.get('contactInfo', [])
 
@@ -423,7 +420,6 @@ class InvitationGenerator:
                 program_header = "Program"
                 program_height += self._calculate_text_block_height(program_header, 'bold1', safe_width/2, width)
 
-                # Create program text
                 program_text = "\n".join([f"{item.get('name', 'Event')}: {item.get('time', '')}" 
                                       for item in program_details])
                 program_height += self._calculate_text_block_height(program_text, 'regular', safe_width/2, width)
@@ -432,10 +428,8 @@ class InvitationGenerator:
                 contact_header = "R.S.V.P"
                 contact_height += self._calculate_text_block_height(contact_header, 'bold1', safe_width/2, width)
 
-                # Create contact text with proper wrapping for names and numbers
                 contact_lines = []
                 for contact in contact_info:
-                    # Split contact into name and number if possible
                     if ":" in contact:
                         name, number = contact.split(":", 1)
                         contact_lines.append(f"{name}:")
@@ -445,26 +439,20 @@ class InvitationGenerator:
                 contact_text = "\n".join(contact_lines)
                 contact_height += self._calculate_text_block_height(contact_text, 'regular', safe_width/2, width)
 
-            # Calculate total content height
             total_content_height = main_content_height + max(program_height, contact_height)
 
-            # Calculate starting y position for vertical centering
             y_start = safe_top + (safe_height - total_content_height) / 2
             y_position = y_start
 
-            # Draw main content
             for text, font_style, color in main_sections:
                 y_position = self._draw_centered_text(
                     draw, text, y_position, font_style, color, 
                     width, safe_zones, safe_width
                 )
 
-            # Draw program and contact sections
             if program_details or contact_info:
                 if program_details and contact_info:
-                        # Calculate column widths and positions to center the combined block
-                        column_gap = padding * 2  # Space between columns
-                        # Measure max width of each column
+                        column_gap = padding * 2 
                         program_font = self._get_font('regular')
                         contact_font = self._get_font('regular')
                         max_program_text = max([draw.textlength(f"{i.get('name', '').capitalize()} ...... {i.get('time', '')}", font=program_font) for i in program_details], default=0)
@@ -478,31 +466,22 @@ class InvitationGenerator:
                             else:
                                 max_contact_text = max(max_contact_text, draw.textlength(c, font=contact_font))
 
-                        # Final widths (add padding between columns)
                         column_gap = padding * 2
                         true_combined_width = max_program_text + column_gap + max_contact_text
 
-                        # Now center based on that width
-
-                        # Calculate total height needed for both sections
                         program_height = self._calculate_section_height(program_details, column_gap)
                         contact_height = self._calculate_section_height(contact_info, column_gap)
                         max_height = max(program_height, contact_height)
 
-                        # Calculate starting positions to center the combined block
-                        start_x = safe_left + (safe_width - true_combined_width) / 2  # Center within safe zone
+                        start_x = safe_left + (safe_width - true_combined_width) / 2  
                         start_y = y_position + (safe_bottom - y_position - max_height) / 2
-                        # Program section (left column)
                         program_x = start_x
                         program_y = start_y
-                        # Draw program header (left aligned in column)
                         program_header = "Program"
                         program_header_font = self._get_font('bold1')
                         draw.text((program_x, program_y), program_header, 
                                  fill=primary_color, font=program_header_font)
                         program_y += program_header_font.size + 20
-
-                        # Draw program items (left aligned)
                         program_font = self._get_font('regular')
                         program_font_size = max(program_font.size - 4, 24)
                         try:
@@ -516,18 +495,15 @@ class InvitationGenerator:
                                      fill=secondary_color, font=program_font)
                             program_y += program_font.size + 10
 
-                        # Contact section (right column)
                         contact_x = program_x + max_program_text + column_gap
                         contact_y = start_y
 
-                        # Draw contact header (left aligned in column)
                         contact_header = "R.S.V.P"
                         contact_header_font = self._get_font('bold1')
                         draw.text((contact_x, contact_y), contact_header, 
                                  fill=primary_color, font=contact_header_font)
                         contact_y += contact_header_font.size + 20
 
-                        # Draw contact items with proper wrapping
                         contact_font = self._get_font('regular')
                         contact_font_size = max(contact_font.size - 4, 24)
                         try:
@@ -538,12 +514,10 @@ class InvitationGenerator:
                         for contact in contact_info:
                             if ":" in contact:
                                 name, number = contact.split(":", 1)
-                                # Draw name
                                 draw.text((contact_x, contact_y), f"{name}:", 
                                          fill=secondary_color, font=contact_font)
                                 contact_y += contact_font.size + 5
 
-                                # Draw number with indentation
                                 draw.text((contact_x + 20, contact_y), number.strip(), 
                                          fill=secondary_color, font=contact_font)
                                 contact_y += contact_font.size + 10
@@ -555,15 +529,12 @@ class InvitationGenerator:
                         y_position = start_y + max_height
             
                 else:
-                    # Single centered section (only program or only contacts)
                     section_content = program_details or contact_info
                     section_title = "Program" if program_details else "Contact"
                     
-                    # Calculate section height for vertical centering
                     section_height = self._calculate_section_height(section_content, safe_width)
                     start_y = y_position + (safe_bottom - y_position - section_height) / 2
                     
-                    # Draw section header (centered)
                     section_header_font = self._get_font('bold1')
                     section_header_width = section_header_font.getlength(section_title)
                     section_header_x = safe_left + (safe_width - section_header_width) / 2
@@ -571,7 +542,6 @@ class InvitationGenerator:
                              fill=primary_color, font=section_header_font)
                     current_y = start_y + section_header_font.size + 20
                     
-                    # Draw section content
                     section_font = self._get_font('regular')
                     section_font_size = max(section_font.size - 4, 24)
                     try:
@@ -580,23 +550,19 @@ class InvitationGenerator:
                         section_font = ImageFont.truetype("arial.ttf", section_font_size)
                     
                     if program_details:
-                        # Left aligned program details
                         for item in program_details:
                             program_text = f"{item.get('name', 'Event')}: {item.get('time', '')}"
                             draw.text((safe_left, current_y), program_text, 
                                      fill=secondary_color, font=section_font)
                             current_y += section_font.size + 10
                     else:
-                        # Left aligned contact info with wrapping
                         for contact in contact_info:
                             if ":" in contact:
                                 name, number = contact.split(":", 1)
-                                # Draw name
                                 draw.text((safe_left, current_y), f"{name}:", 
                                          fill=secondary_color, font=section_font)
                                 current_y += section_font.size + 5
                                 
-                                # Draw number with indentation
                                 draw.text((safe_left + 20, current_y), number.strip(), 
                                          fill=secondary_color, font=section_font)
                                 current_y += section_font.size + 10
@@ -606,37 +572,24 @@ class InvitationGenerator:
                                 current_y += section_font.size + 10
                     
                     y_position = current_y
-            # Construct relative path within MEDIA_ROOT
             relative_path = f"uploads/tempCards/{self.data['uid']}/Card_{event_type}.png"
 
-            # Get the default storage which points to MEDIA_ROOT
             filestorage = FileSystemStorage()
 
-            # Absolute full path on disk
             full_path = os.path.join(filestorage.location, relative_path)
 
-            # Ensure the directory exists
             os.makedirs(os.path.dirname(full_path), exist_ok=True)
-
-            # Save the image to the file system
             img.save(full_path)
             path = filestorage.save(relative_path, open(full_path, 'rb'))
             return filestorage.url(path) 
-            # with open(full_path, 'rb') as f:
-            #     django_file = File(f)
-            #     card = md.TempInvitationCard.objects.create(file=django_file)
-            # # Optional: If you want to return a URL to the image
-            # return card.file.url
         except Exception as e:
             print(f"Error generating invitation: {str(e)}")
             return None
 
-    
-# Helper method to calculate section height
     def _calculate_section_height(self, items, max_width):
         height = 0
         header_font = self._get_font('bold1')
-        height += header_font.size + 20  # Header with spacing
+        height += header_font.size + 20 
         
         content_font = self._get_font('regular')
         content_font_size = max(content_font.size - 4, 24)
@@ -646,16 +599,14 @@ class InvitationGenerator:
             content_font = ImageFont.truetype("arial.ttf", content_font_size)
         
         if isinstance(items, list) and all(isinstance(item, dict) for item in items):
-            # Program details
             for item in items:
                 text = f"{item.get('name', 'Event')}: {item.get('time', '')}"
                 height += self._calculate_text_height(text, content_font, max_width)
         else:
-            # Contact info
             for contact in items:
                 if ":" in contact:
                     name, number = contact.split(":", 1)
-                    height += content_font.size + 5  # Name
+                    height += content_font.size + 5  
                     height += self._calculate_text_height(number.strip(), content_font, max_width - 20)
                 else:
                     height += self._calculate_text_height(contact, content_font, max_width)
@@ -700,10 +651,10 @@ class InvitationGenerator:
             return "a special day"
 
 class DeleteOldTempCardsCronJob(CronJobBase):
-    RUN_EVERY_MINS = 60  # every hour
+    RUN_EVERY_MINS = 60 
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'myapp.delete_old_temp_cards'  # a unique code
+    code = 'myapp.delete_old_temp_cards' 
 
     def do(self):
         cutoff = timezone.now() - timedelta(hours=24)

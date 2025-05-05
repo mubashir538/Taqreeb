@@ -1,3 +1,23 @@
+from django.utils.timezone import now
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from firebase_admin import credentials, firestore, initialize_app, messaging
+import os
+import bcrypt
+from ..models import UserActivity
+from .. import models as m
+import random as rd
+from django.conf import settings
+from .helper_methods import generate_username
+from django.core.files.storage import FileSystemStorage
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.mail import send_mail
+
+cred = credentials.Certificate(os.getenv('firebase_PATH'))
+firebase_app = initialize_app(cred)
+db = firestore.client()
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def AccountSignupPage(request):
@@ -9,7 +29,7 @@ def AccountSignupPage(request):
     city = request.data.get('city')
     gender = request.data.get('gender')
     profilePicture = request.FILES.get('profilePicture')
-    username = generateUsername(firstName,lastName)
+    username = generate_username(firstName,lastName)
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(str(password).encode(),salt)
     password = hashed.decode()
@@ -27,7 +47,6 @@ def AccountSignupPage(request):
 
         user = m.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
-    # After user.save()
     UserActivity.objects.create(
         user=user,
         action='user_register',
@@ -93,12 +112,6 @@ def resendOTPEmail(request):
 def resendOTPPhone(request):
     contactNumber = request.data.get('phone')
     otp = request.data.get('otp')
-    # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    # message = client.messages.create(
-    #     body=f"Your OTP for Taqreeb is {otp}",
-    #     from_=settings.TWILIO_PHONE_NUMBER,
-    #     to=contactNumber
-    # )
     return Response({'status':'success','otp': otp,'contact':contactNumber})
 
 @api_view(['POST'])
@@ -117,17 +130,11 @@ def sendOTPPhone(request):
                 title="Your OTP Code",
                 body=f"Your Taqreeb verification code is {otp}. Do not share it with anyone."
             ),
-            token=contactNumber,  # Phone number should be FCM token from the mobile app
+            token=contactNumber,
         )
 
     response = messaging.send(message)
     print(response)
-    # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    # message = client.messages.create(
-    #     body=f"Your OTP for Taqreeb is {otp}",
-    #     from_=settings.TWILIO_PHONE_NUMBER,
-    #     to=contactNumber
-    # )
     return Response({'status':'success','otp': otp,'contact':contactNumber})
 
 @api_view(['POST'])
@@ -213,7 +220,7 @@ def googleAuth(request):
     if not m.User.objects.filter(email=email).exists():
         firstName = name.split(' ')[0]
         lastName = name.split(' ')[1]
-        username = generateUsername(firstName,lastName)
+        username = generate_username(firstName,lastName)
         if not m.User.objects.filter(email=email).exists():
             m.User(firstName=firstName,lastName=lastName,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
             user = m.User.objects.filter(email=email).first()

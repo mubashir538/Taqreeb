@@ -1,14 +1,13 @@
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def deleteTable(request):
-    # md.Listing.objects.filter(ownerID=None).delete()
-    # listings = md.Listing.objects.all()
-    # for list in listings:
-    #     md.ReviewDetails(listingID=list).save()
     return Response({'status': 'success'})
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def health_check(request):
     return Response({'status': 'ok'}, status=200)
-

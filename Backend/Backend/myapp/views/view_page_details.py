@@ -1,3 +1,10 @@
+from rest_framework.response import Response
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from .. import Serializers as s
+from rest_framework.permissions import IsAuthenticated, AllowAny
+import math
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def PhotographerViewPage(request, listingid):
@@ -15,7 +22,7 @@ def PhotographerViewPage(request, listingid):
     Listingserializer = s.ListingSerializer (Listing, many =False)
     bookings = m.Booking.objects.filter(
             listing_id=listingid,
-            status__in=['confirmed', 'completed']  # Only confirmed/completed bookings
+            status__in=['confirmed', 'completed']
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
@@ -90,7 +97,7 @@ def CatererViewPage(request,listingid):
     Listingserializer = s.ListingSerializer (Listing, many =False)
     bookings = m.Booking.objects.filter(
             listing_id=listingid,
-            status__in=['confirmed', 'completed']  # Only confirmed/completed bookings
+            status__in=['confirmed', 'completed'] 
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
@@ -137,7 +144,7 @@ def VenueViewPage(request, listingid):
     Packageserializer = s.PackagesSerializer( Package, many = True)
     bookings = m.Booking.objects.filter(
             listing_id=listingid,
-            status__in=['confirmed', 'completed']  # Only confirmed/completed bookings
+            status__in=['confirmed', 'completed'] 
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
@@ -192,25 +199,6 @@ def ParlourViewPage(request, listingid):
                     'Addons': Addonsserializer.data,'reviewData':reviewData.data,
     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def BakersViewPage(request, listingid):
-#     bakers = m.BakersAndSweets.objects.get( listingID =listingid)
-#     Listing = m.Listing.objects.get(id = listingid)
-#     Package = m.Packages.objects.filter(listingId = listingid)
-#     Review = m.Review.objects.filter(listingID =listingid)
-#     cakes = m.DesertItems.objects.filter(bakersId = bakers.id)
-#     pic = m.PicturesListings.objects.filter(listingId=listingid)
-#     pictureSerializer = s.PicturesListingSerializers(pic, many=True)
-#     Reviewserializer = s.ReviewSerializer( Review, many = True)
-#     Packageserializer = s.PackagesSerializer( Package, many = True)
-#     serializer = s.BakersAndSweetsSerializer( bakers, many=False)
-#     cakeSerializer  = s.DesertItemsSerializer(cakes, many=True)
-#     Listingserializer = s.ListingSerializer (Listing, many =False)
-#     reviewData= m.ReviewDetails.objects.get(listingID=listingid)
-#     reviewData = s.ReviewDetailsSerializer(reviewData,many=False)
-#     return Response({'status': 'success','View': serializer.data, 'items':cakeSerializer.data,'reviewData':reviewData.data,
-#     'Package': Packageserializer.data,'Review': Reviewserializer.data, 'Listing': Listingserializer.data,'pictures':pictureSerializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -229,7 +217,7 @@ def PhotographyPlacesViewPage(request, listingid):
     Listingserializer = s.ListingSerializer (Listing, many =False)
     bookings = m.Booking.objects.filter(
             listing_id=listingid,
-            status__in=['confirmed', 'completed']  # Only confirmed/completed bookings
+            status__in=['confirmed', 'completed'] 
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
