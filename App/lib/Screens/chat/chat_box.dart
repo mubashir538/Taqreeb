@@ -463,7 +463,7 @@ class _ChatBoxState extends State<ChatBox> {
                   _listing['Listing']['description'] ?? '',
                   style: GoogleFonts.montserrat(
                     fontSize: 14,
-                    color: MyColors.white.withOpacity(0.7),
+                    color: MyColors.white.withAlpha(179),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

@@ -47,9 +47,9 @@ class _CategorySlotsState extends State<CategorySlots> {
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: isBooked
-            ? MyColors.yellow.withOpacity(0.3)
+            ? MyColors.yellow.withAlpha(77)
             : isSelected
-                ? MyColors.yellow.withOpacity(0.6)
+                ? MyColors.yellow.withAlpha(153)
                 : Colors.transparent,
         shape: BoxShape.circle,
       ),
@@ -109,7 +109,7 @@ class _CategorySlotsState extends State<CategorySlots> {
           color: Colors.grey,
         ),
         todayDecoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.5),
+          color: Colors.grey.withAlpha(128),
           shape: BoxShape.circle,
         ),
         selectedDecoration: BoxDecoration(
@@ -124,9 +124,9 @@ class _CategorySlotsState extends State<CategorySlots> {
         //   return BoxDecoration(
         //     shape: BoxShape.circle,
         //     color: isBooked
-        //         ? MyColors.Yellow.withOpacity(0.3)
+        //         ? MyColors.yellow.withOpacity(0.3)
         //         : isSelected
-        //             ? MyColors.Yellow
+        //             ? MyColors.yellow
         //             : isToday
         //                 ? Colors.grey.withOpacity(0.5)
         //                 : Colors.transparent,

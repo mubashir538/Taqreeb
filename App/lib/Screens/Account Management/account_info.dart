@@ -223,7 +223,10 @@ class _AccountInfoState extends State<AccountInfo> {
                 MyIcons.profile,
                 width: size,
                 height: size,
-                color: MyColors.white,
+                colorFilter: ColorFilter.mode(
+                  MyColors.white, // Your desired color
+                  BlendMode.srcIn, // Ensures the SVG takes the specified color
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: Screen.max(context) * 0.02),

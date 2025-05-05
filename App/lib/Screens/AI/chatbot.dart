@@ -159,7 +159,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withAlpha(76),
             spreadRadius: 2,
             blurRadius: 5,
             offset: Offset(0, 3),

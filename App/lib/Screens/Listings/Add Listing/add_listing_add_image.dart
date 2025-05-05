@@ -129,7 +129,7 @@ class _AddImageState extends State<AddImage> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withAlpha(102),
               blurRadius: 4,
               offset: const Offset(2, 2),
             ),
@@ -192,7 +192,7 @@ class _AddImageState extends State<AddImage> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withAlpha(102),
                 blurRadius: 4,
                 offset: const Offset(2, 2),
               ),

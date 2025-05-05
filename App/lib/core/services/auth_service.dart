@@ -42,7 +42,7 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final phone, gender, age;
+        final dynamic phone, gender, age;
         if (data.containsKey('phoneNumbers')) {
           final phoneNumber = data['phoneNumbers'][0]['value'];
           phone = phoneNumber;

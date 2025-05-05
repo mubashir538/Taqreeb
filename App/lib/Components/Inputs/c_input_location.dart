@@ -67,22 +67,24 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
   }
 
   Future<void> _getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+  try {
+    Position position = await Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    );
 
-      setState(() {
-        _currentLocation = "${position.latitude}, ${position.longitude}";
-        _textController.text = _currentLocation;
-        widget.onLocationChanged(_currentLocation);
-      });
-    } catch (e) {
-      MyApi.postRequest(
-          endpoint: 'error/application',
-          body: {'error': 'Error fetching current location: $e'});
-    }
+    setState(() {
+      _currentLocation = "${position.latitude}, ${position.longitude}";
+      _textController.text = _currentLocation;
+      widget.onLocationChanged(_currentLocation);
+    });
+  } catch (e) {
+    MyApi.postRequest(
+        endpoint: 'error/application',
+        body: {'error': 'Error fetching current location: $e'});
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Padding(

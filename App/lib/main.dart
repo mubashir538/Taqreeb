@@ -32,7 +32,7 @@ import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_family.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
-import 'package:taqreeb/Screens/Event%20Management/Invitation/createInvitation.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/create_invitation.dart';
 import 'package:taqreeb/Screens/Event%20Management/Invitation/view_invitation_card.dart';
 import 'package:taqreeb/Screens/Globals/no_internet.dart';
 import 'package:taqreeb/Screens/Globals/settings.dart';

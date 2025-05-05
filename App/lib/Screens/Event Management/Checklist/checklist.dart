@@ -308,7 +308,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           horizontal: Screen.max(context) * 0.02,
         ),
         decoration: BoxDecoration(
-          color: MyColors.red.withOpacity(0.3),
+          color: MyColors.red.withAlpha(77),
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.centerRight,
