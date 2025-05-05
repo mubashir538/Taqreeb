@@ -2,7 +2,6 @@ from django.db import models as m
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import os
 from django.contrib.auth import get_user_model
-from .React.react_models import ReactUser 
 from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):

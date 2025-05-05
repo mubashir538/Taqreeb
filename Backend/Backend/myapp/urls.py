@@ -1,4 +1,7 @@
 from django.urls import path,include
+from django.conf.urls.static import static
+from django.conf import settings
+from .React import react_api as react
 from . import views
 from .views import cart_views as cart
 from .views import wishlist_views as wl
@@ -22,9 +25,6 @@ from .views import chat_views as ch
 from .views import category_views as cat
 from .views import business_views as b
 from .views import activity_views as a
-from django.conf.urls.static import static
-from django.conf import settings
-from .React import react_api as react
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
