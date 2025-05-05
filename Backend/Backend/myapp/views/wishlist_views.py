@@ -1,3 +1,9 @@
+from rest_framework.response import Response
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from .. import Serializers as s
+from rest_framework.permissions import IsAuthenticated
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getWishlist(request,uid):
@@ -20,7 +26,6 @@ def checkWishlist(request):
     listing_id = request.query_params.get('listing')
     
     try:
-        # Check if the wishlist entry exists
         exists = m.Wishlist.objects.filter(
             user_id=userid, 
             listing_id=listing_id

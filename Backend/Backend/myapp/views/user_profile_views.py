@@ -1,3 +1,20 @@
+import os
+from rest_framework.response import Response
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from .. import Serializers as s
+from myapp.models import UserActivity
+from django.utils.timezone import now
+from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from firebase_admin import credentials, firestore, initialize_app
+
+
+cred = credentials.Certificate(os.getenv('firebase_PATH'))
+firebase_app = initialize_app(cred)
+db = firestore.client()
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def AccountInfoPage(request,id):

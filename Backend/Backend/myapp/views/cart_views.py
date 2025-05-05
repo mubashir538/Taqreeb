@@ -1,3 +1,20 @@
+import os
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from firebase_admin import credentials, firestore, initialize_app
+from .. import models as m
+from .. import Serializers as s
+from datetime import datetime
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, permissions, status
+
+cred = credentials.Certificate(os.getenv('firebase_PATH'))
+firebase_app = initialize_app(cred)
+db = firestore.client()
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def showBookCart(request,id):
@@ -22,9 +39,6 @@ def showBookCart(request,id):
         elif i.type == 'Parlor':
             view = m.Parlors.objects.get(listingId=listing.id)
             view = s.ParlorsSerializer(view,many=False).data
-        # elif i.type == 'Baker':
-        #     view = md.BakersAndSweets.objects.get(listingID=listing.id)
-        #     view = s.BakersAndSweetsSerializer(view,many=False).data
         elif i.type == 'PhotographyPlace':
             view = m.PhotographyPlaces.objects.get(listingId=listing.id)
             view = s.PhotographyPlacesSerializer(view,many=False).data

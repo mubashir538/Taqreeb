@@ -1,9 +1,9 @@
-from .. import models as m
-import random as rd
-from rest_framework.decorators import api_view, permission_classes
-from django.core.files.storage import FileSystemStorage
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+# from .. import models as m
+# import random as rd
+# from rest_framework.decorators import api_view, permission_classes
+# from django.core.files.storage import FileSystemStorage
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.response import Response
 
 
 # @api_view(['POST'])

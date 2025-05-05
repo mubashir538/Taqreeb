@@ -1,3 +1,11 @@
+from rest_framework.response import Response
+from django.db.models import Q
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .. import Serializers as s
+from datetime import timezone
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_booking(request):
@@ -7,7 +15,6 @@ def create_booking(request):
         if serializer.is_valid():
             booking = serializer.save(user=request.user)
             
-            # Update booked dates if it's a listing
             if booking.listing:
                 listing = booking.listing
                 booking_date_str = booking.booking_date.isoformat()
@@ -32,7 +39,6 @@ def create_order(request):
         if not cart_items.exists():
             return Response({'status': 'error', 'message': 'Cart is empty'}, status=400)
         
-        # Calculate total amount
         total_amount = 0
         bookings = []
         
@@ -47,7 +53,6 @@ def create_order(request):
                 package = m.Packages.objects.get(id=item.item_id)
                 total_amount += package.price * item.quantity
         
-        # Create order
         order_data = {
             'user': user.id,
             'cart': cart.id,
@@ -59,7 +64,6 @@ def create_order(request):
         if order_serializer.is_valid():
             order = order_serializer.save()
             
-                # Log user activity: Booked Venue
             m.UserActivity.objects.create(
             user=user,
             action='book_venue',
@@ -70,11 +74,10 @@ def create_order(request):
             }
         )
 
-            # Create bookings for each item
             for item in cart_items:
                 booking_data = {
                     'user': user.id,
-                    'payment_amount': 0,  # Will be updated based on payment
+                    'payment_amount': 0,
                     'booking_date': request.data.get('booking_date'),
                 }
                 
@@ -93,7 +96,6 @@ def create_order(request):
                     booking_serializer.save()
                     bookings.append(booking_serializer.data)
             
-            # Clear the cart
             cart.items.all().delete()
             
             return Response({
@@ -119,15 +121,12 @@ def user_bookings(request):
 def cancel_booking(request, booking_id):
     try:
         booking = m.Booking.objects.get(id=booking_id, user=request.user)
-        
-        # Check if booking can be cancelled (not past date)
         if booking.booking_date.date() < timezone.now().date():
             return Response({'status': 'error', 'message': 'Cannot cancel past bookings'}, status=400)
             
         booking.status = 'cancelled'
         booking.save()
         
-        # If it's a listing booking, remove from booked_dates
         if booking.listing:
             listing = booking.listing
             booking_date_str = booking.booking_date.isoformat()
@@ -139,20 +138,18 @@ def cancel_booking(request, booking_id):
     except m.Booking.DoesNotExist:
         return Response({'status': 'error', 'message': 'Booking not found'}, status=404)
     
-# views.py
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def business_bookings(request):
     listings = m.Listing.objects.filter(ownerID__userID=request.user)
-    print(listings)  # Verify this works
+    print(listings)
     
     packages = m.Packages.objects.filter(listingId__in=listings)
-    print(packages)  # Verify this works
+    print(packages)
     
     products = m.Product.objects.filter(listingId__in=listings)
-    print(products)  # Verify this works
+    print(products) 
 
-# Then try each Q object separately
     bookings = m.Booking.objects.filter(
         Q(listing__in=listings) | 
         Q(package__in=packages) | 
@@ -165,3 +162,23 @@ def business_bookings(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def update_booking_status(request, booking_id):
+    try:
+        booking = m.Booking.objects.get(id=booking_id)
+        
+        if not (
+            (booking.listing and booking.listing.ownerID.userID == request.user) or
+            (booking.package and booking.package.listingId.ownerID.userID == request.user) or
+            (booking.product and booking.product.listingId.ownerID.userID == request.user)
+        ):
+            return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
+            
+        new_status = request.data.get('status')
+        if new_status not in [choice[0] for choice in m.Booking.STATUS_CHOICES]:
+            return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
+            
+        booking.status = new_status
+        booking.save()
+        
+        return Response({'status': 'success'})
+    except m.Booking.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Booking not found'}, status=404)

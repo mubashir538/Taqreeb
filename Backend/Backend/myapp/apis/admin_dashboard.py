@@ -1,9 +1,9 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .. import models as md
-from .. import Serializers as s
-from django.utils.timezone import now, timedelta
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.response import Response
+# from .. import models as md
+# from .. import Serializers as s
+# from django.utils.timezone import now, timedelta
 
 
 # @api_view(['GET'])

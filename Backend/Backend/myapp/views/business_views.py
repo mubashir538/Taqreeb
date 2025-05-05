@@ -1,3 +1,18 @@
+from .. import Serializers as s
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.core.files.storage import FileSystemStorage
+from firebase_admin import credentials, firestore, initialize_app
+from django.conf import settings
+import os
+
+
+cred = credentials.Certificate(os.getenv('firebase_PATH'))
+firebase_app = initialize_app(cred)
+db = firestore.client()
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def searchType(request,userid):

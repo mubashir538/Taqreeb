@@ -1,25 +1,25 @@
-import bcrypt
-from django.core.mail import send_mail
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny,IsAuthenticated
-from myapp import models as m
-from django.core.files.storage import FileSystemStorage
-from myapp import Serializers as s
-import re
-import random as rd
-from firebase_admin import credentials, firestore, initialize_app,messaging
-import os
-from django.conf import settings
-from myapp.models import UserActivity
-from django.utils.timezone import now
+# import bcrypt
+# from django.core.mail import send_mail
+# from rest_framework_simplejwt.tokens import RefreshToken
+# from rest_framework.response import Response
+# from rest_framework.decorators import api_view, permission_classes
+# from rest_framework.permissions import AllowAny,IsAuthenticated
+# from myapp import models as m
+# from django.core.files.storage import FileSystemStorage
+# from myapp import Serializers as s
+# import re
+# import random as rd
+# from firebase_admin import credentials, firestore, initialize_app,messaging
+# import os
+# from django.conf import settings
+# from myapp.models import UserActivity
+# from django.utils.timezone import now
 
 
 
-cred = credentials.Certificate(os.getenv('firebase_PATH'))
-firebase_app = initialize_app(cred)
-db = firestore.client()
+# cred = credentials.Certificate(os.getenv('firebase_PATH'))
+# firebase_app = initialize_app(cred)
+# db = firestore.client()
 
 # @api_view(['POST'])
 # @permission_classes([AllowAny])

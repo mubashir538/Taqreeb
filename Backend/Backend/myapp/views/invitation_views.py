@@ -1,3 +1,20 @@
+import json
+import os
+import difflib
+import random
+from .. import models as m
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from PIL import Image, ImageDraw, ImageFont
+from django_cron import CronJobBase, Schedule
+from datetime import timedelta
+from django.utils import timezone
+from datetime import datetime
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def getInvitationDetails(request):
@@ -39,7 +56,7 @@ def getInvitationDetails(request):
     if data['venueName']:
         data2['venueName'] = data['venueName']
 
-    generator = InvitationGenerator(data2, template_id)  # Pass template_id to generator
+    generator = InvitationGenerator(data2, template_id) 
     cardurl = generator.generate_invitation()
 
     return Response({'status':'success','TempCard':cardurl})
@@ -52,14 +69,12 @@ def getAvailableTemplates(request):
     
     templates = []
     if os.path.exists(bg_dir):
-        # Get all PNG files
         png_files = [f for f in os.listdir(bg_dir) if f.lower().endswith('.png')]
         
         for png_file in png_files:
             base_name = os.path.splitext(png_file)[0]
             json_file = f"{base_name}.json"
             
-            # Check if JSON exists
             json_exists = os.path.exists(os.path.join(bg_dir, json_file))
             
             templates.append({
@@ -77,10 +92,7 @@ class InvitationGenerator:
         media_storage = FileSystemStorage(location=settings.MEDIA_ROOT)
         self.backgrounds_dir = os.path.join(media_storage.location, 'InvitationBackground')
         self.fonts_dir = os.path.join(media_storage.location, 'FontStyles')
-        # self.backgrounds_dir = "InvitationBackground"
-        # self.fonts_dir = "FontStyles"
 
-        # Initialize fonts dictionary with larger sizes
         self.fonts = {
             'bold1': {'size': 54, 'fonts': [], 'selected_font': None},
             'bold2': {'size': 44, 'fonts': [], 'selected_font': None, 'extra_space': 10},
@@ -88,10 +100,8 @@ class InvitationGenerator:
             'script': {'size': 92, 'fonts': [], 'selected_font': None}
         }
         
-        # Load all available fonts from the organized folder structure
         self._load_fonts_from_structure()
         
-        # Select random fonts for each category that will be used throughout
         self._select_fonts_for_categories()
 
     def _load_fonts_from_structure(self):
@@ -114,7 +124,6 @@ class InvitationGenerator:
                         except Exception as e:
                             print(f"Failed to load font {font_path}: {str(e)}")
             
-            # Fallback to Arial if no custom fonts loaded
             if not self.fonts[style]['fonts']:
                 fallback_font = "arialbd.ttf" if 'bold' in style else "arial.ttf"
                 self.fonts[style]['fonts'].append({
@@ -161,14 +170,12 @@ class InvitationGenerator:
         with open(json_path, 'r') as f:
             try:
                 config = json.load(f)
-                if 'color' in config:  # Handle old format
+                if 'color' in config: 
                     config['color1'] = config['color']
                     config['color2'] = config['color']
                 
-                # Convert safe zones to absolute values if they exist
                 if 'safe_zones' in config:
                     safe_zones = config['safe_zones']
-                    # Ensure all safe zone values are present
                     for key in ['xStart', 'xEnd', 'yStart', 'yEnd']:
                         if key not in safe_zones:
                             safe_zones[key] = default_config['safe_zones'][key]
@@ -186,7 +193,6 @@ class InvitationGenerator:
         bg_dir = os.path.join(self.backgrounds_dir, event_type)
         
         if self.template_id:
-            # Use the specified template
             image_path = os.path.join(bg_dir, f"{self.template_id}.png")
             if not os.path.exists(image_path):
                 raise FileNotFoundError(f"Template {self.template_id} not found")
@@ -195,7 +201,6 @@ class InvitationGenerator:
             template_config = self._load_template_config(json_path)
             return image_path, template_config
         else:
-            # Original random selection logic
             images = [f for f in os.listdir(bg_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             selected_image = random.choice(images)
             image_path = os.path.join(bg_dir, selected_image)
@@ -245,12 +250,10 @@ class InvitationGenerator:
         font = self._get_font(font_style)
         lines = text.split('\n')
         
-        # Convert safe zone percentages to absolute values
         safe_left = safe_zones['xStart'] * img_width
         safe_right = safe_zones['xEnd'] * img_width
         safe_width = safe_right - safe_left
         
-        # Use the smaller of max_width or safe_width
         available_width = min(max_width, safe_width) if max_width else safe_width
         
         for line in lines:
@@ -290,7 +293,6 @@ class InvitationGenerator:
                 draw.text((x_position, y_position), line, fill=color, font=font)
                 y_position += int(font.size * 1.5)
                 
-            # Add extra space below bold2 text
             if font_style == 'bold2' and 'extra_space' in self.fonts[font_style]:
                 y_position += self.fonts[font_style]['extra_space']
                 
@@ -307,8 +309,7 @@ class InvitationGenerator:
             secondary_color = template_config['color2']
             safe_zones = template_config['safe_zones']
 
-            # Convert safe zone percentages to absolute values with padding
-            padding = width * 0.03  # 3% padding from safe zone edges
+            padding = width * 0.03 
             safe_left = safe_zones['xStart'] * width + padding
             safe_right = safe_zones['xEnd'] * width - padding
             safe_top = safe_zones['yStart'] * height + padding
@@ -316,12 +317,10 @@ class InvitationGenerator:
             safe_width = safe_right - safe_left
             safe_height = safe_bottom - safe_top
 
-            # Calculate total content height for vertical centering
             event_type = self.data.get('eventType', 'Wedding')
             function_type = self.data.get('functionType', 'Wedding')
             basic_info = self.data.get('basicInfo', {})
 
-            # First calculate all content height
             sections = []
 
             if event_type == 'Wedding':
@@ -405,14 +404,12 @@ class InvitationGenerator:
                 ]
             sections.extend(main_sections)
 
-            # Calculate total height of main content
             main_content_height = 0
             for text, font_style, _ in main_sections:
                 main_content_height += self._calculate_text_block_height(
                     text, font_style, safe_width, width
                 )
 
-            # Calculate program and contact sections height
             program_details = self.data.get('programDetails', [])
             contact_info = self.data.get('contactInfo', [])
 
