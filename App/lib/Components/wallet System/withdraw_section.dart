@@ -35,7 +35,6 @@ class _WithDrawSectionState extends State<WithDrawSection> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     convertBanks();
   }

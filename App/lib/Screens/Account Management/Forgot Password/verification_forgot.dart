@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taqreeb/core/providers/ForgotPasswordVerifyCodeViewModel.dart';
+import 'package:taqreeb/core/providers/forgot_password_verify_code_view_model.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';

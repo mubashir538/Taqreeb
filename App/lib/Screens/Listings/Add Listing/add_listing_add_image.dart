@@ -11,7 +11,6 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/icons.dart';
 
 class AddImage extends StatefulWidget {
   const AddImage({super.key});
@@ -278,7 +277,6 @@ class ImageController {
         'addons': _safeJsonEncode(args['addons']),
         'viewData': _safeJsonEncode(args['viewData']), // Added viewData
       };
-      print(_safeJsonEncode(args['viewData']));
 
       // _addCategorySpecificData(data);
 
@@ -287,7 +285,6 @@ class ImageController {
         body: data,
         files: {'pictures': images},
       );
-      print('Executed... $response');
 
       return response ??
           {'status': 'error', 'message': 'No response from server'};
@@ -301,35 +298,6 @@ class ImageController {
       return data != null ? jsonEncode(data) : null;
     } catch (e) {
       return null;
-    }
-  }
-
-  void _addCategorySpecificData(Map<String, dynamic> data) {
-    final category = args['category']?.toString() ?? '';
-
-    final categoryFields = {
-      'Venue': [
-        'venueType',
-        'staff',
-        'guestmaxAllowed',
-        'guestminAllowed',
-        'catering'
-      ],
-      'Photography Place': ['type'],
-      'Decorator': ['decorType', 'catering', 'staff'],
-      'Photographer': ['portfolioLink'],
-      'Graphic Designer': ['portfolioLink'],
-      'Video Editor': ['portfolioLink'],
-      'Caterer': ['serviceType', 'cateringOptions', 'staff', 'expertise'],
-      'Car Renter': ['serviceType'],
-    };
-
-    if (categoryFields.containsKey(category)) {
-      for (final field in categoryFields[category]!) {
-        if (args[field] != null) {
-          data[field] = args[field];
-        }
-      }
     }
   }
 }

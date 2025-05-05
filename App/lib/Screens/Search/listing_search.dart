@@ -64,7 +64,6 @@ class _SearchServiceState extends State<SearchService> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-      print("📍 [DEBUG] Entered ListingsSearch at $_entryTime");
 
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         UI_Management.getHeaderHeight(
@@ -76,7 +75,6 @@ class _SearchServiceState extends State<SearchService> {
   void dispose() {
     if (_entryTime != null) {
     final duration = DateTime.now().difference(_entryTime!).inSeconds;
-    print("🚪 [DEBUG] Exited ListingsSearch. Duration: $duration seconds");
     Logs.logUserActivity("listing_search_view_duration", {
       "time_spent_seconds": duration,
     });
@@ -222,7 +220,6 @@ class _SearchServiceState extends State<SearchService> {
     final entryTime = DateTime.now();
     final serviceId = service['id'];
     final serviceName = service['name'];
-print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
 
     Logs.logUserActivity("service_click",
         {"service_id": serviceId, "service_name": serviceName});
@@ -237,7 +234,6 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
       },
     ).then((_) {
       final duration = DateTime.now().difference(entryTime).inSeconds;
-      print("📊 [DEBUG] Time spent on $serviceName: $duration seconds");
 
       Logs.logUserActivity("service_view_duration", {
         "service_id": serviceId,
@@ -366,7 +362,6 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
                       .toList();
                 });
                 if (value.isNotEmpty) {
-                    print("🔍 [DEBUG] User searched: $value");
 
                   Logs.logUserActivity("search", {"search_query": value});
                 }
@@ -711,7 +706,6 @@ print("🖱️ [DEBUG] Service clicked: $serviceName (ID: $serviceId)");
     };
 
     Logs.logUserActivity("filter", filterData);
-    print("🎯 [DEBUG] Applied filters: $filterData");
 
     _searchWithFilters();
   }

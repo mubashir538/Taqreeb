@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -58,7 +57,6 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-      print("📍 [DEBUG] Entered Caterers View at $_entryTime");
 
     _initializeUI();
   }
@@ -92,7 +90,6 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
-          print("🚪 [DEBUG] Exited Caterers View. Duration: $duration seconds");
 
     }
   }

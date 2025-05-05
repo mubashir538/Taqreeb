@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/user_listings.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
-import 'package:taqreeb/core/providers/BusinessSignupProvider.dart';
-import 'package:taqreeb/core/providers/ForgotPasswordVerifyCodeViewModel.dart';
-import 'package:taqreeb/core/providers/ThemeProvider.dart';
-import 'package:taqreeb/core/providers/businessEditInfoViewModel.dart';
-import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
-import 'package:taqreeb/core/providers/forgotPasswordProvider.dart';
+import 'package:taqreeb/core/providers/business_signup_provider.dart';
+import 'package:taqreeb/core/providers/forgot_password_verify_code_view_model.dart';
+import 'package:taqreeb/core/providers/theme_provider.dart';
+import 'package:taqreeb/core/providers/business_edit_info_view_model.dart';
+import 'package:taqreeb/core/providers/business_info_view_model.dart';
+import 'package:taqreeb/core/providers/forgot_password_provider.dart';
 import 'package:taqreeb/core/services/firebase_service.dart';
 
 class AppInitializer {

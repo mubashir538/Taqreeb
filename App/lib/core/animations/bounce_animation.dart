@@ -6,10 +6,10 @@ class BounceAnimation extends StatefulWidget {
   const BounceAnimation({super.key, required this.child});
 
   @override
-  _BounceAnimationState createState() => _BounceAnimationState();
+  BounceAnimationState createState() => BounceAnimationState();
 }
 
-class _BounceAnimationState extends State<BounceAnimation>
+class BounceAnimationState extends State<BounceAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _bounceAnimation;

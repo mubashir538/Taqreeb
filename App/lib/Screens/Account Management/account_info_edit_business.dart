@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
-import 'package:taqreeb/core/providers/businessEditInfoViewModel.dart';
+import 'package:taqreeb/core/providers/business_edit_info_view_model.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,9 +72,6 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<BusinessInfoEditViewModel>(context);
-    final businessData = Provider.of<BusinessData>(context);
-
     return Scaffold(
       backgroundColor: MyColors.dark,
       body: Stack(

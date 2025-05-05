@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taqreeb/core/providers/ThemeProvider.dart';
+import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
