@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/firebase_options.dart';
 
 class FirebaseService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -75,7 +75,7 @@ class FirebaseService {
   }
 
   static Future<void> _requestPermissions() async {
-    final settings = await _messaging.requestPermission(
+    await _messaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -84,7 +84,6 @@ class FirebaseService {
       provisional: false,
       sound: true,
     );
-
   }
 
   static Future<void> _setupTokenHandling() async {
