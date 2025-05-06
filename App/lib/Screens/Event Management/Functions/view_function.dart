@@ -44,7 +44,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
-w            _bookingList.addAll(data['cart'] ?? []); // Use the stored data
+            _bookingList.addAll(data['cart'] ?? []); // Use the stored data
           });
         }
       },
