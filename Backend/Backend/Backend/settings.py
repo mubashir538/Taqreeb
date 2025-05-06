@@ -188,6 +188,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+from ..myapp.Models.user_models import User
+
 AUTH_USER_MODEL = 'myapp.User'
 
 # SIMPLE_JWT = {
