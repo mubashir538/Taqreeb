@@ -10,7 +10,8 @@ class RecieveMessage extends StatelessWidget {
   final String time;
   final String? imageUrl;
   final String? audioUrl;
-  final Map<String, dynamic>? listing; // Add this line
+  final Map<String, dynamic>? listing;
+  final bool isBold; // Add this parameter
 
   const RecieveMessage({
     super.key,
@@ -18,7 +19,8 @@ class RecieveMessage extends StatelessWidget {
     required this.time,
     this.imageUrl,
     this.audioUrl,
-    this.listing, // Add this line
+    this.listing,
+    this.isBold = false, // Default to false
   });
 
   Widget _buildListingPreview(BuildContext context) {
@@ -131,8 +133,8 @@ class RecieveMessage extends StatelessWidget {
                     textAlign: TextAlign.start,
                     style: GoogleFonts.montserrat(
                       fontSize: Screen.max(context) * 0.015,
-                      fontWeight: FontWeight.w400,
-                      color: MyColors.white,
+                      fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
+                      color: isBold ? MyColors.yellow : MyColors.white,
                     ),
                   ),
                 if (audioUrl != null)

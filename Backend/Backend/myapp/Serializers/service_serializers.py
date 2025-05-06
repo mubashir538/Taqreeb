@@ -1,3 +1,7 @@
+from ..Models import listing_types_models as m
+from ..Models import listing_models as lm
+from rest_framework import serializers as s
+
 class VenueSerializer(s.ModelSerializer):
     class Meta:
         model = m.Venue
@@ -5,7 +9,7 @@ class VenueSerializer(s.ModelSerializer):
 
 class AddOnsSerializer(s.ModelSerializer):
     class Meta:
-        model = m.AddOns
+        model = lm.AddOns
         fields = '__all__'
 
 class CaterersSerializer(s.ModelSerializer):

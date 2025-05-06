@@ -1,7 +1,7 @@
 from rest_framework import serializers as s
 from .listing_serializers import ListingSerializer,PackagesSerializer,ProductsSerializer
 from .ecommerce_serializers import CartItemSerializer
-from .. import models as m
+from ..Models import booking_models as m
 
 class CartSerializer(s.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)

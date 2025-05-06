@@ -1,13 +1,13 @@
-import datetime
-import json
-from . import models as m
-from rest_framework import serializers as s
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import AuthenticationFailed
-from .models import User
-from django.core.exceptions import ValidationError
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# import datetime
+# import json
+# from . import models as m
+# from rest_framework import serializers as s
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+# from rest_framework.exceptions import AuthenticationFailed
+# from .models import User
+# from django.core.exceptions import ValidationError
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 # from .models import User, UserActivity, 
 
 # class CustomJWTAuthentication(JWTAuthentication):

@@ -1,3 +1,6 @@
+from ..Models import business_models as m
+from rest_framework import serializers as s
+
 class BusinessOwnerSerializer(s.ModelSerializer):
     class Meta:
         model = m.BusinessOwner
