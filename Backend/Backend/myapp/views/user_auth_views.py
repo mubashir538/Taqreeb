@@ -2,10 +2,9 @@ from django.utils.timezone import now
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from firebase_admin import credentials, firestore, initialize_app, messaging
-import os
 import bcrypt
 from ..models import UserActivity
+from myapp.firebase_db import db
 from .. import models as m
 import random as rd
 from django.conf import settings
@@ -13,10 +12,6 @@ from .helper_methods import generate_username
 from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
-
-cred = credentials.Certificate(os.getenv('firebase_PATH'))
-firebase_app = initialize_app(cred)
-db = firestore.client()
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

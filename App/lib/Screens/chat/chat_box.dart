@@ -24,6 +24,7 @@ class _ChatBoxState extends State<ChatBox> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final ScrollController _scrollController = ScrollController();
 
   String? _currentUserId;
   String _chatUserId = "";
@@ -31,92 +32,17 @@ class _ChatBoxState extends State<ChatBox> {
   String? _chatName;
   String? _chatUserImage;
   bool _isLoading = true;
-  bool _isMessageSent = true;
   Map<String, dynamic> _listing = {};
   String _messageCollection = '';
   String _type = '';
   bool _isChanged = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_isChanged) return;
-    _isChanged = true;
-    _initializeChatData();
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _initializeChatData() async {
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args == null || args['userId'] == null) {
-      _handleError('Missing chat user ID in route arguments');
-      return;
-    }
-
-    setState(() {
-      if (args.containsKey('type')) {
-        _type = args['type'];
-        _listing = args['listing'];
-      }
-      if (_type.toLowerCase() == 'Business'.toLowerCase()) {
-        _messageCollection = 'BusinessChats';
-      } else if (_type.toLowerCase() == 'Freelancer'.toLowerCase()) {
-        _messageCollection = 'FreelancerChats';
-      } else {
-        _messageCollection = 'chats';
-      }
-
-      _chatUserId = args['userId'].toString();
-      _isLoading = true;
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeChatData();
     });
-
-    await _fetchCurrentUserId();
-    await _fetchChatUserDetails();
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _fetchCurrentUserId() async {
-    _currentUserId = await MyStorage.getToken(MyTokens.userId);
-    if (_currentUserId == null) {
-      _handleError('Failed to get current user ID');
-    }
-  }
-
-  Future<void> _fetchChatUserDetails() async {
-    try {
-      String collectionName = "";
-      if (_type.toLowerCase() == 'Business'.toLowerCase()) {
-        collectionName = 'businessUsers';
-      } else if (_type.toLowerCase() == "Freelancer".toLowerCase()) {
-        collectionName = 'freelanceUsers';
-      } else {
-        collectionName = 'users';
-      }
-      final userDoc =
-          await _firestore.collection(collectionName).doc(_chatUserId).get();
-
-      if (!mounted) return;
-
-      setState(() {
-        _chatName = _type != ''
-            ? _capitalizeName(userDoc['businessName'])
-            : _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
-        _chatUserName = _type != '' ? _type : userDoc['username'];
-        _chatUserImage =
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type != '' ? 'profile' : 'profilePicture']}';
-      });
-    } catch (e) {
-      _handleError('Error fetching chat user details: $e');
-    }
   }
 
   String _capitalizeName(String name) {
@@ -129,10 +55,183 @@ class _ChatBoxState extends State<ChatBox> {
         .join(' ');
   }
 
+  Widget _buildListingPreview() {
+    if (_listing.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Listing Image
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              image: DecorationImage(
+                image: NetworkImage(
+                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['pictures'][0]['picturePath'] ?? ''}'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          // Listing Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _listing['Listing']['name'] ?? '',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  _listing['Listing']['description'] ?? '',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: MyColors.white.withAlpha(179),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  _listing['Listing']['type'] ??
+                      '', // Replace with your actual domain
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    color: MyColors.yellow,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Close button
+          IconButton(
+            icon: Icon(Icons.close, size: 20, color: MyColors.white),
+            onPressed: () {
+              setState(() {
+                _listing = {};
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeChatData() async {
+    if (_isChanged) return;
+    _isChanged = true;
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args == null || args['userId'] == null) {
+      _handleError('Missing chat user ID in route arguments');
+      return;
+    }
+
+    setState(() {
+      if (args.containsKey('type')) {
+        _type = args['type'];
+        _listing = args['listing'];
+      }
+      _messageCollection = _getMessageCollection();
+      _chatUserId = args['userId'].toString();
+      _isLoading = true;
+    });
+
+    await _fetchCurrentUserId();
+    await _fetchChatUserDetails();
+    _markMessagesAsRead();
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  String _getMessageCollection() {
+    if (_type.toLowerCase() == 'business') {
+      return 'BusinessChats';
+    } else if (_type.toLowerCase() == "freelancer") {
+      return 'FreelancerChats';
+    } else {
+      return 'chats';
+    }
+  }
+
+  Future<void> _fetchCurrentUserId() async {
+    _currentUserId = await MyStorage.getToken(MyTokens.userId);
+    if (_currentUserId == null) {
+      _handleError('Failed to get current user ID');
+    }
+  }
+
+  Future<void> _fetchChatUserDetails() async {
+    try {
+      String collectionName = _getUserCollection();
+      final userDoc =
+          await _firestore.collection(collectionName).doc(_chatUserId).get();
+
+      if (!mounted) return;
+
+      setState(() {
+        _chatName = _type.isNotEmpty
+            ? _capitalizeName(userDoc['businessName'])
+            : _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
+        _chatUserName = _type.isNotEmpty ? _type : userDoc['username'];
+        _chatUserImage =
+            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type.isNotEmpty ? 'profile' : 'profilePicture']}';
+      });
+    } catch (e) {
+      _handleError('Error fetching chat user details: $e');
+    }
+  }
+
+  String _getUserCollection() {
+    if (_type.toLowerCase() == 'business') {
+      return 'businessUsers';
+    } else if (_type.toLowerCase() == "freelancer") {
+      return 'freelanceUsers';
+    } else {
+      return 'users';
+    }
+  }
+
+  Future<void> _markMessagesAsRead() async {
+    try {
+      final chatId = _getChatId();
+      await _firestore.collection(_messageCollection).doc(chatId).update({
+        'unreadMessages.$_currentUserId': 0,
+      });
+    } catch (e) {
+      _handleError('Error marking messages as read: $e');
+    }
+  }
+
   Future<void> _sendMessage(String text) async {
     if (_currentUserId == null || text.isEmpty) return;
 
-    setState(() => _isMessageSent = false);
     try {
       final chatId = _getChatId();
       final messageData = {
@@ -143,7 +242,6 @@ class _ChatBoxState extends State<ChatBox> {
         'type': 'text',
       };
 
-      // Add listing data if available
       if (_listing.isNotEmpty) {
         messageData['listing'] = {
           'id': _listing['Listing']['id'],
@@ -154,26 +252,36 @@ class _ChatBoxState extends State<ChatBox> {
         messageData['type'] = _listing['Listing']['type'];
       }
 
-      // Add message to chat collection
-      await _firestore
+      // Optimistic UI update - add message immediately
+      final newMessageRef = _firestore
           .collection(_messageCollection)
           .doc(chatId)
           .collection('messages')
-          .add(messageData);
+          .doc();
 
-      // Update chat metadata
-      await _firestore.collection(_messageCollection).doc(chatId).set({
-        'chatId': chatId,
-        'lastMessage': text,
-        'lastMessageTime': FieldValue.serverTimestamp(),
-        'unreadMessages': {
-          _currentUserId: FieldValue.increment(0),
-          _chatUserId: FieldValue.increment(1),
-        },
-      }, SetOptions(merge: true));
+      await _firestore.runTransaction((transaction) async {
+        // Add the new message
+        transaction.set(newMessageRef, messageData);
 
+        // Update chat metadata
+        transaction.set(
+          _firestore.collection(_messageCollection).doc(chatId),
+          {
+            'chatId': chatId,
+            'lastMessage': text,
+            'lastMessageTime': FieldValue.serverTimestamp(),
+            'unreadMessages': {
+              _currentUserId: FieldValue.increment(0),
+              _chatUserId: FieldValue.increment(1),
+            },
+          },
+          SetOptions(merge: true),
+        );
+      });
+
+      // Send push notification
       await MyApi.postRequest(
-        endpoint: 'notification/sendNotification', // Match your Django endpoint
+        endpoint: 'notification/sendNotification',
         body: {
           'recv': _chatUserId,
           'send': _currentUserId,
@@ -186,26 +294,39 @@ class _ChatBoxState extends State<ChatBox> {
       );
 
       _messageController.clear();
-      // Clear listing after sending
       if (_listing.isNotEmpty) {
-        setState(() {
-          _listing = {};
-        });
+        setState(() => _listing = {});
       }
+
+      // Scroll to bottom after sending
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     } catch (e) {
       _handleError('Failed to send message: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _isMessageSent = true);
-      }
     }
   }
 
   Future<void> _sendImage() async {
     try {
-      final pickedFile =
-          await _imagePicker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70,
+        maxWidth: 800,
+        maxHeight: 800,
+      );
       if (pickedFile == null) return;
+
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Uploading image...')),
+      );
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'saveChatImage/',
@@ -218,29 +339,45 @@ class _ChatBoxState extends State<ChatBox> {
       }
 
       final chatId = _getChatId();
-      await _firestore
+      final newMessageRef = _firestore
           .collection(_messageCollection)
           .doc(chatId)
           .collection('messages')
-          .add({
-        'senderId': _currentUserId,
-        'receiverId': _chatUserId,
-        'message': response['path'],
-        'timestamp': FieldValue.serverTimestamp(),
-        'type': 'image',
+          .doc();
+
+      await _firestore.runTransaction((transaction) async {
+        transaction.set(newMessageRef, {
+          'senderId': _currentUserId,
+          'receiverId': _chatUserId,
+          'message': response['path'],
+          'timestamp': FieldValue.serverTimestamp(),
+          'type': 'image',
+        });
+
+        transaction.set(
+          _firestore.collection(_messageCollection).doc(chatId),
+          {
+            'chatId': chatId,
+            'lastMessage': 'Image sent',
+            'lastMessageTime': FieldValue.serverTimestamp(),
+            'unreadMessages': {
+              _currentUserId: FieldValue.increment(0),
+              _chatUserId: FieldValue.increment(1),
+            },
+          },
+          SetOptions(merge: true),
+        );
       });
 
-      await _firestore.collection(_messageCollection).doc(chatId).set({
-        'chatId': chatId,
-        'lastMessage': 'Image sent',
-        'lastMessageTime': FieldValue.serverTimestamp(),
-        'unreadMessages': {
-          _currentUserId: FieldValue.increment(0),
-          _chatUserId: FieldValue.increment(1),
-        },
-      }, SetOptions(merge: true));
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
     } catch (e) {
-      _handleError('Failed to send image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send image: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -292,62 +429,10 @@ class _ChatBoxState extends State<ChatBox> {
     } else if (messageType == 'listing') {
       final listing = doc['listing'] ?? {};
       return isSentByMe
-          ? SendMessage(
-              text: message,
-              time: time,
-              listing: listing,
-            )
-          : RecieveMessage(
-              text: message,
-              time: time,
-              listing: listing,
-            );
+          ? SendMessage(text: message, time: time, listing: listing)
+          : RecieveMessage(text: message, time: time, listing: listing);
     }
     return const SizedBox.shrink();
-  }
-
-  Widget _buildChatHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.03),
-      height: Screen.height(context) * 0.16,
-      width: Screen.width(context),
-      decoration: BoxDecoration(color: MyColors.red),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: Screen.width(context) * 0.6,
-                child: Text(
-                  _chatName ?? '',
-                  softWrap: true,
-                  maxLines: 2,
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.025,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Text(
-                _chatUserName ?? '',
-                style: GoogleFonts.montserrat(
-                  fontSize: Screen.max(context) * 0.015,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
-          CircleAvatar(
-            radius: Screen.max(context) * 0.05,
-            backgroundImage: NetworkImage(_chatUserImage ?? ''),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildMessagesList() {
@@ -370,27 +455,26 @@ class _ChatBoxState extends State<ChatBox> {
         for (final message in messages) {
           final messageDate = message['timestamp']?.toDate() ?? DateTime.now();
 
-          // Add date header if needed
           if (lastMessageDate == null ||
               _formatDate(lastMessageDate) != _formatDate(messageDate)) {
             messageWidgets.add(
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: Screen.max(context) * 0.012,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _formatDate(messageDate),
-                        style: GoogleFonts.montserrat(
-                          fontSize: Screen.max(context) * 0.01,
-                          fontWeight: FontWeight.w500,
-                        ),
+                child: Center(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MyColors.darkLighter,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      _formatDate(messageDate),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -401,94 +485,82 @@ class _ChatBoxState extends State<ChatBox> {
           lastMessageDate = messageDate;
         }
 
-        return ListView(
+        return ListView.builder(
+          controller: _scrollController,
           reverse: true,
-          children: messageWidgets,
+          itemCount: messageWidgets.length,
+          itemBuilder: (context, index) => messageWidgets[index],
         );
       },
     );
   }
 
-  void _handleError(String error) {
-    MyApi.postRequest(
-      endpoint: 'error/application',
-      body: {'error': error},
-    );
-  }
-
-  Widget _buildListingPreview() {
-    if (_listing.isEmpty) return const SizedBox.shrink();
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 8.0),
-      padding: EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: MyColors.darkLighter,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: MyColors.dark,
+      body: Column(
         children: [
-          // Listing Image
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['pictures'][0]['picturePath'] ?? ''}'),
-                fit: BoxFit.cover,
+          const Header(),
+          if (_isLoading)
+            Expanded(
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: Column(
+                children: [
+                  // Chat header
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Screen.max(context) * 0.03),
+                    height: Screen.height(context) * 0.1,
+                    decoration: BoxDecoration(color: MyColors.red),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: Screen.width(context) * 0.6,
+                              child: Text(
+                                _chatName ?? '',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: Screen.max(context) * 0.025,
+                                  fontWeight: FontWeight.w600,
+                                  color: MyColors.white,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              _chatUserName ?? '',
+                              style: GoogleFonts.montserrat(
+                                fontSize: Screen.max(context) * 0.015,
+                                color: MyColors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        CircleAvatar(
+                          radius: Screen.max(context) * 0.04,
+                          backgroundImage: NetworkImage(_chatUserImage ?? ''),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Messages list
+                  Expanded(child: _buildMessagesList()),
+                  // Chat input
+                  _buildChatInput(),
+                ],
               ),
             ),
-          ),
-          SizedBox(width: 12),
-          // Listing Details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _listing['Listing']['name'] ?? '',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.white,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  _listing['Listing']['description'] ?? '',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    color: MyColors.white.withOpacity(0.7),
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  _listing['Listing']['type'] ??
-                      '', // Replace with your actual domain
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    color: MyColors.yellow,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Close button
-          IconButton(
-            icon: Icon(Icons.close, size: 20, color: MyColors.white),
-            onPressed: () {
-              setState(() {
-                _listing = {};
-              });
-            },
-          ),
         ],
       ),
     );
@@ -498,65 +570,47 @@ class _ChatBoxState extends State<ChatBox> {
     return Column(
       children: [
         if (_listing.isNotEmpty) _buildListingPreview(),
-        Row(
-          children: [
-            IconButton(
-              icon: Icon(Icons.image, color: MyColors.yellow),
-              onPressed: _sendImage,
-            ),
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: "Type a message",
-                  fillColor: MyColors.darkLighter,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                onSubmitted: _sendMessage,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.image, color: MyColors.yellow),
+                onPressed: _sendImage,
               ),
-            ),
-            IconButton(
-              icon: Icon(Icons.send, color: MyColors.white),
-              onPressed: () => _sendMessage(_messageController.text),
-            ),
-          ],
+              Expanded(
+                child: TextField(
+                  controller: _messageController,
+                  decoration: InputDecoration(
+                    hintText: "Type a message",
+                    fillColor: MyColors.darkLighter,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onSubmitted: _sendMessage,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.send, color: MyColors.white),
+                onPressed: () => _sendMessage(_messageController.text),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MyColors.dark,
-      body: Stack(
-        children: [
-          if (_isLoading)
-            Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-              ),
-            )
-          else
-            Column(
-              children: [
-                SizedBox(height: Screen.height(context) * 0.1),
-                _buildChatHeader(),
-                Expanded(
-                  child: _isMessageSent
-                      ? _buildMessagesList()
-                      : const SizedBox.shrink(),
-                ),
-                _buildChatInput(),
-              ],
-            ),
-          const Positioned(top: 0, child: Header()),
-        ],
-      ),
+  void _handleError(String error) {
+    MyApi.postRequest(
+      endpoint: 'error/application',
+      body: {'error': error},
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error)),
     );
   }
 }

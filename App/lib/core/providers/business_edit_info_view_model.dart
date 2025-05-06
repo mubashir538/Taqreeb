@@ -127,7 +127,8 @@ class BusinessInfoEditViewModel with ChangeNotifier {
       _userId = await MyStorage.getToken(MyTokens.userId) ?? "";
       _type = await MyTokens.getBusinessType();
 
-      final response;
+      final Map<String, dynamic> response;
+
       if (_selectedImage != null) {
         response = await MyApi.postMultipartRequest(
           endpoint: 'editBusinessInfo/',

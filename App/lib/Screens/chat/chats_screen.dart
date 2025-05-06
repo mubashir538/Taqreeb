@@ -1,3 +1,6 @@
+// ignore_for_file: unused_field
+
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,12 +25,9 @@ class ChatsScreen extends StatefulWidget {
 
 class _ChatsScreenState extends State<ChatsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  CollectionReference _usersCollection =
-      FirebaseFirestore.instance.collection('users');
-  final CollectionReference _groupsCollection =
-      FirebaseFirestore.instance.collection('groups');
-  CollectionReference _chatsCollection =
-      FirebaseFirestore.instance.collection('chats');
+  late CollectionReference _usersCollection;
+  late CollectionReference _groupsCollection;
+  late CollectionReference _chatsCollection;
   FocusNode searchFocus = FocusNode();
 
   List<Map<String, dynamic>> _userChats = [];
@@ -37,294 +37,265 @@ class _ChatsScreenState extends State<ChatsScreen> {
   bool _isLoading = true;
   String _loggedInUserId = "";
   bool _isSearching = false;
-  bool _isChanged = false;
-  String _type = 'user';
+  String _type = 'businessowner';
+
+  // Stream subscriptions
+  StreamSubscription? _chatsSubscription;
+  StreamSubscription? _groupsSubscription;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_isChanged) return;
+  void initState() {
+    super.initState();
     _initialize();
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    searchFocus.dispose();
+    _chatsSubscription?.cancel();
+    _groupsSubscription?.cancel();
+    super.dispose();
+  }
+
   Future<void> _initialize() async {
-    _isChanged = true;
-    _loggedInUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
-    _fetchChatsAndGroups();
-    String type = await MyTokens.getBusinessType();
-    _type = type;
-    if (type == 'businessowner') {
-      _chatsCollection = FirebaseFirestore.instance.collection('BusinessChats');
-      _usersCollection = FirebaseFirestore.instance.collection('businessUsers');
-    } else if (type == 'freelancer') {
-      _chatsCollection =
-          FirebaseFirestore.instance.collection('FreelancerChats');
-      _usersCollection =
-          FirebaseFirestore.instance.collection('freelanceUsers');
-    }
-  }
-
-  List<Map<String, dynamic>> convertChatsForJson(
-      List<Map<String, dynamic>> chats) {
-    return chats.map((chat) {
-      return chat.map((key, value) {
-        if (value is Timestamp) {
-          return MapEntry(
-              key, value.toDate().toIso8601String()); // Convert to String
-          // return MapEntry(key, value.millisecondsSinceEpoch); // Convert to int (epoch time)
-        }
-        return MapEntry(key, value);
-      });
-    }).toList();
-  }
-
-  List<Map<String, dynamic>> convertJsonToChats(String jsonString) {
-    List<dynamic> decodedList = json.decode(jsonString);
-
-    return decodedList.map<Map<String, dynamic>>((chat) {
-      return chat.map((key, value) {
-        if (key == 'time' && value is String) {
-          return MapEntry(
-              key,
-              Timestamp.fromDate(
-                  DateTime.parse(value))); // Convert back to Timestamp
-        }
-        return MapEntry(key, value);
-      });
-    }).toList();
-  }
-
-  Future<void> _fetchChatsAndGroups() async {
     setState(() {
       _isLoading = true;
     });
 
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String cachedData = prefs.getString('cached_chats') ?? "";
+    _loggedInUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
+    _type = await MyTokens.getBusinessType();
 
-      if (cachedData != "") {
+    // Initialize collections based on user type
+    if (_type == 'businessowner') {
+      _chatsCollection = FirebaseFirestore.instance.collection('BusinessChats');
+      _usersCollection = FirebaseFirestore.instance.collection('businessUsers');
+    } else if (_type == 'freelancer') {
+      _chatsCollection =
+          FirebaseFirestore.instance.collection('FreelancerChats');
+      _usersCollection =
+          FirebaseFirestore.instance.collection('freelanceUsers');
+    } else {
+      _chatsCollection = FirebaseFirestore.instance.collection('chats');
+      _usersCollection = FirebaseFirestore.instance.collection('users');
+    }
+
+    _groupsCollection = FirebaseFirestore.instance.collection('groups');
+
+    // Load cached data first for quick display
+    await _loadCachedData();
+
+    // Set up real-time listeners
+    _setupChatListeners();
+
+    if (_type == 'user') {
+      _setupGroupListeners();
+    }
+  }
+
+  Future<void> _loadCachedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedChats = prefs.getString('cached_chats');
+    final cachedGroups =
+        _type == 'user' ? prefs.getString('cached_groups') : null;
+
+    if (cachedChats != null) {
+      setState(() {
+        _userChats = _parseCachedChats(cachedChats);
+      });
+    }
+
+    if (cachedGroups != null && _type == 'user') {
+      setState(() {
+        _groups = _parseCachedChats(cachedGroups);
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> _parseCachedChats(String jsonString) {
+    try {
+      final decoded = json.decode(jsonString) as List;
+      return decoded.map((chat) {
+        final map = Map<String, dynamic>.from(chat);
+        if (map['time'] is String) {
+          map['time'] = Timestamp.fromDate(DateTime.parse(map['time']));
+        }
+        return map;
+      }).toList();
+    } catch (e) {
+      MyApi.postRequest(
+        endpoint: 'error/application',
+        body: {'error': 'Error parsing cached chats: $e'},
+      );
+      return [];
+    }
+  }
+
+  void _setupChatListeners() {
+    _chatsSubscription = _chatsCollection.snapshots().listen((snapshot) async {
+      final updatedChats = await _processChats(snapshot.docs);
+
+      // Sort by last message time (newest first)
+      updatedChats.sort(
+          (a, b) => (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
+
+      // Update cache
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+          'cached_chats', json.encode(_prepareForCache(updatedChats)));
+
+      if (mounted) {
         setState(() {
-          _userChats = (json.decode(cachedData) as List)
-              .map((chat) => Map<String, dynamic>.from(chat).map((key, value) {
-                    if (key == 'time' && value is String) {
-                      return MapEntry(
-                          key, Timestamp.fromDate(DateTime.parse(value)));
-                    }
-                    return MapEntry(key, value);
-                  }))
-              .toList();
-          // Sort cached chats by time
-          _userChats.sort((a, b) =>
-              (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
+          _userChats = updatedChats;
           _isLoading = false;
         });
       }
-
-      if (_type == 'user') {
-        cachedData = prefs.getString('cached_groups') ?? "";
-        if (cachedData != "") {
-          if (mounted) {
-            setState(() {
-              _groups = (json.decode(cachedData) as List)
-                  .map((chat) =>
-                      Map<String, dynamic>.from(chat).map((key, value) {
-                        if (key == 'time' && value is String) {
-                          return MapEntry(
-                              key, Timestamp.fromDate(DateTime.parse(value)));
-                        }
-                        return MapEntry(key, value);
-                      }))
-                  .toList();
-              // Sort cached groups by time
-              _groups.sort((a, b) =>
-                  (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
-            });
-          }
-        }
+    }, onError: (error) {
+      MyApi.postRequest(
+        endpoint: 'error/application',
+        body: {'error': 'Chats stream error: $error'},
+      );
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
+    });
+  }
 
-      final chatsSnapshot = await _chatsCollection.get();
+  void _setupGroupListeners() {
+    if (_type != 'user') return;
 
-      final filteredChats =
-          await Future.wait(chatsSnapshot.docs.map((chatDoc) async {
-        final messagesSnapshot = await _chatsCollection
+    _groupsSubscription = _groupsCollection
+        .where('participants', arrayContains: _loggedInUserId)
+        .snapshots()
+        .listen((snapshot) async {
+      final updatedGroups = await _processGroups(snapshot.docs);
+
+      // Sort by last message time (newest first)
+      updatedGroups.sort(
+          (a, b) => (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
+
+      // Update cache
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+          'cached_groups', json.encode(_prepareForCache(updatedGroups)));
+
+      if (mounted) {
+        setState(() {
+          _groups = updatedGroups;
+        });
+      }
+    }, onError: (error) {
+      MyApi.postRequest(
+        endpoint: 'error/application',
+        body: {'error': 'Groups stream error: $error'},
+      );
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> _processChats(
+      List<QueryDocumentSnapshot> chatDocs) async {
+    final List<Map<String, dynamic>> processedChats = [];
+
+    for (final chatDoc in chatDocs) {
+      try {
+        // Get last message
+        final lastMessage = await _chatsCollection
             .doc(chatDoc.id)
             .collection('messages')
             .orderBy('timestamp', descending: true)
             .limit(1)
             .get();
 
-        if (messagesSnapshot.docs.isNotEmpty) {
-          final List<String> ids = chatDoc.id.split('-');
-          String otherUserId =
-              messagesSnapshot.docs.first['senderId'] == _loggedInUserId
-                  ? messagesSnapshot.docs.first['receiverId']
-                  : messagesSnapshot.docs.first['senderId'];
+        if (lastMessage.docs.isEmpty) continue;
 
-          final user = await _usersCollection.doc(otherUserId).get();
-          if (user.exists &&
-              (_loggedInUserId == ids[0] || _loggedInUserId == ids[1])) {
-            return {
-              'userId': user.id,
-              'chatimage':
-                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture'] ?? ''}',
-              'name': _type == 'user'
-                  ? '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'
-                  : user['businessName'] ?? 'Unknown',
-              'lastMessage': chatDoc['lastMessage'] ?? '',
-              'newMessages': chatDoc['unreadMessages'][_loggedInUserId] ?? 0,
-              'time': chatDoc['lastMessageTime'] ?? Timestamp.now()
-            };
-          }
-        }
-        return null;
-      }).toList());
+        final lastMsgData = lastMessage.docs.first.data();
+        final List<String> ids = chatDoc.id.split('-');
 
-      // Remove nulls and sort by timestamp
-      var chats = filteredChats
-          .where((chat) => chat != null)
-          .cast<Map<String, dynamic>>()
-          .toList();
-      chats.sort((a, b) {
-        final aTime = a['time'] as Timestamp? ?? Timestamp.now();
-        final bTime = b['time'] as Timestamp? ?? Timestamp.now();
-        return bTime.compareTo(aTime);
-      });
-      if (_type == 'user') {
-        final groupsSnapshot = await _groupsCollection.get();
-        var filteredGroups =
-            await Future.wait(groupsSnapshot.docs.where((groupDoc) {
-          final participants = groupDoc['participants'] as List<dynamic>;
-          return participants.contains(_loggedInUserId);
-        }).map((groupDoc) async {
-          // Get last message for the group
-          final messagesSnapshot = await _groupsCollection
-              .doc(groupDoc.id)
-              .collection('messages')
-              .orderBy('timestamp', descending: true)
-              .limit(1)
-              .get();
+        if (!ids.contains(_loggedInUserId)) continue;
 
-          Timestamp lastMessageTime = Timestamp.now();
-          String lastMessage = 'No messages yet';
+        final otherUserId = lastMsgData['senderId'] == _loggedInUserId
+            ? lastMsgData['receiverId']
+            : lastMsgData['senderId'];
 
-          if (messagesSnapshot.docs.isNotEmpty) {
-            lastMessageTime =
-                messagesSnapshot.docs.first['timestamp'] as Timestamp;
-            lastMessage = messagesSnapshot.docs.first['message'] ?? lastMessage;
-          }
+        final userDoc = await _usersCollection.doc(otherUserId).get();
+        if (!userDoc.exists) continue;
 
-          return {
-            'groupId': groupDoc.id,
-            'groupImageUrl': groupDoc['groupImageUrl'],
-            'name': groupDoc['groupName'],
-            'participants': groupDoc['participants'],
-            'lastMessage': lastMessage,
-            'time': lastMessageTime,
-          };
-        }).toList());
-
-        // Sort groups by last message time
-        filteredGroups.sort((a, b) {
-          final aTime = a['time'] as Timestamp? ?? Timestamp.now();
-          final bTime = b['time'] as Timestamp? ?? Timestamp.now();
-          return bTime.compareTo(aTime);
+        processedChats.add({
+          'userId': otherUserId,
+          'chatId': chatDoc.id,
+          'chatimage':
+              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture'] ?? ''}',
+          'name': _type == 'user'
+              ? '${userDoc['firstName'] ?? ''} ${userDoc['lastName'] ?? ''}'
+              : userDoc['businessName'] ?? 'Unknown',
+          'lastMessage': chatDoc['lastMessage'] ?? '',
+          'newMessages': chatDoc['unreadMessages']?[_loggedInUserId] ?? 0,
+          'time': chatDoc['lastMessageTime'] ?? Timestamp.now(),
+          'isGroup': false,
         });
-        if (mounted) {
-          setState(() {
-            _userChats = chats;
-            _groups = filteredGroups;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            _userChats = chats;
-          });
-        }
-      }
-
-      // Save sorted chats to cache
-      prefs.setString(
-          'cached_chats', json.encode(convertChatsForJson(_userChats)));
-      if (_type == 'user') {
-        prefs.setString(
-            'cached_groups', json.encode(convertChatsForJson(_groups)));
-      }
-    } catch (e) {
-      MyApi.postRequest(
-        endpoint: 'error/application',
-        body: {'error': 'Error fetching chats or groups: $e'},
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+      } catch (e) {
+        MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error processing chat ${chatDoc.id}: $e'},
+        );
       }
     }
+
+    return processedChats;
   }
 
-  List<Widget> _buildCombinedChatList() {
-    if (_type != 'user') return _buildChatsAndGroupsList();
+  Future<List<Map<String, dynamic>>> _processGroups(
+      List<QueryDocumentSnapshot> groupDocs) async {
+    final List<Map<String, dynamic>> processedGroups = [];
 
-    // Combine all conversations
-    List<Map<String, dynamic>> allConversations = [];
+    for (final groupDoc in groupDocs) {
+      try {
+        // Get last message
+        final lastMessage = await _groupsCollection
+            .doc(groupDoc.id)
+            .collection('messages')
+            .orderBy('timestamp', descending: true)
+            .limit(1)
+            .get();
 
-    // Add individual chats
-    for (var chat in _userChats) {
-      allConversations.add({
+        Timestamp lastMessageTime = Timestamp.now();
+        String lastMessageText = 'No messages yet';
+
+        if (lastMessage.docs.isNotEmpty) {
+          lastMessageTime = lastMessage.docs.first['timestamp'] as Timestamp;
+          lastMessageText =
+              lastMessage.docs.first['message'] ?? lastMessageText;
+        }
+
+        processedGroups.add({
+          'groupId': groupDoc.id,
+          'chatimage':
+              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] ?? ''}',
+          'name': groupDoc['groupName'],
+          'participants': groupDoc['participants'],
+          'lastMessage': lastMessageText,
+          'time': lastMessageTime,
+          'newMessages': 0, // You can implement group unread counts if needed
+          'isGroup': true,
+        });
+      } catch (e) {
+        MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error processing group ${groupDoc.id}: $e'},
+        );
+      }
+    }
+
+    return processedGroups;
+  }
+
+  List<Map<String, dynamic>> _prepareForCache(
+      List<Map<String, dynamic>> chats) {
+    return chats.map((chat) {
+      return {
         ...chat,
-        'isGroup': false,
-        'time': chat['time'] ?? Timestamp.now(), // Ensure time exists
-      });
-    }
-
-    // Add group chats
-    for (var group in _groups) {
-      allConversations.add({
-        ...group,
-        'isGroup': true,
-        'time': group['time'] ?? Timestamp.now(), // Ensure time exists
-      });
-    }
-
-    // Sort by timestamp (most recent first)
-    allConversations.sort((a, b) {
-      final aTime = a['time'] as Timestamp;
-      final bTime = b['time'] as Timestamp;
-      return bTime.compareTo(aTime);
-    });
-
-    return allConversations.map((convo) {
-      // Handle image URL
-      final imageUrl = convo['isGroup']
-          ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${convo['groupImageUrl'] ?? ''}'
-          : convo['chatimage'] ?? '';
-
-      // Handle time display
-      final timeText = convo['time'] != null
-          ? _formatTimestamp(convo['time'] as Timestamp)
-          : '';
-
-      return MessageChatButton(
-        image: imageUrl,
-        onpressed: () {
-          if (convo['isGroup']) {
-            Navigator.pushNamed(context, '/GroupChatBox', arguments: {
-              'groupId': convo['groupId'],
-              'participants': convo['participants'],
-            });
-          } else {
-            _navigateToChatbox(convo['userId']);
-          }
-        },
-        name: convo['name'] ?? 'Unknown',
-        message: convo['lastMessage'] ?? '',
-        newMessage: convo['isGroup'] ? 0 : (convo['newMessages'] ?? 0),
-        time: timeText,
-      );
+        'time': (chat['time'] as Timestamp).toDate().toIso8601String(),
+      };
     }).toList();
   }
 
@@ -335,24 +306,35 @@ class _ChatsScreenState extends State<ChatsScreen> {
         _searchedUsers = [];
         _searchedGroups = [];
       });
-    } else {
-      setState(() {
-        _isSearching = true;
-        _searchedUsers = _userChats
-            .where((chat) =>
-                chat['name'].toLowerCase().contains(query.toLowerCase()))
-            .toList();
-        if (_type == 'user') {
-          _searchedGroups = _groups
-              .where((chat) =>
-                  chat['name'].toLowerCase().contains(query.toLowerCase()))
-              .toList();
-        }
-      });
+      return;
     }
+
+    final lowerQuery = query.toLowerCase();
+
+    setState(() {
+      _isSearching = true;
+      _searchedUsers = _userChats
+          .where((chat) => chat['name'].toLowerCase().contains(lowerQuery))
+          .toList();
+
+      if (_type == 'user') {
+        _searchedGroups = _groups
+            .where((group) => group['name'].toLowerCase().contains(lowerQuery))
+            .toList();
+      }
+    });
   }
 
-  void _navigateToChatbox(String userId) {
+  void _navigateToChatbox(String userId) async {
+    // Mark messages as read when opening chat
+    final chat =
+        _userChats.firstWhere((c) => c['userId'] == userId, orElse: () => {});
+    if (chat.isNotEmpty && chat['newMessages'] > 0) {
+      await _chatsCollection.doc(chat['chatId']).update({
+        'unreadMessages.$_loggedInUserId': 0,
+      });
+    }
+
     Navigator.pushNamed(context, '/ChatBox', arguments: {'userId': userId});
   }
 
@@ -362,10 +344,70 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   String _formatTimestamp(Timestamp timestamp) {
-    final DateTime dateTime = timestamp.toDate();
-    final DateFormat format = DateFormat('h:mm a');
-    return format.format(dateTime);
+    final now = DateTime.now();
+    final messageTime = timestamp.toDate();
+    final diff = now.difference(messageTime);
+
+    if (diff.inDays > 7) {
+      return DateFormat('MM/dd/yy').format(messageTime); // Older than 1 week
+    } else if (diff.inDays > 1) {
+      return '${diff.inDays}d ago'; // 2-7 days ago
+    } else if (diff.inDays == 1) {
+      return 'Yesterday'; // Yesterday
+    } else if (diff.inHours > 0) {
+      return '${diff.inHours}h ago'; // Hours ago
+    } else if (diff.inMinutes > 0) {
+      return '${diff.inMinutes}m ago'; // Minutes ago
+    } else {
+      return 'Just now'; // Less than a minute
+    }
   }
+
+  List<Widget> _buildChatList() {
+    // Combine all conversations into one list
+    final List<Map<String, dynamic>> allConversations = [
+      ..._userChats,
+      if (_type == 'user') ..._groups,
+    ];
+
+    // Sort by timestamp (newest first)
+    allConversations.sort((a, b) {
+      final aTime = a['time'] as Timestamp;
+      final bTime = b['time'] as Timestamp;
+      return bTime.compareTo(aTime); // Descending order (newest first)
+    });
+
+    // If searching, filter the combined list
+    final displayConversations = _isSearching
+        ? allConversations.where((convo) => convo['name']
+            .toLowerCase()
+            .contains(_searchController.text.toLowerCase()))
+        : allConversations;
+
+    return displayConversations.map((convo) {
+      return MessageChatButton(
+        key: ValueKey(convo['isGroup']
+            ? 'group_${convo['groupId']}'
+            : 'chat_${convo['userId']}'),
+        image: convo['chatimage'] ?? convo['groupImageUrl'],
+        onpressed: () {
+          if (convo['isGroup'] ?? false) {
+            Navigator.pushNamed(context, '/GroupChatBox', arguments: {
+              'groupId': convo['groupId'],
+              'participants': convo['participants'],
+            });
+          } else {
+            _navigateToChatbox(convo['userId']);
+          }
+        },
+        name: convo['name'] ?? 'Unknown',
+        message: convo['lastMessage'] ?? '',
+        newMessage: convo['newMessages'] ?? 0,
+        time: _formatTimestamp(convo['time'] as Timestamp),
+      );
+    }).toList();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -387,103 +429,60 @@ class _ChatsScreenState extends State<ChatsScreen> {
               SizedBox(height: Screen.height(context) * 0.02),
               _buildSearchBar(max),
               _isLoading
-                  ? const CircularProgressIndicator()
+                  ? const Expanded(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
                   : Expanded(
-                      child: ListView(
-                        children: _isSearching
-                            ? _buildSearchedUsersandGroupsList()
-                            : _buildCombinedChatList(),
+                      child: RefreshIndicator(
+                        onRefresh: _initialize,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: _buildChatList(),
+                        ),
                       ),
                     ),
             ],
           ),
-          _type == 'user' ? _buildCreateGroupButton(max) : Container(),
+          if (_type == 'user') _buildCreateGroupButton(max),
         ],
       ),
     );
   }
 
   Widget _buildSearchBar(double max) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SearchBox(
-          focusNode: searchFocus,
-          onclick: () {
-            searchFocus.requestFocus();
-          },
-          onChanged: _searchUsers,
-          hint: 'Search Users',
-          controller: _searchController,
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, '/search_new_user');
-          },
-          child: Container(
-            padding: EdgeInsets.all(max * 0.015),
-            decoration: BoxDecoration(
-              color: MyColors.red,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              Icons.add,
-              color: MyColors.white,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: max * 0.03),
+      child: Row(
+        children: [
+          Expanded(
+            child: SearchBox(
+              focusNode: searchFocus,
+              onclick: () => searchFocus.requestFocus(),
+              onChanged: _searchUsers,
+              hint: 'Search ${_type == 'user' ? 'Users/Groups' : 'Users'}',
+              controller: _searchController,
             ),
           ),
-        ),
-      ],
+          if (_type == 'user')
+            Padding(
+              padding: EdgeInsets.only(left: max * 0.02),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/search_new_user');
+                },
+                child: Container(
+                  padding: EdgeInsets.all(max * 0.015),
+                  decoration: BoxDecoration(
+                    color: MyColors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.add, color: MyColors.white),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
-  }
-
-  List<Widget> _buildSearchedUsersandGroupsList() {
-    return [
-      ..._searchedUsers.map((user) => MessageChatButton(
-            image: user['chatimage'],
-            onpressed: () => _navigateToChatbox(user['userId']),
-            name: user['name'],
-            message: 'Start a conversation',
-            newMessage: 0,
-            time: '',
-          )),
-      if (_type == 'user')
-        ..._searchedGroups.map((user) => MessageChatButton(
-              image: user['groupImageUrl'],
-              onpressed: () => _navigateToChatbox(user['groupId']),
-              name: user['name'],
-              message: 'Group Chat',
-              newMessage: 0,
-              time: '',
-            ))
-    ];
-  }
-
-  List<Widget> _buildChatsAndGroupsList() {
-    return [
-      ..._userChats.map((chat) => MessageChatButton(
-            image: chat['chatimage'],
-            onpressed: () => _navigateToChatbox(chat['userId']),
-            name: chat['name'],
-            message: chat['lastMessage'],
-            newMessage: chat['newMessages'],
-            time: _formatTimestamp(chat['time']),
-          )),
-      if (_type == 'user')
-        ..._groups.map((group) => MessageChatButton(
-              image:
-                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${group['groupImageUrl']}',
-              onpressed: () {
-                Navigator.pushNamed(context, '/GroupChatBox', arguments: {
-                  'groupId': group['groupId'],
-                  'participants': group['participants'],
-                });
-              },
-              name: group['name'],
-              message: 'Group Chat',
-              newMessage: 0,
-              time: '',
-            )),
-    ];
   }
 
   Widget _buildCreateGroupButton(double max) {
@@ -493,29 +492,23 @@ class _ChatsScreenState extends State<ChatsScreen> {
       child: InkWell(
         onTap: _navigateToCreateGroup,
         child: Container(
-          padding: EdgeInsets.all(Screen.width(context) * 0.05),
+          padding: EdgeInsets.all(Screen.width(context) * 0.04),
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
                 color: MyColors.dark.withAlpha(51),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
-              ),
+              )
             ],
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(max * 0.05),
-              topRight: Radius.circular(max * 0.05),
-              bottomLeft: Radius.circular(max * 0.05),
-            ),
+            borderRadius: BorderRadius.circular(max * 0.05),
             color: MyColors.red,
           ),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              SizedBox(width: Screen.width(context) * 0.01),
+              const Icon(Icons.add, color: Colors.white),
+              SizedBox(width: Screen.width(context) * 0.02),
               Text(
                 'Create Group',
                 style: GoogleFonts.montserrat(

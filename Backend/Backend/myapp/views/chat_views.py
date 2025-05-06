@@ -1,6 +1,4 @@
-import os
 from rest_framework.decorators import api_view, permission_classes
-from firebase_admin import credentials, firestore, initialize_app
 from .. import models as m
 import random as rd
 from rest_framework.decorators import api_view, permission_classes
@@ -8,9 +6,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.files.storage import FileSystemStorage
 
-cred = credentials.Certificate(os.getenv('firebase_PATH'))
-firebase_app = initialize_app(cred)
-db = firestore.client()
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taqreeb/core/services/api_service.dart' show MyApi;
+import 'package:taqreeb/firebase_options.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -41,7 +42,7 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final phone, gender, age;
+        final dynamic phone, gender, age;
         if (data.containsKey('phoneNumbers')) {
           final phoneNumber = data['phoneNumbers'][0]['value'];
           phone = phoneNumber;
