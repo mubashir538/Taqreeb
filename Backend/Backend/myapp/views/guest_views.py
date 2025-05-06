@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def AddGuests(request):
+def add_guests(request):
     guesttype = request.data.get('guesttype')
     eid = request.data.get('eid')
     event = m.Events.objects.get(id=eid)
@@ -16,39 +16,39 @@ def AddGuests(request):
     else:
         fid = None
     if guesttype=='Family':
-        FamilyName = request.data.get('FamilyName')
+        family_name = request.data.get('FamilyName')
         member = request.data.get('member')
         if fid:
-            GuestList = m.GuestList(name=FamilyName,members=member,type=guesttype,eventId=event,functionId=function)
+            guest_list = m.GuestList(name=family_name,members=member,type=guesttype,eventId=event,functionId=function)
         else:
-            GuestList = m.GuestList(name=FamilyName,members=member,type=guesttype,eventId=event)
+            guest_list = m.GuestList(name=family_name,members=member,type=guesttype,eventId=event)
     else:   
-        PersonName = request.data.get('PersonName')
-        PersonContact = request.data.get('PersonContact')
+        person_name = request.data.get('PersonName')
+        person_contact = request.data.get('PersonContact')
         if fid:
-            GuestList = m.GuestList(name=PersonName,phone=PersonContact,type=guesttype,eventId=event,functionId=function)
+            guest_list = m.GuestList(name=person_name,phone=person_contact,type=guesttype,eventId=event,functionId=function)
         else:
-            GuestList = m.GuestList(name=PersonName,phone=PersonContact,type=guesttype,eventId=event)
-    GuestList.save()
+            guest_list = m.GuestList(name=person_name,phone=person_contact,type=guesttype,eventId=event)
+    guest_list.save()
     return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def ShowGuest(request):
-    EventId = request.data.get('EventId')
-    event = m.Events.objects.get(id=EventId)
+def show_guest(request):
+    eventid = request.data.get('EventId')
+    event = m.Events.objects.get(id=eventid)
     if request.data.get('FunctionID') == 'None':
         functionid = None
-        Guests = m.GuestList.objects.filter(eventId=event,functionId__isnull=True)
+        guests = m.GuestList.objects.filter(eventId=event,functionId__isnull=True)
     else:
         functionid= request.data.get('FunctionID')
-        Guests = m.GuestList.objects.filter(eventId=event,functionId=functionid)
-    GuestListSerializer = s.GuestListSerializer(Guests,many=True)
-    return Response({'status': 'success', 'Guests':GuestListSerializer.data})
+        guests = m.GuestList.objects.filter(eventId=event,functionId=functionid)
+    guest_list_serializer = s.GuestListSerializer(guests,many=True)
+    return Response({'status': 'success', 'Guests':guest_list_serializer.data})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def DeleteGuest(request):
-    guestId = request.data.get('guestId')
-    guest = m.GuestList.objects.get(id=guestId).delete()
+def delete_guest(request):
+    guestid = request.data.get('guestId')
+    guest = m.GuestList.objects.get(id=guestid).delete()
     return Response({'status': 'success'})

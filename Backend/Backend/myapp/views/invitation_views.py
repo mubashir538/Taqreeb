@@ -17,39 +17,39 @@ from datetime import datetime
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def getInvitationDetails(request):
+def get_invitation_details(request):
     data = request.data
     template_id = data.get('templateId')  
-    userId = data['uid']
-    Eventtype = data['eventType']
+    userid = data['uid']
+    eventtype = data['eventType']
     date = data['basicInfo']['date']
     location = data['basicInfo']['location']
-    hostName = data['basicInfo']['hostName']
-    if Eventtype == 'Wedding':
+    hostname = data['basicInfo']['hostName']
+    if eventtype == 'Wedding':
         name = data['basicInfo']['name1']
         bride = data['basicInfo']['name2']
         son = data['basicInfo']['s/o']
         daughter = data['basicInfo']['d/o']
-    elif Eventtype == 'Birthday':
+    elif eventtype == 'Birthday':
         name = data['basicInfo']['name1']
     else:
         name = data['basicInfo']['name1']
-    contactInfo = data['contactInfo'] 
+    contact_info = data['contactInfo'] 
 
     data2 = {
-    "eventType": Eventtype,
+    "eventType": eventtype,
     'functionType': data['functionType'].capitalize(),
     "basicInfo": {
         "date": date,
         "location": location,
-        "hostName": hostName.capitalize(),
+        "hostName": hostname.capitalize(),
         "name1": name.capitalize(),
         "name2": bride.capitalize(),
         "s/o": f"S/O. {son.capitalize()}",
         "d/o": f"D/O. {daughter.capitalize()}"
     },
-    'uid': userId,
-    "contactInfo": [f"{i['name'].capitalize()}: {i['number']}" for i in contactInfo]
+    'uid': userid,
+    "contactInfo": [f"{i['name'].capitalize()}: {i['number']}" for i in contact_info]
 }
     if data['programDetails']:
         data2['programDetails'] = data['programDetails']
@@ -63,7 +63,7 @@ def getInvitationDetails(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getAvailableTemplates(request):
+def get_available_templates(request):
     event_type = request.GET.get('eventType', 'Wedding')
     bg_dir = os.path.join(settings.MEDIA_ROOT, 'InvitationBackground', event_type)
     

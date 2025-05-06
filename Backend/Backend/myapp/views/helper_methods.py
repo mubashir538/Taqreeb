@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 import json
 import inspect
 
-def urlShortener(url):
+def url_shortener(url):
     try:
         response = rq.get("http://tinyurl.com/api-create.php?url="+url)
         response.raise_for_status()

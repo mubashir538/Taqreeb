@@ -167,8 +167,8 @@ def updateListing(request):
     listing = m.Listing.objects.get(id=id,status='active')
     name = request.data.get('name')
     location = request.data.get('location')
-    priceMin = request.data.get('priceMin')
-    priceMax = request.data.get('priceMax')
+    pricemin = request.data.get('priceMin')
+    pricemax = request.data.get('priceMax')
     description = request.data.get('description')
     value= request.data.get('value')
     if name:
@@ -179,13 +179,13 @@ def updateListing(request):
         listing.location = location
         listing.save(update_fields=['location'])
         return Response({'status':'success'})
-    elif priceMin:
-        listing.priceMin = priceMin
+    elif pricemin:
+        listing.priceMin = pricemin
         listing.basicPrice = int((int(listing.priceMin)+int(listing.priceMax))/2)
         listing.save(update_fields=['priceMin','basicPrice'])
         return Response({'status':'success'})
-    elif priceMax:
-        listing.priceMax = priceMax
+    elif pricemax:
+        listing.priceMax = pricemax
         listing.basicPrice = int((int(listing.priceMin)+int(listing.priceMax))/2)
         listing.save(update_fields=['priceMax','basicPrice'])
         return Response({'status':'success'})
@@ -201,24 +201,24 @@ def updateListing(request):
     if type == 'Venue':
         view = m.Venue.objects.get(listingID = listing)
         catering = request.data.get('catering')
-        guestminAllowed = request.data.get('guestmin')
-        guestmaxAllowed = request.data.get('guestmax')
+        guestminallowed = request.data.get('guestmin')
+        guestmaxallowed = request.data.get('guestmax')
         staff = request.data.get('staff')
-        venueType = request.data.get('venuetype')
+        venuetype = request.data.get('venuetype')
         if catering:
             view.catering = catering
             updated.append(get_variable_name(catering))
-        elif guestminAllowed or guestmaxAllowed:
-            view.guestminAllowed = guestminAllowed
-            updated.append(get_variable_name(guestminAllowed))
-            view.guestmaxAllowed = guestmaxAllowed
-            updated.append(get_variable_name(guestmaxAllowed))
+        elif guestminallowed or guestmaxallowed:
+            view.guestminAllowed = guestminallowed
+            updated.append(get_variable_name(guestminallowed))
+            view.guestmaxAllowed = guestmaxallowed
+            updated.append(get_variable_name(guestmaxallowed))
         elif staff:
             view.staff = staff
             updated.append(get_variable_name(staff))
-        elif venueType:
-            view.venueType = venueType
-            updated.append(get_variable_name(venueType))
+        elif venuetype:
+            view.venueType = venuetype
+            updated.append(get_variable_name(venuetype))
         view.save(update_fields=updated)
         return Response({'status':'success'})
     elif type == 'PhotographyPlace':
@@ -230,13 +230,13 @@ def updateListing(request):
         return Response({'status':'success'})
     elif type == 'Decorator':
         view = m.Decorators.objects.get(listingID = listing)
-        decorType = request.data.get('decortype')
+        decortype = request.data.get('decortype')
         catering = request.data.get('catering')
         staff = request.data.get('staff')
         updated = []
-        if decorType:
-            view.decorType = decorType
-            updated.append(get_variable_name(decorType))
+        if decortype:
+            view.decortype = decortype
+            updated.append(get_variable_name(decortype))
         elif catering:
             view.catering = catering
             updated.append(get_variable_name(catering))
