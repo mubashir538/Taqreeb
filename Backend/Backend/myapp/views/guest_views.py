@@ -50,5 +50,5 @@ def show_guest(request):
 @permission_classes([IsAuthenticated])
 def delete_guest(request):
     guestid = request.data.get('guestId')
-    guest = m.GuestList.objects.get(id=guestid).delete()
+    m.GuestList.objects.get(id=guestid).delete()
     return Response({'status': 'success'})

@@ -87,7 +87,7 @@ def update_list_item(request):
 @permission_classes([IsAuthenticated])
 def delete_list_item(request):
     lid = request.data.get('id')
-    checklist = m.CheckList.objects.get(id=lid).delete()
+    m.CheckList.objects.get(id=lid).delete()
     return Response({'status':'success'})
 
 @api_view(['GET'])
@@ -162,201 +162,139 @@ def delete_listing(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def updateListing(request):
-    id = request.data.get('id')
-    listing = m.Listing.objects.get(id=id,status='active')
-    name = request.data.get('name')
-    location = request.data.get('location')
-    pricemin = request.data.get('priceMin')
-    pricemax = request.data.get('priceMax')
-    description = request.data.get('description')
-    value= request.data.get('value')
-    if name:
-        listing.name = name
-        listing.save(update_fields=['name'])
-        return Response({'status':'success'})
-    elif location:
-        listing.location = location
-        listing.save(update_fields=['location'])
-        return Response({'status':'success'})
-    elif pricemin:
-        listing.priceMin = pricemin
-        listing.basicPrice = int((int(listing.priceMin)+int(listing.priceMax))/2)
-        listing.save(update_fields=['priceMin','basicPrice'])
-        return Response({'status':'success'})
-    elif pricemax:
-        listing.priceMax = pricemax
-        listing.basicPrice = int((int(listing.priceMin)+int(listing.priceMax))/2)
-        listing.save(update_fields=['priceMax','basicPrice'])
-        return Response({'status':'success'})
-    elif description:
-        listing.description = description
-        listing.save(update_fields=['description'])
-        return Response({'status':'success'})
-    if not value:
-        type = listing.type
-    else:
-        type = None
-    updated = []
-    if type == 'Venue':
-        view = m.Venue.objects.get(listingID = listing)
-        catering = request.data.get('catering')
-        guestminallowed = request.data.get('guestmin')
-        guestmaxallowed = request.data.get('guestmax')
-        staff = request.data.get('staff')
-        venuetype = request.data.get('venuetype')
-        if catering:
-            view.catering = catering
-            updated.append(get_variable_name(catering))
-        elif guestminallowed or guestmaxallowed:
-            view.guestminAllowed = guestminallowed
-            updated.append(get_variable_name(guestminallowed))
-            view.guestmaxAllowed = guestmaxallowed
-            updated.append(get_variable_name(guestmaxallowed))
-        elif staff:
-            view.staff = staff
-            updated.append(get_variable_name(staff))
-        elif venuetype:
-            view.venueType = venuetype
-            updated.append(get_variable_name(venuetype))
-        view.save(update_fields=updated)
-        return Response({'status':'success'})
-    elif type == 'PhotographyPlace':
-        view = m.PhotographyPlaces.objects.get(listingID = listing)
-        type = request.data.get('type')
-        if type:
-            view.type = type
-            view.save(update_fields=['type'])
-        return Response({'status':'success'})
-    elif type == 'Decorator':
-        view = m.Decorators.objects.get(listingID = listing)
-        decortype = request.data.get('decortype')
-        catering = request.data.get('catering')
-        staff = request.data.get('staff')
-        updated = []
-        if decortype:
-            view.decortype = decortype
-            updated.append(get_variable_name(decortype))
-        elif catering:
-            view.catering = catering
-            updated.append(get_variable_name(catering))
-        elif staff:
-            view.staff = staff
-            updated.append(get_variable_name(staff))
-        view.save(update_fields=updated)
-        return Response({'status':'success'})
-    elif type == 'Photographer':
-        view = m.Photographers.objects.get(listingID = listing)
-        portfolioLink = request.data.get('portfoliolink')
-        if portfolioLink:
-            view.portfolioLink = portfolioLink
-            view.save(update_fields=['portfolioLink'])
-        return Response({'status':'success'})
-    elif type == 'Caterer':
-        view = m.Caterers.objects.get(listingID = listing)
-        cateringOptions=request.data.get('cateringoptions')
-        serviceType=request.data.get('servicetype')
-        staff=request.data.get('staff')
-        expertise=request.data.get('expertise')
-        updated = []
-        if cateringOptions:
-            view.cateringOptions = cateringOptions
-            updated.append(get_variable_name(cateringOptions))
-        elif serviceType:
-            view.serviceType = serviceType
-            updated.append(get_variable_name(serviceType))
-        elif staff:
-            view.staff = staff
-            updated.append(get_variable_name(staff))
-        elif expertise:
-            view.expertise = expertise
-            updated.append(get_variable_name(expertise))
-        return Response({'status':'success'})
-    elif type == 'CarRenter':
-        view = m.CarRenters.objects.get(listingID = listing)
-        serviceType=request.data.get('servicetype')
-        if serviceType:
-            view.serviceType = serviceType
-            view.save(update_fields=['serviceType'])
-        return Response({'status':'success'})
-    elif type == 'VideoEditor':
-        view = m.VideoEditors.objects.get(listingID = listing)
-        portfolioLink = request.data.get('portfoliolink')
-        if portfolioLink:
-            view.portfolioLink = portfolioLink
-            view.save(update_fields=['portfolioLink'])
-        return Response({'status':'success'})
-    elif type == 'GraphicDesigner':
-        view = m.GraphicDesigners.objects.get(listingID = listing)
-        portfolioLink = request.data.get('portfoliolink')
-        if portfolioLink:
-            view.portfolioLink = portfolioLink
-            view.save(update_fields=['portfolioLink'])
-        return Response({'status':'success'})    
+def _update_listing_fields(listing, data):
+    fields = {
+        'name': 'name',
+        'location': 'location',
+        'priceMin': 'priceMin',
+        'priceMax': 'priceMax',
+        'description': 'description'
+    }
+    for key, attr in fields.items():
+        if data.get(key):
+            setattr(listing, attr, data[key])
+            if key in ['priceMin', 'priceMax']:
+                listing.basicPrice = int((int(listing.priceMin) + int(listing.priceMax)) / 2)
+                listing.save(update_fields=[attr, 'basicPrice'])
+            else:
+                listing.save(update_fields=[attr])
+            return True
+    return False
 
-    operation = request.data.get('operation')
-    value = request.data.get('value')
-    if operation and value:
-        if operation.lower() == 'add':
-            if value.lower() == 'addon':
-                name = request.data.get('namev')
-                price = request.data.get('pricev')
-                perhead = request.data.get('perheadv')
-                headtype = request.data.get('headtypev')
-                if perhead == "Yes":
-                    m.AddOns(perType=headtype,isPer=True,listingId=listing,name=name,price=price).save()
-                else:
-                    m.AddOns(isPer=False,listingId=listing,name=name,price=price).save()
-                return Response({'status':'success','id':m.AddOns.objects.filter(listingId=listing).last().id})
-            elif value.lower() == 'package':
-                name = request.data.get('namev')
-                description = request.data.get('descv')
-                price = request.data.get('pricev')
-                m.Packages(name=name,listingId=listing,description=description,price=price).save()
-                return Response({'status':'success','id':m.Packages.objects.filter(listingId=listing).last().id})
-        if operation.lower() == 'delete':
-            if value.lower() == 'addon':
-                id = request.data.get('idv')
-                addon = m.AddOns.objects.get(id=id).delete()
-                return Response({'status':'success'})
-            elif value.lower() == 'package':
-                id = request.data.get('idv')
-                m.Packages.objects.delete(id=id).delete()
-                return Response({'status':'success'})
-        if operation.lower() == 'edit':
-            if value.lower() == 'addon':
-                id = request.data.get('idv')
-                addon = m.AddOns.objects.get(id=id)
-                name = request.data.get('namev')
-                price = request.data.get('pricev')
-                addon.name = name
-                addon.price = price
-                addon.save(update_fields=['name','price'])
-                return Response({'status':'success'})
-            elif value.lower() == 'package':
-                name = request.data.get('namev')
-                description = request.data.get('descv')
-                price = request.data.get('pricev')
-                id = request.data.get('idv')
-                pack = m.Packages.objects.get(id=id)
-                pack.name = name
-                pack.description = description
-                pack.price = price
-                pack.save(update_fields=['name','description','price'])
-                
-                return Response({'status':'success'})
-            UserActivity.objects.create(
-    user=request.user,
-    action='content_updated',
-    metadata={
-        'listing_id': listing.id,
-        'listing_name': listing.name,
-        'listing_type': listing.type,
-    },
-    timestamp=now()
-)
-        
-    return Response({'status':'error'})
+
+def _update_venue_fields(view, data):
+    updated = []
+    if data.get('catering'):
+        view.catering = data['catering']
+        updated.append('catering')
+    if data.get('guestmin') or data.get('guestmax'):
+        view.guestminAllowed = data.get('guestmin')
+        view.guestmaxAllowed = data.get('guestmax')
+        updated += ['guestminAllowed', 'guestmaxAllowed']
+    if data.get('staff'):
+        view.staff = data['staff']
+        updated.append('staff')
+    if data.get('venuetype'):
+        view.venueType = data['venuetype']
+        updated.append('venueType')
+    view.save(update_fields=updated)
+
+
+def _update_type_specific_fields(listing, data):
+    model_map = {
+        'Venue': (m.Venue, _update_venue_fields),
+        'PhotographyPlace': (m.PhotographyPlaces, lambda v, d: _simple_update(v, d, 'type')),
+        'Decorator': (m.Decorators, lambda v, d: _bulk_update(v, d, ['decortype', 'catering', 'staff'])),
+        'Photographer': (m.Photographers, lambda v, d: _simple_update(v, d, 'portfoliolink')),
+        'Caterer': (m.Caterers, lambda v, d: _bulk_update(v, d, ['cateringoptions', 'servicetype', 'staff', 'expertise'])),
+        'CarRenter': (m.CarRenters, lambda v, d: _simple_update(v, d, 'servicetype')),
+        'VideoEditor': (m.VideoEditors, lambda v, d: _simple_update(v, d, 'portfoliolink')),
+        'GraphicDesigner': (m.GraphicDesigners, lambda v, d: _simple_update(v, d, 'portfoliolink')),
+    }
+
+    model, updater = model_map.get(listing.type, (None, None))
+    if model and updater:
+        view = model.objects.get(listingID=listing)
+        updater(view, data)
+        return True
+    return False
+
+
+def _simple_update(view, data, key):
+    value = data.get(key)
+    if value:
+        setattr(view, key, value)
+        view.save(update_fields=[key])
+
+
+def _bulk_update(view, data, keys):
+    updated = []
+    for key in keys:
+        if data.get(key):
+            setattr(view, key, data[key])
+            updated.append(key)
+    if updated:
+        view.save(update_fields=updated)
+
+def _handle_addon_package_operations(request, listing):
+    operation = request.data.get('operation', '').lower()
+    value = request.data.get('value', '').lower()
+
+    if operation == 'add':
+        return _add_addon_or_package(request, listing, value)
+    elif operation == 'delete':
+        return _delete_addon_or_package(request, value)
+    elif operation == 'edit':
+        return _edit_addon_or_package(request, value)
+    return None
+
+
+def _add_addon_or_package(request, listing, value):
+    if value == 'addon':
+        m.AddOns(
+            isPer=(request.data.get('perheadv') == "Yes"),
+            perType=request.data.get('headtypev'),
+            listingId=listing,
+            name=request.data.get('namev'),
+            price=request.data.get('pricev')
+        ).save()
+        addon_id = m.AddOns.objects.filter(listingId=listing).last().id
+        return Response({'status': 'success', 'id': addon_id})
+    elif value == 'package':
+        m.Packages(
+            listingId=listing,
+            name=request.data.get('namev'),
+            description=request.data.get('descv'),
+            price=request.data.get('pricev')
+        ).save()
+        pack_id = m.Packages.objects.filter(listingId=listing).last().id
+        return Response({'status': 'success', 'id': pack_id})
+
+
+def _delete_addon_or_package(request, value):
+    idv = request.data.get('idv')
+    if value == 'addon':
+        m.AddOns.objects.filter(id=idv).delete()
+    elif value == 'package':
+        m.Packages.objects.filter(id=idv).delete()
+    return Response({'status': 'success'})
+
+
+def _edit_addon_or_package(request, value):
+    idv = request.data.get('idv')
+    if value == 'addon':
+        addon = m.AddOns.objects.get(id=idv)
+        addon.name = request.data.get('namev')
+        addon.price = request.data.get('pricev')
+        addon.save(update_fields=['name', 'price'])
+        return Response({'status': 'success'})
+    elif value == 'package':
+        pack = m.Packages.objects.get(id=idv)
+        pack.name = request.data.get('namev')
+        pack.description = request.data.get('descv')
+        pack.price = request.data.get('pricev')
+        pack.save(update_fields=['name', 'description', 'price'])
+        return Response({'status': 'success'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -393,111 +331,135 @@ def listing_with_views(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@api_view(['GET'])
 def unified_search(request):
     search_query = request.GET.get('q', '')
     if search_query:
-            UserActivity.objects.create(
+        UserActivity.objects.create(
             user=request.user,
             action='search',
             metadata={'search_query': search_query},
             timestamp=now()
         )
 
-    category = request.GET.get('category', 'All')
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    min_rating = request.GET.get('min_rating')
-    max_rating = request.GET.get('max_rating')
-    location = request.GET.get('location')
-    date = request.GET.get('date')
     content_type = request.GET.get('type', 'listings')
     
+    filters = {
+        'query': search_query,
+        'category': request.GET.get('category', 'All'),
+        'min_price': request.GET.get('min_price'),
+        'max_price': request.GET.get('max_price'),
+        'location': request.GET.get('location'),
+        'date': request.GET.get('date'),
+        'min_rating': request.GET.get('min_rating'),
+        'max_rating': request.GET.get('max_rating'),
+    }
+
     if content_type == 'listings':
-        queryset = m.Listing.objects.filter(status='active').prefetch_related(
-            'pictureslistings_set',
-            'venue_set',
-            'caterers_set',
-            'carrenters_set',
-            'decorators_set',
-            'photographyplaces_set',
-            'photographers_set',
-            'videoeditors_set',
-            'graphicdesigners_set'
-        )
-        
-        if search_query:
-            queryset = queryset.filter(name__icontains=search_query)
-        if category != 'All':
-            queryset = queryset.filter(type=category)
-        if location:
-            queryset = queryset.filter(location__icontains=location)
-        if min_price and max_price:
-            queryset = queryset.filter(basicPrice__range=(min_price, max_price))
-        
-        serializer = s.ListingSerializer(queryset, many=True)
-        results = serializer.data
-        for listing in results:
-            listing_id = listing['id']
-            listing['pictures'] = get_picture(listing_id)
-            view_data = get_view_data(listing_id)
-            if view_data:
-                listing['View'] = view_data
-    
+        results = _search_listings(filters)
     elif content_type == 'packages':
-        queryset = m.Packages.objects.all().prefetch_related('picturespackages_set')
-        
-        if search_query:
-            queryset = queryset.filter(name__icontains=search_query)
-        if min_price and max_price:
-            queryset = queryset.filter(price__range=(min_price, max_price))
-        if category != 'All':
-            queryset = queryset.filter(listingId__type=category)
-        
-        serializer = s.PackagesSerializer(queryset, many=True)
-        results = serializer.data
-    
+        results = _search_packages(filters)
     elif content_type == 'products':
-        queryset = m.Product.objects.all().prefetch_related('picturesproducts_set')
-        
-        if search_query:
-            queryset = queryset.filter(name__icontains=search_query)
-        if min_price and max_price:
-            queryset = queryset.filter(price__range=(min_price, max_price))
-        if category != 'All':
-            queryset = queryset.filter(listingId__type=category)
-        
-        serializer = s.ProductsSerializer(queryset, many=True)
-        results = serializer.data
-    
+        results = _search_products(filters)
+    else:
+        results = []
+
     return Response({
         'status': 'success',
         'results': results,
         'count': len(results)
     })
 
+def _search_listings(filters):
+    queryset = m.Listing.objects.filter(status='active').prefetch_related(
+        'pictureslistings_set',
+        'venue_set',
+        'caterers_set',
+        'carrenters_set',
+        'decorators_set',
+        'photographyplaces_set',
+        'photographers_set',
+        'videoeditors_set',
+        'graphicdesigners_set'
+    )
+
+    if filters['query']:
+        queryset = queryset.filter(name__icontains=filters['query'])
+    if filters['category'] != 'All':
+        queryset = queryset.filter(type=filters['category'])
+    if filters['location']:
+        queryset = queryset.filter(location__icontains=filters['location'])
+    if filters['min_price'] and filters['max_price']:
+        queryset = queryset.filter(basicPrice__range=(filters['min_price'], filters['max_price']))
+
+    serializer = s.ListingSerializer(queryset, many=True)
+    results = serializer.data
+
+    for listing in results:
+        listing_id = listing['id']
+        listing['pictures'] = get_picture(listing_id)
+        view_data = get_view_data(listing_id)
+        if view_data:
+            listing['View'] = view_data
+
+    return results
+
+
+def _search_packages(filters):
+    queryset = m.Packages.objects.all().prefetch_related('picturespackages_set')
+
+    if filters['query']:
+        queryset = queryset.filter(name__icontains=filters['query'])
+    if filters['min_price'] and filters['max_price']:
+        queryset = queryset.filter(price__range=(filters['min_price'], filters['max_price']))
+    if filters['category'] != 'All':
+        queryset = queryset.filter(listingId__type=filters['category'])
+
+    serializer = s.PackagesSerializer(queryset, many=True)
+    return serializer.data
+
+def _search_products(filters):
+    queryset = m.Product.objects.all().prefetch_related('picturesproducts_set')
+
+    if filters['query']:
+        queryset = queryset.filter(name__icontains=filters['query'])
+    if filters['min_price'] and filters['max_price']:
+        queryset = queryset.filter(price__range=(filters['min_price'], filters['max_price']))
+    if filters['category'] != 'All':
+        queryset = queryset.filter(listingId__type=filters['category'])
+
+    serializer = s.ProductsSerializer(queryset, many=True)
+    return serializer.data
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def HomeListings(request):
-    paginator = PageNumberPagination()
-    paginator.page_size = request.GET.get('page_size', 10)
+@api_view(['GET'])
+def home_listings(request):
+    listings = m.Listing.objects.filter(status='active').order_by('?')
+    paginated_listings, paginator = _paginate_listings(request, listings)
     
-    listings = m.Listing.objects.filter(status='active').order_by('?') 
-    result_page = paginator.paginate_queryset(listings, request)
-    
-    serializer = s.ListingSerializer(result_page, many=True)
-    listings_data = serializer.data
-    
-    pictures = []
-    for listing in listings_data:
-        pic = m.PicturesListings.objects.filter(listingId=listing['id'])
-        serializer = s.PicturesListingSerializers(pic, many=True)
-        pictures.append(serializer.data)
-    
+    listings_data = s.ListingSerializer(paginated_listings, many=True).data
+    pictures = _get_listing_pictures(listings_data)
+
     return paginator.get_paginated_response({
         'status': 'success',
         'HomeListing': listings_data,
         'pictures': pictures
     })
+
+def _paginate_listings(request, queryset):
+    paginator = PageNumberPagination()
+    paginator.page_size = request.GET.get('page_size', 10)
+    result_page = paginator.paginate_queryset(queryset, request)
+    return result_page, paginator
+
+def _get_listing_pictures(listings_data):
+    pictures = []
+    for listing in listings_data:
+        pic_qs = m.PicturesListings.objects.filter(listingId=listing['id'])
+        pic_serializer = s.PicturesListingSerializers(pic_qs, many=True)
+        pictures.append(pic_serializer.data)
+    return pictures
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -536,21 +498,34 @@ def home_products(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def YourListings(request,id,type):
-    if type == 'freelancer':
-        user = m.Freelancer.objects.get(userID=id)
-        Listing= m.Listing.objects.filter(freelancerID = user,status='active')
-    else:
-        user = m.BusinessOwner.objects.get(userID=id)
-        Listing= m.Listing.objects.filter(ownerID = user,status='active')
-    ListingSerializer= s.ListingSerializer(Listing, many=True)
-    Pictures = []
-    for i in Listing:
-        pic = m.PicturesListings.objects.filter(listingId=i.id)
-        serializer = s.PicturesListingSerializers(pic, many=True)
-        Pictures.append(serializer.data)
+@api_view(['GET'])
+def your_listings(request, id, type):
+    user = _get_user_by_type(id, type)
+    listings = _get_user_listings(user, type)
+    
+    listing_data = s.ListingSerializer(listings, many=True).data
+    pictures = _get_listing_pictures(listings)
 
-    return Response({'status':'succuess', 'YourListings':ListingSerializer.data,'pictures':Pictures})
+    return Response({
+        'status': 'success',
+        'YourListings': listing_data,
+        'pictures': pictures
+    })
+def _get_user_by_type(user_id, user_type):
+    if user_type == 'freelancer':
+        return m.Freelancer.objects.get(userID=user_id)
+    return m.BusinessOwner.objects.get(userID=user_id)
+def _get_user_listings(user, user_type):
+    if user_type == 'freelancer':
+        return m.Listing.objects.filter(freelancerID=user, status='active')
+    return m.Listing.objects.filter(ownerID=user, status='active')
+def _get_listing_pictures(listings):
+    pictures = []
+    for listing in listings:
+        pics = m.PicturesListings.objects.filter(listingId=listing.id)
+        serializer = s.PicturesListingSerializers(pics, many=True)
+        pictures.append(serializer.data)
+    return pictures
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

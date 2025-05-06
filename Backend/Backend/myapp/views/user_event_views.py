@@ -9,25 +9,25 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getEventType(request):
-    eventTypes = m.EventType.objects.all()
-    serializer = s.EventTypeSerializer(eventTypes,many=True)
+def get_event_type(request):
+    event_types = m.EventType.objects.all()
+    serializer = s.EventTypeSerializer(event_types,many=True)
     return Response({'status':'success','eventTypes':serializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def EventDetails(request,eventId):
-    EventDetail = m.Events.objects.get(id=eventId)
-    serializer = s.EventsSerializer(EventDetail,many=False)
-    Function = m.Functions.objects.filter(eventId=eventId)
-    serializer2 = s.FunctionsSerializer(Function,many=True)
+def event_details(request,eventid):
+    event_detail = m.Events.objects.get(id=eventid)
+    serializer = s.EventsSerializer(event_detail,many=False)
+    function = m.Functions.objects.filter(eventId=eventid)
+    serializer2 = s.FunctionsSerializer(function,many=True)
     UserActivity.objects.create(
         user=request.user,
         action='event_view',
         metadata={
-            'event_id': eventId,
-            'event_name': EventDetail.name,
-            'event_type': EventDetail.type
+            'event_id': eventid,
+            'event_name': event_detail.name,
+            'event_type': event_detail.type
         },
         timestamp=now()
     )
@@ -36,34 +36,34 @@ def EventDetails(request,eventId):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def EditEvent(request):
+def edit_event(request):
     name = request.data.get('Event Name')
-    type = request.data.get('Event Type')
+    edit_event_type = request.data.get('Event Type')
     date = request.data.get('Date')
     location = request.data.get('Location')
     description = request.data.get('description')
-    themeColor = request.data.get('Theme')
+    theme_color = request.data.get('Theme')
     budget = request.data.get('Budget')
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
-    eventId = request.data.get('EventId')
+    event_id = request.data.get('EventId')
     budget = int(budget.replace(",", ""))
-    EditEvent = m.Events.objects.get(id=eventId)
-    EditEvent.name = name
-    EditEvent.guestsmin = guestmin
-    EditEvent.guestsmax = guestmax
-    EditEvent.type = type
-    EditEvent.date = date
-    EditEvent.location = location
-    EditEvent.description = description
-    EditEvent.themeColor = themeColor
-    EditEvent.budget = budget
-    EditEvent.save(update_fields=['name','guestsmin','guestsmax','type','date','location','description','themeColor','budget'])
+    edit_event = m.Events.objects.get(id=event_id)
+    edit_event.name = name
+    edit_event.guestsmin = guestmin
+    edit_event.guestsmax = guestmax
+    edit_event.type = edit_event_type
+    edit_event.date = date
+    edit_event.location = location
+    edit_event.description = description
+    edit_event.themeColor = theme_color
+    edit_event.budget = budget
+    edit_event.save(update_fields=['name','guestsmin','guestsmax','type','date','location','description','themeColor','budget'])
     UserActivity.objects.create(
         user=request.user,
         action='event_edit',
         metadata={
-            'event_id': eventId,
+            'event_id': event_id,
             'updated_name': name,
             'updated_location': location
         },
@@ -74,29 +74,29 @@ def EditEvent(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def CreateEvent(request):
-    userId = request.data.get('userId')
+def create_event(request):
+    userid = request.data.get('userId')
     name = request.data.get('Event Name')
-    type = request.data.get('Event Type')
+    create_event_type = request.data.get('Event Type')
     date = request.data.get('Date')
     location = request.data.get('Location')
     description = request.data.get('description')
-    themeColor = request.data.get('Theme')
+    theme_color = request.data.get('Theme')
     budget = request.data.get('Budget')
     budget = int(budget.replace(",", ""))
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
-    userId= m.User.objects.get(id=userId)
-    CreateEvent = m.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userId,type=type,date=date,location=location,themeColor=themeColor,budget=budget)
+    userid= m.User.objects.get(id=userid)
+    create_event = m.Events(name=name,guestsmin=guestmin,guestsmax=guestmax,userID=userid,type=create_event_type,date=date,location=location,themeColor=theme_color,budget=budget)
     if description != None:
-        CreateEvent.description = description
-    CreateEvent.save()
+        create_event.description = description
+    create_event.save()
     UserActivity.objects.create(
         user=request.user,
         action='event_create',
         metadata={
             'event_name': name,
-            'event_type': type,
+            'event_type': create_event_type,
             'location': location,
             'budget': budget
         },
@@ -107,26 +107,26 @@ def CreateEvent(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def YourEvents(request,id):
-    YourEvent = m.Events.objects.filter(userID=id)
-    serializer = s.EventsSerializer (YourEvent,many=True)
-    numberofFunctions = []
-    for i in YourEvent:
+def your_events(request,id):
+    your_event = m.Events.objects.filter(userID=id)
+    serializer = s.EventsSerializer (your_event,many=True)
+    number_of_functions = []
+    for i in your_event:
         functions = m.Functions.objects.filter(eventId=i.id)
-        numberofFunctions.append(len(functions))
-    return Response({'status':'success','Event':serializer.data,'nofunctions':numberofFunctions})
+        number_of_functions.append(len(functions))
+    return Response({'status':'success','Event':serializer.data,'nofunctions':number_of_functions})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def DeleteEvent(request):
-    id = request.data.get('EventId')
-    DeleteEvent = m.Events.objects.get(id=id)
-    DeleteEvent.delete()
+def delete_event(request):
+    delete_event_id = request.data.get('EventId')
+    delete_event = m.Events.objects.get(id=delete_event_id)
+    delete_event.delete()
     return Response({'status':'success'})
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def getEventsAndFunctions(request, id):
+def get_events_and_functions(request, id):
     user = m.User.objects.get(id=id)
     events = m.Events.objects.filter(userID=user).values('id', 'name', 'userID')
     response_data = []

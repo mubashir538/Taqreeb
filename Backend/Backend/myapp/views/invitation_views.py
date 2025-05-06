@@ -13,7 +13,7 @@ from django_cron import CronJobBase, Schedule
 from datetime import timedelta
 from django.utils import timezone
 from datetime import datetime
-
+from ..constants.views_constants import arial_font
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -107,33 +107,52 @@ class InvitationGenerator:
     def _load_fonts_from_structure(self):
         """Load fonts from the organized folder structure"""
         for style in self.fonts.keys():
-            style_dir = os.path.join(self.fonts_dir, style)
-            if os.path.exists(style_dir):
-                for font_file in os.listdir(style_dir):
-                    if font_file.lower().endswith(('.otf', '.ttf')):
-                        font_path = os.path.join(style_dir, font_file)
-                        try:
-                            font = ImageFont.truetype(
-                                font_path, 
-                                self.fonts[style]['size']
-                            )
-                            self.fonts[style]['fonts'].append({
-                                'name': font_file,
-                                'object': font
-                            })
-                        except Exception as e:
-                            print(f"Failed to load font {font_path}: {str(e)}")
-            
-            if not self.fonts[style]['fonts']:
-                fallback_font = "arialbd.ttf" if 'bold' in style else "arial.ttf"
+            self._load_fonts_for_style(style)
+
+
+    def _load_fonts_for_style(self, style):
+        style_dir = os.path.join(self.fonts_dir, style)
+        font_files = self._get_font_files_for_style(style_dir)
+
+        for font_file in font_files:
+            font_path = os.path.join(style_dir, font_file)
+            font_obj = self._load_font_object(font_path, self.fonts[style]['size'])
+            if font_obj:
                 self.fonts[style]['fonts'].append({
-                    'name': fallback_font,
-                    'object': ImageFont.truetype(
-                        fallback_font,
-                        self.fonts[style]['size']
-                    )
+                    'name': font_file,
+                    'object': font_obj
                 })
-                print(f"Using fallback font for {style}")
+
+        if not self.fonts[style]['fonts']:
+            self._load_fallback_font(style)
+
+
+    def _get_font_files_for_style(self, style_dir):
+        if not os.path.exists(style_dir):
+            return []
+        return [f for f in os.listdir(style_dir) if f.lower().endswith(('.otf', '.ttf'))]
+
+
+    def _load_font_object(self, path, size):
+        try:
+            return ImageFont.truetype(path, size)
+        except Exception as e:
+            print(f"Failed to load font {path}: {str(e)}")
+            return None
+
+
+    def _load_fallback_font(self, style):
+        fallback_font = "arialbd.ttf" if 'bold' in style else arial_font
+        try:
+            fallback = ImageFont.truetype(fallback_font, self.fonts[style]['size'])
+            self.fonts[style]['fonts'].append({
+                'name': fallback_font,
+                'object': fallback
+            })
+            print(f"Using fallback font for {style}")
+        except Exception as e:
+            print(f"Failed to load fallback font {fallback_font}: {str(e)}")
+
 
     def _select_fonts_for_categories(self):
         """Select random fonts for each category that will be used throughout the invitation"""
@@ -141,7 +160,7 @@ class InvitationGenerator:
             if self.fonts[style]['fonts']:
                 self.fonts[style]['selected_font'] = random.choice(self.fonts[style]['fonts'])['object']
             else:
-                fallback_font = "arialbd.ttf" if 'bold' in style else "arial.ttf"
+                fallback_font = "arialbd.ttf" if 'bold' in style else arial_font
                 self.fonts[style]['selected_font'] = ImageFont.truetype(
                     fallback_font,
                     self.fonts[style]['size']
@@ -149,7 +168,7 @@ class InvitationGenerator:
 
     def _get_font(self, style):
         """Get the pre-selected font for the specified style"""
-        return self.fonts.get(style, {}).get('selected_font', ImageFont.truetype("arial.ttf", 42))
+        return self.fonts.get(style, {}).get('selected_font', ImageFont.truetype(arial_font, 42))
 
     def _load_template_config(self, json_path):
         """Load template config from JSON including safe zones"""

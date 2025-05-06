@@ -33,81 +33,105 @@ def create_booking(request):
 def create_order(request):
     try:
         user = request.user
-        cart = m.Cart.objects.get(user=user)
+        cart = get_user_cart(user)
         cart_items = cart.items.all()
         
         if not cart_items.exists():
             return Response({'status': 'error', 'message': 'Cart is empty'}, status=400)
         
-        total_amount = 0
-        bookings = []
-        
-        for item in cart_items:
-            if item.item_type == 'listing':
-                listing = m.Listing.objects.get(id=item.item_id)
-                total_amount += listing.priceMin * item.quantity
-            elif item.item_type == 'product':
-                product = m.Product.objects.get(id=item.item_id)
-                total_amount += product.price * item.quantity
-            elif item.item_type == 'package':
-                package = m.Packages.objects.get(id=item.item_id)
-                total_amount += package.price * item.quantity
-        
-        order_data = {
-            'user': user.id,
-            'cart': cart.id,
-            'total_amount': total_amount,
-            'booking_info': request.data.get('booking_info', {}),
-        }
+        total_amount = calculate_total_amount(cart_items)
+        order_data = build_order_data(user, cart, total_amount, request)
         
         order_serializer = s.OrderSerializer(data=order_data)
-        if order_serializer.is_valid():
-            order = order_serializer.save()
-            
-            m.UserActivity.objects.create(
-            user=user,
-            action='book_venue',
-            metadata={
-                'order_id': order.id,
-                'total_amount': total_amount,
-                'item_count': cart_items.count()
-            }
-        )
+        if not order_serializer.is_valid():
+            return Response({'status': 'error', 'errors': order_serializer.errors}, status=400)
 
-            for item in cart_items:
-                booking_data = {
-                    'user': user.id,
-                    'payment_amount': 0,
-                    'booking_date': request.data.get('booking_date'),
-                }
-                
-                if item.item_type == 'listing':
-                    booking_data['listing'] = item.item_id
-                    booking_data['payment_amount'] = m.Listing.objects.get(id=item.item_id).priceMin
-                elif item.item_type == 'product':
-                    booking_data['product'] = item.item_id
-                    booking_data['payment_amount'] = m.Product.objects.get(id=item.item_id).price * item.quantity
-                elif item.item_type == 'package':
-                    booking_data['package'] = item.item_id
-                    booking_data['payment_amount'] = m.Packages.objects.get(id=item.item_id).price
-                
-                booking_serializer = s.BookingSerializer(data=booking_data)
-                if booking_serializer.is_valid():
-                    booking_serializer.save()
-                    bookings.append(booking_serializer.data)
-            
-            cart.items.all().delete()
-            
-            return Response({
-                'status': 'success', 
-                'order': order_serializer.data,
-                'bookings': bookings,
-            })
-        return Response({'status': 'error', 'errors': order_serializer.errors}, status=400)
+        order = order_serializer.save()
+        log_user_activity(user, order, total_amount, cart_items.count())
+        
+        bookings = process_bookings(user, cart_items, request)
+        cart.items.all().delete()
+
+        return Response({
+            'status': 'success', 
+            'order': order_serializer.data,
+            'bookings': bookings,
+        })
+        
     except m.Cart.DoesNotExist:
         return Response({'status': 'error', 'message': 'Cart not found'}, status=404)
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
+
+
+def get_user_cart(user):
+    return m.Cart.objects.get(user=user)
+
+def calculate_total_amount(cart_items):
+    total = 0
+    for item in cart_items:
+        model = get_model_for_item(item)
+        price = model.price if item.item_type != 'listing' else model.priceMin
+        total += price * item.quantity
+    return total
+
+def build_order_data(user, cart, total_amount, request):
+    return {
+        'user': user.id,
+        'cart': cart.id,
+        'total_amount': total_amount,
+        'booking_info': request.data.get('booking_info', {}),
+    }
+
+def log_user_activity(user, order, total_amount, item_count):
+    m.UserActivity.objects.create(
+        user=user,
+        action='book_venue',
+        metadata={
+            'order_id': order.id,
+            'total_amount': total_amount,
+            'item_count': item_count
+        }
+    )
+
+def process_bookings(user, cart_items, request):
+    bookings = []
+    booking_date = request.data.get('booking_date')
+
+    for item in cart_items:
+        booking_data = build_booking_data(user, item, booking_date)
+        booking_serializer = s.BookingSerializer(data=booking_data)
+        if booking_serializer.is_valid():
+            booking_serializer.save()
+            bookings.append(booking_serializer.data)
+    return bookings
+
+def build_booking_data(user, item, booking_date):
+    model = get_model_for_item(item)
+    payment_amount = model.priceMin if item.item_type == 'listing' else model.price * item.quantity
+    
+    data = {
+        'user': user.id,
+        'payment_amount': payment_amount,
+        'booking_date': booking_date,
+    }
+
+    if item.item_type == 'listing':
+        data['listing'] = item.item_id
+    elif item.item_type == 'product':
+        data['product'] = item.item_id
+    elif item.item_type == 'package':
+        data['package'] = item.item_id
+
+    return data
+
+def get_model_for_item(item):
+    if item.item_type == 'listing':
+        return m.Listing.objects.get(id=item.item_id)
+    elif item.item_type == 'product':
+        return m.Product.objects.get(id=item.item_id)
+    elif item.item_type == 'package':
+        return m.Packages.objects.get(id=item.item_id)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

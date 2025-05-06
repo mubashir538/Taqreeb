@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def deleteTable(request):
+def delete_table(request):
     return Response({'status': 'success'})
 
 @api_view(['GET'])
