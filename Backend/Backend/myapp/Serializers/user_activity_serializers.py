@@ -1,4 +1,9 @@
 
+from ..Models import user_models as m
+from ..Models import listing_models as lm
+from rest_framework import serializers as s
+
+
 class UserActivitySerializer(s.ModelSerializer):
     class Meta:
         model = m.UserActivity
@@ -6,7 +11,7 @@ class UserActivitySerializer(s.ModelSerializer):
 
 class WishlistSerializer(s.ModelSerializer):
     class Meta:
-        model = m.Wishlist
+        model = lm.Wishlist
         fields = '__all__'
 
 class BankDetailsSerializer(s.ModelSerializer):

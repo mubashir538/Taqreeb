@@ -25,6 +25,7 @@ from .views import chat_views as ch
 from .views import category_views as cat
 from .views import business_views as b
 from .views import activity_views as a
+from .views import chat_bot_views as chatbot
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -37,7 +38,7 @@ router.register(r'cart', cart.CartViewSet, basename='cart')
 router.register(r'cart/items', cart.CartItemViewSet, basename='cart-items')
 
 urlpatterns = [
-    
+    path('api/chatbot/', chatbot.chatbot_api, name='chatbot_api'),
     path('profile/', react.react_user_profile, name='react_user_profile'),
     path('api/react/login/', react.ReactUserLogin, name='react_user_login'),
     path('api/react/token/refresh/', TokenRefreshView.as_view(), name='react_token_refresh'),

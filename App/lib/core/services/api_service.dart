@@ -391,7 +391,6 @@ class MyApi {
         }
       }
 
-
       final response = await request.send().timeout(const Duration(seconds: 30),
           onTimeout: () {
         if (context != null) {
@@ -605,6 +604,21 @@ class MyApi {
         },
       );
     } catch (_) {}
+  }
+
+  static Future<Map<String, dynamic>> sendChatbotMessage({
+    required String userId,
+    required String message,
+    BuildContext? context,
+  }) async {
+    return await postRequest(
+      endpoint: 'chatbot/', // Your Django endpoint
+      body: {
+        'user_id': userId,
+        'message': message,
+      },
+      context: context,
+    );
   }
 
   static Future<void> deleteCache(String url) async {

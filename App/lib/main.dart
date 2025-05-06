@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Screens/AI/chatbot.dart';
 import 'package:taqreeb/Screens/AI/event_detail_ai.dart';
 import 'package:taqreeb/Screens/AI/event_packages_ai.dart';
 import 'package:taqreeb/Screens/AI/function_detail_ai.dart';
@@ -202,8 +203,9 @@ class _MainAppState extends State<MainApp> {
       '/CategoryView_Venue': (context) => CategoryViewVenue(),
       '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
       '/ChatBox': (context) => ChatBox(),
+      '/ChatBot': (context) => EventPlanningChatbot(),
       '/ChatsScreen': (context) => MainScreen(index: 1),
-      '/CreateAIPackage': (context) => MainScreen(index: 1),
+      // '/CreateAIPackage': (context) => MainScreen(index: 1),
       '/CreateChecklistItems': (context) => CreateChecklistItems(),
       '/CreateEvent': (context) => CreateEvent(),
       '/CreateFunction': (context) => CreateFunction(),

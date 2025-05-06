@@ -1,3 +1,7 @@
+from ..Models import review_models as m
+from rest_framework import serializers as s
+
+
 class ReviewSerializer(s.ModelSerializer):
     class Meta:
         model = m.Review

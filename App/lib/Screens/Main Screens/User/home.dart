@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Logs.logUserActivity("ai_package_button_click", {});
 
-          Navigator.pushNamed(context, '/CreateAIPackage');
+          Navigator.pushNamed(context, '/ChatBot');
         },
         text: 'Create Package with AI',
       ),

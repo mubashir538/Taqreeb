@@ -1,5 +1,8 @@
 from rest_framework import serializers as s
-from .. import models as m
+from ..Models import event_models as m
+from ..Models import listing_models as lm
+from ..Models import misc_models as mm
+
 
 class EventTypeSerializer(s.ModelSerializer):
     class Meta:
@@ -14,10 +17,10 @@ class FunctionTypeSerializer(s.ModelSerializer):
 
 class CategoriesSerializer(s.ModelSerializer):
     class Meta:
-        model = m.Categories
+        model = lm.Categories
         fields = '__all__'
 
 class HomePageImagesSerializer(s.ModelSerializer):
     class Meta:
-        model = m.HomePageImages
+        model = mm.HomePageImages
         fields = '__all__'
