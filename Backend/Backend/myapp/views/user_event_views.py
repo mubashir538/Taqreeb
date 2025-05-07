@@ -1,8 +1,8 @@
 from rest_framework.response import Response
-from .. import models as m
+from .. import models2 as m
 from rest_framework.decorators import api_view, permission_classes
 from .. import Serializers as s
-from myapp.models import UserActivity
+from Backend.Backend.myapp.models2 import UserActivity
 from django.utils.timezone import now
 from rest_framework.permissions import IsAuthenticated, AllowAny
 

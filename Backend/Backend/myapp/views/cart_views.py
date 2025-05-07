@@ -1,7 +1,7 @@
 import os
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
-from .. import models as m
+from .. import models2 as m
 from .. import Serializers as s
 from datetime import datetime
 from rest_framework.decorators import api_view, permission_classes

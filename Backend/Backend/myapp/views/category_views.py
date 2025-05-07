@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view, permission_classes
-from .. import models as m
+from .. import models2 as m
 from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response

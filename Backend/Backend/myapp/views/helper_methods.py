@@ -1,4 +1,4 @@
-from .. import models as m
+from .. import models2 as m
 import random as rd
 import requests as rq
 import re

@@ -3,9 +3,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 import bcrypt
-from ..models import UserActivity
+from ..models2 import UserActivity
 from myapp.firebase_db import db
-from .. import models as m
+from .. import models2 as m
 import random as rd
 from django.conf import settings
 from .helper_methods import generate_username
