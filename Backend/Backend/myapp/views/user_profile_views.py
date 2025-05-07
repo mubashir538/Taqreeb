@@ -12,7 +12,7 @@ from myapp.firebase_db import db
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def AccountInfoPage(request,id):
+def account_info_page(request,id):
     userid = id
     user = m.User.objects.filter(id=userid).first()
     serializer = s.UserSerializer(user)
@@ -39,27 +39,27 @@ def get_basic_userinfo(request,id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def EditAccountInfoPage(request):
+def edit_account_info_page(request):
     userid = request.data.get('userid')
-    firstName = request.data.get('firstName')
-    profilePicture = request.data.get('profilePicture')
+    first_name = request.data.get('firstName')
+    profile_picture = request.data.get('profilePicture')
     gender = request.data.get('gender')
     city = request.data.get('city')
     lastname = request.data.get('lastName')
     user = m.User.objects.get(id=userid)
-    user.firstName = firstName
+    user.firstName = first_name
     user.lastName = lastname
     user.gender = gender
     user.city = city
-    if profilePicture:
+    if profile_picture:
         relative_path = user.profilePicture.replace('/media/', '', 1) 
         full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
         full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
-        filePath = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profilePicture)
-        user.profilePicture = filestorage.url(filePath)   
+        file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profile_picture)
+        user.profilePicture = filestorage.url(file_path)   
         user.save(update_fields=["profilePicture",'firstName','lastName','gender','city'])
     else:
         user.save(update_fields=['firstName','lastName','gender','city'])

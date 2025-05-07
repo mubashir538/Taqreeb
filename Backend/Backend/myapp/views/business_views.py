@@ -10,7 +10,7 @@ from myapp.firebase_db import db
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def searchType(request,userid):
+def search_type(request,userid):
     business = m.BusinessOwner.objects.filter(userID=userid,status='Approved')
     response = {'status':'success','business':False,'freelancer':False}
     if business:
@@ -30,30 +30,30 @@ def get_business_usernames(request):
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def BusinessOwnerSignup(request):
+def business_owner_signup(request):
     userid = request.data.get('id')
-    businessName = request.data.get('businessName')
+    business_name = request.data.get('businessName')
     cnic = request.data.get('cnic')
-    cnicFront = request.FILES.get('cnicFront')
-    cnicBack = request.FILES.get('cnicBack')
+    cnic_front = request.FILES.get('cnicFront')
+    cnic_back = request.FILES.get('cnicBack')
     description = request.data.get('description')
     profile = request.FILES.get('profilePicture')
     user = m.User.objects.get(id=userid)
     if m.BusinessOwner.objects.filter(userID=userid).exists():
         return Response({'status':'error', 'message': 'Business Owner Already Exists'}) 
-    owner = m.BusinessOwner(userID=user,businessName=businessName,Description=description,cnic=cnic,status='Pending')
+    owner = m.BusinessOwner(userID=user,businessName=business_name,Description=description,cnic=cnic,status='Pending')
     owner.save()
     filestorage = FileSystemStorage()
-    filePath = filestorage.save(f'uploads/Business/cnic/Approval/Front/{userid}.png', cnicFront)
-    filePath2 = filestorage.save(f'uploads/Business/cnic/Approval/Back/{userid}.png', cnicBack)
+    file_path = filestorage.save(f'uploads/Business/cnic/Approval/Front/{userid}.png', cnic_front)
+    file_path2 = filestorage.save(f'uploads/Business/cnic/Approval/Back/{userid}.png', cnic_back)
     picture = filestorage.save(f'uploads/Business/profilePicture/{userid}.png', profile)
     owner = m.BusinessOwner.objects.get(userID=userid)
-    owner.CNICBack = filestorage.url(filePath2)
-    owner.CNICFront = filestorage.url(filePath)
+    owner.CNICBack = filestorage.url(file_path2)
+    owner.CNICFront = filestorage.url(file_path)
     owner.profilepic = filestorage.url(picture)
     owner.save(update_fields=["CNICFront","CNICBack","profilepic"])
     firebase_user_data = {
-        "businessName": businessName,
+        "businessName": business_name,
         "profile":picture,
         "description":description,
         "userId":userid
@@ -66,52 +66,52 @@ def BusinessOwnerSignup(request):
     return Response({'status':'success'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def BusinessAccountInfoPage(request,id,type):
+def business_account_info_page(request,id,type):
     userid = id
     user = m.User.objects.filter(id=userid).first()
     if type == 'freelancer':
-        businessInfo = m.Freelancer.objects.get(userID=id)
-        BusinessSerializer = s.FreelancerSerializer(businessInfo,many=False)
+        business_info = m.Freelancer.objects.get(userID=id)
+        business_serializer = s.FreelancerSerializer(business_info,many=False)
     else:
-        businessInfo = m.BusinessOwner.objects.get(userID=id)
-        BusinessSerializer = s.BusinessOwnerSerializer(businessInfo,many=False)
+        business_info = m.BusinessOwner.objects.get(userID=id)
+        business_serializer = s.BusinessOwnerSerializer(business_info,many=False)
     serializer = s.UserSerializer(user,many=False)
     if type == 'freelancer':
-        types = list(m.Listing.objects.filter(freelancerID=businessInfo.id).values_list('type', flat=True).distinct())
-        listing = m.Listing.objects.filter(freelancerID=businessInfo.id).count()
+        types = list(m.Listing.objects.filter(freelancerID=business_info.id).values_list('type', flat=True).distinct())
+        listing = m.Listing.objects.filter(freelancerID=business_info.id).count()
     else:
-        types = list(m.Listing.objects.filter(ownerID=businessInfo.id).values_list('type', flat=True).distinct())
-        listing = m.Listing.objects.filter(ownerID=businessInfo.id).count()
-    return Response({'status':'success','businessInfo':BusinessSerializer.data,'userinfo':serializer.data,'categories':list(types),'listingCount':listing})
+        types = list(m.Listing.objects.filter(ownerID=business_info.id).values_list('type', flat=True).distinct())
+        listing = m.Listing.objects.filter(ownerID=business_info.id).count()
+    return Response({'status':'success','businessInfo':business_serializer.data,'userinfo':serializer.data,'categories':list(types),'listingCount':listing})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def editBusinessInfo(request):
+def edit_business_info(request):
     userid = request.data.get('userid')
-    businessName = request.data.get('name')
-    Description = request.data.get('description')
-    type = request.data.get('type')
+    business_name = request.data.get('name')
+    description = request.data.get('description')
+    user_type = request.data.get('type')
     user = m.User.objects.get(id=userid)
-    if type == 'freelancer':
+    if user_type == 'freelancer':
         business = m.Freelancer.objects.get(userID=user)
     else:
         business = m.BusinessOwner.objects.get(userID=user)
-    business.businessName = businessName
-    business.Description = Description
-    profilePicture = request.FILES.get('profilePicture')
+    business.businessName = business_name
+    business.Description = description
+    profile_picture = request.FILES.get('profilePicture')
     
-    if profilePicture:
+    if profile_picture:
         relative_path = business.profilepic.replace('/media/', '', 1) 
         full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
         full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
-        if type == 'freelancer':
-            filePath = filestorage.save(f'uploads/Business/profilePicture/{user.id}.png', profilePicture)
+        if user_type == 'freelancer':
+            file_path = filestorage.save(f'uploads/Business/profilePicture/{user.id}.png', profile_picture)
         else:
-            filePath = filestorage.save(f'uploads/Freelancer/profilePicture/{user.id}.png', profilePicture)
-        business.profilepic = filestorage.url(filePath)   
+            file_path = filestorage.save(f'uploads/Freelancer/profilePicture/{user.id}.png', profile_picture)
+        business.profilepic = filestorage.url(file_path)   
         business.save(update_fields=["profilepic",'businessName','Description'])
     else:
         business.save(update_fields=['businessName','Description'])
@@ -120,26 +120,26 @@ def editBusinessInfo(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def FreelancerSignup(request):
-    BusinessName = request.data.get('BusinessName')
-    PortfolioLink = request.data.get('Portfoliolink')
-    Description = request.data.get('Description')
-    Picture = request.FILES.get('profilePicture')
-    UserId = request.data.get('UserId')
+def freelancer_signup(request):
+    business_name = request.data.get('BusinessName')
+    portfolio_link = request.data.get('Portfoliolink')
+    description = request.data.get('Description')
+    picture = request.FILES.get('profilePicture')
+    user_id = request.data.get('UserId')
     cnic = request.data.get('cnic')
-    user = m.User.objects.get(id=UserId)
-    Freelancer = m.Freelancer(userID = user,businessName = BusinessName,cnic=cnic,portfolioLink = PortfolioLink,Description = Description,status='Pending')
-    Freelancer.save()
+    user = m.User.objects.get(id=user_id)
+    freelancer = m.Freelancer(userID = user,businessName = business_name,cnic=cnic,portfolioLink = portfolio_link,Description = description,status='Pending')
+    freelancer.save()
     filestorage = FileSystemStorage()
-    picture = filestorage.save(f'uploads/Freelancer/profilePicture/{UserId}.png',Picture)
-    owner = m.Freelancer.objects.get(userID=UserId)
+    picture = filestorage.save(f'uploads/Freelancer/profilePicture/{user_id}.png',picture)
+    owner = m.Freelancer.objects.get(userID=user_id)
     owner.profilepic = filestorage.url(picture)
     owner.save(update_fields=["profilepic"])
     firebase_user_data = {
-        "businessName": BusinessName,
+        "businessName": business_name,
         "profile":owner.profilepic,
-        "description":Description,
-        "userId":UserId
+        "description":description,
+        "userId":user_id
     }
     try:
         db.collection("freelanceUsers").document(str(owner.id)).set(firebase_user_data)

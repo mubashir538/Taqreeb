@@ -78,16 +78,16 @@ def send_notification(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def saveFCMToken(request):
+def save_fcm_token(request):
     token = request.data.get('token')
-    userId = request.data.get('userId')
-    userId = m.User.objects.get(id=userId)
-    m.FCMTokens(userid=userId,token=token).save()
+    userid = request.data.get('userId')
+    userid = m.User.objects.get(id=userid)
+    m.FCMTokens(userid=userid,token=token).save()
     return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def DeleteFCMToken(request):
+def delete_fcm_token(request):
     token = request.data.get('token')
     m.FCMTokens.objects.filter(token=token).delete()
     return Response({'status':'success'})
