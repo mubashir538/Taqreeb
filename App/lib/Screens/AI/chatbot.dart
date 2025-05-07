@@ -12,7 +12,7 @@ class EventPlanningChatbot extends StatefulWidget {
   const EventPlanningChatbot({super.key});
 
   @override
-  EventPlanningChatbotState createState() => EventPlanningChatbotState();
+  EventPlanningChatbotStatew createState() => EventPlanningChatbotState();
 }
 
 class EventPlanningChatbotState extends State<EventPlanningChatbot> {

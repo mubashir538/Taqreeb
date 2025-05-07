@@ -6,9 +6,9 @@ from rest_framework.response import Response
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def YourEventsandFunctions(request,id):
-    YourEvent = m.Events.objects.filter(userID=id)
-    serializer = s.EventsSerializer(YourEvent,many=True)
+def youreventsandfunctions(request,id):
+    yourevent = m.Events.objects.filter(userID=id)
+    serializer = s.EventsSerializer(yourevent,many=True)
     for event in serializer.data:
         functions = m.Functions.objects.filter(eventId=event['id'])
         event['functions'] = s.FunctionsSerializer(functions,many=True).data

@@ -1,4 +1,3 @@
-import os
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from .. import models as m
@@ -12,7 +11,7 @@ from rest_framework import viewsets, permissions, status
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def showBookCart(request,id):
+def show_book_cart(request,id):
     cart = m.BookingCart.objects.filter(functionId=id,status='Cart')
     if cart.count() == 0:
         return Response({'status':'CartEmpty'})
@@ -49,11 +48,11 @@ def showBookCart(request,id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def AddtoBookCart(request):
+def add_to_book_cart(request):
     fid = request.data.get('fid')
     lid = request.data.get('lid')
     uid = request.data.get('uid')
-    type = request.data.get('type')
+    listing_type = request.data.get('type')
     slot = request.data.get('slot')
     function = m.Functions.objects.get(id=fid)
     listing = m.Listing.objects.get(id=lid)
@@ -62,9 +61,9 @@ def AddtoBookCart(request):
         if slot.find(' ') != -1:
             slot = slot[:-1]
             slot = datetime.strptime(slot, "%Y-%m-%d %H:%M:%S.%f").date()
-        cart = m.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart',slot=slot)
+        cart = m.BookingCart(userId=user,listingId=listing,functionId=function,type=listing_type,status='Cart',slot=slot)
     else:
-        cart = m.BookingCart(userId=user,listingId=listing,functionId=function,type=type,status='Cart')
+        cart = m.BookingCart(userId=user,listingId=listing,functionId=function,type=listing_type,status='Cart')
     cart.save()
     if function.budget < listing.basicPrice:
         return Response({'status':'BudgetError','message':'Budget not enough'})
@@ -72,12 +71,12 @@ def AddtoBookCart(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def CartItems(request, CartItemsID):
-    Listing = m.Listing.objects.get(id = CartItemsID)
-    CartItems = m.CartItem.objects.get(CartItemsID = CartItemsID)
-    ListingSerializer = s.ListingSerializer(Listing, many=True)
-    CartItemsSerializer = s.CartItemSerializer(CartItems, many = True)
-    return Response({'Status': 'Success', 'Listing': ListingSerializer.data, 'Cartitems': CartItemsSerializer.data})
+def cart_items(request, cart_items_id):
+    listing = m.Listing.objects.get(id = cart_items_id)
+    cart_items = m.CartItems.objects.get(CartItemsID = cart_items_id)
+    listing_serializer = s.ListingSerializer(listing, many=True)
+    cart_items_serializer = s.CartItemsSerializer(cart_items, many = True)
+    return Response({'Status': 'Success', 'Listing': listing_serializer.data, 'Cartitems': cart_items_serializer.data})
 
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = s.CartSerializer

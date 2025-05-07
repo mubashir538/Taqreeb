@@ -14,20 +14,20 @@ from datetime import timezone
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def addTransaction(request):
-    senderId = request.data.get('senderId')
-    packageId = request.data.get('packageId')
+def add_transaction(request):
+    senderid = request.data.get('senderId')
+    packageid = request.data.get('packageId')
     amount = request.data.get('amount')
-    bookingId = request.data.get('bookingId', None)
+    bookingid = request.data.get('bookingId', None)
     
     try:
-        user = m.User.objects.get(id=senderId)
-        package = m.Packages.objects.get(id=packageId)
+        user = m.User.objects.get(id=senderid)
+        package = m.Packages.objects.get(id=packageid)
         listing = m.Listing.objects.get(id=package.listingId)
         
         booking = None
-        if bookingId:
-            booking = m.Booking.objects.get(id=bookingId)
+        if bookingid:
+            booking = m.Booking.objects.get(id=bookingid)
         else:
             booking = m.Booking.objects.create(
                 user=user,
@@ -91,7 +91,7 @@ def addTransaction(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getTransactions(request, id, type):
+def get_transactions(request, id, type):
     try:
         user = m.User.objects.get(id=id)
         now = timezone.now()
@@ -115,11 +115,11 @@ def getTransactions(request, id, type):
             date__month=now.month
         ).aggregate(Sum('amount'))['amount__sum'] or 0
         
-        transactionSerializer = s.BusinessTransactionSerializer(transactions, many=True)
+        transaction_serializer = s.BusinessTransactionSerializer(transactions, many=True)
         
         return Response({
             'status': 'success',
-            'data': transactionSerializer.data,
+            'data': transaction_serializer.data,
             'stats': {
                 'total_amount': total_amount,
                 'monthly_amount': monthly_amount
@@ -131,7 +131,7 @@ def getTransactions(request, id, type):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def getTransactionsRecent(request, id, type):
+def get_transactions_recent(request, id, type):
     try:
         user = m.User.objects.get(id=id)
         now = datetime.datetime.now()
@@ -153,15 +153,15 @@ def getTransactionsRecent(request, id, type):
                 status='Completed'
             ).order_by('-date')
         
-        transactionSerializer = s.BusinessTransactionSerializer(transactions, many=True)
-        return Response({'status': 'success', 'data': transactionSerializer.data})
+        transaction_serializer = s.BusinessTransactionSerializer(transactions, many=True)
+        return Response({'status': 'success', 'data': transaction_serializer.data})
     
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getUserTransactions(request, user_id):
+def get_user_transactions(request, user_id):
     try:
         user = m.User.objects.get(id=user_id)
         transactions = m.Transaction.objects.filter(
@@ -169,62 +169,62 @@ def getUserTransactions(request, user_id):
             status='Completed'
         ).order_by('-date')
         
-        transactionSerializer = s.TransactionSerializer(transactions, many=True)
-        return Response({'status': 'success', 'data': transactionSerializer.data})
+        transaction_serializer = s.TransactionSerializer(transactions, many=True)
+        return Response({'status': 'success', 'data': transaction_serializer.data})
     
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getWalletBalance(request,id,type):
-    userID = m.User.objects.get(id=id)
+def get_wallet_balance(request,id,type):
+    userid = m.User.objects.get(id=id)
     if type == 'freelancer':
-        Freelancer = m.Freelancer.objects.get(userID=userID)
-        return Response({'status':'success','balance':Freelancer.balance})
+        freelancer = m.Freelancer.objects.get(userID=userid)
+        return Response({'status':'success','balance':freelancer.balance})
     else:
-        BusinessOwner = m.BusinessOwner.objects.get(userID=userID)
-        return Response({'status':'success','balance':BusinessOwner.balance})
+        business_owner = m.BusinessOwner.objects.get(userID=userid)
+        return Response({'status':'success','balance':business_owner.balance})
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def WithdrawBalance(request):
+def withdraw_balance(request):
     amount = int(request.data.get('amount'))
-    userID = request.data.get('userID')
-    type = request.data.get('type')
-    userID = m.User.objects.get(id=userID)
-    bankDetails = request.data.get('bankDetails') 
-    if type == 'freelancer':
-        Freelancer = m.Freelancer.objects.get(userID=userID)
-        Freelancer.balance = Freelancer.balance - amount
-        Freelancer.save(update_fields=['balance'])
-        m.BusinessTransaction(type="Withdraw",amount=amount,ownerf=Freelancer,date=datetime.datetime.now(),info=f"Withdrawal to {bankDetails}").save()
+    userid = request.data.get('userID')
+    withdraw_type = request.data.get('type')
+    userid = m.User.objects.get(id=userid)
+    bank_details = request.data.get('bankDetails') 
+    if withdraw_type == 'freelancer':
+        freelancer = m.Freelancer.objects.get(userID=userid)
+        freelancer.balance = freelancer.balance - amount
+        freelancer.save(update_fields=['balance'])
+        m.BusinessTransaction(type="Withdraw",amount=amount,ownerf=freelancer,date=datetime.datetime.now(),info=f"Withdrawal to {bank_details}").save()
     else:
-        BusinessOwner = m.BusinessOwner.objects.get(userID=userID)
-        BusinessOwner.balance = BusinessOwner.balance - amount
-        BusinessOwner.save(update_fields=['balance'])
-        m.BusinessTransaction(type="Withdraw",amount=amount,ownerb=BusinessOwner,date=datetime.datetime.now(),info=f"Withdrawal to {bankDetails}").save()
+        business_owner = m.BusinessOwner.objects.get(userID=userid)
+        business_owner.balance = business_owner.balance - amount
+        business_owner.save(update_fields=['balance'])
+        m.BusinessTransaction(type="Withdraw",amount=amount,ownerb=business_owner,date=datetime.datetime.now(),info=f"Withdrawal to {bank_details}").save()
     return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def addBank(request):
-    bankName = request.data.get('bankName')
-    accountNumber = request.data.get('accountNumber')
-    IBANNumber = request.data.get('IBANNumber')
-    accountHolderName = request.data.get('accountHolderName')
-    userID = request.data.get('userID')
-    userID = m.User.objects.get(id=userID)
-    m.BankDetails(userID=userID,bankName=bankName,accountNumber=accountNumber,IBANNumber=IBANNumber,accountHolderName=accountHolderName).save()
+def add_bank(request):
+    bank_name = request.data.get('bankName')
+    account_number = request.data.get('accountNumber')
+    iban_number = request.data.get('IBANNumber')
+    account_holder_name = request.data.get('accountHolderName')
+    userid = request.data.get('userID')
+    userid = m.User.objects.get(id=userid)
+    m.BankDetails(userID=userid,bankName=bank_name,accountNumber=account_number,IBANNumber=iban_number,accountHolderName=account_holder_name).save()
     return Response({'status':'success'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getBank(request,id):
-    userID = m.User.objects.get(id=id)
-    bank = m.BankDetails.objects.filter(userID=userID)
-    bankSerializer = s.BankDetailsSerializer(bank,many=True)
-    return Response({'status':'success','data':bankSerializer.data})
+def get_bank(request,id):
+    userid = m.User.objects.get(id=id)
+    bank = m.BankDetails.objects.filter(userID=userid)
+    bank_serializer = s.BankDetailsSerializer(bank,many=True)
+    return Response({'status':'success','data':bank_serializer.data})
 
 
 @api_view(['POST'])
@@ -315,118 +315,120 @@ def process_payment(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@api_view(['POST'])
 def update_order_status(request):
     try:
-        order_id = request.data.get('order_id')
-        new_status = request.data.get('status')
-        
+        order_id, new_status = request.data.get('order_id'), request.data.get('status')
         if not all([order_id, new_status]):
             return Response({'status': 'error', 'message': 'Missing order_id or status'}, status=400)
         
-        order = get_object_or_404(
-            m.Order.objects.select_related('cart').prefetch_related('bookings'),
-            id=order_id
-        )
-        
-        is_owner = False
-        if request.user.is_authenticated:
-            if hasattr(request.user, 'businessowner'):
-                is_owner = order.bookings.filter(
-                    Q(listing__ownerID__userID=request.user) |
-                    Q(package__listingId__ownerID__userID=request.user) |
-                    Q(product__listingId__ownerID__userID=request.user)
-                ).exists()
-            elif hasattr(request.user, 'freelancer'):
-                is_owner = order.bookings.filter(
-                    Q(listing__freelancerID__userID=request.user) |
-                    Q(package__listingId__freelancerID__userID=request.user) |
-                    Q(product__listingId__freelancerID__userID=request.user)
-                ).exists()
-        
-        if not is_owner and order.user != request.user:
-            return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
-        
-        valid_statuses = ['pending', 'confirmed', 'completed', 'cancelled']
-        if new_status not in valid_statuses:
-            return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
-        
-        if order.status == 'completed' and new_status != 'completed':
-            return Response({'status': 'error', 'message': 'Completed orders cannot be modified'}, status=400)
-        
-        if order.status == 'cancelled' and new_status != 'cancelled':
-            return Response({'status': 'error', 'message': 'Cancelled orders cannot be modified'}, status=400)
-        
-        with transaction.atomic():
-            order.status = new_status
-            order.save(update_fields=['status'])
-            
-            bookings = order.bookings.all()
-            bookings.update(status=new_status)
-            if new_status == 'completed':
-                UserActivity.objects.create(
-                    user=request.user,
-                    action='order_completed',
-                    metadata={
-                        'order_id': order.id,
-                        'status': new_status
-                    },
-                    timestamp=now()
-                )
-            elif new_status == 'cancelled':
-                UserActivity.objects.create(
-                    user=request.user,
-                    action='order_cancelled',
-                    metadata={
-                        'order_id': order.id,
-                        'status': new_status
-                    },
-                    timestamp=now()
-                )
+        order = _get_order_with_related_data(order_id)
 
-            if new_status == 'cancelled':
-                for booking in bookings:
-                    if booking.listing and booking.booking_date:
-                        booking_date_str = booking.booking_date.isoformat()
-                        if booking_date_str in booking.listing.booked_dates:
-                            booking.listing.booked_dates.remove(booking_date_str)
-                            booking.listing.save()
-            
-            elif new_status == 'completed':
-                for booking in bookings:
-                    recipient = None
-                    if booking.listing:
-                        recipient = booking.listing.ownerID or booking.listing.freelancerID
-                    elif booking.package:
-                        recipient = booking.package.listingId.ownerID or booking.package.listingId.freelancerID
-                    elif booking.product:
-                        recipient = booking.product.listingId.ownerID or booking.product.listingId.freelancerID
-                    
-                    if recipient:
-                        if hasattr(recipient, 'businessowner'):
-                            m.BusinessTransaction.objects.create(
-                                ownerb=recipient,
-                                amount=booking.payment_amount,
-                                type='order_completion',
-                                info=f"Completed booking #{booking.id} from order #{order.id}",
-                                status='Completed',
-                                order=order
-                            )
-                        else:
-                            m.BusinessTransaction.objects.create(
-                                ownerf=recipient,
-                                amount=booking.payment_amount,
-                                type='order_completion',
-                                info=f"Completed booking #{booking.id} from order #{order.id}",
-                                status='Completed',
-                                order=order
-                            )
-            
-            return Response({
-                'status': 'success',
-                'order_id': order.id,
-                'new_status': new_status,
-                'updated_bookings': bookings.count()
-            })
-    
+        if not _is_authorized(request.user, order):
+            return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
+
+        if not _is_valid_status(new_status):
+            return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
+
+        if _is_non_modifiable(order.status, new_status):
+            return Response({'status': 'error', 'message': f'{order.status.capitalize()} orders cannot be modified'}, status=400)
+
+        with transaction.atomic():
+            _update_order_and_bookings(order, new_status)
+            _record_user_activity(request.user, order.id, new_status)
+            _handle_booking_side_effects(order.bookings.all(), order, new_status)
+        
+        return Response({
+            'status': 'success',
+            'order_id': order.id,
+            'new_status': new_status,
+            'updated_bookings': order.bookings.count()
+        })
+
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
+def _get_order_with_related_data(order_id):
+    return get_object_or_404(
+        m.Order.objects.select_related('cart').prefetch_related('bookings'),
+        id=order_id
+    )
+def _is_authorized(user, order):
+    if not user.is_authenticated:
+        return False
+
+    if hasattr(user, 'businessowner'):
+        return order.bookings.filter(
+            Q(listing__ownerID__userID=user) |
+            Q(package__listingId__ownerID__userID=user) |
+            Q(product__listingId__ownerID__userID=user)
+        ).exists()
+    elif hasattr(user, 'freelancer'):
+        return order.bookings.filter(
+            Q(listing__freelancerID__userID=user) |
+            Q(package__listingId__freelancerID__userID=user) |
+            Q(product__listingId__freelancerID__userID=user)
+        ).exists()
+
+    return order.user == user
+def _is_valid_status(status):
+    return status in ['pending', 'confirmed', 'completed', 'cancelled']
+def _is_non_modifiable(current_status, new_status):
+    return (current_status == 'completed' and new_status != 'completed') or \
+           (current_status == 'cancelled' and new_status != 'cancelled')
+def _update_order_and_bookings(order, new_status):
+    order.status = new_status
+    order.save(update_fields=['status'])
+    order.bookings.all().update(status=new_status)
+def _record_user_activity(user, order_id, status):
+    action_map = {
+        'completed': 'order_completed',
+        'cancelled': 'order_cancelled'
+    }
+    if status in action_map:
+        UserActivity.objects.create(
+            user=user,
+            action=action_map[status],
+            metadata={'order_id': order_id, 'status': status},
+            timestamp=now()
+        )
+def _handle_booking_side_effects(bookings, order, status):
+    if status == 'cancelled':
+        _cancel_booking_dates(bookings)
+    elif status == 'completed':
+        _record_completed_transactions(bookings, order)
+def _cancel_booking_dates(bookings):
+    for booking in bookings:
+        if _should_remove_booking_date(booking):
+            _remove_booking_date(booking)
+def _should_remove_booking_date(booking):
+    return booking.listing and booking.booking_date and \
+           booking.booking_date.isoformat() in booking.listing.booked_dates
+def _remove_booking_date(booking):
+    date_str = booking.booking_date.isoformat()
+    booking.listing.booked_dates.remove(date_str)
+    booking.listing.save()
+def _record_completed_transactions(bookings, order):
+    for booking in bookings:
+        recipient = _get_booking_recipient(booking)
+        if recipient:
+            _create_business_transaction(booking, order, recipient)
+def _create_business_transaction(booking, order, recipient):
+    is_business_owner = hasattr(recipient, 'businessowner')
+    m.BusinessTransaction.objects.create(
+        ownerb=recipient if is_business_owner else None,
+        ownerf=None if is_business_owner else recipient,
+        amount=booking.payment_amount,
+        type='order_completion',
+        info=f"Completed booking #{booking.id} from order #{order.id}",
+        status='Completed',
+        order=order
+    )
+
+def _get_booking_recipient(booking):
+    if booking.listing:
+        return booking.listing.ownerID or booking.listing.freelancerID
+    if booking.package:
+        return booking.package.listingId.ownerID or booking.package.listingId.freelancerID
+    if booking.product:
+        return booking.product.listingId.ownerID or booking.product.listingId.freelancerID
+    return None

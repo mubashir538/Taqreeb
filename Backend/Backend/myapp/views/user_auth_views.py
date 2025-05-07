@@ -12,35 +12,36 @@ from .helper_methods import generate_username
 from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
+from firebase_admin import messaging
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def AccountSignupPage(request):
-    firstName = request.data.get('firstName')
-    lastName = request.data.get('lastName')
+def account_signup_page(request):
+    first_name = request.data.get('firstName')
+    last_name = request.data.get('lastName')
     password = request.data.get('password')
     age = request.data.get('age')
-    contactType = request.data.get('contactType')
+    contact_type = request.data.get('contactType')
     city = request.data.get('city')
     gender = request.data.get('gender')
-    profilePicture = request.FILES.get('profilePicture')
-    username = generate_username(firstName,lastName)
+    profile_picture = request.FILES.get('profilePicture')
+    username = generate_username(first_name,last_name)
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(str(password).encode(),salt)
     password = hashed.decode()
-    if contactType=='email':
+    if contact_type=='email':
         contact = request.data.get('email')
         user = m.User.objects.filter(email=contact).first()
         if user:
             return Response({'status':'error', 'message': 'Email Already Exists'})
-        user = m.User(firstName=firstName,lastName=lastName,password=password,email=contact,city=city,gender=gender,age=age,username=username)
+        user = m.User(firstName=first_name,lastName=last_name,password=password,email=contact,city=city,gender=gender,age=age,username=username)
     else:
         contact = request.data.get('contactNumber')
         user = m.User.objects.filter(contactNumber=contact).first()
         if user:
             return Response({'status':'error', 'message': 'Contact Already Exists'})
 
-        user = m.User(firstName=firstName,lastName=lastName,password=password,contactNumber=contact,city=city,gender=gender)
+        user = m.User(firstName=first_name,lastName=last_name,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
     UserActivity.objects.create(
         user=user,
@@ -55,39 +56,39 @@ def AccountSignupPage(request):
         timestamp=now()
     )
 
-    if contactType=='email':
+    if contact_type=='email':
         user = m.User.objects.filter(email=contact).first()
     else:
         user = m.User.objects.filter(contactNumber=contact).first()
 
-    if profilePicture:
+    if profile_picture:
             filestorage = FileSystemStorage()
-            filePath = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profilePicture)
-            user.profilePicture = filestorage.url(filePath)   
+            file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profile_picture)
+            user.profilePicture = filestorage.url(file_path)   
             user.save(update_fields=["profilePicture"])
     
     firebase_user_data = {
-        "firstName": firstName,
-        "lastName": lastName,
+        "firstName": first_name,
+        "lastName": last_name,
         "username": username,
         "age":age,
-        "email": contact if contactType == 'email' else None,
-        "contactNumber": contact if contactType != 'email' else None,
+        "email": contact if contact_type == 'email' else None,
+        "contactNumber": contact if contact_type != 'email' else None,
         "city": city,
         "gender": gender,
-        "profilePicture": user.profilePicture if profilePicture else None,
+        "profilePicture": user.profilePicture if profile_picture else None,
     }
     try:
         db.collection("users").document(str(user.id)).set(firebase_user_data)
     except Exception as e:
         return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
     refresh = RefreshToken.for_user(user)
-    id = user.id    
-    return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
+    user_id = user.id    
+    return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':user_id})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def resendOTPEmail(request):
+def resend_otp_email(request):
     email = request.data.get('email')
     otp = request.data.get('otp')
     subject = 'OTP for Taqreeb'
@@ -104,37 +105,37 @@ def resendOTPEmail(request):
     
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def resendOTPPhone(request):
-    contactNumber = request.data.get('phone')
+def resend_otp_phone(request):
+    contact_number = request.data.get('phone')
     otp = request.data.get('otp')
-    return Response({'status':'success','otp': otp,'contact':contactNumber})
+    return Response({'status':'success','otp': otp,'contact':contact_number})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def sendOTPPhone(request):
-    contactNumber = request.data.get('contactNumber')
+def send_otp_phone(request):
+    contact_number = request.data.get('contactNumber')
     country = '+92'
-    if contactNumber.find(country) == -1:
-        if contactNumber[0] == '0':
-            contactNumber = contactNumber[1:]
-        contactNumber = country + contactNumber
-    print('contactNumber: ',contactNumber)
+    if contact_number.find(country) == -1:
+        if contact_number[0] == '0':
+            contact_number = contact_number[1:]
+        contact_number = country + contact_number
+    print('contactNumber: ',contact_number)
     otp = rd.randint(100000,999999)
     message = messaging.Message(
             notification=messaging.Notification(
                 title="Your OTP Code",
                 body=f"Your Taqreeb verification code is {otp}. Do not share it with anyone."
             ),
-            token=contactNumber,
+            token=contact_number,
         )
 
     response = messaging.send(message)
     print(response)
-    return Response({'status':'success','otp': otp,'contact':contactNumber})
+    return Response({'status':'success','otp': otp,'contact':contact_number})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def sendOTPEmail(request):
+def send_otp_email(request):
     email = request.data.get('email')
     if not m.User.objects.filter(email=email).exists():
         otp = rd.randint(1000,9999)
@@ -154,7 +155,7 @@ def sendOTPEmail(request):
     
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def ForgotPasswordPage(request):
+def forgot_password_page(request):
     contact = request.data.get('email')
     if request.data.get('email'):
         contact = request.data.get('email')
@@ -185,7 +186,7 @@ def ForgotPasswordPage(request):
     
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def resendOTP(request):
+def resend_otp(request):
     email = request.data.get('email')
     otp = request.data.get('otp')
     if str(email).find('@') != -1:
@@ -205,7 +206,7 @@ def resendOTP(request):
     
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def googleAuth(request):
+def google_auth(request):
     email = request.data.get('email')
     name = request.data.get('name')
     picture = request.data.get('picture')
@@ -213,15 +214,15 @@ def googleAuth(request):
     gender = request.data.get('gender')
     age = request.data.get('age')
     if not m.User.objects.filter(email=email).exists():
-        firstName = name.split(' ')[0]
-        lastName = name.split(' ')[1]
-        username = generate_username(firstName,lastName)
+        first_name = name.split(' ')[0]
+        last_name = name.split(' ')[1]
+        username = generate_username(first_name,last_name)
         if not m.User.objects.filter(email=email).exists():
-            m.User(firstName=firstName,lastName=lastName,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
+            m.User(firstName=first_name,lastName=last_name,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
             user = m.User.objects.filter(email=email).first()
             firebase_user_data = {
-                "firstName": firstName,
-                "lastName": lastName,
+                "firstName": first_name,
+                "lastName": last_name,
                 "username": username,
                 "age":age,
                 "email": email,
@@ -235,33 +236,33 @@ def googleAuth(request):
             except Exception as e:
                 return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
         refresh = RefreshToken.for_user(user)
-        id = user.id    
-        return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
+        user_id = user.id    
+        return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':user_id})
     else:
         user = m.User.objects.filter(email=email).first()
         refresh = RefreshToken.for_user(user)
-        id = user.id
-        return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':id})
+        user_id = user.id
+        return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':user_id})
     
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def ResetPasswordPage(request):
+def reset_password_page(request):
     password = request.data.get('password')
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(str(password).encode(),salt)
     password = hashed.decode() 
-    id = request.data.get('contact')
-    if str(id).find('@') != -1:
-        user = m.User.objects.get(email=id)
+    user_id = request.data.get('contact')
+    if str(user_id).find('@') != -1:
+        user = m.User.objects.get(email=user_id)
     else:
-        user = m.User.objects.get(contactNumber=id)
+        user = m.User.objects.get(contactNumber=user_id)
     user.password = password
     user.save(update_fields=["password"])
     return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def UserLogin(request):
+def user_login(request):
     contact = request.data.get('contact')
     password = request.data.get('password')
     print('pass: ',password)
@@ -269,9 +270,8 @@ def UserLogin(request):
         user = m.User.objects.filter(email=contact).first()
     else:
         user = m.User.objects.filter(contactNumber=contact).first()
-    if(user):
-        if bcrypt.checkpw(password.encode(), user.password.encode()):
-            refresh = RefreshToken.for_user(user)
-            return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})
+    if(user and bcrypt.checkpw(password.encode(), user.password.encode())):
+        refresh = RefreshToken.for_user(user)
+        return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})
     
     return Response({'status': 'error', 'message': 'Invalid Credentials'})

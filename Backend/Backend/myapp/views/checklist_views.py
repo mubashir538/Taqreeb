@@ -7,11 +7,11 @@ from .. import Serializers as s
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def ShowChecklist(request,functionId=None,eventId=None):
+def showchecklist(request,functionid=None,eventid=None):
     if request.GET.get('functionId'):
-        checklist = m.CheckList.objects.filter(functionId=functionId,eventId=eventId)
+        checklist = m.CheckList.objects.filter(functionId=functionid,eventId=eventid)
     else:
-        checklist = m.CheckList.objects.filter(eventId=eventId,functionId__isnull=True)
+        checklist = m.CheckList.objects.filter(eventId=eventid,functionId__isnull=True)
     serializer = s.CheckListSerializer(checklist,many=True)
     return Response({'status':'success','checklist':serializer.data})
 

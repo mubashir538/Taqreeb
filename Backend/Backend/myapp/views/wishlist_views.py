@@ -6,22 +6,22 @@ from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getWishlist(request,uid):
+def get_wishlist(request,uid):
     uid = m.User.objects.get(id=uid)
-    list = m.Wishlist.objects.filter(user=uid)
-    list = m.Listing.objects.filter(id__in=list.values_list('listing', flat=True))
-    ListingSerializer = s.ListingSerializer(list, many=True)
-    Pictures = []
-    Listings = ListingSerializer.data[:]
-    for i in Listings:
+    get_wishlist_list = m.Wishlist.objects.filter(user=uid)
+    get_wishlist_list = m.Listing.objects.filter(id__in=get_wishlist_list.values_list('listing', flat=True))
+    listing_serializer = s.ListingSerializer(get_wishlist_list, many=True)
+    pictures = []
+    listings = listing_serializer.data[:]
+    for i in listings:
         pic = m.PicturesListings.objects.filter(listingId=i['id'])
         serializer = s.PicturesListingSerializers(pic, many=True)
-        Pictures.append(serializer.data)
-    return Response({'status':'success', 'list':Listings, 'pictures':Pictures})
+        pictures.append(serializer.data)
+    return Response({'status':'success', 'list':listings, 'pictures':pictures})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def checkWishlist(request):
+def check_wishlist(request):
     userid = request.query_params.get('userid')
     listing_id = request.query_params.get('listing')
     
@@ -44,7 +44,7 @@ def checkWishlist(request):
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def addtoWishlist(request):
+def add_to_wishlist(request):
     userid = request.data.get('userid')
     listing = request.data.get('listing')
     listing = m.Listing.objects.get(id=listing)
@@ -54,7 +54,7 @@ def addtoWishlist(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def removeFromWishlist(request):
+def remove_from_wishlist(request):
     userid = request.data.get('userid')
     listing = request.data.get('listing')
     listing = m.Listing.objects.get(id=listing)
