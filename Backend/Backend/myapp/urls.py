@@ -29,7 +29,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .Serializers import CustomTokenObtainPairSerializer
+from .Serializers.token_serializers import CustomTokenObtainPairSerializer
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()

@@ -1,4 +1,4 @@
-from ..Models import event_models as m
+from ..models import event_models as m
 from rest_framework import serializers as s
 
 class EventsSerializer(s.ModelSerializer):

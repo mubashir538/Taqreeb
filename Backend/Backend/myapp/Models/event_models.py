@@ -1,5 +1,4 @@
 from django.db import models as m
-from .event_models import Functions
 from .user_models import User
 
 class Events(m.Model):

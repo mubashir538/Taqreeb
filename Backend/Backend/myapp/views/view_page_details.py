@@ -1,33 +1,42 @@
 from rest_framework.response import Response
-from .. import models as m
 from rest_framework.decorators import api_view, permission_classes
-from .. import Serializers as s
 from rest_framework.permissions import IsAuthenticated, AllowAny
 import math
+from ..models.listing_types_models import Photographers,Caterers,CarRenters,Listing,Decorators,PhotographyPlaces,VideoEditors,GraphicDesigners,Venue,Salons,Parlors
+from ..models.listing_models import Packages,AddOns,PicturesListings
+from ..models.review_models import Review,ReviewDetails
+from ..Serializers.listing_serializers import ListingSerializer,PackagesSerializer,PicturesListingSerializers
+from ..Serializers.review_serializers import ReviewSerializer,ReviewDetailsSerializer
+from ..Serializers.service_serializers import PhotographersSerializer,CaterersSerializer,CarRentersSerializer,DecoratorsSerializer,PhotographyPlacesSerializer,VideoEditorsSerializer,GraphicDesignersSerializer,VenueSerializer,SalonsSerializer,ParlorsSerializer
+from ..models.booking_models import Booking
+from ..models.product_models import Product
+from ..models.user_models import User
+from ..Serializers.listing_serializers import ProductsSerializer
+from ..Serializers.service_serializers import AddOnsSerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def photographer_view_page(request, listingid):
-    photographer_view = m.Photographers.objects.get( listingId = listingid)
-    listing = m.Listing.objects.get(id = listingid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.PhotographersSerializer( photographer_view, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    bookings = m.Booking.objects.filter(
+    photographer_view = Photographers.objects.get( listingId = listingid)
+    listing = Listing.objects.get(id = listingid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer = PicturesListingSerializers(pic, many=True)
+    review_serializer = ReviewSerializer( review, many = True)
+    package_serializer = PackagesSerializer( package, many = True)
+    addons_serializer = AddOnsSerializer( addons, many = True)
+    serializer = PhotographersSerializer( photographer_view, many=False)
+    listing_serializer = ListingSerializer (listing, many =False)
+    bookings = Booking.objects.filter(
             listing_id=listingid,
             status__in=['confirmed', 'completed']
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data = ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data,'bookedDates': booked_dates})
@@ -35,22 +44,22 @@ def photographer_view_page(request, listingid):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def car_renter_view_page(request, listingid):
-    listing = m.Listing.objects.get(id = listingid)
-    car_renters = m.CarRenters.objects.get(listingID = listingid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    product = m.Product.objects.filter(listingId=listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    cars = s.ProductsSerializer(product, many=True)
-    serializer = s.CarRentersSerializer(car_renters, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    listing = Listing.objects.get(id = listingid)
+    car_renters = CarRenters.objects.get(listingID = listingid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    product = Product.objects.filter(listingId=listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer = PicturesListingSerializers(pic, many=True)
+    review_serializer = ReviewSerializer( review, many = True)
+    package_serializer = PackagesSerializer( package, many = True)
+    addons_serializer = AddOnsSerializer( addons, many = True)
+    cars = ProductsSerializer(product, many=True)
+    serializer = CarRentersSerializer(car_renters, many=False)
+    listing_serializer = ListingSerializer (listing, many =False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data = ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
                     'cars': cars.data,
@@ -60,20 +69,20 @@ def car_renter_view_page(request, listingid):
 @permission_classes([IsAuthenticated])
 def graphic_designer_view_page(request, listingid):
     graphicdesignerid = listingid
-    listing = m.Listing.objects.get(id= graphicdesignerid)
-    graphic_designers = m.GraphicDesigners.objects.get(listingId = graphicdesignerid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.GraphicDesignersSerializer(graphic_designers,many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    listing = Listing.objects.get(id= graphicdesignerid)
+    graphic_designers = GraphicDesigners.objects.get(listingId = graphicdesignerid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer = PicturesListingSerializers(pic, many=True)
+    review_serializer = ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =GraphicDesignersSerializer(graphic_designers,many=False)
+    listing_serializer =ListingSerializer (listing, many =False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data, 'reviewData':review_data.data,'Addons':addons_serializer.data,'Packages':package_serializer.data,  'Listing':listing_serializer.data, 
                     'Package': package_serializer.data, 'Review': review_serializer.data,'pictures':picture_serializer.data})
 
@@ -81,28 +90,28 @@ def graphic_designer_view_page(request, listingid):
 @permission_classes([IsAuthenticated])
 def caterer_view_page(request,listingid):
     caterer_id= listingid
-    caterer_view = m.Caterers.objects.get(listingId = caterer_id)
-    listing = m.Listing.objects.get(id = caterer_id)
-    addons = m.AddOns.objects.filter(listingId =  caterer_id)
-    package = m.Packages.objects.filter(listingId =  caterer_id)
-    review = m.Review.objects.filter(listingID = caterer_id)
-    pic = m.PicturesListings.objects.filter(listingId= caterer_id)
-    product = m.Product.objects.filter(listingId=caterer_id)
-    menu = s.ProductsSerializer(product, many=True)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.CaterersSerializer( caterer_view, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    bookings = m.Booking.objects.filter(
+    caterer_view = Caterers.objects.get(listingId = caterer_id)
+    listing = Listing.objects.get(id = caterer_id)
+    addons = AddOns.objects.filter(listingId =  caterer_id)
+    package = Packages.objects.filter(listingId =  caterer_id)
+    review = Review.objects.filter(listingID = caterer_id)
+    pic = PicturesListings.objects.filter(listingId= caterer_id)
+    product = Product.objects.filter(listingId=caterer_id)
+    menu =ProductsSerializer(product, many=True)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    review_serializer =ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =CaterersSerializer( caterer_view, many=False)
+    listing_serializer =ListingSerializer (listing, many =False)
+    bookings = Booking.objects.filter(
             listing_id=listingid,
             status__in=['confirmed', 'completed'] 
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
     'bookedDates':booked_dates,
     'menu':menu.data,
@@ -112,20 +121,20 @@ def caterer_view_page(request,listingid):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def video_editor_view_page(request, videoeditorid):
-    listing =m.Listing.objects.get(id = videoeditorid)
-    video_editors = m.VideoEditors.objects.get(listingId = videoeditorid)
-    addons = m.AddOns.objects.filter(listingId =  videoeditorid)
-    package = m.Packages.objects.filter(listingId =  videoeditorid)
-    review = m.Review.objects.filter(listingId = videoeditorid)
-    pic = m.PicturesListings.objects.filter(listingId= videoeditorid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    video_editors_serializer = s.VideoEditorsSerializer(video_editors, many =False)
-    package_serializer = s.PackagesSerializer(package, many = True)
-    review_serializer = s.ReviewSerializer(review,many=True)
-    listing_serializer = s.ListingSerializer(listing, many=False)
-    review_data= m.ReviewDetails.objects.get(listingID=videoeditorid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    listing =Listing.objects.get(id = videoeditorid)
+    video_editors = VideoEditors.objects.get(listingId = videoeditorid)
+    addons = AddOns.objects.filter(listingId =  videoeditorid)
+    package = Packages.objects.filter(listingId =  videoeditorid)
+    review = Review.objects.filter(listingId = videoeditorid)
+    pic = PicturesListings.objects.filter(listingId= videoeditorid)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    video_editors_serializer =VideoEditorsSerializer(video_editors, many =False)
+    package_serializer =PackagesSerializer(package, many = True)
+    review_serializer =ReviewSerializer(review,many=True)
+    listing_serializer =ListingSerializer(listing, many=False)
+    review_data= ReviewDetails.objects.get(listingID=videoeditorid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': video_editors_serializer.data,'reviewData':review_data.data, 'Addons':addons_serializer.data,  'Listing':listing_serializer.data, 
                      'Package': package_serializer.data, 'Review': review_serializer.data,'pictures':picture_serializer.data})
 
@@ -133,26 +142,26 @@ def video_editor_view_page(request, videoeditorid):
 @permission_classes([AllowAny])
 def venue_view_page(request, listingid):
     venue_id = listingid
-    listing = m.Listing.objects.get(id = venue_id)
-    venue_view = m.Venue.objects.get(listingID= venue_id)
-    addons = m.AddOns.objects.filter(listingId = venue_id)
-    package = m.Packages.objects.filter(listingId = venue_id)
-    review = m.Review.objects.filter(listingID =venue_id)
-    pic = m.PicturesListings.objects.filter(listingId=venue_id)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    bookings = m.Booking.objects.filter(
+    listing = Listing.objects.get(id = venue_id)
+    venue_view = Venue.objects.get(listingID= venue_id)
+    addons = AddOns.objects.filter(listingId = venue_id)
+    package = Packages.objects.filter(listingId = venue_id)
+    review = Review.objects.filter(listingID =venue_id)
+    pic = PicturesListings.objects.filter(listingId=venue_id)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    review_serializer =ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    bookings = Booking.objects.filter(
             listing_id=listingid,
             status__in=['confirmed', 'completed'] 
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.VenueSerializer( venue_view, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =VenueSerializer( venue_view, many=False)
+    listing_serializer =ListingSerializer (listing, many =False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data,'bookedDates':booked_dates})
@@ -160,20 +169,20 @@ def venue_view_page(request, listingid):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def salon_view_page(request, listingid):
-    salon_view = m.Salons.objects.get(listingId = listingid)
-    listing = m.Listing.objects.get(id = listingid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.SalonsSerializer( salon_view, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    salon_view = Salons.objects.get(listingId = listingid)
+    listing = Listing.objects.get(id = listingid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    review_serializer =ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =SalonsSerializer( salon_view, many=False)
+    listing_serializer =ListingSerializer (listing, many =False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data})
@@ -181,20 +190,20 @@ def salon_view_page(request, listingid):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def parlour_view_page(request, listingid):
-    parlor_view = m.Parlors.objects.get(listingId = listingid)
-    listing = m.Listing.objects.get(id = listingid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.ParlorsSerializer(parlor_view, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    parlor_view = Parlors.objects.get(listingId = listingid)
+    listing = Listing.objects.get(id = listingid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    review_serializer =ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =ParlorsSerializer(parlor_view, many=False)
+    listing_serializer =ListingSerializer (listing, many =False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data})
@@ -203,26 +212,26 @@ def parlour_view_page(request, listingid):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def photography_places_view_page(request, listingid):
-    photographer_view = m.PhotographyPlaces.objects.get( listingID =listingid)
-    listing = m.Listing.objects.get(id = listingid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.PhotographyPlacesSerializer( photographer_view, many=False)
-    listing_serializer = s.ListingSerializer (listing, many =False)
-    bookings = m.Booking.objects.filter(
+    photographer_view = PhotographyPlaces.objects.get( listingID =listingid)
+    listing = Listing.objects.get(id = listingid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    review_serializer =ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =PhotographyPlacesSerializer( photographer_view, many=False)
+    listing_serializer =ListingSerializer (listing, many =False)
+    bookings = Booking.objects.filter(
             listing_id=listingid,
             status__in=['confirmed', 'completed'] 
         )
         
     booked_dates = [booking.booking_date for booking in bookings]
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data,'bookedDates':booked_dates})
@@ -230,20 +239,20 @@ def photography_places_view_page(request, listingid):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def decorator_detail_page(request,listingid):
-    listing_details = m.Listing.objects.get(id=listingid)
-    decorator_details = m.Decorators.objects.get(listingId=listingid)
-    addons = m.AddOns.objects.filter(listingId = listingid)
-    package = m.Packages.objects.filter(listingId = listingid)
-    review = m.Review.objects.filter(listingID =listingid)
-    pic = m.PicturesListings.objects.filter(listingId=listingid)
-    picture_serializer = s.PicturesListingSerializers(pic, many=True)
-    review_serializer = s.ReviewSerializer( review, many = True)
-    package_serializer = s.PackagesSerializer( package, many = True)
-    addons_serializer = s.AddOnsSerializer( addons, many = True)
-    serializer = s.DecoratorsSerializer( decorator_details, many=False)
-    listing_serializer = s.ListingSerializer (listing_details, many =False)
-    review_data= m.ReviewDetails.objects.get(listingID=listingid)
-    review_data = s.ReviewDetailsSerializer(review_data,many=False)
+    listing_details = Listing.objects.get(id=listingid)
+    decorator_details = Decorators.objects.get(listingId=listingid)
+    addons = AddOns.objects.filter(listingId = listingid)
+    package = Packages.objects.filter(listingId = listingid)
+    review = Review.objects.filter(listingID =listingid)
+    pic = PicturesListings.objects.filter(listingId=listingid)
+    picture_serializer =PicturesListingSerializers(pic, many=True)
+    review_serializer =ReviewSerializer( review, many = True)
+    package_serializer =PackagesSerializer( package, many = True)
+    addons_serializer =AddOnsSerializer( addons, many = True)
+    serializer =DecoratorsSerializer( decorator_details, many=False)
+    listing_serializer =ListingSerializer (listing_details, many =False)
+    review_data= ReviewDetails.objects.get(listingID=listingid)
+    review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,'reviewData':review_data.data,
                     'Addons': addons_serializer.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data})
@@ -255,20 +264,20 @@ def add_review(request):
     rating = request.data.get('rating')
     listingid = request.data.get('listingId')
     userid = request.data.get('userId')
-    listing = m.Listing.objects.get(id =listingid)
-    user = m.User.objects.get(id = userid)
-    review = m.Review(listingID = listing, userID = user, rating = rating, review = review)
+    listing = Listing.objects.get(id =listingid)
+    user = User.objects.get(id = userid)
+    review = Review(listingID = listing, userID = user, rating = rating, review = review)
     review.save()
     new_rating = float(listing.rating * listing.ratingCount) + float(rating)
     listing.ratingCount += 1
     listing.rating = new_rating/listing.ratingCount
     listing.save(update_fields=['ratingCount','rating']) 
-    rdetails = m.ReviewDetails.objects.filter(listingID=listing).first()
+    rdetails = ReviewDetails.objects.filter(listingID=listing).first()
     rating = math.floor(rating)
     if not rdetails:
-        rdetails = m.ReviewDetails(listingID=listing)
+        rdetails = ReviewDetails(listingID=listing)
         rdetails.save()
-        rdetails = m.ReviewDetails.objects.filter(listingID=listing).first()
+        rdetails = ReviewDetails.objects.filter(listingID=listing).first()
     if rating == 5:
         rdetails.s5+=1
         rdetails.save(update_fields=['s5'])

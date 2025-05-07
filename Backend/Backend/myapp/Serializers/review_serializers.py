@@ -1,4 +1,4 @@
-from ..Models import review_models as m
+from ..models import review_models as m
 from rest_framework import serializers as s
 
 

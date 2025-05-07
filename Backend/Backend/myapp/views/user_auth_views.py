@@ -3,9 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 import bcrypt
-from ..models import UserActivity
 from myapp.firebase_db import db
-from .. import models as m
 import random as rd
 from django.conf import settings
 from .helper_methods import generate_username
@@ -13,6 +11,7 @@ from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from firebase_admin import messaging
+from ..models.user_models import User,UserActivity
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -31,17 +30,17 @@ def account_signup_page(request):
     password = hashed.decode()
     if contact_type=='email':
         contact = request.data.get('email')
-        user = m.User.objects.filter(email=contact).first()
+        user = User.objects.filter(email=contact).first()
         if user:
             return Response({'status':'error', 'message': 'Email Already Exists'})
-        user = m.User(firstName=first_name,lastName=last_name,password=password,email=contact,city=city,gender=gender,age=age,username=username)
+        user = User(firstName=first_name,lastName=last_name,password=password,email=contact,city=city,gender=gender,age=age,username=username)
     else:
         contact = request.data.get('contactNumber')
-        user = m.User.objects.filter(contactNumber=contact).first()
+        user = User.objects.filter(contactNumber=contact).first()
         if user:
             return Response({'status':'error', 'message': 'Contact Already Exists'})
 
-        user = m.User(firstName=first_name,lastName=last_name,password=password,contactNumber=contact,city=city,gender=gender)
+        user = User(firstName=first_name,lastName=last_name,password=password,contactNumber=contact,city=city,gender=gender)
     user.save()
     UserActivity.objects.create(
         user=user,
@@ -57,9 +56,9 @@ def account_signup_page(request):
     )
 
     if contact_type=='email':
-        user = m.User.objects.filter(email=contact).first()
+        user = User.objects.filter(email=contact).first()
     else:
-        user = m.User.objects.filter(contactNumber=contact).first()
+        user = User.objects.filter(contactNumber=contact).first()
 
     if profile_picture:
             filestorage = FileSystemStorage()
@@ -137,7 +136,7 @@ def send_otp_phone(request):
 @permission_classes([AllowAny])
 def send_otp_email(request):
     email = request.data.get('email')
-    if not m.User.objects.filter(email=email).exists():
+    if not User.objects.filter(email=email).exists():
         otp = rd.randint(1000,9999)
         subject = 'The OTP for Taqreeb'
         message = f''' The Otp for your Taqreeb App is
@@ -163,7 +162,7 @@ def forgot_password_page(request):
         contact = request.data.get('phone')
     otp = rd.randint(1000,9999)
     if str(contact).find('@') != -1:
-        user = m.User.objects.filter(email=contact).first()
+        user = User.objects.filter(email=contact).first()
         otp = rd.randint(1000,9999)
         subject = 'Password Reset OTP for Taqreeb'
         message = f''' The Passowrd Reset Otp for your Taqreeb App is
@@ -177,7 +176,7 @@ def forgot_password_page(request):
             print(e)
             return Response({'status': 'error'})
     else:
-        user = m.User.objects.filter(contactNumber=contact).first()
+        user = User.objects.filter(contactNumber=contact).first()
         # OTP Send Contact Number
     if user != None:
         return Response({'status':'error', 'message': 'Enter a Valid Email or Phone Number'})
@@ -213,13 +212,13 @@ def google_auth(request):
     phone = request.data.get('phone')
     gender = request.data.get('gender')
     age = request.data.get('age')
-    if not m.User.objects.filter(email=email).exists():
+    if not User.objects.filter(email=email).exists():
         first_name = name.split(' ')[0]
         last_name = name.split(' ')[1]
         username = generate_username(first_name,last_name)
-        if not m.User.objects.filter(email=email).exists():
-            m.User(firstName=first_name,lastName=last_name,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
-            user = m.User.objects.filter(email=email).first()
+        if not User.objects.filter(email=email).exists():
+            User(firstName=first_name,lastName=last_name,contactNumber=phone,email=email,city='Karachi',gender=gender,age=age,username=username).save()
+            user = User.objects.filter(email=email).first()
             firebase_user_data = {
                 "firstName": first_name,
                 "lastName": last_name,
@@ -239,7 +238,7 @@ def google_auth(request):
         user_id = user.id    
         return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':user_id})
     else:
-        user = m.User.objects.filter(email=email).first()
+        user = User.objects.filter(email=email).first()
         refresh = RefreshToken.for_user(user)
         user_id = user.id
         return Response({'status':'success','refresh':str(refresh),'access':str(refresh.access_token),'userId':user_id})
@@ -253,9 +252,9 @@ def reset_password_page(request):
     password = hashed.decode() 
     user_id = request.data.get('contact')
     if str(user_id).find('@') != -1:
-        user = m.User.objects.get(email=user_id)
+        user = User.objects.get(email=user_id)
     else:
-        user = m.User.objects.get(contactNumber=user_id)
+        user = User.objects.get(contactNumber=user_id)
     user.password = password
     user.save(update_fields=["password"])
     return Response({'status':'success'})
@@ -267,9 +266,9 @@ def user_login(request):
     password = request.data.get('password')
     print('pass: ',password)
     if contact.find('@') != -1:
-        user = m.User.objects.filter(email=contact).first()
+        user = User.objects.filter(email=contact).first()
     else:
-        user = m.User.objects.filter(contactNumber=contact).first()
+        user = User.objects.filter(contactNumber=contact).first()
     if(user and bcrypt.checkpw(password.encode(), user.password.encode())):
         refresh = RefreshToken.for_user(user)
         return Response({'status':'success','refresh': str(refresh),'access': str(refresh.access_token),'userid':user.id})

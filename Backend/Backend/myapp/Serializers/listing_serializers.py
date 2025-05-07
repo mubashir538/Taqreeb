@@ -1,4 +1,5 @@
-from ..Models import listing_models as m
+from ..models import listing_models as m
+from ..models import product_models as pm
 import json
 from rest_framework import serializers as s
 import datetime
@@ -17,7 +18,7 @@ class PicturesPackagesSerializer(s.ModelSerializer):
 
 class PicturesProductsSerializer(s.ModelSerializer):
     class Meta:
-        model = m.PicturesProducts
+        model = pm.PicturesProducts
         fields = ['picturePath']
 
 class PackagesSerializer(s.ModelSerializer):
@@ -39,7 +40,7 @@ class ProductsSerializer(s.ModelSerializer):
     )
     
     class Meta:
-        model = m.Product
+        model = pm.Product
         fields = ['id', 'name', 'listingId', 'description', 'price', 'pictures']
 
 class ListingSerializer(s.ModelSerializer):

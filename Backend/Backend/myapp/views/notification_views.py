@@ -2,8 +2,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .. import models as m
 from firebase_admin import messaging
+from ..models.user_models import User,FCMTokens
+
 
 def send_notification(token, title, body,image):
     print(token)
@@ -27,12 +28,12 @@ def send_notification(request):
             return Response({'status': 'error', 'message': 'Missing required fields'}, status=400)
         
         try:
-            sender = m.User.objects.get(id=sender_id)
+            sender = User.objects.get(id=sender_id)
             sender_name = f"{sender.firstName} {sender.lastName}".strip()
-        except m.User.DoesNotExist:
+        except User.DoesNotExist:
             return Response({'status': 'error', 'message': 'Sender not found'}, status=404)
         
-        receiver_tokens = m.FCMTokens.objects.filter(userid=receiver_id)
+        receiver_tokens = FCMTokens.objects.filter(userid=receiver_id)
         if not receiver_tokens.exists():
             return Response({'status': 'success', 'message': 'No tokens found for receiver'})
         
@@ -81,13 +82,13 @@ def send_notification(request):
 def save_fcm_token(request):
     token = request.data.get('token')
     userid = request.data.get('userId')
-    userid = m.User.objects.get(id=userid)
-    m.FCMTokens(userid=userid,token=token).save()
+    userid = User.objects.get(id=userid)
+    FCMTokens(userid=userid,token=token).save()
     return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def delete_fcm_token(request):
     token = request.data.get('token')
-    m.FCMTokens.objects.filter(token=token).delete()
+    FCMTokens.objects.filter(token=token).delete()
     return Response({'status':'success'})

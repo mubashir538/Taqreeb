@@ -1,17 +1,21 @@
 from rest_framework.response import Response
 from django.db.models import Q
-from .. import models as m
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .. import Serializers as s
 from datetime import timezone
+from ..models.booking_models import Booking
+from ..Serializers.booking_serializers import BookingSerializer,OrderSerializer
+from ..models.booking_models import Cart
+from ..models.user_models import UserActivity
+from ..models.listing_models import Listing,Packages
+from ..models.product_models import Product
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_booking(request):
     try:
         data = request.data
-        serializer = s.BookingSerializer(data=data)
+        serializer = BookingSerializer(data=data)
         if serializer.is_valid():
             booking = serializer.save(user=request.user)
             
@@ -42,7 +46,7 @@ def create_order(request):
         total_amount = calculate_total_amount(cart_items)
         order_data = build_order_data(user, cart, total_amount, request)
         
-        order_serializer = s.OrderSerializer(data=order_data)
+        order_serializer = OrderSerializer(data=order_data)
         if not order_serializer.is_valid():
             return Response({'status': 'error', 'errors': order_serializer.errors}, status=400)
 
@@ -58,14 +62,14 @@ def create_order(request):
             'bookings': bookings,
         })
         
-    except m.Cart.DoesNotExist:
+    except Cart.DoesNotExist:
         return Response({'status': 'error', 'message': 'Cart not found'}, status=404)
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
 
 
 def get_user_cart(user):
-    return m.Cart.objects.get(user=user)
+    return Cart.objects.get(user=user)
 
 def calculate_total_amount(cart_items):
     total = 0
@@ -84,7 +88,7 @@ def build_order_data(user, cart, total_amount, request):
     }
 
 def log_user_activity(user, order, total_amount, item_count):
-    m.UserActivity.objects.create(
+    UserActivity.objects.create(
         user=user,
         action='book_venue',
         metadata={
@@ -100,7 +104,7 @@ def process_bookings(user, cart_items, request):
 
     for item in cart_items:
         booking_data = build_booking_data(user, item, booking_date)
-        booking_serializer = s.BookingSerializer(data=booking_data)
+        booking_serializer = BookingSerializer(data=booking_data)
         if booking_serializer.is_valid():
             booking_serializer.save()
             bookings.append(booking_serializer.data)
@@ -127,24 +131,24 @@ def build_booking_data(user, item, booking_date):
 
 def get_model_for_item(item):
     if item.item_type == 'listing':
-        return m.Listing.objects.get(id=item.item_id)
+        return Listing.objects.get(id=item.item_id)
     elif item.item_type == 'product':
-        return m.Product.objects.get(id=item.item_id)
+        return Product.objects.get(id=item.item_id)
     elif item.item_type == 'package':
-        return m.Packages.objects.get(id=item.item_id)
+        return Packages.objects.get(id=item.item_id)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_bookings(request):
-    bookings = m.Booking.objects.filter(user=request.user).order_by('-booking_date')
-    serializer = s.BookingSerializer(bookings, many=True)
+    bookings = Booking.objects.filter(user=request.user).order_by('-booking_date')
+    serializer = BookingSerializer(bookings, many=True)
     return Response({'status': 'success', 'bookings': serializer.data})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def cancel_booking(request, booking_id):
     try:
-        booking = m.Booking.objects.get(id=booking_id, user=request.user)
+        booking = Booking.objects.get(id=booking_id, user=request.user)
         if booking.booking_date.date() < timezone.now().date():
             return Response({'status': 'error', 'message': 'Cannot cancel past bookings'}, status=400)
             
@@ -159,35 +163,35 @@ def cancel_booking(request, booking_id):
                 listing.save()
         
         return Response({'status': 'success'})
-    except m.Booking.DoesNotExist:
+    except Booking.DoesNotExist:
         return Response({'status': 'error', 'message': 'Booking not found'}, status=404)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def business_bookings(request):
-    listings = m.Listing.objects.filter(ownerID__userID=request.user)
+    listings = Listing.objects.filter(ownerID__userID=request.user)
     print(listings)
     
-    packages = m.Packages.objects.filter(listingId__in=listings)
+    packages = Packages.objects.filter(listingId__in=listings)
     print(packages)
     
-    products = m.Product.objects.filter(listingId__in=listings)
+    products = Product.objects.filter(listingId__in=listings)
     print(products) 
 
-    bookings = m.Booking.objects.filter(
+    bookings = Booking.objects.filter(
         Q(listing__in=listings) | 
         Q(package__in=packages) | 
         Q(product__in=products)
     ).order_by('-booking_date')
     
-    serializer = s.BookingSerializer(bookings, many=True)
+    serializer = BookingSerializer(bookings, many=True)
     return Response({'status': 'success', 'bookings': serializer.data})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def update_booking_status(request, booking_id):
     try:
-        booking = m.Booking.objects.get(id=booking_id)
+        booking = Booking.objects.get(id=booking_id)
         
         if not (
             (booking.listing and booking.listing.ownerID.userID == request.user) or
@@ -197,12 +201,12 @@ def update_booking_status(request, booking_id):
             return Response({'status': 'error', 'message': 'Unauthorized'}, status=403)
             
         new_status = request.data.get('status')
-        if new_status not in [choice[0] for choice in m.Booking.STATUS_CHOICES]:
+        if new_status not in [choice[0] for choice in Booking.STATUS_CHOICES]:
             return Response({'status': 'error', 'message': 'Invalid status'}, status=400)
             
         booking.status = new_status
         booking.save()
         
         return Response({'status': 'success'})
-    except m.Booking.DoesNotExist:
+    except Booking.DoesNotExist:
         return Response({'status': 'error', 'message': 'Booking not found'}, status=404)

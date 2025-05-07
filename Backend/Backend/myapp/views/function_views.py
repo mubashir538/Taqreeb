@@ -1,8 +1,10 @@
-from .. import models as m
-from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from ..models.event_models import Events,Functions
+from ..Serializers.event_serializers import FunctionsSerializer
+from ..Serializers.booking_serializers import BookingCartSerializer
+from ..models.booking_models import BookingCart
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -15,9 +17,9 @@ def createfunction(request):
     guestsmin = request.data.get('guest min')
     guestsmax = request.data.get('guest max')
     eventid = request.data.get('Event Id')
-    event = m.Events.objects.get(id=eventid)
+    event = Events.objects.get(id=eventid)
     try:
-        createfunction = m.Functions(name=name, eventId = event, type=create_function_type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
+        createfunction = Functions(name=name, eventId = event, type=create_function_type, budget=budget,date=date,guestsmin=guestsmin,guestsmax=guestsmax)
         createfunction.save()
         if int(budget) > event.budget:
             return Response({'status':'BudgetError','message':'Budget Exceeded'}) 
@@ -38,7 +40,7 @@ def editfunction(request):
     guestsmin = request.data.get('guest min')
     guestsmax = request.data.get('guest max')
     functionid = int(request.data.get('Function Id'))
-    function = m.Functions.objects.get(id=functionid)
+    function = Functions.objects.get(id=functionid)
     try:
         function.name = name
         function.type = edit_funtion_type
@@ -55,12 +57,12 @@ def editfunction(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def deletefunction(request):
-    m.BookingCart.objects.all().delete()
+    BookingCart.objects.all().delete()
     return Response({'status':'success'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def viewfunction(request, functionid):
-    functions = m.Functions.objects.get(id = functionid)
-    functions_serializer = s.FunctionsSerializer(functions, many=False)
+    functions = Functions.objects.get(id = functionid)
+    functions_serializer = FunctionsSerializer(functions, many=False)
     return Response ({'status':'success', 'Fuctions':functions_serializer.data})

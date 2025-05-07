@@ -90,6 +90,7 @@ class CarRenters(m.Model):
     ]
     serviceType = m.CharField(max_length=100, choices=SERVICE_TYPE_CHOICES, default='Economy')
 
+from ..constants.model_constants  import not_provided
 class Decorators(m.Model):
     id = m.AutoField(primary_key=True)
     listingId = m.ForeignKey(Listing, on_delete=m.CASCADE)
@@ -103,7 +104,7 @@ class Decorators(m.Model):
     ]
     CATERING_CHOICES = [
         ('Provided', 'Provided'),
-        ('not_provided, not_provided'),
+        (not_provided, not_provided),
     ]
     STAFF_CHOICES = [
         ('Male', 'Male'),

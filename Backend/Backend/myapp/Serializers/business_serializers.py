@@ -1,4 +1,4 @@
-from ..Models import business_models as m
+from ..models import business_models as m
 from rest_framework import serializers as s
 
 class BusinessOwnerSerializer(s.ModelSerializer):

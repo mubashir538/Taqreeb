@@ -6,11 +6,17 @@ from django.utils.timezone import now
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .. import models as m
-from .. import Serializers as s
-from myapp.models import UserActivity
 from django.db.models import Q
 from datetime import timezone
+from ..models.booking_models import Booking
+from ..models.user_models import User,UserActivity
+from ..models.listing_models import Listing,Packages
+from ..models.business_models import BusinessOwner,Freelancer
+from ..models.transaction_models import BusinessTransaction,Transaction
+from ..models.booking_models import Order
+from ..Serializers.booking_serializers import BusinessTransactionSerializer,TransactionSerializer
+from ..models.user_models import BankDetails 
+from ..Serializers.user_activity_serializers import BankDetailsSerializer
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -21,15 +27,15 @@ def add_transaction(request):
     bookingid = request.data.get('bookingId', None)
     
     try:
-        user = m.User.objects.get(id=senderid)
-        package = m.Packages.objects.get(id=packageid)
-        listing = m.Listing.objects.get(id=package.listingId)
+        user = User.objects.get(id=senderid)
+        package = Packages.objects.get(id=packageid)
+        listing = Listing.objects.get(id=package.listingId)
         
         booking = None
         if bookingid:
-            booking = m.Booking.objects.get(id=bookingid)
+            booking = Booking.objects.get(id=bookingid)
         else:
-            booking = m.Booking.objects.create(
+            booking = Booking.objects.create(
                 user=user,
                 package=package,
                 booking_date=timezone.now(),
@@ -38,15 +44,15 @@ def add_transaction(request):
             )
         
         if listing.ownerID:
-            owner = m.BusinessOwner.objects.get(id=listing.ownerID)
-            m.BusinessTransaction.objects.create(
+            owner = BusinessOwner.objects.get(id=listing.ownerID)
+            BusinessTransaction.objects.create(
                 ownerb=owner,
                 amount=amount,
                 type='package_payment',
                 info=f"Payment for package #{package.id}",
                 status='Completed'
             )
-            m.Transaction.objects.create(
+            Transaction.objects.create(
                 sender=user,
                 receiverb=owner,
                 amount=amount,
@@ -55,15 +61,15 @@ def add_transaction(request):
                 booking=booking
             )
         else:
-            owner = m.Freelancer.objects.get(id=listing.freelancerID)
-            m.BusinessTransaction.objects.create(
+            owner = Freelancer.objects.get(id=listing.freelancerID)
+            BusinessTransaction.objects.create(
                 ownerf=owner,
                 amount=amount,
                 type='package_payment',
                 info=f"Payment for package #{package.id}",
                 status='Completed'
             )
-            m.Transaction.objects.create(
+            Transaction.objects.create(
                 sender=user,
                 receiverf=owner,
                 amount=amount,
@@ -93,18 +99,18 @@ def add_transaction(request):
 @permission_classes([IsAuthenticated])
 def get_transactions(request, id, type):
     try:
-        user = m.User.objects.get(id=id)
+        user = User.objects.get(id=id)
         now = timezone.now()
         
         if type == 'freelancer':
-            freelancer = m.Freelancer.objects.get(userID=user)
-            transactions = m.BusinessTransaction.objects.filter(
+            freelancer = Freelancer.objects.get(userID=user)
+            transactions = BusinessTransaction.objects.filter(
                 ownerf=freelancer,
                 status='Completed'
             ).order_by('-date')
         else:
-            business_owner = m.BusinessOwner.objects.get(userID=user)
-            transactions = m.BusinessTransaction.objects.filter(
+            business_owner = BusinessOwner.objects.get(userID=user)
+            transactions = BusinessTransaction.objects.filter(
                 ownerb=business_owner,
                 status='Completed'
             ).order_by('-date')
@@ -115,7 +121,7 @@ def get_transactions(request, id, type):
             date__month=now.month
         ).aggregate(Sum('amount'))['amount__sum'] or 0
         
-        transaction_serializer = s.BusinessTransactionSerializer(transactions, many=True)
+        transaction_serializer = BusinessTransactionSerializer(transactions, many=True)
         
         return Response({
             'status': 'success',
@@ -133,27 +139,27 @@ def get_transactions(request, id, type):
 @permission_classes([AllowAny])
 def get_transactions_recent(request, id, type):
     try:
-        user = m.User.objects.get(id=id)
+        user = User.objects.get(id=id)
         now = datetime.datetime.now()
         
         if type == 'freelancer':
-            freelancer = m.Freelancer.objects.get(userID=user)
-            transactions = m.BusinessTransaction.objects.filter(
+            freelancer = Freelancer.objects.get(userID=user)
+            transactions = BusinessTransaction.objects.filter(
                 ownerf=freelancer,
                 date__year=now.year,
                 date__month=now.month,
                 status='Completed'
             ).order_by('-date')
         else:
-            business_owner = m.BusinessOwner.objects.get(userID=user)
-            transactions = m.BusinessTransaction.objects.filter(
+            business_owner = BusinessOwner.objects.get(userID=user)
+            transactions = BusinessTransaction.objects.filter(
                 ownerb=business_owner,
                 date__year=now.year,
                 date__month=now.month,
                 status='Completed'
             ).order_by('-date')
         
-        transaction_serializer = s.BusinessTransactionSerializer(transactions, many=True)
+        transaction_serializer = BusinessTransactionSerializer(transactions, many=True)
         return Response({'status': 'success', 'data': transaction_serializer.data})
     
     except Exception as e:
@@ -163,13 +169,13 @@ def get_transactions_recent(request, id, type):
 @permission_classes([IsAuthenticated])
 def get_user_transactions(request, user_id):
     try:
-        user = m.User.objects.get(id=user_id)
-        transactions = m.Transaction.objects.filter(
+        user = User.objects.get(id=user_id)
+        transactions = Transaction.objects.filter(
             sender=user,
             status='Completed'
         ).order_by('-date')
         
-        transaction_serializer = s.TransactionSerializer(transactions, many=True)
+        transaction_serializer = TransactionSerializer(transactions, many=True)
         return Response({'status': 'success', 'data': transaction_serializer.data})
     
     except Exception as e:
@@ -178,12 +184,12 @@ def get_user_transactions(request, user_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_wallet_balance(request,id,type):
-    userid = m.User.objects.get(id=id)
+    userid = User.objects.get(id=id)
     if type == 'freelancer':
-        freelancer = m.Freelancer.objects.get(userID=userid)
+        freelancer = Freelancer.objects.get(userID=userid)
         return Response({'status':'success','balance':freelancer.balance})
     else:
-        business_owner = m.BusinessOwner.objects.get(userID=userid)
+        business_owner = BusinessOwner.objects.get(userID=userid)
         return Response({'status':'success','balance':business_owner.balance})
     
 @api_view(['POST'])
@@ -192,18 +198,18 @@ def withdraw_balance(request):
     amount = int(request.data.get('amount'))
     userid = request.data.get('userID')
     withdraw_type = request.data.get('type')
-    userid = m.User.objects.get(id=userid)
+    userid = User.objects.get(id=userid)
     bank_details = request.data.get('bankDetails') 
     if withdraw_type == 'freelancer':
-        freelancer = m.Freelancer.objects.get(userID=userid)
+        freelancer = Freelancer.objects.get(userID=userid)
         freelancer.balance = freelancer.balance - amount
         freelancer.save(update_fields=['balance'])
-        m.BusinessTransaction(type="Withdraw",amount=amount,ownerf=freelancer,date=datetime.datetime.now(),info=f"Withdrawal to {bank_details}").save()
+        BusinessTransaction(type="Withdraw",amount=amount,ownerf=freelancer,date=datetime.datetime.now(),info=f"Withdrawal to {bank_details}").save()
     else:
-        business_owner = m.BusinessOwner.objects.get(userID=userid)
+        business_owner = BusinessOwner.objects.get(userID=userid)
         business_owner.balance = business_owner.balance - amount
         business_owner.save(update_fields=['balance'])
-        m.BusinessTransaction(type="Withdraw",amount=amount,ownerb=business_owner,date=datetime.datetime.now(),info=f"Withdrawal to {bank_details}").save()
+        BusinessTransaction(type="Withdraw",amount=amount,ownerb=business_owner,date=datetime.datetime.now(),info=f"Withdrawal to {bank_details}").save()
     return Response({'status':'success'})
 
 @api_view(['POST'])
@@ -214,16 +220,16 @@ def add_bank(request):
     iban_number = request.data.get('IBANNumber')
     account_holder_name = request.data.get('accountHolderName')
     userid = request.data.get('userID')
-    userid = m.User.objects.get(id=userid)
-    m.BankDetails(userID=userid,bankName=bank_name,accountNumber=account_number,IBANNumber=iban_number,accountHolderName=account_holder_name).save()
+    userid = User.objects.get(id=userid)
+    BankDetails(userID=userid,bankName=bank_name,accountNumber=account_number,IBANNumber=iban_number,accountHolderName=account_holder_name).save()
     return Response({'status':'success'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_bank(request,id):
-    userid = m.User.objects.get(id=id)
-    bank = m.BankDetails.objects.filter(userID=userid)
-    bank_serializer = s.BankDetailsSerializer(bank,many=True)
+    userid = User.objects.get(id=id)
+    bank = BankDetails.objects.filter(userID=userid)
+    bank_serializer = BankDetailsSerializer(bank,many=True)
     return Response({'status':'success','data':bank_serializer.data})
 
 
@@ -232,11 +238,11 @@ def get_bank(request,id):
 def mark_booking_reviewed(request):
     booking_id = request.data.get('booking_id')
     try:
-        booking = m.Booking.objects.get(id=booking_id, user=request.user)
+        booking = Booking.objects.get(id=booking_id, user=request.user)
         booking.has_reviewed = True
         booking.save()
         return Response({'status': 'success'})
-    except m.Booking.DoesNotExist:
+    except Booking.DoesNotExist:
         return Response({'status': 'error', 'message': 'Booking not found'}, status=404)
 
 @api_view(['POST'])
@@ -251,18 +257,18 @@ def process_payment(request):
         if not all([order_id, amount]):
             return Response({'status': 'error', 'message': 'Missing required fields'}, status=400)
         
-        order = m.Order.objects.get(id=order_id, user=request.user)
+        order = Order.objects.get(id=order_id, user=request.user)
         
         if order.listing:
             listing = order.listing
             if listing.ownerID:
-                m.BusinessTransaction.objects.create(
+                BusinessTransaction.objects.create(
                     ownerb=listing.ownerID,
                     amount=amount,
                     type='booking_payment',
                     info=f"Payment for order #{order.id}"
                 )
-                m.Transaction.objects.create(
+                Transaction.objects.create(
                     sender=request.user,
                     receiverb=listing.ownerID,
                     amount=amount,
@@ -270,13 +276,13 @@ def process_payment(request):
                     package=order.package if order.package else None
                 )
             else:
-                m.BusinessTransaction.objects.create(
+                BusinessTransaction.objects.create(
                     ownerf=listing.freelancerID,
                     amount=amount,
                     type='booking_payment',
                     info=f"Payment for order #{order.id}"
                 )
-                m.Transaction.objects.create(
+                Transaction.objects.create(
                     sender=request.user,
                     receiverf=listing.freelancerID,
                     amount=amount,
@@ -288,7 +294,7 @@ def process_payment(request):
         order.status = 'confirmed'
         order.save()
         
-        bookings = m.Booking.objects.filter(order=order)
+        bookings = Booking.objects.filter(order=order)
         bookings.update(status='confirmed')
         UserActivity.objects.create(
             user=request.user,
@@ -308,7 +314,7 @@ def process_payment(request):
             'order_status': order.status
         })
         
-    except m.Order.DoesNotExist:
+    except Order.DoesNotExist:
         return Response({'status': 'error', 'message': 'Order not found'}, status=404)
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
@@ -349,7 +355,7 @@ def update_order_status(request):
         return Response({'status': 'error', 'message': str(e)}, status=500)
 def _get_order_with_related_data(order_id):
     return get_object_or_404(
-        m.Order.objects.select_related('cart').prefetch_related('bookings'),
+        Order.objects.select_related('cart').prefetch_related('bookings'),
         id=order_id
     )
 def _is_authorized(user, order):
@@ -414,7 +420,7 @@ def _record_completed_transactions(bookings, order):
             _create_business_transaction(booking, order, recipient)
 def _create_business_transaction(booking, order, recipient):
     is_business_owner = hasattr(recipient, 'businessowner')
-    m.BusinessTransaction.objects.create(
+    BusinessTransaction.objects.create(
         ownerb=recipient if is_business_owner else None,
         ownerf=None if is_business_owner else recipient,
         amount=booking.payment_amount,

@@ -1,21 +1,21 @@
 from rest_framework.response import Response
-from .. import models as m
 from rest_framework.decorators import api_view, permission_classes
-from .. import Serializers as s
 from rest_framework.permissions import IsAuthenticated
-
+from ..models.user_models import User
+from ..models.listing_models import Wishlist, Listing,PicturesListings
+from ..Serializers.listing_serializers import ListingSerializer, PicturesListingSerializers
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_wishlist(request,uid):
-    uid = m.User.objects.get(id=uid)
-    get_wishlist_list = m.Wishlist.objects.filter(user=uid)
-    get_wishlist_list = m.Listing.objects.filter(id__in=get_wishlist_list.values_list('listing', flat=True))
-    listing_serializer = s.ListingSerializer(get_wishlist_list, many=True)
+    uid = User.objects.get(id=uid)
+    get_wishlist_list = Wishlist.objects.filter(user=uid)
+    get_wishlist_list = Listing.objects.filter(id__in=get_wishlist_list.values_list('listing', flat=True))
+    listing_serializer = ListingSerializer(get_wishlist_list, many=True)
     pictures = []
     listings = listing_serializer.data[:]
     for i in listings:
-        pic = m.PicturesListings.objects.filter(listingId=i['id'])
-        serializer = s.PicturesListingSerializers(pic, many=True)
+        pic = PicturesListings.objects.filter(listingId=i['id'])
+        serializer = PicturesListingSerializers(pic, many=True)
         pictures.append(serializer.data)
     return Response({'status':'success', 'list':listings, 'pictures':pictures})
 
@@ -26,7 +26,7 @@ def check_wishlist(request):
     listing_id = request.query_params.get('listing')
     
     try:
-        exists = m.Wishlist.objects.filter(
+        exists = Wishlist.objects.filter(
             user_id=userid, 
             listing_id=listing_id
         ).exists()
@@ -47,9 +47,9 @@ def check_wishlist(request):
 def add_to_wishlist(request):
     userid = request.data.get('userid')
     listing = request.data.get('listing')
-    listing = m.Listing.objects.get(id=listing)
-    userid = m.User.objects.get(id=userid)
-    m.Wishlist(user=userid,listing=listing).save()
+    listing = Listing.objects.get(id=listing)
+    userid = User.objects.get(id=userid)
+    Wishlist(user=userid,listing=listing).save()
     return Response({'status':'success'}) 
 
 @api_view(['POST'])
@@ -57,7 +57,7 @@ def add_to_wishlist(request):
 def remove_from_wishlist(request):
     userid = request.data.get('userid')
     listing = request.data.get('listing')
-    listing = m.Listing.objects.get(id=listing)
-    userid = m.User.objects.get(id=userid)
-    m.Wishlist.objects.filter(user=userid,listing=listing).delete()
+    listing = Listing.objects.get(id=listing)
+    userid = User.objects.get(id=userid)
+    Wishlist.objects.filter(user=userid,listing=listing).delete()
     return Response({'status':'success'}) 

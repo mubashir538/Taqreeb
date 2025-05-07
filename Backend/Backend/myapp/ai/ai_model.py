@@ -1,7 +1,7 @@
 import pandas as pd
-from myapp.models import UserActivity, Listing, User, Categories
+from Backend.Backend.myapp.models2 import UserActivity, Listing, User, Categories
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from myapp.models import Events, Functions,Listing,Orders
+from Backend.Backend.myapp.models2 import Events, Functions,Listing,Orders
 import joblib
 from sklearn.neighbors import NearestNeighbors
 from django.db.models import Count

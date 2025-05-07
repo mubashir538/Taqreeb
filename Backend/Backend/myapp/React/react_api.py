@@ -8,8 +8,13 @@ from .react_permission import IsReactUser
 from .react_serializer import ReactUserSerializer, ReactUserCreateSerializer
 from django.contrib.auth.hashers import check_password
 from rest_framework import status
-from .. import models as m
-from ..models import UserActivity, Order,Review,User,Review,BusinessOwner,Freelancer,Listing,Payment,Events
+from .. import models2 as m
+from ..models.user_models import UserActivity,User
+from ..models.listing_models import  BusinessOwner,Freelancer,Listing
+from ..models.booking_models import  Order
+from ..models.transaction_models import  Payment
+from ..models.review_models import  Review
+from ..models.event_models import  Events
 from django.utils.timezone import make_aware
 from datetime import time, timedelta, date
 import datetime
@@ -18,8 +23,11 @@ from datetime import datetime, date
 from django.utils import timezone
 import pytz
 from django.core.paginator import Paginator,EmptyPage
-from ..Serializers import ListingSerializer,VenueSerializer,CaterersSerializer,PackagesSerializer,ProductsSerializer,AddOnsSerializer,PicturesListingSerializers
-from ..models import Venue,Caterers,Packages,Product,AddOns,PicturesListings
+from ..Serializers.listing_serializers import ListingSerializer,PackagesSerializer,ProductsSerializer,PicturesListingSerializers
+from ..Serializers.service_serializers import VenueSerializer,CaterersSerializer,AddOnsSerializer
+from ..models.listing_types_models import Venue,Caterers
+from ..models.listing_models import Packages,AddOns,PicturesListings
+from ..models.product_models import Product
 from django.db.models import Q
 
 @api_view(['POST'])

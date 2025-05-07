@@ -1,6 +1,6 @@
 
-from ..Models import user_models as m
-from ..Models import listing_models as lm
+from ..models import user_models as m
+from ..models import listing_models as lm
 from rest_framework import serializers as s
 
 class UserActivitySerializer(s.ModelSerializer):

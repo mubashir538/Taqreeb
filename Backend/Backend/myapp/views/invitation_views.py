@@ -1,8 +1,6 @@
 import json
 import os
-import difflib
 import random
-from .. import models as m
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +12,7 @@ from datetime import timedelta
 from django.utils import timezone
 from datetime import datetime
 from ..constants.views_constants import arial_font
+from ..models.misc_models import TempInvitationCard
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -230,92 +229,107 @@ class InvitationGenerator:
             
             return image_path, template_config
         
-    def _calculate_text_block_height(self, text, font_style, max_width, img_width):
-        """Calculate the height needed for a block of text"""
+    def _calculate_text_block_height(self, text, font_style, max_width):
+        "Calculate the height needed for a block of text"
         font = self._get_font(font_style)
         lines = text.split('\n')
         total_height = 0
-        
+
         for line in lines:
-            if not line.strip():
-                total_height += font.size
-                continue
-                
-            text_width = font.getlength(line)
-            if max_width and text_width > max_width:
-                words = line.split()
-                current_line = []
-                
-                for word in words:
-                    test_line = ' '.join(current_line + [word])
-                    test_width = font.getlength(test_line)
-                    
-                    if test_width <= max_width:
-                        current_line.append(word)
-                    else:
-                        if current_line:
-                            total_height += int(font.size * 1.5)
-                        current_line = [word]
-                
-                if current_line:
-                    total_height += int(font.size * 1.5)
-            else:
-                total_height += int(font.size * 1.5)
-                
+            total_height += self._calculate_line_height(line, font, max_width)
+
         return total_height
 
+    # ----------------- Helper Methods -----------------
+
+    def _calculate_line_height(self, line, font, max_width):
+        """Calculate height for a single line or wrapped line"""
+        if not line.strip():
+            return font.size
+
+        text_width = font.getlength(line)
+        if max_width and text_width > max_width:
+            return self._calculate_wrapped_line_height(line, font, max_width)
+        
+        return int(font.size * 1.5)
+
+    def _calculate_wrapped_line_height(self, line, font, max_width):
+        """Calculate height for a line that wraps"""
+        words = line.split()
+        current_line = []
+        line_count = 0
+
+        for word in words:
+            test_line = ' '.join(current_line + [word])
+            test_width = font.getlength(test_line)
+
+            if test_width <= max_width:
+                current_line.append(word)
+            else:
+                if current_line:
+                    line_count += 1
+                current_line = [word]
+
+        if current_line:
+            line_count += 1
+
+        return line_count * int(font.size * 1.5)
+
     def _draw_centered_text(self, draw, text, y_position, font_style, color, img_width, safe_zones, max_width=None):
-        """Draw centered text within safe zones"""
+        "Draw centered text within safe zones"
         font = self._get_font(font_style)
+        safe_left, safe_width, available_width = self._calculate_safe_area(img_width, safe_zones, max_width)
         lines = text.split('\n')
-        
-        safe_left = safe_zones['xStart'] * img_width
-        safe_right = safe_zones['xEnd'] * img_width
-        safe_width = safe_right - safe_left
-        
-        available_width = min(max_width, safe_width) if max_width else safe_width
-        
+
         for line in lines:
             if not line.strip():
                 y_position += font.size
                 continue
-                
-            text_width = font.getlength(line)
-            
-            if available_width and text_width > available_width:
-                words = line.split()
-                current_line = []
-                
-                for word in words:
-                    test_line = ' '.join(current_line + [word])
-                    test_width = font.getlength(test_line)
-                    
-                    if test_width <= available_width:
-                        current_line.append(word)
-                    else:
-                        if current_line:
-                            wrapped_line = ' '.join(current_line)
-                            wrapped_width = font.getlength(wrapped_line)
-                            x_position = safe_left + (safe_width - wrapped_width) / 2
-                            draw.text((x_position, y_position), wrapped_line, fill=color, font=font)
-                            y_position += int(font.size * 1.5)
-                        current_line = [word]
-                
-                if current_line:
-                    remaining_line = ' '.join(current_line)
-                    remaining_width = font.getlength(remaining_line)
-                    x_position = safe_left + (safe_width - remaining_width) / 2
-                    draw.text((x_position, y_position), remaining_line, fill=color, font=font)
-                    y_position += int(font.size * 1.5)
+
+            if font.getlength(line) > available_width:
+                y_position = self._draw_wrapped_text(draw, line, font, color, safe_left, safe_width, available_width, y_position)
             else:
-                x_position = safe_left + (safe_width - text_width) / 2
+                x_position = self._get_center_x(safe_left, safe_width, font.getlength(line))
                 draw.text((x_position, y_position), line, fill=color, font=font)
                 y_position += int(font.size * 1.5)
-                
+
             if font_style == 'bold2' and 'extra_space' in self.fonts[font_style]:
                 y_position += self.fonts[font_style]['extra_space']
-                
+
         return y_position
+
+    def _calculate_safe_area(self, img_width, safe_zones, max_width):
+        safe_left = safe_zones['xStart'] * img_width
+        safe_right = safe_zones['xEnd'] * img_width
+        safe_width = safe_right - safe_left
+        available_width = min(max_width, safe_width) if max_width else safe_width
+        return safe_left, safe_width, available_width
+
+    def _draw_wrapped_text(self, draw, line, font, color, safe_left, safe_width, available_width, y_position):
+        words = line.split()
+        current_line = []
+
+        for word in words:
+            test_line = ' '.join(current_line + [word])
+            if font.getlength(test_line) <= available_width:
+                current_line.append(word)
+            else:
+                if current_line:
+                    y_position = self._draw_line(draw, ' '.join(current_line), font, color, safe_left, safe_width, y_position)
+                current_line = [word]
+
+        if current_line:
+            y_position = self._draw_line(draw, ' '.join(current_line), font, color, safe_left, safe_width, y_position)
+
+        return y_position
+
+    def _draw_line(self, draw, text, font, color, safe_left, safe_width, y_position):
+        x_position = self._get_center_x(safe_left, safe_width, font.getlength(text))
+        draw.text((x_position, y_position), text, fill=color, font=font)
+        return y_position + int(font.size * 1.5)
+
+    def _get_center_x(self, safe_left, safe_width, text_width):
+        return safe_left + (safe_width - text_width) / 2
 
     def generate_invitation(self):
         try:
@@ -324,286 +338,82 @@ class InvitationGenerator:
             draw = ImageDraw.Draw(img)
             width, height = img.size
 
-            primary_color = template_config['color1']
-            secondary_color = template_config['color2']
-            safe_zones = template_config['safe_zones']
+            safe_zones = self._calculate_safe_zone_dimensions(width, height, template_config)
+            main_sections = self._build_main_sections(template_config, safe_zones)
 
-            padding = width * 0.03 
-            safe_left = safe_zones['xStart'] * width + padding
-            safe_right = safe_zones['xEnd'] * width - padding
-            safe_top = safe_zones['yStart'] * height + padding
-            safe_bottom = safe_zones['yEnd'] * height - padding
-            safe_width = safe_right - safe_left
-            safe_height = safe_bottom - safe_top
+            y_position = self._draw_main_sections(draw, main_sections, safe_zones)
 
-            event_type = self.data.get('eventType', 'Wedding')
-            function_type = self.data.get('functionType', 'Wedding')
-            basic_info = self.data.get('basicInfo', {})
+            self._draw_program_and_contact_sections(draw, safe_zones, y_position)
 
-            sections = []
+            return self._save_image(img, self.data['uid'], self.data.get('eventType', 'Event'))
 
-            if event_type == 'Wedding':
-                so = difflib.SequenceMatcher(None, basic_info['s/o'], basic_info['hostName']).ratio()
-                do = difflib.SequenceMatcher(None, basic_info['d/o'], basic_info['hostName']).ratio()
-                if so > do:
-                    bride_and_groom = [
-                        (f"{basic_info.get('name1', 'Groom')}", 'script', primary_color),
-                        ("With", 'bold2', primary_color),
-                        (f"{basic_info.get('name2', 'Bride')}", 'script', primary_color),
-                        (f"{basic_info.get('d/o', '')}", 'regular', primary_color),
-                    ]
-                else:
-                    bride_and_groom = [
-                        (f"{basic_info.get('name2', 'Bride')}", 'script', primary_color),
-                        ("With", 'bold2', primary_color),
-                        (f"{basic_info.get('name1', 'Groom')}", 'script', primary_color),
-                        (f"{basic_info.get('s/o', '')}", 'regular', primary_color),
-                    ]
-
-                main_sections = [
-                    ("In the Name of Allah,\nthe Most Gracious, the Most Merciful", 'regular', primary_color),
-                    (f"Mr. & Mrs. {basic_info.get('hostName', 'Host Family')}", 'bold1', primary_color),
-                    ("Request the honor of your presence", 'regular', primary_color),
-                    (f"at the {function_type} of their beloved", 'regular', primary_color),
-                    *bride_and_groom,
-                    ("", 'regular', primary_color),
-                    (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
-                    (f"At {self.data.get('venueName', 'At Home')}", 'bold2', secondary_color),
-                    (basic_info.get('location', ''), 'regular', secondary_color)
-                ]
-            elif event_type == 'Birthday':
-                main_sections = [
-                    ("Join us in celebrating with", 'regular', primary_color),
-                    (f"Mr. & Mrs. {basic_info.get('hostName', 'Host Family')}", 'bold1', primary_color),
-                    (f"on the Birthday Celebration of", 'regular', primary_color),
-                    (f"{basic_info.get('name1', 'Child')}", 'script', primary_color),
-                    (f"", 'bold1', primary_color),
-                    (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
-                    (f"At {self.data.get('venueName', 'At Our House')}", 'bold2', secondary_color),
-                    (basic_info.get('location', ''), 'regular', secondary_color)
-                ]
-            elif event_type == 'Corporate Event':
-                main_sections = [
-                    (f"The partners of {basic_info.get('hostName', 'Company')} and Co. would like to", 'regular', primary_color),
-                    ("Cordially invite you to", 'regular', primary_color),
-                    (f"Annual", 'bold1', primary_color),
-                    (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),
-                    (f"", 'bold1', primary_color),
-                    (f"Please Join Us for a day of Networking", 'regular', primary_color),
-                    (f"Collaboration and Celebration as we come", 'regular', primary_color),
-                    (f"to Propel our Company Forward", 'regular', primary_color),
-                    (f"", 'bold1', primary_color),
-                    (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
-                    (f"At {self.data.get('venueName', 'At Our House')}", 'bold2', secondary_color),
-                    (basic_info.get('location', ''), 'regular', secondary_color)
-                
-                ]
-            elif event_type == 'Religious Event':
-                main_sections = [
-                    ("Celebrate", 'regular', primary_color),
-                    (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),
-                    (f"with", 'regular', primary_color),
-                    (f"{basic_info.get('hostName', 'Our Family')}", 'bold1', primary_color),
-                    (f"", 'bold1', primary_color),
-                    (f"On {self._format_date(basic_info.get('date', ''))}", 'bold1', primary_color),
-                    (f"At {self.data.get('venueName', 'At Our House')}", 'bold1', secondary_color),
-                    (basic_info.get('location', ''), 'regular', secondary_color)
-                ]
-            else:
-                main_sections = [
-                    ("Let's Celebrate", 'regular', primary_color),
-                    (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),
-                    (f"with", 'regular', primary_color),
-                    (f"{basic_info.get('hostName', 'Our Family')}", 'bold1', primary_color),
-                    (f"Don't Miss It", 'regular', primary_color),
-                    (f"", 'bold1', primary_color),
-                    (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
-                    (f"At {self.data.get('venueName', 'At Our House')}", 'bold2', secondary_color),
-                    (basic_info.get('location', ''), 'regular', secondary_color)
-                ]
-            sections.extend(main_sections)
-
-            main_content_height = 0
-            for text, font_style, _ in main_sections:
-                main_content_height += self._calculate_text_block_height(
-                    text, font_style, safe_width, width
-                )
-
-            program_details = self.data.get('programDetails', [])
-            contact_info = self.data.get('contactInfo', [])
-
-            program_height = 0
-            contact_height = 0
-
-            if program_details:
-                program_header = "Program"
-                program_height += self._calculate_text_block_height(program_header, 'bold1', safe_width/2, width)
-
-                program_text = "\n".join([f"{item.get('name', 'Event')}: {item.get('time', '')}" 
-                                      for item in program_details])
-                program_height += self._calculate_text_block_height(program_text, 'regular', safe_width/2, width)
-
-            if contact_info:
-                contact_header = "R.S.V.P"
-                contact_height += self._calculate_text_block_height(contact_header, 'bold1', safe_width/2, width)
-
-                contact_lines = []
-                for contact in contact_info:
-                    if ":" in contact:
-                        name, number = contact.split(":", 1)
-                        contact_lines.append(f"{name}:")
-                        contact_lines.append(number.strip())
-                    else:
-                        contact_lines.append(contact)
-                contact_text = "\n".join(contact_lines)
-                contact_height += self._calculate_text_block_height(contact_text, 'regular', safe_width/2, width)
-
-            total_content_height = main_content_height + max(program_height, contact_height)
-
-            y_start = safe_top + (safe_height - total_content_height) / 2
-            y_position = y_start
-
-            for text, font_style, color in main_sections:
-                y_position = self._draw_centered_text(
-                    draw, text, y_position, font_style, color, 
-                    width, safe_zones, safe_width
-                )
-
-            if program_details or contact_info:
-                if program_details and contact_info:
-                        column_gap = padding * 2 
-                        program_font = self._get_font('regular')
-                        contact_font = self._get_font('regular')
-                        max_program_text = max([draw.textlength(f"{i.get('name', '').capitalize()} ...... {i.get('time', '')}", font=program_font) for i in program_details], default=0)
-                        max_contact_text = 0
-                        for c in contact_info:
-                            if ":" in c:
-                                name, number = c.split(":", 1)
-                                name_width = draw.textlength(f"{name}:", font=contact_font)
-                                number_width = draw.textlength(number.strip(), font=contact_font)
-                                max_contact_text = max(max_contact_text, name_width, number_width)
-                            else:
-                                max_contact_text = max(max_contact_text, draw.textlength(c, font=contact_font))
-
-                        column_gap = padding * 2
-                        true_combined_width = max_program_text + column_gap + max_contact_text
-
-                        program_height = self._calculate_section_height(program_details, column_gap)
-                        contact_height = self._calculate_section_height(contact_info, column_gap)
-                        max_height = max(program_height, contact_height)
-
-                        start_x = safe_left + (safe_width - true_combined_width) / 2  
-                        start_y = y_position + (safe_bottom - y_position - max_height) / 2
-                        program_x = start_x
-                        program_y = start_y
-                        program_header = "Program"
-                        program_header_font = self._get_font('bold1')
-                        draw.text((program_x, program_y), program_header, 
-                                 fill=primary_color, font=program_header_font)
-                        program_y += program_header_font.size + 20
-                        program_font = self._get_font('regular')
-                        program_font_size = max(program_font.size - 4, 24)
-                        try:
-                            program_font = ImageFont.truetype(program_font.path, program_font_size)
-                        except:
-                            program_font = ImageFont.truetype("arial.ttf", program_font_size)
-
-                        for item in program_details:
-                            program_text = f"{item.get('name', 'Event')} ...... {item.get('time', '')}"
-                            draw.text((program_x, program_y), program_text, 
-                                     fill=secondary_color, font=program_font)
-                            program_y += program_font.size + 10
-
-                        contact_x = program_x + max_program_text + column_gap
-                        contact_y = start_y
-
-                        contact_header = "R.S.V.P"
-                        contact_header_font = self._get_font('bold1')
-                        draw.text((contact_x, contact_y), contact_header, 
-                                 fill=primary_color, font=contact_header_font)
-                        contact_y += contact_header_font.size + 20
-
-                        contact_font = self._get_font('regular')
-                        contact_font_size = max(contact_font.size - 4, 24)
-                        try:
-                            contact_font = ImageFont.truetype(contact_font.path, contact_font_size)
-                        except:
-                            contact_font = ImageFont.truetype("arial.ttf", contact_font_size)
-
-                        for contact in contact_info:
-                            if ":" in contact:
-                                name, number = contact.split(":", 1)
-                                draw.text((contact_x, contact_y), f"{name}:", 
-                                         fill=secondary_color, font=contact_font)
-                                contact_y += contact_font.size + 5
-
-                                draw.text((contact_x + 20, contact_y), number.strip(), 
-                                         fill=secondary_color, font=contact_font)
-                                contact_y += contact_font.size + 10
-                            else:
-                                draw.text((contact_x, contact_y), contact, 
-                                         fill=secondary_color, font=contact_font)
-                                contact_y += contact_font.size + 10
-
-                        y_position = start_y + max_height
-            
-                else:
-                    section_content = program_details or contact_info
-                    section_title = "Program" if program_details else "Contact"
-                    
-                    section_height = self._calculate_section_height(section_content, safe_width)
-                    start_y = y_position + (safe_bottom - y_position - section_height) / 2
-                    
-                    section_header_font = self._get_font('bold1')
-                    section_header_width = section_header_font.getlength(section_title)
-                    section_header_x = safe_left + (safe_width - section_header_width) / 2
-                    draw.text((section_header_x, start_y), section_title, 
-                             fill=primary_color, font=section_header_font)
-                    current_y = start_y + section_header_font.size + 20
-                    
-                    section_font = self._get_font('regular')
-                    section_font_size = max(section_font.size - 4, 24)
-                    try:
-                        section_font = ImageFont.truetype(section_font.path, section_font_size)
-                    except:
-                        section_font = ImageFont.truetype("arial.ttf", section_font_size)
-                    
-                    if program_details:
-                        for item in program_details:
-                            program_text = f"{item.get('name', 'Event')}: {item.get('time', '')}"
-                            draw.text((safe_left, current_y), program_text, 
-                                     fill=secondary_color, font=section_font)
-                            current_y += section_font.size + 10
-                    else:
-                        for contact in contact_info:
-                            if ":" in contact:
-                                name, number = contact.split(":", 1)
-                                draw.text((safe_left, current_y), f"{name}:", 
-                                         fill=secondary_color, font=section_font)
-                                current_y += section_font.size + 5
-                                
-                                draw.text((safe_left + 20, current_y), number.strip(), 
-                                         fill=secondary_color, font=section_font)
-                                current_y += section_font.size + 10
-                            else:
-                                draw.text((safe_left, current_y), contact, 
-                                         fill=secondary_color, font=section_font)
-                                current_y += section_font.size + 10
-                    
-                    y_position = current_y
-            relative_path = f"uploads/tempCards/{self.data['uid']}/Card_{event_type}.png"
-
-            filestorage = FileSystemStorage()
-
-            full_path = os.path.join(filestorage.location, relative_path)
-
-            os.makedirs(os.path.dirname(full_path), exist_ok=True)
-            img.save(full_path)
-            path = filestorage.save(relative_path, open(full_path, 'rb'))
-            return filestorage.url(path) 
         except Exception as e:
             print(f"Error generating invitation: {str(e)}")
             return None
+    def _calculate_safe_zone_dimensions(self, width, height, config):
+        
+        padding = width * 0.03
+        zones = config['safe_zones']
+        return {
+            'left': zones['xStart'] * width + padding,
+            'right': zones['xEnd'] * width - padding,
+            'top': zones['yStart'] * height + padding,
+            'bottom': zones['yEnd'] * height - padding,
+            'width': (zones['xEnd'] - zones['xStart']) * width - 2 * padding,
+            'height': (zones['yEnd'] - zones['yStart']) * height - 2 * padding,
+            'primary_color': config['color1'],
+            'secondary_color': config['color2'],
+            'img_width': width
+        }
+
+    def _draw_main_sections(self, draw, sections, safe_zones):
+        content_height = self._get_total_content_height(sections, safe_zones)
+        y_position = self._calculate_initial_y(safe_zones, content_height)
+
+        for text, style, color in sections:
+            y_position = self._draw_section_line(draw, text, style, color, y_position, safe_zones)
+
+        return y_position
+    def _get_total_content_height(self, sections, safe_zones):
+        return sum(
+            self._calculate_text_block_height(text, style, safe_zones['width'])
+            for text, style, _ in sections
+        )
+    def _calculate_initial_y(self, safe_zones, content_height):
+        return safe_zones['top'] + (safe_zones['height'] - content_height) / 2
+
+    def _draw_section_line(self, draw, text, style, color, y_position, safe_zones):
+        return self._draw_centered_text(
+            draw, text, y_position, style, color,
+            safe_zones['img_width'],
+            {
+                'xStart': safe_zones['left'] / safe_zones['img_width'],
+                'xEnd': safe_zones['right'] / safe_zones['img_width'],
+            },
+            max_width=safe_zones['width']
+        )
+
+    def _draw_program_and_contact_sections(self, draw, safe_zones, y_position):
+        program = self.data.get('programDetails', [])
+        contact = self.data.get('contactInfo', [])
+        if not program and not contact:
+            return
+
+        if program and contact:
+            self._draw_two_column_sections(draw, program, contact, safe_zones, y_position)
+        else:
+            self._draw_single_column_section(draw, program or contact, safe_zones, y_position,
+                                            title="Program" if program else "Contact")
+
+    def _save_image(self, img, uid, event_type):
+        relative_path = f"uploads/tempCards/{uid}/Card_{event_type}.png"
+        storage = FileSystemStorage()
+        full_path = os.path.join(storage.location, relative_path)
+
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        img.save(full_path)
+        path = storage.save(relative_path, open(full_path, 'rb'))
+        return storage.url(path)
 
     def _calculate_section_height(self, items, max_width):
         height = 0
@@ -616,6 +426,7 @@ class InvitationGenerator:
             content_font = ImageFont.truetype(content_font.path, content_font_size)
         except:
             content_font = ImageFont.truetype("arial.ttf", content_font_size)
+            raise
         
         if isinstance(items, list) and all(isinstance(item, dict) for item in items):
             for item in items:
@@ -624,7 +435,7 @@ class InvitationGenerator:
         else:
             for contact in items:
                 if ":" in contact:
-                    name, number = contact.split(":", 1)
+                    _name, number = contact.split(":", 1)
                     height += content_font.size + 5  
                     height += self._calculate_text_height(number.strip(), content_font, max_width - 20)
                 else:
@@ -668,6 +479,7 @@ class InvitationGenerator:
             return ', '.join(dates)
         except:
             return "a special day"
+            raise
 
 class DeleteOldTempCardsCronJob(CronJobBase):
     RUN_EVERY_MINS = 60 
@@ -677,6 +489,6 @@ class DeleteOldTempCardsCronJob(CronJobBase):
 
     def do(self):
         cutoff = timezone.now() - timedelta(hours=24)
-        old_cards = m.TempInvitationCard.objects.filter(created_at__lt=cutoff)
+        old_cards = TempInvitationCard.objects.filter(created_at__lt=cutoff)
         for card in old_cards:
             card.delete()

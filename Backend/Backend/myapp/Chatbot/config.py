@@ -1,5 +1,5 @@
-from data.event_types import EVENT_TYPES
-from data.categories import CATEGORIES
+from .data.event_types import EVENT_TYPES
+from .data.categories import CATEGORIES
 
 # 3. Checking venue availability for requested dates
 # - check_availability: Check if a venue is available on a specific date

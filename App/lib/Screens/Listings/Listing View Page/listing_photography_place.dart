@@ -51,7 +51,7 @@ class _CategoryViewPhotographyPlaceState
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-ww
+
     _initializeUI();
   }
 

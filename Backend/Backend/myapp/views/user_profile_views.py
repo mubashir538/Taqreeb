@@ -1,21 +1,21 @@
 import os
 from rest_framework.response import Response
-from .. import models as m
 from rest_framework.decorators import api_view, permission_classes
-from .. import Serializers as s
-from myapp.models import UserActivity
+from ..models.user_models import User,UserActivity
 from django.utils.timezone import now
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from myapp.firebase_db import db
+from ..Serializers.auth_serializers import UserSerializer
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def account_info_page(request,id):
     userid = id
-    user = m.User.objects.filter(id=userid).first()
-    serializer = s.UserSerializer(user)
+    user = User.objects.filter(id=userid).first()
+    serializer = UserSerializer(user)
     UserActivity.objects.create(
         user=user,
         action='profile_updated',
@@ -34,7 +34,7 @@ def account_info_page(request,id):
 @permission_classes([IsAuthenticated])
 def get_basic_userinfo(request,id):
     userid = id
-    user = m.User.objects.filter(id=userid).first()
+    user = User.objects.filter(id=userid).first()
     return Response({'name':f'{user.firstName.capitalize()} {user.lastName.capitalize()}','profilePicture':user.profilePicture})
 
 @api_view(['POST'])
@@ -46,7 +46,7 @@ def edit_account_info_page(request):
     gender = request.data.get('gender')
     city = request.data.get('city')
     lastname = request.data.get('lastName')
-    user = m.User.objects.get(id=userid)
+    user = User.objects.get(id=userid)
     user.firstName = first_name
     user.lastName = lastname
     user.gender = gender
@@ -63,7 +63,7 @@ def edit_account_info_page(request):
         user.save(update_fields=["profilePicture",'firstName','lastName','gender','city'])
     else:
         user.save(update_fields=['firstName','lastName','gender','city'])
-    user = m.User.objects.get(id=userid)
+    user = User.objects.get(id=userid)
     UserActivity.objects.create(
     user=user,
     action='profile_update',
