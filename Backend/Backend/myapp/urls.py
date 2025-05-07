@@ -24,7 +24,7 @@ from .views import chat_views as ch
 from .views import category_views as cat
 from .views import business_views as b
 from .views import activity_views as a
-from .views import chat_bot_views as cb
+from .views import chat_bot_views as chatbot
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -37,7 +37,7 @@ router.register(r'cart', cart.CartViewSet, basename='cart')
 router.register(r'cart/items', cart.CartItemViewSet, basename='cart-items')
 
 urlpatterns = [
-    path('Login/googleAuthentication', am.googleAuth, name='googleAuth'),
+    path('Login/googleAuthentication', am.google_auth, name='googleAuth'),
 path('resendOTP/email', am.resend_otp_email, name='resendOTPEmail'),
 path('resendOTP/forgot', am.resend_otp, name='resendOTP'),
 path('resendOTP/phone', am.resend_otp_phone, name='resendOTPPhone'),
@@ -55,7 +55,7 @@ path('businessowner/addListings/', lm.add_listing, name='AddListing'),
 path('businessowner/DeleteListings/', lm.delete_listing, name='DeleteListings'),
 path('businessowner/listings/[int:id](int:id)/', lm.listings_page, name='ListingsPage'),
 path('businessowner/signup/', b.business_owner_signup, name='BusinessOwnerSignup'),
-path('businessowner/updateListings/', lm.update_listing, name='updateListings'),
+path('businessowner/updateListings/', lm.update_listing_fields, name='updateListings'),
 path('editBusinessInfo/', b.edit_business_info, name='editBusinessInfo'),
 path('freelancer/signup/', b.freelancer_signup, name='FreelancerSignup'),
 path('getUsernames/business/', b.get_business_usernames, name='get_business_usernames'),
