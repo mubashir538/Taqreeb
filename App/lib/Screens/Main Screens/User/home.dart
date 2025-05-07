@@ -62,6 +62,9 @@ class _HomePageState extends State<HomePage> {
 
     if (mounted) {
       setState(() {
+        if (listings.isEmpty || categories.isEmpty || demoImages.isEmpty) {
+          return;
+        }
         _isLoading = false;
       });
     }

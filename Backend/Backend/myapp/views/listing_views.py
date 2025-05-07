@@ -333,7 +333,6 @@ def listing_with_views(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-@api_view(['GET'])
 def unified_search(request):
     search_query = request.GET.get('q', '')
     if search_query:
@@ -435,12 +434,12 @@ def _search_products(filters):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-@api_view(['GET'])
 def home_listings(request):
     listings = Listing.objects.filter(status='active').order_by('?')
     paginated_listings, paginator = _paginate_listings(request, listings)
     
     listings_data = ListingSerializer(paginated_listings, many=True).data
+    # print(listings_data)
     pictures = _get_listing_pictures(listings_data)
 
     return paginator.get_paginated_response({
@@ -500,7 +499,6 @@ def home_products(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-@api_view(['GET'])
 def your_listings(request, id, type):
     user = _get_user_by_type(id, type)
     listings = _get_user_listings(user, type)
@@ -521,13 +519,7 @@ def _get_user_listings(user, user_type):
     if user_type == 'freelancer':
         return Listing.objects.filter(freelancerID=user, status='active')
     return Listing.objects.filter(ownerID=user, status='active')
-def _get_listing_pictures(listings):
-    pictures = []
-    for listing in listings:
-        pics = PicturesListings.objects.filter(listingId=listing.id)
-        serializer = PicturesListingSerializers(pics, many=True)
-        pictures.append(serializer.data)
-    return pictures
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

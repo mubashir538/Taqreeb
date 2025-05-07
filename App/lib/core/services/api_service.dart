@@ -612,10 +612,14 @@ class MyApi {
     BuildContext? context,
   }) async {
     return await postRequest(
-      endpoint: 'chatbot/', // Your Django endpoint
+      endpoint: 'chatbot/', 
       body: {
         'user_id': userId,
         'message': message,
+      },
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
       },
       context: context,
     );

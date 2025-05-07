@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_send.dart';
 import 'package:taqreeb/Components/Messages/c_message_receive.dart';
+import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class EventPlanningChatbot extends StatefulWidget {
   const EventPlanningChatbot({super.key});
 
   @override
-  EventPlanningChatbotStatew createState() => EventPlanningChatbotState();
+  EventPlanningChatbotState createState() => EventPlanningChatbotState();
 }
 
 class EventPlanningChatbotState extends State<EventPlanningChatbot> {
@@ -152,68 +155,72 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Event Planning Assistant'),
-        backgroundColor: Colors.deepPurple,
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(8.0),
-              itemCount: _messages.length +
-                  (_showVenueCard ? 1 : 0) +
-                  (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                // Loading indicator
-                if (_isLoading &&
-                    index == _messages.length + (_showVenueCard ? 1 : 0)) {
-                  return Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        padding: EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12.0),
+          Column(
+            children: [
+              SizedBox(
+                height: Screen.height(context) * 0.2,
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(8.0),
+                  itemCount: _messages.length +
+                      (_showVenueCard ? 1 : 0) +
+                      (_isLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    // Loading indicator
+                    if (_isLoading &&
+                        index == _messages.length + (_showVenueCard ? 1 : 0)) {
+                      return Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(width: 8.0),
+                                Text('Thinking...'),
+                              ],
+                            ),
+                          ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(width: 8.0),
-                            Text('Thinking...'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                if (_showVenueCard && index == _messages.length) {
-                  return _buildEventPlanCard();
-                }
-
-                final message = _messages[_showVenueCard
-                    ? (index >= _messages.length ? index - 1 : index)
-                    : index];
-
-                return message['isUser']
-                    ? SendMessage(
-                        text: message['text'],
-                        time: message['time'],
-                      )
-                    : RecieveMessage(
-                        text: message['text'],
-                        time: message['time'],
-                        imageUrl: message['imageUrl'],
-                        isBold: message['isBold'] ?? false,
                       );
-              },
-            ),
+                    }
+
+                    if (_showVenueCard && index == _messages.length) {
+                      return _buildEventPlanCard();
+                    }
+
+                    final message = _messages[_showVenueCard
+                        ? (index >= _messages.length ? index - 1 : index)
+                        : index];
+
+                    return message['isUser']
+                        ? SendMessage(
+                            text: message['text'],
+                            time: message['time'],
+                          )
+                        : RecieveMessage(
+                            text: message['text'],
+                            time: message['time'],
+                            imageUrl: message['imageUrl'],
+                            isBold: message['isBold'] ?? false,
+                          );
+                  },
+                ),
+              ),
+              _buildMessageInput(),
+            ],
           ),
-          _buildMessageInput(),
+          Positioned(top: 0, child: Header(heading: 'Event Planning Chatbot'))
         ],
       ),
     );
@@ -307,23 +314,13 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                hintText: 'Type your message...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              ),
-            ),
-          ),
+              child: MyTextBox(
+            valueController: _messageController,
+            hint: 'Type your message here...',
+          )),
           SizedBox(width: 8.0),
           IconButton(
-            icon: Icon(Icons.send, color: Colors.deepPurple),
+            icon: Icon(Icons.send, color: Colors.red),
             onPressed: () {
               if (_messageController.text.trim().isNotEmpty) {
                 _addUserMessage(_messageController.text);

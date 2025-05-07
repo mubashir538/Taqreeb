@@ -11,6 +11,7 @@ def get_home_images(request):
     images = HomePageImages.objects.all()
     serializer = HomePageImagesSerializer(images,many=True)
     return Response({'status':'success','images':serializer.data})
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_function_type(request,id):

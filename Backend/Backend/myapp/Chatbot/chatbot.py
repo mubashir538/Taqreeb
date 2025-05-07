@@ -319,7 +319,7 @@ class EventBookingChatbot:
                 function_name = tool_call.function.name
                 function_args = json.loads(tool_call.function.arguments)
 
-                print('>>> calling function', function_name, function_args)
+                # print('>>> calling function', function_name, function_args)
 
                 # Call the function
                 function_response = self.available_functions[function_name](
