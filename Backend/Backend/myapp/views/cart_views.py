@@ -1,4 +1,3 @@
-import os
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from ..models.booking_models import BookingCart
