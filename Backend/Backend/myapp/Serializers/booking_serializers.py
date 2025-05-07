@@ -1,22 +1,23 @@
-from ..Models import booking_models as m
+from ..models.booking_models import BookingCart,Booking,Order 
+from ..models.transaction_models import Transaction,BusinessTransaction,Payment 
 from .listing_serializers import PackagesSerializer
 from rest_framework import serializers as s
 
 class BookingCartSerializer(s.ModelSerializer):
     class Meta:
-        model = m.BookingCart
+        model = BookingCart
         fields = '__all__'
 
 class BookingSerializer(s.ModelSerializer):
     class Meta:
-        model = m.Booking
+        model = Booking
         fields = '__all__'
 
 class OrderSerializer(s.ModelSerializer):
     bookings = BookingSerializer(many=True, read_only=True)
     
     class Meta:
-        model = m.Order
+        model = Order
         fields = '__all__'
 
 class TransactionSerializer(s.ModelSerializer):
@@ -24,15 +25,15 @@ class TransactionSerializer(s.ModelSerializer):
     booking = BookingSerializer(read_only=True)
     
     class Meta:
-        model = m.Transaction
+        model = Transaction
         fields = '__all__'
 
 class BusinessTransactionSerializer(s.ModelSerializer):
     class Meta:
-        model = m.BusinessTransaction
+        model = BusinessTransaction
         fields = '__all__'
 
 class PaymentSerializer(s.ModelSerializer):
     class Meta:
-        model = m.Payment
+        model = Payment
         fields = '__all__'

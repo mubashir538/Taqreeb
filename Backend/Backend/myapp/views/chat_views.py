@@ -1,10 +1,10 @@
 from rest_framework.decorators import api_view, permission_classes
-from .. import models2 as m
 import random as rd
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.files.storage import FileSystemStorage
+from ..models.user_models import User
 
 
 @api_view(['POST'])
@@ -30,7 +30,7 @@ def savegroupimage(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getuserinfochat(request,id):
-    user = m.User.objects.get(id=id)
+    user = User.objects.get(id=id)
     return Response({'status':'success','name':user.firstName,'profilePicture':user.profilePicture})
 
 @api_view(['POST'])

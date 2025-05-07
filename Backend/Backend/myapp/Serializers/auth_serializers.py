@@ -1,4 +1,4 @@
-from ..Models import user_models as m
+from ..models import user_models as m
 from rest_framework import serializers as s
 
 class UserSerializer(s.ModelSerializer):

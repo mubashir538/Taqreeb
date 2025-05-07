@@ -1,7 +1,7 @@
 from rest_framework import serializers as s
-from ..Models import event_models as m
-from ..Models import listing_models as lm
-from ..Models import misc_models as mm
+from ..models import event_models as m
+from ..models import listing_models as lm
+from ..models import misc_models as mm
 
 
 class EventTypeSerializer(s.ModelSerializer):

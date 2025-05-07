@@ -1,68 +1,68 @@
-from django.db import models as m
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+# from django.db import models as m
+# from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 # import os
 # from django.contrib.auth import get_user_model
 # from .Models.user_models import User
 # from .Models.user_models import CustomUserManager
 # from django.utils import timezone
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, id, password=None, **extra_fields):
-        """
-        Create and return a regular user with an id and password.
-        """
-        if not id:
-            raise ValueError('The ID field must be set')
+# class CustomUserManager(BaseUserManager):
+#     def create_user(self, id, password=None, **extra_fields):
+#         """
+#         Create and return a regular user with an id and password.
+#         """
+#         if not id:
+#             raise ValueError('The ID field must be set')
 
-        user = self.model(id=id, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+#         user = self.model(id=id, **extra_fields)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
 
-    def create_superuser(self, id, password=None, **extra_fields):
-        """
-        Create and return a superuser with an id and password.
-        Superusers are created with `is_staff` and `is_superuser` set to True.
-        """
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+#     def create_superuser(self, id, password=None, **extra_fields):
+#         """
+#         Create and return a superuser with an id and password.
+#         Superusers are created with `is_staff` and `is_superuser` set to True.
+#         """
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(id, password, **extra_fields)
+#         return self.create_user(id, password, **extra_fields)
 
-class User(AbstractBaseUser, PermissionsMixin):
-    id = m.AutoField(primary_key=True)
-    firstName = m.CharField(max_length=100)
-    lastName = m.CharField(max_length=100)
-    password = m.CharField(max_length=10000,null=True)
-    contactNumber = m.CharField(max_length=15,null=True)
-    email = m.CharField(max_length=50,null=True)
-    city = m.CharField(max_length=50,null=True)
-    username = m.CharField(max_length=50,null=True)
-    age = m.IntegerField(null=True)
-    gender = m.CharField(max_length=6,null=True)
-    date_joined = m.DateTimeField(auto_now_add=True, null=True)
+# class User(AbstractBaseUser, PermissionsMixin):
+#     id = m.AutoField(primary_key=True)
+#     firstName = m.CharField(max_length=100)
+#     lastName = m.CharField(max_length=100)
+#     password = m.CharField(max_length=10000,null=True)
+#     contactNumber = m.CharField(max_length=15,null=True)
+#     email = m.CharField(max_length=50,null=True)
+#     city = m.CharField(max_length=50,null=True)
+#     username = m.CharField(max_length=50,null=True)
+#     age = m.IntegerField(null=True)
+#     gender = m.CharField(max_length=6,null=True)
+#     date_joined = m.DateTimeField(auto_now_add=True, null=True)
 
-    USERNAME_FIELD = 'id'
-    REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
-    def __str__(self):
-        return str(self.id)
-    # Add these lines to customize related_name
-    groups = m.ManyToManyField(
-        'auth.Group',
-        verbose_name='groups',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        related_name="flutter_user_set",  # Unique related_name
-        related_query_name="flutter_user",
-    )
-    user_permissions = m.ManyToManyField(
-        'auth.Permission',
-        verbose_name='user permissions',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_name="flutter_user_set",  # Unique related_name
-        related_query_name="flutter_user",
-    )
+#     USERNAME_FIELD = 'id'
+#     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
+#     def __str__(self):
+#         return str(self.id)
+#     # Add these lines to customize related_name
+#     groups = m.ManyToManyField(
+#         'auth.Group',
+#         verbose_name='groups',
+#         blank=True,
+#         help_text='The groups this user belongs to.',
+#         related_name="flutter_user_set",  # Unique related_name
+#         related_query_name="flutter_user",
+#     )
+#     user_permissions = m.ManyToManyField(
+#         'auth.Permission',
+#         verbose_name='user permissions',
+#         blank=True,
+#         help_text='Specific permissions for this user.',
+#         related_name="flutter_user_set",  # Unique related_name
+#         related_query_name="flutter_user",
+#     )
 
 
 # class TempInvitationCard(m.Model):

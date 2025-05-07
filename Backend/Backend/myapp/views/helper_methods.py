@@ -1,12 +1,18 @@
-from .. import models2 as m
 import random as rd
 import requests as rq
 import re
-from .. import Serializers as s
 import random as rd
 from django.core.files.storage import FileSystemStorage
 import json
 import inspect
+from ..Serializers.service_serializers import VenueSerializer,CaterersSerializer,CarRentersSerializer,DecoratorsSerializer,PhotographyPlacesSerializer,PhotographersSerializer,VideoEditorsSerializer,GraphicDesignersSerializer
+from ..models.listing_types_models import Venue,Caterers,CarRenters,Decorators,PhotographyPlaces,Photographers,VideoEditors,GraphicDesigners
+from ..models.user_models import User
+from ..models.listing_models import PicturesListings,Listing,PicturesPackages,AddOns
+from ..Serializers.listing_serializers import PicturesListingSerializers
+from ..models.business_models import BusinessOwner,Freelancer
+from ..models.product_models import Product,PicturesProducts
+from ..models.listing_models import Packages
 
 def url_shortener(url):
     try:
@@ -33,29 +39,29 @@ def generate_username(first_name, last_name):
     ]
 
     for variant in base_variants:
-        if not m.User.objects.filter(username=variant).exists():
+        if not User.objects.filter(username=variant).exists():
             return variant
 
     while True:
         variant = f"{first}_{last}_{rd.randint(100, 9999)}"
-        if not m.User.objects.filter(username=variant).exists():
+        if not User.objects.filter(username=variant).exists():
             return variant
         
 def get_picture(listing_id):
-    picture = m.PicturesListings.objects.filter(listingId=listing_id).first()
-    return s.PicturesListingSerializers(picture).data if picture else None
+    picture = PicturesListings.objects.filter(listingId=listing_id).first()
+    return PicturesListingSerializers(picture).data if picture else None
 
 
 def get_view_data(listing_id):
     model_serializer_pairs = [
-        (m.Venue, s.VenueSerializer, 'listingID'),
-        (m.Caterers, s.CaterersSerializer, 'listingId'),
-        (m.CarRenters, s.CarRentersSerializer, 'listingID'),
-        (m.Decorators, s.DecoratorsSerializer, 'listingId'),
-        (m.PhotographyPlaces, s.PhotographyPlacesSerializer, 'listingID'),
-        (m.Photographers, s.PhotographersSerializer, 'listingId'),
-        (m.VideoEditors, s.VideoEditorsSerializer, 'listingId'),
-        (m.GraphicDesigners, s.GraphicDesignersSerializer, 'listingId'),
+        (Venue, VenueSerializer, 'listingID'),
+        (Caterers, CaterersSerializer, 'listingId'),
+        (CarRenters, CarRentersSerializer, 'listingID'),
+        (Decorators, DecoratorsSerializer, 'listingId'),
+        (PhotographyPlaces, PhotographyPlacesSerializer, 'listingID'),
+        (Photographers, PhotographersSerializer, 'listingId'),
+        (VideoEditors, VideoEditorsSerializer, 'listingId'),
+        (GraphicDesigners, GraphicDesignersSerializer, 'listingId'),
     ]
 
     for model, serializer_class, id_field in model_serializer_pairs:
@@ -82,20 +88,20 @@ def create_listing(data, user, listing_type, category):
     }
 
     if listing_type == 'freelancer':
-        freelancer = m.Freelancer.objects.get(userID=user.id)
+        freelancer = Freelancer.objects.get(userID=user.id)
         listing_kwargs['freelancerID'] = freelancer
     else:
-        owner = m.BusinessOwner.objects.get(userID=user)
+        owner = BusinessOwner.objects.get(userID=user)
         listing_kwargs['ownerID'] = owner
 
-    listing = m.Listing(**listing_kwargs)
+    listing = Listing(**listing_kwargs)
     listing.save()
     return listing
 
 
 def create_view_for_category(category, view_data, listing):
     view_models = {
-        'Venue': (m.Venue, {
+        'Venue': (Venue, {
             'catering': view_data.get('catering'),
             'guestminAllowed': view_data.get('guestminAllowed'),
             'guestmaxAllowed': view_data.get('guestmaxAllowed'),
@@ -103,36 +109,36 @@ def create_view_for_category(category, view_data, listing):
             'venueType': view_data.get('venueType'),
             'listingID': listing
         }),
-        'PhotographyPlace': (m.PhotographyPlaces, {
+        'PhotographyPlace': (PhotographyPlaces, {
             'type': view_data.get('type'),
             'listingID': listing
         }),
-        'Decorator': (m.Decorators, {
+        'Decorator': (Decorators, {
             'decorType': view_data.get('decorType'),
             'catering': view_data.get('catering'),
             'staff': view_data.get('staff'),
             'listingId': listing
         }),
-        'Photographer': (m.Photographers, {
+        'Photographer': (Photographers, {
             'portfolioLink': view_data.get('portfolioLink'),
             'listingId': listing
         }),
-        'Caterer': (m.Caterers, {
+        'Caterer': (Caterers, {
             'serviceType': view_data.get('serviceType'),
             'cateringOptions': view_data.get('cateringOptions'),
             'staff': view_data.get('staff'),
             'expertise': view_data.get('expertise'),
             'listingId': listing
         }),
-        'CarRenter': (m.CarRenters, {
+        'CarRenter': (CarRenters, {
             'serviceType': view_data.get('serviceType'),
             'listingID': listing
         }),
-        'VideoEditor': (m.VideoEditors, {
+        'VideoEditor': (VideoEditors, {
             'portfolioLink': view_data.get('portfolioLink'),
             'listingId': listing
         }),
-        'GraphicDesigner': (m.GraphicDesigners, {
+        'GraphicDesigner': (GraphicDesigners, {
             'portfolioLink': view_data.get('portfolioLink'),
             'listingId': listing
         })
@@ -148,7 +154,7 @@ def save_listing_pictures(category, listing, pictures):
     storage = FileSystemStorage()
     for count, picture in enumerate(pictures, start=1):
         path = storage.save(f'uploads/listings/{category}/{listing.id}-{count}.png', picture)
-        m.PicturesListings(
+        PicturesListings(
             listingId=listing,
             picturePath=storage.url(path)
         ).save()
@@ -160,7 +166,7 @@ def save_packages(listing, packages):
     try:
         package_list = json.loads(packages)
         for pkg in package_list:
-            package_obj = m.Packages(
+            package_obj = Packages(
                 listingId=listing,
                 name=pkg.get('name'),
                 price=pkg.get('price'),
@@ -168,7 +174,7 @@ def save_packages(listing, packages):
             )
             package_obj.save()
             for image in pkg.get('images', []):
-                m.PicturesPackages(packageId=package_obj, picturePath=image).save()
+                PicturesPackages(packageId=package_obj, picturePath=image).save()
     except Exception as e:
         print(f"Package saving error: {e}")
 
@@ -181,7 +187,7 @@ def save_products(listing, products):
         product_list = products
 
         for prod in product_list:
-            product_obj = m.Product(
+            product_obj = Product(
                 listingId=listing,
                 name=prod.get('name'),
                 description=prod.get('description'),
@@ -190,7 +196,7 @@ def save_products(listing, products):
             )
             product_obj.save()
             if 'image' in prod:
-                m.PicturesProducts(productId=product_obj, picturePath=prod['image']).save()
+                PicturesProducts(productId=product_obj, picturePath=prod['image']).save()
     except Exception as e:
         print(f"Product saving error: {e}")
 
@@ -201,7 +207,7 @@ def save_addons(listing, addons):
     try:
         addon_list = json.loads(addons)
         for addon in addon_list:
-            m.AddOns(
+            AddOns(
                 listingId=listing,
                 name=addon.get('name'),
                 price=addon.get('price'),

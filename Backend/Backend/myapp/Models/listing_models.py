@@ -1,5 +1,4 @@
 from django.db import models as m
-from .listing_models import Listing,Packages
 from .user_models import User
 from .business_models import BusinessOwner,Freelancer
 from django.utils import timezone

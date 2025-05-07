@@ -2,9 +2,9 @@ import json
 import os
 from typing import Dict, List
 
-from config import SYSTEM_MESSAGE
+from .config import SYSTEM_MESSAGE
 from dotenv import load_dotenv
-from functions import (
+from .functions import (
     # check_availability,
     get_service_details,
     get_venue_recommendations,

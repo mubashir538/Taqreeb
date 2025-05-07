@@ -2,7 +2,7 @@ from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..models2 import UserActivity
+from ..models.user_models import UserActivity
 from django.utils.timezone import now
 
 @api_view(['POST'])

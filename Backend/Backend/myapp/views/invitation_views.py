@@ -1,8 +1,6 @@
 import json
 import os
-import difflib
 import random
-from .. import models2 as m
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +12,7 @@ from datetime import timedelta
 from django.utils import timezone
 from datetime import datetime
 from ..constants.views_constants import arial_font
+from ..models.misc_models import TempInvitationCard
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -490,6 +489,6 @@ class DeleteOldTempCardsCronJob(CronJobBase):
 
     def do(self):
         cutoff = timezone.now() - timedelta(hours=24)
-        old_cards = m.TempInvitationCard.objects.filter(created_at__lt=cutoff)
+        old_cards = TempInvitationCard.objects.filter(created_at__lt=cutoff)
         for card in old_cards:
             card.delete()
