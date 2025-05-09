@@ -27,13 +27,12 @@ class _WalletScreenState extends State<WalletScreen> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchData();
   }
@@ -80,7 +79,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
@@ -97,7 +96,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       child: Column(
                         children: [
                           SizedBox(
-                              height: UI_Management.headerHeight +
+                              height: UImanagement.headerHeight +
                                   Screen.height(context) * 0.01),
                           BalanceCard(
                             balance: _balance,

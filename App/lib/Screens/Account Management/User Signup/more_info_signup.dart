@@ -46,12 +46,12 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -138,7 +138,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
                     children: [
                       SizedBox(
                         height: (Screen.height(context) * 0.01) +
-                            UI_Management.headerHeight,
+                            UImanagement.headerHeight,
                       ),
                       _buildFormField(
                         labelText: "Gender",
@@ -171,7 +171,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
               key: headerKey,
               heading: 'OTP Verification',
               para: 'Unlock exclusive events - sign up now!',
-              image: MyImages.Signup1,
+              image: MyImages.signup1,
             ),
           ),
         ],

@@ -46,12 +46,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -148,11 +148,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         await _uploadGroupImage();
       }
 
+      final currentUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
+
       await FirebaseFirestore.instance.collection('groups').add({
         'groupName': _groupNameController.text,
         'participants': _selectedUsers.map((u) => u['userId']).toList(),
         'groupImageUrl': _groupImageUrl ?? '',
         'createdAt': FieldValue.serverTimestamp(),
+        'adminId': currentUserId, // Set creator as admin
       });
 
       if (mounted) {
@@ -177,7 +180,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       child: CircleAvatar(
         radius: 50,
         backgroundImage: _groupImage != null ? FileImage(_groupImage!) : null,
-        backgroundColor: MyColors.DarkLighter,
+        backgroundColor: MyColors.darkLighter,
         child: _groupImage == null
             ? Icon(
                 Icons.add_photo_alternate,
@@ -201,7 +204,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         ),
         padding: EdgeInsets.all(Screen.width(context) * 0.04),
         decoration: BoxDecoration(
-          color: isSelected ? MyColors.red.withAlpha(51) : MyColors.DarkLighter,
+          color: isSelected ? MyColors.red.withAlpha(51) : MyColors.darkLighter,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -231,7 +234,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: UI_Management.headerHeight),
+              SizedBox(height: UImanagement.headerHeight),
               SizedBox(height: Screen.max(context) * 0.03),
               _buildGroupImagePicker(),
               SizedBox(height: Screen.max(context) * 0.03),

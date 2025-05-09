@@ -28,13 +28,13 @@ class _AddBankState extends State<AddBank> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
@@ -49,14 +49,14 @@ class _AddBankState extends State<AddBank> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: UI_Management.headerHeight +
+                    height: UImanagement.headerHeight +
                         Screen.height(context) * 0.02,
                   ),
                   Container(
                     width: Screen.width(context) * 0.9,
                     padding: EdgeInsets.all(Screen.max(context) * 0.03),
                     decoration: BoxDecoration(
-                      color: MyColors.DarkLighter,
+                      color: MyColors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(

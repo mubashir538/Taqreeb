@@ -47,7 +47,7 @@ class _CategoryReviewState extends State<CategoryReview> {
           style: _buildTextStyle(
             fontSize: 0.025,
             fontWeight: FontWeight.w600,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         GestureDetector(
@@ -81,7 +81,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             style: _buildTextStyle(color: MyColors.white),
           ),
           SizedBox(width: Screen.width(context) * 0.02),
-          Icon(Icons.star, color: MyColors.Yellow),
+          Icon(Icons.star, color: MyColors.yellow),
           SizedBox(width: Screen.width(context) * 0.02),
           Text(
             widget.listing['Listing']['rating'].toString(),
@@ -107,7 +107,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             widget.starsvalue[CategoryReview.stars.indexOf(star)],
             style: _buildTextStyle(
               fontWeight: FontWeight.w500,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ],

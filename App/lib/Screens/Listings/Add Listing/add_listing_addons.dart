@@ -31,7 +31,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -40,7 +40,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -62,7 +62,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -89,7 +89,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             _buildTitle(),
             _buildAddonsList(),
           ],
@@ -106,7 +106,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
         style: GoogleFonts.montserrat(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );
@@ -121,7 +121,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
         vertical: Screen.height(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -157,7 +157,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
                   style: GoogleFonts.montserrat(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400,
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                   ),
                 ),
               ),
@@ -205,7 +205,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   Widget _buildAddButton() {
     return FloatingActionButton(
-      backgroundColor: MyColors.Yellow,
+      backgroundColor: MyColors.yellow,
       onPressed: _navigateToAddAddon,
       child: Icon(
         Icons.add,

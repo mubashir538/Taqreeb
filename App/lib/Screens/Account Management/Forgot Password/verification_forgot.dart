@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taqreeb/core/providers/ForgotPasswordVerifyCodeViewModel.dart';
+import 'package:taqreeb/core/providers/forgot_password_verify_code_view_model.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -24,11 +24,11 @@ class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           setState(() {
-            UI_Management.headerHeight = renderbox.size.height;
+            UImanagement.headerHeight = renderbox.size.height;
           });
         },
       );
@@ -55,7 +55,7 @@ class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: UI_Management.headerHeight * 0.7),
+                SizedBox(height: UImanagement.headerHeight * 0.7),
                 Container(
                   margin: EdgeInsets.only(
                     bottom: Screen.max(context) * 0.02,

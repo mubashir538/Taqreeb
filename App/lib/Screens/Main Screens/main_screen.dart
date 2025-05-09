@@ -101,7 +101,7 @@ class _MainScreenState extends State<MainScreen> {
                       : '/CreateEvent',
                 );
               },
-              backgroundColor: MyColors.Yellow,
+              backgroundColor: MyColors.yellow,
               shape: const CircleBorder(),
               child: Icon(
                 Icons.add,

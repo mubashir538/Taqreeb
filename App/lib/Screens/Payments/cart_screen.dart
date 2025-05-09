@@ -69,7 +69,7 @@ class _CartScreenState extends State<CartScreen> {
         centerTitle: true,
         backgroundColor: MyColors.dark,
       ),
-      backgroundColor: MyColors.DarkLighter,
+      backgroundColor: MyColors.darkLighter,
       body: FutureBuilder<Cart>(
         future: _cartFuture,
         builder: (context, snapshot) {
@@ -93,7 +93,7 @@ class _CartScreenState extends State<CartScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    MyImages.HelpCenter,
+                    MyImages.helpCenter,
                     width: MediaQuery.of(context).size.width * 0.6,
                   ),
                   SizedBox(height: 20),
@@ -173,7 +173,7 @@ class _CartScreenState extends State<CartScreen> {
                         Text(
                           '\$${cart.totalPrice.toStringAsFixed(2)}',
                           style: TextStyle(
-                            color: MyColors.Yellow,
+                            color: MyColors.yellow,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -256,7 +256,7 @@ class _CartScreenState extends State<CartScreen> {
                       Text(
                         '\$${_getItemPrice(item).toStringAsFixed(2)}',
                         style: TextStyle(
-                          color: MyColors.Yellow,
+                          color: MyColors.yellow,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

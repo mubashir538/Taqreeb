@@ -11,7 +11,6 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/icons.dart';
 
 class AddImage extends StatefulWidget {
   const AddImage({super.key});
@@ -39,7 +38,7 @@ class _AddImageState extends State<AddImage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -48,7 +47,7 @@ class _AddImageState extends State<AddImage> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderbox.size.height);
+      setState(() => UImanagement.headerHeight = renderbox.size.height);
     }
   }
 
@@ -85,7 +84,7 @@ class _AddImageState extends State<AddImage> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -105,7 +104,7 @@ class _AddImageState extends State<AddImage> {
           Column(
             children: [
               SizedBox(
-                  height: UI_Management.headerHeight +
+                  height: UImanagement.headerHeight +
                       Screen.height(context) * 0.02),
               _buildImageUploadButton(),
               const SizedBox(height: 10),
@@ -126,11 +125,11 @@ class _AddImageState extends State<AddImage> {
       child: Container(
         height: Screen.height(context) * 0.2,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withAlpha(102),
               blurRadius: 4,
               offset: const Offset(2, 2),
             ),
@@ -150,7 +149,7 @@ class _AddImageState extends State<AddImage> {
                       width: Screen.width(context) * 0.9,
                       padding: EdgeInsets.all(Screen.max(context) * 0.02),
                       decoration: BoxDecoration(
-                        color: MyColors.DarkLighter,
+                        color: MyColors.darkLighter,
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Icon(
@@ -193,7 +192,7 @@ class _AddImageState extends State<AddImage> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withAlpha(102),
                 blurRadius: 4,
                 offset: const Offset(2, 2),
               ),
@@ -278,7 +277,6 @@ class ImageController {
         'addons': _safeJsonEncode(args['addons']),
         'viewData': _safeJsonEncode(args['viewData']), // Added viewData
       };
-      print(_safeJsonEncode(args['viewData']));
 
       // _addCategorySpecificData(data);
 
@@ -287,7 +285,6 @@ class ImageController {
         body: data,
         files: {'pictures': images},
       );
-      print('Executed... $response');
 
       return response ??
           {'status': 'error', 'message': 'No response from server'};
@@ -301,35 +298,6 @@ class ImageController {
       return data != null ? jsonEncode(data) : null;
     } catch (e) {
       return null;
-    }
-  }
-
-  void _addCategorySpecificData(Map<String, dynamic> data) {
-    final category = args['category']?.toString() ?? '';
-
-    final categoryFields = {
-      'Venue': [
-        'venueType',
-        'staff',
-        'guestmaxAllowed',
-        'guestminAllowed',
-        'catering'
-      ],
-      'Photography Place': ['type'],
-      'Decorator': ['decorType', 'catering', 'staff'],
-      'Photographer': ['portfolioLink'],
-      'Graphic Designer': ['portfolioLink'],
-      'Video Editor': ['portfolioLink'],
-      'Caterer': ['serviceType', 'cateringOptions', 'staff', 'expertise'],
-      'Car Renter': ['serviceType'],
-    };
-
-    if (categoryFields.containsKey(category)) {
-      for (final field in categoryFields[category]!) {
-        if (args[field] != null) {
-          data[field] = args[field];
-        }
-      }
     }
   }
 }

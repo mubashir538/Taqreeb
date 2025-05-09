@@ -239,7 +239,7 @@ class _HeaderState extends State<Header> {
               style: GoogleFonts.montserrat(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w700,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             SizedBox(

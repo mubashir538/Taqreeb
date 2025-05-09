@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
+import 'package:taqreeb/Components/Inputs/c_radio_button_question.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/radio%20button%20question.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -33,7 +33,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -42,7 +42,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -69,7 +69,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -81,7 +81,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _buildNameField(),
                 _buildPriceField(),
                 _buildPerHeadQuestion(),

@@ -35,7 +35,6 @@ class _WithDrawSectionState extends State<WithDrawSection> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     convertBanks();
   }
@@ -60,7 +59,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
                 width: Screen.width(context) * 0.9,
                 padding: EdgeInsets.all(Screen.max(context) * 0.02),
                 decoration: BoxDecoration(
-                    color: MyColors.DarkLighter,
+                    color: MyColors.darkLighter,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(

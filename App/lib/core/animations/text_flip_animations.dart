@@ -6,10 +6,10 @@ class ShakeTextAnimation extends StatefulWidget {
   const ShakeTextAnimation({super.key, required this.child});
 
   @override
-  _ShakeTextAnimationState createState() => _ShakeTextAnimationState();
+  ShakeTextAnimationState createState() => ShakeTextAnimationState();
 }
 
-class _ShakeTextAnimationState extends State<ShakeTextAnimation>
+class ShakeTextAnimationState extends State<ShakeTextAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _shakeAnimation;

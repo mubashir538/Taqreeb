@@ -71,7 +71,7 @@ class CalendarViewState extends State<CalendarView> {
     }
 
     if (isSelected) {
-      backgroundColor = MyColors.Yellow;
+      backgroundColor = MyColors.yellow;
       textColor = Colors.black;
     }
 
@@ -151,7 +151,7 @@ class CalendarViewState extends State<CalendarView> {
           Text(
             'Tap dates to select/unselect',
             style: GoogleFonts.montserrat(
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
               fontSize: 14,
             ),
           ),

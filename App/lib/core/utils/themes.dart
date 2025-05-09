@@ -8,21 +8,21 @@ class AppThemes {
     scaffoldBackgroundColor: MyColors.white,
     colorScheme: ColorScheme.light(
       primary: MyColors.red,
-      secondary: MyColors.Yellow,
+      secondary: MyColors.yellow,
     ),
     textTheme: TextTheme(
       displayMedium: TextStyle(color: MyColors.dark),
-      displaySmall: TextStyle(color: MyColors.DarkLighter),
+      displaySmall: TextStyle(color: MyColors.darkLighter),
     ),
   );
 
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primaryColor: MyColors.DarkLighter,
+    primaryColor: MyColors.darkLighter,
     scaffoldBackgroundColor: MyColors.dark,
     colorScheme: ColorScheme.dark(
       primary: MyColors.red,
-      secondary: MyColors.Yellow,
+      secondary: MyColors.yellow,
     ),
     textTheme: TextTheme(
       displayMedium: TextStyle(color: MyColors.white),

@@ -124,14 +124,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(width: 1, color: MyColors.red),
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
       ),
       child: ExpansionTile(
         collapsedShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: MyColors.red,
-        collapsedBackgroundColor: MyColors.DarkLighter,
+        collapsedBackgroundColor: MyColors.darkLighter,
         title: Text(
           event['name'],
           style: _buildTextStyle(fontSize: 0.015, color: MyColors.white),
@@ -420,7 +420,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           onTap: _showEventSelectionDialog,
           child: Icon(
             Icons.add,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
             size: Screen.max(context) * 0.05,
           ),
         ),
@@ -508,7 +508,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Widget _buildRatingDisplay() {
     return Row(
       children: [
-        Icon(Icons.star, color: MyColors.Yellow),
+        Icon(Icons.star, color: MyColors.yellow),
         Text(
           "${widget.listing['Listing']['rating']} (${widget.listing['Listing']['ratingCount']})",
           style: _buildTextStyle(color: MyColors.white),

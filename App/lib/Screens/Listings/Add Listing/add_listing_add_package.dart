@@ -21,7 +21,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
   final _formController = PackageFormController();
   final GlobalKey _headerKey = GlobalKey();
   final ImagePicker _picker = ImagePicker();
-  List<XFile> _selectedImages = [];
+  final List<XFile> _selectedImages = [];
 
   @override
   void didChangeDependencies() {
@@ -36,7 +36,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -51,7 +51,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -101,7 +101,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -117,7 +117,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
                 children: [
                   SizedBox(
                     height: (Screen.height(context) * 0.03) +
-                        UI_Management.headerHeight,
+                        UImanagement.headerHeight,
                   ),
                   _buildNameField(),
                   _buildDetailsField(),

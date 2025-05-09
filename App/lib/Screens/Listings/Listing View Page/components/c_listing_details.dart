@@ -215,7 +215,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           widget.headings[index],
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         _isEditing[index]
@@ -290,7 +290,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           label,
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         isEditing
@@ -370,7 +370,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           widget.headings[index],
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         widget.headings[index] == 'portfolio Link'

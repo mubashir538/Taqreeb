@@ -51,7 +51,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
             height: pickerHeight,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -117,7 +117,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
         height: Screen.height(context) * 0.06,
         width: Screen.width(context) * 0.9,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(

@@ -24,7 +24,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
   final TextEditingController _idNumberController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  Map<DateTime, List<CartItem>> _selectedDates = {};
+  final Map<DateTime, List<CartItem>> _selectedDates = {};
   bool _isLoading = false;
 
   @override
@@ -118,7 +118,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
         title: Text('Booking Information'),
         backgroundColor: MyColors.dark,
       ),
-      backgroundColor: MyColors.DarkLighter,
+      backgroundColor: MyColors.darkLighter,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

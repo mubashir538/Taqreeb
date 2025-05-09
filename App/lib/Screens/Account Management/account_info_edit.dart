@@ -48,7 +48,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
   void initState() {
     super.initState();
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+        .addPostFrameCallback((_) => UImanagement.getHeaderHeight(
             headerKey: headerKey,
             callback: (renderbox) {
               changeHeight(renderbox);
@@ -123,13 +123,13 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
 
   void changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
@@ -139,10 +139,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               child: Column(children: [
                 SizedBox(
-                  height: UI_Management.headerHeight,
+                  height: UImanagement.headerHeight,
                 ),
                 isLoading
                     ? Center(
@@ -188,7 +188,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                             fontSize:
                                                 Screen.max(context) * 0.015,
                                             fontWeight: FontWeight.w400,
-                                            color: MyColors.Yellow),
+                                            color: MyColors.yellow),
                                       ),
                                     ),
                                   ),

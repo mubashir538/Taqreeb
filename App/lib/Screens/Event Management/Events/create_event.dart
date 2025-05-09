@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Inputs/c_date_question.dart';
+import 'package:taqreeb/Components/Inputs/c_question_group.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -11,8 +13,6 @@ import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -78,7 +78,6 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchEventTypes();
   }
@@ -177,7 +176,6 @@ class _CreateEventState extends State<CreateEvent> {
           .show(context);
       return;
     }
-    
 
     final response = await _sendEventRequest();
     _handleResponse(response);
@@ -194,7 +192,6 @@ class _CreateEventState extends State<CreateEvent> {
   Future<Map<String, dynamic>> _sendEventRequest() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    print('type.text: ${_formData.type.text}');
 
     final response = await MyApi.postRequest(
       endpoint: _isEditMode ? 'EditEvent/' : 'CreateEvent/',
@@ -296,7 +293,7 @@ class _CreateEventState extends State<CreateEvent> {
               Headersecondary(
                 heading: _isEditMode ? "Edit Event" : "Create Event",
                 para: "Plan your event effortlessly!",
-                image: MyImages.SingupPng,
+                image: MyImages.singupPng,
               ),
               Container(
                 margin: EdgeInsets.symmetric(
@@ -320,7 +317,7 @@ class _CreateEventState extends State<CreateEvent> {
           child: Container(
             width: Screen.width(context),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -360,7 +357,6 @@ class _CreateEventState extends State<CreateEvent> {
           onChanged: (value) {
             if (mounted) {
               setState(() => _formData.type.text = value);
-              print('Event Type: ${_formData.type.text}');
             }
           },
         ),

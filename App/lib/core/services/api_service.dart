@@ -391,8 +391,6 @@ class MyApi {
         }
       }
 
-      print('request fields; ${request.fields}');
-
       final response = await request.send().timeout(const Duration(seconds: 30),
           onTimeout: () {
         if (context != null) {
@@ -606,6 +604,25 @@ class MyApi {
         },
       );
     } catch (_) {}
+  }
+
+  static Future<Map<String, dynamic>> sendChatbotMessage({
+    required String userId,
+    required String message,
+    BuildContext? context,
+  }) async {
+    return await postRequest(
+      endpoint: 'chatbot/', 
+      body: {
+        'user_id': userId,
+        'message': message,
+      },
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
+      },
+      context: context,
+    );
   }
 
   static Future<void> deleteCache(String url) async {

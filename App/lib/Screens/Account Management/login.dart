@@ -48,12 +48,12 @@ class _LoginState extends State<Login> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -218,7 +218,7 @@ class _LoginState extends State<Login> {
       backgroundColor: MyColors.dark,
       body: Stack(
         children: [
-          if (UI_Management.headerHeight > 0)
+          if (UImanagement.headerHeight > 0)
             SingleChildScrollView(
               child: SizedBox(
                 width: Screen.width(context),
@@ -232,7 +232,7 @@ class _LoginState extends State<Login> {
                           para:
                               "We believe that your event should not be delayed so let's "
                               "login your Account so we can get Started",
-                          image: MyImages.Login,
+                          image: MyImages.login,
                         ),
                         SizedBox(height: (Screen.height(context) * 0.03)),
                         MyTextBox(
@@ -261,7 +261,7 @@ class _LoginState extends State<Login> {
                                   style: GoogleFonts.montserrat(
                                     fontSize: Screen.max(context) * 0.012,
                                     fontWeight: FontWeight.w300,
-                                    color: MyColors.Yellow,
+                                    color: MyColors.yellow,
                                   ),
                                 ),
                               ),

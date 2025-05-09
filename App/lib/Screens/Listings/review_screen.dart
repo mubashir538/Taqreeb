@@ -180,7 +180,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final token = await MyStorage.getToken(MyTokens.accessToken);
     for (int i = 0; i < _listing['Review'].length; i++) {
       final user = await MyApi.getRequest(
-         context: context,
+          context: context,
           endpoint: 'basicUserInfo/${_listing['Review'][i]['userID']}/',
           headers: {'Authorization': 'Bearer $token'},
           refresh: true);
@@ -220,7 +220,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     return Container(
       width: Screen.width(context),
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
-      color: MyColors.DarkLighter,
+      color: MyColors.darkLighter,
       child: Text(
         "Load More",
         style: GoogleFonts.montserrat(

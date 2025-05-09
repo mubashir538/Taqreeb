@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Inputs/c_date_question.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -8,7 +9,6 @@ import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -162,7 +162,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
@@ -270,7 +270,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
@@ -285,7 +285,7 @@ class _CreateFunctionState extends State<CreateFunction> {
             child: Header(
               key: headerKey,
               heading: _isEditMode ? 'Edit Function' : 'Create Function',
-              image: MyImages.Function,
+              image: MyImages.function,
             ),
           ),
           _buildSubmitButton(),
@@ -302,7 +302,7 @@ class _CreateFunctionState extends State<CreateFunction> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             Column(
               children: [
                 SizedBox(height: Screen.height(context) * 0.04),
@@ -391,7 +391,7 @@ class _CreateFunctionState extends State<CreateFunction> {
       child: Container(
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),

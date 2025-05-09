@@ -42,7 +42,7 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final phone, gender, age;
+        final dynamic phone, gender, age;
         if (data.containsKey('phoneNumbers')) {
           final phoneNumber = data['phoneNumbers'][0]['value'];
           phone = phoneNumber;
@@ -103,7 +103,6 @@ class AuthService {
           'user_location'
         ],
       );
-      print('executed');
 
       if (result.status == LoginStatus.success) {
         final OAuthCredential credential =
@@ -118,7 +117,8 @@ class AuthService {
       }
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Facebook login error: $e'});
+          endpoint: 'error/application',
+          body: {'error': 'Facebook login error: $e'});
     }
     return null;
   }
@@ -129,7 +129,8 @@ class AuthService {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
       MyApi.postRequest(
-          endpoint: 'error/application', body: {'error': 'Error logging out: $e'});
+          endpoint: 'error/application',
+          body: {'error': 'Error logging out: $e'});
     }
   }
 

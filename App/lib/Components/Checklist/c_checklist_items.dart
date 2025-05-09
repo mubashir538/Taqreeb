@@ -39,7 +39,7 @@ class GuideButton extends StatelessWidget {
           height: containerHeight.clamp(60, 80.0),
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(

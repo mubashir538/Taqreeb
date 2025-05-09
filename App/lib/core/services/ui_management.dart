@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class UI_Management {
+class UImanagement {
   static double headerHeight = 0.0;
 
   static void getHeaderHeight(
