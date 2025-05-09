@@ -481,7 +481,6 @@ class _ChatBoxState extends State<ChatBox> {
               ),
             );
           }
-          print('widgets : ${messageWidgets.length}');
           messageWidgets.add(_buildMessageTile(message));
           lastMessageDate = messageDate;
         }
