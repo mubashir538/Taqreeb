@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Inputs/c_radio_button_question.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/radio%20button%20question.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -113,7 +113,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
               style: _buildTextStyle(
                 fontSize: 0.02,
                 fontWeight: FontWeight.w600,
-                color: MyColors.Yellow,
+                color: MyColors.yellow,
               ),
             ),
             content: Column(
@@ -303,7 +303,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             style: _buildTextStyle(
               fontSize: 0.025,
               fontWeight: FontWeight.w600,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
           Padding(
@@ -343,7 +343,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
           'Add-On ${index + 1}',
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         _buildEditableField(

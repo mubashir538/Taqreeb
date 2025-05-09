@@ -2,6 +2,7 @@ C/C++ Structured Logˆ
 …
 ‚C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\additional_project_files.txtC
 A
+<<<<<<< HEAD
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	¥â–Ùé2 Ð»ŽÜ2„
 
 C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\android_gradle_build.json	¥â–Ùé2ê ÙÐ»ŽÜ2Š
@@ -26,3 +27,29 @@ xC:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.
 }C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\symbol_folder_index.txt	¨â–Ùé2t ˆÑ»ŽÜ2K
 I
 GC:\flutter\packages\flutter_tools\gradle\src\main\groovy\CMakeLists.txt	¨â–Ùé2§ ±µß€Ú2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	Ìè«Üê2 Ð»ŽÜ2„
+
+C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\android_gradle_build.json	Ìè«Üê2ê ÙÐ»ŽÜ2Š
+‡
+„C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\android_gradle_build_mini.json	Ìè«Üê2Å ûÐ»ŽÜ2u
+s
+qC:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\build.ninja	Ìè«Üê2˜Õ ±Ì»ŽÜ2y
+w
+uC:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\build.ninja.txt	Ìè«Üê2~
+|
+zC:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\build_file_index.txt	Ðè«Üê2G ŒÑ»ŽÜ2
+}
+{C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\compile_commands.json	Ðè«Üê2„
+
+C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\compile_commands.json.bin	Ðè«Üê2	‹
+ˆ
+…C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\metadata_generation_command.txt	Ðè«Üê2
+„	 Ñ»ŽÜ2|
+z
+xC:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\prefab_config.json	Ðè«Üê2( ƒÑ»ŽÜ2
+
+}C:\Users\mubas\OneDrive\Documents\GitHub\Taqreeb Apps\Taqreeb\App\android\app\.cxx\Debug\3n2o22b4\x86\symbol_folder_index.txt	Ðè«Üê2t ˆÑ»ŽÜ2K
+I
+GC:\flutter\packages\flutter_tools\gradle\src\main\groovy\CMakeLists.txt	Ñè«Üê2§ ±µß€Ú2
+>>>>>>> Code-refractor-and-error-Resolving

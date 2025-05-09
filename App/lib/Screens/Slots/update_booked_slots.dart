@@ -59,7 +59,6 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
       MyScaffold(text: 'Please select a listing').show(context);
       return;
     }
-    ;
 
     setState(() {
       isSaving = true;
@@ -128,7 +127,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
-        color: MyColors.Yellow,
+        color: MyColors.yellow,
       ),
     );
   }
@@ -173,7 +172,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
         'Tap on dates to mark them as booked. Tap again to unmark.',
         style: GoogleFonts.montserrat(
           fontSize: Screen.max(context) * 0.02,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
         textAlign: TextAlign.center,
       ),
@@ -187,7 +186,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
         title: Text(
           'Manage Booked Slots',
           style: GoogleFonts.montserrat(
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
             fontWeight: FontWeight.bold,
           ),
         ),

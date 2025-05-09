@@ -1,11 +1,11 @@
 class MyIcons {
-  static const String Playbutton = "assets/icons/Playbutton.png";
+  static const String playbutton = "assets/icons/Playbutton.png";
   static const String accounts = "assets/icons/Accounting.png";
   static const String leftAlign = "assets/icons/AlignLeft.png";
   static const String add = "assets/icons/add.png";
-  static const String Arena = "assets/icons/Arena.png";
+  static const String arena = "assets/icons/Arena.png";
   static const String bold = "assets/icons/Bold.png";
-  static const String Camera = "assets/icons/Camera.png";
+  static const String camera = "assets/icons/Camera.png";
   static const String communicate = "assets/icons/Communicate.png";
   static const String confetti = "assets/icons/Confetti.png";
   static const String correct = "assets/icons/correct.png";
@@ -18,7 +18,7 @@ class MyIcons {
   static const String invisible = "assets/icons/Invisible.png";
   static const String link = "assets/icons/link.png";
   static const String management = "assets/icons/Management.png";
-  static const String Microphone = "assets/icons/Microphone.png";
+  static const String microphone = "assets/icons/Microphone.png";
   static const String move = "assets/icons/Move.png";
   static const String online = "assets/icons/online.png";
   static const String opacity = "assets/icons/Opacity.png";

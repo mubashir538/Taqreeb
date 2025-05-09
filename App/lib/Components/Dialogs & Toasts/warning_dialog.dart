@@ -23,7 +23,7 @@ class WarningDialog extends StatelessWidget {
               title: Text(
                 title,
                 style: GoogleFonts.montserrat(
-                    color: MyColors.Yellow,
+                    color: MyColors.yellow,
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600),
               ),

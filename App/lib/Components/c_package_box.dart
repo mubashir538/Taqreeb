@@ -95,7 +95,7 @@ class _PackageBoxState extends State<PackageBox> {
         height: isCollapsed ? Screen.height(context) * 0.07 : null,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           boxShadow: [const BoxShadow(color: Colors.black, blurRadius: 5)],
         ),
         child: Column(
@@ -185,8 +185,8 @@ class _PackageBoxState extends State<PackageBox> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: _currentImageIndex == entry.key
-                                    ? MyColors.Yellow
-                                    : Colors.white.withOpacity(0.4),
+                                    ? MyColors.yellow
+                                    : Colors.white.withAlpha(102),
                               ),
                             ),
                           );
@@ -216,7 +216,7 @@ class _PackageBoxState extends State<PackageBox> {
                         style: GoogleFonts.montserrat(
                             fontSize: Screen.max(context) * 0.02,
                             fontWeight: FontWeight.w600,
-                            color: MyColors.Yellow)),
+                            color: MyColors.yellow)),
                     // Only show if packageId exists
                     if (widget.packageId != null)
                       SizedBox(

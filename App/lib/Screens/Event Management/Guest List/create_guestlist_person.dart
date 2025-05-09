@@ -13,15 +13,15 @@ import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 
-class CreateGuestList_AddPerson extends StatefulWidget {
-  const CreateGuestList_AddPerson({super.key});
+class CreateGuestListAddPerson extends StatefulWidget {
+  const CreateGuestListAddPerson({super.key});
 
   @override
-  State<CreateGuestList_AddPerson> createState() =>
-      _CreateGuestList_AddPersonState();
+  State<CreateGuestListAddPerson> createState() =>
+      _CreateGuestListAddPersonState();
 }
 
-class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
+class _CreateGuestListAddPersonState extends State<CreateGuestListAddPerson> {
   final GlobalKey _headerKey = GlobalKey();
   final List<Map<String, String>> _guestList = [];
   final TextEditingController _personController = TextEditingController();
@@ -38,7 +38,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -65,7 +65,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
@@ -167,7 +167,7 @@ class _CreateGuestList_AddPersonState extends State<CreateGuestList_AddPerson> {
           children: [
             SizedBox(
                 height: (Screen.height(context) * 0.05) +
-                    UI_Management.headerHeight),
+                    UImanagement.headerHeight),
             _buildInputFields(),
             _buildGuestList(),
             SizedBox(height: Screen.height(context) * 0.05),

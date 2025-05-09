@@ -16,7 +16,7 @@ class ApiCall {
     Map<String, dynamic>? params, // Add params parameter
   }) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
-    final data;
+    final dynamic data;
     if (type == 'get') {
       data = await MyApi.getRequest(
         endpoint: endpoint,

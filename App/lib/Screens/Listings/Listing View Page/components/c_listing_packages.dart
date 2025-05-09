@@ -185,7 +185,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
         style: GoogleFonts.montserrat(
           fontSize: Screen.max(context) * 0.02,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
       content: SizedBox(
@@ -273,7 +273,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.edit, color: MyColors.Yellow),
+          icon: Icon(Icons.edit, color: MyColors.yellow),
           onPressed: () => _showPackageDialog(index: index),
         ),
         IconButton(
@@ -290,14 +290,14 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       style: GoogleFonts.montserrat(
         fontSize: Screen.max(context) * 0.025,
         fontWeight: FontWeight.w600,
-        color: MyColors.Yellow,
+        color: MyColors.yellow,
       ),
     );
   }
 
   Widget _buildAddButton() {
     return IconButton(
-      icon: Icon(Icons.add_circle_outline, color: MyColors.Yellow),
+      icon: Icon(Icons.add_circle_outline, color: MyColors.yellow),
       onPressed: () => _showPackageDialog(),
     );
   }

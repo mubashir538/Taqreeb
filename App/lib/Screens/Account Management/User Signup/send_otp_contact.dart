@@ -44,12 +44,12 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -122,7 +122,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                     children: [
                       SizedBox(
                         height: (Screen.height(context) * _topPaddingFactor) +
-                            UI_Management.headerHeight,
+                            UImanagement.headerHeight,
                       ),
                       MyTextBox(
                         focusNode: _contactFocus,
@@ -145,7 +145,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                         child: Text(
                           'Verify Email Instead',
                           style: TextStyle(
-                            color: MyColors.Yellow,
+                            color: MyColors.yellow,
                             fontSize: Screen.max(context) * _textSizeFactor,
                           ),
                         ),
@@ -163,7 +163,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
               key: _headerKey,
               heading: 'Contact Verification',
               para: 'Enter Phone number to send one time password',
-              image: MyImages.SingupPng,
+              image: MyImages.singupPng,
             ),
           ),
         ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -56,7 +55,6 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
-      print("📍 [DEBUG] Entered Decorator View at $_entryTime");
 
     _initializeUI();
   }
@@ -69,7 +67,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -78,7 +76,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
@@ -90,8 +88,6 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
         "listing_id": _listingId!,
         "time_spent_seconds": duration
       });
-          print("🚪 [DEBUG] Exited Decorator View. Duration: $duration seconds");
-
     }
   }
 
@@ -155,12 +151,6 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
     }
   }
 
-  void _handleDateSelection(DateTime date) {
-    setState(() {
-      _selectedDate = date;
-    });
-  }
-
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -220,11 +210,9 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -236,7 +224,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

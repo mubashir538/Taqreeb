@@ -39,7 +39,7 @@ class _YourEventsState extends State<YourEvents> {
 
   void _initializeHeaderHeight() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: (renderbox) {
           _changeHeight(renderbox);
@@ -88,7 +88,7 @@ class _YourEventsState extends State<YourEvents> {
 
   void _changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -122,7 +122,7 @@ class _YourEventsState extends State<YourEvents> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderbox) {
         _changeHeight(renderbox);
@@ -136,7 +136,7 @@ class _YourEventsState extends State<YourEvents> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _buildSearchBox(),
                 _isLoading ? _buildLoadingIndicator() : _buildEventList(),
               ],

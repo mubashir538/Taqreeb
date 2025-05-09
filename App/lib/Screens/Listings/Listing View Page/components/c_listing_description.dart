@@ -127,7 +127,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
         style: _buildTextStyle(
           fontSize: 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.Yellow,
+          color: MyColors.yellow,
         ),
       ),
     );

@@ -10,7 +10,8 @@ class RecieveMessage extends StatelessWidget {
   final String time;
   final String? imageUrl;
   final String? audioUrl;
-  final Map<String, dynamic>? listing; // Add this line
+  final Map<String, dynamic>? listing;
+  final bool isBold; // Add this parameter
 
   const RecieveMessage({
     super.key,
@@ -18,7 +19,8 @@ class RecieveMessage extends StatelessWidget {
     required this.time,
     this.imageUrl,
     this.audioUrl,
-    this.listing, // Add this line
+    this.listing,
+    this.isBold = false, // Default to false
   });
 
   Widget _buildListingPreview(BuildContext context) {
@@ -29,7 +31,7 @@ class RecieveMessage extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -82,7 +84,7 @@ class RecieveMessage extends StatelessWidget {
             'www.taqreeb.com', // Replace with your actual domain
             style: GoogleFonts.montserrat(
               fontSize: 12,
-              color: MyColors.Yellow,
+              color: MyColors.yellow,
             ),
           ),
         ],
@@ -103,7 +105,7 @@ class RecieveMessage extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
             padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
-              color: MyColors.DarkLighter,
+              color: MyColors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(0),
                 bottomLeft: Radius.circular(15),
@@ -131,8 +133,8 @@ class RecieveMessage extends StatelessWidget {
                     textAlign: TextAlign.start,
                     style: GoogleFonts.montserrat(
                       fontSize: Screen.max(context) * 0.015,
-                      fontWeight: FontWeight.w400,
-                      color: MyColors.white,
+                      fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
+                      color: isBold ? MyColors.yellow : MyColors.white,
                     ),
                   ),
                 if (audioUrl != null)

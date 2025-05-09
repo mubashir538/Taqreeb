@@ -24,7 +24,6 @@ class YourListingsController with ChangeNotifier {
     _isLoading = true;
     notifyListeners(); // Notify listeners when loading starts
 
-    print('Fetching data...');
     final String id = await MyStorage.getToken(MyTokens.userId) ?? "";
     type = await MyTokens.getBusinessType();
 
@@ -98,7 +97,7 @@ class YourListingsScreen extends StatelessWidget {
       style: GoogleFonts.montserrat(
         fontSize: Screen.max(context) * 0.025,
         fontWeight: FontWeight.w700,
-        color: MyColors.Yellow,
+        color: MyColors.yellow,
       ),
     );
   }

@@ -190,10 +190,6 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'myapp.User'
 
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Set the token expiration time
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-# }
 
 import os
 from dotenv import load_dotenv

@@ -6,13 +6,13 @@ import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
+import 'package:taqreeb/Components/Inputs/c_checkbox_question.dart';
+import 'package:taqreeb/Components/Inputs/c_date_question.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_location.dart';
 import 'package:taqreeb/Components/Inputs/c_input_range_slider.dart';
 import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/checkbox%20question.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -83,7 +83,7 @@ class _SearchServiceState extends State<SearchService>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        UI_Management.getHeaderHeight(
+        UImanagement.getHeaderHeight(
             headerKey: _headerKey,
             callback: (renderbox) => _updateHeaderHeight(renderbox)));
   }
@@ -114,7 +114,7 @@ class _SearchServiceState extends State<SearchService>
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -479,7 +479,7 @@ class _SearchServiceState extends State<SearchService>
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           constraints: BoxConstraints(maxHeight: Screen.max(context) * 0.8),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
@@ -605,7 +605,7 @@ class _SearchServiceState extends State<SearchService>
           style: GoogleFonts.montserrat(
             fontSize: Screen.max(context) * 0.02,
             fontWeight: FontWeight.w500,
-            color: MyColors.Yellow,
+            color: MyColors.yellow,
           ),
         ),
         child,
@@ -633,7 +633,7 @@ class _SearchServiceState extends State<SearchService>
                     style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: MyColors.Yellow,
+                      color: MyColors.yellow,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -648,7 +648,7 @@ class _SearchServiceState extends State<SearchService>
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: MyColors.Yellow,
+                                color: MyColors.yellow,
                               ),
                             ),
                             CheckBoxQuestion(
@@ -689,7 +689,7 @@ class _SearchServiceState extends State<SearchService>
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderbox) => _updateHeaderHeight(renderbox),
     );

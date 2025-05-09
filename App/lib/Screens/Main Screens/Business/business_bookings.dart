@@ -71,7 +71,7 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: MyColors.DarkLighter,
+      color: MyColors.darkLighter,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

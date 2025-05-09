@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:taqreeb/firebase_options.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/firebase_options.dart';
 
 class FirebaseService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -26,7 +27,9 @@ class FirebaseService {
       await _setupTokenHandling();
       _initialized = true;
     } catch (e) {
-      print('FirebaseService initialization failed: $e');
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'FirebaseService initialization failed: $e'}));
       // Consider adding error reporting here
     }
   }
@@ -72,7 +75,7 @@ class FirebaseService {
   }
 
   static Future<void> _requestPermissions() async {
-    final settings = await _messaging.requestPermission(
+    await _messaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -81,19 +84,15 @@ class FirebaseService {
       provisional: false,
       sound: true,
     );
-
-    print('Notification permissions: ${settings.authorizationStatus}');
   }
 
   static Future<void> _setupTokenHandling() async {
     // Get initial token
     _fcmToken = await _messaging.getToken();
-    print('Initial FCM Token: $_fcmToken');
     await _saveTokenToBackend(_fcmToken);
 
     // Listen for token refresh
     _messaging.onTokenRefresh.listen((newToken) {
-      print('FCM Token refreshed: $newToken');
       _fcmToken = newToken;
       _saveTokenToBackend(newToken);
     });
@@ -116,10 +115,11 @@ class FirebaseService {
                 'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}',
           },
         );
-        print('FCM token saved to backend successfully');
       }
     } catch (e) {
-      print('Error saving FCM token to backend: $e');
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error saving FCM token to backend: $e'}));
     }
   }
 
@@ -129,7 +129,6 @@ class FirebaseService {
 
     // Foreground message handler
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Foreground message received');
       _onMessageReceived(message);
     });
 
@@ -149,18 +148,15 @@ class FirebaseService {
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
-    print("Background Message: ${message.notification?.title}");
     // You might want to show a notification here as well
     await _showNotification(message);
   }
 
   static void _onMessageReceived(RemoteMessage message) {
-    print("Message received: ${message.notification?.title}");
     _showNotification(message);
   }
 
   static void _onMessageOpened(RemoteMessage message) {
-    print("Message opened: ${message.notification?.title}");
     _handleNotificationTap(message.data.toString());
   }
 
@@ -189,7 +185,6 @@ class FirebaseService {
 
   static void _handleNotificationTap(String? payload) {
     // Parse payload and navigate to appropriate screen
-    print('Notification tapped with payload: $payload');
     // Example: Navigate to chat screen if payload contains chat data
     // You'll need to integrate with your navigation system
   }
@@ -199,9 +194,10 @@ class FirebaseService {
     try {
       await _messaging.deleteToken();
       _fcmToken = null;
-      print('FCM token deleted successfully');
     } catch (e) {
-      print('Error deleting FCM token: $e');
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error deleting FCM token: $e'}));
     }
   }
 }

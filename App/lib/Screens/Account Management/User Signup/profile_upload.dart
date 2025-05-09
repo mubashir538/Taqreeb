@@ -57,12 +57,12 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -225,7 +225,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   _buildProfileImageSection(),
                   const ProgressBar(progress: _progressStep),
                 ],
@@ -267,7 +267,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
                             fit: BoxFit.cover,
                           )
                         : Image.asset(
-                            MyImages.UploadProfile,
+                            MyImages.uploadProfile,
                             width: Screen.width(context) * _imageSizeFactor,
                             height: Screen.width(context) * _imageSizeFactor,
                             fit: BoxFit.cover,

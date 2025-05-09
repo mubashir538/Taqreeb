@@ -1,0 +1,96 @@
+import os
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from ..models.user_models import User,UserActivity
+from django.utils.timezone import now
+from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from myapp.firebase_db import db
+from ..Serializers.auth_serializers import UserSerializer
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def account_info_page(request,id):
+    userid = id
+    user = User.objects.filter(id=userid).first()
+    serializer = UserSerializer(user)
+    UserActivity.objects.create(
+        user=user,
+        action='profile_updated',
+        metadata={
+            'firstName': user.firstName,
+            'lastName': user.lastName,
+            'city': user.city,
+            'gender': user.gender,
+        },
+        timestamp=now()
+    )
+    
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_basic_userinfo(request,id):
+    userid = id
+    user = User.objects.filter(id=userid).first()
+    return Response({'name':f'{user.firstName.capitalize()} {user.lastName.capitalize()}','profilePicture':user.profilePicture})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def edit_account_info_page(request):
+    userid = request.data.get('userid')
+    first_name = request.data.get('firstName')
+    profile_picture = request.data.get('profilePicture')
+    gender = request.data.get('gender')
+    city = request.data.get('city')
+    lastname = request.data.get('lastName')
+    user = User.objects.get(id=userid)
+    user.firstName = first_name
+    user.lastName = lastname
+    user.gender = gender
+    user.city = city
+    if profile_picture:
+        relative_path = user.profilePicture.replace('/media/', '', 1) 
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        full_path = full_path.replace('\\', '/')
+        if os.path.exists(full_path):
+            os.remove(full_path)
+        filestorage = FileSystemStorage()
+        file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profile_picture)
+        user.profilePicture = filestorage.url(file_path)   
+        user.save(update_fields=["profilePicture",'firstName','lastName','gender','city'])
+    else:
+        user.save(update_fields=['firstName','lastName','gender','city'])
+    user = User.objects.get(id=userid)
+    UserActivity.objects.create(
+    user=user,
+    action='profile_update',
+    metadata={
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'gender': user.gender,
+        'city': user.city
+    },
+    timestamp=now()
+)
+
+    firebase_user_data = {
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "username": user.username,
+        "age":user.age,
+        "email": user.email,
+        "contactNumber": user.contactNumber,
+        "city": user.city,
+        "gender": user.gender,
+        "profilePicture": user.profilePicture if user.profilePicture else None,
+    }
+    try:
+        db.collection("users").document(str(user.id)).set(firebase_user_data)
+    except Exception as e:
+        return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
+
+    
+    return Response({'status':'success'})

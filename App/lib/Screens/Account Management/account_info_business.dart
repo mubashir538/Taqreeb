@@ -5,7 +5,7 @@ import 'package:taqreeb/Components/c_business_categories.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
-import 'package:taqreeb/core/providers/businessInfoViewModel.dart';
+import 'package:taqreeb/core/providers/business_info_view_model.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -30,12 +30,12 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderbox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderbox.size.height;
+            UImanagement.headerHeight = renderbox.size.height;
           });
         }
       },
@@ -59,10 +59,9 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<BusinessAccountInfoViewModel>(context);
     final businessData = Provider.of<BusinessData>(context);
-    print("Current loading state: ${viewModel.isLoading}");
 
     // Safely get data with null checks
-    final userInfo = viewModel.userInfo ?? {};
+    final userInfo = viewModel.userInfo;
     final businessInfo = businessData.businessInfo;
     final items = viewModel.items;
 
@@ -86,7 +85,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   SizedBox(height: Screen.height(context) * 0.04),
                   CircleAvatar(
                     radius: 50,

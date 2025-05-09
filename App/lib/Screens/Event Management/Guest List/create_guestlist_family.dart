@@ -12,15 +12,15 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 
-class CreateGuestList_AddFamily extends StatefulWidget {
-  const CreateGuestList_AddFamily({super.key});
+class CreateGuestListAddFamily extends StatefulWidget {
+  const CreateGuestListAddFamily({super.key});
 
   @override
-  State<CreateGuestList_AddFamily> createState() =>
-      _CreateGuestList_AddFamilyState();
+  State<CreateGuestListAddFamily> createState() =>
+      _CreateGuestListAddFamilyState();
 }
 
-class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
+class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
   final GlobalKey _headerKey = GlobalKey();
   final List<Map<String, String>> _guestList = [];
   final TextEditingController _familyNameController = TextEditingController();
@@ -37,7 +37,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -64,7 +64,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
@@ -163,7 +163,7 @@ class _CreateGuestList_AddFamilyState extends State<CreateGuestList_AddFamily> {
           children: [
             SizedBox(
                 height: (Screen.height(context) * 0.05) +
-                    UI_Management.headerHeight),
+                    UImanagement.headerHeight),
             _buildInputFields(),
             _buildGuestList(),
             SizedBox(height: Screen.height(context) * 0.05),

@@ -58,7 +58,7 @@ class _SearchBoxState extends State<SearchBox> {
         height: Screen.height(context) * 0.07,
         width: widget.width == 0 ? Screen.width(context) * 0.8 : widget.width,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Container(

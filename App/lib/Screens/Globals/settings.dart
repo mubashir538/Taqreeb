@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taqreeb/core/providers/ThemeProvider.dart';
+import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -33,7 +33,7 @@ class _SettingsState extends State<Settings> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
           headerKey: headerKey,
           callback: (renderbox) {
             changeHeight(renderbox);
@@ -61,7 +61,7 @@ class _SettingsState extends State<Settings> {
 
   void changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -70,7 +70,7 @@ class _SettingsState extends State<Settings> {
     final themeProvider =
         Provider.of<ThemeProvider>(context); // Get the ThemeProvider
 
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
@@ -87,7 +87,7 @@ class _SettingsState extends State<Settings> {
               width: Screen.width(context),
               child: Column(
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   isLoading
                       ? CircularProgressIndicator(
                           valueColor:
@@ -107,13 +107,13 @@ class _SettingsState extends State<Settings> {
                                       decoration: BoxDecoration(
                                         color: themeProvider.themeMode ==
                                                 ThemeMode.dark
-                                            ? MyColors.DarkLighter
+                                            ? MyColors.darkLighter
                                             : MyColors.whiteDarker,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.DarkLighter
+                                                ? MyColors.darkLighter
                                                 : MyColors.whiteDarker),
                                       ),
                                       child: Row(
@@ -204,13 +204,13 @@ class _SettingsState extends State<Settings> {
                                       decoration: BoxDecoration(
                                         color: themeProvider.themeMode ==
                                                 ThemeMode.dark
-                                            ? MyColors.DarkLighter
+                                            ? MyColors.darkLighter
                                             : MyColors.whiteDarker,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.DarkLighter
+                                                ? MyColors.darkLighter
                                                 : MyColors.whiteDarker),
                                       ),
                                       child: Row(

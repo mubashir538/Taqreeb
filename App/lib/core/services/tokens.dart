@@ -28,7 +28,7 @@ class MyTokens {
   static const String sphone = "sphone";
   static const String user = "user";
   static const String userType = "userType";
-  static const String Light = "Light";
+  static const String light = "Light";
   static const String acname = "acname";
   static const String acdesc = "acdesc";
   static const String aclocation = "aclocation";

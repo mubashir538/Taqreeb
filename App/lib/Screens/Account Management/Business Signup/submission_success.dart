@@ -24,7 +24,7 @@ class _SubmissionSucessfulState extends State<SubmissionSucessful> {
             heading: 'Profile Submitted Successfully',
             para:
                 'Your Profile Has been Submitted Successfully Now our team is Reviewing your Profile We\'ll notify you when it is Approved.',
-            image: MyImages.BusinessSignup,
+            image: MyImages.businessSignup,
           ),
           SizedBox(
             height: Screen.height(context) * 0.1,

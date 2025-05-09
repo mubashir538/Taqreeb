@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:taqreeb/core/providers/forgotPasswordProvider.dart';
+import 'package:taqreeb/core/providers/forgot_password_provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 import 'forgot_password_form.dart';
 
-class ForgotPassword_EmailorPhoneInput extends StatefulWidget {
-  const ForgotPassword_EmailorPhoneInput({super.key});
+class ForgotPasswordEmailorPhoneInput extends StatefulWidget {
+  const ForgotPasswordEmailorPhoneInput({super.key});
 
   @override
-  State<ForgotPassword_EmailorPhoneInput> createState() =>
-      _ForgotPassword_EmailorPhoneInputState();
+  State<ForgotPasswordEmailorPhoneInput> createState() =>
+      _ForgotPasswordEmailorPhoneInputState();
 }
 
-class _ForgotPassword_EmailorPhoneInputState
-    extends State<ForgotPassword_EmailorPhoneInput> {
+class _ForgotPasswordEmailorPhoneInputState
+    extends State<ForgotPasswordEmailorPhoneInput> {
   final TextEditingController _contactController = TextEditingController();
   final GlobalKey _headerKey = GlobalKey();
 
@@ -24,7 +24,7 @@ class _ForgotPassword_EmailorPhoneInputState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: (renderbox) {
           _changeHeight(renderbox);
@@ -35,7 +35,7 @@ class _ForgotPassword_EmailorPhoneInputState
 
   void _changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -50,7 +50,7 @@ class _ForgotPassword_EmailorPhoneInputState
   Widget build(BuildContext context) {
     final forgotPasswordProvider = Provider.of<ForgotPasswordProvider>(context);
 
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderbox) {
         _changeHeight(renderbox);
@@ -70,7 +70,7 @@ class _ForgotPassword_EmailorPhoneInputState
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: UI_Management.headerHeight),
+                      SizedBox(height: UImanagement.headerHeight),
                       ForgotPasswordForm(
                         contactController: _contactController,
                         onSendCode: _sendCode,
@@ -85,7 +85,7 @@ class _ForgotPassword_EmailorPhoneInputState
                     heading: 'Forgot Password',
                     para:
                         'Enter the email address with your account and we\'ll send an email with confirmation to reset your password',
-                    image: MyImages.ForgotPassword,
+                    image: MyImages.forgotPassword,
                   ),
                 ),
               ],

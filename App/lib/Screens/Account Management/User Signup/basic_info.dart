@@ -122,12 +122,12 @@ class _BasicSignupState extends State<BasicSignup> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -247,7 +247,7 @@ class _BasicSignupState extends State<BasicSignup> {
         height: Screen.height(context) * 0.06,
         width: Screen.height(context) * 0.06,
         decoration: BoxDecoration(
-          color: MyColors.DarkLighter,
+          color: MyColors.darkLighter,
           borderRadius: BorderRadius.circular(50),
         ),
         child: Center(
@@ -275,7 +275,7 @@ class _BasicSignupState extends State<BasicSignup> {
                   Headersecondary(
                     heading: "Signup",
                     para: "Unlock exclusive events - sign up now!",
-                    image: MyImages.Signup1,
+                    image: MyImages.signup1,
                   ),
                   SizedBox(height: Screen.height(context) * 0.01),
                   MyTextBox(

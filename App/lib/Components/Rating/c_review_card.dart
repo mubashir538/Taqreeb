@@ -32,7 +32,7 @@ class ReviewCard extends StatelessWidget {
           EdgeInsets.symmetric(vertical: max * 0.01, horizontal: max * 0.02),
       padding: EdgeInsets.all(max * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.DarkLighter,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(max * 0.01),
         boxShadow: [
           BoxShadow(

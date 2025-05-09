@@ -27,7 +27,7 @@ class IconedButton extends StatelessWidget {
           padding:
               EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(

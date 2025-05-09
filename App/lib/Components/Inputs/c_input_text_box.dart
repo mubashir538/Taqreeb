@@ -124,7 +124,7 @@ class _MyTextBoxState extends State<MyTextBox> {
           height: Screen.height(context) * 0.06,
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: MyColors.DarkLighter,
+            color: MyColors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: _isFocused
