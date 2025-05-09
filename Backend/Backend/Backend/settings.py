@@ -38,7 +38,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.0.104:8000",
     "http://127.0.0.1:8000",
     ip
-    ,ip+':8000'     
+    # ,ip+':8000'     
 ]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/

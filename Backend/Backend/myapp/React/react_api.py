@@ -8,7 +8,6 @@ from .react_permission import IsReactUser
 from .react_serializer import ReactUserSerializer, ReactUserCreateSerializer
 from django.contrib.auth.hashers import check_password
 from rest_framework import status
-from .. import models2 as m
 from ..models.user_models import UserActivity,User
 from ..models.listing_models import  BusinessOwner,Freelancer,Listing
 from ..models.booking_models import  Order

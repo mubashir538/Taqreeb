@@ -79,7 +79,7 @@ class SendMessage extends StatelessWidget {
 
           // Website link
           Text(
-            'www.taqreeb.com', // Replace with your actual domain
+            listing!['type'] ?? '', // Replace with your actual domain
             style: GoogleFonts.montserrat(
               fontSize: 12,
               color: MyColors.yellow,
