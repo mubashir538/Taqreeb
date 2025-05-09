@@ -77,7 +77,7 @@ import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
 import 'package:taqreeb/Screens/chat/chat_box.dart';
 import 'package:taqreeb/Screens/chat/search_new_user.dart';
 import 'package:taqreeb/core/config/config.dart';
-import 'package:taqreeb/core/providers/ThemeProvider.dart';
+import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/app_initializer.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
