@@ -24,7 +24,7 @@ class MyColors {
       MyColors.darkLighter = Color(0xff242526);
       MyColors.yellowonDark = Color(0xffffbe0b);
     } else {
-      await MyStorage.saveToken(MyTokens.Light, MyTokens.theme);
+      await MyStorage.saveToken(MyTokens.light, MyTokens.theme);
       MyColors.dark = Color(0xffE0E1DD);
       MyColors.yellowonDark = Color(0xffef233c);
       MyColors.darkLighter = Color(0xffffffff);
@@ -35,7 +35,7 @@ class MyColors {
 
   static void getTheme() async {
     final theme = await MyStorage.getToken(MyTokens.theme) ?? "";
-    if (theme == MyTokens.Light) {
+    if (theme == MyTokens.light) {
       MyColors.dark = Color(0xffE0E1DD);
       MyColors.yellowonDark = Color(0xffef233c);
       MyColors.darkLighter = Color(0xffffffff);

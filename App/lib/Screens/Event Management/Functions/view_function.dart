@@ -44,7 +44,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
       onSuccess: (token, data) {
         if (mounted) {
           setState(() {
-            print("Cart: ${data['cart']}");
             _bookingList.addAll(data['cart'] ?? []); // Use the stored data
           });
         }
@@ -100,7 +99,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
@@ -158,7 +157,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -173,7 +172,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
             child: Header(
               key: _headerKey,
               heading: "Your Function Details",
-              image: MyImages.CheckList,
+              image: MyImages.checkList,
             ),
           ),
         ],
@@ -187,7 +186,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         width: Screen.width(context),
         child: Column(
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             _isLoading ? _buildLoadingIndicator() : _buildFunctionDetails(),
           ],
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -16,7 +15,6 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_list
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_packages.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_pricing.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_review.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_slot.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class CategoryViewDecorator extends StatefulWidget {
@@ -57,6 +55,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+
     _initializeUI();
   }
 
@@ -68,7 +67,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -77,7 +76,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
@@ -152,12 +151,6 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
     }
   }
 
-  void _handleDateSelection(DateTime date) {
-    setState(() {
-      _selectedDate = date;
-    });
-  }
-
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -195,17 +188,12 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
               ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
-              CategorySlots(
-                listing: _listing,
-                onDateSelected: _handleDateSelection,
-              ),
               _buildDivider(),
               CategoryReview(
                 listing: _listing,
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),
@@ -222,13 +210,9 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
     );
   }
 
-  Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);
-  }
-
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -240,7 +224,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

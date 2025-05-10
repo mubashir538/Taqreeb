@@ -28,4 +28,6 @@ class MyStorage {
     return token;
   }
 
+  static getBusinessType() {}
+
 }

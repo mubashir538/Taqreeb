@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -50,6 +49,7 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+
     _initializeUI();
   }
 
@@ -61,7 +61,7 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -70,13 +70,14 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+
       Logs.logUserActivity("category_view_duration", {
         "category": "Photographer",
         "listing_id": _listingId!,
@@ -188,7 +189,9 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategorySlots(
-                listing: _listing,
+                bookedDates: (_listing['booked_dates'] as List)
+                    .map((dateStr) => DateTime.parse(dateStr))
+                    .toList(),
                 onDateSelected: _handleDateSelection,
               ),
               _buildDivider(),
@@ -197,7 +200,6 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
                 starsvalue: _starsValue,
               ),
               _buildDivider(),
-              _buildBookNowButton(),
             ],
           ),
         ),
@@ -214,13 +216,9 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
     );
   }
 
-  Widget _buildBookNowButton() {
-    return BookNowButton(context: context, listing: _listing);
-  }
-
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -232,7 +230,7 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

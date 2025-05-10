@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,13 +28,13 @@ class _AddBankState extends State<AddBank> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
@@ -45,7 +49,7 @@ class _AddBankState extends State<AddBank> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: UI_Management.headerHeight +
+                    height: UImanagement.headerHeight +
                         Screen.height(context) * 0.02,
                   ),
                   Container(
@@ -108,6 +112,7 @@ class _AddBankState extends State<AddBank> {
                         MyTextBox(
                           hint: "Account Number",
                           isNum: true,
+                          maxLength: 16,
                           valueController: accountNumberController,
                         ),
                         SizedBox(height: Screen.max(context) * 0.02),
@@ -116,6 +121,7 @@ class _AddBankState extends State<AddBank> {
                         MyTextBox(
                           hint: "IBAN Number",
                           valueController: ibanController,
+                          maxLength: 24,
                         ),
                         SizedBox(height: Screen.max(context) * 0.04),
 
@@ -123,8 +129,32 @@ class _AddBankState extends State<AddBank> {
                         Center(
                           child: ColoredButton(
                             text: "Add Bank Account",
-                            onPressed: () {
+                            onPressed: () async {
                               // Handle bank account submission
+                              final response = await MyApi.postRequest(
+                                  endpoint: 'Payments/addBank/',
+                                  body: {
+                                    'bankName': selectedBank,
+                                    'accountNumber':
+                                        accountNumberController.text,
+                                    'IBANNumber': ibanController.text,
+                                    'accountHolderName':
+                                        accountNameController.text,
+                                    'userID': await MyStorage.getToken(
+                                        MyTokens.userId)
+                                  },
+                                  headers: {
+                                    'Authorization':
+                                        'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+                                  });
+                              if (response['status'] == 'success') {
+                                MyScaffold(text: 'Bank Added Successfully!')
+                                    .show(context);
+                              } else {
+                                MyScaffold(text: 'Failed to Add Bank Account!')
+                                    .show(context);
+                              }
+                              Navigator.pop(context);
                             },
                           ),
                         ),

@@ -6,7 +6,8 @@ import 'package:taqreeb/core/utils/color.dart';
 
 class BalanceCard extends StatefulWidget {
   final String balance;
-  const BalanceCard({super.key, required this.balance});
+  final VoidCallback onpopped;
+  const BalanceCard({super.key, required this.balance, required this.onpopped});
 
   @override
   State<BalanceCard> createState() => _BalanceCardState();
@@ -55,7 +56,9 @@ class _BalanceCardState extends State<BalanceCard> {
             ColoredButton(
                 text: "Add Bank",
                 onPressed: () {
-                  Navigator.pushNamed(context, "/AddBank");
+                  Navigator.pushNamed(context, "/AddBank").then(
+                    (value) => widget.onpopped(),
+                  );
                 },
                 width: Screen.width(context) * 0.3,
                 textSize: Screen.max(context) * 0.015)

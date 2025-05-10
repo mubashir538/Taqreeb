@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 
 class PhoneAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,16 +15,13 @@ class PhoneAuthService {
 
       verificationCompleted: (PhoneAuthCredential credential) async {
         await _auth.signInWithCredential(credential);
-        print("Auto verification successful!");
       },
 
       verificationFailed: (FirebaseAuthException e) {
-        print("Verification failed: ${e.message}");
       },
 
       codeSent: (String verificationId, int? resendToken) {
         _verificationId = verificationId;
-        print("OTP sent successfully!");
       },
 
       codeAutoRetrievalTimeout: (String verificationId) {
@@ -40,10 +40,11 @@ class PhoneAuthService {
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
 
-      print("OTP Verified Successfully!");
       return userCredential;
     } catch (e) {
-      print("Invalid OTP: $e");
+      unawaited(MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': "Invalid OTP: $e"}));
       return null;
     }
   }

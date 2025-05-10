@@ -78,11 +78,11 @@ class FreelancerSignupDescriptionState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           setState(() {
-            UI_Management.headerHeight = renderbox.size.height;
+            UImanagement.headerHeight = renderbox.size.height;
           });
         },
       );
@@ -105,7 +105,7 @@ class FreelancerSignupDescriptionState
                 children: [
                   SizedBox(
                     height: (Screen.max(context) * 0.05) +
-                        UI_Management.headerHeight,
+                        UImanagement.headerHeight,
                   ),
                   DescriptionBox(
                     valueController: viewModel.descriptionController,

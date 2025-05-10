@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Screens/AI/chatbot.dart';
 import 'package:taqreeb/Screens/AI/event_detail_ai.dart';
 import 'package:taqreeb/Screens/AI/event_packages_ai.dart';
 import 'package:taqreeb/Screens/AI/function_detail_ai.dart';
@@ -32,16 +34,19 @@ import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_family.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/create_guestlist_person.dart';
 import 'package:taqreeb/Screens/Event%20Management/Guest%20List/view_guestlist.dart';
-import 'package:taqreeb/Screens/Event%20Management/Invitation/createInvitation.dart';
-import 'package:taqreeb/Screens/Event%20Management/Invitation/viewInvitationCard.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/create_invitation.dart';
+import 'package:taqreeb/Screens/Event%20Management/Invitation/view_invitation_card.dart';
+import 'package:taqreeb/Screens/Globals/no_internet.dart';
 import 'package:taqreeb/Screens/Globals/settings.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_addons.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_image.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_add_product.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_addons.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_basic.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_details.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_package.dart';
+import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_product.dart';
 import 'package:taqreeb/Screens/Listings/Add%20Listing/add_listing_video_upload.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_car_renter.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_caterer.dart';
@@ -55,11 +60,15 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_venue.dar
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_video_editor.dart';
 import 'package:taqreeb/Screens/Listings/review_screen.dart';
 import 'package:taqreeb/Screens/Listings/user_wishlist.dart';
+import 'package:taqreeb/Screens/Main%20Screens/Business/business_bookings.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
+import 'package:taqreeb/Screens/Main%20Screens/User/user_bookings.dart';
 import 'package:taqreeb/Screens/Main%20Screens/main_screen.dart';
+import 'package:taqreeb/Screens/Payments/cart_screen.dart';
 import 'package:taqreeb/Screens/Payments/debit_card_details.dart';
 import 'package:taqreeb/Screens/Payments/order_summary.dart';
 import 'package:taqreeb/Screens/Search/listing_search.dart';
+import 'package:taqreeb/Screens/Slots/update_booked_slots.dart';
 import 'package:taqreeb/Screens/Wallet%20System/add_bank.dart';
 import 'package:taqreeb/Screens/Wallet%20System/see_all_transactions.dart';
 import 'package:taqreeb/Screens/Wallet%20System/wallet_screen.dart';
@@ -67,7 +76,8 @@ import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
 import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
 import 'package:taqreeb/Screens/chat/chat_box.dart';
 import 'package:taqreeb/Screens/chat/search_new_user.dart';
-import 'package:taqreeb/core/providers/ThemeProvider.dart';
+import 'package:taqreeb/core/config/config.dart';
+import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/app_initializer.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -78,7 +88,7 @@ import 'package:taqreeb/core/utils/themes.dart';
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-
+  AppConfig.fetchIp();
   // Preserve splash screen with required widgetsBinding parameter
   FlutterNativeSplash.preserve(
     widgetsBinding: widgetsBinding,
@@ -159,7 +169,7 @@ class _MainAppState extends State<MainApp> {
     return {
       '/': (context) => SplashScreen(),
       '/AIPackage_EventDetail': (context) => AiPackageEventDetail(),
-      '/AIPackage_FunctionDetail': (context) => AIPackage_FunctionDetail(),
+      '/AIPackage_FunctionDetail': (context) => AIPackageFunctionDetail(),
       '/AccountInfo': (context) => MainScreen(index: 3),
       '/AccountInfoEdit': (context) => AccountInfoEdit(),
       '/Add360video': (context) => Add360Video(),
@@ -167,17 +177,21 @@ class _MainAppState extends State<MainApp> {
       '/AddCategory_AddImage': (context) => AddImage(),
       '/AddCategory_Addons': (context) => AddCategoryAddons(),
       '/AddCategory_AddPackage': (context) => AddCategoryAddPackage(),
+      '/AddCategory_AddProduct': (context) => AddCategoryAddProduct(),
       '/AddCategory_List': (context) => AddCategoryListing(),
       '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(),
       '/AddCategory_Packages': (context) => AddCategoryPackages(),
+      '/AddCategoryProducts': (context) => AddCategoryProducts(),
       '/AllTransactions': (context) => AllTransactions(),
       '/AddBank': (context) => AddBank(),
       '/BasicSignup': (context) => BasicSignup(),
       '/BusinessAccountInfo': (context) => MainScreen(index: 3),
+      '/BusinessBookings': (context) => BusinessBookingsScreen(),
       '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
-      '/BusinessSignup_BasicInfo': (context) => BusinessSignup_BasicInfo(),
-      '/BusinessSignup_CNICUpload': (context) => BusinessSignup_CNICUpload(),
+      '/BusinessSignup_BasicInfo': (context) => BusinessSignupBasicInfo(),
+      '/BusinessSignup_CNICUpload': (context) => BusinessSignupCNICUpload(),
       '/BusinessSignup_Description': (context) => BusinessSignupDescription(),
+      '/CartScreen': (context) => CartScreen(),
       '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),
       '/CategoryView_Caterers': (context) => CategoryViewCaterers(),
       '/CategoryView_Decorator': (context) => CategoryViewDecorator(),
@@ -191,15 +205,16 @@ class _MainAppState extends State<MainApp> {
       '/CategoryView_Venue': (context) => CategoryViewVenue(),
       '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
       '/ChatBox': (context) => ChatBox(),
+      '/ChatBot': (context) => EventPlanningChatbot(),
       '/ChatsScreen': (context) => MainScreen(index: 1),
-      '/CreateAIPackage': (context) => MainScreen(index: 1),
+      // '/CreateAIPackage': (context) => MainScreen(index: 1),
       '/CreateChecklistItems': (context) => CreateChecklistItems(),
       '/CreateEvent': (context) => CreateEvent(),
       '/CreateFunction': (context) => CreateFunction(),
       '/CreateGroup': (context) => CreateGroupScreen(),
       '/CreateGuestList': (context) => CreateGuestList(),
-      '/CreateGuestList_AddFamily': (context) => CreateGuestList_AddFamily(),
-      '/CreateGuestList_AddPerson': (context) => CreateGuestList_AddPerson(),
+      '/CreateGuestList_AddFamily': (context) => CreateGuestListAddFamily(),
+      '/CreateGuestList_AddPerson': (context) => CreateGuestListAddPerson(),
       '/CreateGuestList_List': (context) => CreateGuestListList(),
       '/CreateInvitation': (context) => CreateInvitation(),
       '/Dashboard': (context) => Dashboard(),
@@ -207,10 +222,10 @@ class _MainAppState extends State<MainApp> {
       '/EditFunction': (context) => CreateFunction(),
       '/EventDetails': (context) => EventDetails(),
       '/ForgotPassword_EmailorPhoneInput': (context) =>
-          ForgotPassword_EmailorPhoneInput(),
-      '/ForgotPassword_NewPassword': (context) => ForgotPassword_NewPassword(),
+          ForgotPasswordEmailorPhoneInput(),
+      '/ForgotPassword_NewPassword': (context) => ForgotPasswordNewPassword(),
       '/ForgotPassword_VerifyCode': (context) => ForgotPasswordVerifyCode(),
-      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignup_BasicInfo(),
+      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignupBasicInfo(),
       '/FreelancerSignup_Description': (context) =>
           FreelancerSignupDescription(),
       '/FunctionDetail': (context) => FunctionDetail(),
@@ -218,6 +233,7 @@ class _MainAppState extends State<MainApp> {
       '/HomePage': (context) => MainScreen(index: 0),
       '/InvitationCardView': (context) => ViewInvitationCard(),
       '/Login': (context) => Login(),
+      '/NoInternet': (context) => NoInternetScreen(),
       '/OrderSummary': (context) => OrderSummaryScreen(),
       '/PaymentDetails': (context) => SecurePaymentScreen(),
       '/ProfilePictureUpload': (context) => ProfilePictureUpload(),
@@ -230,6 +246,8 @@ class _MainAppState extends State<MainApp> {
       '/Signup_EmailOTPVerify': (context) => SignupEmailOtpVerify(),
       '/Signup_MoreInfo': (context) => SignupMoreInfo(),
       '/SubmissionSucessful': (context) => SubmissionSucessful(),
+      '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(),
+      '/UserBookings': (context) => UserBookingsScreen(),
       '/ViewAIPackage': (context) => ViewAIPackage(),
       '/WalletScreen': (context) => WalletScreen(),
       '/Wishlist': (context) => WishlistViewPage(),

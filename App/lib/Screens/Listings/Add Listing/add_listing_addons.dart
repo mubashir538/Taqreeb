@@ -31,7 +31,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -40,7 +40,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   void _updateHeaderHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -62,7 +62,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -89,7 +89,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             _buildTitle(),
             _buildAddonsList(),
           ],

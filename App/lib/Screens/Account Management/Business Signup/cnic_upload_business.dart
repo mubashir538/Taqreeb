@@ -14,22 +14,22 @@ import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
 import '../../../core/services/picture_options.dart';
 
-class BusinessSignup_CNICUpload extends StatefulWidget {
-  const BusinessSignup_CNICUpload({super.key});
+class BusinessSignupCNICUpload extends StatefulWidget {
+  const BusinessSignupCNICUpload({super.key});
 
   @override
-  State<BusinessSignup_CNICUpload> createState() =>
-      _BusinessSignup_CNICUploadState();
+  State<BusinessSignupCNICUpload> createState() =>
+      _BusinessSignupCNICUploadState();
 }
 
-class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
+class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
   File? frontImage;
   File? backImage;
   GlobalKey headerKey = GlobalKey();
 
   void changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -37,7 +37,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
   void initState() {
     super.initState();
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => UI_Management.getHeaderHeight(
+        .addPostFrameCallback((_) => UImanagement.getHeaderHeight(
             headerKey: headerKey,
             callback: (renderbox) {
               changeHeight(renderbox);
@@ -46,7 +46,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
@@ -61,7 +61,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
               children: [
                 SizedBox(
                     height: (Screen.height(context) * 0.02) +
-                        UI_Management.headerHeight),
+                        UImanagement.headerHeight),
                 Container(
                   padding: EdgeInsets.symmetric(
                       vertical: Screen.height(context) * 0.02),
@@ -75,7 +75,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               fit: BoxFit.cover,
                             )
                           : Image.asset(
-                              MyImages.Cnic,
+                              MyImages.cnic,
                               height: Screen.height(context) * 0.2,
                               fit: BoxFit.contain,
                             ),
@@ -103,7 +103,7 @@ class _BusinessSignup_CNICUploadState extends State<BusinessSignup_CNICUpload> {
                               fit: BoxFit.cover,
                             )
                           : Image.asset(
-                              MyImages.Cnic,
+                              MyImages.cnic,
                               height: Screen.height(context) * 0.2,
                               fit: BoxFit.contain,
                             ),

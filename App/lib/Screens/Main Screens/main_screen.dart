@@ -28,11 +28,11 @@ class _MainScreenState extends State<MainScreen> {
   bool _isBusinessOwner = false;
   bool _isFreelancer = false;
   int _currentIndex = 0; // Local state variable for managing the selected index
-  final controller = YourListingsController();
+  // final controller = YourListingsController();
 
-  void initializeController() async {
-    await controller.fetchData();
-  }
+  // void initializeController() async {
+  //   // await controller.fetchData();
+  // }
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _initializePages() {
-    initializeController();
+    // initializeController();
     _pages = [
       const HomePage(),
       const ChatsScreen(),
@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
     _businessPages = [
       const Dashboard(),
       const ChatsScreen(),
-      YourListingsScreen(controller: controller),
+      YourListingsScreen(),
       const BusinessAccountInfo(),
     ];
   }

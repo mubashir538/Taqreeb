@@ -1,0 +1,90 @@
+.statistics-container {
+  display: flex;
+  background-color: #0e1626;
+  color: white;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+.statistics-main {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.statistics-header {
+  margin-bottom: 30px;
+}
+
+.statistics-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #e2e8f0;
+  margin-bottom: 10px;
+}
+
+.sections-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: #1a2235;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #2d3748;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.stat-item {
+  background: #2d3748;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #a0aec0;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #f7fafc;
+}
+
+/* Single stat item for Event Statistics */
+.single-stat {
+  grid-column: span 2;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sections-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .sections-grid {
+    grid-template-columns: 1fr;
+  }
+}

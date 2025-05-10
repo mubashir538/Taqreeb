@@ -13,16 +13,15 @@ import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
-class FreelancerSignup_BasicInfo extends StatefulWidget {
-  const FreelancerSignup_BasicInfo({super.key});
+class FreelancerSignupBasicInfo extends StatefulWidget {
+  const FreelancerSignupBasicInfo({super.key});
 
   @override
-  State<FreelancerSignup_BasicInfo> createState() =>
-      _FreelancerSignup_BasicInfoState();
+  State<FreelancerSignupBasicInfo> createState() =>
+      _FreelancerSignupBasicInfoState();
 }
 
-class _FreelancerSignup_BasicInfoState
-    extends State<FreelancerSignup_BasicInfo> {
+class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _cnicController = TextEditingController();
   final TextEditingController _portfolioController = TextEditingController();
@@ -53,7 +52,7 @@ class _FreelancerSignup_BasicInfoState
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -62,7 +61,7 @@ class _FreelancerSignup_BasicInfoState
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
@@ -111,13 +110,13 @@ class _FreelancerSignup_BasicInfoState
   }
 
   Future<void> _handleContinueButton() async {
-    if (_validateInputs()) {
+    if (await _validateInputs()) {
       await _saveUserData();
       Navigator.pushNamed(context, '/FreelancerSignup_Description');
     }
   }
 
-  bool _validateInputs() {
+  Future<bool> _validateInputs() async {
     if (_fullNameController.text.isEmpty ||
         _cnicController.text.isEmpty ||
         _portfolioController.text.isEmpty) {
@@ -125,9 +124,23 @@ class _FreelancerSignup_BasicInfoState
       return false;
     }
 
+    final fullNameValidation =
+        Validations.validateServiceName(_fullNameController.text);
+    if (fullNameValidation != 'Ok') {
+      _showErrorDialog(fullNameValidation, "Invalid Details");
+      return false;
+    }
+
     final cnicValidation = Validations.validateCNIC(_cnicController.text);
     if (cnicValidation != 'Ok') {
       _showErrorDialog(cnicValidation, "Invalid Details");
+      return false;
+    }
+
+    final linkValidation =
+        await Validations.validateLink(_portfolioController.text);
+    if (linkValidation != 'Ok') {
+      _showErrorDialog(linkValidation, "Invalid Details");
       return false;
     }
 
@@ -187,7 +200,7 @@ class _FreelancerSignup_BasicInfoState
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -203,7 +216,7 @@ class _FreelancerSignup_BasicInfoState
                 children: [
                   SizedBox(
                     height: (Screen.max(context) * 0.05) +
-                        UI_Management.headerHeight,
+                        UImanagement.headerHeight,
                   ),
                   _buildInputFields(),
                   _buildDivider(),
@@ -219,7 +232,7 @@ class _FreelancerSignup_BasicInfoState
               heading: "Create A Freelancer Account",
               para:
                   "Earn a Soothing Income by Editing Videos or Pictures of Events",
-              image: MyImages.FreelancerSignup,
+              image: MyImages.freelancerSignup,
             ),
           ),
         ],

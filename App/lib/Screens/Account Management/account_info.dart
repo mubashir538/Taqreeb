@@ -33,7 +33,7 @@ class _AccountInfoState extends State<AccountInfo> {
 
   void _initializeHeaderHeight() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: (renderbox) {
           _changeHeight(renderbox);
@@ -56,7 +56,7 @@ class _AccountInfoState extends State<AccountInfo> {
 
   void _changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
@@ -69,7 +69,7 @@ class _AccountInfoState extends State<AccountInfo> {
   Widget build(BuildContext context) {
     final double size = Screen.max(context) * 0.03;
 
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderbox) {
         _changeHeight(renderbox);
@@ -83,7 +83,7 @@ class _AccountInfoState extends State<AccountInfo> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _buildIntroText(),
                 _isLoading ? _buildLoadingIndicator() : _buildUserInfo(size),
               ],
@@ -223,7 +223,10 @@ class _AccountInfoState extends State<AccountInfo> {
                 MyIcons.profile,
                 width: size,
                 height: size,
-                color: MyColors.white,
+                colorFilter: ColorFilter.mode(
+                  MyColors.white, // Your desired color
+                  BlendMode.srcIn, // Ensures the SVG takes the specified color
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: Screen.max(context) * 0.02),

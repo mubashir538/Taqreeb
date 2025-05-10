@@ -46,12 +46,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -148,11 +148,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         await _uploadGroupImage();
       }
 
+      final currentUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
+
       await FirebaseFirestore.instance.collection('groups').add({
         'groupName': _groupNameController.text,
         'participants': _selectedUsers.map((u) => u['userId']).toList(),
         'groupImageUrl': _groupImageUrl ?? '',
         'createdAt': FieldValue.serverTimestamp(),
+        'adminId': currentUserId, // Set creator as admin
       });
 
       if (mounted) {
@@ -231,7 +234,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: UI_Management.headerHeight),
+              SizedBox(height: UImanagement.headerHeight),
               SizedBox(height: Screen.max(context) * 0.03),
               _buildGroupImagePicker(),
               SizedBox(height: Screen.max(context) * 0.03),

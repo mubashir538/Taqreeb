@@ -26,7 +26,6 @@ class _UserBookingsState extends State<UserBookings> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -77,16 +76,9 @@ class _UserBookingsState extends State<UserBookings> {
 
   void _updateHeaderHeight(RenderBox renderBox) {
     if (mounted) {
-      setState(() => UI_Management.headerHeight = renderBox.size.height);
+      setState(() => UImanagement.headerHeight = renderBox.size.height);
     }
   }
-
-  // String _formatNumberWithCommas(String number) {
-  //   return number.toString().replaceAllMapped(
-  //         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-  //         (Match m) => '${m[1]},',
-  //       );
-  // }
 
   String formatDate(DateTime date) {
     final formatter = DateFormat('MMM d,yyyy');
@@ -95,7 +87,7 @@ class _UserBookingsState extends State<UserBookings> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );

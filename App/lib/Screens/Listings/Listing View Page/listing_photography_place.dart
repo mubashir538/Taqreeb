@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknowButton.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_booknow_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -51,6 +51,7 @@ class _CategoryViewPhotographyPlaceState
   void initState() {
     super.initState();
     _entryTime = DateTime.now();
+
     _initializeUI();
   }
 
@@ -62,7 +63,7 @@ class _CategoryViewPhotographyPlaceState
 
   void _initializeUI() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -71,13 +72,14 @@ class _CategoryViewPhotographyPlaceState
 
   void _updateHeaderHeight(RenderBox renderBox) {
     setState(() {
-      UI_Management.headerHeight = renderBox.size.height;
+      UImanagement.headerHeight = renderBox.size.height;
     });
   }
 
   void _logViewDuration() {
     if (_entryTime != null && _listingId != null) {
       final duration = DateTime.now().difference(_entryTime!).inSeconds;
+
       Logs.logUserActivity("category_view_duration", {
         "category": "PhotographyPlace",
         "listing_id": _listingId!,
@@ -189,7 +191,9 @@ class _CategoryViewPhotographyPlaceState
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategorySlots(
-                listing: _listing,
+                bookedDates: (_listing['booked_dates'] as List)
+                    .map((dateStr) => DateTime.parse(dateStr))
+                    .toList(),
                 onDateSelected: _handleDateSelection,
               ),
               _buildDivider(),
@@ -221,7 +225,7 @@ class _CategoryViewPhotographyPlaceState
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -233,7 +237,7 @@ class _CategoryViewPhotographyPlaceState
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UI_Management.headerHeight),
+                SizedBox(height: UImanagement.headerHeight),
                 _isLoading ? _buildLoadingIndicator() : _buildContent(),
               ],
             ),

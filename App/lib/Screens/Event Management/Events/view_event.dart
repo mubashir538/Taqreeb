@@ -6,8 +6,6 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -24,10 +22,13 @@ class _EventDetailsState extends State<EventDetails> {
   final _eventData = _EventDetailsData();
   Timer? _refreshTimer;
   bool _isLoading = true;
+  bool _ischanged = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_ischanged) return;
+    _ischanged = true;
     _initializeEvent();
   }
 
@@ -91,6 +92,8 @@ class _EventDetailsState extends State<EventDetails> {
       context,
       routeName,
       arguments: {'eventId': _eventData.eventId},
+    ).then(
+      (value) => _fetchEventDetails(),
     );
   }
 
@@ -108,6 +111,40 @@ class _EventDetailsState extends State<EventDetails> {
         children: [
           _buildContent(),
           const Positioned(top: 0, child: Header()),
+          Positioned(
+              bottom: Screen.max(context) * 0.02,
+              right: Screen.max(context) * 0.02,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/CreateFunction',
+                    arguments: {
+                      'eventId': _eventData.eventId,
+                      'type': _eventData.eventDetails['type'],
+                    },
+                  ).then(
+                    (value) => _fetchEventDetails(),
+                  );
+                },
+                child: Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: Screen.max(context) * 0.015,
+                        horizontal: Screen.max(context) * 0.03),
+                    decoration: BoxDecoration(
+                        color: MyColors.red,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(Screen.max(context) * 0.05),
+                          topRight: Radius.circular(Screen.max(context) * 0.05),
+                          bottomLeft:
+                              Radius.circular(Screen.max(context) * 0.05),
+                        )),
+                    child: Text('Add Function',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: Screen.max(context) * 0.02,
+                        ))),
+              ))
         ],
       ),
     );
@@ -119,7 +156,7 @@ class _EventDetailsState extends State<EventDetails> {
         children: [
           const Headersecondary(
             heading: "Your Event Details",
-            image: MyImages.EventDetails,
+            image: MyImages.eventDetails,
           ),
           SizedBox(height: Screen.height(context) * 0.03),
           _isLoading ? _buildLoadingIndicator() : _buildEventContent(),
@@ -146,8 +183,6 @@ class _EventDetailsState extends State<EventDetails> {
         _buildFunctionsList(),
         _buildActionButtons(),
         SizedBox(height: Screen.height(context) * 0.1),
-        Center(child: MyDivider()),
-        _buildCreateFunctionButton(),
       ],
     );
   }
@@ -207,7 +242,7 @@ class _EventDetailsState extends State<EventDetails> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _eventData.functions.length,
-      itemBuilder: (context, index) => Function12(
+      itemBuilder: (context, index) => FunctionCard(
         delete: () => _deleteFunction(index),
         color: Color(int.parse(
           '0xff${_eventData.eventDetails["themeColor"].substring(1)}',
@@ -233,6 +268,8 @@ class _EventDetailsState extends State<EventDetails> {
         'eventId': _eventData.eventId,
         'type': _eventData.eventDetails['type'],
       },
+    ).then(
+      (value) => _fetchEventDetails(),
     );
   }
 
@@ -246,6 +283,8 @@ class _EventDetailsState extends State<EventDetails> {
         'fid': _eventData.functions[index]['id'],
         'type': _eventData.eventDetails['type']
       },
+    ).then(
+      (value) => _fetchEventDetails(),
     );
   }
 
@@ -263,7 +302,9 @@ class _EventDetailsState extends State<EventDetails> {
         _buildActionButton(
           text: "Create Invitation Card",
           onTap: () => Navigator.pushNamed(context, '/CreateInvitation',
-              arguments: {'type': _eventData.eventDetails['type']}),
+              arguments: {'type': _eventData.eventDetails['type']}).then(
+            (value) => _fetchEventDetails(),
+          ),
         ),
       ],
     );
@@ -302,22 +343,8 @@ class _EventDetailsState extends State<EventDetails> {
       context,
       '/CreateChecklistItems',
       arguments: {'eventId': _eventData.eventId},
-    );
-  }
-
-  Widget _buildCreateFunctionButton() {
-    return ColoredButton(
-      text: 'Create New Function',
-      onPressed: () {
-        Navigator.pushNamed(
-          context,
-          '/CreateFunction',
-          arguments: {
-            'eventId': _eventData.eventId,
-            'type': _eventData.eventDetails['type'],
-          },
-        );
-      },
+    ).then(
+      (value) => _fetchEventDetails(),
     );
   }
 

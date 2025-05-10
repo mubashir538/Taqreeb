@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Components/Inputs/c_date_question.dart';
+import 'package:taqreeb/Components/Inputs/c_question_group.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -11,8 +13,6 @@ import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header_secondary.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/Date%20Question.dart';
-import 'package:taqreeb/Screens/Temp/For%20Fyp2/Create%20AI%20Package/Components/question%20group.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -78,7 +78,6 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchEventTypes();
   }
@@ -155,14 +154,25 @@ class _CreateEventState extends State<CreateEvent> {
       return;
     }
 
-    if (Validations.validateName(_formData.eventName.text) != 'Ok') {
-      MyScaffold(text: Validations.validateName(_formData.eventName.text))
+    if (Validations.validateServiceName(_formData.eventName.text) != 'Ok') {
+      MyScaffold(
+              text: Validations.validateServiceName(_formData.eventName.text))
           .show(context);
       return;
     }
-    if (Validations.validateDescription(_formData.description.text) != 'Ok') {
-      MyScaffold(
-              text: Validations.validateDescription(_formData.description.text))
+    if (_formData.description.text.isNotEmpty) {
+      if (Validations.validateDescription(_formData.description.text) != 'Ok') {
+        MyScaffold(
+                text:
+                    Validations.validateDescription(_formData.description.text))
+            .show(context);
+        return;
+      }
+    }
+
+    if (int.parse(_formData.guestMin.text) >
+        int.parse(_formData.guestMax.text)) {
+      MyScaffold(text: 'Minimum Guests should be less than Maximum Guests')
           .show(context);
       return;
     }
@@ -176,14 +186,12 @@ class _CreateEventState extends State<CreateEvent> {
         _formData.type.text.isNotEmpty &&
         _formData.date.text.isNotEmpty &&
         _formData.location.text.isNotEmpty &&
-        _formData.description.text.isNotEmpty &&
         _formData.budget.text.isNotEmpty;
   }
 
   Future<Map<String, dynamic>> _sendEventRequest() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-    print('type.text: ${_formData.type.text}');
 
     final response = await MyApi.postRequest(
       endpoint: _isEditMode ? 'EditEvent/' : 'CreateEvent/',
@@ -197,7 +205,8 @@ class _CreateEventState extends State<CreateEvent> {
         'Event Type': _formData.type.text,
         'Date': _formData.date.text,
         'Location': _formData.location.text,
-        'description': _formData.description.text,
+        if (_formData.description.text.isNotEmpty)
+          'description': _formData.description.text,
         'Theme': _formData.themeColor.text,
         'Budget': _formData.budget.text,
         'EventId': _eventId,
@@ -284,7 +293,7 @@ class _CreateEventState extends State<CreateEvent> {
               Headersecondary(
                 heading: _isEditMode ? "Edit Event" : "Create Event",
                 para: "Plan your event effortlessly!",
-                image: MyImages.SingupPng,
+                image: MyImages.singupPng,
               ),
               Container(
                 margin: EdgeInsets.symmetric(
@@ -348,7 +357,6 @@ class _CreateEventState extends State<CreateEvent> {
           onChanged: (value) {
             if (mounted) {
               setState(() => _formData.type.text = value);
-              print('Event Type: ${_formData.type.text}');
             }
           },
         ),

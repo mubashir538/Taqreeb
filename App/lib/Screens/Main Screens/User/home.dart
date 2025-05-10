@@ -23,6 +23,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+DateTime? entryTime; // ⏱️ Track view duration
+
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
 
@@ -37,13 +39,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    entryTime = DateTime.now();
     _initializeHeaderHeight();
     _fetchData();
   }
 
   void _initializeHeaderHeight() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           _changeHeight(renderbox);
@@ -61,6 +64,9 @@ class _HomePageState extends State<HomePage> {
 
     if (mounted) {
       setState(() {
+        if (listings.isEmpty || categories.isEmpty || demoImages.isEmpty) {
+          return;
+        }
         _isLoading = false;
       });
     }
@@ -88,10 +94,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchListings() async {
-    await ApiCall.fetchAPI('home/listings/', onSuccess: (token, data) {
+    await ApiCall.fetchAPI('home/listings/?page=1&page_size=10',
+        onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          listings = data;
+          listings = data['results'];
         });
       }
     }, context: mounted ? context : null);
@@ -107,11 +114,15 @@ class _HomePageState extends State<HomePage> {
 
   void _changeHeight(RenderBox renderbox) {
     setState(() {
-      UI_Management.headerHeight = renderbox.size.height;
+      UImanagement.headerHeight = renderbox.size.height;
     });
   }
 
   void _handleSearch() {
+    final query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      Logs.logUserActivity("search", {"search_query": query});
+    }
     Navigator.pushNamed(context, '/SearchService');
   }
 
@@ -143,7 +154,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: headerKey,
       callback: (renderbox) {
         _changeHeight(renderbox);
@@ -154,12 +165,12 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: MyColors.dark,
       body: Stack(
         children: [
-          if (UI_Management.headerHeight > 0)
+          if (UImanagement.headerHeight > 0)
             SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: UI_Management.headerHeight),
+                  SizedBox(height: UImanagement.headerHeight),
                   _buildSearchBox(),
                   _isLoading
                       ? _buildLoadingIndicator()
@@ -267,7 +278,9 @@ class _HomePageState extends State<HomePage> {
       child: ColoredButton(
         icon: FontAwesomeIcons.wandMagicSparkles,
         onPressed: () {
-          Navigator.pushNamed(context, '/CreateAIPackage');
+          Logs.logUserActivity("ai_package_button_click", {});
+
+          Navigator.pushNamed(context, '/ChatBot');
         },
         text: 'Create Package with AI',
       ),
@@ -320,5 +333,18 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    if (entryTime != null) {
+      final exitTime = DateTime.now();
+      final duration = exitTime.difference(entryTime!).inSeconds;
+
+      Logs.logUserActivity("homepage_view_duration", {
+        "time_spent_seconds": duration,
+      });
+    }
+    super.dispose();
   }
 }

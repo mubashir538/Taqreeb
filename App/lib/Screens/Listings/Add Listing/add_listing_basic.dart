@@ -13,6 +13,7 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class AddCategoryListing extends StatefulWidget {
@@ -35,7 +36,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   void _initializeScreen() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -44,7 +45,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() => UI_Management.headerHeight = renderbox.size.height);
+    setState(() => UImanagement.headerHeight = renderbox.size.height);
   }
 
   Future<void> _checkPreviousAttempt() async {
@@ -90,6 +91,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       final token = await MyStorage.getToken(MyTokens.accessToken) ?? '';
       final type = await MyTokens.getBusinessType();
       final response = await MyApi.getRequest(
+        context: context,
         endpoint: 'business/categories/$type',
         headers: {'Authorization': 'Bearer $token'},
       );
@@ -123,6 +125,29 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       return;
     }
 
+    String nameValidation =
+        Validations.validateServiceName(_formController.nameController.text);
+    if (nameValidation != 'Ok') {
+      MyScaffold(text: nameValidation).show(context);
+      return;
+    }
+    String descriptionValidation = Validations.validateDescription(
+        _formController.descriptionController.text);
+
+    if (descriptionValidation != 'Ok') {
+      MyScaffold(text: descriptionValidation).show(context);
+      return;
+    }
+
+    if (int.parse(
+            _formController.priceminController.text.replaceAll(',', '')) >=
+        int.parse(
+            _formController.pricemaxController.text.replaceAll(',', ''))) {
+      MyScaffold(text: 'Minimum Price should be less than Maximum Price')
+          .show(context);
+      return;
+    }
+
     if (_formController.charactersLeft > 1050) {
       MyScaffold(text: 'Description is too Short').show(context);
       return;
@@ -143,7 +168,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -168,7 +193,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: UI_Management.headerHeight),
+            SizedBox(height: UImanagement.headerHeight),
             _buildNameField(),
             _buildDescriptionField(),
             _buildCharacterCounter(),
@@ -328,9 +353,7 @@ class ListingFormController {
   }
 
   bool categoryRequiresAddons() {
-    return typeController.text == 'Salon' ||
-        typeController.text == 'Parlour' ||
-        typeController.text == 'Baker and Sweet';
+    return typeController.text == 'Salon' || typeController.text == 'Parlour';
   }
 
   void dispose() {

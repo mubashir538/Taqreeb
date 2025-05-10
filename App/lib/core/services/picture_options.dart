@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class Picture {
@@ -45,9 +47,71 @@ class Picture {
         callback(compressedFile);
       }
     } catch (e) {
-      print('Image processing error: $e');
+      unawaited(MyApi.postRequest(
+          context: context,
+          endpoint: 'error/application',
+          body: {'error': 'Image processing error: $e'}));
       MyScaffold(text: 'Failed to process image. Please try again.')
           .show(context);
+    }
+  }
+
+  static Future<List<File>> pickMultipleImages(
+    BuildContext context, {
+    int maxImages = 10,
+  }) async {
+    try {
+      final List<XFile> pickedFiles = await ImagePicker().pickMultiImage(
+        maxWidth: 2000,
+        maxHeight: 2000,
+        imageQuality: 90,
+      );
+
+      if (pickedFiles.isEmpty) return [];
+
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final List<File> processedImages = [];
+
+      for (final pickedFile in pickedFiles) {
+        try {
+          // Skip cropping, just compress the original image
+          final compressedFile = await compressImage(File(pickedFile.path));
+          processedImages.add(compressedFile);
+        } catch (e) {
+          unawaited(MyApi.postRequest(
+              context: context,
+              endpoint: 'error/application',
+              body: {
+                'error': 'Error processing image ${pickedFile.path}: $e'
+              }));
+          processedImages.add(File(pickedFile.path));
+        }
+      }
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      return processedImages;
+    } catch (e) {
+      unawaited(MyApi.postRequest(
+          context: context,
+          endpoint: 'error/application',
+          body: {'error': 'Multiple image processing error: $e'}));
+      if (context.mounted) {
+        MyScaffold(text: 'Failed to process images. Please try again.')
+            .show(context);
+      }
+      return [];
     }
   }
 
@@ -72,8 +136,8 @@ class Picture {
     );
 
     if (result != null) {
-      final FcompressedFile = File(result.path);
-      return FcompressedFile;
+      final fcompressedFile = File(result.path);
+      return fcompressedFile;
     } else {
       throw Exception('Image compression failed.');
     }

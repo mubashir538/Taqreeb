@@ -32,7 +32,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      UI_Management.getHeaderHeight(
+      UImanagement.getHeaderHeight(
         headerKey: _headerKey,
         callback: _updateHeaderHeight,
       );
@@ -40,7 +40,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   void _updateHeaderHeight(RenderBox renderbox) {
-    setState(() => UI_Management.headerHeight = renderbox.size.height);
+    setState(() => UImanagement.headerHeight = renderbox.size.height);
   }
 
   void _navigateToAddPackage() {
@@ -54,14 +54,14 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   void _navigateToAddImage() {
     Navigator.pushNamed(
       context,
-      '/AddCategory_AddImage',
+      '/AddCategoryProducts',
       arguments: _args,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
@@ -88,7 +88,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
           children: [
             SizedBox(
               height:
-                  (Screen.height(context) * 0.03) + UI_Management.headerHeight,
+                  (Screen.height(context) * 0.03) + UImanagement.headerHeight,
             ),
             _buildTitle(),
             _buildPackagesList(),
@@ -124,6 +124,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
 
   Widget _buildPackageItem(Map<String, dynamic> package) {
     return PackageBox(
+      imageUrls: package['images'],
       packagedetails: package['details'],
       packageprice: package['price'],
       packagename: package['name'],

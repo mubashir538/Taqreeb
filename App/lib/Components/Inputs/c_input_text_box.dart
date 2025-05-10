@@ -30,6 +30,7 @@ class MyTextBox extends StatefulWidget {
   final TextStyle? hintStyle; // Custom hint style
   final TextStyle? errorStyle; // Custom error style
   final BoxShadow? boxShadow; // Custom shadow
+  final int? maxLength; // New parameter for max length
 
   const MyTextBox({
     super.key,
@@ -58,6 +59,7 @@ class MyTextBox extends StatefulWidget {
     this.hintStyle,
     this.errorStyle,
     this.boxShadow,
+    this.maxLength, // Added maxLength parameter
   });
 
   @override
@@ -193,9 +195,23 @@ class _MyTextBoxState extends State<MyTextBox> {
                     focusNode: _focusNode,
                     onSubmitted: widget.onFieldSubmitted,
                     onChanged: (value) {
+                      // Enforce max length if specified
+                      if (widget.maxLength != null &&
+                          value.length > widget.maxLength!) {
+                        _controller.text = _previousText;
+                        _controller.selection = TextSelection.collapsed(
+                          offset: _previousText.length,
+                        );
+                        return;
+                      }
+
+                      _previousText = value;
+
                       if (widget.onChanged != null) {
-                        String rawValue =
-                            value.replaceAll(RegExp(r'[^0-9]'), '');
+                        // Pass the raw number without commas to the callback
+                        String rawValue = widget.isPrice
+                            ? value.replaceAll(RegExp(r'[^0-9]'), '')
+                            : value;
                         widget.onChanged!(rawValue);
                       }
                     },
@@ -205,20 +221,18 @@ class _MyTextBoxState extends State<MyTextBox> {
                         : widget.isPrice
                             ? TextInputType.numberWithOptions(decimal: true)
                             : TextInputType.text,
-                    inputFormatters: widget.isNum
-                        ? [FilteringTextInputFormatter.digitsOnly]
-                        : widget.isPrice
-                            ? [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9,]')),
-                              ]
-                            : null,
-                    style: widget.textStyle ??
-                        GoogleFonts.roboto(
-                          fontSize: Screen.max(context) * 0.018,
-                          fontWeight: FontWeight.w400,
-                          color: widget.textColor ?? MyColors.white,
-                        ),
+                    inputFormatters: [
+                      if (widget.isNum) FilteringTextInputFormatter.digitsOnly,
+                      if (widget.isPrice)
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
+                      if (widget.maxLength != null)
+                        LengthLimitingTextInputFormatter(widget.maxLength),
+                    ],
+                    style: GoogleFonts.roboto(
+                      fontSize: Screen.max(context) * 0.018,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white,
+                    ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: widget.hintStyle ??
@@ -228,7 +242,9 @@ class _MyTextBoxState extends State<MyTextBox> {
                             fontSize: Screen.max(context) * 0.015,
                           ),
                       border: InputBorder.none,
+                      counterText: '', // Remove default counter
                     ),
+                    maxLength: widget.maxLength, // Set max length
                   ),
                 ),
                 if (widget.isPassword)
@@ -257,6 +273,18 @@ class _MyTextBoxState extends State<MyTextBox> {
                     color: errorBorderColor,
                     fontSize: Screen.max(context) * 0.015,
                   ),
+            ),
+          ),
+        // Show remaining characters counter if maxLength is specified
+        if (widget.maxLength != null)
+          Padding(
+            padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
+            child: Text(
+              '${_controller.text.length}/${widget.maxLength}',
+              style: GoogleFonts.montserrat(
+                color: MyColors.white.withAlpha(153),
+                fontSize: Screen.max(context) * 0.012,
+              ),
             ),
           ),
       ],

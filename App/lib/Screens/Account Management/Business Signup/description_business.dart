@@ -39,12 +39,12 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
   }
 
   void _measureHeaderHeight() {
-    UI_Management.getHeaderHeight(
+    UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: (renderBox) {
         if (mounted) {
           setState(() {
-            UI_Management.headerHeight = renderBox.size.height;
+            UImanagement.headerHeight = renderBox.size.height;
           });
         }
       },
@@ -109,7 +109,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: UI_Management.headerHeight),
+                      SizedBox(height: UImanagement.headerHeight),
                       DescriptionBox(
                         valueController: _descriptionController,
                         onChanged: _updateCharacterCount,

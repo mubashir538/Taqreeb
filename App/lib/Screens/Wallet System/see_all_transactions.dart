@@ -27,7 +27,6 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

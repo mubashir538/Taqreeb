@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:taqreeb/Screens/chat/Groups/edit_group_screen.dart';
 import 'package:taqreeb/Screens/chat/Groups/member_info_group.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -29,6 +30,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   String? _groupName;
   String? _groupImage;
   bool _isLoading = true;
+  String? _adminId;
+  bool _isAdmin = false;
 
   @override
   void didChangeDependencies() {
@@ -75,6 +78,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       setState(() {
         _groupName = groupDoc['groupName'];
         _groupImage = groupDoc['groupImageUrl'];
+        _adminId = groupDoc['adminId'];
+        _isAdmin = _adminId == _currentUserId;
         _isLoading = false;
       });
     } catch (e) {
@@ -82,10 +87,33 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     }
   }
 
+  void _navigateToEditGroup() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditGroupScreen(
+          groupId: _groupId,
+          currentUserId: _currentUserId!,
+        ),
+      ),
+    ).then((updated) {
+      if (updated == true) {
+        _fetchGroupData(); // Refresh group data if updated
+      }
+    });
+  }
+
   Future<void> _sendMessage(String text) async {
     if (_currentUserId == null || text.isEmpty) return;
 
     try {
+      // First update last message in group document for faster retrieval
+      await _firestore.collection('groups').doc(_groupId).update({
+        'lastMessage': text,
+        'lastMessageTime': FieldValue.serverTimestamp(),
+      });
+
+      // Then add the message
       await _firestore
           .collection('groups')
           .doc(_groupId)
@@ -96,6 +124,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         'timestamp': FieldValue.serverTimestamp(),
         'type': 'text',
       });
+
       _messageController.clear();
     } catch (e) {
       _handleError('Failed to send message: $e');
@@ -104,9 +133,19 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   Future<void> _sendImage() async {
     try {
-      final pickedFile =
-          await _imagePicker.pickImage(source: ImageSource.gallery);
-      if (pickedFile == null) return;
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70, // Reduce quality for faster upload
+        maxWidth: 800,
+        maxHeight: 800,
+      );
+
+      if (pickedFile == null || !mounted) return;
+
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Uploading image...')),
+      );
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'saveGroupImage/',
@@ -114,7 +153,16 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         files: {'image': File(pickedFile.path)},
       );
 
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
+        // Update last message in group document
+        await _firestore.collection('groups').doc(_groupId).update({
+          'lastMessage': '[Image]',
+          'lastMessageTime': FieldValue.serverTimestamp(),
+        });
+
+        // Add the image message
         await _firestore
             .collection('groups')
             .doc(_groupId)
@@ -130,6 +178,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       }
     } catch (e) {
       _handleError('Failed to send image: $e');
+    } finally {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
     }
   }
 
@@ -296,33 +348,85 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             children: [
               CircleAvatar(
                 backgroundImage: NetworkImage(
-                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_groupImage!}',
+                  '${MyApi.baseUrl}${_groupImage!}',
                 ),
                 radius: 30,
               ),
               const SizedBox(width: 15),
-              Text(
-                _groupName!,
-                style: GoogleFonts.roboto(
-                  color: MyColors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _groupName!,
+                    style: GoogleFonts.montserrat(
+                      color: MyColors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (_isAdmin)
+                    Text(
+                      'Admin',
+                      style: GoogleFonts.montserrat(
+                        color: MyColors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
-          IconButton(
-            icon: Icon(Icons.people, color: MyColors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MembersScreen(groupId: _groupId),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.people, color: MyColors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MembersScreen(groupId: _groupId),
+                    ),
+                  );
+                },
+              ),
+              if (_isAdmin)
+                IconButton(
+                  icon: Icon(Icons.edit, color: MyColors.white),
+                  onPressed: _navigateToEditGroup,
                 ),
-              );
-            },
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMessageStream() {
+    return Expanded(
+      child: StreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('groups')
+            .doc(_groupId)
+            .collection('messages')
+            .orderBy('timestamp', descending: true)
+            .limit(50) // Limit messages for better performance
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Use ListView.builder with itemExtent for better performance
+          return ListView.builder(
+            reverse: true,
+            itemCount: snapshot.data!.docs.length,
+            itemExtent: 100, // Approximate height of each message
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return _buildMessageTile(snapshot.data!.docs[index]);
+            },
+          );
+        },
       ),
     );
   }
@@ -342,29 +446,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         children: [
           const Header(),
           _buildGroupHeader(),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('groups')
-                  .doc(_groupId)
-                  .collection('messages')
-                  .orderBy('timestamp', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                return ListView.builder(
-                  reverse: true,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    return _buildMessageTile(snapshot.data!.docs[index]);
-                  },
-                );
-              },
-            ),
-          ),
+          _buildMessageStream(),
           _buildChatInput(),
         ],
       ),
