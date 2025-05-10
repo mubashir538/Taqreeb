@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Buttons/c_border_button.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:flutter/rendering.dart';
+import 'package:taqreeb/Components/Cards/c_function_card.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_send.dart';
 import 'package:taqreeb/Components/Messages/c_message_receive.dart';
@@ -20,24 +21,59 @@ class EventPlanningChatbot extends StatefulWidget {
 
 class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [];
-  bool _showVenueCard = false;
-  Map<String, dynamic>? _currentEventPlan;
+  List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
   String userId = '';
+  String _chatbotSessionKey = '';
+  Map<String, dynamic>? _finalEventPlan;
+  bool _showFinalPlan = false;
 
-  void fetchUserId() async {
+  Future<void> fetchUserId() async {
     userId = await MyStorage.getToken(MyTokens.userId) ?? '';
+    _chatbotSessionKey = 'chatbot_session_$userId';
   }
 
   @override
   void initState() {
     super.initState();
-    // Initial bot greeting
-    fetchUserId();
-    _addBotMessage(
-      "Hello! I'm your event planning assistant. Please describe the event you'd like to plan.",
+    fetchUserId().then((_) {
+      _loadChatHistory();
+    });
+  }
+
+  Future<void> _loadChatHistory() async {
+    final savedHistory = await MyStorage.getChatHistory(_chatbotSessionKey);
+    if (savedHistory != null) {
+      final savedPlan = await MyStorage.getPendingEventPlan(_chatbotSessionKey);
+      setState(() {
+        _messages = List<Map<String, dynamic>>.from(jsonDecode(savedHistory));
+        // Check if we have a pending event plan
+        _finalEventPlan = savedPlan;
+        _showFinalPlan = _finalEventPlan != null;
+      });
+    } else {
+      _addBotMessage(
+        "Hello! I'm your event planning assistant. Please describe the event you'd like to plan.",
+      );
+    }
+  }
+
+  Future<void> _saveChatHistory() async {
+    await MyStorage.saveChatHistory(
+      _chatbotSessionKey,
+      jsonEncode(_messages),
     );
+    if (_finalEventPlan != null) {
+      await MyStorage.savePendingEventPlan(
+        _chatbotSessionKey,
+        _finalEventPlan!,
+      );
+    }
+  }
+
+  Future<void> _clearPersistedData() async {
+    await MyStorage.clearChatHistory(_chatbotSessionKey);
+    await MyStorage.clearPendingEventPlan(_chatbotSessionKey);
   }
 
   void _addBotMessage(String text, {String? imageUrl, bool isBold = false}) {
@@ -50,6 +86,12 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         'isBold': isBold,
       });
     });
+  }
+
+  dispose() {
+    _messageController.dispose();
+    _clearPersistedData();
+    super.dispose();
   }
 
   void _addUserMessage(String text) {
@@ -82,27 +124,17 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         return;
       }
 
-      // Check if this is a booking confirmation
-      if ((response['response']
-              ?.toString()
-              .toLowerCase()
-              .contains('booking_initiated') ??
-          false)) {
-        _handleBookingConfirmation(response['response']);
+      // Check if this is the final event plan
+      if (response['is_final_plan'] ?? false) {
+        _handleFinalPlan(response['event_data']);
         return;
       }
-
+      _saveChatHistory();
       // Regular message
       _addBotMessage(
         response['response'] ?? "I didn't understand that. Could you rephrase?",
         isBold: response['is_bold'] ?? false,
       );
-
-      // Check if we should show venue card
-      if (message.toLowerCase().contains('venue') &&
-          _currentEventPlan != null) {
-        _show360VenuePreview();
-      }
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -111,45 +143,84 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
     }
   }
 
-  void _handleBookingConfirmation(String message) {
-    _addBotMessage(message);
-
-    // Show booking confirmation
+  void _handleFinalPlan(Map<String, dynamic> eventData) {
     setState(() {
-      _currentEventPlan = {
-        'status': 'confirmed',
-        'confirmation_message': message,
-      };
-      _showVenueCard = true;
+      _finalEventPlan = eventData;
+      _showFinalPlan = true;
     });
+
+    _addBotMessage(
+      "Here's your complete event plan. Review it and click 'Add Event' to save it.",
+      isBold: true,
+    );
+  }
+
+  Future<void> _saveEvent() async {
+    if (_finalEventPlan == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Call your API to save the event
+      final response = await MyApi.postRequest(
+        endpoint: 'chatbot/saveEvent',
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+        body: {
+          'user_id': userId,
+          'event_data': _finalEventPlan!,
+        },
+        context: context,
+      );
+
+      if (response['status'] == 'success') {
+        // Clear chat history and reset
+        await _clearPersistedData();
+        setState(() {
+          _messages.clear();
+          _finalEventPlan = null;
+          _showFinalPlan = false;
+          _isLoading = false;
+        });
+
+        // Show success message
+        _addBotMessage("Your event has been saved successfully!");
+
+        // Initial bot greeting again
+        _addBotMessage(
+          "Hello! I'm your event planning assistant. Would you like to plan another event?",
+        );
+      } else {
+        _addBotMessage(
+            response['message'] ?? "Failed to save event. Please try again.");
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _addBotMessage("Failed to save event. Please try again.");
+    }
+  }
+
+  void _clearChatHistory() {
+    setState(() {
+      _messages.clear();
+      _finalEventPlan = null;
+      _showFinalPlan = false;
+    });
+
+    // Initial bot greeting again
+    _addBotMessage(
+      "Hello! I'm your event planning assistant. Would you like to plan another event?",
+    );
   }
 
   String _formatTime(DateTime time) {
     return '${time.hour}:${time.minute.toString().padLeft(2, '0')}';
-  }
-
-  void _show360VenuePreview() {
-    setState(() {
-      _showVenueCard = true;
-    });
-    _addBotMessage(
-      "Here's the venue preview with 360° view:",
-      imageUrl: _currentEventPlan!['venue360'],
-    );
-  }
-
-  void _saveEventPlan() {
-    _addBotMessage("Your event plan has been saved successfully!");
-    setState(() {
-      _showVenueCard = false;
-    });
-  }
-
-  void _modifyDetails() {
-    _addBotMessage("What would you like to change about your event plan?");
-    setState(() {
-      _showVenueCard = false;
-    });
   }
 
   @override
@@ -166,12 +237,12 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                 child: ListView.builder(
                   padding: EdgeInsets.all(8.0),
                   itemCount: _messages.length +
-                      (_showVenueCard ? 1 : 0) +
+                      (_showFinalPlan ? 1 : 0) +
                       (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {
                     // Loading indicator
                     if (_isLoading &&
-                        index == _messages.length + (_showVenueCard ? 1 : 0)) {
+                        index == _messages.length + (_showFinalPlan ? 1 : 0)) {
                       return Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Align(
@@ -195,11 +266,12 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                       );
                     }
 
-                    if (_showVenueCard && index == _messages.length) {
-                      return _buildEventPlanCard();
+                    // Final event plan card
+                    if (_showFinalPlan && index == _messages.length) {
+                      return _buildFinalPlanCard();
                     }
 
-                    final message = _messages[_showVenueCard
+                    final message = _messages[_showFinalPlan
                         ? (index >= _messages.length ? index - 1 : index)
                         : index];
 
@@ -226,84 +298,43 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
     );
   }
 
-  Widget _buildEventPlanCard() {
-    return Container(
-      margin: EdgeInsets.all(8.0),
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withAlpha(76),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Event Plan Summary',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepPurple,
-            ),
-          ),
-          SizedBox(height: 10),
-          _buildDetailRow('Event Type:', _currentEventPlan!['eventType']),
-          _buildDetailRow('Date:', _currentEventPlan!['date']),
-          _buildDetailRow('Guest Count:', _currentEventPlan!['guestCount']),
-          Divider(),
-          _buildDetailRow('Venue:', _currentEventPlan!['venue']),
-          _buildDetailRow('Venue Price:', _currentEventPlan!['venuePrice']),
-          _buildDetailRow('Catering:', _currentEventPlan!['catering']),
-          _buildDetailRow(
-              'Catering Price:', _currentEventPlan!['cateringPrice']),
-          Divider(),
-          _buildDetailRow('Total Budget:', _currentEventPlan!['totalBudget'],
-              isBold: true),
-          SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ColoredButton(text: 'Save Event Plan', onPressed: _saveEventPlan),
-              SizedBox(width: 10),
-              BorderButton(text: 'Modify Details', onPressed: _modifyDetails),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildFinalPlanCard() {
+    if (_finalEventPlan == null) return SizedBox.shrink();
 
-  Widget _buildDetailRow(String label, String value, {bool isBold = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              value,
-              style: GoogleFonts.montserrat(
-                fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
-      ),
+    return FunctionCard(
+      name: _finalEventPlan!['eventName'] ?? 'Event',
+      head: 'Event Details',
+      budget: 'Total Budget: ${_finalEventPlan!['totalBudget'] ?? 'N/A'}',
+      headings: [
+        'Event Type',
+        'Date',
+        'Total Guests',
+        'Venue',
+        'Catering',
+        'Decorations',
+      ],
+      values: [
+        _finalEventPlan!['eventType'] ?? 'N/A',
+        _finalEventPlan!['date'] ?? 'N/A',
+        _finalEventPlan!['totalGuests']?.toString() ?? '0',
+        _finalEventPlan!['venueName'] ?? 'N/A',
+        _finalEventPlan!['cateringName'] ?? 'N/A',
+        _finalEventPlan!['decorationsName'] ?? 'N/A',
+      ],
+      type: 'event',
+      color: Colors.deepPurple,
+      delete: () {
+        // Option to discard the plan
+        _clearChatHistory();
+      },
+      editPressed: () {
+        _saveEvent();
+      },
+      editText: 'Save Event',
+      seePressed: () {
+        // Option to see more details
+        // You could implement a detailed view here
+      },
     );
   }
 
@@ -314,10 +345,11 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
       child: Row(
         children: [
           Expanded(
-              child: MyTextBox(
-            valueController: _messageController,
-            hint: 'Type your message here...',
-          )),
+            child: MyTextBox(
+              valueController: _messageController,
+              hint: 'Type your message here...',
+            ),
+          ),
           SizedBox(width: 8.0),
           IconButton(
             icon: Icon(Icons.send, color: Colors.red),

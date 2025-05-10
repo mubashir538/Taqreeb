@@ -162,7 +162,7 @@ class _SearchServiceState extends State<SearchService>
       }
     });
 
-    await ApiCall.fetchAPI('unified_search/', params: params,
+    await ApiCall.fetchAPI('unified_search/', params: params, refresh: true,
         onSuccess: (_, data) {
       if (mounted) {
         setState(() {
@@ -239,8 +239,8 @@ class _SearchServiceState extends State<SearchService>
           "Category": _categoryController.text,
         if (_appliedFilters.contains("Price"))
           "Price": {
-            "min": _rangeSliderController.minValue.toInt(),
-            "max": _rangeSliderController.maxValue.toInt()
+            "min": int.parse(_rangeSliderController.minValue.toString()),
+            "max": int.parse(_rangeSliderController.maxValue.toString())
           },
         if (_appliedFilters.contains("Location"))
           "Location": _locationController.text,
@@ -406,8 +406,10 @@ class _SearchServiceState extends State<SearchService>
               return Productcard(
                 listingType: listing['type'].toString(),
                 listingid: listing['id'].toString(),
-                imageUrl: listing['pictures']?['picturePath'] ??
-                    "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+                imageUrl: listing['pictures']?['picturePath'] != ''
+                    ? MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+                        listing['pictures']['picturePath']
+                    : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
                 venueName: listing['name'],
                 location: listing['location'],
                 type: listing['type'].toString(),

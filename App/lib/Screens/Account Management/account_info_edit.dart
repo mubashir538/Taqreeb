@@ -65,10 +65,11 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       if (mounted) {
         setState(() {
           this.token = token;
-          user = user;
+          user = data;
         });
       }
     }, context: mounted ? context : null);
+    if (user.isEmpty) return;
     isLoading = false;
     ishchanged = true;
     fnamecontroller.text = user['firstName'];
@@ -100,6 +101,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
 
       if (response['status'] == 'success') {
         MyScaffold(text: 'Profile Updated Successfully').show(context);
+        MyApi.getRequest(
+            endpoint: 'accountInfo/$userId/',
+            refresh: true,
+            headers: {'Authorization': 'Bearer $token'});
       } else {
         MyScaffold(text: 'Failed to update the profile. Please try again.')
             .show(context);
@@ -113,6 +118,11 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
         'gender': genderController.text
       }, onSuccess: (token, data) {
         MyScaffold(text: 'Profile Updated Successfully').show(context);
+        MyApi.getRequest(
+            endpoint: 'accountInfo/$userId/',
+            refresh: true,
+            headers: {'Authorization': 'Bearer $token'});
+
         Navigator.pushNamed(context, '/AccountInfo');
       }, onError: () {
         MyScaffold(text: 'Failed to update the profile. Please try again.')

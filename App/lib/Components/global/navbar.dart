@@ -84,6 +84,7 @@ class _NavbarState extends State<Navbar> {
         alignment: Alignment.center,
         child: SvgPicture.asset(
           icon,
+          color: index != widget.selectedIndex ? MyColors.white : MyColors.yellow,
           width: size,
           height: size,
         ),

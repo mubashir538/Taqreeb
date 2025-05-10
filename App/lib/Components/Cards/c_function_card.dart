@@ -11,11 +11,13 @@ class FunctionCard extends StatelessWidget {
   final String type;
   final Function editPressed;
   final Function seePressed;
+  final String editText;
   final Color color;
   final VoidCallback? delete;
 
   const FunctionCard(
       {super.key,
+      this.editText = '',
       required this.delete,
       required this.color,
       required this.type,
@@ -146,9 +148,11 @@ class FunctionCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ColoredButton(
-                          text: type.toLowerCase() == 'event'
-                              ? 'Edit Event'
-                              : 'Edit Function',
+                          text: editText != ''
+                              ? editText
+                              : type.toLowerCase() == 'event'
+                                  ? 'Edit Event'
+                                  : 'Edit Function',
                           width: Screen.width(context) * 0.38,
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {

@@ -270,7 +270,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         processedGroups.add({
           'groupId': groupDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] ?? ''}',
+              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] != '' ? groupDoc['groupImageUrl'] : '/media/display/group.png'}',
           'name': groupDoc['groupName'],
           'participants': groupDoc['participants'],
           'lastMessage': lastMessageText,
@@ -408,7 +408,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }).toList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final double max = Screen.max(context);
@@ -501,7 +500,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 offset: const Offset(0, 5),
               )
             ],
-            borderRadius: BorderRadius.circular(max * 0.05),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(max * 0.05),
+                topRight: Radius.circular(max * 0.05),
+                bottomLeft: Radius.circular(max * 0.05)),
             color: MyColors.red,
           ),
           child: Row(

@@ -257,6 +257,7 @@ class MyApi {
   static Future<dynamic> postRequest({
     required String endpoint,
     Map<String, String>? headers,
+    timeout = const Duration(seconds: 10),
     required dynamic body,
     BuildContext? context,
   }) async {
@@ -286,7 +287,7 @@ class MyApi {
     try {
       response = await http
           .post(url, headers: headers, body: jsonEncode(body))
-          .timeout(const Duration(seconds: 10), onTimeout: () {
+          .timeout(timeout, onTimeout: () {
         if (context != null) {
           MyScaffold(text: 'Request timed out. Please try again.')
               .show(context);
@@ -612,7 +613,8 @@ class MyApi {
     BuildContext? context,
   }) async {
     return await postRequest(
-      endpoint: 'chatbot/', 
+      endpoint: 'chatbot/',
+      timeout: const Duration(seconds: 20),
       body: {
         'user_id': userId,
         'message': message,

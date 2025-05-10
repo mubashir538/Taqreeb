@@ -36,7 +36,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     age = m.IntegerField(null=True)
     gender = m.CharField(max_length=6,null=True)
     date_joined = m.DateTimeField(auto_now_add=True, null=True)
-
+    profilePicture = m.TextField(null=True)
+    
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['password', 'firstName', 'lastName', 'city', 'gender']
     def __str__(self):
