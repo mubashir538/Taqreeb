@@ -84,7 +84,7 @@ class CalendarViewState extends State<CalendarView> {
       child: Center(
         child: Text(
           '${day.day}',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: textColor,
             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
           ),
@@ -124,15 +124,15 @@ class CalendarViewState extends State<CalendarView> {
             titleCentered: true,
             leftChevronIcon: Icon(Icons.chevron_left, color: MyColors.white),
             rightChevronIcon: Icon(Icons.chevron_right, color: MyColors.white),
-            titleTextStyle: GoogleFonts.montserrat(
+            titleTextStyle: GoogleFonts.roboto(
               color: MyColors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
           daysOfWeekStyle: DaysOfWeekStyle(
-            weekdayStyle: GoogleFonts.montserrat(color: MyColors.white),
-            weekendStyle: GoogleFonts.montserrat(color: MyColors.white),
+            weekdayStyle: GoogleFonts.roboto(color: MyColors.white),
+            weekendStyle: GoogleFonts.roboto(color: MyColors.white),
           ),
           calendarBuilders: CalendarBuilders(
             defaultBuilder: (context, day, focusedDay) {
@@ -156,7 +156,7 @@ class CalendarViewState extends State<CalendarView> {
           const SizedBox(height: 16),
           Text(
             'Tap dates to select/unselect',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: MyColors.yellow,
               fontSize: 14,
             ),
@@ -164,7 +164,7 @@ class CalendarViewState extends State<CalendarView> {
           const SizedBox(height: 8),
           Text(
             'Booked dates are shown in red',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: MyColors.red,
               fontSize: 14,
             ),

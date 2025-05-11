@@ -249,14 +249,17 @@ class _HeaderState extends State<Header> {
             ),
           ],
           if (widget.para.isNotEmpty) ...[
-            SizedBox(height: Screen.height(context) * 0.005),
-            Text(
-              widget.para,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.roboto(
-                fontSize: Screen.max(context) * 0.013,
-                fontWeight: FontWeight.w400,
-                color: MyColors.white,
+            Container(
+              margin: EdgeInsets.all(Screen.max(context) * 0.01),
+              width: Screen.width(context) * 0.9,
+              child: Text(
+                widget.para,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.roboto(
+                  fontSize: Screen.max(context) * 0.015,
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white,
+                ),
               ),
             ),
             SizedBox(
@@ -268,15 +271,21 @@ class _HeaderState extends State<Header> {
           if (widget.image.isNotEmpty) ...[
             SizedBox(height: Screen.height(context) * 0.01),
             SizedBox(height: Screen.height(context) * 0.03),
-            isSvg
-                ? SvgPicture.asset(
-                    widget.image,
-                    height: Screen.height(context) * 0.2,
-                  )
-                : Image.asset(
-                    widget.image,
-                    height: Screen.height(context) * 0.2,
-                  ),
+            SizedBox(
+              width: Screen.width(context) * 0.9, // your fixed width
+              height: Screen.height(context) * 0.25, // your fixed height
+              child: isSvg
+                  ? SvgPicture.asset(
+                      widget.image,
+                      fit: BoxFit
+                          .contain, // scales the SVG to fit within the box
+                    )
+                  : Image.asset(
+                      widget.image,
+                      fit: BoxFit
+                          .contain, // scales the raster image to fit within the box
+                    ),
+            ),
             SizedBox(height: Screen.height(context) * 0.03),
           ],
         ],

@@ -56,7 +56,7 @@ class _CategorySlotsState extends State<CategorySlots> {
       child: Center(
         child: Text(
           '${day.day}',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: isBooked || isSelected ? Colors.black : Colors.white,
           ),
         ),
@@ -73,7 +73,7 @@ class _CategorySlotsState extends State<CategorySlots> {
       calendarFormat: CalendarFormat.month,
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
-        titleTextStyle: GoogleFonts.montserrat(
+        titleTextStyle: GoogleFonts.roboto(
           color: MyColors.yellow,
           fontSize: Screen.max(context) * 0.025,
         ),
@@ -89,23 +89,23 @@ class _CategorySlotsState extends State<CategorySlots> {
         ),
       ),
       daysOfWeekStyle: DaysOfWeekStyle(
-        weekdayStyle: GoogleFonts.montserrat(
+        weekdayStyle: GoogleFonts.roboto(
           color: MyColors.yellow,
           fontSize: Screen.max(context) * 0.02,
         ),
-        weekendStyle: GoogleFonts.montserrat(
+        weekendStyle: GoogleFonts.roboto(
           color: MyColors.yellow,
           fontSize: Screen.max(context) * 0.02,
         ),
       ),
       calendarStyle: CalendarStyle(
-        defaultTextStyle: GoogleFonts.montserrat(
+        defaultTextStyle: GoogleFonts.roboto(
           color: Colors.white,
         ),
-        weekendTextStyle: GoogleFonts.montserrat(
+        weekendTextStyle: GoogleFonts.roboto(
           color: Colors.white,
         ),
-        outsideTextStyle: GoogleFonts.montserrat(
+        outsideTextStyle: GoogleFonts.roboto(
           color: Colors.grey,
         ),
         todayDecoration: BoxDecoration(

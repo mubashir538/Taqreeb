@@ -84,7 +84,6 @@ class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
                             callback: (file) =>
                                 setState(() => frontImage = file)),
                         icon: MyIcons.upload2,
-                        text: 'Upload Front',
                       ),
                     ],
                   ),
@@ -112,7 +111,6 @@ class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
                             callback: (file) =>
                                 setState(() => backImage = file)),
                         icon: MyIcons.upload2,
-                        text: 'Upload Back',
                       ),
                     ],
                   ),

@@ -1,57 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class IconedButton extends StatelessWidget {
-  final String text;
   final String icon;
   final VoidCallback? onPressed;
 
-  const IconedButton(
-      {required this.text,
-      required this.onPressed,
-      required this.icon,
-      super.key});
+  const IconedButton({
+    required this.onPressed,
+    required this.icon,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
+      borderRadius: BorderRadius.circular(
+          Screen.width(context) * 0.05), // Half of width for perfect circle
       child: Center(
         child: Container(
-          height: Screen.height(context) * 0.06,
-          width: Screen.width(context) * 0.9,
-          margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-          padding:
-              EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+          width: Screen.width(context) * 0.15, // 20% of screen width
+          height:
+              Screen.width(context) * 0.15, // Same as width for perfect circle
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
-            borderRadius: BorderRadius.circular(10),
+            color: MyColors.ligthDark,
+            shape: BoxShape.circle, // Makes it a perfect circle
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withAlpha(102),
                 blurRadius: 4,
                 spreadRadius: 1,
-                offset: Offset(2, 2),
+                offset: const Offset(2, 2),
               )
             ],
           ),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SvgPicture.asset(icon, height: Screen.max(context) * 0.03),
-            SizedBox(
-              width: Screen.max(context) * 0.02,
+          child: Center(
+            child: SvgPicture.asset(
+              icon,
+              height: Screen.width(context) * 0.1, // Half of container size
             ),
-            Text(
-              text,
-              style: GoogleFonts.roboto(
-                fontSize: Screen.max(context) * 0.015,
-                fontWeight: FontWeight.w200,
-                color: Colors.white,
-              ),
-            ),
-          ]),
+          ),
         ),
       ),
     );

@@ -426,14 +426,15 @@ class _SearchServiceState extends State<SearchService>
               final package = _searchResults['packages'][index];
               return PackageBox(
                 packageId: package['id'].toString(),
-                imageUrls: package['pictures'].length != 0
+                imageUrl: package['pictures'].length != 0
                     ? package['pictures']
                         ?.map((p) => p['picturePath'].toString())
                         .toList()
                     : [],
-                packagedetails: package['description'],
-                packageprice: package['price'].toString(),
-                packagename: package['name'],
+                packageDetails: package['description'],
+                packagePrice: package['price'].toString(),
+                packageName: package['name'],
+                onPressed: () {},
               );
             },
           );
@@ -461,7 +462,7 @@ class _SearchServiceState extends State<SearchService>
     return Center(
       child: Text(
         'No results found',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.white,
           fontSize: 18,
         ),

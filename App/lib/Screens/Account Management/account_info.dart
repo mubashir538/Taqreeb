@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/icons.dart';
 
 class AccountInfo extends StatefulWidget {
   const AccountInfo({super.key});
@@ -132,11 +131,28 @@ class _AccountInfoState extends State<AccountInfo> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildUserProfile(size),
-        _buildDivider(),
-        if (_user['gender'] != null) _buildGenderInfo(size),
-        if (_user['contactNumber'] != null) _buildPhoneInfo(size),
-        if (_user['email'] != null) _buildEmailInfo(size),
-        _buildLocationInfo(size),
+        SizedBox(height: Screen.max(context) * 0.03),
+        if (_user['gender'] != null)
+          _buildInfoCard(
+              size, FontAwesomeIcons.person, _user['gender'], 'Gender'),
+        if (_user['contactNumber'] != null)
+          _buildInfoCard(
+              size, FontAwesomeIcons.phone, _user['contactNumber'], 'Phone'),
+        if (_user['email'] != null)
+          _buildInfoCard(
+              size, FontAwesomeIcons.envelope, _user['email'], 'Email'),
+        _buildInfoCard(
+            size, FontAwesomeIcons.locationPin, _user['city'], 'Address'),
+        SizedBox(height: Screen.max(context) * 0.02),
+        ColoredButton(
+            text: 'Edit Profile',
+            onPressed: () async {
+              if (await MyTokens.getBusinessType() == 'user') {
+                Navigator.pushNamed(context, '/AccountInfoEdit');
+              } else {
+                Navigator.pushNamed(context, '/BusinessAccountInfoEdit');
+              }
+            }),
       ],
     );
   }
@@ -147,10 +163,16 @@ class _AccountInfoState extends State<AccountInfo> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: Screen.width(context) * 0.1,
-            backgroundImage: NetworkImage(
-              "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_user['profilePicture']}",
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: MyColors.yellow, width: 3),
+            ),
+            child: CircleAvatar(
+              radius: Screen.width(context) * 0.1,
+              backgroundImage: NetworkImage(
+                "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_user['profilePicture']}",
+              ),
             ),
           ),
           Column(
@@ -162,10 +184,10 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Text(
                   "${_capitalize(_user['firstName'])} ${_capitalize(_user['lastName'])}",
                   softWrap: true,
-                  maxLines: 3,
+                  maxLines: 2,
                   style: GoogleFonts.roboto(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w600,
+                    fontSize: Screen.max(context) * 0.025,
+                    fontWeight: FontWeight.w700,
                     color: MyColors.white,
                   ),
                 ),
@@ -176,10 +198,10 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Text(
                   _user['username'],
                   softWrap: true,
-                  maxLines: 3,
+                  maxLines: 1,
                   style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                     color: MyColors.yellow,
                   ),
                 ),
@@ -191,198 +213,63 @@ class _AccountInfoState extends State<AccountInfo> {
     );
   }
 
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(child: MyDivider()),
-    );
-  }
-
-  Widget _buildGenderInfo(double size) {
+  Widget _buildInfoCard(
+      double size, IconData icon, String text, String heading) {
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
-          child: Text(
-            'Gender',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              fontSize: Screen.max(context) * 0.02,
-              fontWeight: FontWeight.w700,
-              color: MyColors.yellow,
-            ),
+        Container(
+          decoration: BoxDecoration(
+            color: MyColors.darkLighter,
+            borderRadius: BorderRadius.circular(10),
           ),
-        ),
-        SizedBox(
-          width: Screen.width(context) * 0.8,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          padding: EdgeInsets.all(Screen.max(context) * 0.03),
+          margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+          width: Screen.width(context) * 0.9,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                MyIcons.profile,
-                width: size,
-                height: size,
-                colorFilter: ColorFilter.mode(
-                  MyColors.white, // Your desired color
-                  BlendMode.srcIn, // Ensures the SVG takes the specified color
+              Text(
+                heading,
+                style: GoogleFonts.roboto(
+                  fontSize: Screen.max(context) * 0.015,
+                  fontWeight: FontWeight.w700,
+                  color: MyColors.yellow,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: Screen.max(context) * 0.02),
-                child: Text(
-                  _user['gender'],
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.roboto(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w200,
+              SizedBox(height: Screen.max(context) * 0.02),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    icon,
+                    size: size,
                     color: MyColors.white,
                   ),
-                ),
+                  SizedBox(width: Screen.max(context) * 0.03),
+                  SizedBox(
+                    width: Screen.width(context) * 0.6,
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.start,
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: text.length > 15
+                          ? TextOverflow.clip
+                          : TextOverflow.ellipsis,
+                      style: GoogleFonts.roboto(
+                        fontSize: Screen.max(context) * 0.02,
+                        fontWeight: FontWeight.w500,
+                        color: MyColors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-        _buildDivider(),
-      ],
-    );
-  }
-
-  Widget _buildPhoneInfo(double size) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
-          child: Text(
-            'Phone',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              fontSize: Screen.max(context) * 0.02,
-              fontWeight: FontWeight.w700,
-              color: MyColors.yellow,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: Screen.width(context) * 0.8,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.phone,
-                color: MyColors.white,
-                size: size,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: Screen.max(context) * 0.02),
-                child: Text(
-                  _user['contactNumber'],
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.roboto(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w200,
-                    color: MyColors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        _buildDivider(),
-      ],
-    );
-  }
-
-  Widget _buildEmailInfo(double size) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
-          child: Text(
-            'Email',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              fontSize: Screen.max(context) * 0.02,
-              fontWeight: FontWeight.w700,
-              color: MyColors.yellow,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: Screen.width(context) * 0.8,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                MyIcons.email,
-                width: size,
-                height: size,
-                color: MyColors.white,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: Screen.max(context) * 0.02),
-                child: Text(
-                  _user['email'],
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.roboto(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w200,
-                    color: MyColors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        _buildDivider(),
-      ],
-    );
-  }
-
-  Widget _buildLocationInfo(double size) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
-          child: Text(
-            'Location',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              fontSize: Screen.max(context) * 0.02,
-              fontWeight: FontWeight.w700,
-              color: MyColors.yellow,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: Screen.width(context) * 0.8,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.location_on,
-                color: MyColors.white,
-                size: size,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: Screen.max(context) * 0.02),
-                child: Text(
-                  _user['city'],
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.roboto(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w200,
-                    color: MyColors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        _buildDivider(),
       ],
     );
   }

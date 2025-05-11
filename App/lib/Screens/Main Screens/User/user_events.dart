@@ -199,7 +199,7 @@ class _YourEventsState extends State<YourEvents> {
                   horizontal: Screen.width(context) * 0.02),
               child: Text(
                 'No Events Found',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
@@ -222,7 +222,7 @@ class _YourEventsState extends State<YourEvents> {
                   horizontal: Screen.width(context) * 0.02),
               child: Text(
                 'You currently don\'t have any events for this Name',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,

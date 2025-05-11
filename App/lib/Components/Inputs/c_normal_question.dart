@@ -26,7 +26,7 @@ class NormalQuestion extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             child: Text(
               question,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                   color: MyColors.white, fontSize: Screen.max(context) * 0.018),
             ),
           ),

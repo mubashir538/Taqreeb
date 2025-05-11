@@ -47,7 +47,7 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
                   padding: EdgeInsets.symmetric(
                       vertical: Screen.max(context) * 0.01),
                   child: Text(widget.question,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontSize: Screen.max(context) * 0.018)),
                 ),
@@ -56,7 +56,7 @@ class _CheckBoxQuestionState extends State<CheckBoxQuestion> {
             children: widget.options.map((option) {
               return CheckboxListTile(
                 title: Text(option,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.whiteDarker,
                       fontWeight: FontWeight.w300,
                       fontSize: Screen.max(context) * 0.015,

@@ -358,7 +358,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 children: [
                   Text(
                     _groupName!,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -367,7 +367,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   if (_isAdmin)
                     Text(
                       'Admin',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         color: MyColors.white,
                         fontSize: 12,
                       ),

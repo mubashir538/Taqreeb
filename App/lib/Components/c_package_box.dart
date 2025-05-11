@@ -1,235 +1,111 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/services/cart_service.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
 
-class PackageBox extends StatefulWidget {
-  final String packagename, packageprice, packagedetails;
-  final String? packageId; // Now optional
-  final List<dynamic> imageUrls;
+class PackageBox extends StatelessWidget {
+  final String packageName;
+  final String packageDetails;
+  final String packagePrice;
+  final String imageUrl;
+  final String packageId;
+  final VoidCallback onPressed;
 
   const PackageBox({
     super.key,
-    required this.packagedetails,
-    required this.packageprice,
-    required this.packagename,
-    required this.imageUrls,
-    this.packageId, // No longer required
+    required this.packageName,
+    required this.packageDetails,
+    required this.packagePrice,
+    required this.imageUrl,
+    required this.packageId,
+    required this.onPressed,
   });
 
   @override
-  State<PackageBox> createState() => _PackageBoxState();
-}
-
-class _PackageBoxState extends State<PackageBox> {
-  bool isCollapsed = true;
-  int _currentImageIndex = 0;
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
-  bool _isAddingToCart = false;
-
-  Future<void> _addToCart() async {
-    if (_isAddingToCart || widget.packageId == null) return;
-
-    setState(() {
-      _isAddingToCart = true;
-    });
-
-    try {
-      final token = await MyStorage.getToken(MyTokens.accessToken);
-      if (token == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please login to add items to cart')),
-          );
-          Navigator.pushNamed(context, '/Login');
-        }
-        return;
-      }
-
-      await CartService.addToCart(
-        token: token,
-        itemType: 'package',
-        itemId: widget.packageId!,
-        quantity: 1,
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Package added to cart')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add to cart: ${e.toString()}')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isAddingToCart = false;
-        });
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    void changeCollapse() {
-      setState(() {
-        isCollapsed = !isCollapsed;
-      });
-    }
-
     return InkWell(
-      onTap: () => changeCollapse(),
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         width: Screen.width(context) * 0.9,
-        height: isCollapsed ? Screen.height(context) * 0.07 : null,
+        margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          color: MyColors.darkLighter,
-          boxShadow: [const BoxShadow(color: Colors.black, blurRadius: 5)],
+          color: MyColors.ligthDark,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: MyColors.whiteDarker, width: 0.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: Column(
-          mainAxisAlignment:
-              isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image on the left
             Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(widget.packagename,
-                      style: GoogleFonts.montserrat(
-                          fontSize: Screen.max(context) * 0.02,
-                          fontWeight: FontWeight.w500,
-                          color: MyColors.white)),
-                  InkWell(
-                    onTap: () => changeCollapse(),
-                    child: Transform.rotate(
-                      angle: 90 * 3.14 / 180,
-                      child: Icon(
-                        isCollapsed ? Icons.chevron_right : Icons.chevron_left,
-                        color: MyColors.white,
-                        size: Screen.max(context) * 0.05,
-                      ),
-                    ),
-                  )
-                ],
+              width: Screen.width(context) * 0.35,
+              height: Screen.width(context) * 0.4,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                ),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            if (!isCollapsed) ...[
-              SizedBox(height: Screen.max(context) * 0.02),
-              // Image Carousel
-              Container(
-                height: Screen.height(context) * 0.2,
-                margin: EdgeInsets.symmetric(
-                    horizontal: Screen.max(context) * 0.02),
-                child: Stack(
+
+            // Content on the right
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(Screen.max(context) * 0.02),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CarouselSlider(
-                      carouselController: _carouselController,
-                      options: CarouselOptions(
-                        height: Screen.height(context) * 0.2,
-                        viewportFraction: 1.0,
-                        autoPlay: false,
-                        enlargeCenterPage: false,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _currentImageIndex = index;
-                          });
-                        },
+                    // Package Name
+                    Text(
+                      packageName,
+                      style: GoogleFonts.roboto(
+                        fontSize: Screen.max(context) * 0.02,
+                        fontWeight: FontWeight.w600,
+                        color: MyColors.white,
                       ),
-                      items: widget.imageUrls.map((url) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                image: DecorationImage(
-                                  image: NetworkImage(url),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    // Image indicator
-                    Positioned(
-                      bottom: 10,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: widget.imageUrls.asMap().entries.map((entry) {
-                          return GestureDetector(
-                            onTap: () =>
-                                _carouselController.animateToPage(entry.key),
-                            child: Container(
-                              width: 8.0,
-                              height: 8.0,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _currentImageIndex == entry.key
-                                    ? MyColors.yellow
-                                    : Colors.white.withAlpha(102),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: Screen.max(context) * 0.02),
-              // Package details
-              Container(
-                margin: EdgeInsets.all(Screen.max(context) * 0.02),
-                child: Text(widget.packagedetails,
-                    style: GoogleFonts.montserrat(
+                    SizedBox(height: Screen.max(context) * 0.01),
+
+                    // Package Details
+                    Text(
+                      packageDetails,
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.015,
-                        fontWeight: FontWeight.w300,
-                        color: MyColors.white)),
-              ),
-              // Package price and (conditionally) Add to Cart button
-              Container(
-                margin: EdgeInsets.all(Screen.max(context) * 0.02),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(widget.packageprice,
-                        style: GoogleFonts.montserrat(
-                            fontSize: Screen.max(context) * 0.02,
-                            fontWeight: FontWeight.w600,
-                            color: MyColors.yellow)),
-                    // Only show if packageId exists
-                    if (widget.packageId != null)
-                      SizedBox(
-                        width: Screen.width(context) * 0.3,
-                        child: ColoredButton(
-                          text: _isAddingToCart ? 'Adding...' : 'Add to Cart',
-                          onPressed: _isAddingToCart ? null : _addToCart,
-                        ),
+                        fontWeight: FontWeight.w400,
+                        color: MyColors.whiteDarker,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: Screen.max(context) * 0.02),
+
+                    // Price only (no Add to Cart button)
+                    Text(
+                      packagePrice,
+                      style: GoogleFonts.roboto(
+                        fontSize: Screen.max(context) * 0.02,
+                        fontWeight: FontWeight.w600,
+                        color: MyColors.red,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ],
+            ),
           ],
         ),
       ),

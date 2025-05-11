@@ -125,7 +125,7 @@ class _ProductCardState extends State<ProductCard> {
                 vertical: Screen.height(context) * 0.015,
               ),
               decoration: BoxDecoration(
-                color: MyColors.darkLighter,
+                color: MyColors.ligthDark,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),

@@ -321,25 +321,25 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             backgroundColor: MyColors.dark,
             title: Text(
               "Delete Item",
-              style: GoogleFonts.montserrat(color: Colors.white),
+              style: GoogleFonts.roboto(color: Colors.white),
             ),
             content: Text(
               "Are you sure you want to delete this item?",
-              style: GoogleFonts.montserrat(color: Colors.white70),
+              style: GoogleFonts.roboto(color: Colors.white70),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.montserrat(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: MyColors.red),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(
                   "Delete",
-                  style: GoogleFonts.montserrat(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: MyColors.red),
                 ),
               ),
             ],
@@ -378,19 +378,18 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                     ? TextField(
                         controller: _editControllers[index],
                         focusNode: _focusNodes[index],
-                        style: GoogleFonts.montserrat(color: Colors.white),
+                        style: GoogleFonts.roboto(color: Colors.white),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Edit item',
-                          hintStyle:
-                              GoogleFonts.montserrat(color: Colors.white54),
+                          hintStyle: GoogleFonts.roboto(color: Colors.white54),
                         ),
                         autofocus: true,
                         onSubmitted: (value) => _finishEditing(index),
                       )
                     : Text(
                         item["description"],
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           color: Colors.white,
                           decoration: item["isChecked"]
                               ? TextDecoration.lineThrough
@@ -413,7 +412,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           children: [
             Text(
               "No checklist items yet",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: Colors.white70,
                 fontSize: 18,
               ),

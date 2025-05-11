@@ -31,7 +31,7 @@ class _DateQuestionState extends State<DateQuestion> {
         children: [
           widget.question != ''
               ? Text(widget.question,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.018))
               : Container(),
@@ -59,7 +59,7 @@ class _DateQuestionState extends State<DateQuestion> {
                 onSubmitted: widget.onFieldSubmitted,
                 textAlignVertical: TextAlignVertical.center,
                 controller: widget.valuecontroller,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.018,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
@@ -67,7 +67,7 @@ class _DateQuestionState extends State<DateQuestion> {
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.date_range_rounded),
                   hintText: 'Select Date',
-                  hintStyle: GoogleFonts.montserrat(
+                  hintStyle: GoogleFonts.roboto(
                     color: MyColors.white.withAlpha(153),
                     fontSize: Screen.max(context) * 0.015,
                   ),

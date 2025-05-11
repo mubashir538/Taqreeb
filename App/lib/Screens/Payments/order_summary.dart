@@ -142,7 +142,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               children: [
                 Text(
                   'Order Items',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.white,
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.bold,
@@ -153,7 +153,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 SizedBox(height: Screen.height(context) * 0.03),
                 Text(
                   'Booking Dates',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.white,
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.bold,
@@ -167,7 +167,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                         EdgeInsets.only(bottom: Screen.height(context) * 0.01),
                     child: Text(
                       '${date.day}/${date.month}/${date.year}',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         color: MyColors.white,
                       ),
                     ),
@@ -176,7 +176,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 SizedBox(height: Screen.height(context) * 0.03),
                 Text(
                   'Customer Information',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.white,
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.bold,
@@ -250,7 +250,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               children: [
                 Text(
                   item.itemDetails['name'] ?? 'No Name',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -258,14 +258,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 SizedBox(height: Screen.height(context) * 0.005),
                 Text(
                   'Quantity: ${item.quantity}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.white,
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.005),
                 Text(
                   '\$${_getItemPrice(item).toStringAsFixed(2)}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     color: MyColors.yellow,
                     fontWeight: FontWeight.bold,
                   ),
@@ -322,7 +322,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: MyColors.white,
               fontSize: isTotal
                   ? Screen.max(context) * 0.02
@@ -332,7 +332,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           ),
           Text(
             '\$${amount.toStringAsFixed(2)}',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: isTotal ? MyColors.yellow : MyColors.white,
               fontSize: isTotal
                   ? Screen.max(context) * 0.02

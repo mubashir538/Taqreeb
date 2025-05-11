@@ -155,7 +155,7 @@ class _MyTextBoxState extends State<MyTextBox> {
           height: Screen.height(context) * 0.06,
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: widget.backgroundColor ?? MyColors.darkLighter,
+            color: widget.backgroundColor ?? MyColors.ligthDark,
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 10),
             border: Border.all(
               color: currentBorderColor,
@@ -182,8 +182,10 @@ class _MyTextBoxState extends State<MyTextBox> {
                     padding: const EdgeInsets.only(right: 12),
                     child: Icon(
                       widget.prefixIcon,
-                      color: widget.prefixIconColor ??
-                          MyColors.white.withAlpha(153),
+                      color: _isFocused
+                          ? MyColors.red
+                          : widget.prefixIconColor ??
+                              MyColors.white.withAlpha(153),
                       size:
                           widget.prefixIconSize ?? Screen.max(context) * 0.025,
                     ),
@@ -281,7 +283,7 @@ class _MyTextBoxState extends State<MyTextBox> {
             padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
             child: Text(
               '${_controller.text.length}/${widget.maxLength}',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white.withAlpha(153),
                 fontSize: Screen.max(context) * 0.012,
               ),

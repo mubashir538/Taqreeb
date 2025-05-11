@@ -128,7 +128,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                 children: [
                   Text(
                     'Personal Information',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
@@ -158,7 +158,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   SizedBox(height: Screen.height(context) * 0.03),
                   Text(
                     'Booking Dates',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
@@ -170,7 +170,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   SizedBox(height: Screen.height(context) * 0.03),
                   Text(
                     'Additional Notes',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
@@ -198,7 +198,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
       children: [
         Text(
           item.itemDetails['name'],
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: MyColors.white,
             fontSize: Screen.max(context) * 0.02,
           ),

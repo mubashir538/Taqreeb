@@ -21,7 +21,7 @@ class QuestionGroup extends StatelessWidget {
               vertical: Screen.max(context) * 0.02),
           child: Text(
             heading,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 color: MyColors.yellow,
                 fontWeight: FontWeight.w500,
                 fontSize: Screen.max(context) * 0.02),

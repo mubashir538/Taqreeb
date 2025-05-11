@@ -140,7 +140,7 @@ class _EventDetailsState extends State<EventDetails> {
                               Radius.circular(Screen.max(context) * 0.05),
                         )),
                     child: Text('Add Function',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           color: Colors.white,
                           fontSize: Screen.max(context) * 0.02,
                         ))),

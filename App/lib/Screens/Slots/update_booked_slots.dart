@@ -170,7 +170,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
       ),
       child: Text(
         'Tap on dates to mark them as booked. Tap again to unmark.',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.02,
           color: MyColors.yellow,
         ),
@@ -185,7 +185,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
       appBar: AppBar(
         title: Text(
           'Manage Booked Slots',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: MyColors.yellow,
             fontWeight: FontWeight.bold,
           ),

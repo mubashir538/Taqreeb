@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -237,12 +238,14 @@ class _LoginState extends State<Login> {
                         SizedBox(height: (Screen.height(context) * 0.03)),
                         MyTextBox(
                           focusNode: _emailFocus,
+                          prefixIcon: FontAwesomeIcons.envelope,
                           onFieldSubmitted: (_) => FocusScope.of(context)
                               .requestFocus(_passwordFocus),
                           hint: "Enter Email or Phone Number",
                           valueController: _emailController,
                         ),
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.lock,
                           focusNode: _passwordFocus,
                           onFieldSubmitted: (_) => _passwordFocus.unfocus(),
                           hint: "Enter Password",
@@ -259,9 +262,9 @@ class _LoginState extends State<Login> {
                                 child: Text(
                                   "Forgot Password?",
                                   style: GoogleFonts.roboto(
-                                    fontSize: Screen.max(context) * 0.012,
-                                    fontWeight: FontWeight.w300,
-                                    color: MyColors.yellow,
+                                    fontSize: Screen.max(context) * 0.013,
+                                    fontWeight: FontWeight.w400,
+                                    color: MyColors.red,
                                   ),
                                 ),
                               ),
@@ -281,16 +284,19 @@ class _LoginState extends State<Login> {
                           height: Screen.height(context) * 0.05,
                           child: const MyDivider(),
                         ),
-                        IconedButton(
-                          onPressed: _handleGoogleSignIn,
-                          text: "Continue with Google",
-                          icon: MyIcons.google,
-                        ),
-                        IconedButton(
-                          onPressed: _handleFacebookSignIn,
-                          text: "Continue with Facebook",
-                          icon: MyIcons.facebook,
-                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconedButton(
+                                onPressed: _handleGoogleSignIn,
+                                icon: MyIcons.google,
+                              ),
+                              SizedBox(width: Screen.width(context) * 0.05),
+                              IconedButton(
+                                onPressed: _handleFacebookSignIn,
+                                icon: MyIcons.facebook,
+                              ),
+                            ])
                       ],
                     ),
                   ],

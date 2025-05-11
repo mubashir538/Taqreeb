@@ -97,7 +97,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                   SizedBox(height: Screen.max(context) * 0.02),
                   Text(
                     businessInfo['businessName'] ?? 'No Business Name',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: Screen.max(context) * 0.03,
@@ -170,7 +170,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                       children: [
                         Text(
                           "Category",
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                             color: MyColors.white,
                             fontWeight: FontWeight.w500,
                             fontSize: Screen.max(context) * 0.02,

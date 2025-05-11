@@ -132,7 +132,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                   onTap: () => viewModel.pickImage(context),
                   child: Text(
                     "Change Profile Picture",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       decoration: TextDecoration.underline,
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,

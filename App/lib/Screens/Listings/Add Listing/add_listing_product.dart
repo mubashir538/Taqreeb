@@ -103,7 +103,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
         "Products",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w600,
           color: MyColors.yellow,

@@ -89,7 +89,7 @@ class _ChatBoxState extends State<ChatBox> {
               children: [
                 Text(
                   _listing['Listing']['name'] ?? '',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: MyColors.white,
@@ -100,7 +100,7 @@ class _ChatBoxState extends State<ChatBox> {
                 SizedBox(height: 4),
                 Text(
                   _listing['Listing']['description'] ?? '',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: 14,
                     color: MyColors.white.withAlpha(179),
                   ),
@@ -111,7 +111,7 @@ class _ChatBoxState extends State<ChatBox> {
                 Text(
                   _listing['Listing']['type'] ??
                       '', // Replace with your actual domain
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: 12,
                     color: MyColors.yellow,
                   ),
@@ -448,7 +448,7 @@ class _ChatBoxState extends State<ChatBox> {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         final messages = snapshot.data!.docs;
         final messageWidgets = <Widget>[];
         DateTime? lastMessageDate;
@@ -471,7 +471,7 @@ class _ChatBoxState extends State<ChatBox> {
                     ),
                     child: Text(
                       _formatDate(messageDate),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -532,7 +532,7 @@ class _ChatBoxState extends State<ChatBox> {
                               width: Screen.width(context) * 0.6,
                               child: Text(
                                 _chatName ?? '',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.roboto(
                                   fontSize: Screen.max(context) * 0.025,
                                   fontWeight: FontWeight.w600,
                                   color: MyColors.white,
@@ -541,7 +541,7 @@ class _ChatBoxState extends State<ChatBox> {
                             ),
                             Text(
                               _chatUserName ?? '',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.roboto(
                                 fontSize: Screen.max(context) * 0.015,
                                 color: MyColors.white,
                               ),

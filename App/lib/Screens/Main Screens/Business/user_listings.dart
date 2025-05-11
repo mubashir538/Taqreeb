@@ -110,7 +110,7 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.3),
           Text(
             'You currently don\'t have any listings',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w400,
               color: MyColors.white,
@@ -138,7 +138,7 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.3),
           Text(
             'You need a business account to create listings',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w400,
               color: MyColors.white,
