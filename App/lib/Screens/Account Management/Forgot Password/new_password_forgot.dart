@@ -153,7 +153,7 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
                     ),
                   ),
                   SizedBox(
-                    height: Screen.height(context) * 0.1,
+                    height: Screen.height(context) * 0.05,
                     child: Center(child: MyDivider()),
                   ),
                   ColoredButton(
@@ -170,7 +170,7 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.01),
+          padding: EdgeInsets.all( Screen.max(context) * 0.01),
           child: Icon(
             FontAwesomeIcons.circleCheck,
             size: 20,
@@ -181,7 +181,7 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
           text,
           style: GoogleFonts.roboto(
             fontSize: Screen.max(context) * 0.015,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w400,
             color: isValid ? Colors.green : Colors.red,
           ),
         ),

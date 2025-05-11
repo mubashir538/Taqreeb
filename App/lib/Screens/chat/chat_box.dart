@@ -519,39 +519,46 @@ class _ChatBoxState extends State<ChatBox> {
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: Screen.max(context) * 0.03),
-                    height: Screen.height(context) * 0.1,
                     decoration: BoxDecoration(color: MyColors.red),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(height: Screen.max(context) * 0.02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: Screen.width(context) * 0.6,
-                              child: Text(
-                                _chatName ?? '',
-                                style: GoogleFonts.roboto(
-                                  fontSize: Screen.max(context) * 0.025,
-                                  fontWeight: FontWeight.w600,
-                                  color: MyColors.white,
-                                ),
-                              ),
+                            CircleAvatar(
+                              radius: Screen.max(context) * 0.04,
+                              backgroundImage:
+                                  NetworkImage(_chatUserImage ?? ''),
                             ),
-                            Text(
-                              _chatUserName ?? '',
-                              style: GoogleFonts.roboto(
-                                fontSize: Screen.max(context) * 0.015,
-                                color: MyColors.white,
-                              ),
+                            SizedBox(width: Screen.width(context) * 0.04),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: Screen.width(context) * 0.6,
+                                  child: Text(
+                                    _chatName ?? '',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: Screen.max(context) * 0.025,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.white,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  _chatUserName ?? '',
+                                  style: GoogleFonts.roboto(
+                                    fontSize: Screen.max(context) * 0.015,
+                                    color: MyColors.whiteDarker,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        CircleAvatar(
-                          radius: Screen.max(context) * 0.04,
-                          backgroundImage: NetworkImage(_chatUserImage ?? ''),
-                        ),
+                        SizedBox(height: Screen.max(context) * 0.02),
                       ],
                     ),
                   ),
@@ -568,40 +575,45 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
   Widget _buildChatInput() {
-    return Column(
-      children: [
-        if (_listing.isNotEmpty) _buildListingPreview(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              IconButton(
-                icon: Icon(FontAwesomeIcons.image, color: MyColors.yellow),
-                onPressed: _sendImage,
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: "Type a message",
-                    fillColor: MyColors.darkLighter,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onSubmitted: _sendMessage,
+    return Container(
+      color: MyColors.ligthDark,
+      padding: EdgeInsets.all(Screen.max(context) * 0.01),
+      child: Column(
+        children: [
+          if (_listing.isNotEmpty) _buildListingPreview(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(FontAwesomeIcons.image, color: MyColors.white),
+                  onPressed: _sendImage,
                 ),
-              ),
-              IconButton(
-                icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
-                onPressed: () => _sendMessage(_messageController.text),
-              ),
-            ],
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: " Type a message",
+                      fillColor: MyColors.darkLighter,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    onSubmitted: _sendMessage,
+                  ),
+                ),
+                IconButton(
+                  icon:
+                      Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+                  onPressed: () => _sendMessage(_messageController.text),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

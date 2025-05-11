@@ -55,6 +55,7 @@ dependencies:
   shared_preferences: ^2.5.3
   page_transition: ^2.2.1
   animate_do: ^4.2.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

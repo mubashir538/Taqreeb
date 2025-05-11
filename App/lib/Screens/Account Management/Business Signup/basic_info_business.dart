@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/core/providers/business_signup_provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -64,6 +65,15 @@ class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
                       return Column(
                         children: [
                           MyTextBox(
+                            prefixIcon: FontAwesomeIcons.building,
+                            hint: 'Business Name',
+                            focusNode: provider.profileNameFocusNode,
+                            valueController: provider.profileNameController,
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context).unfocus();
+                            },
+                          ),
+                          MyTextBox(
                             prefixIcon: FontAwesomeIcons.addressCard,
                             hint: 'CNIC',
                             focusNode: provider.cnicFocusNode,
@@ -74,21 +84,13 @@ class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
                                   .requestFocus(provider.profileNameFocusNode);
                             },
                           ),
-                          MyTextBox(
-                            prefixIcon: FontAwesomeIcons.building,
-                            hint: 'Profile Name',
-                            focusNode: provider.profileNameFocusNode,
-                            valueController: provider.profileNameController,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context).unfocus();
-                            },
-                          ),
                           ColoredButton(
                             onPressed: () {
                               provider.validateAndSave(context);
                             },
                             text: 'Continue',
                           ),
+                          ProgressBar(progress: 1),
                         ],
                       );
                     },

@@ -106,7 +106,7 @@ class _MainScreenState extends State<MainScreen> {
               shape: const CircleBorder(),
               child: Icon(
                 FontAwesomeIcons.plus,
-                size: Screen.max(context) * 0.04,
+                size: Screen.max(context) * 0.03,
                 color: MyColors.white,
               ),
             ),

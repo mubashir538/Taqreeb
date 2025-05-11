@@ -10,7 +10,6 @@ import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/images.dart';
 
 class CreateChecklistItems extends StatefulWidget {
   const CreateChecklistItems({super.key});
@@ -268,7 +267,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     return Headersecondary(
       heading: "Create CheckList",
       para: "From to-do to done one check at a time!",
-      image: MyImages.checkList,
     );
   }
 

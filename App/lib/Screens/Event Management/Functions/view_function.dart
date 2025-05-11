@@ -203,7 +203,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   Widget _buildFunctionDetails() {
-    final function = _functionDetails['Fuctions'] ?? {};
+    final function =
+        _functionDetails['Fuctions'].cast<Map<String, dynamic>>() ?? {};
     final headings = ['Function Type', 'Guests', 'Date'];
     final values = [
       function['type'] ?? '',

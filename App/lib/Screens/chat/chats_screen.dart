@@ -502,7 +502,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 offset: const Offset(0, 5),
               )
             ],
-            borderRadius: BorderRadius.circular(max * 0.05),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(max * 0.05),
+              topRight: Radius.circular(max * 0.05),
+              bottomLeft: Radius.circular(max * 0.05),),
             color: MyColors.red,
           ),
           child: Row(

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -180,9 +182,95 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildLoadingIndicator() {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+    return _buildSkeletonLoader();
+  }
+
+  Widget _buildSkeletonLoader() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+      child: Column(
+        children: List.generate(
+          5, // Number of skeleton items to show
+          (index) => _buildSkeletonItem(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkeletonItem() {
+    return Container(
+      margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
+      child: Shimmer.fromColors(
+        baseColor: MyColors.ligthDark.withOpacity(0.6),
+        highlightColor: MyColors.ligthDark.withOpacity(0.3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title placeholder
+            Container(
+              width: Screen.width(context) * 0.6,
+              height: Screen.height(context) * 0.03,
+              color: Colors.white,
+            ),
+            SizedBox(height: Screen.height(context) * 0.01),
+
+            // Budget placeholder
+            Container(
+              width: Screen.width(context) * 0.4,
+              height: Screen.height(context) * 0.02,
+              color: Colors.white,
+            ),
+            SizedBox(height: Screen.height(context) * 0.02),
+
+            // Three info placeholders
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            SizedBox(height: Screen.height(context) * 0.02),
+
+            // Button placeholders
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.04,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.04,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            SizedBox(height: Screen.height(context) * 0.02),
+
+            // Divider
+            Container(
+              width: double.infinity,
+              height: 1,
+              color: Colors.grey[300],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -252,8 +340,7 @@ class _YourEventsState extends State<YourEvents> {
         final event = _filteredEvents[index];
         return FunctionCard(
           delete: () => _deleteEvent(event["id"], index),
-          color: Color(int.parse(
-              '0xff${event["themeColor"].substring(1, event["themeColor"].length)}')),
+          color: MyColors.red,
           name: event["name"],
           head: 'Budget',
           budget: event["budget"].toString(),
@@ -261,7 +348,9 @@ class _YourEventsState extends State<YourEvents> {
           values: [
             event["type"],
             _events["nofunctions"][index].toString(),
-            event["date"],
+            DateFormat('MMMM d, y')
+                .format(DateTime.parse(event["date"]))
+                .toString(),
           ],
           type: 'Event',
           seePressed: () {

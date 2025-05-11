@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
+import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -109,7 +110,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: UImanagement.headerHeight),
+                      SizedBox(height: UImanagement.headerHeight + Screen.height(context) * 0.05),
                       DescriptionBox(
                         valueController: _descriptionController,
                         onChanged: _updateCharacterCount,
@@ -122,8 +123,8 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                             Text(
                               "$_charactersLeft characters left",
                               style: GoogleFonts.roboto(
-                                color: MyColors.white,
-                                fontSize: Screen.max(context) * 0.018,
+                                color: MyColors.red,
+                                fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
@@ -138,6 +139,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                         text: "Continue",
                         onPressed: _handleContinue,
                       ),
+                      ProgressBar(progress: 3),
                     ],
                   ),
                 ],
