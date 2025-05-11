@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -78,12 +79,12 @@ class _CategorySlotsState extends State<CategorySlots> {
           fontSize: Screen.max(context) * 0.025,
         ),
         leftChevronIcon: Icon(
-          Icons.chevron_left,
+          FontAwesomeIcons.chevronLeft,
           color: MyColors.yellow,
           size: Screen.max(context) * 0.04,
         ),
         rightChevronIcon: Icon(
-          Icons.chevron_right,
+          FontAwesomeIcons.chevronRight,
           color: MyColors.yellow,
           size: Screen.max(context) * 0.04,
         ),

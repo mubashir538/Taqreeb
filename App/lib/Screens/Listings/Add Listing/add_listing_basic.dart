@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -210,6 +211,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   Widget _buildNameField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.user,
       focusNode: _formController.nameFocus,
       onFieldSubmitted: (_) =>
           FocusScope.of(context).requestFocus(_formController.descriptionFocus),
@@ -273,6 +275,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
     return Column(
       children: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.moneyBill,
           focusNode: _formController.priceminFocus,
           onFieldSubmitted: (_) => FocusScope.of(context)
               .requestFocus(_formController.pricemaxFocus),
@@ -282,6 +285,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
           valueController: _formController.priceminController,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.moneyBill,
           focusNode: _formController.pricemaxFocus,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           hint: 'Maximum Price',

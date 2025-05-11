@@ -484,7 +484,7 @@ class _HomePageState extends State<HomePage> {
           onTabChanged: _handleTabChange,
         ),
         isLoadingServices
-            ? Container()
+            ? Container(height: Screen.height(context),)
             : Center(
                 child: SizedBox(
                   width: Screen.width(context) * 0.9,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
@@ -99,7 +100,6 @@ class _MyTextBoxState extends State<MyTextBox> {
     if (widget.isPrice) {
       _controller.removeListener(_formatPrice);
     }
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -257,7 +257,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                       });
                     },
                     child: Icon(
-                      _isObscured ? Icons.visibility_off : Icons.visibility,
+                      _isObscured ? FontAwesomeIcons.eyeSlash :FontAwesomeIcons.eyeSlash,
                       color: MyColors.white.withAlpha(153),
                     ),
                   ),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -138,7 +141,10 @@ class _BasicSignupState extends State<BasicSignup> {
     if (!_validateForm()) return;
 
     await _saveUserData();
-    Navigator.pushNamed(context, '/Signup_EmailOTPSend');
+    context.pushNamedTransition(
+        routeName: '/Signup_EmailOTPSend',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
   }
 
   bool _validateForm() {
@@ -279,6 +285,7 @@ class _BasicSignupState extends State<BasicSignup> {
                   ),
                   SizedBox(height: Screen.height(context) * 0.01),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.user,
                     focusNode: firstNameFocus,
                     onFieldSubmitted: (_) =>
                         FocusScope.of(context).requestFocus(lastNameFocus),
@@ -286,6 +293,7 @@ class _BasicSignupState extends State<BasicSignup> {
                     valueController: firstNameController,
                   ),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.user,
                     focusNode: lastNameFocus,
                     onFieldSubmitted: (_) =>
                         FocusScope.of(context).requestFocus(passwordFocus),
@@ -293,6 +301,7 @@ class _BasicSignupState extends State<BasicSignup> {
                     valueController: lastNameController,
                   ),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.lock,
                     focusNode: passwordFocus,
                     onFieldSubmitted: (_) => FocusScope.of(context)
                         .requestFocus(confirmPasswordFocus),
@@ -301,6 +310,7 @@ class _BasicSignupState extends State<BasicSignup> {
                     valueController: passwordController,
                   ),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.lock,
                     focusNode: confirmPasswordFocus,
                     onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                     hint: "Confirm Password",
@@ -317,7 +327,8 @@ class _BasicSignupState extends State<BasicSignup> {
                         Navigator.pushReplacementNamed(context, '/Login'),
                     child: Text(
                       "Already a Member? Login",
-                      style: TextStyle(color: MyColors.yellowonDark),
+                      style: GoogleFonts.roboto(
+                          color: MyColors.red, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Row(

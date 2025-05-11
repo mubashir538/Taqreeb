@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,8 +19,8 @@ class GuideButton extends StatelessWidget {
     required this.text,
     this.leftIconPath = '',
     this.rightIconPath = '',
-    this.leftIcon = Icons.arrow_back,
-    this.rightIcon = Icons.arrow_back,
+    this.leftIcon = FontAwesomeIcons.arrowLeft,
+    this.rightIcon = FontAwesomeIcons.arrowRight,
   });
 
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart'; // Assuming MyColors is here
@@ -108,7 +109,7 @@ class _ProductCardState extends State<ProductCard> {
                         ),
                         child: Icon(
                           _isWishlisted
-                              ? Icons.favorite
+                              ? FontAwesomeIcons.heart
                               : Icons.favorite_border,
                           color: _isWishlisted ? MyColors.red : Colors.grey,
                           size: Screen.max(context) * 0.025,
@@ -160,7 +161,7 @@ class _ProductCardState extends State<ProductCard> {
                   Row(
                     children: [
                       Icon(
-                        Icons.star,
+                        FontAwesomeIcons.star,
                         color: MyColors.yellow,
                         size: Screen.max(context) * 0.02,
                       ),

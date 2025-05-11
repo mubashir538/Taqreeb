@@ -158,7 +158,7 @@ class _MainAppState extends State<MainApp> {
         darkTheme: AppThemes.darkTheme,
         themeMode: themeProvider.themeMode,
         initialRoute: '/',
-        // home: WalletScreen(),
+        // home: (),
         routes: _buildRoutes(),
       ),
     );

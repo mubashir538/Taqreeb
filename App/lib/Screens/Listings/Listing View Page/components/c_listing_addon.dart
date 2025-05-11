@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Inputs/c_radio_button_question.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -120,10 +121,12 @@ class _CategoryAddonsState extends State<CategoryAddons> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 MyTextBox(
+                  prefixIcon: FontAwesomeIcons.puzzlePiece,
                   hint: 'Name',
                   valueController: nameController,
                 ),
                 MyTextBox(
+                  prefixIcon: FontAwesomeIcons.moneyBill,
                   hint: 'Price',
                   isNum: true,
                   isPrice: true,
@@ -139,6 +142,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                 ),
                 if (isPerHead)
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.person,
                     hint: 'PerHead Type',
                     valueController: headTypeController,
                   ),
@@ -380,7 +384,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             style: _buildTextStyle(color: MyColors.white),
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
-              hintStyle: const TextStyle(color: Colors.grey),
+              hintStyle: _buildTextStyle(color: Colors.grey),
             ),
           )
         : Text(

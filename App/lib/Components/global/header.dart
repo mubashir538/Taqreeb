@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -17,7 +18,7 @@ class Header extends StatefulWidget {
   final List<HeaderIcon>? additionalIcons;
 
   const Header({
-    this.icon = Icons.settings,
+    this.icon = FontAwesomeIcons.gear,
     this.heading = '',
     this.para = '',
     this.image = '',
@@ -179,17 +180,24 @@ class _HeaderState extends State<Header> {
                           }
                         },
                         child: Icon(
-                          Icons.chevron_left_outlined,
+                          FontAwesomeIcons.chevronLeft,
                           color: MyColors.redonWhite,
                           size: Screen.max(context) * 0.03,
                         ),
                       ),
-                Text(
-                  'Taqreeb',
-                  style: GoogleFonts.pacifico(
-                    fontSize: Screen.max(context) * 0.03,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.redonWhite,
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: (Screen.width(context) * 0.02 +
+                              Screen.max(context) * 0.03) *
+                          additionalIcons.length,
+                      right: _noSettings ? Screen.width(context) * 0.03 : 0),
+                  child: Text(
+                    'Taqreeb',
+                    style: GoogleFonts.pacifico(
+                      fontSize: Screen.max(context) * 0.03,
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.redonWhite,
+                    ),
                   ),
                 ),
                 Row(
@@ -270,9 +278,8 @@ class _HeaderState extends State<Header> {
           ],
           if (widget.image.isNotEmpty) ...[
             SizedBox(height: Screen.height(context) * 0.01),
-            SizedBox(height: Screen.height(context) * 0.03),
             SizedBox(
-              width: Screen.width(context) * 0.9, // your fixed width
+              width: Screen.width(context) * 0.5, // your fixed width
               height: Screen.height(context) * 0.25, // your fixed height
               child: isSvg
                   ? SvgPicture.asset(

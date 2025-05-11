@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -323,6 +324,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   Widget _buildNameField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.champagneGlasses,
       focusNode: _formData.nameFocus,
       onFieldSubmitted: (_) => _focusNext(_formData.budgetFocus),
       hint: 'Function Name',
@@ -332,6 +334,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   Widget _buildBudgetField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.moneyBill1Wave,
       focusNode: _formData.budgetFocus,
       onFieldSubmitted: (_) => _focusNext(_formData.typeFocus),
       hint: 'Budget',
@@ -367,6 +370,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   Widget _buildGuestMinField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.userGroup,
       focusNode: _formData.guestMinFocus,
       onFieldSubmitted: (_) => _focusNext(_formData.guestMaxFocus),
       hint: 'Minimum Guests',
@@ -377,6 +381,7 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   Widget _buildGuestMaxField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.userGroup,
       focusNode: _formData.guestMaxFocus,
       onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
       hint: 'Maximum Guests',

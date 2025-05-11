@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -304,7 +305,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     hintText: 'Enter $label...',
-                    hintStyle: const TextStyle(color: Colors.grey),
+                    hintStyle:  GoogleFonts.roboto(color: Colors.grey),
                   ),
                 ),
               )
@@ -357,7 +358,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         hintText: 'Enter ${widget.headings[index]}...',
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle:  GoogleFonts.roboto(color: Colors.grey),
       ),
     );
   }
@@ -377,7 +378,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             ? InkWell(
                 onTap: () => _launchUrl(widget.values[index]),
                 child: Icon(
-                  Icons.link,
+                  FontAwesomeIcons.link,
                   size: Screen.max(context) * 0.03,
                   color: MyColors.white,
                 ),

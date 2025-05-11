@@ -4,6 +4,7 @@ import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -161,7 +162,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
                           if (snapshot.hasError) {
                             return Text(
                               'Error loading OTP',
-                              style: TextStyle(color: MyColors.white),
+                              style: GoogleFonts.roboto(color: MyColors.white),
                             );
                           }
 
@@ -173,7 +174,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
                               _isResendEnabled
                                   ? 'Send Code Again'
                                   : 'Send Code Again in ${_formatTime(_remainingTime)}',
-                              style: TextStyle(
+                              style: GoogleFonts.roboto(
                                 color: MyColors.white,
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.04,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -122,8 +123,10 @@ class CalendarViewState extends State<CalendarView> {
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
-            leftChevronIcon: Icon(Icons.chevron_left, color: MyColors.white),
-            rightChevronIcon: Icon(Icons.chevron_right, color: MyColors.white),
+            leftChevronIcon:
+                Icon(FontAwesomeIcons.chevronLeft, color: MyColors.white),
+            rightChevronIcon:
+                Icon(FontAwesomeIcons.chevronRight, color: MyColors.white),
             titleTextStyle: GoogleFonts.roboto(
               color: MyColors.white,
               fontSize: 20,

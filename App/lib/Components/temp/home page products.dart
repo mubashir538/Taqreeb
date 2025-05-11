@@ -66,18 +66,18 @@ class HomePageProducts extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: TextStyle(
+                    style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),
                   Text(
                     category,
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: GoogleFonts.roboto(color: Colors.grey[600]),
                   ),
                   Text(
                     price,
-                    style: TextStyle(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: MyColors.white),
                   ),
                 ],
               ),

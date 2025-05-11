@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Screens/Payments/booking_information_screen.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
@@ -6,6 +7,7 @@ import 'package:taqreeb/core/services/cart_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
 class CartScreen extends StatefulWidget {
@@ -81,7 +83,7 @@ class _CartScreenState extends State<CartScreen> {
             return Center(
               child: Text(
                 'Failed to load cart\n${snapshot.error}',
-                style: TextStyle(color: MyColors.white),
+                style: GoogleFonts.roboto(color: MyColors.white),
                 textAlign: TextAlign.center,
               ),
             );
@@ -99,7 +101,7 @@ class _CartScreenState extends State<CartScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Your cart is empty',
-                    style: TextStyle(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: 20,
                     ),
@@ -107,7 +109,7 @@ class _CartScreenState extends State<CartScreen> {
                   SizedBox(height: 10),
                   Text(
                     'Add items to get started',
-                    style: TextStyle(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: 16,
                     ),
@@ -144,14 +146,14 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         Text(
                           'Total Items',
-                          style: TextStyle(
+                          style: GoogleFonts.roboto(
                             color: MyColors.white,
                             fontSize: 16,
                           ),
                         ),
                         Text(
                           cart.totalItems.toString(),
-                          style: TextStyle(
+                          style: GoogleFonts.roboto(
                             color: MyColors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -165,14 +167,14 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         Text(
                           'Total Price',
-                          style: TextStyle(
+                          style: GoogleFonts.roboto(
                             color: MyColors.white,
                             fontSize: 18,
                           ),
                         ),
                         Text(
                           '\$${cart.totalPrice.toStringAsFixed(2)}',
-                          style: TextStyle(
+                          style: GoogleFonts.roboto(
                             color: MyColors.yellow,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -234,7 +236,7 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       Text(
                         item.itemDetails['name'] ?? 'No Name',
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -245,7 +247,7 @@ class _CartScreenState extends State<CartScreen> {
                       SizedBox(height: 4),
                       Text(
                         _getItemDescription(item),
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontSize: 14,
                         ),
@@ -255,7 +257,7 @@ class _CartScreenState extends State<CartScreen> {
                       SizedBox(height: 8),
                       Text(
                         '\$${_getItemPrice(item).toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(
                           color: MyColors.yellow,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -273,7 +275,7 @@ class _CartScreenState extends State<CartScreen> {
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.remove, color: MyColors.white),
+                      icon: Icon(FontAwesomeIcons.minus, color: MyColors.white),
                       onPressed: item.quantity > 1
                           ? () => _updateQuantity(item.id, item.quantity - 1)
                           : null,
@@ -287,18 +289,18 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       child: Text(
                         item.quantity.toString(),
-                        style: TextStyle(color: MyColors.white),
+                        style: GoogleFonts.roboto(color: MyColors.white),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.add, color: MyColors.white),
+                      icon: Icon(FontAwesomeIcons.plus, color: MyColors.white),
                       onPressed: () =>
                           _updateQuantity(item.id, item.quantity + 1),
                     ),
                   ],
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete, color: MyColors.red),
+                  icon: Icon(FontAwesomeIcons.trash, color: MyColors.red),
                   onPressed: () => _removeItem(item.id),
                 ),
               ],

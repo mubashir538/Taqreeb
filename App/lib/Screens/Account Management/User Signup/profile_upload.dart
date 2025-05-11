@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -13,7 +12,6 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
 class ProfilePictureUpload extends StatefulWidget {
@@ -31,7 +29,6 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
   // Constants
   static const double _imageSizeFactor = 0.5;
-  static const double _uploadIconSizeFactor = 0.03;
   static const int _progressStep = 4;
 
   @override
@@ -256,31 +253,30 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
             margin: EdgeInsets.all(Screen.max(context) * 0.04),
             child: Stack(
               children: [
-                ClipOval(
-                  child: Container(
-                    color: Colors.white,
-                    child: _selectedImage != null
-                        ? Image.file(
-                            _selectedImage!,
-                            width: Screen.width(context) * _imageSizeFactor,
-                            height: Screen.width(context) * _imageSizeFactor,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            MyImages.uploadProfile,
-                            width: Screen.width(context) * _imageSizeFactor,
-                            height: Screen.width(context) * _imageSizeFactor,
-                            fit: BoxFit.cover,
-                          ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: MyColors.yellow, width: 5),
+                    shape: BoxShape.circle,
                   ),
-                ),
-                Positioned(
-                  bottom: Screen.width(context) * _uploadIconSizeFactor,
-                  left: Screen.width(context) * _uploadIconSizeFactor,
-                  child: SvgPicture.asset(
-                    MyIcons.upload,
-                    width: Screen.max(context) * _uploadIconSizeFactor,
-                    height: Screen.max(context) * _uploadIconSizeFactor,
+                  child: ClipOval(
+                    child: Container(
+                      width: Screen.width(context) * _imageSizeFactor,
+                      height: Screen.width(context) * _imageSizeFactor,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        // border: Border.all(color: MyColors.yellow, width: 5),
+                      ),
+                      child: _selectedImage != null
+                          ? Image.file(
+                              _selectedImage!,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              MyImages.uploadProfile,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                 ),
               ],

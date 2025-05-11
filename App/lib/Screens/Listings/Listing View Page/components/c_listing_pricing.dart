@@ -169,7 +169,7 @@ class _PricingSectionState extends State<PricingSection> {
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               hintText: 'Enter $label...',
-              hintStyle: const TextStyle(color: Colors.grey),
+              hintStyle:  GoogleFonts.roboto(color: Colors.grey),
             ),
           )
         else

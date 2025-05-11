@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
@@ -8,6 +9,7 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddCategoryAddProduct extends StatefulWidget {
   const AddCategoryAddProduct({super.key});
@@ -128,6 +130,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
 
   Widget _buildNameField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.box,
       focusNode: _formController.nameFocus,
       onFieldSubmitted: (_) {
         FocusScope.of(context).requestFocus(_formController.descriptionFocus);
@@ -167,9 +170,9 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+           Text(
             'Product Image',
-            style: TextStyle(
+            style: GoogleFonts.roboto(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -203,7 +206,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
                           color: Colors.red,
                         ),
                         child: Icon(
-                          Icons.close,
+                          FontAwesomeIcons.xmark,
                           size: Screen.max(context) * 0.04,
                           color: Colors.white,
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -156,7 +157,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                 ),
               ),
               Icon(
-                Icons.color_lens,
+                FontAwesomeIcons.palette,
                 color: selectedColor,
                 size: Screen.max(context) * 0.03,
               ),

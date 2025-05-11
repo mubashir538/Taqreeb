@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NoInternetScreen extends StatelessWidget {
   const NoInternetScreen({super.key});
@@ -16,12 +17,12 @@ class NoInternetScreen extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               'No Internet Connection',
-              style: TextStyle(color: MyColors.white, fontSize: 24),
+              style: GoogleFonts.roboto(color: MyColors.white, fontSize: 24),
             ),
             SizedBox(height: 20),
             Text(
               'Please check your connection and try again',
-              style: TextStyle(color: MyColors.white, fontSize: 16),
+              style: GoogleFonts.roboto(color: MyColors.white, fontSize: 16),
             ),
             SizedBox(height: 30),
             ElevatedButton(

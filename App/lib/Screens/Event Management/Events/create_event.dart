@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
 import 'package:taqreeb/Components/Inputs/c_question_group.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -16,7 +17,6 @@ import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
-import 'package:taqreeb/core/utils/images.dart';
 
 class CreateEvent extends StatefulWidget {
   const CreateEvent({super.key});
@@ -192,7 +192,6 @@ class _CreateEventState extends State<CreateEvent> {
   Future<Map<String, dynamic>> _sendEventRequest() async {
     final userId = await MyStorage.getToken(MyTokens.userId) ?? "";
 
-
     final response = await MyApi.postRequest(
       endpoint: _isEditMode ? 'EditEvent/' : 'CreateEvent/',
       headers: {
@@ -293,7 +292,6 @@ class _CreateEventState extends State<CreateEvent> {
               Headersecondary(
                 heading: _isEditMode ? "Edit Event" : "Create Event",
                 para: "Plan your event effortlessly!",
-                image: MyImages.singupPng,
               ),
               Container(
                 margin: EdgeInsets.symmetric(
@@ -339,6 +337,7 @@ class _CreateEventState extends State<CreateEvent> {
       heading: "Basic Info",
       questions: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.calendarWeek,
           focusNode: _formData.eventNameFocus,
           onFieldSubmitted: (_) => _focusNext(_formData.typeFocus),
           hint: "Event Name",
@@ -367,6 +366,7 @@ class _CreateEventState extends State<CreateEvent> {
           valuecontroller: _formData.date,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.locationDot,
           focusNode: _formData.locationFocus,
           onFieldSubmitted: (_) => _focusNext(_formData.themeColorFocus),
           hint: "Location",
@@ -401,6 +401,7 @@ class _CreateEventState extends State<CreateEvent> {
       heading: "Guest Info",
       questions: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.userGroup,
           focusNode: _formData.guestMinFocus,
           onFieldSubmitted: (_) => _focusNext(_formData.guestMaxFocus),
           hint: "Minimum Guests",
@@ -408,6 +409,7 @@ class _CreateEventState extends State<CreateEvent> {
           valueController: _formData.guestMin,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.userGroup,
           focusNode: _formData.guestMaxFocus,
           onFieldSubmitted: (_) => _focusNext(_formData.budgetFocus),
           hint: "Maximum Guests",
@@ -423,6 +425,7 @@ class _CreateEventState extends State<CreateEvent> {
       heading: "Budget",
       questions: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.moneyBill1Wave,
           focusNode: _formData.budgetFocus,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           hint: "Enter Budget",

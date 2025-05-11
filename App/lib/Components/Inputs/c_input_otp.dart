@@ -106,7 +106,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: _focusNodes[index].hasFocus
-                        ? Colors.blue
+                        ? MyColors.red
                         : Colors.transparent,
                     width: 2,
                   ),

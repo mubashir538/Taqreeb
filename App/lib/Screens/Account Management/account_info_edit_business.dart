@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
@@ -147,6 +148,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
         Column(
           children: [
             MyTextBox(
+              prefixIcon: FontAwesomeIcons.building,
               focusNode: FocusNode(),
               onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
               hint: 'Business Name',

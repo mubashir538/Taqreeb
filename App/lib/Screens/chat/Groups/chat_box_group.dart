@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -278,7 +279,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                               height: 150,
                               width: 200,
                               color: MyColors.darkLighter,
-                              child: const Icon(Icons.error, color: Colors.red),
+                              child: const Icon(FontAwesomeIcons.exclamation, color: Colors.red),
                             );
                           },
                         ),
@@ -310,7 +311,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.image, color: MyColors.yellow),
+            icon: Icon(FontAwesomeIcons.image, color: MyColors.yellow),
             onPressed: _sendImage,
           ),
           Expanded(
@@ -329,7 +330,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send, color: MyColors.white),
+            icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
             onPressed: () => _sendMessage(_messageController.text),
           ),
         ],
@@ -379,7 +380,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           Row(
             children: [
               IconButton(
-                icon: Icon(Icons.people, color: MyColors.white),
+                icon: Icon(FontAwesomeIcons.userGroup, color: MyColors.white),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -391,7 +392,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               ),
               if (_isAdmin)
                 IconButton(
-                  icon: Icon(Icons.edit, color: MyColors.white),
+                  icon: Icon(FontAwesomeIcons.pen, color: MyColors.white),
                   onPressed: _navigateToEditGroup,
                 ),
             ],

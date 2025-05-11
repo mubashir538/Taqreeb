@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -146,6 +147,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
                         controller: genderController,
                       ),
                       MyTextBox(
+                        prefixIcon: FontAwesomeIcons.child,
                         hint: 'Enter Your Age',
                         valueController: ageController,
                         isNum: true,

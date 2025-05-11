@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -98,13 +99,13 @@ class _CartItemsState extends State<CartItems> {
                           onTap: () => setState(() {
                             widget.quantity == 1 ? null : widget.quantity--;
                           }),
-                          child: Icon(Icons.remove,
+                          child: Icon(FontAwesomeIcons.minus,
                               color: Colors.white,
                               size: Screen.max(context) * 0.015),
                         ),
                         Text(
                           widget.quantity.toString(),
-                          style: TextStyle(
+                          style: GoogleFonts.roboto(
                               color: Colors.white,
                               fontSize: Screen.max(context) * 0.015),
                         ),
@@ -112,7 +113,7 @@ class _CartItemsState extends State<CartItems> {
                             onTap: () => setState(() {
                                   widget.quantity++;
                                 }),
-                            child: Icon(Icons.add,
+                            child: Icon(FontAwesomeIcons.plus,
                                 color: Colors.white,
                                 size: Screen.max(context) * 0.015)),
                       ],

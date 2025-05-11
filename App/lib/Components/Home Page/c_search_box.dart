@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -67,7 +68,7 @@ class _SearchBoxState extends State<SearchBox> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Icon(Icons.search, color: MyColors.white),
+              Icon(FontAwesomeIcons.magnifyingGlass, color: MyColors.white),
               Container(
                 margin: EdgeInsets.only(left: Screen.max(context) * 0.02),
                 width: Screen.width(context) * 0.5,

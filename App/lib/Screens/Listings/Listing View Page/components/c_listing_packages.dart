@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -194,6 +195,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           mainAxisSize: MainAxisSize.min,
           children: [
             MyTextBox(
+              prefixIcon: FontAwesomeIcons.cubes,
               focusNode: nameFocus,
               onFieldSubmitted: (_) =>
                   FocusScope.of(context).requestFocus(detailsFocus),
@@ -207,6 +209,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                   FocusScope.of(context).requestFocus(priceFocus),
             ),
             MyTextBox(
+              prefixIcon: FontAwesomeIcons.moneyBill,
               focusNode: priceFocus,
               onFieldSubmitted: (_) => priceFocus.unfocus(),
               hint: 'Price',
@@ -274,11 +277,11 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.edit, color: MyColors.yellow),
+          icon: Icon(FontAwesomeIcons.pen, color: MyColors.yellow),
           onPressed: () => _showPackageDialog(index: index),
         ),
         IconButton(
-          icon: Icon(Icons.delete, color: MyColors.red),
+          icon: Icon(FontAwesomeIcons.trash, color: MyColors.red),
           onPressed: () => _handleDeletePackage(index),
         ),
       ],
@@ -298,7 +301,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
   Widget _buildAddButton() {
     return IconButton(
-      icon: Icon(Icons.add_circle_outline, color: MyColors.yellow),
+      icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.yellow),
       onPressed: () => _showPackageDialog(),
     );
   }

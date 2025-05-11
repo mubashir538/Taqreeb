@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -123,7 +124,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.add,
+                      FontAwesomeIcons.plus,
                       color: MyColors.white,
                       size: maxThing * 0.035,
                     ),

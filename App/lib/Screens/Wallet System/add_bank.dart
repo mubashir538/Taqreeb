@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
@@ -103,6 +104,7 @@ class _AddBankState extends State<AddBank> {
 
                         // Account Name Field
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.userTie,
                           hint: "Account Holder Name",
                           valueController: accountNameController,
                         ),
@@ -110,6 +112,7 @@ class _AddBankState extends State<AddBank> {
 
                         // Account Number Field
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.buildingColumns,
                           hint: "Account Number",
                           isNum: true,
                           maxLength: 16,
@@ -119,6 +122,7 @@ class _AddBankState extends State<AddBank> {
 
                         // IBAN Number Field
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.earthAmericas,
                           hint: "IBAN Number",
                           valueController: ibanController,
                           maxLength: 24,

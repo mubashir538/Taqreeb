@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -116,11 +117,13 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
                     child: Column(
                       children: [
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.lock,
                           hint: 'New Password',
                           isPassword: true,
                           valueController: _passwordController,
                         ),
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.lock,
                           hint: 'Confirm Password',
                           valueController: _confirmPasswordController,
                           isPassword: true,
@@ -169,7 +172,7 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.01),
           child: Icon(
-            Icons.check_circle_outline_rounded,
+            FontAwesomeIcons.circleCheck,
             size: 20,
             color: isValid ? Colors.green : Colors.red,
           ),

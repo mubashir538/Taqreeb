@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Home%20Page/c_product.dart';
@@ -160,7 +161,7 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
       backgroundColor: MyColors.yellow,
       onPressed: _navigateToAddProduct,
       child: Icon(
-        Icons.add,
+        FontAwesomeIcons.plus,
         color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),

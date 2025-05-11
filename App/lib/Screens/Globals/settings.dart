@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -121,7 +122,7 @@ class _SettingsState extends State<Settings> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Icon(
-                                            Icons.business_rounded,
+                                            FontAwesomeIcons.building,
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
@@ -192,9 +193,9 @@ class _SettingsState extends State<Settings> {
                                             '/BusinessSignup_BasicInfo');
                                       },
                                       text: 'Signup As Business',
-                                      leftIcon: Icons.business_rounded,
+                                      leftIcon: FontAwesomeIcons.building,
                                       rightIcon:
-                                          Icons.arrow_forward_ios_rounded,
+                                          FontAwesomeIcons.chevronRight,
                                     ),
                               types['freelancer']
                                   ? Container(
@@ -218,7 +219,7 @@ class _SettingsState extends State<Settings> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Icon(
-                                            Icons.business_rounded,
+                                            FontAwesomeIcons.building,
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
@@ -289,9 +290,9 @@ class _SettingsState extends State<Settings> {
                                             '/FreelancerSignup_BasicInfo');
                                       },
                                       text: 'Signup As Freelancer',
-                                      leftIcon: Icons.work_outline_rounded,
+                                      leftIcon: FontAwesomeIcons.userTie,
                                       rightIcon:
-                                          Icons.arrow_forward_ios_rounded,
+                                          FontAwesomeIcons.chevronRight,
                                     ),
                               GuideButton(
                                 onpressed: () {
@@ -319,8 +320,8 @@ class _SettingsState extends State<Settings> {
                                   ).showDialogBox(context);
                                 },
                                 text: 'Appearance',
-                                leftIcon: Icons.palette_rounded,
-                                rightIcon: Icons.arrow_forward_ios_rounded,
+                                leftIcon: FontAwesomeIcons.moon,
+                                rightIcon: FontAwesomeIcons.chevronRight,
                               ),
                               GuideButton(
                                 onpressed: () {
@@ -331,8 +332,8 @@ class _SettingsState extends State<Settings> {
                                           : '/AccountInfoEdit');
                                 },
                                 text: 'Edit Account Info',
-                                leftIcon: Icons.edit_rounded,
-                                rightIcon: Icons.arrow_forward_ios_rounded,
+                                leftIcon: FontAwesomeIcons.pen,
+                                rightIcon: FontAwesomeIcons.chevronRight,
                               ),
                             ],
                           ),
@@ -346,7 +347,7 @@ class _SettingsState extends State<Settings> {
             child: Header(
               key: headerKey,
               heading: 'Settings',
-              icon: Icons.logout_rounded,
+              icon: FontAwesomeIcons.arrowRightFromBracket,
             ),
           ),
         ],

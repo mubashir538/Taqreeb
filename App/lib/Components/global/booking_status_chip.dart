@@ -1,5 +1,6 @@
 // lib/Components/Chips/booking_status_chip.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class BookingStatusChip extends StatelessWidget {
@@ -18,7 +19,7 @@ class BookingStatusChip extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(
+        style: GoogleFonts.roboto(
           color: _getStatusColor(status),
           fontSize: 12,
           fontWeight: FontWeight.bold,

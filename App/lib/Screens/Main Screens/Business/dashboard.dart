@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -163,7 +164,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             const Spacer(),
             Icon(
-              Icons.arrow_forward_ios,
+              FontAwesomeIcons.chevronRight,
               color: MyColors.white,
               size: Screen.max(context) * 0.02,
             ),
@@ -209,37 +210,37 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           _buildDashboardOption(
                             title: "My Bookings",
-                            icon: Icons.calendar_today,
+                            icon: FontAwesomeIcons.calendarDay,
                             onTap: () => Navigator.pushNamed(
                                 context, '/BusinessBookings'),
                           ),
                           _buildDashboardOption(
                             title: "My Wallet",
-                            icon: Icons.wallet,
+                            icon: FontAwesomeIcons.wallet,
                             onTap: () =>
                                 Navigator.pushNamed(context, '/WalletScreen'),
                           ),
                           _buildDashboardOption(
                             title: "My Messages",
-                            icon: Icons.message,
+                            icon: FontAwesomeIcons.comment,
                             onTap: () =>
                                 Navigator.pushNamed(context, '/ChatsScreen'),
                           ),
                           _buildDashboardOption(
                             title: "Manage Slots",
-                            icon: Icons.access_time,
+                            icon: FontAwesomeIcons.clock,
                             onTap: () => Navigator.pushNamed(
                                 context, '/UpdateBookedSlots'),
                           ),
                           _buildDashboardOption(
                             title: "Manage Listings",
-                            icon: Icons.business,
+                            icon: FontAwesomeIcons.building,
                             onTap: () =>
                                 Navigator.pushNamed(context, '/YourListings'),
                           ),
                           _buildDashboardOption(
                             title: "Profile Settings",
-                            icon: Icons.settings,
+                            icon: FontAwesomeIcons.gear,
                             onTap: () => Navigator.pushNamed(
                                 context, '/BusinessInfoEdit'),
                           ),

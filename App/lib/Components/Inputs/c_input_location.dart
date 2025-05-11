@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
@@ -67,24 +68,25 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
   }
 
   Future<void> _getCurrentLocation() async {
-  try {
-    Position position = await Geolocator.getCurrentPosition(
-      locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    );
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
 
-    setState(() {
-      _currentLocation = "${position.latitude}, ${position.longitude}";
-      _textController.text = _currentLocation;
-      widget.onLocationChanged(_currentLocation);
-    });
-  } catch (e) {
-    MyApi.postRequest(
-        endpoint: 'error/application',
-        body: {'error': 'Error fetching current location: $e'});
+      setState(() {
+        _currentLocation = "${position.latitude}, ${position.longitude}";
+        _textController.text = _currentLocation;
+        widget.onLocationChanged(_currentLocation);
+      });
+    } catch (e) {
+      MyApi.postRequest(
+          endpoint: 'error/application',
+          body: {'error': 'Error fetching current location: $e'});
+    }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -97,6 +99,7 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
                 child: TypeAheadField<String>(
                   builder: (context, controller, focusNode) {
                     return MyTextBox(
+                      prefixIcon: FontAwesomeIcons.locationPin,
                       hint: 'Location',
                       valueController: _textController,
                       focusNode: _focusNode,
@@ -105,7 +108,7 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
                   suggestionsCallback: _fetchSuggestions,
                   itemBuilder: (context, suggestion) {
                     return ListTile(
-                      leading: Icon(Icons.location_on),
+                      leading: Icon(FontAwesomeIcons.locationDot),
                       title: Text(suggestion),
                     );
                   },
@@ -118,7 +121,7 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.location_on),
+                icon: Icon(FontAwesomeIcons.locationDot),
                 onPressed: _getCurrentLocation,
               ),
             ],

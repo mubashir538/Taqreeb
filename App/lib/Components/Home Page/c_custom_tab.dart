@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart'; // Assuming MyColors is here
 
 class CustomTabBar extends StatefulWidget {
@@ -57,7 +58,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                 child: Center(
                   child: Text(
                     widget.tabs[index],
-                    style: TextStyle(
+                    style: GoogleFonts.roboto(
                       color: isSelected ? MyColors.white : MyColors.whiteDarker,
                       fontWeight: FontWeight.w500,
                       fontSize: Screen.max(context) * 0.015,

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -476,7 +477,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     color: MyColors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.add, color: MyColors.white),
+                  child: Icon(FontAwesomeIcons.plus, color: MyColors.white),
                 ),
               ),
             ),
@@ -507,7 +508,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.add, color: Colors.white),
+              const Icon(FontAwesomeIcons.plus, color: Colors.white),
               SizedBox(width: Screen.width(context) * 0.02),
               Text(
                 'Create Group',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/c_business_categories.dart';
@@ -123,7 +124,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.location_on_outlined),
+                            const Icon(FontAwesomeIcons.locationDot),
                             SizedBox(width: Screen.width(context) * 0.02),
                             Text(
                               '${userInfo['city'] ?? 'Unknown City'}, Pakistan',
@@ -135,7 +136,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           SizedBox(height: Screen.height(context) * 0.015),
                           Row(
                             children: [
-                              Icon(Icons.mail, color: MyColors.white),
+                              Icon(FontAwesomeIcons.envelope, color: MyColors.white),
                               SizedBox(width: Screen.width(context) * 0.02),
                               Text(userInfo['email'], style: style),
                             ],
@@ -145,7 +146,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                           SizedBox(height: Screen.height(context) * 0.015),
                           Row(
                             children: [
-                              Icon(Icons.phone, color: MyColors.white),
+                              Icon(FontAwesomeIcons.phone, color: MyColors.white),
                               SizedBox(width: Screen.width(context) * 0.02),
                               Text(
                                 userInfo['contactNumber'].toString(),

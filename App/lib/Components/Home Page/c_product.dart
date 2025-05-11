@@ -4,6 +4,7 @@ import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/cart_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 
@@ -113,7 +114,7 @@ class _ProductBoxState extends State<ProductBox> {
                     Expanded(
                       child: Text(
                         widget.productName,
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(
                           color: Colors.white,
                           fontSize: Screen.max(context) * 0.02,
                           fontWeight: FontWeight.bold,
@@ -134,7 +135,7 @@ class _ProductBoxState extends State<ProductBox> {
                 SizedBox(height: Screen.max(context) * 0.01),
                 Text(
                   widget.productDescription,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(
                     color: Colors.white70,
                     fontSize: Screen.max(context) * 0.018,
                   ),
@@ -144,7 +145,7 @@ class _ProductBoxState extends State<ProductBox> {
                 SizedBox(height: Screen.max(context) * 0.01),
                 Text(
                   widget.productPrice,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(
                     color: MyColors.yellow,
                     fontSize: Screen.max(context) * 0.022,
                     fontWeight: FontWeight.bold,

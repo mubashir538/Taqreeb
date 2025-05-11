@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/picture_options.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -197,6 +198,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                           Column(
                             children: [
                               MyTextBox(
+                                prefixIcon: FontAwesomeIcons.user,
                                   focusNode: fnameFocus,
                                   onFieldSubmitted: (_) {
                                     FocusScope.of(context)
@@ -205,6 +207,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                   hint: 'First Name',
                                   valueController: fnamecontroller),
                               MyTextBox(
+                                prefixIcon: FontAwesomeIcons.user,
                                   focusNode: lastnameFocus,
                                   onFieldSubmitted: (_) {
                                     FocusScope.of(context)
@@ -219,6 +222,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                     genderController.text = value;
                                   }),
                               MyTextBox(
+                                prefixIcon: FontAwesomeIcons.locationDot,
                                   focusNode: locationFocus,
                                   onFieldSubmitted: (_) {
                                     FocusScope.of(context).unfocus();

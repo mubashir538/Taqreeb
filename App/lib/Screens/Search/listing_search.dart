@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
@@ -317,7 +318,7 @@ class _SearchServiceState extends State<SearchService>
                       });
                     },
                     child: Icon(
-                      Icons.close,
+                      FontAwesomeIcons.xmark,
                       size: 16,
                       color: MyColors.dark,
                     ),
@@ -352,7 +353,7 @@ class _SearchServiceState extends State<SearchService>
                 IconButton(
                   onPressed: () => _showFilterPopup(context),
                   icon: Icon(
-                    Icons.tune,
+                    FontAwesomeIcons.bars,
                     size: Screen.max(context) * 0.03,
                     color: MyColors.white,
                   ),
@@ -362,7 +363,7 @@ class _SearchServiceState extends State<SearchService>
                   IconButton(
                     onPressed: () => _showAdditionalFilterPopup(context),
                     icon: Icon(
-                      Icons.filter_alt,
+                      FontAwesomeIcons.filter,
                       size: Screen.max(context) * 0.03,
                       color: MyColors.white,
                     ),

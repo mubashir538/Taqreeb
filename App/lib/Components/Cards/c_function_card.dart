@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -76,7 +77,7 @@ class FunctionCard extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(
-                      Icons.delete,
+                      FontAwesomeIcons.trash,
                       size: Screen.max(context) * 0.03,
                       color: isColorDark(color)
                           ? Color(0xffedf2f4)

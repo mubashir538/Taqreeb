@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -84,10 +85,10 @@ class _NewUserSearchState extends State<NewUserSearch> {
     }
 
     if (_searchedUsers.isEmpty) {
-      return const Center(
+      return  Center(
         child: Text(
           'No users found',
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.roboto(color: Colors.white),
         ),
       );
     }

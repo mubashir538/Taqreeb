@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -46,8 +47,8 @@ class _TransactionCardState extends State<TransactionCard> {
                   radius: Screen.max(context) * 0.03,
                   child: Icon(
                     widget.type == "Deposit"
-                        ? Icons.arrow_downward_rounded
-                        : Icons.arrow_upward_rounded,
+                        ? FontAwesomeIcons.arrowDown
+                        : FontAwesomeIcons.arrowUp,
                     color: MyColors.white.withAlpha(200),
                     size: 30,
                   ),

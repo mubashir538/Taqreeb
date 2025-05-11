@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -227,7 +228,7 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
       backgroundColor: MyColors.yellow,
       onPressed: _showAddGuestOptions,
       child: Icon(
-        Icons.add,
+        FontAwesomeIcons.plus,
         color: MyColors.dark,
         size: Screen.max(context) * 0.04,
       ),

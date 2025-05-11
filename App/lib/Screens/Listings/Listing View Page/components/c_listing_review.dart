@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -81,7 +82,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             style: _buildTextStyle(color: MyColors.white),
           ),
           SizedBox(width: Screen.width(context) * 0.02),
-          Icon(Icons.star, color: MyColors.yellow),
+          Icon(FontAwesomeIcons.star, color: MyColors.yellow),
           SizedBox(width: Screen.width(context) * 0.02),
           Text(
             widget.listing['Listing']['rating'].toString(),

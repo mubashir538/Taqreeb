@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -315,12 +316,13 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         children: [
           Expanded(
               child: MyTextBox(
+              prefixIcon: FontAwesomeIcons.comment,
             valueController: _messageController,
             hint: 'Type your message here...',
           )),
           SizedBox(width: 8.0),
           IconButton(
-            icon: Icon(Icons.send, color: Colors.red),
+            icon: Icon(FontAwesomeIcons.paperPlane, color: Colors.red),
             onPressed: () {
               if (_messageController.text.trim().isNotEmpty) {
                 _addUserMessage(_messageController.text);

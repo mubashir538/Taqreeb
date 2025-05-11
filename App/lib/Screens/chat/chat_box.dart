@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -121,7 +122,7 @@ class _ChatBoxState extends State<ChatBox> {
           ),
           // Close button
           IconButton(
-            icon: Icon(Icons.close, size: 20, color: MyColors.white),
+            icon: Icon(FontAwesomeIcons.xmark, size: 20, color: MyColors.white),
             onPressed: () {
               setState(() {
                 _listing = {};
@@ -576,7 +577,7 @@ class _ChatBoxState extends State<ChatBox> {
           child: Row(
             children: [
               IconButton(
-                icon: Icon(Icons.image, color: MyColors.yellow),
+                icon: Icon(FontAwesomeIcons.image, color: MyColors.yellow),
                 onPressed: _sendImage,
               ),
               Expanded(
@@ -595,7 +596,7 @@ class _ChatBoxState extends State<ChatBox> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.send, color: MyColors.white),
+                icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
                 onPressed: () => _sendMessage(_messageController.text),
               ),
             ],

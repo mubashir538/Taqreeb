@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Cards/c_calendar.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
@@ -136,23 +137,27 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   ),
                   SizedBox(height: Screen.height(context) * 0.02),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.user,
                     hint: 'Full Name',
                     valueController: _nameController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.015),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.envelope,
                     hint: 'Email Address',
                     valueController: _emailController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.015),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.phone,
                     hint: 'Phone Number',
                     valueController: _phoneController,
                     isNum: true,
                   ),
                   SizedBox(height: Screen.height(context) * 0.015),
                   MyTextBox(
-                    hint: 'ID Number (Optional)',
+                    prefixIcon: FontAwesomeIcons.addressCard,
+                    hint: 'ID Number',
                     valueController: _idNumberController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.03),
@@ -178,6 +183,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   ),
                   SizedBox(height: Screen.height(context) * 0.02),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.noteSticky,
                     hint: 'Special requests or notes',
                     valueController: _notesController,
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -8,6 +9,7 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
+
 
 class DescriptionCategory extends StatefulWidget {
   final Map<String, dynamic> listing;
@@ -142,7 +144,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
           style: _buildTextStyle(color: MyColors.white),
           decoration: InputDecoration(
             hintText: 'Edit description...',
-            hintStyle: const TextStyle(color: Colors.grey),
+            hintStyle:  GoogleFonts.roboto(color: Colors.grey),
             border: const OutlineInputBorder(),
           ),
         ),
@@ -171,8 +173,8 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
               textAlign: TextAlign.justify,
             ),
             Icon(_isToggled
-                ? Icons.arrow_downward_outlined
-                : Icons.arrow_upward_outlined),
+                ? FontAwesomeIcons.arrowDown
+                : FontAwesomeIcons.arrowUp),
           ],
         ),
       ),

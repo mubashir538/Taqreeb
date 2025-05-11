@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -26,8 +28,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
   bool _isLoading = false;
 
   static const double _topPaddingFactor = 0.05;
-  static const double _dividerHeightFactor = 0.1;
-  static const double _textSizeFactor = 0.015;
+  static const double _dividerHeightFactor = 0.05;
   static const int _progressStep = 1;
 
   @override
@@ -129,6 +130,7 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                         onFieldSubmitted: (_) =>
                             FocusScope.of(context).unfocus(),
                         hint: 'Contact Number',
+                        prefixIcon: FontAwesomeIcons.phone,
                         isNum: true,
                         valueController: _contactController,
                       ),
@@ -140,16 +142,11 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                         onPressed: _isLoading ? null : _sendOtp,
                         text: 'Send OTP',
                       ),
-                      InkWell(
-                        onTap: _navigateToEmailVerification,
-                        child: Text(
-                          'Verify Email Instead',
-                          style: TextStyle(
-                            color: MyColors.yellow,
-                            fontSize: Screen.max(context) * _textSizeFactor,
-                          ),
-                        ),
-                      ),
+                      SizedBox(height: Screen.max(context) * 0.007),
+                      BorderButton(
+                        text: 'Verify Email Instead',
+                        onPressed: _navigateToEmailVerification,
+                      )
                     ],
                   ),
                   const ProgressBar(progress: _progressStep),

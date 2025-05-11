@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class EditIcon extends StatelessWidget {
   const EditIcon({super.key});
@@ -17,7 +19,7 @@ class EditIcon extends StatelessWidget {
         child: Center(
           child: Text(
             'T',
-            style: TextStyle(
+            style: GoogleFonts.roboto(
               color: Colors.white,
               fontSize: 40,
               fontWeight: FontWeight.bold,

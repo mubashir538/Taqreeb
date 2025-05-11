@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+
 
 class EditGroupScreen extends StatefulWidget {
   final String groupId;
@@ -202,10 +205,11 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
     return Column(
       children: [
         ListTile(
-          title: const Text('Participants', style: TextStyle(fontSize: 18)),
+          title:  Text('Participants',
+              style: GoogleFonts.roboto(fontSize: 18)),
           trailing: _isAdmin
               ? IconButton(
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(FontAwesomeIcons.plus),
                   onPressed: () => setState(() => _showAddParticipants = true),
                 )
               : null,
@@ -223,20 +227,20 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                   ),
                   title: Text('${user['firstName']} ${user['lastName']}'),
                   subtitle: userId == _adminId
-                      ? const Text('Admin',
-                          style: TextStyle(color: Colors.green))
+                      ?  Text('Admin',
+                          style: GoogleFonts.roboto(color: Colors.green))
                       : null,
                   trailing: _isAdmin
                       ? userId == _adminId
                           ? null // Can't remove admin
                           : IconButton(
-                              icon: const Icon(Icons.remove_circle,
+                              icon: const Icon(FontAwesomeIcons.circleMinus,
                                   color: Colors.red),
                               onPressed: () => _removeParticipant(userId),
                             )
                       : userId == widget.currentUserId
                           ? IconButton(
-                              icon: const Icon(Icons.exit_to_app,
+                              icon: const Icon(FontAwesomeIcons.arrowRightFromBracket,
                                   color: Colors.red),
                               onPressed: () => _removeParticipant(userId),
                             )
@@ -256,7 +260,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
           decoration: InputDecoration(
             labelText: 'Search users',
             suffixIcon: IconButton(
-              icon: const Icon(Icons.close),
+              icon: const Icon(FontAwesomeIcons.xmark),
               onPressed: () => setState(() => _showAddParticipants = false),
             ),
           ),
@@ -276,7 +280,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 ),
                 title: Text(user['name']),
                 trailing: IconButton(
-                  icon: const Icon(Icons.add, color: Colors.green),
+                  icon: const Icon(FontAwesomeIcons.plus, color: Colors.green),
                   onPressed: () => _addParticipant(user['userId']),
                 ),
               );
@@ -324,7 +328,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     ? FileImage(_newGroupImage!)
                     : NetworkImage('${MyApi.baseUrl}$_newGroupImageUrl')
                         as ImageProvider,
-                child: _isAdmin ? const Icon(Icons.edit, size: 30) : null,
+                child: _isAdmin ? const Icon(FontAwesomeIcons.pen, size: 30) : null,
               ),
             ),
             const SizedBox(height: 20),

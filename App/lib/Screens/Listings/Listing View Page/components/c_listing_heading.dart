@@ -419,7 +419,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         GestureDetector(
           onTap: _showEventSelectionDialog,
           child: Icon(
-            Icons.add,
+            FontAwesomeIcons.plus,
             color: MyColors.yellow,
             size: Screen.max(context) * 0.05,
           ),
@@ -444,7 +444,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         ),
         margin: EdgeInsets.all(Screen.max(context) * 0.02),
         child: Icon(
-          Icons.delete,
+          FontAwesomeIcons.trash,
           size: Screen.max(context) * 0.03,
           color: Colors.white,
         ),
@@ -499,7 +499,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         children: [
           _buildRatingDisplay(),
           _buildLocationDisplay(),
-          Icon(Icons.location_on, color: MyColors.white),
+          Icon(FontAwesomeIcons.locationDot, color: MyColors.white),
         ],
       ),
     );
@@ -508,7 +508,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   Widget _buildRatingDisplay() {
     return Row(
       children: [
-        Icon(Icons.star, color: MyColors.yellow),
+        Icon(FontAwesomeIcons.star, color: MyColors.yellow),
         Text(
           "${widget.listing['Listing']['rating']} (${widget.listing['Listing']['ratingCount']})",
           style: _buildTextStyle(color: MyColors.white),

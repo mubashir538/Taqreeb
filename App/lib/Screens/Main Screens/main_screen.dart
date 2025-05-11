@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
 import 'package:taqreeb/Screens/chat/chats_screen.dart';
@@ -104,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
               backgroundColor: MyColors.red,
               shape: const CircleBorder(),
               child: Icon(
-                Icons.add,
+                FontAwesomeIcons.plus,
                 size: Screen.max(context) * 0.04,
                 color: MyColors.white,
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -190,6 +191,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         content: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: MyTextBox(
+            prefixIcon: FontAwesomeIcons.list,
             hint: 'Enter Checklist Item',
             valueController: _textController,
           ),
@@ -312,7 +314,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.centerRight,
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: const Icon(FontAwesomeIcons.trash, color: Colors.white),
       ),
       confirmDismiss: (direction) async {
         return await showDialog(
@@ -437,7 +439,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         borderRadius: BorderRadius.circular(50),
       ),
       backgroundColor: MyColors.red,
-      child: const Icon(Icons.add, color: Colors.white),
+      child: const Icon(FontAwesomeIcons.plus, color: Colors.white),
     );
   }
 }

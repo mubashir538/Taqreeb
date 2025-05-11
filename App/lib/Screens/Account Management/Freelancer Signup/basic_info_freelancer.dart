@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -161,13 +162,15 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
     return Column(
       children: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.userTie,
           focusNode: _fullNameFocus,
           onFieldSubmitted: (_) =>
               FocusScope.of(context).requestFocus(_cnicFocus),
-          hint: "Enter Business Name",
+          hint: "Enter Agency Name",
           valueController: _fullNameController,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.addressCard,
           focusNode: _cnicFocus,
           onFieldSubmitted: (_) =>
               FocusScope.of(context).requestFocus(_portfolioFocus),
@@ -175,6 +178,7 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
           valueController: _cnicController,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.upwork,
           focusNode: _portfolioFocus,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           hint: "Enter Portfolio Link",

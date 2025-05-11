@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -62,7 +63,7 @@ class _SliderQuestionState extends State<SliderQuestion> {
             children: [
               IconButton(
                 onPressed: () => _updateValue(-50000),
-                icon: Icon(Icons.remove, color: MyColors.red),
+                icon: Icon(FontAwesomeIcons.minus, color: MyColors.red),
               ),
               Expanded(
                 child: Slider(
@@ -83,7 +84,7 @@ class _SliderQuestionState extends State<SliderQuestion> {
               ),
               IconButton(
                 onPressed: () => _updateValue(50000),
-                icon: Icon(Icons.add, color: MyColors.red),
+                icon: Icon(FontAwesomeIcons.plus, color: MyColors.red),
               ),
             ],
           ),
