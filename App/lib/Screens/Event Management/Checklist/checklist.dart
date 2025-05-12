@@ -348,7 +348,8 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       },
       onDismissed: (direction) => _deleteChecklistItem(index),
       child: GestureDetector(
-        onTap: () => _startEditing(index),
+        onTap: () => _toggleChecklistItem(index),
+        onDoubleTap: () => _startEditing(index),
         child: Container(
           margin: EdgeInsets.symmetric(
             horizontal: Screen.max(context) * 0.02,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -285,8 +286,6 @@ class _CreateFunctionState extends State<CreateFunction> {
             top: 0,
             child: Header(
               key: headerKey,
-              heading: _isEditMode ? 'Edit Function' : 'Create Function',
-              image: MyImages.function,
             ),
           ),
           _buildSubmitButton(),
@@ -297,16 +296,19 @@ class _CreateFunctionState extends State<CreateFunction> {
 
   Widget _buildContent() {
     return SingleChildScrollView(
-      child: Container(
-        width: Screen.width(context),
-        constraints: BoxConstraints(minHeight: Screen.height(context)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(height: UImanagement.headerHeight),
-            Column(
+      child: Column(
+        children: [
+          Headersecondary(
+            heading: _isEditMode ? 'Edit Function' : 'Create Function',
+            image: MyImages.function,
+          ),
+          SizedBox(height: Screen.height(context) * 0.04),
+          SizedBox(
+            width: Screen.width(context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: Screen.height(context) * 0.04),
                 _buildNameField(),
                 _buildBudgetField(),
                 _buildTypeDropdown(),
@@ -316,8 +318,8 @@ class _CreateFunctionState extends State<CreateFunction> {
                 SizedBox(height: Screen.height(context) * 0.12),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

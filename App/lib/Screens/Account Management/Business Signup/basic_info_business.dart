@@ -66,7 +66,7 @@ class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
                         children: [
                           MyTextBox(
                             prefixIcon: FontAwesomeIcons.building,
-                            hint: 'Business Name',
+                            hint: 'Enter Business Name',
                             focusNode: provider.profileNameFocusNode,
                             valueController: provider.profileNameController,
                             onFieldSubmitted: (_) {
@@ -75,7 +75,7 @@ class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
                           ),
                           MyTextBox(
                             prefixIcon: FontAwesomeIcons.addressCard,
-                            hint: 'CNIC',
+                            hint: 'Enter CNIC Number',
                             focusNode: provider.cnicFocusNode,
                             isNum: true,
                             valueController: provider.cnicController,

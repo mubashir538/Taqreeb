@@ -28,7 +28,7 @@ class _DateQuestionState extends State<DateQuestion> {
       padding: EdgeInsets.symmetric(
           horizontal: widget.question != '' ? Screen.max(context) * 0.02 : 0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           widget.question != ''
               ? Text(widget.question,
@@ -37,11 +37,11 @@ class _DateQuestionState extends State<DateQuestion> {
                       fontSize: Screen.max(context) * 0.018))
               : Container(),
           Container(
-            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             height: Screen.height(context) * 0.06,
             width: Screen.width(context) * 0.9,
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: MyColors.ligthDark,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -66,7 +66,10 @@ class _DateQuestionState extends State<DateQuestion> {
                   color: MyColors.white,
                 ),
                 decoration: InputDecoration(
-                  prefixIcon: Icon(FontAwesomeIcons.calendarDays),
+                  prefixIcon: Icon(
+                    FontAwesomeIcons.calendarDays,
+                    color: MyColors.white.withAlpha(153),
+                  ),
                   hintText: 'Select Date',
                   hintStyle: GoogleFonts.roboto(
                     color: MyColors.white.withAlpha(153),

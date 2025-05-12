@@ -15,9 +15,11 @@ class FunctionCard extends StatelessWidget {
   final Function seePressed;
   final Color color;
   final VoidCallback? delete;
+  final double width;
 
   const FunctionCard(
       {super.key,
+      this.width = 0.9,
       required this.delete,
       required this.color,
       required this.type,
@@ -50,7 +52,7 @@ class FunctionCard extends StatelessWidget {
     return Center(
       child: Container(
         margin: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
-        width: Screen.width(context) * 0.9,
+        width: Screen.width(context) * width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           color: MyColors.ligthDark,
@@ -59,7 +61,7 @@ class FunctionCard extends StatelessWidget {
           children: [
             Container(
               height: Screen.height(context) * 0.07,
-              width: Screen.width(context) * 0.9,
+              width: Screen.width(context) * width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -99,7 +101,7 @@ class FunctionCard extends StatelessWidget {
             Container(
               margin:
                   EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
-              width: Screen.width(context) * 0.8,
+              width: Screen.width(context) * (width-0.1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -158,7 +160,7 @@ class FunctionCard extends StatelessWidget {
                           text: type.toLowerCase() == 'event'
                               ? 'Edit Event'
                               : 'Edit Function',
-                          width: Screen.width(context) * 0.38,
+                          width: Screen.width(context) * (width/2-0.07),
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {
                             editPressed();
@@ -166,7 +168,7 @@ class FunctionCard extends StatelessWidget {
                         ),
                         BorderButton(
                           text: 'See Details',
-                          width: Screen.width(context) * 0.38,
+                          width: Screen.width(context) * (width/2-0.07),
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {
                             seePressed();

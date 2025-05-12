@@ -59,14 +59,6 @@ class _AddBankState extends State<AddBank> {
                     decoration: BoxDecoration(
                       color: MyColors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withAlpha(51),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +68,7 @@ class _AddBankState extends State<AddBank> {
                           style: GoogleFonts.roboto(
                             fontSize: Screen.max(context) * 0.025,
                             fontWeight: FontWeight.w700,
-                            color: MyColors.white,
+                            color: MyColors.red,
                           ),
                         ),
                         SizedBox(height: Screen.max(context) * 0.03),

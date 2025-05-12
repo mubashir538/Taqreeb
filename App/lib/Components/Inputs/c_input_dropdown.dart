@@ -58,12 +58,14 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
   Widget build(BuildContext context) {
     return Container(
       width: Screen.width(context) * 0.9,
-      padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.02),
+      padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.01),
       child: DropdownButtonFormField<String>(
         focusNode: widget.focusNode ?? _focusNode,
         onSaved: (value) => widget.onFieldSubmitted,
         decoration: InputDecoration(
           labelText: widget.labelText,
+          contentPadding:
+              EdgeInsets.all( Screen.max(context) * 0.02),
           labelStyle: GoogleFonts.roboto(
             color: _isFocused ? MyColors.red : Colors.white.withAlpha(102),
             fontSize: Screen.width(context) * 0.03,
@@ -77,7 +79,7 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
             borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
-          fillColor: MyColors.darkLighter,
+          fillColor: MyColors.ligthDark,
         ),
         dropdownColor: MyColors.darkLighter,
         style: GoogleFonts.roboto(

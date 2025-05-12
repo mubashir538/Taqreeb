@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
+import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -175,6 +176,7 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
           onFieldSubmitted: (_) =>
               FocusScope.of(context).requestFocus(_portfolioFocus),
           hint: "Enter CNIC Number",
+          isNum: true,
           valueController: _cnicController,
         ),
         MyTextBox(
@@ -225,6 +227,7 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
                   _buildInputFields(),
                   _buildDivider(),
                   _buildContinueButton(),
+                  ProgressBar(progress: 2),
                 ],
               ),
             ),

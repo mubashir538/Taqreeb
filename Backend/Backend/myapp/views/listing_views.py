@@ -348,8 +348,8 @@ def unified_search(request):
     filters = {
         'query': search_query,
         'category': request.GET.get('category', 'All'),
-        'min_price': request.GET.get('min_price'),
-        'max_price': request.GET.get('max_price'),
+        'min_price': int(str(request.GET.get('min_price')).replace('.', ''))if request.GET.get('min_price') else  None,
+        'max_price': int(str(request.GET.get('max_price')).replace('.', '')) if request.GET.get('max_price') else None,
         'location': request.GET.get('location'),
         'date': request.GET.get('date'),
         'min_rating': request.GET.get('min_rating'),

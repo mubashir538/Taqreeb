@@ -170,6 +170,7 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
         ],
       ),
       floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
     );
   }
 
@@ -224,13 +225,17 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
   }
 
   Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      backgroundColor: MyColors.yellow,
-      onPressed: _showAddGuestOptions,
-      child: Icon(
-        FontAwesomeIcons.plus,
-        color: MyColors.dark,
-        size: Screen.max(context) * 0.04,
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.03),
+      child: FloatingActionButton(
+        backgroundColor: MyColors.red,
+        shape: CircleBorder(),
+        onPressed: _showAddGuestOptions,
+        child: Icon(
+          FontAwesomeIcons.plus,
+          color: MyColors.dark,
+          size: Screen.max(context) * 0.03,
+        ),
       ),
     );
   }

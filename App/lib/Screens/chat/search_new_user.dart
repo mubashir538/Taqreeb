@@ -85,7 +85,7 @@ class _NewUserSearchState extends State<NewUserSearch> {
     }
 
     if (_searchedUsers.isEmpty) {
-      return  Center(
+      return Center(
         child: Text(
           'No users found',
           style: GoogleFonts.roboto(color: Colors.white),
@@ -93,21 +93,24 @@ class _NewUserSearchState extends State<NewUserSearch> {
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _searchedUsers.length,
-      itemBuilder: (context, index) {
-        final user = _searchedUsers[index];
-        return MessageChatButton(
-          image: user['chatimage'],
-          onpressed: () => _navigateToChatbox(user['userId']),
-          name: user['name'],
-          message: 'Start a conversation',
-          newMessage: 0,
-          time: '',
-        );
-      },
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _searchedUsers.length,
+        itemBuilder: (context, index) {
+          final user = _searchedUsers[index];
+          return MessageChatButton(
+            image: user['chatimage'],
+            onpressed: () => _navigateToChatbox(user['userId']),
+            name: user['name'],
+            message: 'Start a conversation',
+            newMessage: 0,
+            time: '',
+          );
+        },
+      ),
     );
   }
 
@@ -130,6 +133,7 @@ class _NewUserSearchState extends State<NewUserSearch> {
               hint: 'Search by Username',
               controller: _searchController,
             ),
+            SizedBox(height: Screen.height(context) * 0.02),
             Expanded(
               child: _buildSearchResults(),
             ),

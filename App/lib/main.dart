@@ -154,7 +154,7 @@ class _MainAppState extends State<MainApp> {
         darkTheme: AppThemes.darkTheme,
         themeMode: themeProvider.themeMode,
         initialRoute: '/',
-        // home: NoInternetScreen(),
+        // home: FreelancerSignupBasicInfo(),
         routes: _buildRoutes(),
       ),
     );
@@ -165,17 +165,24 @@ class _MainAppState extends State<MainApp> {
       '/': (context) => SplashScreen(), // Done
       '/AccountInfo': (context) => MainScreen(index: 3), // Done
       '/BasicSignup': (context) => BasicSignup(), // Done
-      '/BusinessSignup_BasicInfo': (context) => BusinessSignupBasicInfo(), // Done
-      '/BusinessSignup_Description': (context) => BusinessSignupDescription(), // Done
-      '/BusinessSignup_CNICUpload': (context) => BusinessSignupCNICUpload(), // Done
+      '/BusinessSignup_BasicInfo': (context) =>
+          BusinessSignupBasicInfo(), // Done
+      '/BusinessSignup_Description': (context) =>
+          BusinessSignupDescription(), // Done
+      '/BusinessSignup_CNICUpload': (context) =>
+          BusinessSignupCNICUpload(), // Done
       '/ChatBox': (context) => ChatBox(), // Done
       '/ChatsScreen': (context) => MainScreen(index: 1), // Done
       '/CreateGuestList': (context) => CreateGuestList(), // Done
       '/CreateEvent': (context) => CreateEvent(), // Done
       '/EditEvent': (context) => CreateEvent(), // Done
-      '/ForgotPassword_EmailorPhoneInput': (context) => ForgotPasswordEmailorPhoneInput(), // Done
-      '/ForgotPassword_NewPassword': (context) => ForgotPasswordNewPassword(), // Done
-      '/ForgotPassword_VerifyCode': (context) => ForgotPasswordVerifyCode(), // Done
+      '/ForgotPassword_EmailorPhoneInput': (context) =>
+          ForgotPasswordEmailorPhoneInput(), // Done
+      '/ForgotPassword_NewPassword': (context) =>
+          ForgotPasswordNewPassword(), // Done
+      '/ForgotPassword_VerifyCode': (context) =>
+          ForgotPasswordVerifyCode(), // Done
+      '/Wishlist': (context) => WishlistViewPage(), // Done
       '/HomePage': (context) => MainScreen(index: 0), // Done
       '/Login': (context) => Login(), // Done
       '/NoInternet': (context) => NoInternetScreen(), // Done
@@ -189,7 +196,38 @@ class _MainAppState extends State<MainApp> {
       '/WalletScreen': (context) => WalletScreen(), // Done
       '/YourEvents': (context) => MainScreen(index: 2), // Done
       '/search_new_user': (context) => NewUserSearch(), // Done
-      '/AccountInfoEdit': (context) => AccountInfoEdit(),
+      '/AccountInfoEdit': (context) => AccountInfoEdit(), // Done
+      '/SearchService': (context) => SearchService(), // Done
+      '/SubmissionSucessful': (context) => SubmissionSucessful(), // Done
+      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignupBasicInfo(), // Done
+      '/FreelancerSignup_Description': (context) => 
+          FreelancerSignupDescription(), // Done
+      '/CreateChecklistItems': (context) => CreateChecklistItems(), // Done
+      '/CreateGuestList_AddFamily': (context) => CreateGuestListAddFamily(), // Done
+      '/CreateGuestList_AddPerson': (context) => CreateGuestListAddPerson(), // Done
+      '/CreateGuestList_List': (context) => CreateGuestListList(), // Done
+      '/CreateFunction': (context) => CreateFunction(),// Done 
+      '/EditFunction': (context) => CreateFunction(),// Done 
+      '/EventDetails': (context) => EventDetails(), // Done 
+      '/AddBank': (context) => AddBank(),// Done 
+      '/AllTransactions': (context) => AllTransactions(), // Done 
+      '/FunctionDetail': (context) => FunctionDetail(),
+      '/BusinessAccountInfo': (context) => MainScreen(index: 3),
+      '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
+      '/CreateGroup': (context) => CreateGroupScreen(),
+      '/GroupChatBox': (context) => GroupChatScreen(),
+      '/ChatBot': (context) => EventPlanningChatbot(),
+      '/BusinessBookings': (context) => BusinessBookingsScreen(),
+      '/CartScreen': (context) => CartScreen(),
+      '/CreateInvitation': (context) => CreateInvitation(),
+      '/Dashboard': (context) => Dashboard(),
+      '/InvitationCardView': (context) => ViewInvitationCard(),
+      '/OrderSummary': (context) => OrderSummaryScreen(),
+      '/PaymentDetails': (context) => SecurePaymentScreen(),
+      '/ReviewPage': (context) => ReviewScreen(),
+      '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(),
+      '/UserBookings': (context) => UserBookingsScreen(),
+      '/YourListings': (context) => MainScreen(index: 2),
       '/AddCategory_Add_Addons': (context) => AddCategoryAddAddons(),
       '/AddCategory_AddImage': (context) => AddImage(),
       '/AddCategory_Addons': (context) => AddCategoryAddons(),
@@ -199,47 +237,18 @@ class _MainAppState extends State<MainApp> {
       '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(),
       '/AddCategory_Packages': (context) => AddCategoryPackages(),
       '/AddCategoryProducts': (context) => AddCategoryProducts(),
-      '/AllTransactions': (context) => AllTransactions(),
-      '/AddBank': (context) => AddBank(),
-      '/BusinessAccountInfo': (context) => MainScreen(index: 3),
-      '/BusinessBookings': (context) => BusinessBookingsScreen(),
-      '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
-      '/CartScreen': (context) => CartScreen(),
       '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),
       '/CategoryView_Caterers': (context) => CategoryViewCaterers(),
       '/CategoryView_Decorator': (context) => CategoryViewDecorator(),
-      '/CategoryView_GraphicDesigner': (context) => CategoryViewGraphicDesigner(),
+      '/CategoryView_GraphicDesigner': (context) =>
+          CategoryViewGraphicDesigner(),
       '/CategoryView_Parlour': (context) => CategoryViewParlour(),
       '/CategoryView_Photographer': (context) => CategoryViewPhotographer(),
-      '/CategoryView_PhotographyPlace': (context) => CategoryViewPhotographyPlace(),
+      '/CategoryView_PhotographyPlace': (context) =>
+          CategoryViewPhotographyPlace(),
       '/CategoryView_Salon': (context) => CategoryViewSaloon(),
       '/CategoryView_Venue': (context) => CategoryViewVenue(),
       '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
-      '/ChatBot': (context) => EventPlanningChatbot(),
-      '/CreateChecklistItems': (context) => CreateChecklistItems(),
-      '/CreateFunction': (context) => CreateFunction(),
-      '/CreateGroup': (context) => CreateGroupScreen(),
-      '/CreateGuestList_AddFamily': (context) => CreateGuestListAddFamily(),
-      '/CreateGuestList_AddPerson': (context) => CreateGuestListAddPerson(),
-      '/CreateGuestList_List': (context) => CreateGuestListList(),
-      '/CreateInvitation': (context) => CreateInvitation(),
-      '/Dashboard': (context) => Dashboard(),
-      '/EditFunction': (context) => CreateFunction(),
-      '/EventDetails': (context) => EventDetails(),
-      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignupBasicInfo(),
-      '/FreelancerSignup_Description': (context) => FreelancerSignupDescription(),
-      '/FunctionDetail': (context) => FunctionDetail(),
-      '/GroupChatBox': (context) => GroupChatScreen(),
-      '/InvitationCardView': (context) => ViewInvitationCard(),
-      '/OrderSummary': (context) => OrderSummaryScreen(),
-      '/PaymentDetails': (context) => SecurePaymentScreen(),
-      '/ReviewPage': (context) => ReviewScreen(),
-      '/SearchService': (context) => SearchService(),
-      '/SubmissionSucessful': (context) => SubmissionSucessful(),
-      '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(),
-      '/UserBookings': (context) => UserBookingsScreen(),
-      '/Wishlist': (context) => WishlistViewPage(),
-      '/YourListings': (context) => MainScreen(index: 2),
     };
   }
 }
