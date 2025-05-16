@@ -180,7 +180,6 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
                 listingId: _listingId,
                 selectedDate: _selectedDate,
               ),
-              _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
               CategoryDetails(
@@ -194,7 +193,6 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
                 listing: _listing,
                 starsvalue: _starsValue,
               ),
-              _buildDivider(),
             ],
           ),
         ),

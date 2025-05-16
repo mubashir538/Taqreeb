@@ -7,7 +7,6 @@ import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -298,28 +297,96 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     }
 
     return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      padding: EdgeInsets.symmetric(
+        horizontal: Screen.width(context) * 0.02,
+        vertical: Screen.height(context) * 0.02,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Add-Ons',
-            style: _buildTextStyle(
-              fontSize: 0.025,
+            style: GoogleFonts.poppins(
+              fontSize: Screen.max(context) * 0.025,
               fontWeight: FontWeight.w600,
-              color: MyColors.yellow,
+              color: MyColors.white,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-            child: _buildAddonsList(),
-          ),
-          if (_isBusinessUser) _buildAddAddonButton(),
-          SizedBox(
-            height: Screen.height(context) * 0.05,
-            child: Center(
-              child: MyDivider(width: Screen.width(context) * 0.85),
+          SizedBox(height: Screen.height(context) * 0.02),
+          _buildAddonsGrid(),
+          if (_isBusinessUser) ...[
+            SizedBox(height: Screen.height(context) * 0.03),
+            Center(
+              child: ColoredButton(
+                text: 'Add New Add-On',
+                width: Screen.width(context) * 0.6,
+                onPressed: _showAddAddonDialog,
+              ),
             ),
+          ],
+          SizedBox(height: Screen.height(context) * 0.03),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddonsGrid() {
+    final addons = widget.listing['Addons'] as List;
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: Screen.max(context) * 0.02,
+        mainAxisSpacing: Screen.max(context) * 0.02,
+        childAspectRatio: 1.2,
+      ),
+      itemCount: addons.length,
+      itemBuilder: (context, index) {
+        return _buildAddonCard(addons[index]);
+      },
+    );
+  }
+
+  Widget _buildAddonCard(Map<String, dynamic> addon) {
+    return Container(
+      width: Screen.width(context) * 0.45,
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: EdgeInsets.all(Screen.max(context) * 0.015),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                addon['name'],
+                style: GoogleFonts.poppins(
+                  fontSize: Screen.max(context) * 0.018,
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: Screen.height(context) * 0.01),
+              SizedBox(
+                width: Screen.width(context) * 0.4,
+                child: Text(
+                  'Rs. ${addon['price']}${addon['isPer'] ? '/${addon['perType']}' : ''}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: Screen.max(context) * 0.02,
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.red,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

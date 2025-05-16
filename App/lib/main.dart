@@ -154,7 +154,7 @@ class _MainAppState extends State<MainApp> {
         darkTheme: AppThemes.darkTheme,
         themeMode: themeProvider.themeMode,
         initialRoute: '/',
-        // home: FreelancerSignupBasicInfo(),
+        // home: AddCategoryListing(),
         routes: _buildRoutes(),
       ),
     );
@@ -199,56 +199,59 @@ class _MainAppState extends State<MainApp> {
       '/AccountInfoEdit': (context) => AccountInfoEdit(), // Done
       '/SearchService': (context) => SearchService(), // Done
       '/SubmissionSucessful': (context) => SubmissionSucessful(), // Done
-      '/FreelancerSignup_BasicInfo': (context) => FreelancerSignupBasicInfo(), // Done
-      '/FreelancerSignup_Description': (context) => 
+      '/FreelancerSignup_BasicInfo': (context) =>
+          FreelancerSignupBasicInfo(), // Done
+      '/FreelancerSignup_Description': (context) =>
           FreelancerSignupDescription(), // Done
       '/CreateChecklistItems': (context) => CreateChecklistItems(), // Done
-      '/CreateGuestList_AddFamily': (context) => CreateGuestListAddFamily(), // Done
-      '/CreateGuestList_AddPerson': (context) => CreateGuestListAddPerson(), // Done
+      '/CreateGuestList_AddFamily': (context) =>
+          CreateGuestListAddFamily(), // Done
+      '/CreateGuestList_AddPerson': (context) =>
+          CreateGuestListAddPerson(), // Done
       '/CreateGuestList_List': (context) => CreateGuestListList(), // Done
-      '/CreateFunction': (context) => CreateFunction(),// Done 
-      '/EditFunction': (context) => CreateFunction(),// Done 
-      '/EventDetails': (context) => EventDetails(), // Done 
-      '/AddBank': (context) => AddBank(),// Done 
-      '/AllTransactions': (context) => AllTransactions(), // Done 
-      '/FunctionDetail': (context) => FunctionDetail(),
-      '/BusinessAccountInfo': (context) => MainScreen(index: 3),
-      '/BusinessInfoEdit': (context) => BusinessInfoEdit(),
-      '/CreateGroup': (context) => CreateGroupScreen(),
-      '/GroupChatBox': (context) => GroupChatScreen(),
-      '/ChatBot': (context) => EventPlanningChatbot(),
-      '/BusinessBookings': (context) => BusinessBookingsScreen(),
-      '/CartScreen': (context) => CartScreen(),
-      '/CreateInvitation': (context) => CreateInvitation(),
-      '/Dashboard': (context) => Dashboard(),
-      '/InvitationCardView': (context) => ViewInvitationCard(),
+      '/CreateFunction': (context) => CreateFunction(), // Done
+      '/EditFunction': (context) => CreateFunction(), // Done
+      '/EventDetails': (context) => EventDetails(), // Done
+      '/AddBank': (context) => AddBank(), // Done
+      '/AllTransactions': (context) => AllTransactions(), // Done
+      '/FunctionDetail': (context) => FunctionDetail(), // Done
+      '/GroupChatBox': (context) => GroupChatScreen(), // Done
+      '/ChatBot': (context) => EventPlanningChatbot(), // Done
+      '/Dashboard': (context) => Dashboard(), // Done
+      '/BusinessAccountInfo': (context) => MainScreen(index: 3), // Done
+      '/BusinessInfoEdit': (context) => BusinessInfoEdit(), // Done
+      '/YourListings': (context) => MainScreen(index: 2), // Done
+      '/CreateGroup': (context) => CreateGroupScreen(), // Done
+      '/BusinessBookings': (context) => BusinessBookingsScreen(), // Done 
+      '/CreateInvitation': (context) => CreateInvitation(), // Done
+      '/InvitationCardView': (context) => ViewInvitationCard(), // Done
+      '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(), // Done
+      '/AddCategory_List': (context) => AddCategoryListing(), // Done
+      '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(), // Done
+      '/AddCategory_Add_Addons': (context) => AddCategoryAddAddons(), // Done
+      '/AddCategory_Addons': (context) => AddCategoryAddons(), // Done
+      '/AddCategory_AddPackage': (context) => AddCategoryAddPackage(), // Done
+      '/AddCategory_Packages': (context) => AddCategoryPackages(),  // Done
+      '/AddCategory_AddProduct': (context) => AddCategoryAddProduct(),// Done
+      '/AddCategoryProducts': (context) => AddCategoryProducts(),// Done
+      '/AddCategory_AddImage': (context) => AddImage(),// Done
+      '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),// Done
+      '/CategoryView_Caterers': (context) => CategoryViewCaterers(),// Done
+      '/CategoryView_Decorator': (context) => CategoryViewDecorator(),// Done
+      '/CategoryView_GraphicDesigner': (context) =>
+          CategoryViewGraphicDesigner(),// Done
+      '/CategoryView_Parlour': (context) => CategoryViewParlour(),// Done
+      '/CategoryView_Photographer': (context) => CategoryViewPhotographer(),// Done
+      '/CategoryView_PhotographyPlace': (context) =>
+          CategoryViewPhotographyPlace(),// Done
+      '/CategoryView_Salon': (context) => CategoryViewSaloon(),// Done
+      '/CategoryView_Venue': (context) => CategoryViewVenue(),// Done
+      '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),// Done
+      '/ReviewPage': (context) => ReviewScreen(),// Done
+      '/UserBookings': (context) => UserBookingsScreen(),
+      '/CartScreen': (context) => CartScreen(), 
       '/OrderSummary': (context) => OrderSummaryScreen(),
       '/PaymentDetails': (context) => SecurePaymentScreen(),
-      '/ReviewPage': (context) => ReviewScreen(),
-      '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(),
-      '/UserBookings': (context) => UserBookingsScreen(),
-      '/YourListings': (context) => MainScreen(index: 2),
-      '/AddCategory_Add_Addons': (context) => AddCategoryAddAddons(),
-      '/AddCategory_AddImage': (context) => AddImage(),
-      '/AddCategory_Addons': (context) => AddCategoryAddons(),
-      '/AddCategory_AddPackage': (context) => AddCategoryAddPackage(),
-      '/AddCategory_AddProduct': (context) => AddCategoryAddProduct(),
-      '/AddCategory_List': (context) => AddCategoryListing(),
-      '/AddCategory_MoreDetails': (context) => AddCategoryMoreDetails(),
-      '/AddCategory_Packages': (context) => AddCategoryPackages(),
-      '/AddCategoryProducts': (context) => AddCategoryProducts(),
-      '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),
-      '/CategoryView_Caterers': (context) => CategoryViewCaterers(),
-      '/CategoryView_Decorator': (context) => CategoryViewDecorator(),
-      '/CategoryView_GraphicDesigner': (context) =>
-          CategoryViewGraphicDesigner(),
-      '/CategoryView_Parlour': (context) => CategoryViewParlour(),
-      '/CategoryView_Photographer': (context) => CategoryViewPhotographer(),
-      '/CategoryView_PhotographyPlace': (context) =>
-          CategoryViewPhotographyPlace(),
-      '/CategoryView_Salon': (context) => CategoryViewSaloon(),
-      '/CategoryView_Venue': (context) => CategoryViewVenue(),
-      '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),
     };
   }
 }

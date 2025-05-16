@@ -101,13 +101,15 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
 
   Widget _buildTitle() {
     return Container(
+      width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
+        textAlign: TextAlign.start,
         "Products",
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
-          fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          fontWeight: FontWeight.w700,
+          color: MyColors.red,
         ),
       ),
     );
@@ -157,13 +159,17 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
   }
 
   Widget _buildAddButton() {
-    return FloatingActionButton(
-      backgroundColor: MyColors.yellow,
-      onPressed: _navigateToAddProduct,
-      child: Icon(
-        FontAwesomeIcons.plus,
-        color: MyColors.dark,
-        size: Screen.max(context) * 0.04,
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      child: FloatingActionButton(
+        backgroundColor: MyColors.red,
+        shape: CircleBorder(),
+        onPressed: _navigateToAddProduct,
+        child: Icon(
+          FontAwesomeIcons.plus,
+          color: MyColors.white,
+          size: Screen.max(context) * 0.03,
+        ),
       ),
     );
   }

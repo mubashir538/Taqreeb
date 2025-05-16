@@ -101,13 +101,15 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
 
   Widget _buildTitle() {
     return Container(
+      width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
+        textAlign: TextAlign.start,
         "Packages",
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
-          fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          fontWeight: FontWeight.w700,
+          color: MyColors.red,
         ),
       ),
     );
@@ -126,11 +128,10 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   Widget _buildPackageItem(Map<String, dynamic> package) {
     return PackageBox(
       onPressed: () {},
-      imageUrl: package['images'],
+      imageUrl: package['images'][0],
       packageDetails: package['details'],
       packagePrice: package['price'],
       packageName: package['name'],
-      packageId: package['id'],
     );
   }
 
@@ -159,13 +160,17 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   Widget _buildAddButton() {
-    return FloatingActionButton(
-      backgroundColor: MyColors.yellow,
-      onPressed: _navigateToAddPackage,
-      child: Icon(
-        FontAwesomeIcons.plus,
-        color: MyColors.dark,
-        size: Screen.max(context) * 0.04,
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      child: FloatingActionButton(
+        backgroundColor: MyColors.red,
+        shape: CircleBorder(),
+        onPressed: _navigateToAddPackage,
+        child: Icon(
+          FontAwesomeIcons.plus,
+          color: MyColors.white,
+          size: Screen.max(context) * 0.03,
+        ),
       ),
     );
   }

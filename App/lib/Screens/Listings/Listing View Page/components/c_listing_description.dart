@@ -10,7 +10,6 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-
 class DescriptionCategory extends StatefulWidget {
   final Map<String, dynamic> listing;
   final bool type;
@@ -95,7 +94,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
 
   TextStyle _buildTextStyle({
     double fontSize = 0.015,
-    FontWeight fontWeight = FontWeight.w300,
+    FontWeight fontWeight = FontWeight.w400,
     required Color color,
   }) {
     return GoogleFonts.roboto(
@@ -112,10 +111,11 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: Screen.height(context) * 0.02),
           _buildTitle(),
           _isBusinessUser && _isEditing ? _buildEditMode() : _buildViewMode(),
           if (_isBusinessUser && !_isEditing) _buildEditButton(),
-          _buildDivider(),
+          SizedBox(height: Screen.height(context) * 0.02),
         ],
       ),
     );
@@ -129,7 +129,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
         style: _buildTextStyle(
           fontSize: 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          color: MyColors.white,
         ),
       ),
     );
@@ -144,7 +144,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
           style: _buildTextStyle(color: MyColors.white),
           decoration: InputDecoration(
             hintText: 'Edit description...',
-            hintStyle:  GoogleFonts.roboto(color: Colors.grey),
+            hintStyle: GoogleFonts.roboto(color: MyColors.white.withAlpha(153)),
             border: const OutlineInputBorder(),
           ),
         ),
@@ -160,8 +160,12 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
   Widget _buildViewMode() {
     return InkWell(
       onTap: () => setState(() => _isToggled = !_isToggled),
-      child: Padding(
-        padding: EdgeInsets.only(bottom: Screen.max(context) * 0.01),
+      child: Container(
+        decoration: BoxDecoration(
+          color: MyColors.darkLighter,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: EdgeInsets.all(Screen.max(context) * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -172,9 +176,10 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
               style: _buildTextStyle(color: MyColors.white),
               textAlign: TextAlign.justify,
             ),
+            SizedBox(height: Screen.height(context) * 0.02),
             Icon(_isToggled
-                ? FontAwesomeIcons.arrowDown
-                : FontAwesomeIcons.arrowUp),
+                ? FontAwesomeIcons.chevronDown
+                : FontAwesomeIcons.chevronUp),
           ],
         ),
       ),

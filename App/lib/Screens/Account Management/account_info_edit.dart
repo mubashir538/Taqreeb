@@ -6,14 +6,12 @@ import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/picture_options.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -169,39 +167,63 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                 horizontal: Screen.max(context) * 0.02),
                             child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: _selectedImage != null
-                                        ? Image.file(_selectedImage!,
-                                                fit: BoxFit.cover)
-                                            .image
-                                        : NetworkImage(image),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        left: Screen.max(context) * 0.02),
-                                    child: InkWell(
-                                      onTap: () async {
-                                        Picture.pickImage(context,
-                                            callback: (file) {
-                                          setState(() {
-                                            _selectedImage = file;
+                                  Stack(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Picture.pickImage(context,
+                                              callback: (file) {
+                                            setState(() {
+                                              _selectedImage = file;
+                                            });
                                           });
-                                        });
-                                      },
-                                      child: Text(
-                                        "Change Profile Picture",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.roboto(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            fontSize:
-                                                Screen.max(context) * 0.015,
-                                            fontWeight: FontWeight.w400,
-                                            color: MyColors.yellow),
+                                        },
+                                        child: CircleAvatar(
+                                          radius: Screen.max(context) * 0.1,
+                                          backgroundImage:
+                                              _selectedImage != null
+                                                  ? Image.file(_selectedImage!,
+                                                          fit: BoxFit.cover)
+                                                      .image
+                                                  : NetworkImage(image),
+                                        ),
                                       ),
-                                    ),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 4,
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            Picture.pickImage(context,
+                                                callback: (file) {
+                                              setState(() {
+                                                _selectedImage = file;
+                                              });
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(Screen.max(context)*0.02),
+                                            decoration: BoxDecoration(
+                                              color: MyColors.whiteDarker,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 4,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Icon(
+                                              FontAwesomeIcons.pen,
+                                              size: Screen.max(context) * 0.025,
+                                              color: MyColors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ]),
                           ),
@@ -242,8 +264,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                             ],
                           ),
                           SizedBox(
-                            height: Screen.height(context) * 0.1,
-                            child: Center(child: MyDivider()),
+                            height: Screen.max(context) * 0.02,
                           ),
                           ColoredButton(
                             text: 'Save',
@@ -269,9 +290,6 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                 ],
                               ).showDialogBox(context);
                             },
-                          ),
-                          SizedBox(
-                            height: 30,
                           ),
                         ],
                       )

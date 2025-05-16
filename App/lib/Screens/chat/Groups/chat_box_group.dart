@@ -11,6 +11,7 @@ import 'package:taqreeb/Screens/chat/Groups/member_info_group.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -25,6 +26,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final ScrollController _scrollController = ScrollController();
 
   String? _currentUserId;
   String _groupId = "";
@@ -33,17 +35,36 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   bool _isLoading = true;
   String? _adminId;
   bool _isAdmin = false;
+  bool _isChanged = false;
+  bool _showScrollToBottom = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_isChanged) return;
+    _isChanged = true;
     _initializeGroupData();
   }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 100 && !_showScrollToBottom) {
+      setState(() => _showScrollToBottom = true);
+    } else if (_scrollController.offset <= 100 && _showScrollToBottom) {
+      setState(() => _showScrollToBottom = false);
+    }
   }
 
   Future<void> _initializeGroupData() async {
@@ -56,6 +77,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
     setState(() {
       _groupId = args['groupId'];
+      _isLoading = true;
     });
 
     await _fetchCurrentUserId();
@@ -91,11 +113,21 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   void _navigateToEditGroup() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditGroupScreen(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            EditGroupScreen(
           groupId: _groupId,
           currentUserId: _currentUserId!,
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
       ),
     ).then((updated) {
       if (updated == true) {
@@ -127,16 +159,29 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       });
 
       _messageController.clear();
+      _scrollToBottom();
     } catch (e) {
       _handleError('Failed to send message: $e');
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   Future<void> _sendImage() async {
     try {
       final pickedFile = await _imagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 70, // Reduce quality for faster upload
+        imageQuality: 70,
         maxWidth: 800,
         maxHeight: 800,
       );
@@ -145,7 +190,19 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
       // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Uploading image...')),
+        SnackBar(
+          content: Row(
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(width: 16),
+              Text(
+                'Uploading image...',
+                style: GoogleFonts.roboto(color: MyColors.white),
+              ),
+            ],
+          ),
+          backgroundColor: MyColors.darkLighter,
+        ),
       );
 
       final response = await MyApi.postMultipartRequest(
@@ -174,6 +231,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           'timestamp': FieldValue.serverTimestamp(),
           'type': 'image',
         });
+
+        _scrollToBottom();
       } else {
         _handleError('Failed to upload image: ${response['message']}');
       }
@@ -193,6 +252,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     );
 
     if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error),
+          backgroundColor: Colors.red,
+        ),
+      );
       setState(() => _isLoading = false);
     }
   }
@@ -210,7 +275,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     return FutureBuilder<DocumentSnapshot>(
       future: _firestore.collection('users').doc(doc['senderId']).get(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const SizedBox.shrink();
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
 
         final senderData = snapshot.data!;
         final senderName = senderData['firstName'];
@@ -218,14 +285,28 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${senderData['profilePicture']}';
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (!isSentByMe)
-                CircleAvatar(
-                  backgroundImage: NetworkImage(senderImage),
-                  radius: 20,
+                InkWell(
+                  onTap: () {
+                    // Show user profile when avatar is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MembersScreen(
+                          groupId: _groupId,
+                          // initialMemberId: doc['senderId'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(senderImage),
+                    radius: 20,
+                  ),
                 ),
               const SizedBox(width: 10),
               Expanded(
@@ -234,22 +315,33 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      senderName,
-                      style: GoogleFonts.roboto(
-                        color: MyColors.red,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                    if (!isSentByMe)
+                      Text(
+                        senderName,
+                        style: GoogleFonts.roboto(
+                          color: MyColors.yellow,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 4),
                     if (messageType == 'text')
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           color:
                               isSentByMe ? MyColors.red : MyColors.darkLighter,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.only(
+                            topLeft: isSentByMe
+                                ? const Radius.circular(16)
+                                : Radius.zero,
+                            topRight: isSentByMe
+                                ? Radius.zero
+                                : const Radius.circular(16),
+                            bottomLeft: const Radius.circular(16),
+                            bottomRight: const Radius.circular(16),
+                          ),
                         ),
                         child: Text(
                           messageText,
@@ -257,31 +349,75 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         ),
                       ),
                     if (messageType == 'image')
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
-                          height: 150,
-                          width: 200,
-                          fit: BoxFit.cover,
-                          imageBuilder: (context, image) {
-                            return Container(
-                              height: 150,
-                              width: 200,
-                              color: MyColors.darkLighter,
-                              child: const Center(
-                                  child: CircularProgressIndicator()),
-                            );
-                          },
-                          errorWidget: (context, error, stackTrace) {
-                            return Container(
-                              height: 150,
-                              width: 200,
-                              color: MyColors.darkLighter,
-                              child: const Icon(FontAwesomeIcons.exclamation, color: Colors.red),
-                            );
-                          },
+                      GestureDetector(
+                        onTap: () {
+                          // Show image in full screen
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              insetPadding: const EdgeInsets.all(20),
+                              child: Stack(
+                                children: [
+                                  CachedNetworkImage(
+                                    imageUrl:
+                                        '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
+                                    fit: BoxFit.contain,
+                                  ),
+                                  Positioned(
+                                    top: 10,
+                                    right: 10,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.close,
+                                          color: Colors.white),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: MyColors.red.withAlpha(100),
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
+                              height: 200,
+                              width: 250,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                height: 200,
+                                width: 250,
+                                color: MyColors.darkLighter,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        MyColors.red),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                height: 200,
+                                width: 250,
+                                color: MyColors.darkLighter,
+                                child: Center(
+                                  child: Icon(
+                                    FontAwesomeIcons.exclamation,
+                                    color: MyColors.red,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     if (timestamp != null)
@@ -290,7 +426,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         child: Text(
                           _formatTimestamp(timestamp),
                           style: GoogleFonts.roboto(
-                            color: MyColors.darkLighter,
+                            color: MyColors.whiteDarker,
                             fontSize: 12,
                           ),
                         ),
@@ -306,32 +442,57 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   }
 
   Widget _buildChatInput() {
-    return Padding(
-      padding: const EdgeInsets.all(10),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      color: MyColors.ligthDark,
       child: Row(
         children: [
           IconButton(
             icon: Icon(FontAwesomeIcons.image, color: MyColors.yellow),
             onPressed: _sendImage,
+            tooltip: 'Send Image',
           ),
           Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                hintText: "Type a message",
-                fillColor: MyColors.darkLighter,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: MyColors.darkLighter,
+                borderRadius: BorderRadius.circular(30),
               ),
-              onSubmitted: _sendMessage,
+              child: Row(
+                children: [
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      style: GoogleFonts.roboto(color: MyColors.white),
+                      decoration: InputDecoration(
+                        hintText: "Type a message...",
+                        hintStyle:
+                            GoogleFonts.roboto(color: MyColors.whiteDarker),
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: _sendMessage,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          IconButton(
-            icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
-            onPressed: () => _sendMessage(_messageController.text),
+          const SizedBox(width: 8),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: MyColors.red,
+            ),
+            child: IconButton(
+              icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+              onPressed: () {
+                if (_messageController.text.trim().isNotEmpty) {
+                  _sendMessage(_messageController.text);
+                }
+              },
+              tooltip: 'Send Message',
+            ),
           ),
         ],
       ),
@@ -340,63 +501,93 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   Widget _buildGroupHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      color: MyColors.red,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: MyColors.red,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(
-                  '${MyApi.baseUrl}${_groupImage!}',
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MembersScreen(groupId: _groupId),
                 ),
-                radius: 30,
+              );
+            },
+            child: CircleAvatar(
+              radius: 24,
+              backgroundColor: MyColors.white,
+              child: CircleAvatar(
+                radius: 22,
+                backgroundImage: NetworkImage(
+                  _groupImage != null
+                      ? '${MyApi.baseUrl}${_groupImage!}'
+                      : 'https://via.placeholder.com/150',
+                ),
               ),
-              const SizedBox(width: 15),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _groupName ?? 'Group',
+                  style: GoogleFonts.roboto(
+                    color: MyColors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (_isAdmin)
                   Text(
-                    _groupName!,
+                    'Admin',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                      color: MyColors.white.withAlpha(200),
+                      fontSize: 12,
                     ),
                   ),
-                  if (_isAdmin)
-                    Text(
-                      'Admin',
-                      style: GoogleFonts.roboto(
-                        color: MyColors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(FontAwesomeIcons.userGroup, color: MyColors.white),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MembersScreen(groupId: _groupId),
-                    ),
-                  );
-                },
-              ),
-              if (_isAdmin)
-                IconButton(
-                  icon: Icon(FontAwesomeIcons.pen, color: MyColors.white),
-                  onPressed: _navigateToEditGroup,
+          IconButton(
+            icon: Icon(
+              FontAwesomeIcons.users,
+              color: MyColors.white,
+              size: 20,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MembersScreen(groupId: _groupId),
                 ),
-            ],
+              );
+            },
+            tooltip: 'Group Members',
           ),
+          if (_isAdmin)
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.gear,
+                color: MyColors.white,
+                size: 20,
+              ),
+              onPressed: _navigateToEditGroup,
+              tooltip: 'Group Settings',
+            ),
         ],
       ),
     );
@@ -404,30 +595,49 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   Widget _buildMessageStream() {
     return Expanded(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: _firestore
-            .collection('groups')
-            .doc(_groupId)
-            .collection('messages')
-            .orderBy('timestamp', descending: true)
-            .limit(50) // Limit messages for better performance
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      child: Stack(
+        children: [
+          StreamBuilder<QuerySnapshot>(
+            stream: _firestore
+                .collection('groups')
+                .doc(_groupId)
+                .collection('messages')
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.red)),
+                );
+              }
 
-          // Use ListView.builder with itemExtent for better performance
-          return ListView.builder(
-            reverse: true,
-            itemCount: snapshot.data!.docs.length,
-            itemExtent: 100, // Approximate height of each message
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return _buildMessageTile(snapshot.data!.docs[index]);
+              return ListView.builder(
+                controller: _scrollController,
+                reverse: true,
+                padding: const EdgeInsets.only(bottom: 16),
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  return _buildMessageTile(snapshot.data!.docs[index]);
+                },
+              );
             },
-          );
-        },
+          ),
+          if (_showScrollToBottom)
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: FloatingActionButton(
+                mini: true,
+                backgroundColor: MyColors.red,
+                child: Icon(
+                  Icons.arrow_downward,
+                  color: MyColors.white,
+                ),
+                onPressed: _scrollToBottom,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -437,19 +647,25 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     if (_isLoading) {
       return Scaffold(
         backgroundColor: MyColors.dark,
-        body: const Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
+          ),
+        ),
       );
     }
 
     return Scaffold(
       backgroundColor: MyColors.dark,
-      body: Column(
-        children: [
-          const Header(),
-          _buildGroupHeader(),
-          _buildMessageStream(),
-          _buildChatInput(),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Header(),
+            _buildGroupHeader(),
+            _buildMessageStream(),
+            _buildChatInput(),
+          ],
+        ),
       ),
     );
   }

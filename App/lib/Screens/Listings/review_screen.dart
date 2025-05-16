@@ -69,8 +69,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           _buildRatingDistribution(),
           _buildDivider(context),
           _buildReviewsList(),
-          _buildLoadMoreButton(context),
-        ],
+          ],
       ),
     );
   }

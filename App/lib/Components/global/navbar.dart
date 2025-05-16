@@ -31,12 +31,13 @@ class _NavbarState extends State<Navbar> {
 
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-          border: Border.all(color: MyColors.whiteDarker, width: 0.5)),
-      // clipBehavior: Clip.hardEdge,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+        border: Border.all(color: MyColors.white.withAlpha(123), width: 0.5)
+      ),
+      clipBehavior: Clip.hardEdge,
       child: BottomAppBar(
-        color: Colors.transparent, // Let container color show through
+        color: MyColors.darkLighter, // Let container color show through
         elevation: 0, // No shadow needed
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

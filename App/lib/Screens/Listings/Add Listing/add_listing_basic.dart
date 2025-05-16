@@ -194,7 +194,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: UImanagement.headerHeight),
+            SizedBox(height: UImanagement.headerHeight+ Screen.height(context) * 0.02),
             _buildNameField(),
             _buildDescriptionField(),
             _buildCharacterCounter(),

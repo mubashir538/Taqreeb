@@ -186,16 +186,39 @@ class _CategoryDetailsState extends State<CategoryDetails> {
       padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
       child: Column(
         children: [
-          for (int i = 0; i < widget.headings.length; i++) _buildDetailItem(i),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: Screen.width(context) * 0.03,
+              mainAxisSpacing: Screen.height(context) * 0.02,
+              childAspectRatio: 1.2, // Adjust this ratio as needed
+            ),
+            itemCount: widget.headings.length,
+            itemBuilder: (context, index) {
+              return _buildDetailCard(index);
+            },
+          ),
           if (widget.headings.isNotEmpty) _buildDivider(),
         ],
       ),
     );
   }
 
-  Widget _buildDetailItem(int index) {
+  Widget _buildDetailCard(int index) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+      width: Screen.width(context) * 0.45,
+      margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
+      padding: EdgeInsets.symmetric(
+        horizontal: Screen.width(context) * 0.05,
+        vertical: Screen.height(context) * 0.03,
+      ),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: _isBusinessUser
           ? _buildEditableDetail(index)
           : _buildReadOnlyDetail(index),
@@ -215,27 +238,47 @@ class _CategoryDetailsState extends State<CategoryDetails> {
         Text(
           widget.headings[index],
           style: _buildTextStyle(
-            fontWeight: FontWeight.w500,
+            fontSize: 0.018,
+            fontWeight: FontWeight.w600,
             color: MyColors.yellow,
           ),
         ),
+        SizedBox(height: Screen.height(context) * 0.01),
         _isEditing[index]
             ? _buildEditField(index)
-            : Text(
-                widget.values[index],
-                style: _buildTextStyle(color: MyColors.white),
+            : Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Screen.width(context) * 0.03,
+                  vertical: Screen.height(context) * 0.01,
+                ),
+                decoration: BoxDecoration(
+                  color: MyColors.darkLighter,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  widget.values[index],
+                  style: _buildTextStyle(
+                    fontSize: 0.016,
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.white,
+                  ),
+                ),
               ),
+        SizedBox(height: Screen.height(context) * 0.015),
         Align(
           alignment: Alignment.centerRight,
-          child: ColoredButton(
-            text: _isEditing[index] ? "Save" : "Edit",
-            onPressed: () {
-              if (_isEditing[index]) {
-                _saveValue(index);
-              } else {
-                setState(() => _isEditing[index] = true);
-              }
-            },
+          child: SizedBox(
+            width: Screen.width(context) * 0.3,
+            child: ColoredButton(
+              text: _isEditing[index] ? "Save" : "Edit",
+              onPressed: () {
+                if (_isEditing[index]) {
+                  _saveValue(index);
+                } else {
+                  setState(() => _isEditing[index] = true);
+                }
+              },
+            ),
           ),
         ),
       ],
@@ -247,30 +290,44 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     final isEditingMin = _isEditGuestMin && _isEditing[index];
     final isEditingMax = _isEditGuestMax && _isEditing[index];
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildGuestRangePart(
-          label: 'Guest Min',
-          value: parts[0],
-          isEditing: isEditingMin,
-          controller: _controllers[index],
-          onEdit: () => setState(() {
-            _isEditing[index] = true;
-            _isEditGuestMin = true;
-          }),
-          onSave: () => _saveValue(index),
+        Text(
+          widget.headings[index],
+          style: _buildTextStyle(
+            fontSize: 0.018,
+            fontWeight: FontWeight.w600,
+            color: MyColors.yellow,
+          ),
         ),
-        _buildGuestRangePart(
-          label: 'Guest Max',
-          value: parts[1],
-          isEditing: isEditingMax,
-          controller: _controllers.last,
-          onEdit: () => setState(() {
-            _isEditing[index] = true;
-            _isEditGuestMax = true;
-          }),
-          onSave: () => _saveValue(index),
+        SizedBox(height: Screen.height(context) * 0.015),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildGuestRangePart(
+              label: 'Min',
+              value: parts[0],
+              isEditing: isEditingMin,
+              controller: _controllers[index],
+              onEdit: () => setState(() {
+                _isEditing[index] = true;
+                _isEditGuestMin = true;
+              }),
+              onSave: () => _saveValue(index),
+            ),
+            _buildGuestRangePart(
+              label: 'Max',
+              value: parts[1],
+              isEditing: isEditingMax,
+              controller: _controllers.last,
+              onEdit: () => setState(() {
+                _isEditing[index] = true;
+                _isEditGuestMax = true;
+              }),
+              onSave: () => _saveValue(index),
+            ),
+          ],
         ),
       ],
     );
@@ -284,53 +341,93 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     required VoidCallback onEdit,
     required VoidCallback onSave,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: _buildTextStyle(
-            fontWeight: FontWeight.w500,
-            color: MyColors.yellow,
+    return Flexible(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: _buildTextStyle(
+              fontSize: 0.016,
+              fontWeight: FontWeight.w500,
+              color: MyColors.yellow.withOpacity(0.8),
+            ),
           ),
-        ),
-        isEditing
-            ? Container(
-                constraints: BoxConstraints(
-                  maxWidth: Screen.width(context) * 0.4,
-                ),
-                child: TextField(
+          SizedBox(height: Screen.height(context) * 0.008),
+          isEditing
+              ? TextField(
                   controller: controller,
-                  style: _buildTextStyle(color: MyColors.white),
+                  style: _buildTextStyle(
+                    fontSize: 0.016,
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.white,
+                  ),
                   decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: MyColors.darkLighter,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: Screen.width(context) * 0.03,
+                      vertical: Screen.height(context) * 0.015,
+                    ),
                     hintText: 'Enter $label...',
-                    hintStyle:  GoogleFonts.roboto(color: Colors.grey),
+                    hintStyle: GoogleFonts.roboto(
+                      color: Colors.grey,
+                      fontSize: Screen.max(context) * 0.016,
+                    ),
+                  ),
+                )
+              : Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Screen.width(context) * 0.03,
+                    vertical: Screen.height(context) * 0.015,
+                  ),
+                  decoration: BoxDecoration(
+                    color: MyColors.darkLighter,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    value,
+                    style: _buildTextStyle(
+                      fontSize: 0.016,
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.white,
+                    ),
                   ),
                 ),
-              )
-            : Text(
-                value,
-                style: _buildTextStyle(color: MyColors.white),
-              ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ColoredButton(
-            width: Screen.width(context) * 0.4,
-            textSize: Screen.max(context) * 0.015,
-            text: isEditing ? "Save" : "Edit",
-            onPressed: isEditing ? onSave : onEdit,
+          SizedBox(height: Screen.height(context) * 0.015),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ColoredButton(
+              width: Screen.width(context) * 0.3,
+              textSize: Screen.max(context) * 0.015,
+              text: isEditing ? "Save" : "Edit",
+              onPressed: isEditing ? onSave : onEdit,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildEditField(int index) {
     if (_dropdownChoices[index].isNotEmpty) {
       return DropdownButtonFormField<String>(
+        dropdownColor: MyColors.darkLighter,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
+          filled: true,
+          fillColor: MyColors.darkLighter,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: Screen.width(context) * 0.03,
+            vertical: Screen.height(context) * 0.015,
+          ),
           hintText: 'Select ${widget.headings[index]}...',
           hintStyle: _buildTextStyle(color: MyColors.whiteDarker),
         ),
@@ -354,24 +451,42 @@ class _CategoryDetailsState extends State<CategoryDetails> {
 
     return TextField(
       controller: _controllers[index],
-      style: _buildTextStyle(color: MyColors.white),
+      style: _buildTextStyle(
+        fontSize: 0.016,
+        fontWeight: FontWeight.w500,
+        color: MyColors.white,
+      ),
       decoration: InputDecoration(
-        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: MyColors.darkLighter,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: Screen.width(context) * 0.03,
+          vertical: Screen.height(context) * 0.015,
+        ),
         hintText: 'Enter ${widget.headings[index]}...',
-        hintStyle:  GoogleFonts.roboto(color: Colors.grey),
+        hintStyle: GoogleFonts.roboto(
+          color: Colors.grey,
+          fontSize: Screen.max(context) * 0.016,
+        ),
       ),
     );
   }
 
   Widget _buildReadOnlyDetail(int index) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           widget.headings[index],
           style: _buildTextStyle(
-            fontWeight: FontWeight.w500,
-            color: MyColors.yellow,
+            fontSize: 0.015,
+            fontWeight: FontWeight.w400,
+            color: MyColors.white.withAlpha(123),
           ),
         ),
         widget.headings[index] == 'portfolio Link'
@@ -379,19 +494,16 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                 onTap: () => _launchUrl(widget.values[index]),
                 child: Icon(
                   FontAwesomeIcons.link,
-                  size: Screen.max(context) * 0.03,
-                  color: MyColors.white,
+                  size: Screen.max(context) * 0.025,
+                  color: MyColors.white.withAlpha(123),
                 ),
               )
-            : SizedBox(
-                width: Screen.width(context) * 0.5,
-                child: Text(
-                  widget.values[index],
-                  maxLines: 3,
-                  softWrap: true,
-                  textAlign: TextAlign.right,
-                  overflow: TextOverflow.ellipsis,
-                  style: _buildTextStyle(color: MyColors.white),
+            : Text(
+                widget.values[index],
+                style: _buildTextStyle(
+                  fontSize: 0.02,
+                  fontWeight: FontWeight.w600,
+                  color: MyColors.white,
                 ),
               ),
       ],

@@ -62,7 +62,7 @@ def deletefunction(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def viewfunction(request, functionId):
-    functions = Functions.objects.get(id = functionId)
+def viewfunction(request, FunctionId):
+    functions = Functions.objects.get(id = FunctionId)
     functions_serializer = FunctionsSerializer(functions, many=False)
     return Response ({'status':'success', 'Fuctions':functions_serializer.data})

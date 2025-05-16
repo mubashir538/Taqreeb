@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,6 +35,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   late final TextEditingController _detailsController;
   late final TextEditingController _priceController;
   bool _isBusinessUser = false;
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
 
   @override
   void initState() {
@@ -48,6 +52,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     _nameController.dispose();
     _detailsController.dispose();
     _priceController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -141,37 +146,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     MyScaffold(text: 'Something Went Wrong!').show(context);
   }
 
-  void _showPackageDialog({int? index}) {
-    final nameFocus = FocusNode();
-    final detailsFocus = FocusNode();
-    final priceFocus = FocusNode();
-
-    if (index != null) {
-      final package = widget.listing['Package'][index];
-      _nameController.text = package['name'];
-      _detailsController.text = package['description'];
-      _priceController.text = package['price'].toString();
-    } else {
-      _nameController.clear();
-      _detailsController.clear();
-      _priceController.clear();
-    }
-
-    showDialog(
-      context: context,
-      builder: (context) => _buildPackageDialog(
-        nameFocus,
-        detailsFocus,
-        priceFocus,
-        index,
-      ),
-    ).then((_) {
-      nameFocus.dispose();
-      detailsFocus.dispose();
-      priceFocus.dispose();
-    });
-  }
-
   Widget _buildPackageDialog(
     FocusNode nameFocus,
     FocusNode detailsFocus,
@@ -240,78 +214,178 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     );
   }
 
-  Widget _buildPackageList() {
-    return Column(
-      children: widget.listing['Package']
-          .asMap()
-          .entries
-          .map((entry) {
-            final index = entry.key;
-            final package = entry.value;
+  void _showPackageDialog({int? index}) {
+    final nameFocus = FocusNode();
+    final detailsFocus = FocusNode();
+    final priceFocus = FocusNode();
 
-            return Container(
-              margin:
-                  EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (_isBusinessUser) _buildPackageActions(index),
-                  PackageBox(
-                    packageId: package['id'].toString(),
-                    imageUrl: package['pictures'][0],
-                    packageDetails: package['description'],
-                    packagePrice: package['price'].toString(),
-                    packageName: package['name'],
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            );
-          })
-          .cast<Widget>()
-          .toList(),
-    );
+    if (index != null) {
+      final package = widget.listing['Package'][index];
+      _nameController.text = package['name'];
+      _detailsController.text = package['description'];
+      _priceController.text = package['price'].toString();
+    } else {
+      _nameController.clear();
+      _detailsController.clear();
+      _priceController.clear();
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => _buildPackageDialog(
+        nameFocus,
+        detailsFocus,
+        priceFocus,
+        index,
+      ),
+    ).then((_) {
+      nameFocus.dispose();
+      detailsFocus.dispose();
+      priceFocus.dispose();
+    });
   }
 
-  Widget _buildPackageActions(int index) {
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(FontAwesomeIcons.pen, color: MyColors.yellow),
-          onPressed: () => _showPackageDialog(index: index),
-        ),
-        IconButton(
-          icon: Icon(FontAwesomeIcons.trash, color: MyColors.red),
-          onPressed: () => _handleDeletePackage(index),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTitle() {
-    return Text(
-      'Packages',
-      style: GoogleFonts.roboto(
-        fontSize: Screen.max(context) * 0.025,
-        fontWeight: FontWeight.w600,
-        color: MyColors.yellow,
+  Widget _buildPackageItem(Map package, int index) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: Screen.width(context) * 0.05,
+      ),
+      height: Screen.height(context)*0.2,
+      child: PackageBox(
+        packageId: package['id'].toString(),
+        imageUrl: package['pictures'].isEmpty
+            ? 'https://picsum.photos/id/${DateTime.now().millisecondsSinceEpoch % 1000}/600/300'
+            : package['pictures'][0]['picturePath'],
+        packageDetails: package['description'],
+        packagePrice: package['price'].toString(),
+        packageName: package['name'],
+        onPressed: () {},
       ),
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _buildNavigationArrow(bool isLeft) {
     return IconButton(
-      icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.yellow),
-      onPressed: () => _showPackageDialog(),
+      icon: Icon(
+        isLeft ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.chevronRight,
+        color: MyColors.red,
+        size: Screen.max(context) * 0.04,
+      ),
+      onPressed: () {
+        if (isLeft && _currentPage > 0) {
+          _pageController.previousPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        } else if (!isLeft &&
+            _currentPage < widget.listing['Package'].length - 1) {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      },
     );
   }
 
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
+  Widget _buildPageIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        widget.listing['Package'].length,
+        (index) => Container(
+          width: Screen.max(context) * 0.015,
+          height: Screen.max(context) * 0.015,
+          margin: EdgeInsets.symmetric(
+            horizontal: Screen.width(context) * 0.01,
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _currentPage == index
+                ? MyColors.red
+                : MyColors.white.withOpacity(0.3),
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildPackageList() {
+    if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        SizedBox(
+          height: Screen.height(context) * 0.22,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() => _currentPage = index);
+                  },
+                  itemCount: widget.listing['Package'].length,
+                  itemBuilder: (context, index) {
+                    return _buildPackageItem(
+                      widget.listing['Package'][index],
+                      index,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                left: 0,
+                child: _buildNavigationArrow(true),
+              ),
+              Positioned(
+                right: 0,
+                child: _buildNavigationArrow(false),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: Screen.height(context) * 0.02),
+        _buildPageIndicator(),
+        if (_isBusinessUser)
+          Padding(
+            padding: EdgeInsets.only(
+              top: Screen.height(context) * 0.02,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.pen,
+                    color: MyColors.yellow,
+                    size: Screen.max(context) * 0.03,
+                  ),
+                  onPressed: () => _showPackageDialog(index: _currentPage),
+                ),
+                SizedBox(width: Screen.width(context) * 0.05),
+                IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.trash,
+                    color: MyColors.red,
+                    size: Screen.max(context) * 0.03,
+                  ),
+                  onPressed: () => _handleDeletePackage(_currentPage),
+                ),
+                SizedBox(width: Screen.width(context) * 0.05),
+                IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.circlePlus,
+                    color: MyColors.yellow,
+                    size: Screen.max(context) * 0.03,
+                  ),
+                  onPressed: () => _showPackageDialog(),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 
@@ -320,17 +394,33 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      padding: EdgeInsets.symmetric(
+        vertical: Screen.height(context) * 0.03,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTitle(),
           Padding(
-            padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-            child: _buildPackageList(),
+            padding: EdgeInsets.symmetric(
+              horizontal: Screen.width(context) * 0.05,
+            ),
+            child: Text(
+              'Packages',
+              style: GoogleFonts.poppins(
+                fontSize: Screen.max(context) * 0.025,
+                fontWeight: FontWeight.w600,
+                color: MyColors.white,
+              ),
+            ),
           ),
-          if (_isBusinessUser) _buildAddButton(),
-          _buildDivider(),
+          SizedBox(height: Screen.height(context) * 0.02),
+          _buildPackageList(),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: Screen.width(context) * 0.05,
+            ),
+            child: MyDivider(),
+          ),
         ],
       ),
     );

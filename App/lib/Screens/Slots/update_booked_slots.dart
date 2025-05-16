@@ -4,6 +4,7 @@ import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_calendar.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
+import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -182,34 +183,31 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Manage Booked Slots',
-          style: GoogleFonts.roboto(
-            color: MyColors.yellow,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.black,
-      ),
       body: isLoading
           ? _buildLoadingIndicator()
-          : SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(Screen.max(context) * 0.03),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildListingDropdown(),
-                    SizedBox(height: Screen.height(context) * 0.03),
-                    _buildInstructions(),
-                    _buildCalendar(),
-                    SizedBox(height: Screen.height(context) * 0.05),
-                    Center(child: _buildSaveButton()),
-                  ],
+          : Stack(children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(Screen.max(context) * 0.03),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: Screen.height(context) * 0.2),
+                      _buildListingDropdown(),
+                      SizedBox(height: Screen.height(context) * 0.03),
+                      _buildInstructions(),
+                      _buildCalendar(),
+                      SizedBox(height: Screen.height(context) * 0.05),
+                      Center(child: _buildSaveButton()),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              Positioned(
+                top: 0,
+                child: Header(heading: 'Manage Booked Slots'),
+              ),
+            ]),
     );
   }
 }

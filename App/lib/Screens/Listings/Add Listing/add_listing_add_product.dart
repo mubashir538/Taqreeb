@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -109,9 +110,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
                   _buildDescriptionField(),
                   _buildPriceField(),
                   _buildImageUploadSection(),
-                  SizedBox(height: Screen.max(context) * 0.05),
                   _buildSubmitButton(),
-                  SizedBox(height: Screen.max(context) * 0.02),
                 ],
               ),
             ),
@@ -165,12 +164,12 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
-        vertical: Screen.max(context) * 0.03,
+        vertical: Screen.max(context) * 0.01,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
+          Text(
             'Product Image',
             style: GoogleFonts.roboto(
               color: Colors.white,
@@ -218,7 +217,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
             ),
           SizedBox(height: Screen.max(context) * 0.03),
           Center(
-            child: ColoredButton(
+            child: BorderButton(
               text: _selectedImage == null ? 'Select Image' : 'Change Image',
               onPressed: _pickImage,
             ),

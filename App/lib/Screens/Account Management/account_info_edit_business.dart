@@ -6,12 +6,10 @@ import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/providers/business_edit_info_view_model.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class BusinessInfoEdit extends StatefulWidget {
@@ -117,30 +115,50 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundImage: viewModel.selectedImage != null
-                    ? FileImage(viewModel.selectedImage!)
-                    : (businessData.profileImageUrl != null
-                            ? NetworkImage(businessData.profileImageUrl!)
-                            : AssetImage('assets/images/default_profile.png'))
-                        as ImageProvider,
-              ),
-              Container(
-                margin: EdgeInsets.only(left: Screen.max(context) * 0.02),
-                child: InkWell(
-                  onTap: () => viewModel.pickImage(context),
-                  child: Text(
-                    "Change Profile Picture",
-                    style: GoogleFonts.roboto(
-                      decoration: TextDecoration.underline,
-                      fontSize: Screen.max(context) * 0.015,
-                      fontWeight: FontWeight.w400,
-                      color: MyColors.yellow,
+              Stack(
+                children: [
+                  GestureDetector(
+                    onTap: () => viewModel.pickImage(context),
+                    child: CircleAvatar(
+                      radius: Screen.max(context) * 0.1,
+                      backgroundImage: viewModel.selectedImage != null
+                          ? FileImage(viewModel.selectedImage!)
+                          : (businessData.profileImageUrl != null
+                                  ? NetworkImage(businessData.profileImageUrl!)
+                                  : AssetImage(
+                                      'assets/images/default_profile.png'))
+                              as ImageProvider,
                     ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    right: 4,
+                    child: GestureDetector(
+                      onTap: () => viewModel.pickImage(context),
+                      child: Container(
+                        padding: EdgeInsets.all(Screen.max(context) * 0.02),
+                        decoration: BoxDecoration(
+                          color: MyColors.whiteDarker,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          FontAwesomeIcons.pen,
+                          size: Screen.max(context) * 0.025,
+                          color: MyColors.red,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -163,8 +181,8 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
           ],
         ),
         SizedBox(
-            height: Screen.height(context) * 0.1,
-            child: Center(child: MyDivider())),
+          height: Screen.max(context) * 0.02,
+        ),
         ColoredButton(
           text: 'Save',
           onPressed: () {

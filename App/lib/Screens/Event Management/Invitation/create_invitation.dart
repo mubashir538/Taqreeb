@@ -323,7 +323,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.yellow),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
                   onPressed: addProgramDetail,
                 ),
               ),
@@ -390,7 +390,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.yellow),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
                   onPressed: addContactInfo,
                 ),
               ),
@@ -425,7 +425,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.yellow,
+              color: MyColors.red,
             ),
           ),
           SizedBox(height: 10),

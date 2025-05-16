@@ -378,15 +378,14 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                width: Screen.width(context) * 0.6,
+              Expanded(
                 child: Text(
                   widget.listing['Listing']['name'],
                   softWrap: true,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: _buildTextStyle(
-                      fontSize: 0.025,
+                      fontSize: 0.02,
                       fontWeight: FontWeight.w600,
                       color: MyColors.white),
                 ),
@@ -421,7 +420,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           child: Icon(
             FontAwesomeIcons.plus,
             color: MyColors.yellow,
-            size: Screen.max(context) * 0.05,
+            size: Screen.max(context) * 0.03,
           ),
         ),
       ],
@@ -497,38 +496,50 @@ class _UpperHeadingsState extends State<UpperHeadings> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildRatingDisplay(),
           _buildLocationDisplay(),
-          Icon(FontAwesomeIcons.locationDot, color: MyColors.white),
+          _buildRatingDisplay(),
         ],
       ),
     );
   }
 
   Widget _buildRatingDisplay() {
-    return Row(
-      children: [
-        Icon(FontAwesomeIcons.star, color: MyColors.yellow),
-        Text(
-          "${widget.listing['Listing']['rating']} (${widget.listing['Listing']['ratingCount']})",
-          style: _buildTextStyle(color: MyColors.white),
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: MyColors.ligthDark,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: EdgeInsets.all(Screen.max(context) * 0.01),
+      child: Row(
+        children: [
+          Icon(Icons.star, color: MyColors.yellow),
+          Text(
+            "${widget.listing['Listing']['rating']}",
+            style: _buildTextStyle(color: MyColors.white),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLocationDisplay() {
     return Column(
       children: [
-        SizedBox(
-          width: Screen.width(context) * 0.6,
-          child: Text(
-            widget.listing['Listing']['location'],
-            overflow: TextOverflow.ellipsis,
-            maxLines: 3,
-            softWrap: true,
-            style: _buildTextStyle(color: MyColors.white),
-          ),
+        Row(
+          children: [
+            Icon(FontAwesomeIcons.locationDot, color: MyColors.white),
+            SizedBox(width: Screen.width(context) * 0.01),
+            SizedBox(
+              width: Screen.width(context) * 0.6,
+              child: Text(
+                widget.listing['Listing']['location'],
+                overflow: TextOverflow.ellipsis,
+                maxLines: 3,
+                softWrap: true,
+                style: _buildTextStyle(color: MyColors.white),
+              ),
+            ),
+          ],
         ),
         if (_isBusinessUser)
           ColoredButton(

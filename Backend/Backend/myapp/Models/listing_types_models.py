@@ -3,7 +3,7 @@ from .listing_models import Listing
 
 class Venue(m.Model):
     id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey('Listing', on_delete=m.CASCADE)
+    listingId = m.ForeignKey('Listing', on_delete=m.CASCADE)
     VENUE_TYPE_CHOICES = [
         ('Banquet', 'Banquet'),
         ('Hall', 'Hall'),
@@ -40,7 +40,7 @@ class Venue(m.Model):
     guestmaxAllowed = m.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.listingID} - {self.venueType}"
+        return f"{self.listingId} - {self.venueType}"
     
 class Caterers(m.Model):
     id = m.AutoField(primary_key=True)
@@ -80,7 +80,7 @@ class Caterers(m.Model):
 
 class CarRenters(m.Model):
     id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing, on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing, on_delete=m.CASCADE)
     SERVICE_TYPE_CHOICES = [
         ('Luxury', 'Luxury'),
         ('Economy', 'Economy'),
@@ -118,7 +118,7 @@ class Decorators(m.Model):
 
 class PhotographyPlaces(m.Model):
     id = m.AutoField(primary_key=True)
-    listingID = m.ForeignKey(Listing, on_delete=m.CASCADE)
+    listingId = m.ForeignKey(Listing, on_delete=m.CASCADE)
 
     TYPE_CHOICES = [
         ('Studio', 'Studio'),

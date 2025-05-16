@@ -82,7 +82,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UImanagement.headerHeight),
+                SizedBox(height: UImanagement.headerHeight+ Screen.max(context)*0.02),
                 _buildNameField(),
                 _buildPriceField(),
                 _buildPerHeadQuestion(),
@@ -136,7 +136,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
   Widget _buildPerHeadQuestion() {
     return RadioButtonQuestion(
       options: const ['Yes', 'No'],
-      question: '',
+      question: 'Does this Price is on Per Head?',
       myValue: _formController.perheadController.text,
       onChanged: _handlePerHeadChange,
     );
@@ -147,7 +147,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
       prefixIcon: FontAwesomeIcons.person,
       focusNode: _formController.headtypeFocus,
       onFieldSubmitted: (_) => _formController.headtypeFocus.unfocus(),
-      hint: 'PerHead Type',
+      hint: 'PerHead Type (Per Person or Per Piece)',
       valueController: _formController.headtypeController,
     );
   }

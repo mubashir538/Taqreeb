@@ -17,7 +17,7 @@ class PackageBox extends StatelessWidget {
     required this.packageDetails,
     required this.packagePrice,
     required this.imageUrl,
-    required this.packageId,
+    this.packageId = "0",
     required this.onPressed,
   });
 
@@ -42,7 +42,7 @@ class PackageBox extends StatelessWidget {
           ],
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Image on the left
             Container(
@@ -62,47 +62,51 @@ class PackageBox extends StatelessWidget {
 
             // Content on the right
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(Screen.max(context) * 0.02),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Package Name
-                    Text(
-                      packageName,
-                      style: GoogleFonts.roboto(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w600,
-                        color: MyColors.white,
+              child: SizedBox(
+                height: Screen.height(context) * 0.2,
+                child: Padding(
+                  padding: EdgeInsets.all(Screen.max(context) * 0.02),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Package Name
+                      Text(
+                        packageName,
+                        style: GoogleFonts.roboto(
+                          fontSize: Screen.max(context) * 0.02,
+                          fontWeight: FontWeight.w600,
+                          color: MyColors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: Screen.max(context) * 0.01),
+                      SizedBox(height: Screen.max(context) * 0.01),
 
-                    // Package Details
-                    Text(
-                      packageDetails,
-                      style: GoogleFonts.roboto(
-                        fontSize: Screen.max(context) * 0.015,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.whiteDarker,
+                      // Package Details
+                      Text(
+                        packageDetails,
+                        style: GoogleFonts.roboto(
+                          fontSize: Screen.max(context) * 0.015,
+                          fontWeight: FontWeight.w400,
+                          color: MyColors.whiteDarker,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: Screen.max(context) * 0.02),
+                      SizedBox(height: Screen.max(context) * 0.02),
 
-                    // Price only (no Add to Cart button)
-                    Text(
-                      packagePrice,
-                      style: GoogleFonts.roboto(
-                        fontSize: Screen.max(context) * 0.02,
-                        fontWeight: FontWeight.w600,
-                        color: MyColors.red,
+                      // Price only (no Add to Cart button)
+                      Text(
+                        packagePrice,
+                        style: GoogleFonts.roboto(
+                          fontSize: Screen.max(context) * 0.02,
+                          fontWeight: FontWeight.w600,
+                          color: MyColors.red,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

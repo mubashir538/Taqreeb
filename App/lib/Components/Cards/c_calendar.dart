@@ -58,12 +58,15 @@ class CalendarViewState extends State<CalendarView> {
     final isBooked = _isBooked(day);
     final isSelected = _isSelected(day);
     final isToday = isSameDay(day, DateTime.now());
+    final isWeekend =
+        day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
 
     Color backgroundColor = Colors.transparent;
-    Color textColor = MyColors.white;
+    Color textColor = isWeekend ? MyColors.red : MyColors.white;
+    Border? border;
 
     if (isToday) {
-      backgroundColor = MyColors.red;
+      border = Border.all(color: MyColors.red, width: 1.5);
     }
 
     if (isBooked) {
@@ -72,21 +75,23 @@ class CalendarViewState extends State<CalendarView> {
     }
 
     if (isSelected) {
-      backgroundColor = MyColors.yellow;
-      textColor = Colors.black;
+      backgroundColor = MyColors.red;
+      textColor = MyColors.white;
     }
 
     return Container(
-      margin: const EdgeInsets.all(4),
+      margin: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
+        border: border,
       ),
       child: Center(
         child: Text(
           '${day.day}',
-          style: GoogleFonts.roboto(
+          style: GoogleFonts.poppins(
             color: textColor,
+            fontSize: 14,
             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -96,84 +101,208 @@ class CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TableCalendar(
-          firstDay: DateTime.now(),
-          lastDay: DateTime.now().add(const Duration(days: 365)),
-          focusedDay: _focusedDay,
-          selectedDayPredicate: (day) => widget.isSelectionMode
-              ? _isSelected(day)
-              : isSameDay(_selectedDay, day),
-          onDaySelected: _handleDateSelection,
-          calendarFormat: CalendarFormat.month,
-          calendarStyle: CalendarStyle(
-            todayDecoration: BoxDecoration(
-              color: MyColors.red,
-              shape: BoxShape.circle,
-            ),
-            selectedDecoration: BoxDecoration(
-              color: MyColors.yellow,
-              shape: BoxShape.rectangle,
-            ),
-            defaultTextStyle: GoogleFonts.roboto(color: MyColors.white),
-            weekendTextStyle: GoogleFonts.roboto(color: MyColors.red),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: MyColors.dark,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with month/year and navigation
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(FontAwesomeIcons.chevronLeft,
+                    color: MyColors.white, size: 16),
+                onPressed: () {
+                  setState(() {
+                    _focusedDay =
+                        DateTime(_focusedDay.year, _focusedDay.month - 1);
+                  });
+                },
+              ),
+              Text(
+                '${_getMonthName(_focusedDay.month)} ${_focusedDay.year}',
+                style: GoogleFonts.poppins(
+                  color: MyColors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              IconButton(
+                icon: Icon(FontAwesomeIcons.chevronRight,
+                    color: MyColors.white, size: 16),
+                onPressed: () {
+                  setState(() {
+                    _focusedDay =
+                        DateTime(_focusedDay.year, _focusedDay.month + 1);
+                  });
+                },
+              ),
+            ],
           ),
-          headerStyle: HeaderStyle(
-            formatButtonVisible: false,
-            titleCentered: true,
-            leftChevronIcon:
-                Icon(FontAwesomeIcons.chevronLeft, color: MyColors.white),
-            rightChevronIcon:
-                Icon(FontAwesomeIcons.chevronRight, color: MyColors.white),
-            titleTextStyle: GoogleFonts.roboto(
-              color: MyColors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          daysOfWeekStyle: DaysOfWeekStyle(
-            weekdayStyle: GoogleFonts.roboto(color: MyColors.white),
-            weekendStyle: GoogleFonts.roboto(color: MyColors.white),
-          ),
-          calendarBuilders: CalendarBuilders(
-            defaultBuilder: (context, day, focusedDay) {
-              return _buildDayWidget(day, focusedDay);
-            },
-            todayBuilder: (context, day, focusedDay) {
-              return _buildDayWidget(day, focusedDay);
-            },
-            selectedBuilder: (context, day, focusedDay) {
-              return _buildDayWidget(day, focusedDay);
-            },
-            disabledBuilder: (context, day, focusedDay) {
-              return Opacity(
-                opacity: 0.5,
-                child: _buildDayWidget(day, focusedDay),
-              );
-            },
-          ),
-        ),
-        if (widget.isSelectionMode) ...[
           const SizedBox(height: 16),
-          Text(
-            'Tap dates to select/unselect',
-            style: GoogleFonts.roboto(
-              color: MyColors.yellow,
-              fontSize: 14,
-            ),
+
+          // Weekday headers
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+                .map((day) => Text(
+                      day,
+                      style: GoogleFonts.poppins(
+                        color: day == 'S' ? MyColors.red : MyColors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ))
+                .toList(),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Booked dates are shown in red',
-            style: GoogleFonts.roboto(
-              color: MyColors.red,
-              fontSize: 14,
+
+          // Calendar grid
+          TableCalendar(
+            firstDay: DateTime.now(),
+            lastDay: DateTime.now().add(const Duration(days: 365)),
+            focusedDay: _focusedDay,
+            selectedDayPredicate: (day) => widget.isSelectionMode
+                ? _isSelected(day)
+                : isSameDay(_selectedDay, day),
+            onDaySelected: _handleDateSelection,
+            calendarFormat: CalendarFormat.month,
+            startingDayOfWeek: StartingDayOfWeek.sunday,
+            headerVisible: false,
+            daysOfWeekVisible: false,
+            calendarStyle: CalendarStyle(
+              outsideDaysVisible: false,
+              defaultDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.transparent,
+              ),
+              weekendDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.transparent,
+              ),
+              todayDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.transparent,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: MyColors.red,
+                shape: BoxShape.circle,
+              ),
+              defaultTextStyle: GoogleFonts.poppins(color: MyColors.white),
+              weekendTextStyle: GoogleFonts.poppins(color: MyColors.red),
+              todayTextStyle: GoogleFonts.poppins(
+                color: MyColors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) {
+                return _buildDayWidget(day, focusedDay);
+              },
+              todayBuilder: (context, day, focusedDay) {
+                return _buildDayWidget(day, focusedDay);
+              },
+              selectedBuilder: (context, day, focusedDay) {
+                return _buildDayWidget(day, focusedDay);
+              },
+              disabledBuilder: (context, day, focusedDay) {
+                return Opacity(
+                  opacity: 0.3,
+                  child: _buildDayWidget(day, focusedDay),
+                );
+              },
+              outsideBuilder: (context, day, focusedDay) {
+                return Opacity(
+                  opacity: 0.3,
+                  child: _buildDayWidget(day, focusedDay),
+                );
+              },
             ),
           ),
+
+          // Legend/instructions
+          if (widget.isSelectionMode) ...[
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: MyColors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Selected/Booked dates',
+                  style: GoogleFonts.poppins(
+                    color: MyColors.white,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: MyColors.red),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Today',
+                  style: GoogleFonts.poppins(
+                    color: MyColors.white,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
-      ],
+      ),
     );
+  }
+
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1:
+        return 'January';
+      case 2:
+        return 'February';
+      case 3:
+        return 'March';
+      case 4:
+        return 'April';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'October';
+      case 11:
+        return 'November';
+      case 12:
+        return 'December';
+      default:
+        return '';
+    }
   }
 }

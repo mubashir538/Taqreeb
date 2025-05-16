@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -106,35 +105,130 @@ class _PricingSectionState extends State<PricingSection> {
     MyScaffold(text: message).show(context);
   }
 
+  String _formatNumberWithCommas(String number) {
+    return number.replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+  }
+
   Widget _buildPriceRangeRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          "Pricing:",
-          style: _buildTextStyle(
-            fontSize: 0.02,
-            fontWeight: FontWeight.w500,
-            color: MyColors.white,
+    return Container(
+      width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.symmetric(
+          horizontal: Screen.width(context) * 0.05,
+          vertical: Screen.height(context) * 0.04),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Pricing",
+            style: _buildTextStyle(
+              fontSize: 0.018,
+              fontWeight: FontWeight.w600,
+              color: MyColors.white,
+            ),
           ),
-        ),
-        Text(
-          "Rs. ${widget.listing['Listing']['priceMin']} - ${widget.listing['Listing']['priceMax']}",
-          style: _buildTextStyle(
-            fontSize: 0.02,
-            fontWeight: FontWeight.w400,
-            color: MyColors.white,
+          SizedBox(height: Screen.height(context) * 0.02),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Min Price",
+                    style: _buildTextStyle(
+                      fontSize: 0.015,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white.withAlpha(123),
+                    ),
+                  ),
+                  Text(
+                    "Rs. ${_formatNumberWithCommas(widget.listing['Listing']['priceMin'].toString())}",
+                    style: _buildTextStyle(
+                      fontSize: 0.025,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.white,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "Max Price",
+                    style: _buildTextStyle(
+                      fontSize: 0.015,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white.withAlpha(123),
+                    ),
+                  ),
+                  Text(
+                    "Rs. ${_formatNumberWithCommas(widget.listing['Listing']['priceMax'].toString())}",
+                    style: _buildTextStyle(
+                      fontSize: 0.025,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildBasicPriceRow() {
-    return _buildNonEditableRow(
-      label: "Basic Price:",
-      value: widget.listing['Listing']['basicPrice'].toString(),
-      isYellow: !_isBusinessUser,
+    return Container(
+      width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.symmetric(
+          horizontal: Screen.width(context) * 0.05,
+          vertical: Screen.height(context) * 0.04),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Basic Price:",
+            style: _buildTextStyle(
+              fontSize: 0.018,
+              fontWeight: FontWeight.w400,
+              color: MyColors.white,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: Screen.width(context) * 0.03,
+                vertical: Screen.height(context) * 0.008),
+            decoration: BoxDecoration(
+              color: MyColors.darkLighter,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              "Rs. ${widget.listing['Listing']['basicPrice']}",
+              style: _buildTextStyle(
+                fontSize: 0.025,
+                fontWeight: FontWeight.w600,
+                color: MyColors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -145,79 +239,117 @@ class _PricingSectionState extends State<PricingSection> {
     required TextEditingController controller,
     required VoidCallback onSave,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: _buildTextStyle(
-            fontSize: 0.015,
-            fontWeight: FontWeight.w500,
-            color: MyColors.yellow,
-          ),
-        ),
-        const SizedBox(height: 4),
-        if (isEditing)
-          TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            style: _buildTextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 0.015,
-              color: MyColors.white,
-            ),
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintText: 'Enter $label...',
-              hintStyle:  GoogleFonts.roboto(color: Colors.grey),
-            ),
-          )
-        else
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: Screen.width(context) * 0.05,
+          vertical: Screen.height(context) * 0.015),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            widget.listing['Listing'][field].toString(),
+            label,
             style: _buildTextStyle(
-              fontSize: 0.015,
-              fontWeight: FontWeight.w400,
-              color: MyColors.white,
+              fontSize: 0.018,
+              fontWeight: FontWeight.w600,
+              color: MyColors.yellow,
             ),
           ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ColoredButton(
-            text: isEditing ? "Save" : "Edit",
-            onPressed: isEditing ? onSave : () => _toggleEditing(field),
+          SizedBox(height: Screen.height(context) * 0.01),
+          if (isEditing)
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              style: _buildTextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 0.016,
+                color: MyColors.white,
+              ),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: MyColors.darkLighter,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: Screen.width(context) * 0.03,
+                    vertical: Screen.height(context) * 0.015),
+                hintText: 'Enter $label...',
+                hintStyle: GoogleFonts.roboto(
+                  color: Colors.grey,
+                  fontSize: Screen.max(context) * 0.016,
+                ),
+              ),
+            )
+          else
+            Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Screen.width(context) * 0.03,
+                  vertical: Screen.height(context) * 0.015),
+              decoration: BoxDecoration(
+                color: MyColors.darkLighter,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                widget.listing['Listing'][field].toString(),
+                style: _buildTextStyle(
+                  fontSize: 0.016,
+                  fontWeight: FontWeight.w500,
+                  color: MyColors.white,
+                ),
+              ),
+            ),
+          SizedBox(height: Screen.height(context) * 0.015),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: Screen.width(context) * 0.3,
+              child: ColoredButton(
+                text: isEditing ? "Save" : "Edit",
+                onPressed: isEditing ? onSave : () => _toggleEditing(field),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildNonEditableRow({
-    required String label,
-    required String value,
-    bool isYellow = false,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: _buildTextStyle(
-            fontSize: 0.015,
-            fontWeight: FontWeight.w500,
-            color: isYellow ? MyColors.yellow : MyColors.white,
-          ),
-        ),
-        Text(
-          value,
-          style: _buildTextStyle(
-            fontSize: 0.015,
-            fontWeight: FontWeight.w400,
-            color: MyColors.white,
-          ),
-        ),
-      ],
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
+      child: Column(
+        children: [
+          _buildPriceRangeRow(),
+          SizedBox(height: Screen.max(context) * 0.025),
+          if (_isBusinessUser) ...[
+            _buildEditablePriceRow(
+              label: "Minimum Price",
+              field: "priceMin",
+              isEditing: _isEditingPriceMin,
+              controller: _priceMinController,
+              onSave: () =>
+                  _savePriceField('priceMin', _priceMinController.text),
+            ),
+            SizedBox(height: Screen.max(context) * 0.025),
+            _buildEditablePriceRow(
+              label: "Maximum Price",
+              field: "priceMax",
+              isEditing: _isEditingPriceMax,
+              controller: _priceMaxController,
+              onSave: () =>
+                  _savePriceField('priceMax', _priceMaxController.text),
+            ),
+            SizedBox(height: Screen.max(context) * 0.025),
+          ],
+          _buildBasicPriceRow(),
+        ],
+      ),
     );
   }
 
@@ -241,49 +373,5 @@ class _PricingSectionState extends State<PricingSection> {
         _isEditingPriceMax = true;
       }
     });
-  }
-
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: Screen.height(context) * 0.02),
-      child: Column(
-        children: [
-          _buildPriceRangeRow(),
-          SizedBox(height: Screen.max(context) * 0.02),
-          if (_isBusinessUser) ...[
-            _buildEditablePriceRow(
-              label: "Minimum Price:",
-              field: "priceMin",
-              isEditing: _isEditingPriceMin,
-              controller: _priceMinController,
-              onSave: () =>
-                  _savePriceField('priceMin', _priceMinController.text),
-            ),
-            SizedBox(height: Screen.max(context) * 0.02),
-            _buildEditablePriceRow(
-              label: "Maximum Price:",
-              field: "priceMax",
-              isEditing: _isEditingPriceMax,
-              controller: _priceMaxController,
-              onSave: () =>
-                  _savePriceField('priceMax', _priceMaxController.text),
-            ),
-            SizedBox(height: Screen.max(context) * 0.02),
-          ],
-          _buildBasicPriceRow(),
-          _buildDivider(),
-        ],
-      ),
-    );
   }
 }
