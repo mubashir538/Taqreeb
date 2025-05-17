@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
@@ -65,9 +66,10 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
         _descriptionController.text, MyTokens.bsdescription);
 
     if (mounted) {
-      Navigator.pushNamed(
-        context,
-        '/ProfilePictureUpload',
+      context.pushNamedTransition(
+        routeName: '/ProfilePictureUpload',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
         arguments: {'type': 'Business'},
       );
     }
@@ -110,7 +112,9 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: UImanagement.headerHeight + Screen.height(context) * 0.05),
+                      SizedBox(
+                          height: UImanagement.headerHeight +
+                              Screen.height(context) * 0.05),
                       DescriptionBox(
                         valueController: _descriptionController,
                         onChanged: _updateCharacterCount,

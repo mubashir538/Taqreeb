@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/picture_options.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -122,7 +123,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
             refresh: true,
             headers: {'Authorization': 'Bearer $token'});
 
-        Navigator.pushNamed(context, '/AccountInfo');
+        context.pushNamedTransition(
+            routeName: '/AccountInfo',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }, onError: () {
         MyScaffold(text: 'Failed to update the profile. Please try again.')
             .show(context);
@@ -203,7 +207,8 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                             });
                                           },
                                           child: Container(
-                                            padding: EdgeInsets.all(Screen.max(context)*0.02),
+                                            padding: EdgeInsets.all(
+                                                Screen.max(context) * 0.02),
                                             decoration: BoxDecoration(
                                               color: MyColors.whiteDarker,
                                               shape: BoxShape.circle,
@@ -283,8 +288,12 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                       onPressed: () async {
                                         Navigator.pop(context);
                                         _uploadProfilePicture();
-                                        Navigator.pushNamed(
-                                            context, '/AccountInfo');
+                                        context.pushNamedTransition(
+                                            routeName: '/AccountInfo',
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            duration:
+                                                Duration(milliseconds: 300));
                                       },
                                       child: Text('Save')),
                                 ],

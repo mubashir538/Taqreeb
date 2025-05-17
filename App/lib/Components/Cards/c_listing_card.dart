@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart'; // Assuming MyColors is here
@@ -130,7 +131,7 @@ class _ProductCardState extends State<ProductCard> {
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
-                ),  
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,10 +235,13 @@ class _ProductCardState extends State<ProductCard> {
         path = '/CategoryView_Caterers';
         break;
     }
-
-    Navigator.pushNamed(context, path, arguments: {
-      'id': int.parse(widget.listingid),
-      'isBusiness': widget.isBusiness,
-    });
+    context.pushNamedTransition(
+        routeName: path,
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {
+          'id': int.parse(widget.listingid),
+          'isBusiness': widget.isBusiness,
+        });
   }
 }

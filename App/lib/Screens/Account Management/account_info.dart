@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -148,9 +149,15 @@ class _AccountInfoState extends State<AccountInfo> {
             text: 'Edit Profile',
             onPressed: () async {
               if (await MyTokens.getBusinessType() == 'user') {
-                Navigator.pushNamed(context, '/AccountInfoEdit');
+                context.pushNamedTransition(
+                    routeName: '/AccountInfoEdit',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300));
               } else {
-                Navigator.pushNamed(context, '/BusinessAccountInfoEdit');
+                context.pushNamedTransition(
+                    routeName: '/BusinessAccountInfoEdit',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300));
               }
             }),
       ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -120,10 +121,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
     final routeName = response["Guests"].isEmpty
         ? '/CreateGuestList'
         : '/CreateGuestList_List';
-
-    Navigator.pushNamed(
-      context,
-      routeName,
+    context.pushNamedTransition(
+      routeName: routeName,
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
         'eventId': _eventId,
         'functionid': _functionId,
@@ -132,9 +133,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   void _navigateToChecklist() {
-    Navigator.pushNamed(
-      context,
-      '/CreateChecklistItems',
+    context.pushNamedTransition(
+      routeName: '/CreateChecklistItems',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
         'eventId': _eventId,
         'functionid': _functionId,
@@ -143,18 +145,22 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   void _navigateToInvitation() {
-    Navigator.pushNamed(
-      context,
-      '/CreateInvitation',
+    context.pushNamedTransition(
+      routeName: '/CreateInvitation',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
-        'type': _eventType,
-        'functionType': _functionDetails['type'],
+        'eventId': _eventId,
+        'functionid': _functionId,
       },
     );
   }
 
   void _navigateToAddNewItem() {
-    Navigator.pushNamed(context, '/SearchService');
+    context.pushNamedTransition(
+        routeName: '/SearchService',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
   }
 
   @override
@@ -224,7 +230,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
       children: [
         SizedBox(height: Screen.height(context) * 0.05),
         _buildFunctionCard(function, headings, values),
-        SizedBox(height: Screen.height(context) * 0.05),  
+        SizedBox(height: Screen.height(context) * 0.05),
         ..._buildBookingList(),
         SizedBox(height: Screen.height(context) * 0.05),
         _buildActionButtons(),
@@ -386,7 +392,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
         children: [
           _buildBudgetRow(),
           ..._buildInfoRows(headings, values),
-        SizedBox(height: Screen.height(context) * 0.02),
+          SizedBox(height: Screen.height(context) * 0.02),
         ],
       ),
     );
@@ -409,7 +415,9 @@ class _FunctionDetailState extends State<FunctionDetail> {
           Text(
             _formatNumberWithCommas(
                 _functionDetails['Fuctions']?['budget']?.toString() ?? ''),
-            style: _buildTextStyle(fontWeight: FontWeight.w600, color: MyColors.white.withAlpha(200)),
+            style: _buildTextStyle(
+                fontWeight: FontWeight.w600,
+                color: MyColors.white.withAlpha(200)),
           ),
         ],
       ),
@@ -434,7 +442,9 @@ class _FunctionDetailState extends State<FunctionDetail> {
             ),
             Text(
               values[headings.indexOf(heading)],
-              style: _buildTextStyle(fontWeight: FontWeight.w400, color: MyColors.white.withAlpha(200)),
+              style: _buildTextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white.withAlpha(200)),
             ),
           ],
         ),

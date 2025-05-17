@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/wallet%20System/transaction_card.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import '../../core/services/screen_size.dart';
@@ -41,10 +42,16 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                       color: MyColors.white)),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, "/AllTransactions",arguments: widget.transactions);
+                  context.pushNamedTransition(
+                      routeName: "/AllTransactions",
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300),
+                      arguments: widget.transactions);
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01, horizontal: Screen.max(context) * 0.02),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Screen.max(context) * 0.01,
+                      horizontal: Screen.max(context) * 0.02),
                   decoration: BoxDecoration(
                     color: MyColors.darkLighter,
                     borderRadius: BorderRadius.circular(20),

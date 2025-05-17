@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -47,7 +48,10 @@ class ForgotPasswordProvider with ChangeNotifier {
 
       if (response['status'] == 'success') {
         MyScaffold(text: 'Verification code sent successfully.').show(context);
-        Navigator.pushNamed(context, '/ForgotPassword_VerifyCode',
+        context.pushNamedTransition(
+            routeName: '/ForgotPassword_VerifyCode',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300),
             arguments: {'email': contact, 'response': response});
       } else {
         MyScaffold(text: 'Something Went Wrong!').show(context);

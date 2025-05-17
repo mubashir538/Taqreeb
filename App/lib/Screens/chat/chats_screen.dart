@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -337,11 +338,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
       });
     }
 
-    Navigator.pushNamed(context, '/ChatBox', arguments: {'userId': userId});
+    context.pushNamedTransition(
+        routeName: '/ChatBox',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {'userId': userId});
   }
 
   void _navigateToCreateGroup() {
-    Navigator.pushNamed(context, '/CreateGroup',
+    context.pushNamedTransition(
+        routeName: '/CreateGroup',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
         arguments: {'chats': _userChats});
   }
 
@@ -394,10 +402,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
         image: convo['chatimage'] ?? convo['groupImageUrl'],
         onpressed: () {
           if (convo['isGroup'] ?? false) {
-            Navigator.pushNamed(context, '/GroupChatBox', arguments: {
-              'groupId': convo['groupId'],
-              'participants': convo['participants'],
-            });
+            context.pushNamedTransition(
+                routeName: '/GroupChatBox',
+                type: PageTransitionType.rightToLeftWithFade,
+                duration: Duration(milliseconds: 300),
+                arguments: {
+                  'groupId': convo['groupId'],
+                  'participants': convo['participants'],
+                });
           } else {
             _navigateToChatbox(convo['userId']);
           }
@@ -575,7 +587,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
               padding: EdgeInsets.only(left: max * 0.02),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/search_new_user');
+                  context.pushNamedTransition(
+                      routeName: '/search_new_user',
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300));
                 },
                 child: Container(
                   padding: EdgeInsets.all(max * 0.015),

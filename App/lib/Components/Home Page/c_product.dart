@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -45,7 +46,10 @@ class _ProductBoxState extends State<ProductBox> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please login to add items to cart')),
           );
-          Navigator.pushNamed(context, '/Login');
+          context.pushNamedTransition(
+              routeName: '/Login',
+              type: PageTransitionType.rightToLeftWithFade,
+              duration: Duration(milliseconds: 300));
         }
         return;
       }

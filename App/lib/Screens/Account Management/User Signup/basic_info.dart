@@ -114,13 +114,22 @@ class _BasicSignupState extends State<BasicSignup> {
         milliseconds: 100)); // Small delay ensures smooth UI transition
 
     if (await MyStorage.exists(MyTokens.scity)) {
-      Navigator.pushNamed(context, '/ProfilePictureUpload',
+      context.pushNamedTransition(
+          routeName: '/ProfilePictureUpload',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300),
           arguments: {'type': 'User'});
     } else if (await MyStorage.exists(MyTokens.sphone) ||
         await MyStorage.exists(MyTokens.semail)) {
-      Navigator.pushNamed(context, '/Signup_MoreInfo');
+      context.pushNamedTransition(
+          routeName: '/Signup_MoreInfo',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     } else {
-      Navigator.pushNamed(context, '/Signup_EmailOTPSend');
+      context.pushNamedTransition(
+          routeName: '/Signup_EmailOTPSend',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     }
   }
 

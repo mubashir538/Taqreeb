@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -94,9 +95,10 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
     }
 
     _formController.addPackage(images: _selectedImages);
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_Packages',
+    context.pushNamedTransition(
+      routeName: '/AddCategory_Packages',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: _formController.args,
     );
   }

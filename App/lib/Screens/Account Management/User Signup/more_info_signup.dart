@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -98,9 +99,10 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   }
 
   void _navigateToProfilePictureUpload() {
-    Navigator.pushNamed(
-      context,
-      '/ProfilePictureUpload',
+    context.pushNamedTransition(
+      routeName: '/ProfilePictureUpload',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {'type': 'user'},
     );
   }

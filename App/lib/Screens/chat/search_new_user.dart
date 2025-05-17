@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
@@ -69,7 +70,10 @@ class _NewUserSearchState extends State<NewUserSearch> {
   }
 
   void _navigateToChatbox(String userId) {
-    Navigator.pushNamed(context, '/ChatBox', arguments: {'userId': userId});
+    context.pushNamedTransition(
+        routeName: '/ChatBox',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),arguments: {'userId': userId});
   }
 
   void _handleError(String error) {

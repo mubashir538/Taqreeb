@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/AI/c_ai_functions.dart';
@@ -69,8 +70,10 @@ class AiPackageEventDetail extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return AIFunctions(
                       onpressed: () {
-                        Navigator.pushNamed(
-                            context, '/AIPackage_FunctionDetail');
+                        context.pushNamedTransition(
+                            routeName: '/AIPackage_FunctionDetail',
+                            type: PageTransitionType.rightToLeftWithFade,
+                            duration: Duration(milliseconds: 300));
                       },
                       event: "Mehendi",
                       date: "24-Nov-2024",

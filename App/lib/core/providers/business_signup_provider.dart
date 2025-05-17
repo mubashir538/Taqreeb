@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -39,12 +40,21 @@ class BusinessSignupProvider with ChangeNotifier {
           text: 'Continue',
           onPressed: () async {
             if (await MyStorage.exists(MyTokens.bsdescription)) {
-              Navigator.pushNamed(context, '/ProfilePictureUpload',
+              context.pushNamedTransition(
+                  routeName: '/ProfilePictureUpload',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300),
                   arguments: {'type': 'Business'});
             } else if (await MyStorage.exists(MyTokens.bsfront)) {
-              Navigator.pushNamed(context, '/BusinessSignup_Description');
+              context.pushNamedTransition(
+                  routeName: '/BusinessSignup_Description',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300));
             } else {
-              Navigator.pushNamed(context, '/BusinessSignup_CNICUpload');
+              context.pushNamedTransition(
+                  routeName: '/BusinessSignup_CNICUpload',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300));
             }
           },
         ),

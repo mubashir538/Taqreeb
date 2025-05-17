@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -45,9 +46,11 @@ class FreelancerSignupDescriptionViewModel with ChangeNotifier {
     }
 
     MyStorage.saveToken(_descriptionController.text, MyTokens.fsdescription);
-    Navigator.pushNamed(
-      context,
-      '/ProfilePictureUpload',
+
+    context.pushNamedTransition(
+      routeName: '/ProfilePictureUpload',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {'type': 'Freelancer'},
     );
   }
@@ -102,8 +105,7 @@ class FreelancerSignupDescriptionState
                     "Your Description Creates a Great Impact on the customers and can help your get more clients ",
               ),
               SizedBox(
-                height:
-                    (Screen.max(context) * 0.02),
+                height: (Screen.max(context) * 0.02),
               ),
               Consumer<FreelancerSignupDescriptionViewModel>(
                 builder: (context, viewModel, child) {

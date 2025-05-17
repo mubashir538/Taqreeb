@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
@@ -104,17 +105,26 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
 
   Future<void> _handleContinue() async {
     if (await MyStorage.exists(MyTokens.fsdescription)) {
-      Navigator.pushNamed(context, '/ProfilePictureUpload',
+      context.pushNamedTransition(
+          routeName: '/ProfilePictureUpload',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300),
           arguments: {'type': 'Freelancer'});
     } else {
-      Navigator.pushNamed(context, '/FreelancerSignup_Description');
+      context.pushNamedTransition(
+        routeName: '/FreelancerSignup_Description',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
     }
   }
 
   Future<void> _handleContinueButton() async {
     if (await _validateInputs()) {
       await _saveUserData();
-      Navigator.pushNamed(context, '/FreelancerSignup_Description');
+      context.pushNamedTransition(
+        routeName: '/FreelancerSignup_Description',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
     }
   }
 

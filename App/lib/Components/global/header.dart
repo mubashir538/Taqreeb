@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -225,7 +226,10 @@ class _HeaderState extends State<Header> {
                               '/Settings') {
                             _showLogoutDialog();
                           } else {
-                            Navigator.pushNamed(context, '/Settings');
+                            context.pushNamedTransition(
+        routeName: '/Settings',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
                           }
                         },
                         child: Icon(

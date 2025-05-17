@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
@@ -313,7 +314,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(FontAwesomeIcons.circleMinus, color: MyColors.red),
+                    icon:
+                        Icon(FontAwesomeIcons.circleMinus, color: MyColors.red),
                     onPressed: () => removeProgramDetail(index),
                   ),
                 ],
@@ -380,7 +382,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   ),
                   if (contactInfo.length > 1)
                     IconButton(
-                      icon: Icon(FontAwesomeIcons.circleMinus, color: MyColors.red),
+                      icon: Icon(FontAwesomeIcons.circleMinus,
+                          color: MyColors.red),
                       onPressed: () => removeContactInfo(index),
                     ),
                 ],
@@ -559,7 +562,10 @@ class _CreateInvitationState extends State<CreateInvitation> {
           .toList(),
     };
     if (mounted) {
-      Navigator.pushNamed(context, '/InvitationCardView',
+      context.pushNamedTransition(
+          routeName: '/InvitationCardView',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300),
           arguments: {'data': formData});
       MyScaffold(text: 'Creating Your Invitation Card, This may Take a While!')
           .show(context);

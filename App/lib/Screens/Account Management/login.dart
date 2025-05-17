@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Buttons/c_icon_button.dart';
@@ -206,7 +207,10 @@ class _LoginState extends State<Login> {
   }
 
   void _navigateToForgotPassword() {
-    Navigator.pushNamed(context, '/ForgotPassword_EmailorPhoneInput');
+    context.pushNamedTransition(
+        routeName: '/ForgotPassword_EmailorPhoneInput',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
   }
 
   void _navigateToSignup() {

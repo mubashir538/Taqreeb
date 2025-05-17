@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -98,7 +99,10 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
       if (int.parse(_enteredOTP) == response['otp']) {
         await MyStorage.saveToken(response['email'], 'semail');
         if (mounted) {
-          Navigator.pushNamed(context, '/Signup_MoreInfo');
+          context.pushNamedTransition(
+        routeName: '/Signup_MoreInfo',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
         }
       } else {
         _showErrorDialog('Invalid OTP', 'The entered OTP is incorrect.');

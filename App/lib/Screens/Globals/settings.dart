@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -189,13 +190,17 @@ class _SettingsState extends State<Settings> {
                                     )
                                   : GuideButton(
                                       onpressed: () {
-                                        Navigator.pushNamed(context,
-                                            '/BusinessSignup_BasicInfo');
+                                        context.pushNamedTransition(
+                                            routeName:
+                                                '/BusinessSignup_BasicInfo',
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            duration:
+                                                Duration(milliseconds: 300));
                                       },
                                       text: 'Signup As Business',
                                       leftIcon: FontAwesomeIcons.building,
-                                      rightIcon:
-                                          FontAwesomeIcons.chevronRight,
+                                      rightIcon: FontAwesomeIcons.chevronRight,
                                     ),
                               types['freelancer']
                                   ? Container(
@@ -286,13 +291,17 @@ class _SettingsState extends State<Settings> {
                                     )
                                   : GuideButton(
                                       onpressed: () {
-                                        Navigator.pushNamed(context,
-                                            '/FreelancerSignup_BasicInfo');
+                                        context.pushNamedTransition(
+                                            routeName:
+                                                '/FreelancerSignup_BasicInfo',
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            duration:
+                                                Duration(milliseconds: 300));
                                       },
                                       text: 'Signup As Freelancer',
                                       leftIcon: FontAwesomeIcons.userTie,
-                                      rightIcon:
-                                          FontAwesomeIcons.chevronRight,
+                                      rightIcon: FontAwesomeIcons.chevronRight,
                                     ),
                               GuideButton(
                                 onpressed: () {
@@ -325,11 +334,14 @@ class _SettingsState extends State<Settings> {
                               ),
                               GuideButton(
                                 onpressed: () {
-                                  Navigator.pushNamed(
-                                      context,
-                                      businessOwnerSwitch || freelancerSwitch
+                                  context.pushNamedTransition(
+                                      routeName: businessOwnerSwitch ||
+                                              freelancerSwitch
                                           ? '/BusinessInfoEdit'
-                                          : '/AccountInfoEdit');
+                                          : '/AccountInfoEdit',
+                                      type: PageTransitionType
+                                          .rightToLeftWithFade,
+                                      duration: Duration(milliseconds: 300));
                                 },
                                 text: 'Edit Account Info',
                                 leftIcon: FontAwesomeIcons.pen,

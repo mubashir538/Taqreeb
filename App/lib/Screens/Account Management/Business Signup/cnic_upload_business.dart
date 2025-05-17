@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
@@ -142,8 +143,10 @@ class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
                       } else {
                         MyStorage.saveToken(frontImage!.path, MyTokens.bsfront);
                         MyStorage.saveToken(backImage!.path, MyTokens.bsback);
-                        Navigator.pushNamed(
-                            context, '/BusinessSignup_Description');
+                        context.pushNamedTransition(
+                            routeName: '/BusinessSignup_Description',
+                            type: PageTransitionType.rightToLeftWithFade,
+                            duration: Duration(milliseconds: 300));
                       }
                     },
                     text: 'Continue',
