@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -91,15 +92,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       );
 
       if (orderResponse['status'] == 'success') {
-        Navigator.pushNamed(
-          context,
-          '/PaymentDetails',
-          arguments: {
-            'orderId': orderResponse['order']['id'],
-            'amount': paymentAmount.toInt(),
-            'isFullPayment': isFullPayment,
-          },
-        );
+        context.pushNamedTransition(
+            routeName: '/PaymentDetails',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300),
+            arguments: {
+              'orderId': orderResponse['order']['id'],
+              'amount': paymentAmount.toInt(),
+              'isFullPayment': isFullPayment,
+            });
       } else {
         throw Exception(orderResponse['message'] ?? 'Failed to create order');
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
@@ -202,16 +203,20 @@ class _HomePageState extends State<HomePage> {
     if (query.isNotEmpty) {
       Logs.logUserActivity("search", {"search_query": query});
     }
-    Navigator.pushNamed(context, '/SearchService');
+    context.pushNamedTransition(
+        routeName: '/SearchService',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
   }
 
   void _handleCategoryClick(String categoryName) {
     Logs.logUserActivity("category_click", {"category": categoryName});
-    Navigator.pushNamed(
-      context,
-      '/SearchService',
-      arguments: {'category': categoryName},
-    );
+
+    context.pushNamedTransition(
+        routeName: '/SearchService',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {'category': categoryName});
   }
 
   void _handleServiceClick(int serviceId, String serviceName) {
@@ -220,15 +225,15 @@ class _HomePageState extends State<HomePage> {
       "service_name": serviceName,
     });
 
-    Navigator.pushNamed(
-      context,
-      '/ServiceDetails',
-      arguments: {
-        "id": serviceId,
-        "service_name": serviceName,
-        "entry_time": DateTime.now().toIso8601String(),
-      },
-    );
+    context.pushNamedTransition(
+        routeName: '/ServiceDetails',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {
+          "id": serviceId,
+          "service_name": serviceName,
+          "entry_time": DateTime.now().toIso8601String(),
+        });
   }
 
   void _handleTabChange(int index) {
@@ -469,7 +474,10 @@ class _HomePageState extends State<HomePage> {
         icon: FontAwesomeIcons.wandMagicSparkles,
         onPressed: () {
           Logs.logUserActivity("ai_package_button_click", {});
-          Navigator.pushNamed(context, '/ChatBot');
+          context.pushNamedTransition(
+              routeName: '/ChatBot',
+              type: PageTransitionType.rightToLeftWithFade,
+              duration: Duration(milliseconds: 300));
         },
         text: 'Create Package with AI',
       ),
@@ -484,7 +492,9 @@ class _HomePageState extends State<HomePage> {
           onTabChanged: _handleTabChange,
         ),
         isLoadingServices
-            ? Container(height: Screen.height(context),)
+            ? Container(
+                height: Screen.height(context),
+              )
             : Center(
                 child: SizedBox(
                   width: Screen.width(context) * 0.9,

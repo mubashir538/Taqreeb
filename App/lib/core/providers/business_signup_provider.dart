@@ -82,7 +82,10 @@ class BusinessSignupProvider with ChangeNotifier {
     } else {
       MyStorage.saveToken(cnicController.text, MyTokens.bscnic);
       MyStorage.saveToken(profileNameController.text, MyTokens.bsname);
-      Navigator.pushNamed(context, '/BusinessSignup_CNICUpload');
+      context.pushNamedTransition(
+          routeName: '/BusinessSignup_CNICUpload',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     }
   }
 }

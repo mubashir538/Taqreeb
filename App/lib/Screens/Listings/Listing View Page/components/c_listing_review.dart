@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -71,7 +72,11 @@ class _CategoryReviewState extends State<CategoryReview> {
   }
 
   void _navigateToReviewPage() {
-    Navigator.pushNamed(context, '/ReviewPage', arguments: widget.listing);
+    context.pushNamedTransition(
+        routeName: '/ReviewPage',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: widget.listing);
   }
 
   Widget _buildRatingSummary() {
@@ -92,7 +97,7 @@ class _CategoryReviewState extends State<CategoryReview> {
               ),
               SizedBox(width: Screen.width(context) * 0.01),
               Padding(
-                padding:  EdgeInsets.only(bottom: Screen.max(context) * 0.01),
+                padding: EdgeInsets.only(bottom: Screen.max(context) * 0.01),
                 child: Text(
                   '/5',
                   style: GoogleFonts.poppins(
@@ -120,7 +125,7 @@ class _CategoryReviewState extends State<CategoryReview> {
               ),
             ),
           ),
-           SizedBox(height: Screen.max(context) * 0.01),
+          SizedBox(height: Screen.max(context) * 0.01),
           Text(
             '${widget.listing['Listing']['ratingCount']} total reviews',
             style: _buildTextStyle(
@@ -149,7 +154,7 @@ class _CategoryReviewState extends State<CategoryReview> {
     final percentage =
         totalReviews == 0 ? 0 : ((count / totalReviews) * 100).round();
     return Container(
-      margin:  EdgeInsets.symmetric(vertical: Screen.max(context) * 0.007),
+      margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.007),
       child: Row(
         children: [
           SizedBox(
@@ -195,7 +200,7 @@ class _CategoryReviewState extends State<CategoryReview> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:  EdgeInsets.all(Screen.max(context) * 0.02),
+      padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
         color: MyColors.dark.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
@@ -204,12 +209,12 @@ class _CategoryReviewState extends State<CategoryReview> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeaderRow(),
-           Divider(
+          Divider(
             color: Colors.white24,
             height: Screen.height(context) * 0.01,
           ),
           _buildRatingSummary(),
-           SizedBox(height: Screen.height(context) * 0.01),
+          SizedBox(height: Screen.height(context) * 0.01),
           ...CategoryReview.stars.map(_buildStarRatingRow),
         ],
       ),

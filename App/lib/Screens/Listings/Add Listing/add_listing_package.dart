@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -45,19 +46,19 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   void _navigateToAddPackage() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_AddPackage',
-      arguments: _args,
-    );
+    context.pushNamedTransition(
+        routeName: '/AddCategory_AddPackage',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: _args);
   }
 
   void _navigateToAddImage() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategoryProducts',
-      arguments: _args,
-    );
+    context.pushNamedTransition(
+        routeName: '/AddCategoryProducts',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: _args);
   }
 
   @override

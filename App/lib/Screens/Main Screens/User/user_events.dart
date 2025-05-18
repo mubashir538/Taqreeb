@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -153,7 +154,10 @@ class _YourEventsState extends State<YourEvents> {
                 HeaderIcon(
                     icon: FontAwesomeIcons.heart,
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Wishlist');
+                      context.pushNamedTransition(
+                          routeName: '/Wishlist',
+                          type: PageTransitionType.rightToLeftWithFade,
+                          duration: Duration(milliseconds: 300));
                     })
               ],
             ),
@@ -321,7 +325,10 @@ class _YourEventsState extends State<YourEvents> {
             ColoredButton(
               onPressed: () {
                 // Navigate to the screen where user can add a new event
-                Navigator.pushNamed(context, '/AddEvent');
+                context.pushNamedTransition(
+                    routeName: '/AddEvent',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300));
               },
               text: 'Add your first event',
               width: Screen.width(context) * 0.5,
@@ -354,18 +361,18 @@ class _YourEventsState extends State<YourEvents> {
           ],
           type: 'Event',
           seePressed: () {
-            Navigator.pushNamed(
-              context,
-              '/EventDetails',
-              arguments: event["id"],
-            );
+            context.pushNamedTransition(
+                routeName: '/EventDetails',
+                type: PageTransitionType.rightToLeftWithFade,
+                duration: Duration(milliseconds: 300),
+                arguments: event["id"]);
           },
           editPressed: () {
-            Navigator.pushNamed(
-              context,
-              '/EditEvent',
-              arguments: event["id"].toString(),
-            );
+            context.pushNamedTransition(
+                routeName: '/EditEvent',
+                type: PageTransitionType.rightToLeftWithFade,
+                duration: Duration(milliseconds: 300),
+                arguments: event["id"].toString());
           },
         );
       },

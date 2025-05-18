@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -31,7 +32,10 @@ class ChatIcon extends StatelessWidget {
       right: Screen.height(context) * 0.03,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/ChatBox',
+          context.pushNamedTransition(
+              routeName: '/ChatBox',
+              type: PageTransitionType.rightToLeftWithFade,
+              duration: Duration(milliseconds: 300),
               arguments: {'userId': ownerId, 'type': type, 'listing': listing});
         },
         child: Container(

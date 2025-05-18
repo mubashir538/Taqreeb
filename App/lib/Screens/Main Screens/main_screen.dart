@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/dashboard.dart';
 import 'package:taqreeb/Screens/chat/chats_screen.dart';
@@ -95,12 +96,12 @@ class _MainScreenState extends State<MainScreen> {
           : FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  _isBusinessOwner || _isFreelancer
-                      ? '/AddCategory_List'
-                      : '/CreateEvent',
-                );
+                context.pushNamedTransition(
+                    routeName: _isBusinessOwner || _isFreelancer
+                        ? '/AddCategory_List'
+                        : '/CreateEvent',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300));
               },
               backgroundColor: MyColors.red,
               shape: const CircleBorder(),

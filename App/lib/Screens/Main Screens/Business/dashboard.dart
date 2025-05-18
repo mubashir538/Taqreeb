@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
@@ -211,38 +212,50 @@ class _DashboardState extends State<Dashboard> {
                           _buildDashboardOption(
                             title: "My Bookings",
                             icon: FontAwesomeIcons.calendarDay,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/BusinessBookings'),
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/BusinessBookings',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "My Wallet",
                             icon: FontAwesomeIcons.wallet,
-                            onTap: () =>
-                                Navigator.pushNamed(context, '/WalletScreen'),
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/WalletScreen',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "My Messages",
                             icon: FontAwesomeIcons.comment,
-                            onTap: () =>
-                                Navigator.pushNamed(context, '/ChatsScreen'),
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/ChatsScreen',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "Manage Slots",
                             icon: FontAwesomeIcons.clock,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/UpdateBookedSlots'),
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/UpdateBookedSlots',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "Manage Listings",
                             icon: FontAwesomeIcons.building,
-                            onTap: () =>
-                                Navigator.pushNamed(context, '/YourListings'),
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/YourListings',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "Profile Settings",
                             icon: FontAwesomeIcons.gear,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/BusinessInfoEdit'),
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/BusinessInfoEdit',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                         ],
                       ),

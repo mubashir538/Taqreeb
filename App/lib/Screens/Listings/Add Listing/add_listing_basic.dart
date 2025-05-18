@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
@@ -75,15 +76,22 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
 
   Future<void> _navigateToSavedState() async {
     if (await MyStorage.exists(MyTokens.packages)) {
-      Navigator.pushNamed(
-        context,
-        '/AddCategory_MoreDetails',
+      context.pushNamedTransition(
+        routeName: '/AddCategory_MoreDetails',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
         arguments: {'type': 'Business'},
       );
     } else if (await MyStorage.exists(MyTokens.bsfront)) {
-      Navigator.pushNamed(context, '/BusinessSignup_Description');
+      context.pushNamedTransition(
+          routeName: '/BusinessSignup_Description',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     } else {
-      Navigator.pushNamed(context, '/AddCategory_MoreDetails');
+      context.pushNamedTransition(
+          routeName: '/AddCategory_MoreDetails',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     }
   }
 
@@ -164,7 +172,12 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
         ? '/AddCategory_Addons'
         : '/AddCategory_MoreDetails';
 
-    Navigator.pushNamed(context, nextRoute, arguments: args);
+    context.pushNamedTransition(
+        routeName: nextRoute,
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: args);
+        
   }
 
   @override
@@ -194,7 +207,9 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: UImanagement.headerHeight+ Screen.height(context) * 0.02),
+            SizedBox(
+                height:
+                    UImanagement.headerHeight + Screen.height(context) * 0.02),
             _buildNameField(),
             _buildDescriptionField(),
             _buildCharacterCounter(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Cards/c_calendar.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -95,9 +96,10 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
       };
 
       // Navigate to order summary with the booking info
-      Navigator.pushNamed(
-        context,
-        '/OrderSummary',
+      context.pushNamedTransition(
+        routeName: '/OrderSummary',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
         arguments: {
           'cart': widget.cart,
           'bookingInfo': bookingInfo,

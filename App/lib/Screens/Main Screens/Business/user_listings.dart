@@ -1,3 +1,4 @@
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -119,7 +120,10 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.03),
           ColoredButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/AddCategory_List');
+              context.pushNamedTransition(
+                  routeName: '/AddCategory_List',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300));
             },
             text: 'Add your first listing',
             width: Screen.width(context) * 0.5,
@@ -147,7 +151,10 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.03),
           ColoredButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/BusinessSignup');
+              context.pushNamedTransition(
+                  routeName: '/BusinessSignup',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300));
             },
             text: 'Create Business Account',
             width: Screen.width(context) * 0.6,
