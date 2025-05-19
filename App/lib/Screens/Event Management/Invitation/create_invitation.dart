@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
@@ -197,24 +199,28 @@ class _CreateInvitationState extends State<CreateInvitation> {
           children: [
             if (eventType == 'Wedding') ...[
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.person,
                 hint: 'Groom Name',
                 valueController: nameController,
                 focusNode: nameFocus,
                 onFieldSubmitted: (_) => sonFocus.requestFocus(),
               ),
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.user,
                 hint: 'Son Of',
                 valueController: sonController,
                 focusNode: sonFocus,
                 onFieldSubmitted: (_) => name2Focus.requestFocus(),
               ),
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.personDress,
                 hint: 'Bride Name',
                 valueController: name2Controller,
                 focusNode: name2Focus,
                 onFieldSubmitted: (_) => daughterFocus.requestFocus(),
               ),
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.user,
                 hint: 'Daughter of',
                 valueController: daughterController,
                 focusNode: daughterFocus,
@@ -222,6 +228,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               ),
             ] else if (eventType == 'Birthday') ...[
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.child,
                 hint: 'Birthday Boy/Girl Name',
                 valueController: nameController,
                 focusNode: nameFocus,
@@ -230,6 +237,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
             ] else ...[
               // For all other event types (Corporate, Religious, etc.)
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.calendar,
                 hint: 'Event Title',
                 valueController: nameController,
                 focusNode: nameFocus,
@@ -249,6 +257,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               },
             ),
             MyTextBox(
+              prefixIcon: FontAwesomeIcons.user,
               hint: 'Host Name',
               valueController: fromNameController,
               focusNode: fromNameFocus,
@@ -275,6 +284,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   Expanded(
                     flex: 3,
                     child: MyTextBox(
+                      prefixIcon: FontAwesomeIcons.calendarDay,
                       hint: 'Program Name',
                       valueController: entry.value['name']!,
                       focusNode: programNameFocusNodes[index],
@@ -304,7 +314,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.remove_circle, color: MyColors.red),
+                    icon:
+                        Icon(FontAwesomeIcons.circleMinus, color: MyColors.red),
                     onPressed: () => removeProgramDetail(index),
                   ),
                 ],
@@ -314,7 +325,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(Icons.add_circle, color: MyColors.yellow),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
                   onPressed: addProgramDetail,
                 ),
               ),
@@ -326,6 +337,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
           title: 'Venue Details (Optional)',
           children: [
             MyTextBox(
+              prefixIcon: FontAwesomeIcons.house,
               hint: 'Venue Name',
               valueController: venueNameController,
               focusNode: venueNameFocus,
@@ -345,6 +357,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                 children: [
                   Expanded(
                     child: MyTextBox(
+                      prefixIcon: FontAwesomeIcons.user,
                       hint: 'Contact Name',
                       valueController: entry.value['name']!,
                       focusNode: contactNameFocusNodes[index],
@@ -355,6 +368,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   SizedBox(width: 10),
                   Expanded(
                     child: MyTextBox(
+                      prefixIcon: FontAwesomeIcons.phone,
                       hint: 'Contact Number',
                       valueController: entry.value['number']!,
                       focusNode: contactNumberFocusNodes[index],
@@ -368,7 +382,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   ),
                   if (contactInfo.length > 1)
                     IconButton(
-                      icon: Icon(Icons.remove_circle, color: MyColors.red),
+                      icon: Icon(FontAwesomeIcons.circleMinus,
+                          color: MyColors.red),
                       onPressed: () => removeContactInfo(index),
                     ),
                 ],
@@ -378,7 +393,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(Icons.add_circle, color: MyColors.yellow),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
                   onPressed: addContactInfo,
                 ),
               ),
@@ -410,10 +425,10 @@ class _CreateInvitationState extends State<CreateInvitation> {
         children: [
           Text(
             title,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.yellow,
+              color: MyColors.red,
             ),
           ),
           SizedBox(height: 10),
@@ -547,7 +562,10 @@ class _CreateInvitationState extends State<CreateInvitation> {
           .toList(),
     };
     if (mounted) {
-      Navigator.pushNamed(context, '/InvitationCardView',
+      context.pushNamedTransition(
+          routeName: '/InvitationCardView',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300),
           arguments: {'data': formData});
       MyScaffold(text: 'Creating Your Invitation Card, This may Take a While!')
           .show(context);

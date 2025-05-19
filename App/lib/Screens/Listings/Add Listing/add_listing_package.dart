@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -44,19 +46,19 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   void _navigateToAddPackage() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_AddPackage',
-      arguments: _args,
-    );
+    context.pushNamedTransition(
+        routeName: '/AddCategory_AddPackage',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: _args);
   }
 
   void _navigateToAddImage() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategoryProducts',
-      arguments: _args,
-    );
+    context.pushNamedTransition(
+        routeName: '/AddCategoryProducts',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: _args);
   }
 
   @override
@@ -100,13 +102,15 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
 
   Widget _buildTitle() {
     return Container(
+      width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
+        textAlign: TextAlign.start,
         "Packages",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
-          fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          fontWeight: FontWeight.w700,
+          color: MyColors.red,
         ),
       ),
     );
@@ -124,10 +128,11 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
 
   Widget _buildPackageItem(Map<String, dynamic> package) {
     return PackageBox(
-      imageUrls: package['images'],
-      packagedetails: package['details'],
-      packageprice: package['price'],
-      packagename: package['name'],
+      onPressed: () {},
+      imageUrl: package['images'][0],
+      packageDetails: package['details'],
+      packagePrice: package['price'],
+      packageName: package['name'],
     );
   }
 
@@ -156,13 +161,17 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   Widget _buildAddButton() {
-    return FloatingActionButton(
-      backgroundColor: MyColors.yellow,
-      onPressed: _navigateToAddPackage,
-      child: Icon(
-        Icons.add,
-        color: MyColors.dark,
-        size: Screen.max(context) * 0.04,
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      child: FloatingActionButton(
+        backgroundColor: MyColors.red,
+        shape: CircleBorder(),
+        onPressed: _navigateToAddPackage,
+        child: Icon(
+          FontAwesomeIcons.plus,
+          color: MyColors.white,
+          size: Screen.max(context) * 0.03,
+        ),
       ),
     );
   }

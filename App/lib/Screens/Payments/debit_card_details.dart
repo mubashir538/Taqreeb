@@ -112,7 +112,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
           children: [
             Text(
               'Payment Amount: \$${_amount!.toStringAsFixed(2)}',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.bold,
@@ -121,7 +121,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
             SizedBox(height: Screen.height(context) * 0.03),
             Text(
               'Card Information',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.bold,
@@ -173,7 +173,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
             Center(
               child: Text(
                 'Your payment is secured with 256-bit SSL encryption',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: Screen.max(context) * 0.015,
                 ),

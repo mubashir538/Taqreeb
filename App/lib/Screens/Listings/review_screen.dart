@@ -69,8 +69,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           _buildRatingDistribution(),
           _buildDivider(context),
           _buildReviewsList(),
-          _buildLoadMoreButton(context),
-        ],
+          ],
       ),
     );
   }
@@ -223,7 +222,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       color: MyColors.darkLighter,
       child: Text(
         "Load More",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.red,
           fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w600,

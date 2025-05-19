@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
@@ -58,24 +59,16 @@ class _AddBankState extends State<AddBank> {
                     decoration: BoxDecoration(
                       color: MyColors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withAlpha(51),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Add Bank Account",
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                             fontSize: Screen.max(context) * 0.025,
                             fontWeight: FontWeight.w700,
-                            color: MyColors.white,
+                            color: MyColors.red,
                           ),
                         ),
                         SizedBox(height: Screen.max(context) * 0.03),
@@ -103,6 +96,7 @@ class _AddBankState extends State<AddBank> {
 
                         // Account Name Field
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.userTie,
                           hint: "Account Holder Name",
                           valueController: accountNameController,
                         ),
@@ -110,6 +104,7 @@ class _AddBankState extends State<AddBank> {
 
                         // Account Number Field
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.buildingColumns,
                           hint: "Account Number",
                           isNum: true,
                           maxLength: 16,
@@ -119,6 +114,7 @@ class _AddBankState extends State<AddBank> {
 
                         // IBAN Number Field
                         MyTextBox(
+                          prefixIcon: FontAwesomeIcons.earthAmericas,
                           hint: "IBAN Number",
                           valueController: ibanController,
                           maxLength: 24,

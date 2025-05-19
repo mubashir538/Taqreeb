@@ -53,6 +53,9 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   visibility_detector: ^0.4.0+2
   shared_preferences: ^2.5.3
+  page_transition: ^2.2.1
+  animate_do: ^4.2.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +68,7 @@ flutter_launcher_icons:
   ios: true
   remove_alpha_ios: true
   image_path: "assets/appIcon/taqreebicon.png"
-  adaptive_icon_background: "#18191A"
+  adaptive_icon_background: "#121212"
   adaptive_icon_foreground: "assets/appIcon/taqreebicon.png"
 
 flutter:

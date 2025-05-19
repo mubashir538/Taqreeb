@@ -172,7 +172,6 @@ class _CategoryViewGraphicDesignerState
                 listingId: _listingId,
                 selectedDate: _selectedDate,
               ),
-              _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
               CategoryDetails(
@@ -186,7 +185,6 @@ class _CategoryViewGraphicDesignerState
                 listing: _listing,
                 starsvalue: _starsValue,
               ),
-              _buildDivider(),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -79,7 +80,7 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
           children: [
             Text(
               item['name'],
-              style: TextStyle(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -88,19 +89,19 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
             const SizedBox(height: 8),
             Text(
               'Customer: ${user['firstName']} ${user['lastName']}',
-              style: TextStyle(color: MyColors.white),
+              style: GoogleFonts.roboto(color: MyColors.white),
             ),
             Text(
               'Date: ${DateFormat('MMM dd, yyyy').format(bookingDate)}',
-              style: TextStyle(color: MyColors.white),
+              style: GoogleFonts.roboto(color: MyColors.white),
             ),
             Text(
               'Time: ${DateFormat('hh:mm a').format(bookingDate)}',
-              style: TextStyle(color: MyColors.white),
+              style: GoogleFonts.roboto(color: MyColors.white),
             ),
             Text(
               'Status: ${status.toUpperCase()}',
-              style: TextStyle(
+              style: GoogleFonts.roboto(
                 color: _getStatusColor(status),
                 fontWeight: FontWeight.bold,
               ),
@@ -165,7 +166,7 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
               ? Center(
                   child: Text(
                     'No bookings found',
-                    style: TextStyle(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: MyColors.white),
                   ),
                 )
               : RefreshIndicator(

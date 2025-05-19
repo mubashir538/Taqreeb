@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -27,8 +29,7 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
 
   // Constants
   static const double _topPaddingFactor = 0.05;
-  static const double _dividerHeightFactor = 0.1;
-  static const double _textSizeFactor = 0.015;
+  static const double _dividerHeightFactor = 0.05;
   static const int _progressStep = 1;
 
   @override
@@ -124,6 +125,7 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
                       SizedBox(
                           height: Screen.height(context) * _topPaddingFactor),
                       MyTextBox(
+                        prefixIcon: FontAwesomeIcons.envelope,
                         focusNode: _emailFocus,
                         onFieldSubmitted: (_) => _emailFocus.unfocus(),
                         hint: 'Email',
@@ -139,16 +141,10 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
                               text: 'Send OTP',
                               onPressed: _isLoading ? null : _sendOtp,
                             ),
-                      InkWell(
-                        onTap: _navigateToContactVerification,
-                        child: Text(
-                          'Use Contact to Verify Instead',
-                          style: TextStyle(
-                            color: MyColors.yellow,
-                            fontSize: Screen.max(context) * _textSizeFactor,
-                          ),
-                        ),
-                      ),
+                      SizedBox(height: Screen.max(context) * 0.007),
+                      BorderButton(
+                          text: 'Use Contact Verification Instead',
+                          onPressed: _navigateToContactVerification),
                     ],
                   ),
                   const ProgressBar(progress: _progressStep),

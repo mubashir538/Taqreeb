@@ -180,7 +180,6 @@ class _CategoryViewPhotographyPlaceState
                 listingId: _listingId,
                 selectedDate: _selectedDate,
               ),
-              _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
               CategoryDetails(
@@ -191,17 +190,15 @@ class _CategoryViewPhotographyPlaceState
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
               CategorySlots(
-                bookedDates: (_listing['booked_dates'] as List)
+                bookedDates: (_listing['bookedDates'] as List)
                     .map((dateStr) => DateTime.parse(dateStr))
                     .toList(),
                 onDateSelected: _handleDateSelection,
               ),
-              _buildDivider(),
               CategoryReview(
                 listing: _listing,
                 starsvalue: _starsValue,
               ),
-              _buildDivider(),
               _buildBookNowButton(),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -81,7 +82,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UImanagement.headerHeight),
+                SizedBox(height: UImanagement.headerHeight+ Screen.max(context)*0.02),
                 _buildNameField(),
                 _buildPriceField(),
                 _buildPerHeadQuestion(),
@@ -108,6 +109,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   Widget _buildNameField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.user,
       focusNode: _formController.nameFocus,
       onFieldSubmitted: (_) {
         FocusScope.of(context).requestFocus(_formController.priceFocus);
@@ -119,6 +121,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   Widget _buildPriceField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.moneyBill,
       focusNode: _formController.priceFocus,
       onFieldSubmitted: (_) {
         FocusScope.of(context).requestFocus(_formController.perheadFocus);
@@ -133,7 +136,7 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
   Widget _buildPerHeadQuestion() {
     return RadioButtonQuestion(
       options: const ['Yes', 'No'],
-      question: '',
+      question: 'Does this Price is on Per Head?',
       myValue: _formController.perheadController.text,
       onChanged: _handlePerHeadChange,
     );
@@ -141,9 +144,10 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
 
   Widget _buildHeadTypeField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.person,
       focusNode: _formController.headtypeFocus,
       onFieldSubmitted: (_) => _formController.headtypeFocus.unfocus(),
-      hint: 'PerHead Type',
+      hint: 'PerHead Type (Per Person or Per Piece)',
       valueController: _formController.headtypeController,
     );
   }

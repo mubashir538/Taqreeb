@@ -12,7 +12,7 @@ from ..models.listing_models import PicturesListings,Listing,PicturesPackages,Ad
 from ..Serializers.listing_serializers import PicturesListingSerializers
 from ..models.business_models import BusinessOwner,Freelancer
 from ..models.product_models import Product,PicturesProducts
-from ..models.listing_models import Packages
+from ..models.listing_models import Packages,PicturesPackages
 
 def url_shortener(url):
     try:
@@ -54,11 +54,11 @@ def get_picture(listing_id):
 
 def get_view_data(listing_id):
     model_serializer_pairs = [
-        (Venue, VenueSerializer, 'listingID'),
+        (Venue, VenueSerializer, 'listingId'),
         (Caterers, CaterersSerializer, 'listingId'),
-        (CarRenters, CarRentersSerializer, 'listingID'),
+        (CarRenters, CarRentersSerializer, 'listingId'),
         (Decorators, DecoratorsSerializer, 'listingId'),
-        (PhotographyPlaces, PhotographyPlacesSerializer, 'listingID'),
+        (PhotographyPlaces, PhotographyPlacesSerializer, 'listingId'),
         (Photographers, PhotographersSerializer, 'listingId'),
         (VideoEditors, VideoEditorsSerializer, 'listingId'),
         (GraphicDesigners, GraphicDesignersSerializer, 'listingId'),
@@ -107,11 +107,11 @@ def create_view_for_category(category, view_data, listing):
             'guestmaxAllowed': view_data.get('guestmaxAllowed'),
             'staff': view_data.get('staff'),
             'venueType': view_data.get('venueType'),
-            'listingID': listing
+            'listingId': listing
         }),
         'PhotographyPlace': (PhotographyPlaces, {
             'type': view_data.get('type'),
-            'listingID': listing
+            'listingId': listing
         }),
         'Decorator': (Decorators, {
             'decorType': view_data.get('decorType'),
@@ -132,7 +132,7 @@ def create_view_for_category(category, view_data, listing):
         }),
         'CarRenter': (CarRenters, {
             'serviceType': view_data.get('serviceType'),
-            'listingID': listing
+            'listingId': listing
         }),
         'VideoEditor': (VideoEditors, {
             'portfolioLink': view_data.get('portfolioLink'),
@@ -169,7 +169,7 @@ def save_packages(listing, packages):
             package_obj = Packages(
                 listingId=listing,
                 name=pkg.get('name'),
-                price=pkg.get('price'),
+                price=int(str(pkg.get('price')).replace(',', '')),
                 description=pkg.get('details')
             )
             package_obj.save()
@@ -191,7 +191,7 @@ def save_products(listing, products):
                 listingId=listing,
                 name=prod.get('name'),
                 description=prod.get('description'),
-                price=prod.get('price'),
+                price=int(str(prod.get('price')).replace(',','')),
                 quantity=prod.get('quantity', 1)
             )
             product_obj.save()
@@ -210,7 +210,7 @@ def save_addons(listing, addons):
             AddOns(
                 listingId=listing,
                 name=addon.get('name'),
-                price=addon.get('price'),
+                price=int(str(addon.get('price')).replace(',','')),
                 isPer=addon.get('perhead') == "Yes",
                 perType=addon.get('headtype') if addon.get('perhead') == "Yes" else None
             ).save()

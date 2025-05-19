@@ -18,11 +18,11 @@ class AIPackage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle heading = GoogleFonts.montserrat(
+    TextStyle heading = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.w400,
         color: MyColors.white);
-    TextStyle body = GoogleFonts.montserrat(
+    TextStyle body = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.w300,
         color: MyColors.white);
@@ -49,12 +49,12 @@ class AIPackage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Price',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.026,
                       fontWeight: FontWeight.w600,
                       color: MyColors.white)),
               Text(price,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.026,
                       fontWeight: FontWeight.w600,
                       color: MyColors.white)),

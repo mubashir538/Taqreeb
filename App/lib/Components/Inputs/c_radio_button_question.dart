@@ -38,7 +38,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                   padding: EdgeInsets.symmetric(
                       vertical: Screen.max(context) * 0.01),
                   child: Text(widget.question,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           color: MyColors.white,
                           fontSize: Screen.max(context) * 0.018)),
                 ),
@@ -49,7 +49,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                     for (var option in widget.options)
                       RadioListTile<String>(
                         title: Text(option,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.roboto(
                               color: MyColors.whiteDarker,
                               fontWeight: FontWeight.w300,
                               fontSize: Screen.max(context) * 0.015,
@@ -72,7 +72,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                       Expanded(
                         child: RadioListTile<String>(
                           title: Text(option,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.roboto(
                                 color: MyColors.whiteDarker,
                                 fontWeight: FontWeight.w300,
                                 fontSize: Screen.max(context) * 0.015,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -29,13 +30,13 @@ class ChecklistItemsAdder extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(text,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w500,
                       color: MyColors.whiteDarker)),
               add
                   ? Icon(
-                      Icons.add,
+                      FontAwesomeIcons.plus,
                       color: MyColors.whiteDarker,
                     )
                   : Container(),

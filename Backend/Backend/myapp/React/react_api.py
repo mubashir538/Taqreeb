@@ -367,7 +367,7 @@ def pending_listing_detail(request, pk):
     # Get service-specific details based on type
     service_details = None
     if listing.type == 'Venue':
-        service_details = Venue.objects.filter(listingID=listing).first()
+        service_details = Venue.objects.filter(listingId=listing).first()
     elif listing.type == 'Caterers':
         service_details = Caterers.objects.filter(listingId=listing).first()
     # Add other service types...

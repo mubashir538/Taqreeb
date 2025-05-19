@@ -22,14 +22,14 @@ class WarningDialog extends StatelessWidget {
               backgroundColor: MyColors.dark,
               title: Text(
                 title,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                     color: MyColors.yellow,
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600),
               ),
               content: Text(
                 message,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                     color: MyColors.white,
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400),

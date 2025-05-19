@@ -78,7 +78,7 @@ class MembersScreen extends StatelessWidget {
             child: Text(
               member['name'],
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: textSize,
                 fontWeight: FontWeight.w500,
@@ -98,7 +98,7 @@ class MembersScreen extends StatelessWidget {
     return Center(
       child: Text(
         "Failed to load members",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.red,
           fontSize: 16,
         ),

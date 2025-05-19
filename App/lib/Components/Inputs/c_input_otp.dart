@@ -106,7 +106,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: _focusNodes[index].hasFocus
-                        ? Colors.blue
+                        ? MyColors.red
                         : Colors.transparent,
                     width: 2,
                   ),
@@ -118,7 +118,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w400,
                   ),

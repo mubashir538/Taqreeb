@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -41,33 +42,29 @@ class _SliderQuestionState extends State<SliderQuestion> {
 
   @override
   Widget build(BuildContext context) {
-    
-     
-    
     return Container(
       margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
+            padding:
+                EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
             child: Text(
               widget.question,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: Screen.max(context) * 0.018,
               ),
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
                 onPressed: () => _updateValue(-50000),
-                icon: Icon(Icons.remove, color: MyColors.red),
+                icon: Icon(FontAwesomeIcons.minus, color: MyColors.red),
               ),
-
               Expanded(
                 child: Slider(
                   value: widget.currentCount,
@@ -85,26 +82,25 @@ class _SliderQuestionState extends State<SliderQuestion> {
                   inactiveColor: MyColors.whiteDarker,
                 ),
               ),
-
               IconButton(
                 onPressed: () => _updateValue(50000),
-                icon: Icon(Icons.add, color: MyColors.red),
+                icon: Icon(FontAwesomeIcons.plus, color: MyColors.red),
               ),
             ],
           ),
-
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
+            padding:
+                EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   widget.start.toInt().toString(),
-                  style: GoogleFonts.montserrat(color: Colors.white),
+                  style: GoogleFonts.roboto(color: Colors.white),
                 ),
                 Text(
                   widget.end.toInt().toString(),
-                  style: GoogleFonts.montserrat(color: Colors.white),
+                  style: GoogleFonts.roboto(color: Colors.white),
                 ),
               ],
             ),

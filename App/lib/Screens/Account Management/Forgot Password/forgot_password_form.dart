@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
@@ -20,6 +21,7 @@ class ForgotPasswordForm extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
           child: MyTextBox(
+            prefixIcon: FontAwesomeIcons.envelope,
             hint: "Enter Email/Phone Number",
             valueController: contactController,
           ),

@@ -11,13 +11,11 @@ class AppConfig {
 
     if (response.statusCode == 200) {
       ngrok = response.body.toString().trim();
-    } else {
-      print("Failed to fetch document. Status code: ${response.statusCode}");
     }
   }
 
-  static late String ngrok = 'http://192.168.0.105:8000';
-  static late String baseUrl = "${AppConfig.ngrok}/app/";
+  static String ngrok = 'https://da35-119-155-186-192.ngrok-free.app';
+  static String baseUrl = "${AppConfig.ngrok}/app/";
   static const String appName = "Taqreeb App";
   static const String version = "1.0.0";
 }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/wallet%20System/transaction_card.dart';
+import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class AllTransactions extends StatefulWidget {
@@ -16,6 +20,7 @@ class AllTransactions extends StatefulWidget {
 class _AllTransactionsState extends State<AllTransactions> {
   bool isloading = true;
   List<Map<String, dynamic>> transactions = [];
+  bool isChanged = false;
 
   Map<String, List<Map<String, dynamic>>> groupedData = {
     'Today': [],
@@ -28,13 +33,29 @@ class _AllTransactionsState extends State<AllTransactions> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    transactions = args['data'];
+    if (isChanged) return;
+    isChanged = true;
+    fetchdata();
   }
 
   void fetchdata() async {
-    // data = await db.getExpenses();
+    final userId = await MyStorage.getToken(MyTokens.userId);
+    final type = await MyTokens.getBusinessType();
+    final headers = {
+      'Authorization':
+          'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+    };
+    final response = await MyApi.getRequest(
+        context: context,
+        refresh: true,
+        endpoint: 'Payments/getTransactions/Recent/$userId/$type',
+        headers: headers);
+    if (response['status'] == 'success') {
+      transactions = response['data'].cast<Map<String, dynamic>>()
+          as List<Map<String, dynamic>>;
+    } else {
+      MyScaffold(text: 'Something went wrong!').show(context);
+    }
     DateTime now = DateTime.now();
     String today = DateFormat('yyyy-MM-dd').format(now);
     String yesterday =
@@ -99,7 +120,7 @@ class _AllTransactionsState extends State<AllTransactions> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                      height: Screen.height(context) * 0.1,
+                      height: Screen.height(context) * 0.15,
                       width: Screen.width(context)),
                   Column(
                     children: groupedData.entries
@@ -119,33 +140,37 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   Widget buildTransactionSection(
       String title, List<Map<String, dynamic>> transactions) {
-    return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-      Text(
-        title,
-        style: GoogleFonts.montserrat(
-          color: MyColors.red,
-          fontSize: Screen.max(context) * 0.02,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      SizedBox(height: Screen.max(context) * 0.02),
-      SizedBox(
-        width: Screen.width(context) * 0.9,
-        child: ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            final transact = transactions[index];
-            return TransactionCard(
-              type: transact["type"],
-              amount: _formatNumberWithCommas(transact["amount"]),
-              paidBy: transact['info'],
-              date: formatDate(transact['date']),
-            );
-          },
-          itemCount: transactions.length,
-        ),
-      ),
-    ]);
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: Screen.max(context) * 0.02), 
+          Text(
+            title,
+            style: GoogleFonts.roboto(
+              color: MyColors.red,
+              fontSize: Screen.max(context) * 0.025,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(
+            width: Screen.width(context) * 0.9,
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final transact = transactions[index];
+                return TransactionCard(
+                  type: transact["type"],
+                  amount:
+                      _formatNumberWithCommas(transact["amount"].toString()),
+                  paidBy: transact['info'],
+                  date: formatDate(DateTime.parse(transact['date'])),
+                );
+              },
+              itemCount: transactions.length,
+            ),
+          ),
+        ]);
   }
 }

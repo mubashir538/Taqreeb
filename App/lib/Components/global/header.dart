@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -17,7 +19,7 @@ class Header extends StatefulWidget {
   final List<HeaderIcon>? additionalIcons;
 
   const Header({
-    this.icon = Icons.settings,
+    this.icon = FontAwesomeIcons.gear,
     this.heading = '',
     this.para = '',
     this.image = '',
@@ -67,6 +69,8 @@ class _HeaderState extends State<Header> {
       '/BusinessSignup_Description',
       '/SubmissionSucessful',
       '/ForgotPassword_EmailorPhoneInput',
+      '/ChatBox',
+      '/GroupChatBox',
       '/ForgotPassword_VerifyCode',
       '/ForgotPassword_NewPassword',
     };
@@ -179,17 +183,24 @@ class _HeaderState extends State<Header> {
                           }
                         },
                         child: Icon(
-                          Icons.chevron_left_outlined,
+                          FontAwesomeIcons.chevronLeft,
                           color: MyColors.redonWhite,
                           size: Screen.max(context) * 0.03,
                         ),
                       ),
-                Text(
-                  'Taqreeb',
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.03,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.redonWhite,
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: (Screen.width(context) * 0.02 +
+                              Screen.max(context) * 0.03) *
+                          additionalIcons.length,
+                      right: _noSettings ? Screen.width(context) * 0.03 : 0),
+                  child: Text(
+                    'Taqreeb',
+                    style: GoogleFonts.pacifico(
+                      fontSize: Screen.max(context) * 0.03,
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.redonWhite,
+                    ),
                   ),
                 ),
                 Row(
@@ -217,7 +228,10 @@ class _HeaderState extends State<Header> {
                               '/Settings') {
                             _showLogoutDialog();
                           } else {
-                            Navigator.pushNamed(context, '/Settings');
+                            context.pushNamedTransition(
+                                routeName: '/Settings',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300));
                           }
                         },
                         child: Icon(
@@ -236,7 +250,7 @@ class _HeaderState extends State<Header> {
             Text(
               widget.heading,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w700,
                 color: MyColors.yellow,
@@ -249,14 +263,17 @@ class _HeaderState extends State<Header> {
             ),
           ],
           if (widget.para.isNotEmpty) ...[
-            SizedBox(height: Screen.height(context) * 0.005),
-            Text(
-              widget.para,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                fontSize: Screen.max(context) * 0.013,
-                fontWeight: FontWeight.w400,
-                color: MyColors.white,
+            Container(
+              margin: EdgeInsets.all(Screen.max(context) * 0.01),
+              width: Screen.width(context) * 0.9,
+              child: Text(
+                widget.para,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.roboto(
+                  fontSize: Screen.max(context) * 0.015,
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white,
+                ),
               ),
             ),
             SizedBox(
@@ -267,16 +284,21 @@ class _HeaderState extends State<Header> {
           ],
           if (widget.image.isNotEmpty) ...[
             SizedBox(height: Screen.height(context) * 0.01),
-            SizedBox(height: Screen.height(context) * 0.03),
-            isSvg
-                ? SvgPicture.asset(
-                    widget.image,
-                    height: Screen.height(context) * 0.2,
-                  )
-                : Image.asset(
-                    widget.image,
-                    height: Screen.height(context) * 0.2,
-                  ),
+            SizedBox(
+              width: Screen.width(context) * 0.5, // your fixed width
+              height: Screen.height(context) * 0.25, // your fixed height
+              child: isSvg
+                  ? SvgPicture.asset(
+                      widget.image,
+                      fit: BoxFit
+                          .contain, // scales the SVG to fit within the box
+                    )
+                  : Image.asset(
+                      widget.image,
+                      fit: BoxFit
+                          .contain, // scales the raster image to fit within the box
+                    ),
+            ),
             SizedBox(height: Screen.height(context) * 0.03),
           ],
         ],

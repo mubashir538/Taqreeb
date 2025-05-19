@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
@@ -98,7 +100,7 @@ class _DashboardState extends State<Dashboard> {
             children: [
               Text(
                 businessInfo['businessName'] ?? 'No Business Name',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.yellow,
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w700,
@@ -107,7 +109,7 @@ class _DashboardState extends State<Dashboard> {
               SizedBox(height: Screen.height(context) * 0.01),
               Text(
                 "$listingCount Active Listings",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.white.withAlpha(172),
                   fontSize: Screen.max(context) * 0.015,
                 ),
@@ -155,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(width: Screen.width(context) * 0.05),
             Text(
               title,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white,
                 fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.w500,
@@ -163,7 +165,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             const Spacer(),
             Icon(
-              Icons.arrow_forward_ios,
+              FontAwesomeIcons.chevronRight,
               color: MyColors.white,
               size: Screen.max(context) * 0.02,
             ),
@@ -209,39 +211,51 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           _buildDashboardOption(
                             title: "My Bookings",
-                            icon: Icons.calendar_today,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/BusinessBookings'),
+                            icon: FontAwesomeIcons.calendarDay,
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/BusinessBookings',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "My Wallet",
-                            icon: Icons.wallet,
-                            onTap: () =>
-                                Navigator.pushNamed(context, '/WalletScreen'),
+                            icon: FontAwesomeIcons.wallet,
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/WalletScreen',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "My Messages",
-                            icon: Icons.message,
-                            onTap: () =>
-                                Navigator.pushNamed(context, '/ChatsScreen'),
+                            icon: FontAwesomeIcons.comment,
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/ChatsScreen',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "Manage Slots",
-                            icon: Icons.access_time,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/UpdateBookedSlots'),
+                            icon: FontAwesomeIcons.clock,
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/UpdateBookedSlots',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "Manage Listings",
-                            icon: Icons.business,
-                            onTap: () =>
-                                Navigator.pushNamed(context, '/YourListings'),
+                            icon: FontAwesomeIcons.building,
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/YourListings',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                           _buildDashboardOption(
                             title: "Profile Settings",
-                            icon: Icons.settings,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/BusinessInfoEdit'),
+                            icon: FontAwesomeIcons.gear,
+                            onTap: () => context.pushNamedTransition(
+                                routeName: '/BusinessInfoEdit',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300)),
                           ),
                         ],
                       ),

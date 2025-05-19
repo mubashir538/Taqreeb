@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
@@ -182,6 +183,7 @@ class _CreateGuestListAddPersonState extends State<CreateGuestListAddPerson> {
     return Column(
       children: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.person,
           focusNode: _personFocus,
           onFieldSubmitted: (_) =>
               FocusScope.of(context).requestFocus(_contactFocus),
@@ -189,6 +191,7 @@ class _CreateGuestListAddPersonState extends State<CreateGuestListAddPerson> {
           valueController: _personController,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.mobileScreen,
           focusNode: _contactFocus,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           hint: 'Contact Number',

@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -183,7 +185,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         backgroundColor: MyColors.darkLighter,
         child: _groupImage == null
             ? Icon(
-                Icons.add_photo_alternate,
+                FontAwesomeIcons.image,
                 color: MyColors.white,
                 size: 30,
               )
@@ -212,10 +214,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           children: [
             Text(
               user['name'],
-              style: TextStyle(color: MyColors.white),
+              style: GoogleFonts.roboto(color: MyColors.white),
             ),
             Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
+              isSelected ? FontAwesomeIcons.circleCheck : Icons.circle_outlined,
               color: isSelected ? MyColors.red : MyColors.white,
             ),
           ],
@@ -239,6 +241,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               _buildGroupImagePicker(),
               SizedBox(height: Screen.max(context) * 0.03),
               MyTextBox(
+                prefixIcon: FontAwesomeIcons.peopleGroup,
                 hint: 'Enter Group Name',
                 valueController: _groupNameController,
               ),

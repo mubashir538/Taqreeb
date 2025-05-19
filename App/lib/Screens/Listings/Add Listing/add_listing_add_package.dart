@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -8,6 +10,7 @@ import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class AddCategoryAddPackage extends StatefulWidget {
@@ -92,9 +95,10 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
     }
 
     _formController.addPackage(images: _selectedImages);
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_Packages',
+    context.pushNamedTransition(
+      routeName: '/AddCategory_Packages',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: _formController.args,
     );
   }
@@ -147,6 +151,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
 
   Widget _buildNameField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.user,
       focusNode: _formController.nameFocus,
       onFieldSubmitted: (_) {
         FocusScope.of(context).requestFocus(_formController.detailsFocus);
@@ -168,6 +173,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
 
   Widget _buildPriceField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.moneyBill,
       focusNode: _formController.priceFocus,
       onFieldSubmitted: (_) => _formController.priceFocus.unfocus(),
       hint: 'Price',
@@ -183,9 +189,9 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Add Images (Max 3)',
-            style: TextStyle(
+            style: GoogleFonts.roboto(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -227,7 +233,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
                                   color: Colors.red,
                                 ),
                                 child: const Icon(
-                                  Icons.close,
+                                  FontAwesomeIcons.xmark,
                                   size: 16,
                                   color: Colors.white,
                                 ),
@@ -248,9 +254,9 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Select Images',
-              style: TextStyle(color: Colors.white),
+              style: GoogleFonts.roboto(color: Colors.white),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,21 @@ class MyTextBox extends StatefulWidget {
   final TextEditingController valueController;
   final String? errorText;
   final Function(String)? onChanged;
+  final IconData? prefixIcon; // New parameter for prefix icon
+  final Color? prefixIconColor; // Color for prefix icon
+  final double? prefixIconSize; // Size for prefix icon
+  final EdgeInsetsGeometry? contentPadding; // Custom padding
+  final Color? backgroundColor; // Background color
+  final double? borderRadius; // Border radius
+  final Color? borderColor; // Border color
+  final Color? focusedBorderColor; // Focused border color
+  final Color? errorBorderColor; // Error border color
+  final Color? textColor; // Text color
+  final Color? hintColor; // Hint text color
+  final TextStyle? textStyle; // Custom text style
+  final TextStyle? hintStyle; // Custom hint style
+  final TextStyle? errorStyle; // Custom error style
+  final BoxShadow? boxShadow; // Custom shadow
   final int? maxLength; // New parameter for max length
 
   const MyTextBox({
@@ -29,6 +45,21 @@ class MyTextBox extends StatefulWidget {
     required this.valueController,
     this.errorText,
     this.onChanged,
+    this.prefixIcon,
+    this.prefixIconColor,
+    this.prefixIconSize,
+    this.contentPadding,
+    this.backgroundColor,
+    this.borderRadius,
+    this.borderColor,
+    this.focusedBorderColor,
+    this.errorBorderColor,
+    this.textColor,
+    this.hintColor,
+    this.textStyle,
+    this.hintStyle,
+    this.errorStyle,
+    this.boxShadow,
     this.maxLength, // Added maxLength parameter
   });
 
@@ -59,7 +90,6 @@ class _MyTextBoxState extends State<MyTextBox> {
       }
     });
 
-    // Add listener to controller for price formatting
     if (widget.isPrice) {
       _controller.addListener(_formatPrice);
     }
@@ -70,7 +100,6 @@ class _MyTextBoxState extends State<MyTextBox> {
     if (widget.isPrice) {
       _controller.removeListener(_formatPrice);
     }
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -79,7 +108,6 @@ class _MyTextBoxState extends State<MyTextBox> {
 
     String text = _controller.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-    // Don't format if the text hasn't changed (to prevent infinite loops)
     if (text == _previousText) return;
 
     _previousText = text;
@@ -90,17 +118,11 @@ class _MyTextBoxState extends State<MyTextBox> {
       return;
     }
 
-    // Parse the number
     int num = int.tryParse(text) ?? 0;
-
-    // Format with commas
     String formatted = _formatNumberWithCommas(num);
 
-    // Only update if the formatted text is different from the current text
     if (formatted != _controller.text) {
       _controller.text = formatted;
-
-      // Move cursor to the end
       _controller.selection = TextSelection.collapsed(
         offset: formatted.length,
       );
@@ -116,6 +138,15 @@ class _MyTextBoxState extends State<MyTextBox> {
 
   @override
   Widget build(BuildContext context) {
+    final defaultBorderColor = widget.borderColor ?? Colors.transparent;
+    final focusedBorderColor = widget.focusedBorderColor ?? MyColors.red;
+    final errorBorderColor = widget.errorBorderColor ?? MyColors.red;
+    final currentBorderColor = _isFocused
+        ? focusedBorderColor
+        : (widget.errorText != null && widget.errorText!.isNotEmpty
+            ? errorBorderColor
+            : defaultBorderColor);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -124,30 +155,42 @@ class _MyTextBoxState extends State<MyTextBox> {
           height: Screen.height(context) * 0.06,
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
-            borderRadius: BorderRadius.circular(10),
+            color: widget.backgroundColor ?? MyColors.ligthDark,
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 10),
             border: Border.all(
-              color: _isFocused
-                  ? MyColors.red
-                  : (widget.errorText != null && widget.errorText!.isNotEmpty
-                      ? MyColors.red
-                      : Colors.transparent),
+              color: currentBorderColor,
               width: 2,
             ),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(102),
-                blurRadius: 4,
-                spreadRadius: 1,
-                offset: Offset(2, 2),
-              ),
+              widget.boxShadow ??
+                  BoxShadow(
+                    color: Colors.black.withAlpha(102),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                    offset: const Offset(2, 2),
+                  ),
             ],
           ),
           child: Padding(
-            padding:
+            padding: widget.contentPadding ??
                 EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
             child: Row(
               children: [
+                // Prefix icon
+                if (widget.prefixIcon != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Icon(
+                      widget.prefixIcon,
+                      color: _isFocused
+                          ? MyColors.red
+                          : widget.prefixIconColor ??
+                              MyColors.white.withAlpha(153),
+                      size:
+                          widget.prefixIconSize ?? Screen.max(context) * 0.025,
+                    ),
+                  ),
+
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -187,17 +230,19 @@ class _MyTextBoxState extends State<MyTextBox> {
                       if (widget.maxLength != null)
                         LengthLimitingTextInputFormatter(widget.maxLength),
                     ],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.018,
                       fontWeight: FontWeight.w400,
                       color: MyColors.white,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
-                      hintStyle: GoogleFonts.montserrat(
-                        color: MyColors.white.withAlpha(153),
-                        fontSize: Screen.max(context) * 0.015,
-                      ),
+                      hintStyle: widget.hintStyle ??
+                          GoogleFonts.roboto(
+                            color: widget.hintColor ??
+                                MyColors.white.withAlpha(153),
+                            fontSize: Screen.max(context) * 0.015,
+                          ),
                       border: InputBorder.none,
                       counterText: '', // Remove default counter
                     ),
@@ -212,7 +257,7 @@ class _MyTextBoxState extends State<MyTextBox> {
                       });
                     },
                     child: Icon(
-                      _isObscured ? Icons.visibility_off : Icons.visibility,
+                      _isObscured ? FontAwesomeIcons.eyeSlash :FontAwesomeIcons.eyeSlash,
                       color: MyColors.white.withAlpha(153),
                     ),
                   ),
@@ -225,10 +270,11 @@ class _MyTextBoxState extends State<MyTextBox> {
             padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
             child: Text(
               widget.errorText!,
-              style: GoogleFonts.montserrat(
-                color: MyColors.red,
-                fontSize: Screen.max(context) * 0.015,
-              ),
+              style: widget.errorStyle ??
+                  GoogleFonts.roboto(
+                    color: errorBorderColor,
+                    fontSize: Screen.max(context) * 0.015,
+                  ),
             ),
           ),
         // Show remaining characters counter if maxLength is specified
@@ -237,7 +283,7 @@ class _MyTextBoxState extends State<MyTextBox> {
             padding: EdgeInsets.only(left: Screen.width(context) * 0.05),
             child: Text(
               '${_controller.text.length}/${widget.maxLength}',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.white.withAlpha(153),
                 fontSize: Screen.max(context) * 0.012,
               ),

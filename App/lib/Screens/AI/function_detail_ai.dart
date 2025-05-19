@@ -20,7 +20,7 @@ class AIPackageFunctionDetail extends StatelessWidget {
           Text(
             'Event Details',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: Colors.yellow),
@@ -32,12 +32,12 @@ class AIPackageFunctionDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Budget',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
                   Text("100,000",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w500,
                           color: Colors.white)),
@@ -50,7 +50,8 @@ class AIPackageFunctionDetail extends StatelessWidget {
               child: ListView.builder(
                 itemCount: 5,
                 itemBuilder: (context, index) {
-                  return Productcard(
+                  return ProductCard(
+                      rating: '',
                       listingType: '',
                       listingid: '',
                       imageUrl:

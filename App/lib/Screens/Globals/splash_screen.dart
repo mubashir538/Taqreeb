@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/images.dart';
@@ -18,27 +19,48 @@ class _SplashScreenState extends State<SplashScreen> {
   final Connectivity _connectivity = Connectivity();
   bool _isCheckingConnection = true;
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  double _progressValue = 0.0;
+  late Timer _progressTimer;
 
-// 2. Update your connection status update method
   void _updateConnectionStatus(List<ConnectivityResult> results) {
-    final result = results.first; // or handle all results as needed
+    final result = results.first;
     if (result == ConnectivityResult.none && mounted) {
       _navigateToNoInternet();
     }
   }
 
-// 3. Update your initialization
   @override
   void initState() {
     super.initState();
+    _startProgressTimer();
     _initializeApp();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
+  void _startProgressTimer() {
+    const totalDuration = Duration(seconds: 5);
+    const interval = Duration(milliseconds: 50);
+    final totalSteps = totalDuration.inMilliseconds ~/ interval.inMilliseconds;
+    final increment = 1.0 / totalSteps;
+
+    _progressTimer = Timer.periodic(interval, (timer) {
+      if (mounted) {
+        setState(() {
+          _progressValue += increment;
+          if (_progressValue >= 1.0) {
+            _progressValue = 1.0;
+            timer.cancel();
+          }
+        });
+      }
+    });
+  }
+
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    _progressTimer.cancel();
     super.dispose();
   }
 
@@ -55,11 +77,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Then check server reachability
     try {
-      // Simple request to check server availability
       await MyApi.getRequest(
         context: context,
-        endpoint:
-            'health-check/', // Create a simple endpoint that just returns 200 OK
+        endpoint: 'health-check/',
         headers: {},
         timeout: Duration(seconds: 5),
       );
@@ -82,16 +102,31 @@ class _SplashScreenState extends State<SplashScreen> {
       bool success = await preApiCall({
         'header': header,
         'isLoggedIn': isLoggedIn,
-        'userId': userId,
+        'userId': userId
       });
 
       if (success) {
         timer.cancel();
         if (mounted) {
-          Navigator.pushReplacementNamed(
-            context,
-            isLoggedIn ? '/HomePage' : '/Login',
-          );
+          // Wait until progress reaches 100% before navigating
+          if (_progressValue >= 1.0) {
+            Navigator.pushReplacementNamed(
+              context,
+              isLoggedIn ? '/HomePage' : '/Login',
+            );
+          } else {
+            // If APIs finish before progress completes, wait for progress
+            _progressTimer =
+                Timer.periodic(const Duration(milliseconds: 100), (t) {
+              if (_progressValue >= 1.0 && mounted) {
+                t.cancel();
+                Navigator.pushReplacementNamed(
+                  context,
+                  isLoggedIn ? '/HomePage' : '/Login',
+                );
+              }
+            });
+          }
         }
       } else if (mounted) {
         _navigateToNoInternet();
@@ -102,6 +137,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateToNoInternet() {
     if (mounted && _isCheckingConnection) {
       _isCheckingConnection = false;
+      _progressTimer.cancel();
       Navigator.pushReplacementNamed(context, '/NoInternet');
     }
   }
@@ -169,12 +205,26 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset(
               MyImages.logo,
-              width: MediaQuery.of(context).size.width * 0.9,
+              width: Screen.width(context) * 0.9,
             ),
-            SizedBox(height: 20),
-            _isCheckingConnection
-                ? CircularProgressIndicator(color: MyColors.white)
-                : SizedBox(),
+            SizedBox(height: Screen.height(context) * 0.05),
+            Container(
+              decoration: BoxDecoration(
+                color: MyColors.whiteDarker,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              width: Screen.width(context) * 0.5,
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(20), // same radius as container
+                child: LinearProgressIndicator(
+                  value: _progressValue,
+                  backgroundColor: MyColors.whiteDarker,
+                  valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
+                  minHeight: Screen.height(context) * 0.02,
+                ),
+              ),
+            )
           ],
         ),
       ),

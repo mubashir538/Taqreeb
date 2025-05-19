@@ -1,9 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
+import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
 import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Inputs/c_checkbox_question.dart';
@@ -27,10 +30,7 @@ class SearchService extends StatefulWidget {
   State<SearchService> createState() => _SearchServiceState();
 }
 
-class _SearchServiceState extends State<SearchService>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
+class _SearchServiceState extends State<SearchService> {
   // Data State
   final Map<String, dynamic> _args = {};
   final Map<String, dynamic> _categories = {};
@@ -64,24 +64,13 @@ class _SearchServiceState extends State<SearchService>
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
+  int _currentTab = 0; // 0 = Listings, 1 = Packages, 2 = Products
   final List<String> _appliedFilters = [];
   final List<String> _filtersToApply = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      length: 3,
-      vsync: this,
-      initialIndex: 0,
-    );
-
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        _performSearch();
-      }
-    });
-
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         UImanagement.getHeaderHeight(
             headerKey: _headerKey,
@@ -90,7 +79,6 @@ class _SearchServiceState extends State<SearchService>
 
   @override
   void dispose() {
-    _tabController.dispose();
     _searchController.dispose();
     _locationController.dispose();
     _dateController.dispose();
@@ -162,7 +150,7 @@ class _SearchServiceState extends State<SearchService>
       }
     });
 
-    await ApiCall.fetchAPI('unified_search/', params: params,
+    await ApiCall.fetchAPI('unified_search/', params: params, refresh: true,
         onSuccess: (_, data) {
       if (mounted) {
         setState(() {
@@ -174,7 +162,7 @@ class _SearchServiceState extends State<SearchService>
   }
 
   String _getCurrentTabType() {
-    switch (_tabController.index) {
+    switch (_currentTab) {
       case 0:
         return 'listings';
       case 1:
@@ -239,8 +227,8 @@ class _SearchServiceState extends State<SearchService>
           "Category": _categoryController.text,
         if (_appliedFilters.contains("Price"))
           "Price": {
-            "min": _rangeSliderController.minValue.toInt(),
-            "max": _rangeSliderController.maxValue.toInt()
+            "min": int.parse(_rangeSliderController.minValue.toString()),
+            "max": int.parse(_rangeSliderController.maxValue.toString())
           },
         if (_appliedFilters.contains("Location"))
           "Location": _locationController.text,
@@ -252,21 +240,11 @@ class _SearchServiceState extends State<SearchService>
     _performSearch();
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      margin: EdgeInsets.only(top: Screen.max(context) * 0.02),
-      child: TabBar(
-        controller: _tabController,
-        indicatorColor: MyColors.red,
-        labelColor: MyColors.white,
-        unselectedLabelColor: MyColors.whiteDarker,
-        tabs: const [
-          Tab(text: 'Listings'),
-          Tab(text: 'Packages'),
-          Tab(text: 'Products'),
-        ],
-      ),
-    );
+  void _handleTabChange(int index) {
+    setState(() {
+      _currentTab = index;
+    });
+    _performSearch();
   }
 
   Widget _buildFilterChips() {
@@ -317,7 +295,7 @@ class _SearchServiceState extends State<SearchService>
                       });
                     },
                     child: Icon(
-                      Icons.close,
+                      FontAwesomeIcons.xmark,
                       size: 16,
                       color: MyColors.dark,
                     ),
@@ -352,7 +330,7 @@ class _SearchServiceState extends State<SearchService>
                 IconButton(
                   onPressed: () => _showFilterPopup(context),
                   icon: Icon(
-                    Icons.tune,
+                    FontAwesomeIcons.bars,
                     size: Screen.max(context) * 0.03,
                     color: MyColors.white,
                   ),
@@ -362,7 +340,7 @@ class _SearchServiceState extends State<SearchService>
                   IconButton(
                     onPressed: () => _showAdditionalFilterPopup(context),
                     icon: Icon(
-                      Icons.filter_alt,
+                      FontAwesomeIcons.filter,
                       size: Screen.max(context) * 0.03,
                       color: MyColors.white,
                     ),
@@ -377,14 +355,10 @@ class _SearchServiceState extends State<SearchService>
 
   Widget _buildContent() {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
-        ),
-      );
+      return _buildSkeletonLoader();
     }
 
-    switch (_tabController.index) {
+    switch (_currentTab) {
       case 0:
         return _buildListingsTab();
       case 1:
@@ -396,6 +370,62 @@ class _SearchServiceState extends State<SearchService>
     }
   }
 
+  Widget _buildSkeletonLoader() {
+    return ListView.builder(
+      itemCount: 5, // Number of skeleton items to show
+      itemBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.symmetric(
+            horizontal: Screen.width(context) * 0.05,
+            vertical: Screen.height(context) * 0.01,
+          ),
+          child: Shimmer.fromColors(
+            baseColor: MyColors.dark.withOpacity(0.6),
+            highlightColor: MyColors.dark.withOpacity(0.3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image placeholder
+                Container(
+                  width: double.infinity,
+                  height: Screen.height(context) * 0.2,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                SizedBox(height: Screen.height(context) * 0.02),
+
+                // Title placeholder
+                Container(
+                  width: Screen.width(context) * 0.6,
+                  height: Screen.height(context) * 0.025,
+                  color: Colors.white,
+                ),
+                SizedBox(height: Screen.height(context) * 0.01),
+
+                // Subtitle placeholder
+                Container(
+                  width: Screen.width(context) * 0.4,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+                SizedBox(height: Screen.height(context) * 0.02),
+
+                // Divider
+                Container(
+                  width: double.infinity,
+                  height: 1,
+                  color: Colors.grey[300],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildListingsTab() {
     return _searchResults['listings'].isEmpty
         ? _buildEmptyState()
@@ -403,11 +433,14 @@ class _SearchServiceState extends State<SearchService>
             itemCount: _searchResults['listings'].length,
             itemBuilder: (context, index) {
               final listing = _searchResults['listings'][index];
-              return Productcard(
+              return ProductCard(
+                rating: listing['rating'].toString(),
                 listingType: listing['type'].toString(),
                 listingid: listing['id'].toString(),
-                imageUrl: listing['pictures']?['picturePath'] ??
-                    "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+                imageUrl: listing['pictures']?['picturePath'] != ''
+                    ? MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+                        listing['pictures']['picturePath']
+                    : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
                 venueName: listing['name'],
                 location: listing['location'],
                 type: listing['type'].toString(),
@@ -425,14 +458,16 @@ class _SearchServiceState extends State<SearchService>
               final package = _searchResults['packages'][index];
               return PackageBox(
                 packageId: package['id'].toString(),
-                imageUrls: package['pictures'].length != 0
-                    ? package['pictures']
-                        ?.map((p) => p['picturePath'].toString())
-                        .toList()
-                    : [],
-                packagedetails: package['description'],
-                packageprice: package['price'].toString(),
-                packagename: package['name'],
+                imageUrl: package['pictures'].length != 0
+                    ? package['pictures'][0]
+                    : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+                packageDetails: package['description'],
+                packagePrice: package['price'].toString(),
+                packageName: package['name'],
+                onPressed: () {
+                  // TODO
+                  // Implement Package Click
+                },
               );
             },
           );
@@ -493,7 +528,7 @@ class _SearchServiceState extends State<SearchService>
                   children: [
                     Text(
                       "Filter Options",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.03,
                         fontWeight: FontWeight.bold,
                         color: MyColors.red,
@@ -602,7 +637,7 @@ class _SearchServiceState extends State<SearchService>
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             fontSize: Screen.max(context) * 0.02,
             fontWeight: FontWeight.w500,
             color: MyColors.yellow,
@@ -630,7 +665,7 @@ class _SearchServiceState extends State<SearchService>
                 children: [
                   Text(
                     'Additional Filters',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: MyColors.yellow,
@@ -645,7 +680,7 @@ class _SearchServiceState extends State<SearchService>
                           children: [
                             Text(
                               entry.key,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.roboto(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: MyColors.yellow,
@@ -688,6 +723,7 @@ class _SearchServiceState extends State<SearchService>
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     UImanagement.getHeaderHeight(
       headerKey: _headerKey,
@@ -703,9 +739,14 @@ class _SearchServiceState extends State<SearchService>
             child: Column(
               children: [
                 _buildSearchBar(),
-                _buildTabBar(),
+                CustomTabBar(
+                  tabs: const ["Listings", "Packages", "Products"],
+                  onTabChanged: _handleTabChange,
+                ),
                 if (_appliedFilters.isNotEmpty) _buildFilterChips(),
-                Expanded(child: _buildContent()),
+                Expanded(child: SizedBox(
+                  width: Screen.width(context) * 0.9,
+                  child: _buildContent())),
               ],
             ),
           ),

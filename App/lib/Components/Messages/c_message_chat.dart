@@ -63,7 +63,7 @@ class MessageChatButton extends StatelessWidget {
                           child: Text(
                             name,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: Colors.white,
@@ -73,7 +73,7 @@ class MessageChatButton extends StatelessWidget {
                         newMessage > 0
                             ? Text(
                                 time,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.roboto(
                                   fontSize: Screen.max(context) * 0.015,
                                   fontWeight: FontWeight.w300,
                                   color: MyColors.whiteDarker,
@@ -91,7 +91,7 @@ class MessageChatButton extends StatelessWidget {
                         child: Text(
                           message,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.roboto(
                             fontSize: Screen.max(context) * 0.015,
                             fontWeight: FontWeight.w400,
                             color: MyColors.whiteDarker,
@@ -109,7 +109,7 @@ class MessageChatButton extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   newMessage.toString(),
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w400,
                                     color: MyColors.white,

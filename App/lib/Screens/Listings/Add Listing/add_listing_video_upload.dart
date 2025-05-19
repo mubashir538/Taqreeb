@@ -3,6 +3,7 @@ import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Add360Video extends StatelessWidget {
   const Add360Video({super.key});
@@ -59,7 +60,7 @@ class Add360Video extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     return Text(
       '360° Video Tour',
-      style: TextStyle(
+      style: GoogleFonts.roboto(
         fontSize: Screen.width(context) * 0.045,
         fontWeight: FontWeight.bold,
         color: Colors.white,
@@ -70,7 +71,7 @@ class Add360Video extends StatelessWidget {
   Widget _buildDescription(BuildContext context) {
     return Text(
       'Upload a video to create a 360 view.',
-      style: TextStyle(
+      style: GoogleFonts.roboto(
         fontSize: Screen.width(context) * 0.035,
         color: Colors.white,
       ),
@@ -114,7 +115,7 @@ class Add360Video extends StatelessWidget {
         },
         child: Text(
           'Skip',
-          style: TextStyle(
+          style: GoogleFonts.roboto(
             color: Colors.white,
             fontSize: Screen.width(context) * 0.04,
           ),

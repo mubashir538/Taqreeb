@@ -4,9 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
@@ -270,7 +273,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         processedGroups.add({
           'groupId': groupDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] ?? ''}',
+              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] != '' ? groupDoc['groupImageUrl'] : '/media/display/group.png'}',
           'name': groupDoc['groupName'],
           'participants': groupDoc['participants'],
           'lastMessage': lastMessageText,
@@ -335,11 +338,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
       });
     }
 
-    Navigator.pushNamed(context, '/ChatBox', arguments: {'userId': userId});
+    context.pushNamedTransition(
+        routeName: '/ChatBox',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {'userId': userId});
   }
 
   void _navigateToCreateGroup() {
-    Navigator.pushNamed(context, '/CreateGroup',
+    context.pushNamedTransition(
+        routeName: '/CreateGroup',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
         arguments: {'chats': _userChats});
   }
 
@@ -392,10 +402,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
         image: convo['chatimage'] ?? convo['groupImageUrl'],
         onpressed: () {
           if (convo['isGroup'] ?? false) {
-            Navigator.pushNamed(context, '/GroupChatBox', arguments: {
-              'groupId': convo['groupId'],
-              'participants': convo['participants'],
-            });
+            context.pushNamedTransition(
+                routeName: '/GroupChatBox',
+                type: PageTransitionType.rightToLeftWithFade,
+                duration: Duration(milliseconds: 300),
+                arguments: {
+                  'groupId': convo['groupId'],
+                  'participants': convo['participants'],
+                });
           } else {
             _navigateToChatbox(convo['userId']);
           }
@@ -408,6 +422,110 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }).toList();
   }
 
+  Widget _buildSkeletonLoader() {
+    return ListView.builder(
+      itemCount: 5, // Number of skeleton items to show
+      padding: EdgeInsets.symmetric(
+        horizontal: Screen.max(context) * 0.02,
+        vertical: Screen.max(context) * 0.01,
+      ),
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: MyColors.ligthDark,
+          highlightColor: MyColors.darkLighter,
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
+            padding: EdgeInsets.symmetric(
+              horizontal: Screen.max(context) * 0.02,
+              vertical: Screen.max(context) * 0.02,
+            ),
+            width: Screen.width(context) * 0.9,
+            decoration: BoxDecoration(
+              color: MyColors.darkLighter,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // Avatar placeholder
+                Container(
+                  margin: EdgeInsets.only(right: Screen.max(context) * 0.03),
+                  child: Container(
+                    width: Screen.max(context) * 0.06,
+                    height: Screen.max(context) * 0.06,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Name and time row
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: Screen.max(context) * 0.007),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Name placeholder
+                            Container(
+                              width: Screen.width(context) * 0.4,
+                              height: Screen.max(context) * 0.02,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            // Time placeholder
+                            Container(
+                              width: Screen.width(context) * 0.1,
+                              height: Screen.max(context) * 0.015,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Message and badge row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Message placeholder
+                          Container(
+                            width: Screen.width(context) * 0.5,
+                            height: Screen.max(context) * 0.015,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          // Badge placeholder
+                          Container(
+                            width: Screen.max(context) * 0.03,
+                            height: Screen.max(context) * 0.03,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -429,15 +547,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
               SizedBox(height: Screen.height(context) * 0.02),
               _buildSearchBar(max),
               _isLoading
-                  ? const Expanded(
-                      child: Center(child: CircularProgressIndicator()),
-                    )
+                  ? Expanded(child: _buildSkeletonLoader())
                   : Expanded(
                       child: RefreshIndicator(
                         onRefresh: _initialize,
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          children: _buildChatList(),
+                        child: SizedBox(
+                          width: Screen.width(context) * 0.9,
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: _buildChatList(),
+                          ),
                         ),
                       ),
                     ),
@@ -468,7 +587,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
               padding: EdgeInsets.only(left: max * 0.02),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/search_new_user');
+                  context.pushNamedTransition(
+                      routeName: '/search_new_user',
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300));
                 },
                 child: Container(
                   padding: EdgeInsets.all(max * 0.015),
@@ -476,7 +598,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     color: MyColors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.add, color: MyColors.white),
+                  child: Icon(FontAwesomeIcons.plus, color: MyColors.white),
                 ),
               ),
             ),
@@ -501,17 +623,21 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 offset: const Offset(0, 5),
               )
             ],
-            borderRadius: BorderRadius.circular(max * 0.05),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(max * 0.05),
+              topRight: Radius.circular(max * 0.05),
+              bottomLeft: Radius.circular(max * 0.05),
+            ),
             color: MyColors.red,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.add, color: Colors.white),
+              const Icon(FontAwesomeIcons.plus, color: Colors.white),
               SizedBox(width: Screen.width(context) * 0.02),
               Text(
                 'Create Group',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: max * 0.015,
                   fontWeight: FontWeight.w400,

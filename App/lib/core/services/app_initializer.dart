@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:taqreeb/Screens/Account%20Management/Freelancer%20Signup/description_freelancer.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/user_listings.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/providers/business_signup_provider.dart';
@@ -36,6 +37,8 @@ class AppInitializer {
       ChangeNotifierProvider(
           create: (_) => ForgotPasswordProvider(), lazy: true),
 
+      ChangeNotifierProvider(
+          create: (_) => FreelancerSignupDescriptionViewModel()),
       // Modified BusinessInfoEditViewModel provider
       ChangeNotifierProxyProvider<BusinessData, BusinessAccountInfoViewModel>(
         create: (context) => BusinessAccountInfoViewModel(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -45,17 +47,19 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   }
 
   void _navigateToAddAddon() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_Add_Addons',
+    context.pushNamedTransition(
+      routeName: '/AddCategory_Add_Addons',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: _args,
     );
   }
 
   void _navigateToPackages() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_Packages',
+    context.pushNamedTransition(
+      routeName: '/AddCategory_Packages',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: _args,
     );
   }
@@ -100,13 +104,15 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   Widget _buildTitle() {
     return Container(
+      width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
+        textAlign: TextAlign.start,
         "Add-Ons",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
-          fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          fontWeight: FontWeight.w700,
+          color: MyColors.red,
         ),
       ),
     );
@@ -114,28 +120,24 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
 
   Widget _buildAddonsList() {
     return Container(
-      margin: EdgeInsets.all(Screen.width(context) * 0.01),
       width: Screen.width(context) * 0.9,
-      padding: EdgeInsets.symmetric(
-        horizontal: Screen.width(context) * 0.03,
-        vertical: Screen.height(context) * 0.02,
-      ),
+      margin: EdgeInsets.all(Screen.max(context) * 0.01),
+      padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
         color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(102),
-            blurRadius: 4,
-            spreadRadius: 1,
-            offset: const Offset(2, 2),
-          ),
-        ],
       ),
       child: _args['addons']?.isNotEmpty ?? false
-          ? Column(
+          ? Wrap(
+              spacing: Screen.width(context) * 0.02,
+              runSpacing: Screen.max(context) * 0.015,
               children: _args['addons']
-                  .map<Widget>((addon) => _buildAddonItem(addon))
+                  .map<Widget>((addon) => SizedBox(
+                        width: (Screen.width(context) * 0.9 -
+                                Screen.width(context) * 0.02) /
+                            2, // Adjusted for spacing
+                        child: _buildAddonItem(addon),
+                      ))
                   .toList(),
             )
           : const SizedBox.shrink(),
@@ -143,39 +145,35 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   }
 
   Widget _buildAddonItem(Map<String, dynamic> addon) {
-    return Column(
-      children: [
-        Container(
-          margin:
-              EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.02),
-          child: Row(
-            children: [
-              SizedBox(height: Screen.max(context) * 0.01),
-              Expanded(
-                child: Text(
-                  addon['name'],
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.015,
-                    fontWeight: FontWeight.w400,
-                    color: MyColors.yellow,
-                  ),
-                ),
-              ),
-              Text(
-                addon['perhead'].toLowerCase() == 'yes'
-                    ? '${addon['price']}/${addon['headtype']}'
-                    : addon['price'],
-                style: GoogleFonts.montserrat(
-                  fontSize: Screen.max(context) * 0.015,
-                  fontWeight: FontWeight.w400,
-                  color: MyColors.white,
-                ),
-              ),
-            ],
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.01),
+      padding: EdgeInsets.all(Screen.max(context) * 0.015),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            addon['name'],
+            style: GoogleFonts.roboto(
+              fontSize: Screen.max(context) * 0.02,
+              fontWeight: FontWeight.w600,
+              color: MyColors.white,
+            ),
           ),
-        ),
-        SizedBox(height: Screen.max(context) * 0.01),
-      ],
+          SizedBox(height: Screen.max(context) * 0.01),
+          Text(
+            'Rs. ${(addon['perhead'].toLowerCase() == 'yes' ? '${addon['price']}/${addon['headtype']}' : addon['price'])}',
+            style: GoogleFonts.roboto(
+              fontSize: Screen.max(context) * 0.015,
+              fontWeight: FontWeight.w400,
+              color: MyColors.whiteDarker,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -204,13 +202,17 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   }
 
   Widget _buildAddButton() {
-    return FloatingActionButton(
-      backgroundColor: MyColors.yellow,
-      onPressed: _navigateToAddAddon,
-      child: Icon(
-        Icons.add,
-        color: MyColors.dark,
-        size: Screen.max(context) * 0.04,
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      child: FloatingActionButton(
+        backgroundColor: MyColors.red,
+        shape: CircleBorder(),
+        onPressed: _navigateToAddAddon,
+        child: Icon(
+          FontAwesomeIcons.plus,
+          color: MyColors.white,
+          size: Screen.max(context) * 0.03,
+        ),
       ),
     );
   }

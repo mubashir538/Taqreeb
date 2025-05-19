@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -46,8 +47,8 @@ class _TransactionCardState extends State<TransactionCard> {
                   radius: Screen.max(context) * 0.03,
                   child: Icon(
                     widget.type == "Deposit"
-                        ? Icons.arrow_downward_rounded
-                        : Icons.arrow_upward_rounded,
+                        ? FontAwesomeIcons.arrowDown
+                        : FontAwesomeIcons.arrowUp,
                     color: MyColors.white.withAlpha(200),
                     size: 30,
                   ),
@@ -60,7 +61,7 @@ class _TransactionCardState extends State<TransactionCard> {
                   children: [
                     Text(
                       widget.paidBy,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.017,
                         fontWeight: FontWeight.w400,
                         color: MyColors.white,
@@ -68,7 +69,7 @@ class _TransactionCardState extends State<TransactionCard> {
                     ),
                     Text(
                       widget.date,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.013,
                         fontWeight: FontWeight.w300,
                         color: MyColors.white,
@@ -80,7 +81,7 @@ class _TransactionCardState extends State<TransactionCard> {
             ),
             Text(
               (widget.type == "Deposit" ? "-" : "+") + widget.amount,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.017,
                 fontWeight: FontWeight.w400,
                 color: widget.type == "Deposit" ? MyColors.red : MyColors.green,

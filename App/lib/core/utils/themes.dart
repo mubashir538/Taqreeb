@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppThemes {
   static final ThemeData lightTheme = ThemeData(
@@ -11,8 +12,8 @@ class AppThemes {
       secondary: MyColors.yellow,
     ),
     textTheme: TextTheme(
-      displayMedium: TextStyle(color: MyColors.dark),
-      displaySmall: TextStyle(color: MyColors.darkLighter),
+      displayMedium: GoogleFonts.roboto(color: MyColors.dark),
+      displaySmall: GoogleFonts.roboto(color: MyColors.darkLighter),
     ),
   );
 
@@ -25,8 +26,8 @@ class AppThemes {
       secondary: MyColors.yellow,
     ),
     textTheme: TextTheme(
-      displayMedium: TextStyle(color: MyColors.white),
-      displaySmall: TextStyle(color: MyColors.whiteDarker),
+      displayMedium: GoogleFonts.roboto(color: MyColors.white),
+      displaySmall: GoogleFonts.roboto(color: MyColors.whiteDarker),
     ),
   );
 }

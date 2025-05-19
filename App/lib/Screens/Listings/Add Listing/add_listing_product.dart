@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -44,19 +46,19 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
   }
 
   void _navigateToAddProduct() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_AddProduct', // You'll need to create this route
-      arguments: _args,
-    );
+    context.pushNamedTransition(
+        routeName: '/AddCategory_AddProduct',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: _args);
   }
 
   void _navigateToNextStep() {
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_AddImage', // Adjust this to your navigation flow
-      arguments: _args,
-    );
+    context.pushNamedTransition(
+        routeName: '/AddCategory_AddImage',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: _args);
   }
 
   @override
@@ -100,13 +102,15 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
 
   Widget _buildTitle() {
     return Container(
+      width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Text(
+        textAlign: TextAlign.start,
         "Products",
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
-          fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          fontWeight: FontWeight.w700,
+          color: MyColors.red,
         ),
       ),
     );
@@ -156,13 +160,17 @@ class _AddCategoryProductsState extends State<AddCategoryProducts> {
   }
 
   Widget _buildAddButton() {
-    return FloatingActionButton(
-      backgroundColor: MyColors.yellow,
-      onPressed: _navigateToAddProduct,
-      child: Icon(
-        Icons.add,
-        color: MyColors.dark,
-        size: Screen.max(context) * 0.04,
+    return Container(
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      child: FloatingActionButton(
+        backgroundColor: MyColors.red,
+        shape: CircleBorder(),
+        onPressed: _navigateToAddProduct,
+        child: Icon(
+          FontAwesomeIcons.plus,
+          color: MyColors.white,
+          size: Screen.max(context) * 0.03,
+        ),
       ),
     );
   }

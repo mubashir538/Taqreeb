@@ -46,7 +46,7 @@ def get_listing_details(request, type):
         field_data = []
         
         for field in model._meta.get_fields():
-            if field.name not in ['id', 'listingID','listingId','cars']:
+            if field.name not in ['id', 'listingId','listingId','cars']:
                 field_info = {"name": field.name, "type": field.get_internal_type()}
                 
                 if hasattr(field, 'choices') and field.choices:
@@ -128,7 +128,7 @@ def add_listing(request):
         
         save_addons(listing, data.get('addons'))
 
-        ReviewDetails(listingID=listing).save()
+        ReviewDetails(listingId=listing).save()
 
         UserActivity.objects.create(
         user=request.user,
@@ -176,7 +176,7 @@ def update_listing_fields(listing, data):
         if data.get(key):
             setattr(listing, attr, data[key])
             if key in ['priceMin', 'priceMax']:
-                listing.basicPrice = int((int(listing.priceMin) + int(listing.priceMax)) / 2)
+                listing.basicPrice = int((int(listing.priceMin.replace(',', ''))) + int(listing.priceMax.replace(',', '')) / 2)
                 listing.save(update_fields=[attr, 'basicPrice'])
             else:
                 listing.save(update_fields=[attr])
@@ -216,7 +216,7 @@ def _update_type_specific_fields(listing, data):
 
     model, updater = model_map.get(listing.type, (None, None))
     if model and updater:
-        view = model.objects.get(listingID=listing)
+        view = model.objects.get(listingId=listing)
         updater(view, data)
         return True
     return False
@@ -348,8 +348,8 @@ def unified_search(request):
     filters = {
         'query': search_query,
         'category': request.GET.get('category', 'All'),
-        'min_price': request.GET.get('min_price'),
-        'max_price': request.GET.get('max_price'),
+        'min_price': int(str(request.GET.get('min_price')).replace('.', ''))if request.GET.get('min_price') else  None,
+        'max_price': int(str(request.GET.get('max_price')).replace('.', '')) if request.GET.get('max_price') else None,
         'location': request.GET.get('location'),
         'date': request.GET.get('date'),
         'min_rating': request.GET.get('min_rating'),
@@ -439,7 +439,6 @@ def home_listings(request):
     paginated_listings, paginator = _paginate_listings(request, listings)
     
     listings_data = ListingSerializer(paginated_listings, many=True).data
-    # print(listings_data)
     pictures = _get_listing_pictures(listings_data)
 
     return paginator.get_paginated_response({
@@ -504,7 +503,8 @@ def your_listings(request, id, type):
     listings = _get_user_listings(user, type)
     
     listing_data = ListingSerializer(listings, many=True).data
-    pictures = _get_listing_pictures(listings)
+
+    pictures = _get_listing_pictures(listing_data)
 
     return Response({
         'status': 'success',

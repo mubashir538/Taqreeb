@@ -34,7 +34,7 @@ class BorderButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 fontSize:
                     textSize != 0 ? textSize : Screen.max(context) * 0.018,
                 fontWeight: FontWeight.w600,

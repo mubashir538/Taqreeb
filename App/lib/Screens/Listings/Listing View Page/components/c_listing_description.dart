@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -93,10 +94,10 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
 
   TextStyle _buildTextStyle({
     double fontSize = 0.015,
-    FontWeight fontWeight = FontWeight.w300,
+    FontWeight fontWeight = FontWeight.w400,
     required Color color,
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize: Screen.max(context) * fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -110,10 +111,11 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: Screen.height(context) * 0.02),
           _buildTitle(),
           _isBusinessUser && _isEditing ? _buildEditMode() : _buildViewMode(),
           if (_isBusinessUser && !_isEditing) _buildEditButton(),
-          _buildDivider(),
+          SizedBox(height: Screen.height(context) * 0.02),
         ],
       ),
     );
@@ -127,7 +129,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
         style: _buildTextStyle(
           fontSize: 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          color: MyColors.white,
         ),
       ),
     );
@@ -142,7 +144,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
           style: _buildTextStyle(color: MyColors.white),
           decoration: InputDecoration(
             hintText: 'Edit description...',
-            hintStyle: const TextStyle(color: Colors.grey),
+            hintStyle: GoogleFonts.roboto(color: MyColors.white.withAlpha(153)),
             border: const OutlineInputBorder(),
           ),
         ),
@@ -158,8 +160,12 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
   Widget _buildViewMode() {
     return InkWell(
       onTap: () => setState(() => _isToggled = !_isToggled),
-      child: Padding(
-        padding: EdgeInsets.only(bottom: Screen.max(context) * 0.01),
+      child: Container(
+        decoration: BoxDecoration(
+          color: MyColors.darkLighter,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: EdgeInsets.all(Screen.max(context) * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -170,9 +176,10 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
               style: _buildTextStyle(color: MyColors.white),
               textAlign: TextAlign.justify,
             ),
+            SizedBox(height: Screen.height(context) * 0.02),
             Icon(_isToggled
-                ? Icons.arrow_downward_outlined
-                : Icons.arrow_upward_outlined),
+                ? FontAwesomeIcons.chevronDown
+                : FontAwesomeIcons.chevronUp),
           ],
         ),
       ),

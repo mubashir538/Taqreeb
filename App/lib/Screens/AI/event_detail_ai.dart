@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/AI/c_ai_functions.dart';
@@ -20,7 +21,7 @@ class AiPackageEventDetail extends StatelessWidget {
           Text(
             'Package Details',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: Colors.yellow),
@@ -32,12 +33,12 @@ class AiPackageEventDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Budget',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
                   Text("100,000",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w500,
                           color: Colors.white)),
@@ -50,12 +51,12 @@ class AiPackageEventDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('No. of Events',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
                   Text("5",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.026,
                           fontWeight: FontWeight.w500,
                           color: Colors.white)),
@@ -69,8 +70,10 @@ class AiPackageEventDetail extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return AIFunctions(
                       onpressed: () {
-                        Navigator.pushNamed(
-                            context, '/AIPackage_FunctionDetail');
+                        context.pushNamedTransition(
+                            routeName: '/AIPackage_FunctionDetail',
+                            type: PageTransitionType.rightToLeftWithFade,
+                            duration: Duration(milliseconds: 300));
                       },
                       event: "Mehendi",
                       date: "24-Nov-2024",
