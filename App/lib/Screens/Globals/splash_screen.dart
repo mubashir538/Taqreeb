@@ -102,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
       bool success = await preApiCall({
         'header': header,
         'isLoggedIn': isLoggedIn,
-        'userId': userId,
+        'userId': userId
       });
 
       if (success) {

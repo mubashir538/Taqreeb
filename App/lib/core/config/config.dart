@@ -14,7 +14,7 @@ class AppConfig {
     }
   }
 
-  static String ngrok = 'http://192.168.0.105:8000';
+  static String ngrok = 'https://da35-119-155-186-192.ngrok-free.app';
   static String baseUrl = "${AppConfig.ngrok}/app/";
   static const String appName = "Taqreeb App";
   static const String version = "1.0.0";

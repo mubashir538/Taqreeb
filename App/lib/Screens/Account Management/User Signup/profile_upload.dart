@@ -113,7 +113,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
     return await MyApi.postMultipartRequest(
       endpoint: endpoint,
-      token: false,
+      token: true,
       body: body,
       files: files,
     );

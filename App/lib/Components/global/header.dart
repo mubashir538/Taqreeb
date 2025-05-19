@@ -69,6 +69,8 @@ class _HeaderState extends State<Header> {
       '/BusinessSignup_Description',
       '/SubmissionSucessful',
       '/ForgotPassword_EmailorPhoneInput',
+      '/ChatBox',
+      '/GroupChatBox',
       '/ForgotPassword_VerifyCode',
       '/ForgotPassword_NewPassword',
     };
@@ -227,9 +229,9 @@ class _HeaderState extends State<Header> {
                             _showLogoutDialog();
                           } else {
                             context.pushNamedTransition(
-        routeName: '/Settings',
-        type: PageTransitionType.rightToLeftWithFade,
-        duration: Duration(milliseconds: 300));
+                                routeName: '/Settings',
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300));
                           }
                         },
                         child: Icon(

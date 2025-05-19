@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 
-
 class EditGroupScreen extends StatefulWidget {
   final String groupId;
   final String currentUserId;
@@ -205,8 +204,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
     return Column(
       children: [
         ListTile(
-          title:  Text('Participants',
-              style: GoogleFonts.roboto(fontSize: 18)),
+          title: Text('Participants', style: GoogleFonts.roboto(fontSize: 18)),
           trailing: _isAdmin
               ? IconButton(
                   icon: const Icon(FontAwesomeIcons.plus),
@@ -227,7 +225,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                   ),
                   title: Text('${user['firstName']} ${user['lastName']}'),
                   subtitle: userId == _adminId
-                      ?  Text('Admin',
+                      ? Text('Admin',
                           style: GoogleFonts.roboto(color: Colors.green))
                       : null,
                   trailing: _isAdmin
@@ -240,7 +238,8 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                             )
                       : userId == widget.currentUserId
                           ? IconButton(
-                              icon: const Icon(FontAwesomeIcons.arrowRightFromBracket,
+                              icon: const Icon(
+                                  FontAwesomeIcons.arrowRightFromBracket,
                                   color: Colors.red),
                               onPressed: () => _removeParticipant(userId),
                             )
@@ -275,8 +274,8 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
               final user = _availableUsers[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage:
-                      NetworkImage('${MyApi.baseUrl}${user['profilePicture']}'),
+                  backgroundImage: NetworkImage(
+                      '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}'),
                 ),
                 title: Text(user['name']),
                 trailing: IconButton(
@@ -326,9 +325,12 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 radius: 50,
                 backgroundImage: _newGroupImage != null
                     ? FileImage(_newGroupImage!)
-                    : NetworkImage('${MyApi.baseUrl}$_newGroupImageUrl')
+                    : NetworkImage(
+                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$_newGroupImageUrl')
                         as ImageProvider,
-                child: _isAdmin ? const Icon(FontAwesomeIcons.pen, size: 30) : null,
+                child: _isAdmin
+                    ? const Icon(FontAwesomeIcons.pen, size: 30)
+                    : null,
               ),
             ),
             const SizedBox(height: 20),

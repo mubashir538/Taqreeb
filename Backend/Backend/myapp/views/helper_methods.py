@@ -12,7 +12,7 @@ from ..models.listing_models import PicturesListings,Listing,PicturesPackages,Ad
 from ..Serializers.listing_serializers import PicturesListingSerializers
 from ..models.business_models import BusinessOwner,Freelancer
 from ..models.product_models import Product,PicturesProducts
-from ..models.listing_models import Packages
+from ..models.listing_models import Packages,PicturesPackages
 
 def url_shortener(url):
     try:
@@ -169,7 +169,7 @@ def save_packages(listing, packages):
             package_obj = Packages(
                 listingId=listing,
                 name=pkg.get('name'),
-                price=pkg.get('price'),
+                price=int(str(pkg.get('price')).replace(',', '')),
                 description=pkg.get('details')
             )
             package_obj.save()
@@ -191,7 +191,7 @@ def save_products(listing, products):
                 listingId=listing,
                 name=prod.get('name'),
                 description=prod.get('description'),
-                price=prod.get('price'),
+                price=int(str(prod.get('price')).replace(',','')),
                 quantity=prod.get('quantity', 1)
             )
             product_obj.save()
@@ -210,7 +210,7 @@ def save_addons(listing, addons):
             AddOns(
                 listingId=listing,
                 name=addon.get('name'),
-                price=addon.get('price'),
+                price=int(str(addon.get('price')).replace(',','')),
                 isPer=addon.get('perhead') == "Yes",
                 perType=addon.get('headtype') if addon.get('perhead') == "Yes" else None
             ).save()

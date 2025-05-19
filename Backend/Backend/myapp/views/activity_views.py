@@ -2,7 +2,8 @@ from .. import Serializers as s
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..models.user_models import UserActivity
+from ..Serializers.user_activity_serializers import UserActivitySerializer 
+from ..models.user_models import User,UserActivity
 from django.utils.timezone import now
 
 @api_view(['POST'])
@@ -15,7 +16,7 @@ def log_user_activity(request):
     if action not in valid_actions:
         return Response({'status': 'error', 'message': 'Invalid action type'}, status=400)
 
-    serializer = s.UserActivitySerializer(data={
+    serializer = UserActivitySerializer(data={
         'user': request.user.id,
         'action': action,
         'metadata': metadata,

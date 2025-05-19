@@ -176,7 +176,7 @@ def update_listing_fields(listing, data):
         if data.get(key):
             setattr(listing, attr, data[key])
             if key in ['priceMin', 'priceMax']:
-                listing.basicPrice = int((int(listing.priceMin) + int(listing.priceMax)) / 2)
+                listing.basicPrice = int((int(listing.priceMin.replace(',', ''))) + int(listing.priceMax.replace(',', '')) / 2)
                 listing.save(update_fields=[attr, 'basicPrice'])
             else:
                 listing.save(update_fields=[attr])
@@ -439,7 +439,6 @@ def home_listings(request):
     paginated_listings, paginator = _paginate_listings(request, listings)
     
     listings_data = ListingSerializer(paginated_listings, many=True).data
-    # print(listings_data)
     pictures = _get_listing_pictures(listings_data)
 
     return paginator.get_paginated_response({
@@ -504,7 +503,8 @@ def your_listings(request, id, type):
     listings = _get_user_listings(user, type)
     
     listing_data = ListingSerializer(listings, many=True).data
-    pictures = _get_listing_pictures(listings)
+
+    pictures = _get_listing_pictures(listing_data)
 
     return Response({
         'status': 'success',

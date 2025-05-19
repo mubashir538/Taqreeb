@@ -83,7 +83,7 @@ import 'package:taqreeb/core/utils/themes.dart';
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  AppConfig.fetchIp();
+  // AppConfig.fetchIp();
   // Preserve splash screen with required widgetsBinding parameter
   FlutterNativeSplash.preserve(
     widgetsBinding: widgetsBinding,
