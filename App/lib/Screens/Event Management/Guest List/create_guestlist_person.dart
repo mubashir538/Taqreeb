@@ -75,12 +75,18 @@ class _CreateGuestListAddPersonState extends State<CreateGuestListAddPerson> {
       MyScaffold(text: 'Please fill all fields').show(context);
       return;
     }
+    if (Validations.validateName(_personController.text) != "Ok") {
+      MyScaffold(text: Validations.validateName(_personController.text))
+          .show(context);
+      return;
+    }
 
     if (Validations.validateContact(_contactController.text) != "Ok") {
       MyScaffold(text: Validations.validateContact(_contactController.text))
           .show(context);
       return;
     }
+
     setState(() {
       _guestList.add(
           {'name': _personController.text, 'contact': _contactController.text});

@@ -254,7 +254,9 @@ class _CreateFunctionState extends State<CreateFunction> {
     WarningDialog(
       message: 'Event Budget is Exceeding',
       title: 'Budget Exceed',
-      actions: [ColoredButton(text: 'Ok')],
+      actions: [
+        ColoredButton(text: 'Ok', onPressed: () => Navigator.pop(context))
+      ],
     ).showDialogBox(context);
   }
 

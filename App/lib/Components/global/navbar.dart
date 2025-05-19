@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 
@@ -17,11 +18,27 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar> {
+  String type = '';
   void _onItemTapped(int index) {
     setState(() {
       widget.selectedIndex = index;
       widget.onValueChanged(index);
     });
+  }
+
+  void getType() async {
+    if (await MyTokens.getBusinessType() == 'user') {
+      setState(() {
+        type = 'user';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getType();
   }
 
   @override
