@@ -54,11 +54,11 @@ def get_picture(listing_id):
 
 def get_view_data(listing_id):
     model_serializer_pairs = [
-        (Venue, VenueSerializer, 'listingID'),
+        (Venue, VenueSerializer, 'listingId'),
         (Caterers, CaterersSerializer, 'listingId'),
-        (CarRenters, CarRentersSerializer, 'listingID'),
+        (CarRenters, CarRentersSerializer, 'listingId'),
         (Decorators, DecoratorsSerializer, 'listingId'),
-        (PhotographyPlaces, PhotographyPlacesSerializer, 'listingID'),
+        (PhotographyPlaces, PhotographyPlacesSerializer, 'listingId'),
         (Photographers, PhotographersSerializer, 'listingId'),
         (VideoEditors, VideoEditorsSerializer, 'listingId'),
         (GraphicDesigners, GraphicDesignersSerializer, 'listingId'),
@@ -107,11 +107,11 @@ def create_view_for_category(category, view_data, listing):
             'guestmaxAllowed': view_data.get('guestmaxAllowed'),
             'staff': view_data.get('staff'),
             'venueType': view_data.get('venueType'),
-            'listingID': listing
+            'listingId': listing
         }),
         'PhotographyPlace': (PhotographyPlaces, {
             'type': view_data.get('type'),
-            'listingID': listing
+            'listingId': listing
         }),
         'Decorator': (Decorators, {
             'decorType': view_data.get('decorType'),
@@ -132,7 +132,7 @@ def create_view_for_category(category, view_data, listing):
         }),
         'CarRenter': (CarRenters, {
             'serviceType': view_data.get('serviceType'),
-            'listingID': listing
+            'listingId': listing
         }),
         'VideoEditor': (VideoEditors, {
             'portfolioLink': view_data.get('portfolioLink'),

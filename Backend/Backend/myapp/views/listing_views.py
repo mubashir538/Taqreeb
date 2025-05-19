@@ -46,7 +46,7 @@ def get_listing_details(request, type):
         field_data = []
         
         for field in model._meta.get_fields():
-            if field.name not in ['id', 'listingID','listingId','cars']:
+            if field.name not in ['id', 'listingId','listingId','cars']:
                 field_info = {"name": field.name, "type": field.get_internal_type()}
                 
                 if hasattr(field, 'choices') and field.choices:
@@ -128,7 +128,7 @@ def add_listing(request):
         
         save_addons(listing, data.get('addons'))
 
-        ReviewDetails(listingID=listing).save()
+        ReviewDetails(listingId=listing).save()
 
         UserActivity.objects.create(
         user=request.user,
@@ -216,7 +216,7 @@ def _update_type_specific_fields(listing, data):
 
     model, updater = model_map.get(listing.type, (None, None))
     if model and updater:
-        view = model.objects.get(listingID=listing)
+        view = model.objects.get(listingId=listing)
         updater(view, data)
         return True
     return False
@@ -348,8 +348,8 @@ def unified_search(request):
     filters = {
         'query': search_query,
         'category': request.GET.get('category', 'All'),
-        'min_price': request.GET.get('min_price'),
-        'max_price': request.GET.get('max_price'),
+        'min_price': int(str(request.GET.get('min_price')).replace('.', ''))if request.GET.get('min_price') else  None,
+        'max_price': int(str(request.GET.get('max_price')).replace('.', '')) if request.GET.get('max_price') else None,
         'location': request.GET.get('location'),
         'date': request.GET.get('date'),
         'min_rating': request.GET.get('min_rating'),

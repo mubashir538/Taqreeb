@@ -80,7 +80,7 @@ class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
                               fit: BoxFit.contain,
                             ),
                       IconedButton(
-                        onPressed: () => () => Picture.pickImage(context,
+                        onPressed: () => Picture.pickImage(context,
                             callback: (file) =>
                                 setState(() => frontImage = file)),
                         icon: MyIcons.upload2,
