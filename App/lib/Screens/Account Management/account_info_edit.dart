@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/picture_options.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -65,10 +65,11 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
       if (mounted) {
         setState(() {
           this.token = token;
-          user = user;
+          user = data;
         });
       }
     }, context: mounted ? context : null);
+    if (user.isEmpty) return;
     isLoading = false;
     ishchanged = true;
     fnamecontroller.text = user['firstName'];
@@ -100,6 +101,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
 
       if (response['status'] == 'success') {
         MyScaffold(text: 'Profile Updated Successfully').show(context);
+        MyApi.getRequest(
+            endpoint: 'accountInfo/$userId/',
+            refresh: true,
+            headers: {'Authorization': 'Bearer $token'});
       } else {
         MyScaffold(text: 'Failed to update the profile. Please try again.')
             .show(context);
@@ -113,7 +118,15 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
         'gender': genderController.text
       }, onSuccess: (token, data) {
         MyScaffold(text: 'Profile Updated Successfully').show(context);
-        Navigator.pushNamed(context, '/AccountInfo');
+        MyApi.getRequest(
+            endpoint: 'accountInfo/$userId/',
+            refresh: true,
+            headers: {'Authorization': 'Bearer $token'});
+
+        context.pushNamedTransition(
+            routeName: '/AccountInfo',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }, onError: () {
         MyScaffold(text: 'Failed to update the profile. Please try again.')
             .show(context);
@@ -158,45 +171,71 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                 horizontal: Screen.max(context) * 0.02),
                             child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: _selectedImage != null
-                                        ? Image.file(_selectedImage!,
-                                                fit: BoxFit.cover)
-                                            .image
-                                        : NetworkImage(image),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        left: Screen.max(context) * 0.02),
-                                    child: InkWell(
-                                      onTap: () async {
-                                        Picture.pickImage(context,
-                                            callback: (file) {
-                                          setState(() {
-                                            _selectedImage = file;
+                                  Stack(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Picture.pickImage(context,
+                                              callback: (file) {
+                                            setState(() {
+                                              _selectedImage = file;
+                                            });
                                           });
-                                        });
-                                      },
-                                      child: Text(
-                                        "Change Profile Picture",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            fontSize:
-                                                Screen.max(context) * 0.015,
-                                            fontWeight: FontWeight.w400,
-                                            color: MyColors.yellow),
+                                        },
+                                        child: CircleAvatar(
+                                          radius: Screen.max(context) * 0.1,
+                                          backgroundImage:
+                                              _selectedImage != null
+                                                  ? Image.file(_selectedImage!,
+                                                          fit: BoxFit.cover)
+                                                      .image
+                                                  : NetworkImage(image),
+                                        ),
                                       ),
-                                    ),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 4,
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            Picture.pickImage(context,
+                                                callback: (file) {
+                                              setState(() {
+                                                _selectedImage = file;
+                                              });
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(
+                                                Screen.max(context) * 0.02),
+                                            decoration: BoxDecoration(
+                                              color: MyColors.whiteDarker,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 4,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Icon(
+                                              FontAwesomeIcons.pen,
+                                              size: Screen.max(context) * 0.025,
+                                              color: MyColors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ]),
                           ),
                           Column(
                             children: [
                               MyTextBox(
+                                  prefixIcon: FontAwesomeIcons.user,
                                   focusNode: fnameFocus,
                                   onFieldSubmitted: (_) {
                                     FocusScope.of(context)
@@ -205,6 +244,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                   hint: 'First Name',
                                   valueController: fnamecontroller),
                               MyTextBox(
+                                  prefixIcon: FontAwesomeIcons.user,
                                   focusNode: lastnameFocus,
                                   onFieldSubmitted: (_) {
                                     FocusScope.of(context)
@@ -219,6 +259,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                     genderController.text = value;
                                   }),
                               MyTextBox(
+                                  prefixIcon: FontAwesomeIcons.locationDot,
                                   focusNode: locationFocus,
                                   onFieldSubmitted: (_) {
                                     FocusScope.of(context).unfocus();
@@ -228,8 +269,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                             ],
                           ),
                           SizedBox(
-                            height: Screen.height(context) * 0.1,
-                            child: Center(child: MyDivider()),
+                            height: Screen.max(context) * 0.02,
                           ),
                           ColoredButton(
                             text: 'Save',
@@ -248,16 +288,17 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                       onPressed: () async {
                                         Navigator.pop(context);
                                         _uploadProfilePicture();
-                                        Navigator.pushNamed(
-                                            context, '/AccountInfo');
+                                        context.pushNamedTransition(
+                                            routeName: '/AccountInfo',
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            duration:
+                                                Duration(milliseconds: 300));
                                       },
                                       child: Text('Save')),
                                 ],
                               ).showDialogBox(context);
                             },
-                          ),
-                          SizedBox(
-                            height: 30,
                           ),
                         ],
                       )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/AI/c_ai_packages.dart';
@@ -20,7 +21,7 @@ class ViewAIPackage extends StatelessWidget {
           Text(
             'Your Suggested Packages',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
                 color: Colors.yellow),
@@ -34,7 +35,10 @@ class ViewAIPackage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return AIPackage(
                       onpressed: () {
-                        Navigator.pushNamed(context, '/AIPackage_EventDetail');
+                        context.pushNamedTransition(
+                            routeName: '/AIPackage_EventDetail',
+                            type: PageTransitionType.rightToLeftWithFade,
+                            duration: Duration(milliseconds: 300));
                       },
                       cateringCost: "5000",
                       venueCost: "10000",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -27,20 +28,20 @@ class _DateQuestionState extends State<DateQuestion> {
       padding: EdgeInsets.symmetric(
           horizontal: widget.question != '' ? Screen.max(context) * 0.02 : 0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           widget.question != ''
               ? Text(widget.question,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.018))
               : Container(),
           Container(
-            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
+            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             height: Screen.height(context) * 0.06,
             width: Screen.width(context) * 0.9,
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: MyColors.ligthDark,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -59,15 +60,18 @@ class _DateQuestionState extends State<DateQuestion> {
                 onSubmitted: widget.onFieldSubmitted,
                 textAlignVertical: TextAlignVertical.center,
                 controller: widget.valuecontroller,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.018,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
                 ),
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.date_range_rounded),
+                  prefixIcon: Icon(
+                    FontAwesomeIcons.calendarDays,
+                    color: MyColors.white.withAlpha(153),
+                  ),
                   hintText: 'Select Date',
-                  hintStyle: GoogleFonts.montserrat(
+                  hintStyle: GoogleFonts.roboto(
                     color: MyColors.white.withAlpha(153),
                     fontSize: Screen.max(context) * 0.015,
                   ),

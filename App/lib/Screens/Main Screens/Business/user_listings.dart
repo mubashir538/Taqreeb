@@ -1,3 +1,4 @@
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -94,7 +95,7 @@ class YourListingsScreen extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     return Text(
       "Your Listings",
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.025,
         fontWeight: FontWeight.w700,
         color: MyColors.yellow,
@@ -110,7 +111,7 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.3),
           Text(
             'You currently don\'t have any listings',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w400,
               color: MyColors.white,
@@ -119,7 +120,10 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.03),
           ColoredButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/AddCategory_List');
+              context.pushNamedTransition(
+                  routeName: '/AddCategory_List',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300));
             },
             text: 'Add your first listing',
             width: Screen.width(context) * 0.5,
@@ -138,7 +142,7 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.3),
           Text(
             'You need a business account to create listings',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w400,
               color: MyColors.white,
@@ -147,7 +151,10 @@ class YourListingsScreen extends StatelessWidget {
           SizedBox(height: Screen.height(context) * 0.03),
           ColoredButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/BusinessSignup');
+              context.pushNamedTransition(
+                  routeName: '/BusinessSignup',
+                  type: PageTransitionType.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 300));
             },
             text: 'Create Business Account',
             width: Screen.width(context) * 0.6,
@@ -167,7 +174,8 @@ class YourListingsScreen extends StatelessWidget {
         final listing = controller.listings['YourListings'][index];
         final pictures = controller.listings['pictures'][index];
 
-        return Productcard(
+        return ProductCard(
+          rating: listing['rating'].toString(),
           isBusiness: true,
           listingType: listing['type'],
           listingid: listing['id'].toString(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -9,7 +10,6 @@ import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
-import 'package:taqreeb/core/utils/images.dart';
 
 class CreateChecklistItems extends StatefulWidget {
   const CreateChecklistItems({super.key});
@@ -181,7 +181,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         ),
         title: Text(
           "Add Checklist Item",
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -190,6 +190,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         content: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: MyTextBox(
+            prefixIcon: FontAwesomeIcons.list,
             hint: 'Enter Checklist Item',
             valueController: _textController,
           ),
@@ -199,7 +200,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancel",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: MyColors.red,
                 fontSize: maxDimension * 0.015,
                 fontWeight: FontWeight.w500,
@@ -215,7 +216,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             },
             child: Text(
               "Add",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontSize: maxDimension * 0.015,
                 color: MyColors.red,
                 fontWeight: FontWeight.w500,
@@ -266,7 +267,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     return Headersecondary(
       heading: "Create CheckList",
       para: "From to-do to done one check at a time!",
-      image: MyImages.checkList,
     );
   }
 
@@ -312,7 +312,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.centerRight,
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: const Icon(FontAwesomeIcons.trash, color: Colors.white),
       ),
       confirmDismiss: (direction) async {
         return await showDialog(
@@ -321,25 +321,25 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             backgroundColor: MyColors.dark,
             title: Text(
               "Delete Item",
-              style: GoogleFonts.montserrat(color: Colors.white),
+              style: GoogleFonts.roboto(color: Colors.white),
             ),
             content: Text(
               "Are you sure you want to delete this item?",
-              style: GoogleFonts.montserrat(color: Colors.white70),
+              style: GoogleFonts.roboto(color: Colors.white70),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.montserrat(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: MyColors.red),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(
                   "Delete",
-                  style: GoogleFonts.montserrat(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: MyColors.red),
                 ),
               ),
             ],
@@ -348,7 +348,8 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       },
       onDismissed: (direction) => _deleteChecklistItem(index),
       child: GestureDetector(
-        onTap: () => _startEditing(index),
+        onTap: () => _toggleChecklistItem(index),
+        onDoubleTap: () => _startEditing(index),
         child: Container(
           margin: EdgeInsets.symmetric(
             horizontal: Screen.max(context) * 0.02,
@@ -378,19 +379,18 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                     ? TextField(
                         controller: _editControllers[index],
                         focusNode: _focusNodes[index],
-                        style: GoogleFonts.montserrat(color: Colors.white),
+                        style: GoogleFonts.roboto(color: Colors.white),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Edit item',
-                          hintStyle:
-                              GoogleFonts.montserrat(color: Colors.white54),
+                          hintStyle: GoogleFonts.roboto(color: Colors.white54),
                         ),
                         autofocus: true,
                         onSubmitted: (value) => _finishEditing(index),
                       )
                     : Text(
                         item["description"],
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.roboto(
                           color: Colors.white,
                           decoration: item["isChecked"]
                               ? TextDecoration.lineThrough
@@ -413,7 +413,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           children: [
             Text(
               "No checklist items yet",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 color: Colors.white70,
                 fontSize: 18,
               ),
@@ -438,7 +438,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         borderRadius: BorderRadius.circular(50),
       ),
       backgroundColor: MyColors.red,
-      child: const Icon(Icons.add, color: Colors.white),
+      child: const Icon(FontAwesomeIcons.plus, color: Colors.white),
     );
   }
 }

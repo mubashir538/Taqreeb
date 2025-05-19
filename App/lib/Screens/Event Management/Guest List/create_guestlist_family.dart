@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
@@ -178,6 +179,7 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
     return Column(
       children: [
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.houseChimneyWindow,
           focusNode: _familyNameFocus,
           onFieldSubmitted: (_) =>
               FocusScope.of(context).requestFocus(_membersFocus),
@@ -185,6 +187,7 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
           valueController: _familyNameController,
         ),
         MyTextBox(
+          prefixIcon: FontAwesomeIcons.peopleGroup,
           focusNode: _membersFocus,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           hint: 'No. of Members',

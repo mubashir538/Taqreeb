@@ -190,7 +190,6 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
                 listingId: _listingId,
                 selectedDate: _selectedDate,
               ),
-              _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
               CategoryDetails(
@@ -206,12 +205,10 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
                     .toList(),
                 onDateSelected: _handleDateSelection,
               ),
-              _buildDivider(),
               CategoryReview(
                 listing: _listing,
                 starsvalue: _starsValue,
               ),
-              _buildDivider(),
               _buildBookNowButton(),
             ],
           ),
@@ -220,14 +217,14 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
     );
   }
 
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
-      ),
-    );
-  }
+  // Widget _buildDivider() {
+  //   return SizedBox(
+  //     height: Screen.height(context) * 0.05,
+  //     child: Center(
+  //       child: MyDivider(width: Screen.width(context) * 0.85),
+  //     ),
+  //   );
+  // }
 
   Widget _buildBookNowButton() {
     return BookNowButton(context: context, listing: _listing);

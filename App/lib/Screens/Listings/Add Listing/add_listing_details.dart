@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
@@ -84,12 +85,14 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
     if (!await _formController.validateForm(context)) return;
 
     final viewData = _formController.prepareViewData();
-    Navigator.pushNamed(
-      context,
-      '/AddCategory_Addons',
+
+    context.pushNamedTransition(
+      routeName: '/AddCategory_Addons',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
         ..._formController.args,
-        'viewData': viewData, // Add viewData as a separate key
+        'viewData': viewData,
       },
     );
   }

@@ -11,7 +11,7 @@ class MyScaffold {
       BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.015,
               color: MyColors.white,
               fontWeight: FontWeight.w500)),

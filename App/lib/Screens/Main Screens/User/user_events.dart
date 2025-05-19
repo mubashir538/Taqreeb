@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -151,7 +154,10 @@ class _YourEventsState extends State<YourEvents> {
                 HeaderIcon(
                     icon: FontAwesomeIcons.heart,
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Wishlist');
+                      context.pushNamedTransition(
+                          routeName: '/Wishlist',
+                          type: PageTransitionType.rightToLeftWithFade,
+                          duration: Duration(milliseconds: 300));
                     })
               ],
             ),
@@ -180,9 +186,95 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildLoadingIndicator() {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+    return _buildSkeletonLoader();
+  }
+
+  Widget _buildSkeletonLoader() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
+      child: Column(
+        children: List.generate(
+          5, // Number of skeleton items to show
+          (index) => _buildSkeletonItem(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkeletonItem() {
+    return Container(
+      margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
+      child: Shimmer.fromColors(
+        baseColor: MyColors.ligthDark.withOpacity(0.6),
+        highlightColor: MyColors.ligthDark.withOpacity(0.3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title placeholder
+            Container(
+              width: Screen.width(context) * 0.6,
+              height: Screen.height(context) * 0.03,
+              color: Colors.white,
+            ),
+            SizedBox(height: Screen.height(context) * 0.01),
+
+            // Budget placeholder
+            Container(
+              width: Screen.width(context) * 0.4,
+              height: Screen.height(context) * 0.02,
+              color: Colors.white,
+            ),
+            SizedBox(height: Screen.height(context) * 0.02),
+
+            // Three info placeholders
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.02,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            SizedBox(height: Screen.height(context) * 0.02),
+
+            // Button placeholders
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.04,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: Screen.width(context) * 0.2,
+                  height: Screen.height(context) * 0.04,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            SizedBox(height: Screen.height(context) * 0.02),
+
+            // Divider
+            Container(
+              width: double.infinity,
+              height: 1,
+              color: Colors.grey[300],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -199,7 +291,7 @@ class _YourEventsState extends State<YourEvents> {
                   horizontal: Screen.width(context) * 0.02),
               child: Text(
                 'No Events Found',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
@@ -222,7 +314,7 @@ class _YourEventsState extends State<YourEvents> {
                   horizontal: Screen.width(context) * 0.02),
               child: Text(
                 'You currently don\'t have any events for this Name',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
                   color: MyColors.white,
@@ -233,7 +325,10 @@ class _YourEventsState extends State<YourEvents> {
             ColoredButton(
               onPressed: () {
                 // Navigate to the screen where user can add a new event
-                Navigator.pushNamed(context, '/AddEvent');
+                context.pushNamedTransition(
+                    routeName: '/AddEvent',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300));
               },
               text: 'Add your first event',
               width: Screen.width(context) * 0.5,
@@ -252,8 +347,7 @@ class _YourEventsState extends State<YourEvents> {
         final event = _filteredEvents[index];
         return FunctionCard(
           delete: () => _deleteEvent(event["id"], index),
-          color: Color(int.parse(
-              '0xff${event["themeColor"].substring(1, event["themeColor"].length)}')),
+          color: MyColors.red,
           name: event["name"],
           head: 'Budget',
           budget: event["budget"].toString(),
@@ -261,22 +355,24 @@ class _YourEventsState extends State<YourEvents> {
           values: [
             event["type"],
             _events["nofunctions"][index].toString(),
-            event["date"],
+            DateFormat('MMMM d, y')
+                .format(DateTime.parse(event["date"]))
+                .toString(),
           ],
           type: 'Event',
           seePressed: () {
-            Navigator.pushNamed(
-              context,
-              '/EventDetails',
-              arguments: event["id"],
-            );
+            context.pushNamedTransition(
+                routeName: '/EventDetails',
+                type: PageTransitionType.rightToLeftWithFade,
+                duration: Duration(milliseconds: 300),
+                arguments: event["id"]);
           },
           editPressed: () {
-            Navigator.pushNamed(
-              context,
-              '/EditEvent',
-              arguments: event["id"].toString(),
-            );
+            context.pushNamedTransition(
+                routeName: '/EditEvent',
+                type: PageTransitionType.rightToLeftWithFade,
+                duration: Duration(milliseconds: 300),
+                arguments: event["id"].toString());
           },
         );
       },

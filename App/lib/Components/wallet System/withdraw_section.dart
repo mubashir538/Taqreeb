@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -48,7 +49,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Withdraw Money",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w700,
                     color: MyColors.white)),
@@ -73,6 +74,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
                 child: Column(
                   children: [
                     MyTextBox(
+                      prefixIcon: FontAwesomeIcons.receipt,
                       hint: "Withdraw Amount",
                       isNum: true,
                       valueController: amountController,

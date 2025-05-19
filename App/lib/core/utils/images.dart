@@ -1,8 +1,10 @@
 class MyImages {
   static const String businessSignup = 'assets/images/businesssignup.png';
+  static const String aiIcon = 'assets/images/ai_icon.png';
   static const String businessSignup4 = 'assets/images/businesssignup4.png';
   static const String checkList = 'assets/images/checklist.png';
   static const String cnic = 'assets/images/cnic.png';
+  static const String noInternet = 'assets/images/no_internet.png';
   static const String customerSupport = 'assets/images/customersupport.png';
   static const String eventDetails = 'assets/images/eventdetails.png';
   static const String forgotPassword = 'assets/images/forgotpassword.png';

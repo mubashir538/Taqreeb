@@ -13,6 +13,7 @@ from django.utils import timezone
 from datetime import datetime
 from ..constants.views_constants import arial_font
 from ..models.misc_models import TempInvitationCard
+import difflib
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -414,6 +415,114 @@ class InvitationGenerator:
         img.save(full_path)
         path = storage.save(relative_path, open(full_path, 'rb'))
         return storage.url(path)
+
+    def _build_main_sections(self, template_config, safe_zones):
+        """Build the main content sections based on event type"""
+        event_type = self.data.get('eventType', 'Wedding')
+        basic_info = self.data.get('basicInfo', {})
+        primary_color = template_config['color1']
+        secondary_color = template_config['color2']
+        function_type = self.data.get('functionType', 'Wedding')
+
+        if event_type == 'Wedding':
+            so = basic_info.get('s/o', '')
+            do = basic_info.get('d/o', '')
+            host_name = basic_info.get('hostName', 'Host Family')
+            name1 = basic_info.get('name1', 'Groom')
+            name2 = basic_info.get('name2', 'Bride')
+
+            # Determine order based on similarity to host name
+            if so and do:  # Only compare if both exist
+                so_ratio = difflib.SequenceMatcher(None, so, host_name).ratio()
+                do_ratio = difflib.SequenceMatcher(None, do, host_name).ratio()
+                if so_ratio > do_ratio:
+                    names_section = [
+                        (f"{name1}", 'script', primary_color),
+                        ("With", 'bold2', primary_color),
+                        (f"{name2}", 'script', primary_color),
+                        (f"{basic_info.get('d/o', '')}", 'regular', primary_color),
+                    ]
+                else:
+                    names_section = [
+                        (f"{name2}", 'script', primary_color),
+                        ("With", 'bold2', primary_color),
+                        (f"{name1}", 'script', primary_color),
+                        (f"{basic_info.get('s/o', '')}", 'regular', primary_color),
+                    ]
+            else:
+                # Default order if comparison isn't possible
+                names_section = [
+                    (f"{name1}", 'script', primary_color),
+                    ("With", 'bold2', primary_color),
+                    (f"{name2}", 'script', primary_color),
+                    (f"{basic_info.get('d/o', '')}", 'regular', primary_color),
+                ]
+
+            return [
+                ("In the Name of Allah,\nthe Most Gracious, the Most Merciful", 'regular', primary_color),
+                (f"Mr. & Mrs. {host_name}", 'bold1', primary_color),
+                ("Request the honor of your presence", 'regular', primary_color),
+                (f"at the {function_type} of their beloved", 'regular', primary_color),
+                *names_section,
+                ("", 'regular', primary_color),
+                (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
+                (f"At {self.data.get('venueName', 'At Home')}", 'bold2', secondary_color),
+                (basic_info.get('location', ''), 'regular', secondary_color)
+            ]
+
+        elif event_type == 'Birthday':
+            return [
+                ("Join us in celebrating with", 'regular', primary_color),
+                (f"Mr. & Mrs. {basic_info.get('hostName', 'Host Family')}", 'bold1', primary_color),
+                (f"on the Birthday Celebration of", 'regular', primary_color),
+                (f"{basic_info.get('name1', 'Child')}", 'script', primary_color),
+                (f"", 'bold1', primary_color),
+                (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
+                (f"At {self.data.get('venueName', 'At Our House')}", 'bold2', secondary_color),
+                (basic_info.get('location', ''), 'regular', secondary_color)
+            ]
+
+        elif event_type == 'Corporate Event':
+            return [
+                (f"The partners of {basic_info.get('hostName', 'Company')} and Co. would like to", 'regular', primary_color),
+                ("Cordially invite you to", 'regular', primary_color),
+                (f"Annual", 'bold1', primary_color),
+                (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),
+                (f"", 'bold1', primary_color),
+                (f"Please Join Us for a day of Networking", 'regular', primary_color),
+                (f"Collaboration and Celebration as we come", 'regular', primary_color),
+                (f"to Propel our Company Forward", 'regular', primary_color),
+                (f"", 'bold1', primary_color),
+                (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
+                (f"At {self.data.get('venueName', 'At Our House')}", 'bold2', secondary_color),
+                (basic_info.get('location', ''), 'regular', secondary_color)
+            ]
+
+        elif event_type == 'Religious Event':
+            return [
+                ("Celebrate", 'regular', primary_color),
+                (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),
+                (f"with", 'regular', primary_color),
+                (f"{basic_info.get('hostName', 'Our Family')}", 'bold1', primary_color),
+                (f"", 'bold1', primary_color),
+                (f"On {self._format_date(basic_info.get('date', ''))}", 'bold1', primary_color),
+                (f"At {self.data.get('venueName', 'At Our House')}", 'bold1', secondary_color),
+                (basic_info.get('location', ''), 'regular', secondary_color)
+            ]
+
+        # Default for other event types
+        return [
+            ("Let's Celebrate", 'regular', primary_color),
+            (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),
+            (f"with", 'regular', primary_color),
+            (f"{basic_info.get('hostName', 'Our Family')}", 'bold1', primary_color),
+            (f"Don't Miss It", 'regular', primary_color),
+            (f"", 'bold1', primary_color),
+            (f"On {self._format_date(basic_info.get('date', ''))}", 'bold2', primary_color),
+            (f"At {self.data.get('venueName', 'At Our House')}", 'bold2', secondary_color),
+            (basic_info.get('location', ''), 'regular', secondary_color)
+        ]
+
 
     def _calculate_section_height(self, items, max_width):
         height = 0

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -153,7 +154,7 @@ class _AddImageState extends State<AddImage> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Icon(
-                        Icons.add_photo_alternate,
+                        FontAwesomeIcons.upload,
                         color: MyColors.white,
                         size: Screen.max(context) * 0.03,
                       ),
@@ -220,7 +221,7 @@ class _AddImageState extends State<AddImage> {
                 color: Colors.red,
               ),
               child: const Icon(
-                Icons.close,
+                FontAwesomeIcons.xmark,
                 color: Colors.white,
                 size: 20,
               ),

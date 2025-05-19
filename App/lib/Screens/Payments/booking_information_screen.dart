@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Cards/c_calendar.dart';
 import 'package:taqreeb/core/models/cart_model.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -94,9 +96,10 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
       };
 
       // Navigate to order summary with the booking info
-      Navigator.pushNamed(
-        context,
-        '/OrderSummary',
+      context.pushNamedTransition(
+        routeName: '/OrderSummary',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
         arguments: {
           'cart': widget.cart,
           'bookingInfo': bookingInfo,
@@ -128,7 +131,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                 children: [
                   Text(
                     'Personal Information',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
@@ -136,29 +139,33 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   ),
                   SizedBox(height: Screen.height(context) * 0.02),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.user,
                     hint: 'Full Name',
                     valueController: _nameController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.015),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.envelope,
                     hint: 'Email Address',
                     valueController: _emailController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.015),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.phone,
                     hint: 'Phone Number',
                     valueController: _phoneController,
                     isNum: true,
                   ),
                   SizedBox(height: Screen.height(context) * 0.015),
                   MyTextBox(
-                    hint: 'ID Number (Optional)',
+                    prefixIcon: FontAwesomeIcons.addressCard,
+                    hint: 'ID Number',
                     valueController: _idNumberController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.03),
                   Text(
                     'Booking Dates',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
@@ -170,7 +177,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   SizedBox(height: Screen.height(context) * 0.03),
                   Text(
                     'Additional Notes',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
@@ -178,6 +185,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   ),
                   SizedBox(height: Screen.height(context) * 0.02),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.noteSticky,
                     hint: 'Special requests or notes',
                     valueController: _notesController,
                   ),
@@ -198,7 +206,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
       children: [
         Text(
           item.itemDetails['name'],
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
             color: MyColors.white,
             fontSize: Screen.max(context) * 0.02,
           ),

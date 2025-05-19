@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
@@ -121,7 +123,7 @@ class _SettingsState extends State<Settings> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Icon(
-                                            Icons.business_rounded,
+                                            FontAwesomeIcons.building,
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
@@ -136,7 +138,7 @@ class _SettingsState extends State<Settings> {
                                               child: Text(
                                                 "Business Owner Mode",
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.montserrat(
+                                                style: GoogleFonts.roboto(
                                                   fontSize:
                                                       Screen.max(context) *
                                                           0.015,
@@ -188,13 +190,17 @@ class _SettingsState extends State<Settings> {
                                     )
                                   : GuideButton(
                                       onpressed: () {
-                                        Navigator.pushNamed(context,
-                                            '/BusinessSignup_BasicInfo');
+                                        context.pushNamedTransition(
+                                            routeName:
+                                                '/BusinessSignup_BasicInfo',
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            duration:
+                                                Duration(milliseconds: 300));
                                       },
                                       text: 'Signup As Business',
-                                      leftIcon: Icons.business_rounded,
-                                      rightIcon:
-                                          Icons.arrow_forward_ios_rounded,
+                                      leftIcon: FontAwesomeIcons.building,
+                                      rightIcon: FontAwesomeIcons.chevronRight,
                                     ),
                               types['freelancer']
                                   ? Container(
@@ -218,7 +224,7 @@ class _SettingsState extends State<Settings> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Icon(
-                                            Icons.business_rounded,
+                                            FontAwesomeIcons.building,
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
                                                 ? MyColors.white
@@ -233,7 +239,7 @@ class _SettingsState extends State<Settings> {
                                               child: Text(
                                                 "Freelancer Mode",
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.montserrat(
+                                                style: GoogleFonts.roboto(
                                                   fontSize:
                                                       Screen.max(context) *
                                                           0.015,
@@ -285,13 +291,17 @@ class _SettingsState extends State<Settings> {
                                     )
                                   : GuideButton(
                                       onpressed: () {
-                                        Navigator.pushNamed(context,
-                                            '/FreelancerSignup_BasicInfo');
+                                        context.pushNamedTransition(
+                                            routeName:
+                                                '/FreelancerSignup_BasicInfo',
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            duration:
+                                                Duration(milliseconds: 300));
                                       },
                                       text: 'Signup As Freelancer',
-                                      leftIcon: Icons.work_outline_rounded,
-                                      rightIcon:
-                                          Icons.arrow_forward_ios_rounded,
+                                      leftIcon: FontAwesomeIcons.userTie,
+                                      rightIcon: FontAwesomeIcons.chevronRight,
                                     ),
                               GuideButton(
                                 onpressed: () {
@@ -319,20 +329,23 @@ class _SettingsState extends State<Settings> {
                                   ).showDialogBox(context);
                                 },
                                 text: 'Appearance',
-                                leftIcon: Icons.palette_rounded,
-                                rightIcon: Icons.arrow_forward_ios_rounded,
+                                leftIcon: FontAwesomeIcons.moon,
+                                rightIcon: FontAwesomeIcons.chevronRight,
                               ),
                               GuideButton(
                                 onpressed: () {
-                                  Navigator.pushNamed(
-                                      context,
-                                      businessOwnerSwitch || freelancerSwitch
+                                  context.pushNamedTransition(
+                                      routeName: businessOwnerSwitch ||
+                                              freelancerSwitch
                                           ? '/BusinessInfoEdit'
-                                          : '/AccountInfoEdit');
+                                          : '/AccountInfoEdit',
+                                      type: PageTransitionType
+                                          .rightToLeftWithFade,
+                                      duration: Duration(milliseconds: 300));
                                 },
                                 text: 'Edit Account Info',
-                                leftIcon: Icons.edit_rounded,
-                                rightIcon: Icons.arrow_forward_ios_rounded,
+                                leftIcon: FontAwesomeIcons.pen,
+                                rightIcon: FontAwesomeIcons.chevronRight,
                               ),
                             ],
                           ),
@@ -346,7 +359,7 @@ class _SettingsState extends State<Settings> {
             child: Header(
               key: headerKey,
               heading: 'Settings',
-              icon: Icons.logout_rounded,
+              icon: FontAwesomeIcons.arrowRightFromBracket,
             ),
           ),
         ],

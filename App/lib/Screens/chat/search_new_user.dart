@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -68,7 +70,10 @@ class _NewUserSearchState extends State<NewUserSearch> {
   }
 
   void _navigateToChatbox(String userId) {
-    Navigator.pushNamed(context, '/ChatBox', arguments: {'userId': userId});
+    context.pushNamedTransition(
+        routeName: '/ChatBox',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),arguments: {'userId': userId});
   }
 
   void _handleError(String error) {
@@ -84,29 +89,32 @@ class _NewUserSearchState extends State<NewUserSearch> {
     }
 
     if (_searchedUsers.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No users found',
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.roboto(color: Colors.white),
         ),
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _searchedUsers.length,
-      itemBuilder: (context, index) {
-        final user = _searchedUsers[index];
-        return MessageChatButton(
-          image: user['chatimage'],
-          onpressed: () => _navigateToChatbox(user['userId']),
-          name: user['name'],
-          message: 'Start a conversation',
-          newMessage: 0,
-          time: '',
-        );
-      },
+    return SizedBox(
+      width: Screen.width(context) * 0.9,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _searchedUsers.length,
+        itemBuilder: (context, index) {
+          final user = _searchedUsers[index];
+          return MessageChatButton(
+            image: user['chatimage'],
+            onpressed: () => _navigateToChatbox(user['userId']),
+            name: user['name'],
+            message: 'Start a conversation',
+            newMessage: 0,
+            time: '',
+          );
+        },
+      ),
     );
   }
 
@@ -129,6 +137,7 @@ class _NewUserSearchState extends State<NewUserSearch> {
               hint: 'Search by Username',
               controller: _searchController,
             ),
+            SizedBox(height: Screen.height(context) * 0.02),
             Expanded(
               child: _buildSearchResults(),
             ),

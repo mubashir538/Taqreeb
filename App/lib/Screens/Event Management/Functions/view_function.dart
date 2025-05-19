@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -118,10 +121,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
     final routeName = response["Guests"].isEmpty
         ? '/CreateGuestList'
         : '/CreateGuestList_List';
-
-    Navigator.pushNamed(
-      context,
-      routeName,
+    context.pushNamedTransition(
+      routeName: routeName,
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
         'eventId': _eventId,
         'functionid': _functionId,
@@ -130,9 +133,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   void _navigateToChecklist() {
-    Navigator.pushNamed(
-      context,
-      '/CreateChecklistItems',
+    context.pushNamedTransition(
+      routeName: '/CreateChecklistItems',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
         'eventId': _eventId,
         'functionid': _functionId,
@@ -141,18 +145,22 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   void _navigateToInvitation() {
-    Navigator.pushNamed(
-      context,
-      '/CreateInvitation',
+    context.pushNamedTransition(
+      routeName: '/CreateInvitation',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {
-        'type': _eventType,
-        'functionType': _functionDetails['type'],
+        'eventId': _eventId,
+        'functionid': _functionId,
       },
     );
   }
 
   void _navigateToAddNewItem() {
-    Navigator.pushNamed(context, '/SearchService');
+    context.pushNamedTransition(
+        routeName: '/SearchService',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
   }
 
   @override
@@ -161,7 +169,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
-
     return Scaffold(
       backgroundColor: MyColors.dark,
       body: Stack(
@@ -172,7 +179,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
             child: Header(
               key: _headerKey,
               heading: "Your Function Details",
-              image: MyImages.checkList,
             ),
           ),
         ],
@@ -194,6 +200,13 @@ class _FunctionDetailState extends State<FunctionDetail> {
     );
   }
 
+  String _formatNumberWithCommas(String number) {
+    return number.replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+  }
+
   Widget _buildLoadingIndicator() {
     return Center(
       child: CircularProgressIndicator(
@@ -208,32 +221,102 @@ class _FunctionDetailState extends State<FunctionDetail> {
     final values = [
       function['type'] ?? '',
       '${function['guestsmin'] ?? ''}-${function['guestsmax'] ?? ''}',
-      function['date'] ?? '',
+      DateFormat('MMMM d, y')
+          .format(DateTime.parse(function['date']))
+          .toString(),
     ];
 
     return Column(
       children: [
-        _buildEventHeader(),
+        SizedBox(height: Screen.height(context) * 0.05),
         _buildFunctionCard(function, headings, values),
+        SizedBox(height: Screen.height(context) * 0.05),
+        ..._buildBookingList(),
+        SizedBox(height: Screen.height(context) * 0.05),
+        _buildActionButtons(),
         SizedBox(height: Screen.height(context) * 0.05),
         _buildAddNewItemButton(),
       ],
     );
   }
 
-  Widget _buildEventHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
-      child: Text(
-        _eventName,
-        style: GoogleFonts.montserrat(
-          fontSize: Screen.max(context) * 0.03,
-          fontWeight: FontWeight.w700,
-          color: MyColors.yellow,
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        _buildActionButton(
+          icon: FontAwesomeIcons.userGroup,
+          text: "Event GuestList",
+          onTap: _navigateToGuestList,
+        ),
+        _buildActionButton(
+          icon: FontAwesomeIcons.listCheck,
+          text: "Event Checklist",
+          onTap: () => _navigateToChecklist(),
+        ),
+        _buildActionButton(
+          icon: FontAwesomeIcons.envelopeOpenText,
+          text: "Create Invitation Card",
+          onTap: () => _navigateToInvitation(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton(
+      {required String text,
+      required IconData icon,
+      required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.all(Screen.max(context) * 0.01),
+        padding: EdgeInsets.all(
+          Screen.max(context) * 0.02,
+        ),
+        decoration: BoxDecoration(
+          color: MyColors.darkLighter,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        width: Screen.width(context) * 0.8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(icon,
+                    color: MyColors.red, size: Screen.max(context) * 0.025),
+                SizedBox(width: Screen.max(context) * 0.02),
+                Text(
+                  text,
+                  style: GoogleFonts.roboto(
+                      fontSize: Screen.max(context) * 0.015,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white),
+                ),
+              ],
+            ),
+            Icon(FontAwesomeIcons.chevronRight,
+                color: MyColors.whiteDarker, size: Screen.max(context) * 0.02),
+          ],
         ),
       ),
     );
   }
+
+  // Widget _buildEventHeader() {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
+  //     child: Text(
+  //       _eventName,
+  //       style: GoogleFonts.roboto(
+  //         fontSize: Screen.max(context) * 0.03,
+  //         fontWeight: FontWeight.w700,
+  //         color: MyColors.yellow,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildFunctionCard(
     Map<String, dynamic> function,
@@ -242,6 +325,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   ) {
     return Container(
       width: Screen.width(context) * 0.9,
+      padding: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(16)),
         color: MyColors.darkLighter,
@@ -258,23 +343,37 @@ class _FunctionDetailState extends State<FunctionDetail> {
   Widget _buildFunctionHeader(Map<String, dynamic> function) {
     return Container(
       width: Screen.width(context) * 0.9,
-      padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.02),
+      padding: EdgeInsets.symmetric(
+          vertical: Screen.height(context) * 0.04,
+          horizontal: Screen.height(context) * 0.02),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
         color: MyColors.red,
       ),
-      child: Center(
-        child: Text(
-          function['type'] ?? '',
-          style: GoogleFonts.montserrat(
-            fontSize: Screen.max(context) * 0.02,
-            fontWeight: FontWeight.w600,
-            color: MyColors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _eventName,
+            style: GoogleFonts.roboto(
+              fontSize: Screen.max(context) * 0.018,
+              fontWeight: FontWeight.w400,
+              color: MyColors.white,
+            ),
           ),
-        ),
+          Text(
+            function['type'] ?? '',
+            style: GoogleFonts.roboto(
+              fontSize: Screen.max(context) * 0.025,
+              fontWeight: FontWeight.w700,
+              color: MyColors.white,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -285,19 +384,15 @@ class _FunctionDetailState extends State<FunctionDetail> {
       decoration: BoxDecoration(
         color: MyColors.darkLighter,
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(16),
-          bottomRight: Radius.circular(16),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
         ),
       ),
       child: Column(
         children: [
           _buildBudgetRow(),
           ..._buildInfoRows(headings, values),
-          MyDivider(width: Screen.width(context) * 0.1),
-          ..._buildBookingList(),
-          MyDivider(width: Screen.width(context) * 0.6),
-          SizedBox(height: 20),
-          _buildActionButtons(),
+          SizedBox(height: Screen.height(context) * 0.02),
         ],
       ),
     );
@@ -305,7 +400,11 @@ class _FunctionDetailState extends State<FunctionDetail> {
 
   Widget _buildBudgetRow() {
     return Container(
-      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      margin: EdgeInsets.only(
+          bottom: Screen.max(context) * 0.005,
+          top: Screen.max(context) * 0.03,
+          left: Screen.max(context) * 0.02,
+          right: Screen.max(context) * 0.02),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -314,8 +413,11 @@ class _FunctionDetailState extends State<FunctionDetail> {
             style: _buildTextStyle(fontWeight: FontWeight.w600),
           ),
           Text(
-            _functionDetails['Fuctions']?['budget']?.toString() ?? '',
-            style: _buildTextStyle(fontWeight: FontWeight.w600),
+            _formatNumberWithCommas(
+                _functionDetails['Fuctions']?['budget']?.toString() ?? ''),
+            style: _buildTextStyle(
+                fontWeight: FontWeight.w600,
+                color: MyColors.white.withAlpha(200)),
           ),
         ],
       ),
@@ -336,12 +438,13 @@ class _FunctionDetailState extends State<FunctionDetail> {
               heading,
               style: _buildTextStyle(
                 fontWeight: FontWeight.w600,
-                color: MyColors.yellow,
               ),
             ),
             Text(
               values[headings.indexOf(heading)],
-              style: _buildTextStyle(fontWeight: FontWeight.w400),
+              style: _buildTextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: MyColors.white.withAlpha(200)),
             ),
           ],
         ),
@@ -352,20 +455,25 @@ class _FunctionDetailState extends State<FunctionDetail> {
   List<Widget> _buildBookingList() {
     return _bookingList.map((booking) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            booking['type'].toString(),
-            style: GoogleFonts.montserrat(
-              fontSize: Screen.max(context) * 0.02,
-              fontWeight: FontWeight.w600,
-              color: MyColors.yellow,
+          SizedBox(
+            width: Screen.width(context) * 0.9,
+            child: Text(
+              booking['type'].toString(),
+              style: GoogleFonts.roboto(
+                fontSize: Screen.max(context) * 0.02,
+                fontWeight: FontWeight.w600,
+                color: MyColors.white,
+              ),
             ),
           ),
-          Productcard(
-            mywidth: Screen.width(context) * 0.85,
+          ProductCard(
+            myWidth: Screen.width(context) * 0.85,
             listingType: booking['listing']?['type']?.toString() ?? '',
             listingid: booking['listing']?['id']?.toString() ?? '',
             imageUrl: _getBookingImageUrl(booking),
+            rating: booking['listing']?['rating'] ?? '',
             venueName: booking['listing']?['name'] ?? '',
             location: booking['listing']?['location'] ?? '',
             type: booking['listing']?['type']?.toString() ?? '',
@@ -384,52 +492,52 @@ class _FunctionDetailState extends State<FunctionDetail> {
     return "https://picsum.photos/id/${DateTime.now().millisecondsSinceEpoch % 100}/600/300";
   }
 
-  Widget _buildActionButtons() {
-    return Column(
-      children: [
-        _buildActionButton(
-          text: "View GuestList",
-          onTap: _navigateToGuestList,
-        ),
-        _buildActionButton(
-          text: "View CheckList",
-          onTap: _navigateToChecklist,
-        ),
-        _buildActionButton(
-          text: "Create Invitation Card",
-          onTap: _navigateToInvitation,
-        ),
-      ],
-    );
-  }
+  // Widget _buildActionButtons() {
+  //   return Column(
+  //     children: [
+  //       _buildActionButton(
+  //         text: "View GuestList",
+  //         onTap: _navigateToGuestList,
+  //       ),
+  //       _buildActionButton(
+  //         text: "View CheckList",
+  //         onTap: _navigateToChecklist,
+  //       ),
+  //       _buildActionButton(
+  //         text: "Create Invitation Card",
+  //         onTap: _navigateToInvitation,
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildActionButton(
-      {required String text, required VoidCallback onTap}) {
-    return Container(
-      margin: EdgeInsets.all(Screen.max(context) * 0.01),
-      padding: EdgeInsets.symmetric(
-        vertical: Screen.height(context) * 0.01,
-        horizontal: Screen.width(context) * 0.03,
-      ),
-      decoration: BoxDecoration(
-        color: MyColors.darkLighter,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(127),
-            spreadRadius: 3,
-            blurRadius: 4,
-            offset: Offset(2, 2),
-          ),
-        ],
-      ),
-      width: Screen.width(context) * 0.8,
-      child: InkWell(
-        onTap: onTap,
-        child: Text(text),
-      ),
-    );
-  }
+  // Widget _buildActionButton(
+  //     {required String text, required VoidCallback onTap}) {
+  //   return Container(
+  //     margin: EdgeInsets.all(Screen.max(context) * 0.01),
+  //     padding: EdgeInsets.symmetric(
+  //       vertical: Screen.height(context) * 0.01,
+  //       horizontal: Screen.width(context) * 0.03,
+  //     ),
+  //     decoration: BoxDecoration(
+  //       color: MyColors.darkLighter,
+  //       borderRadius: BorderRadius.circular(10),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black.withAlpha(127),
+  //           spreadRadius: 3,
+  //           blurRadius: 4,
+  //           offset: Offset(2, 2),
+  //         ),
+  //       ],
+  //     ),
+  //     width: Screen.width(context) * 0.8,
+  //     child: InkWell(
+  //       onTap: onTap,
+  //       child: Text(text),
+  //     ),
+  //   );
+  // }
 
   Widget _buildAddNewItemButton() {
     return ColoredButton(
@@ -442,7 +550,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     required FontWeight fontWeight,
     Color color = Colors.white, // Use Flutter's built-in Colors.white
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.roboto(
       fontSize:
           Screen.max(context) * (fontWeight == FontWeight.w600 ? 0.02 : 0.015),
       fontWeight: fontWeight,

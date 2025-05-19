@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as https;
 import 'package:http/http.dart' as http;
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/config/config.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -36,7 +37,10 @@ class MyApi {
     final hasInternet = await hasInternetConnection();
     if (!hasInternet) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -107,7 +111,10 @@ class MyApi {
       return _handleTimeoutError(cacheKey, e.toString(), context);
     } on SocketException catch (e) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return _handleNetworkError(cacheKey, e.toString(), context);
     } on HttpException catch (e) {
@@ -168,7 +175,10 @@ class MyApi {
     } catch (_) {}
 
     if (context != null) {
-      Navigator.pushNamed(context, '/NoInternet');
+      context.pushNamedTransition(
+          routeName: '/NoInternet',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     }
 
     return {
@@ -264,7 +274,10 @@ class MyApi {
     final hasInternet = await hasInternetConnection();
     if (!hasInternet) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -308,7 +321,10 @@ class MyApi {
       }
     } on SocketException catch (_) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -343,7 +359,10 @@ class MyApi {
     final hasInternet = await hasInternetConnection();
     if (!hasInternet) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -417,7 +436,10 @@ class MyApi {
       }
     } on SocketException catch (_) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -449,7 +471,10 @@ class MyApi {
     final hasInternet = await hasInternetConnection();
     if (!hasInternet) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -493,7 +518,10 @@ class MyApi {
       }
     } on SocketException catch (_) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -523,7 +551,10 @@ class MyApi {
     final hasInternet = await hasInternetConnection();
     if (!hasInternet) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -566,7 +597,10 @@ class MyApi {
       }
     } on SocketException catch (_) {
       if (context != null) {
-        Navigator.pushNamed(context, '/NoInternet');
+        context.pushNamedTransition(
+            routeName: '/NoInternet',
+            type: PageTransitionType.rightToLeftWithFade,
+            duration: Duration(milliseconds: 300));
       }
       return {
         "status": "error",
@@ -612,7 +646,7 @@ class MyApi {
     BuildContext? context,
   }) async {
     return await postRequest(
-      endpoint: 'chatbot/', 
+      endpoint: 'chatbot/',
       body: {
         'user_id': userId,
         'message': message,

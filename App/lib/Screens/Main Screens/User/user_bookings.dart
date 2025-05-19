@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -92,15 +93,15 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
             const SizedBox(height: 8),
             Text(
               'Date: ${DateFormat('MMM dd, yyyy').format(bookingDate)}',
-              style: TextStyle(color: MyColors.white),
+              style: GoogleFonts.roboto(color: MyColors.white),
             ),
             Text(
               'Time: ${DateFormat('hh:mm a').format(bookingDate)}',
-              style: TextStyle(color: MyColors.white),
+              style: GoogleFonts.roboto(color: MyColors.white),
             ),
             Text(
               'Status: ${status.toUpperCase()}',
-              style: TextStyle(
+              style: GoogleFonts.roboto(
                 color: _getStatusColor(status),
                 fontWeight: FontWeight.bold,
               ),
@@ -117,7 +118,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'How was your experience?',
-                    style: TextStyle(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: MyColors.white),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -137,6 +138,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                   ),
                   const SizedBox(height: 8),
                   MyTextBox(
+                    prefixIcon: FontAwesomeIcons.star,
                     hint: 'Write your review (optional)',
                     valueController: _reviewControllers[booking['id']] ??=
                         TextEditingController(),
@@ -154,7 +156,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                 padding: EdgeInsets.only(top: 8),
                 child: Text(
                   'Thanks for your review!',
-                  style: TextStyle(color: MyColors.yellow),
+                  style: GoogleFonts.roboto(color: MyColors.yellow),
                 ),
               ),
           ],
@@ -183,23 +185,23 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
         backgroundColor: MyColors.dark,
         title: Text(
           'Cancel Booking',
-          style: TextStyle(color: MyColors.white),
+          style: GoogleFonts.roboto(color: MyColors.white),
         ),
         content: Text(
           'Are you sure you want to cancel this booking?',
-          style: TextStyle(color: MyColors.white),
+          style: GoogleFonts.roboto(color: MyColors.white),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('No', style: TextStyle(color: MyColors.white)),
+            child: Text('No', style: GoogleFonts.roboto(color: MyColors.white)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _cancelBooking(bookingId);
             },
-            child: Text('Yes', style: TextStyle(color: MyColors.red)),
+            child: Text('Yes', style: GoogleFonts.roboto(color: MyColors.red)),
           ),
         ],
       ),
@@ -220,7 +222,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
               ? Center(
                   child: Text(
                     'No bookings found',
-                    style: TextStyle(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: MyColors.white),
                   ),
                 )
               : RefreshIndicator(

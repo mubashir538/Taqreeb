@@ -59,7 +59,7 @@ class ReviewCard extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: max * 0.015,
                       fontWeight: FontWeight.w700,
@@ -67,7 +67,7 @@ class ReviewCard extends StatelessWidget {
                   ),
                   Text(
                     days,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       color: MyColors.whiteDarker,
                       fontSize: max * 0.013,
                       fontWeight: FontWeight.w500,
@@ -100,7 +100,7 @@ class ReviewCard extends StatelessWidget {
           SizedBox(height: max * 0.02),
           Text(
             message,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               color: MyColors.white,
               fontSize: max * 0.015,
               fontWeight: FontWeight.w500,

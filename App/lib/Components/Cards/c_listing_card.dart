@@ -1,149 +1,247 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/utils/color.dart'; // Assuming MyColors is here
 
-class Productcard extends StatefulWidget {
+class ProductCard extends StatefulWidget {
   final String imageUrl;
   final String venueName;
   final String location;
+  final String rating;
   final bool isBusiness;
   final String type;
-  final double mywidth;
+  final double myWidth;
   final String listingid;
   final String listingType;
-  const Productcard({
-    this.mywidth = 0,
-    this.isBusiness = false,
-    required this.listingid,
-    required this.listingType,
+  final bool isWishlisted;
+
+  const ProductCard({
     required this.imageUrl,
     required this.venueName,
     required this.location,
+    required this.rating,
     required this.type,
+    required this.listingid,
+    required this.listingType,
+    this.myWidth = 0,
+    this.isBusiness = false,
+    this.isWishlisted = false,
     super.key,
   });
 
   @override
-  State<Productcard> createState() => _ProductcardState();
+  State<ProductCard> createState() => _ProductCardState();
 }
 
-String toLowerCaseNoSpaces(String input) {
-  return input.toLowerCase().replaceAll(' ', '');
-}
+class _ProductCardState extends State<ProductCard> {
+  late bool _isWishlisted;
 
-class _ProductcardState extends State<Productcard> {
+  @override
+  void initState() {
+    super.initState();
+    _isWishlisted = widget.isWishlisted;
+  }
+
+  void _toggleWishlist() {
+    setState(() {
+      _isWishlisted = !_isWishlisted;
+    });
+    // Here you would typically call an API to update the wishlist status
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        String path = '';
-        final listingType = toLowerCaseNoSpaces(widget.listingType);
-        if (listingType == toLowerCaseNoSpaces("venue")) {
-          path = '/CategoryView_Venue';
-        } else if (listingType == toLowerCaseNoSpaces("graphicdesigner")) {
-          path = '/CategoryView_GraphicDesigner';
-        } else if (listingType == toLowerCaseNoSpaces("Video Editor")) {
-          path = '/CategoryView_VideoEditor';
-        } else if (listingType == toLowerCaseNoSpaces("Baker And Sweet")) {
-          path = '/CategoryView_BakerySweet';
-        } else if (listingType == toLowerCaseNoSpaces("Salon")) {
-          path = '/CategoryView_Salon';
-        } else if (listingType == toLowerCaseNoSpaces("Parlour")) {
-          path = '/CategoryView_Parlour';
-        } else if (listingType == toLowerCaseNoSpaces("Decorator")) {
-          path = '/CategoryView_Decorator';
-        } else if (listingType == toLowerCaseNoSpaces("Car Renter")) {
-          path = '/CategoryView_CarRenter';
-        } else if (listingType == toLowerCaseNoSpaces("Photographer")) {
-          path = '/CategoryView_Photographer';
-        } else if (listingType == toLowerCaseNoSpaces("Photography place")) {
-          path = '/CategoryView_PhotographyPlace';
-        } else if (listingType == toLowerCaseNoSpaces("Caterer")) {
-          path = '/CategoryView_Caterers';
-        }
-        Navigator.pushNamed(context, path, arguments: {
-          'id': int.parse(widget.listingid),
-          'isBusiness': widget.isBusiness
-        });
-      },
+      onTap: _navigateToDetail,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
         width:
-            widget.mywidth == 0 ? Screen.width(context) * 0.7 : widget.mywidth,
-        height: Screen.height(context) * 0.25,
+            widget.myWidth == 0 ? Screen.width(context) * 0.7 : widget.myWidth,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: NetworkImage(widget.imageUrl),
-            fit: BoxFit.cover,
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          border: Border.all(
+            color: MyColors.whiteDarker,
+            width: 0.5,
           ),
         ),
-        child: Stack(
+        child: Column(
           children: [
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: Screen.height(context) * 0.1,
-                padding: EdgeInsets.all(Screen.max(context) * 0.01),
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(178),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                  ),
+            Container(
+              height: Screen.height(context) * 0.2,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.venueName.length > 20
-                              ? "${widget.venueName.substring(0, 20)}..."
-                              : widget.venueName,
-                          style: GoogleFonts.montserrat(
-                            fontSize: Screen.max(context) * 0.02,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: Screen.height(context) * 0.01),
-                        Text(
-                          widget.location.length > 30
-                              ? "${widget.location.replaceAll('\n', '').replaceAll('\r', '').substring(0, 30)}..."
-                              : widget.location
-                                  .replaceAll('\n', '')
-                                  .replaceAll('\r', ''),
-                          style: GoogleFonts.montserrat(
-                            fontSize: Screen.max(context) * 0.015,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        SizedBox(height: Screen.height(context) * 0.01),
-                      ],
-                    ),
-                    Flexible(
-                      child: Text(
-                        widget.type,
-                        softWrap: true,
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.montserrat(
-                          fontSize: Screen.max(context) * 0.015,
-                          fontWeight: FontWeight.w400,
+                image: DecorationImage(
+                  image: NetworkImage(widget.imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  // Wishlist button
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: _toggleWishlist,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
                           color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          _isWishlisted
+                              ? FontAwesomeIcons.heart
+                              : Icons.favorite_border,
+                          color: _isWishlisted ? MyColors.red : Colors.grey,
+                          size: Screen.max(context) * 0.025,
                         ),
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: Screen.width(context) * 0.04,
+                vertical: Screen.height(context) * 0.015,
+              ),
+              decoration: BoxDecoration(
+                color: MyColors.ligthDark,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    widget.venueName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: Screen.max(context) * 0.022,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: Screen.height(context) * 0.005),
+                  Text(
+                    widget.location,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: Screen.max(context) * 0.016,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                  SizedBox(height: Screen.height(context) * 0.01),
+                  Row(
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.star,
+                        color: MyColors.yellow,
+                        size: Screen.max(context) * 0.02,
+                      ),
+                      SizedBox(width: Screen.width(context) * 0.01),
+                      Text(
+                        widget.rating,
+                        style: GoogleFonts.poppins(
+                          fontSize: Screen.max(context) * 0.018,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        widget.type.toUpperCase(),
+                        style: GoogleFonts.poppins(
+                          fontSize: Screen.max(context) * 0.014,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withOpacity(0.8),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _navigateToDetail() {
+    String path = '';
+    final listingType = widget.listingType.toLowerCase().replaceAll(' ', '');
+
+    switch (listingType) {
+      case 'venue':
+        path = '/CategoryView_Venue';
+        break;
+      case 'graphicdesigner':
+        path = '/CategoryView_GraphicDesigner';
+        break;
+      case 'videoeditor':
+        path = '/CategoryView_VideoEditor';
+        break;
+      case 'bakerandsweet':
+        path = '/CategoryView_BakerySweet';
+        break;
+      case 'salon':
+        path = '/CategoryView_Salon';
+        break;
+      case 'parlour':
+        path = '/CategoryView_Parlour';
+        break;
+      case 'decorator':
+        path = '/CategoryView_Decorator';
+        break;
+      case 'carrenter':
+        path = '/CategoryView_CarRenter';
+        break;
+      case 'photographer':
+        path = '/CategoryView_Photographer';
+        break;
+      case 'photographyplace':
+        path = '/CategoryView_PhotographyPlace';
+        break;
+      case 'caterer':
+        path = '/CategoryView_Caterers';
+        break;
+    }
+    context.pushNamedTransition(
+        routeName: path,
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {
+          'id': int.parse(widget.listingid),
+          'isBusiness': widget.isBusiness,
+        });
   }
 }

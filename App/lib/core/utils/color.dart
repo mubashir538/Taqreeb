@@ -3,12 +3,13 @@ import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 
 class MyColors {
-  static Color red = Color(0xffef233c);
-  static Color white = Color(0xffedf2f4);
-  static Color whiteDarker = Color(0xffd9d9d9);
-  static Color dark = Color(0xff18191A);
-  static Color darkLighter = Color(0xff242526);
-  static Color yellow = Color(0xffffbe0b);
+  static Color red = Color(0xffF13F5A);
+  static Color white = Color(0xffffff);
+  static Color whiteDarker = Color(0xffe5e5e5);
+  static Color dark = Color(0xff121212);
+  static Color darkLighter = Color(0xff1e1e1e);
+  static Color ligthDark = Color(0xff2d2d2d);
+  static Color yellow = Color(0xffFFC107);
   static Color green = Color(0xff7ae582);
   static Color redonWhite = Color(0xffedf2f4);
   static Color yellowonDark = Color(0xffffbe0b);

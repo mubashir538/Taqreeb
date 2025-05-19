@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -97,7 +99,10 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
       if (int.parse(_enteredOTP) == response['otp']) {
         await MyStorage.saveToken(response['email'], 'semail');
         if (mounted) {
-          Navigator.pushNamed(context, '/Signup_MoreInfo');
+          context.pushNamedTransition(
+        routeName: '/Signup_MoreInfo',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
         }
       } else {
         _showErrorDialog('Invalid OTP', 'The entered OTP is incorrect.');
@@ -162,7 +167,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                           if (snapshot.hasError) {
                             return Text(
                               'Error loading OTP',
-                              style: TextStyle(color: MyColors.white),
+                              style: GoogleFonts.roboto(color: MyColors.white),
                             );
                           }
 
@@ -174,7 +179,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                               _isResendEnabled
                                   ? 'Send Code Again'
                                   : 'Send Code Again in ${_formatTime(_remainingTime)}',
-                              style: TextStyle(
+                              style: GoogleFonts.roboto(
                                 color: MyColors.white,
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.04,

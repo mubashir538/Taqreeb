@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
+import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Home%20Page/c_image_slider.dart';
 import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
+import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -21,15 +25,31 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-DateTime? entryTime; // ⏱️ Track view duration
+DateTime? entryTime;
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   Map<String, dynamic> categories = {};
-  Map<String, dynamic> listings = {};
   Map<String, dynamic> demoImages = {};
+
+  // Separate data for each tab
+  Map<String, dynamic> listings = {
+    'results': {'HomeListing': [], 'pictures': []}
+  };
+  Map<String, dynamic> packages = {
+    'results': {'HomePackages': []}
+  };
+  Map<String, dynamic> products = {
+    'results': {'HomeProducts': []}
+  };
+
   bool _isLoading = true;
+  bool isLoadingServices = false;
+  bool _isLoadingMore = false;
+  int _currentPage = 1;
+  int _currentTab = 0; // 0 = Listings, 1 = Packages, 2 = Products
   List<String> _myImages = [];
   GlobalKey headerKey = GlobalKey();
   FocusNode searchFocus = FocusNode();
@@ -39,7 +59,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     entryTime = DateTime.now();
     _initializeHeaderHeight();
-    _fetchData();
+    _fetchInitialData();
+    _scrollController.addListener(_scrollListener);
   }
 
   void _initializeHeaderHeight() {
@@ -53,21 +74,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchInitialData() async {
     await Future.wait([
       _fetchCategories(),
       _fetchDemoImages(),
-      _fetchListings(),
+      _fetchTabData(resetPagination: true),
     ]);
-
-    if (mounted) {
-      setState(() {
-        if (listings.isEmpty || categories.isEmpty || demoImages.isEmpty) {
-          return;
-        }
-        _isLoading = false;
-      });
-    }
+    _isLoading = false;
   }
 
   Future<void> _fetchCategories() async {
@@ -91,12 +104,74 @@ class _HomePageState extends State<HomePage> {
     }, context: mounted ? context : null);
   }
 
-  Future<void> _fetchListings() async {
-    await ApiCall.fetchAPI('home/listings/?page=1&page_size=10',
-        onSuccess: (token, data) {
+  Future<void> _fetchTabData({bool resetPagination = false}) async {
+    if (resetPagination) {
+      _currentPage = 1;
+    }
+
+    setState(() {
+      if (resetPagination) {
+        isLoadingServices = true;
+        if (_currentTab == 0) {
+          listings = {
+            'results': {'HomeListing': [], 'pictures': []}
+          };
+        } else if (_currentTab == 1) {
+          packages = {
+            'results': {'HomePackages': []}
+          };
+        } else {
+          products = {
+            'results': {'HomeProducts': []}
+          };
+        }
+      } else {
+        _isLoadingMore = true;
+      }
+    });
+
+    String endpoint;
+    if (_currentTab == 0) {
+      endpoint = 'home/listings/?page=$_currentPage&page_size=10';
+    } else if (_currentTab == 1) {
+      endpoint = 'home/packages/?page=$_currentPage&page_size=10';
+    } else {
+      endpoint = 'home/products/?page=$_currentPage&page_size=10';
+    }
+
+    await ApiCall.fetchAPI(endpoint, onSuccess: (token, data) {
       if (mounted) {
         setState(() {
-          listings = data['results'];
+          if (_currentTab == 0) {
+            if (resetPagination) {
+              listings = data;
+            } else {
+              listings['results']['HomeListing']
+                  .addAll(data['results']['HomeListing']);
+              listings['results']['pictures']
+                  .addAll(data['results']['pictures']);
+            }
+          } else if (_currentTab == 1) {
+            if (resetPagination) {
+              packages = data;
+            } else {
+              packages['results']['HomePackages']
+                  .addAll(data['results']['HomePackages']);
+            }
+          } else {
+            if (resetPagination) {
+              products = data;
+            } else {
+              products['results']['HomeProducts']
+                  .addAll(data['results']['HomeProducts']);
+            }
+          }
+
+          isLoadingServices = false;
+          _isLoadingMore = false;
+          if (!resetPagination) {
+            _currentPage++;
+          }
         });
       }
     }, context: mounted ? context : null);
@@ -116,21 +191,32 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _fetchTabData();
+    }
+  }
+
   void _handleSearch() {
     final query = _searchController.text.trim();
     if (query.isNotEmpty) {
       Logs.logUserActivity("search", {"search_query": query});
     }
-    Navigator.pushNamed(context, '/SearchService');
+    context.pushNamedTransition(
+        routeName: '/SearchService',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300));
   }
 
   void _handleCategoryClick(String categoryName) {
     Logs.logUserActivity("category_click", {"category": categoryName});
-    Navigator.pushNamed(
-      context,
-      '/SearchService',
-      arguments: {'category': categoryName},
-    );
+
+    context.pushNamedTransition(
+        routeName: '/SearchService',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {'category': categoryName});
   }
 
   void _handleServiceClick(int serviceId, String serviceName) {
@@ -139,15 +225,22 @@ class _HomePageState extends State<HomePage> {
       "service_name": serviceName,
     });
 
-    Navigator.pushNamed(
-      context,
-      '/ServiceDetails',
-      arguments: {
-        "id": serviceId,
-        "service_name": serviceName,
-        "entry_time": DateTime.now().toIso8601String(),
-      },
-    );
+    context.pushNamedTransition(
+        routeName: '/ServiceDetails',
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+        arguments: {
+          "id": serviceId,
+          "service_name": serviceName,
+          "entry_time": DateTime.now().toIso8601String(),
+        });
+  }
+
+  void _handleTabChange(int index) {
+    setState(() {
+      _currentTab = index;
+    });
+    _fetchTabData(resetPagination: true);
   }
 
   @override
@@ -165,21 +258,23 @@ class _HomePageState extends State<HomePage> {
         children: [
           if (UImanagement.headerHeight > 0)
             SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: UImanagement.headerHeight),
                   _buildSearchBox(),
                   _isLoading
-                      ? _buildLoadingIndicator()
+                      ? _buildSkeletonLoader()
                       : Column(
                           children: [
                             _buildImageSlider(),
                             _buildCategorySection(),
                             _buildAIPackageButton(),
-                            _buildForYouSection(),
+                            _buildContentSection(),
                           ],
                         ),
+                  if (_isLoadingMore) _buildLoadingMoreIndicator(),
                 ],
               ),
             ),
@@ -211,11 +306,113 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+  Widget _buildSkeletonLoader() {
+    return Column(
+      children: [
+        _buildImageSliderSkeleton(),
+        _buildCategorySectionSkeleton(),
+        _buildContentSectionSkeleton(),
+      ],
+    );
+  }
+
+  Widget _buildImageSliderSkeleton() {
+    return Container(
+      height: Screen.height(context) * 0.25,
+      margin: EdgeInsets.symmetric(
+        horizontal: Screen.width(context) * 0.05,
+        vertical: Screen.height(context) * 0.02,
       ),
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        borderRadius: BorderRadius.circular(10),
+      ),
+    );
+  }
+
+  Widget _buildCategorySectionSkeleton() {
+    return Column(
+      children: [
+        Container(
+          width: Screen.width(context) * 0.95,
+          margin: EdgeInsets.symmetric(
+            vertical: Screen.height(context) * 0.015,
+          ),
+          child: Container(
+            height: 20,
+            width: 150,
+            decoration: BoxDecoration(
+              color: Colors.grey[800],
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: Screen.height(context) * 0.19,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return Container(
+                width: 100,
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      height: 12,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContentSectionSkeleton() {
+    return Column(
+      children: [
+        Container(
+          width: Screen.width(context) * 0.9,
+          height: 40,
+          margin: EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey[800],
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        Container(
+          width: Screen.width(context) * 0.9,
+          child: Column(
+            children: List.generate(3, (index) {
+              return Container(
+                height: 120,
+                margin: EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 
@@ -241,10 +438,10 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   'Browse Categories',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.yellow,
+                    fontWeight: FontWeight.w700,
+                    color: MyColors.white,
                   ),
                 ),
               ],
@@ -274,79 +471,150 @@ class _HomePageState extends State<HomePage> {
   Widget _buildAIPackageButton() {
     return Center(
       child: ColoredButton(
+        icon: FontAwesomeIcons.wandMagicSparkles,
         onPressed: () {
           Logs.logUserActivity("ai_package_button_click", {});
-
-          Navigator.pushNamed(context, '/ChatBot');
+          context.pushNamedTransition(
+              routeName: '/ChatBot',
+              type: PageTransitionType.rightToLeftWithFade,
+              duration: Duration(milliseconds: 300));
         },
         text: 'Create Package with AI',
       ),
     );
   }
 
-  Widget _buildForYouSection() {
+  Widget _buildContentSection() {
     return Column(
       children: [
-        Center(
-          child: Container(
-            width: Screen.width(context) * 0.95,
-            margin:
-                EdgeInsets.symmetric(vertical: Screen.height(context) * 0.015),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'For You',
-                  style: GoogleFonts.montserrat(
-                    fontSize: Screen.max(context) * 0.02,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.yellow,
-                  ),
+        CustomTabBar(
+          tabs: const ["Listings", "Packages", "Products"],
+          onTabChanged: _handleTabChange,
+        ),
+        isLoadingServices
+            ? Container(
+                height: Screen.height(context),
+              )
+            : Center(
+                child: SizedBox(
+                  width: Screen.width(context) * 0.9,
+                  child: _buildContentList(),
                 ),
-              ],
-            ),
-          ),
-        ),
-        Center(
-          child: SizedBox(
-            width: Screen.width(context) * 0.9,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: listings['HomeListing'].length > 10
-                  ? 10
-                  : listings['HomeListing'].length,
-              itemBuilder: (context, index) {
-                final serviceName = listings['HomeListing'][index]['name'];
-                final serviceId = listings['HomeListing'][index]['id'];
-                final imageUrl = listings['pictures'][index].isNotEmpty
-                    ? (listings['pictures'][index][0]['picturePath'] == " "
-                        ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                        : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['pictures'][index][0]['picturePath']}')
-                    : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300";
-
-                return GestureDetector(
-                  onTap: () => _handleServiceClick(serviceId, serviceName),
-                  child: Productcard(
-                    listingType:
-                        listings['HomeListing'][index]['type'].toString(),
-                    listingid: listings['HomeListing'][index]['id'].toString(),
-                    imageUrl: imageUrl,
-                    venueName: serviceName,
-                    location: listings['HomeListing'][index]['location'],
-                    type: listings['HomeListing'][index]['type'].toString(),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
+              ),
       ],
+    );
+  }
+
+  Widget _buildContentList() {
+    if (_currentTab == 0) {
+      return _buildListingsList();
+    } else if (_currentTab == 1) {
+      return _buildPackagesList();
+    } else {
+      return _buildProductsList();
+    }
+  }
+
+  Widget _buildListingsList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: listings['results']['HomeListing'].length,
+      itemBuilder: (context, index) {
+        final serviceName = listings['results']['HomeListing'][index]['name'];
+        final serviceId = listings['results']['HomeListing'][index]['id'];
+        final imageUrl = listings['results']['pictures'][index].isNotEmpty
+            ? (listings['results']['pictures'][index][0]['picturePath'] == " "
+                ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['results']['pictures'][index][0]['picturePath']}')
+            : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300";
+
+        return GestureDetector(
+          onTap: () => _handleServiceClick(serviceId, serviceName),
+          child: ProductCard(
+            listingType:
+                listings['results']['HomeListing'][index]['type'].toString(),
+            listingid:
+                listings['results']['HomeListing'][index]['id'].toString(),
+            imageUrl: imageUrl,
+            venueName: serviceName,
+            rating:
+                listings['results']['HomeListing'][index]['rating'].toString(),
+            location: listings['results']['HomeListing'][index]['location'],
+            type: listings['results']['HomeListing'][index]['type'].toString(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPackagesList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: packages['results']['HomePackages'].length,
+      itemBuilder: (context, index) {
+        final package = packages['results']['HomePackages'][index];
+        // You'll need to adjust this based on your Packages data structure
+        return GestureDetector(
+          onTap: () => _handleServiceClick(package['id'], package['name']),
+          child: PackageBox(
+            onPressed: () {
+              // TODO
+              // _handleServiceClick(package['id'], package['name']);
+            },
+            packageId: package['id'].toString(),
+            packageDetails: package['description'].toString(),
+            packagePrice: package['price'].toString(),
+            imageUrl: package['pictures'].length != 0
+                ? package['pictures'][0]
+                : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+            packageName: package['name'],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProductsList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: products['results']['HomeProducts'].length,
+      itemBuilder: (context, index) {
+        final product = products['results']['HomeProducts'][index];
+        // You'll need to adjust this based on your Products data structure
+        return GestureDetector(
+          onTap: () => _handleServiceClick(product['id'], product['name']),
+          child: ProductCard(
+            listingType: 'product',
+            listingid: product['id'].toString(),
+            imageUrl: product['image'] ??
+                "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+            venueName: product['name'],
+            rating: product['rating']?.toString() ?? '0',
+            location: product['location'] ?? '',
+            type: 'product',
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingMoreIndicator() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        ),
+      ),
     );
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     if (entryTime != null) {
       final exitTime = DateTime.now();
       final duration = exitTime.difference(entryTime!).inSeconds;

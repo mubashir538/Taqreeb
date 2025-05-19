@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 
 class AutoImageSlider extends StatefulWidget {
   final List<String> imageUrls;
@@ -98,36 +101,71 @@ class AutoImageSliderState extends State<AutoImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: widget.height,
-      child: _initialLoadComplete
-          ? PageView.builder(
-              controller: _pageController,
-              itemCount: widget.imageUrls.length,
-              onPageChanged: (index) {
-                if (mounted) {
-                  setState(() => _currentIndex = index);
-                }
-                _preloadImage((index + 1) % widget.imageUrls.length);
-                _preloadImage((index - 1) % widget.imageUrls.length);
-              },
-              itemBuilder: (context, index) {
-                return CachedNetworkImage(
-                  imageUrl: widget.imageUrls[index],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: Center(child: CircularProgressIndicator()),
+      width: Screen.width(context) * 0.9,
+      margin: EdgeInsets.all(Screen.max(context) * 0.02),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            _initialLoadComplete
+                ? PageView.builder(
+                    controller: _pageController,
+                    itemCount: widget.imageUrls.length,
+                    onPageChanged: (index) {
+                      if (mounted) {
+                        setState(() => _currentIndex = index);
+                      }
+                      _preloadImage((index + 1) % widget.imageUrls.length);
+                      _preloadImage((index - 1) % widget.imageUrls.length);
+                    },
+                    itemBuilder: (context, index) {
+                      return CachedNetworkImage(
+                        imageUrl: widget.imageUrls[index],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey[200],
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: Icon(FontAwesomeIcons.exclamation),
+                        ),
+                      );
+                    },
+                  )
+                : Center(child: CircularProgressIndicator()),
+            Positioned(
+              bottom: 0,
+              child: Container(
+                padding: EdgeInsets.all(Screen.max(context) * 0.02),
+                width: Screen.width(context) * 0.9,
+                height: Screen.height(context) * 0.1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withAlpha(20),
+                      Colors.black.withAlpha(200),
+                    ],
                   ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[200],
-                    child: Icon(Icons.error),
-                  ),
-                );
-              },
+                ),
+                child: Text('Top Services',
+                    style: GoogleFonts.roboto(
+                        fontSize: Screen.max(context) * 0.03,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white)),
+              ),
             )
-          : Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      ),
     );
   }
 

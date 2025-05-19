@@ -238,20 +238,20 @@ def photography_places_view_page(request, listingid):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def decorator_detail_page(request,listingid):
-    listing_details = Listing.objects.get(id=listingid)
-    decorator_details = Decorators.objects.get(listingId=listingid)
-    addons = AddOns.objects.filter(listingId = listingid)
-    package = Packages.objects.filter(listingId = listingid)
-    review = Review.objects.filter(listingId =listingid)
-    pic = PicturesListings.objects.filter(listingId=listingid)
+def decorator_detail_page(request,listingId):
+    listing_details = Listing.objects.get(id=listingId)
+    decorator_details = Decorators.objects.get(listingId=listingId)
+    addons = AddOns.objects.filter(listingId = listingId)
+    package = Packages.objects.filter(listingId = listingId)
+    review = Review.objects.filter(listingId =listingId)
+    pic = PicturesListings.objects.filter(listingId=listingId)
     picture_serializer =PicturesListingSerializers(pic, many=True)
     review_serializer =ReviewSerializer( review, many = True)
     package_serializer =PackagesSerializer( package, many = True)
     addons_serializer =AddOnsSerializer( addons, many = True)
     serializer =DecoratorsSerializer( decorator_details, many=False)
     listing_serializer =ListingSerializer (listing_details, many =False)
-    review_data= ReviewDetails.objects.get(listingId=listingid)
+    review_data= ReviewDetails.objects.get(listingId=listingId)
     review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,'reviewData':review_data.data,
                     'Addons': addons_serializer.data,

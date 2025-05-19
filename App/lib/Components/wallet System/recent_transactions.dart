@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/wallet%20System/transaction_card.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import '../../core/services/screen_size.dart';
@@ -35,19 +36,32 @@ class _RecentTransactionsState extends State<RecentTransactions> {
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text("Recent Transactions",
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.02,
                       fontWeight: FontWeight.w700,
                       color: MyColors.white)),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, "/AllTransactions");
+                  context.pushNamedTransition(
+                      routeName: "/AllTransactions",
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300),
+                      arguments: widget.transactions);
                 },
-                child: Text("See All",
-                    style: GoogleFonts.montserrat(
-                        fontSize: Screen.max(context) * 0.015,
-                        fontWeight: FontWeight.w400,
-                        color: MyColors.red)),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      vertical: Screen.max(context) * 0.01,
+                      horizontal: Screen.max(context) * 0.02),
+                  decoration: BoxDecoration(
+                    color: MyColors.darkLighter,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text("See All",
+                      style: GoogleFonts.roboto(
+                          fontSize: Screen.max(context) * 0.015,
+                          fontWeight: FontWeight.w400,
+                          color: MyColors.red)),
+                ),
               ),
             ]),
             SizedBox(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -10,6 +11,8 @@ import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/utils/color.dart';
+import 'package:taqreeb/core/utils/images.dart';
 
 class EventPlanningChatbot extends StatefulWidget {
   const EventPlanningChatbot({super.key});
@@ -25,6 +28,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   Map<String, dynamic>? _currentEventPlan;
   bool _isLoading = false;
   String userId = '';
+  final ScrollController _scrollController = ScrollController();
 
   void fetchUserId() async {
     userId = await MyStorage.getToken(MyTokens.userId) ?? '';
@@ -33,11 +37,17 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   @override
   void initState() {
     super.initState();
-    // Initial bot greeting
     fetchUserId();
     _addBotMessage(
       "Hello! I'm your event planning assistant. Please describe the event you'd like to plan.",
     );
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _addBotMessage(String text, {String? imageUrl, bool isBold = false}) {
@@ -49,6 +59,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         'imageUrl': imageUrl,
         'isBold': isBold,
       });
+      _scrollToBottom();
     });
   }
 
@@ -60,9 +71,22 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         'isUser': true,
       });
       _isLoading = true;
+      _scrollToBottom();
     });
 
     _sendMessageToChatbot(text);
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   Future<void> _sendMessageToChatbot(String message) async {
@@ -82,7 +106,6 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         return;
       }
 
-      // Check if this is a booking confirmation
       if ((response['response']
               ?.toString()
               .toLowerCase()
@@ -92,13 +115,11 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         return;
       }
 
-      // Regular message
       _addBotMessage(
         response['response'] ?? "I didn't understand that. Could you rephrase?",
         isBold: response['is_bold'] ?? false,
       );
 
-      // Check if we should show venue card
       if (message.toLowerCase().contains('venue') &&
           _currentEventPlan != null) {
         _show360VenuePreview();
@@ -114,7 +135,6 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   void _handleBookingConfirmation(String message) {
     _addBotMessage(message);
 
-    // Show booking confirmation
     setState(() {
       _currentEventPlan = {
         'status': 'confirmed',
@@ -155,72 +175,135 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      backgroundColor: MyColors.dark,
+      body: Column(
         children: [
-          Column(
-            children: [
-              SizedBox(
-                height: Screen.height(context) * 0.2,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.all(8.0),
-                  itemCount: _messages.length +
-                      (_showVenueCard ? 1 : 0) +
-                      (_isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    // Loading indicator
-                    if (_isLoading &&
-                        index == _messages.length + (_showVenueCard ? 1 : 0)) {
-                      return Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: EdgeInsets.all(12.0),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircularProgressIndicator(),
-                                SizedBox(width: 8.0),
-                                Text('Thinking...'),
-                              ],
+          const Header(),
+          Expanded(
+            child: Column(
+              children: [
+                // Chat header
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: Screen.max(context) * 0.03),
+                  decoration: BoxDecoration(color: MyColors.red),
+                  child: Column(
+                    children: [
+                      SizedBox(height: Screen.max(context) * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: Screen.max(context) * 0.05,
+                            backgroundColor: MyColors.white,
+                            child: ClipOval(
+                              child: Image.asset(
+                                MyImages.aiIcon,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
-
-                    if (_showVenueCard && index == _messages.length) {
-                      return _buildEventPlanCard();
-                    }
-
-                    final message = _messages[_showVenueCard
-                        ? (index >= _messages.length ? index - 1 : index)
-                        : index];
-
-                    return message['isUser']
-                        ? SendMessage(
-                            text: message['text'],
-                            time: message['time'],
-                          )
-                        : RecieveMessage(
-                            text: message['text'],
-                            time: message['time'],
-                            imageUrl: message['imageUrl'],
-                            isBold: message['isBold'] ?? false,
-                          );
-                  },
+                          SizedBox(width: Screen.width(context) * 0.04),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: Screen.width(context) * 0.6,
+                                child: Text(
+                                  "Event Planning Assistant",
+                                  style: GoogleFonts.roboto(
+                                    fontSize: Screen.max(context) * 0.025,
+                                    fontWeight: FontWeight.w600,
+                                    color: MyColors.white,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "Always online",
+                                style: GoogleFonts.roboto(
+                                  fontSize: Screen.max(context) * 0.015,
+                                  color: MyColors.whiteDarker,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: Screen.max(context) * 0.02),
+                    ],
+                  ),
                 ),
-              ),
-              _buildMessageInput(),
-            ],
+                // Messages list
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: EdgeInsets.all(8.0),
+                    itemCount: _messages.length +
+                        (_showVenueCard ? 1 : 0) +
+                        (_isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      // Loading indicator
+                      if (_isLoading &&
+                          index ==
+                              _messages.length + (_showVenueCard ? 1 : 0)) {
+                        return Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: EdgeInsets.all(12.0),
+                              decoration: BoxDecoration(
+                                color: MyColors.darkLighter,
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        MyColors.white),
+                                  ),
+                                  SizedBox(width: 8.0),
+                                  Text(
+                                    'Thinking...',
+                                    style: GoogleFonts.roboto(
+                                      color: MyColors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (_showVenueCard && index == _messages.length) {
+                        return _buildEventPlanCard();
+                      }
+
+                      final message = _messages[_showVenueCard
+                          ? (index >= _messages.length ? index - 1 : index)
+                          : index];
+
+                      return message['isUser']
+                          ? SendMessage(
+                              text: message['text'],
+                              time: message['time'],
+                            )
+                          : RecieveMessage(
+                              text: message['text'],
+                              time: message['time'],
+                              imageUrl: message['imageUrl'],
+                              isBold: message['isBold'] ?? false,
+                            );
+                    },
+                  ),
+                ),
+                // Chat input
+                _buildMessageInput(),
+              ],
+            ),
           ),
-          Positioned(top: 0, child: Header(heading: 'Event Planning Chatbot'))
         ],
       ),
     );
@@ -231,48 +314,47 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
       margin: EdgeInsets.all(8.0),
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: MyColors.darkLighter,
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withAlpha(76),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
+        border: Border.all(color: MyColors.red.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Event Plan Summary',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.deepPurple,
+              color: MyColors.white,
             ),
           ),
           SizedBox(height: 10),
           _buildDetailRow('Event Type:', _currentEventPlan!['eventType']),
           _buildDetailRow('Date:', _currentEventPlan!['date']),
           _buildDetailRow('Guest Count:', _currentEventPlan!['guestCount']),
-          Divider(),
+          Divider(color: MyColors.white.withAlpha(76)),
           _buildDetailRow('Venue:', _currentEventPlan!['venue']),
           _buildDetailRow('Venue Price:', _currentEventPlan!['venuePrice']),
           _buildDetailRow('Catering:', _currentEventPlan!['catering']),
           _buildDetailRow(
               'Catering Price:', _currentEventPlan!['cateringPrice']),
-          Divider(),
+          Divider(color: MyColors.white.withAlpha(76)),
           _buildDetailRow('Total Budget:', _currentEventPlan!['totalBudget'],
               isBold: true),
           SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ColoredButton(text: 'Save Event Plan', onPressed: _saveEventPlan),
+              ColoredButton(
+                text: 'Save Event Plan',
+                onPressed: _saveEventPlan,
+              ),
               SizedBox(width: 10),
-              BorderButton(text: 'Modify Details', onPressed: _modifyDetails),
+              BorderButton(
+                text: 'Modify Details',
+                onPressed: _modifyDetails,
+              ),
             ],
           ),
         ],
@@ -287,18 +369,18 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.roboto(
               fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              color: MyColors.whiteDarker,
             ),
           ),
           SizedBox(width: 10),
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                 fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
-                color: Colors.black,
+                color: MyColors.white,
               ),
             ),
           ),
@@ -309,26 +391,43 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
 
   Widget _buildMessageInput() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      color: Colors.grey[200],
-      child: Row(
-        children: [
-          Expanded(
-              child: MyTextBox(
-            valueController: _messageController,
-            hint: 'Type your message here...',
-          )),
-          SizedBox(width: 8.0),
-          IconButton(
-            icon: Icon(Icons.send, color: Colors.red),
-            onPressed: () {
-              if (_messageController.text.trim().isNotEmpty) {
-                _addUserMessage(_messageController.text);
-                _messageController.clear();
-              }
-            },
-          ),
-        ],
+      color: MyColors.ligthDark,
+      padding: EdgeInsets.all(Screen.max(context) * 0.01),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: MyColors.darkLighter,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: TextField(
+                  controller: _messageController,
+                  style: GoogleFonts.roboto(color: MyColors.white),
+                  decoration: InputDecoration(
+                    hintText: " Type a message",
+                    hintStyle: GoogleFonts.roboto(color: MyColors.whiteDarker),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 8),
+            IconButton(
+              icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+              onPressed: () {
+                if (_messageController.text.trim().isNotEmpty) {
+                  _addUserMessage(_messageController.text);
+                  _messageController.clear();
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

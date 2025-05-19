@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -8,6 +11,7 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddCategoryAddProduct extends StatefulWidget {
   const AddCategoryAddProduct({super.key});
@@ -78,9 +82,10 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
     }
 
     _formController.addProduct(image: _selectedImage!);
-    Navigator.pushNamed(
-      context,
-      '/AddCategoryProducts', // Adjust this route name as needed
+    context.pushNamedTransition(
+      routeName: '/AddCategoryProducts',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: _formController.args,
     );
   }
@@ -107,9 +112,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
                   _buildDescriptionField(),
                   _buildPriceField(),
                   _buildImageUploadSection(),
-                  SizedBox(height: Screen.max(context) * 0.05),
                   _buildSubmitButton(),
-                  SizedBox(height: Screen.max(context) * 0.02),
                 ],
               ),
             ),
@@ -128,6 +131,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
 
   Widget _buildNameField() {
     return MyTextBox(
+      prefixIcon: FontAwesomeIcons.box,
       focusNode: _formController.nameFocus,
       onFieldSubmitted: (_) {
         FocusScope.of(context).requestFocus(_formController.descriptionFocus);
@@ -162,14 +166,14 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
-        vertical: Screen.max(context) * 0.03,
+        vertical: Screen.max(context) * 0.01,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Product Image',
-            style: TextStyle(
+            style: GoogleFonts.roboto(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -203,7 +207,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
                           color: Colors.red,
                         ),
                         child: Icon(
-                          Icons.close,
+                          FontAwesomeIcons.xmark,
                           size: Screen.max(context) * 0.04,
                           color: Colors.white,
                         ),
@@ -215,7 +219,7 @@ class _AddCategoryAddProductState extends State<AddCategoryAddProduct> {
             ),
           SizedBox(height: Screen.max(context) * 0.03),
           Center(
-            child: ColoredButton(
+            child: BorderButton(
               text: _selectedImage == null ? 'Select Image' : 'Change Image',
               onPressed: _pickImage,
             ),

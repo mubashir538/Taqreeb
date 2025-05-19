@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -38,14 +39,14 @@ class _BalanceCardState extends State<BalanceCard> {
           children: [
             Text(
               "Available Balance",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w400),
             ),
             Text(
               "Rs. ${widget.balance}",
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.roboto(
                   color: MyColors.white,
                   fontSize: Screen.max(context) * 0.03,
                   fontWeight: FontWeight.w600),
@@ -56,9 +57,10 @@ class _BalanceCardState extends State<BalanceCard> {
             ColoredButton(
                 text: "Add Bank",
                 onPressed: () {
-                  Navigator.pushNamed(context, "/AddBank").then(
-                    (value) => widget.onpopped(),
-                  );
+                  context.pushNamedTransition(
+                      routeName: "/AddBank",
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300));
                 },
                 width: Screen.width(context) * 0.3,
                 textSize: Screen.max(context) * 0.015)

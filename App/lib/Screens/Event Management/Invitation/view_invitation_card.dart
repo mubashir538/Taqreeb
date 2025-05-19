@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -220,7 +222,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                               child: CircularProgressIndicator(),
                             ),
                             errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
+                                const Icon(FontAwesomeIcons.exclamation),
                           ),
                           if (_isGenerating)
                             const Center(child: CircularProgressIndicator()),
@@ -232,9 +234,9 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                     if (!_isLoadingTemplates && templates.isNotEmpty)
                       Column(
                         children: [
-                          const Text(
+                           Text(
                             'Available Templates',
-                            style: TextStyle(
+                            style: GoogleFonts.roboto(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -267,7 +269,8 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(6),
                                       child: CachedNetworkImage(
-                                        imageUrl: '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${template['imageUrl']}',
+                                        imageUrl:
+                                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${template['imageUrl']}',
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.cover,
@@ -276,7 +279,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                                           child: CircularProgressIndicator(),
                                         ),
                                         errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
+                                            const Icon(FontAwesomeIcons.exclamation),
                                       ),
                                     ),
                                   ),

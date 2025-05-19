@@ -87,13 +87,14 @@ class _WishlistViewPageState extends State<WishlistViewPage> {
 
   Widget _buildWishlistItem(int index) {
     final item = _wishlistController.listings['list'][index];
-    return Productcard(
+    return ProductCard(
       imageUrl: _getImageUrl(index),
       venueName: item['name'],
       location: item['location'],
       isBusiness: false,
       type: item['type'],
-      mywidth: MediaQuery.of(context).size.width * 0.9,
+      rating: item['rating'],
+      myWidth: MediaQuery.of(context).size.width * 0.9,
       listingid: item['id'].toString(),
       listingType: item['type'],
     );

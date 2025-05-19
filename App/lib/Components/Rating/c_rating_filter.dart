@@ -86,7 +86,7 @@ class FilterButton extends StatelessWidget {
       child: Center(
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.roboto(
               fontSize: max * 0.015,
               fontWeight: FontWeight.w400,
               color: selected ? MyColors.white : MyColors.whiteDarker),

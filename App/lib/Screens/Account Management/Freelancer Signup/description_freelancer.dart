@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:taqreeb/core/services/ui_management.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
+import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
+import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class FreelancerSignupDescriptionViewModel with ChangeNotifier {
@@ -25,13 +27,9 @@ class FreelancerSignupDescriptionViewModel with ChangeNotifier {
   }
 
   bool validateDescription() {
-    if (_descriptionController.text.isEmpty) {
-      return false;
-    } else if (_descriptionController.text.length > 1100) {
-      return false;
-    } else if (_descriptionController.text.length < 50) {
-      return false;
-    }
+    if (_descriptionController.text.isEmpty) return false;
+    if (_descriptionController.text.length > 1100) return false;
+    if (_descriptionController.text.length < 50) return false;
     return true;
   }
 
@@ -48,9 +46,11 @@ class FreelancerSignupDescriptionViewModel with ChangeNotifier {
     }
 
     MyStorage.saveToken(_descriptionController.text, MyTokens.fsdescription);
-    Navigator.pushNamed(
-      context,
-      '/ProfilePictureUpload',
+
+    context.pushNamedTransition(
+      routeName: '/ProfilePictureUpload',
+      type: PageTransitionType.rightToLeftWithFade,
+      duration: Duration(milliseconds: 300),
       arguments: {'type': 'Freelancer'},
     );
   }
@@ -91,68 +91,66 @@ class FreelancerSignupDescriptionState
 
   @override
   Widget build(BuildContext context) {
-    final viewModel =
-        Provider.of<FreelancerSignupDescriptionViewModel>(context);
-
     return Scaffold(
       backgroundColor: MyColors.dark,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: SizedBox(
-              width: Screen.width(context),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: (Screen.max(context) * 0.05) +
-                        UImanagement.headerHeight,
-                  ),
-                  DescriptionBox(
-                    valueController: viewModel.descriptionController,
-                    onChanged: (value) {
-                      viewModel.updateCharactersLeft(value);
-                    },
-                  ),
-                  SizedBox(
-                    width: Screen.width(context) * 0.9,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${viewModel.charactersLeft.toString()} characters left",
-                          style: GoogleFonts.montserrat(
-                            color: MyColors.white,
-                            fontSize: Screen.max(context) * 0.018,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: Screen.height(context) * 0.05,
-                    child: MyDivider(),
-                  ),
-                  ColoredButton(
-                    text: "Continue",
-                    onPressed: () {
-                      viewModel.saveDescription(context);
-                    },
-                  ),
-                ],
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: Screen.width(context),
+          child: Column(
+            children: [
+              Header(
+                key: headerKey,
+                heading: "Create A Description",
+                para:
+                    "Your Description Creates a Great Impact on the customers and can help your get more clients ",
               ),
-            ),
+              SizedBox(
+                height: (Screen.max(context) * 0.02),
+              ),
+              Consumer<FreelancerSignupDescriptionViewModel>(
+                builder: (context, viewModel, child) {
+                  return Column(
+                    children: [
+                      DescriptionBox(
+                        valueController: viewModel.descriptionController,
+                        onChanged: (value) {
+                          viewModel.updateCharactersLeft(value);
+                        },
+                      ),
+                      SizedBox(
+                        width: Screen.width(context) * 0.9,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              "${viewModel.charactersLeft.toString()} characters left",
+                              style: GoogleFonts.roboto(
+                                color: MyColors.red,
+                                fontSize: Screen.max(context) * 0.015,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: Screen.height(context) * 0.05,
+                        child: MyDivider(),
+                      ),
+                      ColoredButton(
+                        text: "Continue",
+                        onPressed: () {
+                          viewModel.saveDescription(context);
+                        },
+                      ),
+                      ProgressBar(progress: 3),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
-          Positioned(
-            top: 0,
-            child: Header(
-              key: headerKey,
-              heading: "Create A Description",
-              para:
-                  "Your Description Creates a Great Impact on the customers and can help your get more clients ",
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

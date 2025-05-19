@@ -15,11 +15,11 @@ class AIFunctions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle heading = GoogleFonts.montserrat(
+    TextStyle heading = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w500,
         color: MyColors.white);
-    TextStyle body = GoogleFonts.montserrat(
+    TextStyle body = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.02,
         fontWeight: FontWeight.w400,
         color: MyColors.white);

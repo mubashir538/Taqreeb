@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -25,19 +26,48 @@ class ResponsiveDropdown extends StatefulWidget {
 
 class ResponsiveDropdownState extends State<ResponsiveDropdown> {
   String? selectedItem;
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_handleFocusChange);
+    if (widget.focusNode != null) {
+      widget.focusNode!.addListener(_handleFocusChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    if (widget.focusNode != null) {
+      widget.focusNode!.removeListener(_handleFocusChange);
+    }
+    super.dispose();
+  }
+
+  void _handleFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus || (widget.focusNode?.hasFocus ?? false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: Screen.width(context) * 0.9,
-      padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.02),
+      padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.01),
       child: DropdownButtonFormField<String>(
-        focusNode: widget.focusNode,
+        focusNode: widget.focusNode ?? _focusNode,
         onSaved: (value) => widget.onFieldSubmitted,
         decoration: InputDecoration(
           labelText: widget.labelText,
-          labelStyle: GoogleFonts.montserrat(
-            color: Colors.white,
+          contentPadding:
+              EdgeInsets.all( Screen.max(context) * 0.02),
+          labelStyle: GoogleFonts.roboto(
+            color: _isFocused ? MyColors.red : Colors.white.withAlpha(102),
             fontSize: Screen.width(context) * 0.03,
           ),
           enabledBorder: OutlineInputBorder(
@@ -49,16 +79,19 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
             borderSide: BorderSide(color: MyColors.red),
           ),
           filled: true,
-          fillColor: MyColors.darkLighter,
+          fillColor: MyColors.ligthDark,
         ),
         dropdownColor: MyColors.darkLighter,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.white,
           fontSize: Screen.width(context) * 0.035,
         ),
         value: selectedItem,
         isExpanded: true,
-        icon: Icon(Icons.arrow_drop_down, color: MyColors.white),
+        icon: Icon(
+          FontAwesomeIcons.caretDown,
+          color: _isFocused ? MyColors.red : MyColors.white,
+        ),
         items: widget.items.map((item) {
           return DropdownMenuItem<String>(
             value: item,

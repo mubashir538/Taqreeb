@@ -169,7 +169,6 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
                 listingId: _listingId,
                 selectedDate: _selectedDate,
               ),
-              _buildDivider(),
               PricingSection(listing: _listing),
               DescriptionCategory(listing: _listing),
               CategoryDetails(
@@ -179,12 +178,10 @@ class _CategoryViewCarRenterState extends State<CategoryViewCarRenter> {
               ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
-              _buildDivider(),
               CategoryReview(
                 listing: _listing,
                 starsvalue: _starsValue,
               ),
-              _buildDivider(),
             ],
           ),
         ),

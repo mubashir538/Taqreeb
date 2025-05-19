@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/utils/color.dart';
@@ -52,7 +53,7 @@ class Guests extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : Icon(
-                        Icons.person,
+                        FontAwesomeIcons.person,
                         size: Screen.max(context) * 0.03,
                         color: Colors.white,
                       ),
@@ -75,7 +76,7 @@ class Guests extends StatelessWidget {
                         children: [
                           Text(
                             name,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
                               color: Colors.white,
@@ -84,7 +85,7 @@ class Guests extends StatelessWidget {
                           InkWell(
                             onTap: ondelete,
                             child: Icon(
-                              Icons.delete,
+                              FontAwesomeIcons.trash,
                               color: MyColors.white,
                               size: Screen.max(context) * 0.03,
                             ),
@@ -95,7 +96,7 @@ class Guests extends StatelessWidget {
                   ),
                   Text(
                     contact,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
                       color: MyColors.whiteDarker,

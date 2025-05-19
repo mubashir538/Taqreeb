@@ -6,6 +6,7 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_otp.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -77,7 +78,7 @@ class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
                     viewModel.isResendEnabled
                         ? 'Send Code Again'
                         : 'Send Code Again in ${viewModel.formatTime(viewModel.remainingTime)}',
-                    style: TextStyle(
+                    style: GoogleFonts.roboto(
                       color: MyColors.white,
                       fontSize: MediaQuery.of(context).size.width * 0.04,
                       decoration: viewModel.isResendEnabled

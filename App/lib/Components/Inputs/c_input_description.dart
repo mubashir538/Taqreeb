@@ -110,14 +110,14 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         controller: widget.valueController,
         onChanged: widget.onChanged,
         maxLines: 50,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.roboto(
           color: MyColors.white,
           fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.roboto(
             color: MyColors.white.withAlpha(153),
             fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,

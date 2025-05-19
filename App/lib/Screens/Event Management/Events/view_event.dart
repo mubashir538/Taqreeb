@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Cards/c_function_card.dart';
@@ -9,6 +11,7 @@ import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
 class EventDetails extends StatefulWidget {
@@ -139,11 +142,19 @@ class _EventDetailsState extends State<EventDetails> {
                           bottomLeft:
                               Radius.circular(Screen.max(context) * 0.05),
                         )),
-                    child: Text('Add Function',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: Screen.max(context) * 0.02,
-                        ))),
+                    child: Row(
+                      children: [
+                        Icon(FontAwesomeIcons.plus,
+                            color: Colors.white,
+                            size: Screen.max(context) * 0.02),
+                        SizedBox(width: Screen.max(context) * 0.01),
+                        Text('Add Function',
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: Screen.max(context) * 0.02,
+                            )),
+                      ],
+                    )),
               ))
         ],
       ),
@@ -180,17 +191,26 @@ class _EventDetailsState extends State<EventDetails> {
         SizedBox(height: Screen.height(context) * 0.02),
         _buildEventInfoSection(),
         SizedBox(height: Screen.height(context) * 0.02),
-        _buildFunctionsList(),
+        SizedBox(
+          width: Screen.width(context) * 0.8,
+          child: _buildFunctionsList()),
         _buildActionButtons(),
         SizedBox(height: Screen.height(context) * 0.1),
       ],
     );
   }
 
+  String _formatNumberWithCommas(String number) {
+    return number.replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+  }
+
   Widget _buildEventHeader() {
     return Text(
       _eventData.eventDetails['name'],
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.03,
         fontWeight: FontWeight.w700,
         color: MyColors.yellow,
@@ -199,41 +219,73 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   Widget _buildEventInfoSection() {
-    final headingStyle = _buildTextStyle(fontWeight: FontWeight.w600);
-    final textStyle = _buildTextStyle(fontWeight: FontWeight.w400);
+    final headingStyle = _buildTextStyle(fontWeight: FontWeight.w400);
+    final textStyle = _buildTextStyle(fontWeight: FontWeight.w600);
 
     return SizedBox(
-      width: Screen.width(context) * 0.9,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildInfoRow('Budget', _eventData.eventDetails['budget'].toString(),
-              headingStyle, textStyle),
-          SizedBox(height: Screen.height(context) * 0.01),
-          _buildInfoRow('Event Type', _eventData.eventDetails['type'],
-              headingStyle, textStyle),
-          SizedBox(height: Screen.height(context) * 0.01),
-          _buildInfoRow(
-            'Guests',
-            '${_eventData.eventDetails['guestsmin']} - ${_eventData.eventDetails['guestsmax']}',
-            headingStyle,
-            textStyle,
+          Row(
+            children: [
+              _buildInfoCard(
+                  'Budget',
+                  FontAwesomeIcons.wallet,
+                  _formatNumberWithCommas(
+                      _eventData.eventDetails['budget'].toString()),
+                  headingStyle,
+                  textStyle),
+              _buildInfoCard('Event Type', FontAwesomeIcons.champagneGlasses,
+                  _eventData.eventDetails['type'], headingStyle, textStyle),
+            ],
           ),
-          SizedBox(height: Screen.height(context) * 0.01),
-          _buildInfoRow(
-              'Date', _eventData.eventDetails['date'], headingStyle, textStyle),
+          Row(
+            children: [
+              _buildInfoCard(
+                'Guests',
+                FontAwesomeIcons.userGroup,
+                '${_eventData.eventDetails['guestsmin']} - ${_eventData.eventDetails['guestsmax']}',
+                headingStyle,
+                textStyle,
+              ),
+              _buildInfoCard(
+                  'Date',
+                  FontAwesomeIcons.calendarDays,
+                  DateFormat('MMMM d, y')
+                      .format(DateTime.parse(_eventData.eventDetails['date']))
+                      .toString(),
+                  headingStyle,
+                  textStyle),
+            ],
+          )
         ],
       ),
     );
   }
 
-  Widget _buildInfoRow(
-      String label, String value, TextStyle headingStyle, TextStyle textStyle) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: headingStyle),
-        Text(value, style: textStyle),
-      ],
+  Widget _buildInfoCard(String label, IconData icon, String value,
+      TextStyle headingStyle, TextStyle textStyle) {
+    return Container(
+      width: Screen.width(context) * 0.45,
+      margin: EdgeInsets.all(Screen.max(context) * 0.01),
+      padding: EdgeInsets.all(Screen.max(context) * 0.02),
+      decoration: BoxDecoration(
+        color: MyColors.darkLighter,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Icon(icon,
+                color: MyColors.yellow, size: Screen.max(context) * 0.02),
+            SizedBox(width: Screen.max(context) * 0.01),
+            Text(label, style: headingStyle),
+          ]),
+          Text(value, style: textStyle),
+        ],
+      ),
     );
   }
 
@@ -244,9 +296,8 @@ class _EventDetailsState extends State<EventDetails> {
       itemCount: _eventData.functions.length,
       itemBuilder: (context, index) => FunctionCard(
         delete: () => _deleteFunction(index),
-        color: Color(int.parse(
-          '0xff${_eventData.eventDetails["themeColor"].substring(1)}',
-        )),
+        color: MyColors.red,
+        width: 0.8,
         name: _eventData.functions[index]['name'],
         type: _eventData.functions[index]['type'],
         head: 'Budget',
@@ -292,14 +343,17 @@ class _EventDetailsState extends State<EventDetails> {
     return Column(
       children: [
         _buildActionButton(
+          icon: FontAwesomeIcons.userGroup,
           text: "Event GuestList",
           onTap: _navigateToGuestList,
         ),
         _buildActionButton(
-          text: "Event CheckLlist",
+          icon: FontAwesomeIcons.listCheck,
+          text: "Event Checklist",
           onTap: () => _navigateToChecklist(),
         ),
         _buildActionButton(
+          icon: FontAwesomeIcons.envelopeOpenText,
           text: "Create Invitation Card",
           onTap: () => Navigator.pushNamed(context, '/CreateInvitation',
               arguments: {'type': _eventData.eventDetails['type']}).then(
@@ -311,29 +365,43 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   Widget _buildActionButton(
-      {required String text, required VoidCallback onTap}) {
-    return Container(
-      margin: EdgeInsets.all(Screen.max(context) * 0.01),
-      padding: EdgeInsets.symmetric(
-        vertical: Screen.height(context) * 0.01,
-        horizontal: Screen.width(context) * 0.03,
-      ),
-      decoration: BoxDecoration(
-        color: MyColors.darkLighter,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(127),
-            spreadRadius: 5,
-            blurRadius: 4,
-            offset: const Offset(2, 2),
-          ),
-        ],
-      ),
-      width: Screen.width(context) * 0.8,
-      child: InkWell(
-        onTap: onTap,
-        child: Text(text),
+      {required String text,
+      required IconData icon,
+      required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.all(Screen.max(context) * 0.01),
+        padding: EdgeInsets.all(
+          Screen.max(context) * 0.02,
+        ),
+        decoration: BoxDecoration(
+          color: MyColors.darkLighter,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        width: Screen.width(context) * 0.8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(icon,
+                    color: MyColors.red, size: Screen.max(context) * 0.025),
+                SizedBox(width: Screen.max(context) * 0.02),
+                Text(
+                  text,
+                  style: GoogleFonts.roboto(
+                      fontSize: Screen.max(context) * 0.015,
+                      fontWeight: FontWeight.w400,
+                      color: MyColors.white),
+                ),
+              ],
+            ),
+            Icon(FontAwesomeIcons.chevronRight,
+                color: MyColors.whiteDarker, size: Screen.max(context) * 0.02),
+          ],
+        ),
       ),
     );
   }
@@ -349,10 +417,12 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   TextStyle _buildTextStyle({required FontWeight fontWeight}) {
-    return GoogleFonts.montserrat(
-      fontSize: Screen.max(context) * 0.017,
+    return GoogleFonts.roboto(
+      fontSize:
+          Screen.max(context) * (fontWeight == FontWeight.w600 ? 0.02 : 0.015),
       fontWeight: fontWeight,
-      color: fontWeight == FontWeight.w600 ? MyColors.yellow : MyColors.white,
+      color:
+          fontWeight == FontWeight.w600 ? MyColors.white : MyColors.whiteDarker,
     );
   }
 }
