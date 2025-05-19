@@ -18,10 +18,11 @@ def add_guests(request):
     if guesttype=='Family':
         family_name = request.data.get('FamilyName')
         member = request.data.get('member')
+        family_contact = request.data.get('PersonContact')
         if fid:
-            guest_list = GuestList(name=family_name,members=member,type=guesttype,eventId=event,functionId=function)
+            guest_list = GuestList(name=family_name,members=member,type=guesttype,eventId=event,functionId=function,phone=family_contact)
         else:
-            guest_list = GuestList(name=family_name,members=member,type=guesttype,eventId=event)
+            guest_list = GuestList(name=family_name,members=member,type=guesttype,eventId=event,phone=family_contact)
     else:   
         person_name = request.data.get('PersonName')
         person_contact = request.data.get('PersonContact')

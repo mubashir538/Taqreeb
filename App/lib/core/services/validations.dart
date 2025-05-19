@@ -58,6 +58,11 @@ class Validations {
       return 'Service name is too long';
     }
 
+    // Ensure the name contains at least one letter
+    if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
+      return 'Service name must contain letters in it';
+    }
+
     // Allow letters, numbers, spaces, and common service name characters
     RegExp validChars = RegExp(r"^[a-zA-Z0-9\s\.\'\-\&\#]+$");
     if (!validChars.hasMatch(value)) {
@@ -199,7 +204,6 @@ class Validations {
     } catch (e) {
       return 'Link is not reachable';
     }
-
   }
 
   static String validatePassword(String? value) {
