@@ -67,9 +67,10 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -101,6 +102,8 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   Widget _buildTitle() {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
@@ -110,7 +113,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w700,
-          color: MyColors.red,
+          color: colors.red,
         ),
       ),
     );
@@ -161,15 +164,17 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   Widget _buildAddButton() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.all(Screen.max(context) * 0.02),
       child: FloatingActionButton(
-        backgroundColor: MyColors.red,
+        backgroundColor: colors.red,
         shape: CircleBorder(),
         onPressed: _navigateToAddPackage,
         child: Icon(
           FontAwesomeIcons.plus,
-          color: MyColors.white,
+          color: colors.white,
           size: Screen.max(context) * 0.03,
         ),
       ),

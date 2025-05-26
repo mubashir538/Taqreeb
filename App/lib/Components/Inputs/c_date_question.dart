@@ -24,6 +24,8 @@ class DateQuestion extends StatefulWidget {
 class _DateQuestionState extends State<DateQuestion> {
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(
           horizontal: widget.question != '' ? Screen.max(context) * 0.02 : 0),
@@ -33,7 +35,7 @@ class _DateQuestionState extends State<DateQuestion> {
           widget.question != ''
               ? Text(widget.question,
                   style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: Screen.max(context) * 0.018))
               : Container(),
           Container(
@@ -41,7 +43,7 @@ class _DateQuestionState extends State<DateQuestion> {
             height: Screen.height(context) * 0.06,
             width: Screen.width(context) * 0.9,
             decoration: BoxDecoration(
-              color: MyColors.ligthDark,
+              color: colors.lightDark,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -63,16 +65,16 @@ class _DateQuestionState extends State<DateQuestion> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.018,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
                 decoration: InputDecoration(
                   prefixIcon: Icon(
                     FontAwesomeIcons.calendarDays,
-                    color: MyColors.white.withAlpha(153),
+                    color: colors.white.withAlpha(153),
                   ),
                   hintText: 'Select Date',
                   hintStyle: GoogleFonts.roboto(
-                    color: MyColors.white.withAlpha(153),
+                    color: colors.white.withAlpha(153),
                     fontSize: Screen.max(context) * 0.015,
                   ),
                   border: InputBorder.none,

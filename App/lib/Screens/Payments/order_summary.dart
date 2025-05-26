@@ -118,13 +118,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     if (_cart == null || _bookingInfo == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+    final colors = AppColors(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Summary'),
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.darkLighter,
+      backgroundColor: colors.darkLighter,
       body: FutureBuilder<Map<String, dynamic>>(
         future: _userFuture,
         builder: (context, snapshot) {
@@ -144,7 +145,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Text(
                   'Order Items',
                   style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.bold,
                   ),
@@ -155,7 +156,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Text(
                   'Booking Dates',
                   style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.bold,
                   ),
@@ -169,7 +170,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     child: Text(
                       '${date.day}/${date.month}/${date.year}',
                       style: GoogleFonts.roboto(
-                        color: MyColors.white,
+                        color: colors.white,
                       ),
                     ),
                   );
@@ -178,7 +179,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Text(
                   'Customer Information',
                   style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.bold,
                   ),
@@ -191,7 +192,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Container(
                   padding: EdgeInsets.all(Screen.width(context) * 0.04),
                   decoration: BoxDecoration(
-                    color: MyColors.dark,
+                    color: colors.dark,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -227,6 +228,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   Widget _buildOrderItem(CartItem item) {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
       child: Row(
@@ -252,7 +255,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Text(
                   item.itemDetails['name'] ?? 'No Name',
                   style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -260,14 +263,14 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 Text(
                   'Quantity: ${item.quantity}',
                   style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.005),
                 Text(
                   '\$${_getItemPrice(item).toStringAsFixed(2)}',
                   style: GoogleFonts.roboto(
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -316,6 +319,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   }
 
   Widget _buildTotalRow(String label, double amount, {bool isTotal = false}) {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.01),
       child: Row(
@@ -324,7 +329,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           Text(
             label,
             style: GoogleFonts.roboto(
-              color: MyColors.white,
+              color: colors.white,
               fontSize: isTotal
                   ? Screen.max(context) * 0.02
                   : Screen.max(context) * 0.018,
@@ -334,7 +339,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           Text(
             '\$${amount.toStringAsFixed(2)}',
             style: GoogleFonts.roboto(
-              color: isTotal ? MyColors.yellow : MyColors.white,
+              color: isTotal ? colors.yellow : colors.white,
               fontSize: isTotal
                   ? Screen.max(context) * 0.02
                   : Screen.max(context) * 0.018,

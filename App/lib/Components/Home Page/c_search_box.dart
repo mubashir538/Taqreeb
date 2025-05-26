@@ -53,13 +53,15 @@ class _SearchBoxState extends State<SearchBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: widget.onclick,
       child: Container(
         height: Screen.height(context) * 0.07,
         width: widget.width == 0 ? Screen.width(context) * 0.8 : widget.width,
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
@@ -68,7 +70,7 @@ class _SearchBoxState extends State<SearchBox> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Icon(FontAwesomeIcons.magnifyingGlass, color: MyColors.white),
+              Icon(FontAwesomeIcons.magnifyingGlass, color: colors.white),
               Container(
                 margin: EdgeInsets.only(left: Screen.max(context) * 0.02),
                 width: Screen.width(context) * 0.5,
@@ -88,14 +90,14 @@ class _SearchBoxState extends State<SearchBox> {
                     style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: widget.hint,
                       hintStyle: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.015,
-                        color: MyColors.whiteDarker,
+                        color: colors.whiteDarker,
                       ),
                     ),
                   ),

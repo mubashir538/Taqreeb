@@ -278,9 +278,10 @@ class _CreateFunctionState extends State<CreateFunction> {
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -395,12 +396,14 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   Widget _buildSubmitButton() {
+    final colors = AppColors(context);
+
     return Positioned(
       bottom: 0,
       child: Container(
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),

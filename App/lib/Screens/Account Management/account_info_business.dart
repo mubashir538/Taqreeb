@@ -67,32 +67,34 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     final double bodySize = Screen.max(context) * 0.016;
     final double iconSize = Screen.max(context) * 0.025;
 
+    final colors = AppColors(context);
+
     TextStyle titleStyle = GoogleFonts.roboto(
       fontSize: titleSize,
       fontWeight: FontWeight.w600,
-      color: MyColors.white,
+      color: colors.white,
     );
 
     TextStyle bodyStyle = GoogleFonts.roboto(
       fontSize: bodySize,
       fontWeight: FontWeight.w400,
-      color: MyColors.white.withOpacity(0.9),
+      color: colors.white.withOpacity(0.9),
     );
 
     TextStyle sectionTitleStyle = GoogleFonts.roboto(
       fontSize: titleSize * 0.9,
       fontWeight: FontWeight.w500,
-      color: MyColors.white,
+      color: colors.white,
     );
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           if (viewModel.isLoading)
             Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(colors.white),
               ),
             )
           else
@@ -117,7 +119,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: MyColors.red,
+                                  color: colors.red,
                                   width: 2,
                                 ),
                               ),
@@ -132,19 +134,6 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                                             as ImageProvider,
                               ),
                             ),
-                            Container(
-                              padding:
-                                  EdgeInsets.all(Screen.max(context) * 0.01),
-                              decoration: BoxDecoration(
-                                color: MyColors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.edit,
-                                size: iconSize,
-                                color: MyColors.white,
-                              ),
-                            ),
                           ],
                         ),
                         SizedBox(height: Screen.height(context) * 0.02),
@@ -157,7 +146,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                         Container(
                           width: Screen.width(context) * 0.3,
                           height: 2,
-                          color: MyColors.red.withOpacity(0.5),
+                          color: colors.red.withOpacity(0.5),
                         ),
                         SizedBox(height: Screen.height(context) * 0.02),
                         Container(
@@ -185,19 +174,19 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                         Icon(
                           Icons.circle,
                           size: 8,
-                          color: MyColors.red,
+                          color: colors.red,
                         ),
                         SizedBox(width: Screen.width(context) * 0.03),
                         Container(
                           width: Screen.width(context) * 0.3,
                           height: 1,
-                          color: MyColors.red.withOpacity(0.3),
+                          color: colors.red.withOpacity(0.3),
                         ),
                         SizedBox(width: Screen.width(context) * 0.03),
                         Icon(
                           FontAwesomeIcons.circle,
                           size: 8,
-                          color: MyColors.red,
+                          color: colors.red,
                         ),
                       ],
                     ),
@@ -211,10 +200,10 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                     ),
                     padding: EdgeInsets.all(Screen.max(context) * 0.025),
                     decoration: BoxDecoration(
-                      color: MyColors.darkLighter,
+                      color: colors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: MyColors.red,
+                        color: colors.red,
                         width: 1,
                       ),
                     ),
@@ -268,10 +257,10 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                     ),
                     padding: EdgeInsets.all(Screen.max(context) * 0.025),
                     decoration: BoxDecoration(
-                      color: MyColors.darkLighter,
+                      color: colors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: MyColors.red,
+                        color: colors.red,
                         width: 1,
                       ),
                     ),
@@ -328,13 +317,15 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     required double iconSize,
     required TextStyle style,
   }) {
+    final colors = AppColors(context);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(
           icon,
           size: iconSize,
-          color: MyColors.red,
+          color: colors.red,
         ),
         SizedBox(width: Screen.width(context) * 0.03),
         Expanded(

@@ -39,7 +39,8 @@ class MyTokens {
   static const String addons = "addons";
   static const String packages = "packages";
 
-  static Future<String> getBusinessType() async {
+  static Future<String> 
+  getBusinessType() async {
     String type;
 
     if (await MyStorage.exists(MyTokens.isBusinessOwner)) {

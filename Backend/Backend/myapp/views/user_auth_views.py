@@ -11,6 +11,7 @@ from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from firebase_admin import messaging
+from datetime import datetime
 from ..models.user_models import User,UserActivity
 
 @api_view(['POST'])
@@ -52,7 +53,7 @@ def account_signup_page(request):
             'city': user.city,
             'gender': user.gender,
         },
-        timestamp=now()
+        timestamp=datetime.now()
     )
 
     if contact_type=='email':
@@ -62,7 +63,8 @@ def account_signup_page(request):
 
     if profile_picture:
             filestorage = FileSystemStorage()
-            file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profile_picture)
+            now = datetime.now().strftime('%Y%m%d_%H%M%S')
+            file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}_{now}.png', profile_picture)
             user.profilePicture = filestorage.url(file_path)   
             user.save(update_fields=["profilePicture"])
     
@@ -151,15 +153,20 @@ def send_otp_email(request):
             return Response({'status': 'error'})
     else:
         return Response({'status': 'error','message': 'Email Already Exists'})
-    
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def forgot_password_page(request):
     contact = request.data.get('email')
     if request.data.get('email'):
         contact = request.data.get('email')
+        if not User.objects.filter(email=contact).exists():
+            return Response({'status': 'error','message': 'This Account Does not Exist'})
     else:
         contact = request.data.get('phone')
+        if not User.objects.filter(email=contact).exists():
+            return Response({'status': 'error','message': 'This Account Does not Exist'})
+        
     otp = rd.randint(1000,9999)
     if str(contact).find('@') != -1:
         user = User.objects.filter(email=contact).first()

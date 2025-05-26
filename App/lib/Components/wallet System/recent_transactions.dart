@@ -29,6 +29,8 @@ class _RecentTransactionsState extends State<RecentTransactions> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
         width: double.infinity,
         margin: EdgeInsets.all(Screen.max(context) * 0.02),
@@ -39,7 +41,7 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                   style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.02,
                       fontWeight: FontWeight.w700,
-                      color: MyColors.white)),
+                      color: colors.white)),
               GestureDetector(
                 onTap: () {
                   context.pushNamedTransition(
@@ -53,14 +55,14 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                       vertical: Screen.max(context) * 0.01,
                       horizontal: Screen.max(context) * 0.02),
                   decoration: BoxDecoration(
-                    color: MyColors.darkLighter,
+                    color: colors.darkLighter,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text("See All",
                       style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w400,
-                          color: MyColors.red)),
+                          color: colors.red)),
                 ),
               ),
             ]),

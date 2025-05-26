@@ -10,6 +10,7 @@ class ProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     // Calculate progress percentage (0.0 to 1.0)
     final progressPercentage = progress.clamp(0, 5) / 5;
+    final colors = AppColors(context);
 
     return Container(
       height: Screen.height(context) * 0.02,
@@ -20,7 +21,7 @@ class ProgressBar extends StatelessWidget {
           // Background of the progress bar
           Container(
             decoration: BoxDecoration(
-              color: MyColors.whiteDarker,
+              color: colors.whiteDarker,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -32,7 +33,7 @@ class ProgressBar extends StatelessWidget {
                 curve: Curves.easeInOut,
                 width: constraints.maxWidth * progressPercentage,
                 decoration: BoxDecoration(
-                  color: MyColors.yellow,
+                  color: colors.yellow,
                   borderRadius: BorderRadius.circular(10),
                 ),
               );

@@ -98,13 +98,14 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+    final colors = AppColors(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Secure Payment'),
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.darkLighter,
+      backgroundColor: colors.darkLighter,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(Screen.width(context) * 0.05),
         child: Column(
@@ -113,7 +114,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
             Text(
               'Payment Amount: \$${_amount!.toStringAsFixed(2)}',
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.bold,
               ),
@@ -122,7 +123,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
             Text(
               'Card Information',
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.bold,
               ),
@@ -174,7 +175,7 @@ class _SecurePaymentScreenState extends State<SecurePaymentScreen> {
               child: Text(
                 'Your payment is secured with 256-bit SSL encryption',
                 style: GoogleFonts.roboto(
-                  color: MyColors.white,
+                  color: colors.white,
                   fontSize: Screen.max(context) * 0.015,
                 ),
               ),

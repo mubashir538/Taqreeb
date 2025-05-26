@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -122,6 +121,8 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
   }
 
   Widget _buildTitle() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.only(bottom: Screen.max(context) * 0.015),
       child: Text(
@@ -129,22 +130,24 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
         style: _buildTextStyle(
           fontSize: 0.025,
           fontWeight: FontWeight.w600,
-          color: MyColors.white,
+          color: colors.white,
         ),
       ),
     );
   }
 
   Widget _buildEditMode() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         TextField(
           controller: _descriptionController,
           maxLines: null,
-          style: _buildTextStyle(color: MyColors.white),
+          style: _buildTextStyle(color: colors.white),
           decoration: InputDecoration(
             hintText: 'Edit description...',
-            hintStyle: GoogleFonts.roboto(color: MyColors.white.withAlpha(153)),
+            hintStyle: GoogleFonts.roboto(color: colors.white.withAlpha(153)),
             border: const OutlineInputBorder(),
           ),
         ),
@@ -158,11 +161,13 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
   }
 
   Widget _buildViewMode() {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: () => setState(() => _isToggled = !_isToggled),
       child: Container(
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         padding: EdgeInsets.all(Screen.max(context) * 0.03),
@@ -173,7 +178,7 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
               widget.listing['Listing']['description'],
               overflow: TextOverflow.ellipsis,
               maxLines: _isToggled ? 6 : 200,
-              style: _buildTextStyle(color: MyColors.white),
+              style: _buildTextStyle(color: colors.white),
               textAlign: TextAlign.justify,
             ),
             SizedBox(height: Screen.height(context) * 0.02),
@@ -190,15 +195,6 @@ class _DescriptionCategoryState extends State<DescriptionCategory> {
     return ColoredButton(
       text: 'Edit',
       onPressed: () => setState(() => _isEditing = true),
-    );
-  }
-
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
-      ),
     );
   }
 }

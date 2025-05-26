@@ -83,6 +83,8 @@ class _ProductBoxState extends State<ProductBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.03,
@@ -90,7 +92,7 @@ class _ProductBoxState extends State<ProductBox> {
       ),
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -150,7 +152,7 @@ class _ProductBoxState extends State<ProductBox> {
                 Text(
                   widget.productPrice,
                   style: GoogleFonts.roboto(
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                     fontSize: Screen.max(context) * 0.022,
                     fontWeight: FontWeight.bold,
                   ),

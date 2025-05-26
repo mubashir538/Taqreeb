@@ -56,11 +56,12 @@ class MembersScreen extends StatelessWidget {
     final avatarRadius = Screen.max(context) * 0.03;
     final textSize = Screen.max(context) * 0.02;
     final padding = Screen.max(context) * 0.02;
+    final colors = AppColors(context);
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
       ),
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
@@ -79,7 +80,7 @@ class MembersScreen extends StatelessWidget {
               member['name'],
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: textSize,
                 fontWeight: FontWeight.w500,
               ),
@@ -94,12 +95,12 @@ class MembersScreen extends StatelessWidget {
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(AppColors colors) {
     return Center(
       child: Text(
         "Failed to load members",
         style: GoogleFonts.roboto(
-          color: MyColors.red,
+          color: colors.red,
           fontSize: 16,
         ),
       ),
@@ -120,8 +121,10 @@ class MembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         children: [
           const Header(heading: 'Group Members'),
@@ -134,7 +137,7 @@ class MembersScreen extends StatelessWidget {
                 }
 
                 if (snapshot.hasError || !snapshot.hasData) {
-                  return _buildErrorState();
+                  return _buildErrorState(colors);
                 }
 
                 return _buildMembersList(snapshot.data!, context);

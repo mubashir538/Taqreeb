@@ -109,9 +109,11 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
+
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -184,6 +186,8 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
   }
 
   Widget _buildImageUploadSection() {
+    final colors = AppColors(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Column(
@@ -249,7 +253,7 @@ class _AddCategoryAddPackageState extends State<AddCategoryAddPackage> {
           ElevatedButton(
             onPressed: _pickImage,
             style: ElevatedButton.styleFrom(
-              backgroundColor: MyColors.red,
+              backgroundColor: colors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

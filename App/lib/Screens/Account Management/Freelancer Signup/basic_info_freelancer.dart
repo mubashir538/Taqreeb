@@ -4,6 +4,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/warning_dialog.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
@@ -112,9 +113,9 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
           arguments: {'type': 'Freelancer'});
     } else {
       context.pushNamedTransition(
-        routeName: '/FreelancerSignup_Description',
-        type: PageTransitionType.rightToLeftWithFade,
-        duration: Duration(milliseconds: 300));
+          routeName: '/FreelancerSignup_Description',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     }
   }
 
@@ -122,9 +123,9 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
     if (await _validateInputs()) {
       await _saveUserData();
       context.pushNamedTransition(
-        routeName: '/FreelancerSignup_Description',
-        type: PageTransitionType.rightToLeftWithFade,
-        duration: Duration(milliseconds: 300));
+          routeName: '/FreelancerSignup_Description',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300));
     }
   }
 
@@ -220,9 +221,10 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -230,10 +232,14 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
               width: Screen.width(context),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: (Screen.max(context) * 0.05) +
-                        UImanagement.headerHeight,
+                  SizedBox(height: UImanagement.headerHeight),
+                  Headersecondary(
+                    heading: "Create A Freelancer Account",
+                    para:
+                        "Earn a Soothing Income by Editing Videos or Pictures of Events",
+                    image: MyImages.businessSignup,
                   ),
+                  SizedBox(height: (Screen.max(context) * 0.05)),
                   _buildInputFields(),
                   _buildDivider(),
                   _buildContinueButton(),
@@ -246,10 +252,6 @@ class _FreelancerSignupBasicInfoState extends State<FreelancerSignupBasicInfo> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: "Create A Freelancer Account",
-              para:
-                  "Earn a Soothing Income by Editing Videos or Pictures of Events",
-              image: MyImages.freelancerSignup,
             ),
           ),
         ],

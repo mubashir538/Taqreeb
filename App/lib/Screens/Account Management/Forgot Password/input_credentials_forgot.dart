@@ -56,13 +56,14 @@ class _ForgotPasswordEmailorPhoneInputState
         _changeHeight(renderbox);
       },
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: forgotPasswordProvider.isLoading
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(colors.white),
               ),
             )
           : Stack(

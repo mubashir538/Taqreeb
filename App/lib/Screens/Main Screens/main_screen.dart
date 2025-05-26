@@ -84,8 +84,10 @@ class _MainScreenState extends State<MainScreen> {
     final currentPageList =
         _isBusinessOwner || _isFreelancer ? _businessPages : _pages;
 
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -103,12 +105,12 @@ class _MainScreenState extends State<MainScreen> {
                     type: PageTransitionType.rightToLeftWithFade,
                     duration: Duration(milliseconds: 300));
               },
-              backgroundColor: MyColors.red,
+              backgroundColor: colors.red,
               shape: const CircleBorder(),
               child: Icon(
                 FontAwesomeIcons.plus,
                 size: Screen.max(context) * 0.03,
-                color: MyColors.white,
+                color: colors.white,
               ),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

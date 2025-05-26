@@ -20,6 +20,8 @@ class BorderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: onPressed,
       child: Container(
@@ -29,7 +31,7 @@ class BorderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: MyColors.red, width: 2),
+          border: Border.all(color: colors.red, width: 2),
         ),
         child: Center(
           child: Text(
@@ -38,7 +40,7 @@ class BorderButton extends StatelessWidget {
                 fontSize:
                     textSize != 0 ? textSize : Screen.max(context) * 0.018,
                 fontWeight: FontWeight.w600,
-                color: MyColors.red),
+                color: colors.red),
           ),
         ),
       ),

@@ -152,15 +152,17 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     FocusNode priceFocus,
     int? index,
   ) {
+    final colors = AppColors(context);
+
     return AlertDialog(
       scrollable: true,
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       title: Text(
         index == null ? 'Add Package' : 'Edit Package',
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.02,
           fontWeight: FontWeight.w600,
-          color: MyColors.yellow,
+          color: colors.yellow,
         ),
       ),
       content: SizedBox(
@@ -250,7 +252,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       margin: EdgeInsets.symmetric(
         horizontal: Screen.width(context) * 0.05,
       ),
-      height: Screen.height(context)*0.2,
+      height: Screen.height(context) * 0.2,
       child: PackageBox(
         packageId: package['id'].toString(),
         imageUrl: package['pictures'].isEmpty
@@ -265,10 +267,12 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   }
 
   Widget _buildNavigationArrow(bool isLeft) {
+    final colors = AppColors(context);
+
     return IconButton(
       icon: Icon(
         isLeft ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.chevronRight,
-        color: MyColors.red,
+        color: colors.red,
         size: Screen.max(context) * 0.04,
       ),
       onPressed: () {
@@ -289,6 +293,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   }
 
   Widget _buildPageIndicator() {
+    final colors = AppColors(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
@@ -302,8 +308,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: _currentPage == index
-                ? MyColors.red
-                : MyColors.white.withOpacity(0.3),
+                ? colors.red
+                : colors.white.withOpacity(0.3),
           ),
         ),
       ),
@@ -312,6 +318,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
   Widget _buildPackageList() {
     if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
+    final colors = AppColors(context);
 
     return Column(
       children: [
@@ -359,7 +366,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                 IconButton(
                   icon: Icon(
                     FontAwesomeIcons.pen,
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                     size: Screen.max(context) * 0.03,
                   ),
                   onPressed: () => _showPackageDialog(index: _currentPage),
@@ -368,7 +375,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                 IconButton(
                   icon: Icon(
                     FontAwesomeIcons.trash,
-                    color: MyColors.red,
+                    color: colors.red,
                     size: Screen.max(context) * 0.03,
                   ),
                   onPressed: () => _handleDeletePackage(_currentPage),
@@ -377,7 +384,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                 IconButton(
                   icon: Icon(
                     FontAwesomeIcons.circlePlus,
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                     size: Screen.max(context) * 0.03,
                   ),
                   onPressed: () => _showPackageDialog(),
@@ -392,6 +399,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   @override
   Widget build(BuildContext context) {
     if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
+
+    final colors = AppColors(context);
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -409,7 +418,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
               style: GoogleFonts.poppins(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
-                color: MyColors.white,
+                color: colors.white,
               ),
             ),
           ),

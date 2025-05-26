@@ -91,8 +91,10 @@ class FreelancerSignupDescriptionState
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: SingleChildScrollView(
         child: SizedBox(
           width: Screen.width(context),
@@ -125,7 +127,7 @@ class FreelancerSignupDescriptionState
                             Text(
                               "${viewModel.charactersLeft.toString()} characters left",
                               style: GoogleFonts.roboto(
-                                color: MyColors.red,
+                                color: colors.red,
                                 fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
                               ),

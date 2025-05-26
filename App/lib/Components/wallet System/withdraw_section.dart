@@ -42,6 +42,8 @@ class _WithDrawSectionState extends State<WithDrawSection> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
         width: double.infinity,
         margin: EdgeInsets.all(Screen.max(context) * 0.02),
@@ -52,7 +54,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
                 style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w700,
-                    color: MyColors.white)),
+                    color: colors.white)),
             SizedBox(
               height: Screen.max(context) * 0.02,
             ),
@@ -60,7 +62,7 @@ class _WithDrawSectionState extends State<WithDrawSection> {
                 width: Screen.width(context) * 0.9,
                 padding: EdgeInsets.all(Screen.max(context) * 0.02),
                 decoration: BoxDecoration(
-                    color: MyColors.darkLighter,
+                    color: colors.darkLighter,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(

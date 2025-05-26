@@ -74,15 +74,17 @@ class _AddCategoryAddAddonsState extends State<AddCategoryAddAddons> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
-
+    final colors = AppColors(context);
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: UImanagement.headerHeight+ Screen.max(context)*0.02),
+                SizedBox(
+                    height:
+                        UImanagement.headerHeight + Screen.max(context) * 0.02),
                 _buildNameField(),
                 _buildPriceField(),
                 _buildPerHeadQuestion(),

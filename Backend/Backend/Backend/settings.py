@@ -188,8 +188,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-AUTH_USER_MODEL = 'myapp.User'
 
+AUTH_USER_MODEL = 'myapp.User'
 
 import os
 from dotenv import load_dotenv

@@ -219,8 +219,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           if (UImanagement.headerHeight > 0)
@@ -268,7 +270,7 @@ class _LoginState extends State<Login> {
                                   style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.013,
                                     fontWeight: FontWeight.w400,
-                                    color: MyColors.red,
+                                    color: colors.red,
                                   ),
                                 ),
                               ),
@@ -318,4 +320,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-

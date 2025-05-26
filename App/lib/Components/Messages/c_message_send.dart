@@ -23,13 +23,14 @@ class SendMessage extends StatelessWidget {
 
   Widget _buildListingPreview(BuildContext context) {
     if (listing == null) return const SizedBox.shrink();
+    final colors = AppColors(context);
 
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -41,7 +42,7 @@ class SendMessage extends StatelessWidget {
             style: GoogleFonts.roboto(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: 8),
@@ -69,7 +70,7 @@ class SendMessage extends StatelessWidget {
               listing!['description'] ?? '',
               style: GoogleFonts.roboto(
                 fontSize: 14,
-                color: MyColors.white.withAlpha(178),
+                color: colors.white.withAlpha(178),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -83,7 +84,7 @@ class SendMessage extends StatelessWidget {
             listing!['type'] ?? '', // Replace with your actual domain
             style: GoogleFonts.roboto(
               fontSize: 12,
-              color: MyColors.yellow,
+              color: colors.yellow,
             ),
           ),
         ],
@@ -93,6 +94,8 @@ class SendMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
       margin: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
@@ -112,7 +115,7 @@ class SendMessage extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
             padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
-              color: MyColors.red,
+              color: colors.red,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30),
                 bottomLeft: Radius.circular(30),
@@ -141,19 +144,19 @@ class SendMessage extends StatelessWidget {
                     style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                   ),
                 if (audioUrl != null)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Icon(Icons.audiotrack, color: MyColors.white),
+                      Icon(Icons.audiotrack, color: colors.white),
                       SizedBox(width: 8),
                       Text(
                         "Voice Note",
                         style: GoogleFonts.roboto(
-                          color: MyColors.white,
+                          color: colors.white,
                           fontSize: Screen.max(context) * 0.015,
                         ),
                       ),

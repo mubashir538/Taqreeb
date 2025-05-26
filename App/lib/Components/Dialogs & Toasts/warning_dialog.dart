@@ -18,19 +18,21 @@ class WarningDialog extends StatelessWidget {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
+          final colors = AppColors(context);
+
           return AlertDialog(
-              backgroundColor: MyColors.dark,
+              backgroundColor: colors.dark,
               title: Text(
                 title,
                 style: GoogleFonts.roboto(
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600),
               ),
               content: Text(
                 message,
                 style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w400),
               ),

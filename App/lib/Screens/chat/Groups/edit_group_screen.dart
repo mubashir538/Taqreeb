@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 
 class EditGroupScreen extends StatefulWidget {
   final String groupId;
@@ -34,12 +35,22 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
   bool _isLoading = true;
   bool _showAddParticipants = false;
   final TextEditingController _searchController = TextEditingController();
+  String _userType = 'user';
 
   @override
   void initState() {
     super.initState();
-    _fetchGroupData();
-    _fetchAvailableUsers();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _getUserType();
+    await _fetchGroupData();
+    await _fetchAvailableUsers();
+  }
+
+  Future<void> _getUserType() async {
+    _userType = await MyTokens.getBusinessType() ;
   }
 
   Future<void> _fetchGroupData() async {
@@ -47,50 +58,91 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
       final groupDoc =
           await _firestore.collection('groups').doc(widget.groupId).get();
 
-      setState(() {
-        _groupNameController.text = groupDoc['groupName'];
-        _adminId = groupDoc['adminId'];
-        _participants = List<String>.from(groupDoc['participants']);
-        _isAdmin = _adminId == widget.currentUserId;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _groupNameController.text = groupDoc['groupName'];
+          _newGroupImageUrl = groupDoc['groupImageUrl'];
+          _adminId = groupDoc['adminId'];
+          _participants = List<String>.from(groupDoc['participants']);
+          _isAdmin = _adminId == widget.currentUserId;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      // Handle error
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   Future<void> _fetchAvailableUsers() async {
     try {
-      final usersSnapshot = await _firestore.collection('users').get();
-      // final currentUserChats = await _getCurrentUserChats();
+      // First get all users the current user has chatted with
+      final chatCollection = _getChatCollection();
+      final userChats = await chatCollection
+          .where('participants', arrayContains: widget.currentUserId)
+          .get();
 
+      // Extract all unique user IDs from chats
+      final Set<String> chatUserIds = {};
+      for (final chat in userChats.docs) {
+        final participants = List<String>.from(chat['participants']);
+        participants.remove(widget.currentUserId);
+        chatUserIds.addAll(participants);
+      }
+
+      // Now fetch user details for these users
+      final usersCollection = _getUsersCollection();
+      final usersSnapshot = await usersCollection
+          .where(FieldPath.documentId, whereIn: chatUserIds.toList())
+          .get();
+
+      // Filter out users already in the group
       setState(() {
         _availableUsers = usersSnapshot.docs
-            .where((doc) =>
-                !_participants.contains(doc.id) &&
-                doc.id != widget.currentUserId)
+            .where((doc) => !_participants.contains(doc.id))
             .map((doc) => {
                   'userId': doc.id,
-                  'name': '${doc['firstName']} ${doc['lastName']}',
+                  'name': _userType == 'user'
+                      ? '${doc['firstName']} ${doc['lastName']}'
+                      : doc['businessName'] ?? 'Unknown',
                   'profilePicture': doc['profilePicture'],
                 })
             .toList();
       });
     } catch (e) {
-      // Handle error
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
-  // Future<List<String>> _getCurrentUserChats() async {
-  //   // Implement logic to get users the current user has chatted with
-  //   return [];
-  // }
+  CollectionReference _getChatCollection() {
+    switch (_userType) {
+      case 'businessowner':
+        return _firestore.collection('BusinessChats');
+      case 'freelancer':
+        return _firestore.collection('FreelancerChats');
+      default:
+        return _firestore.collection('chats');
+    }
+  }
+
+  CollectionReference _getUsersCollection() {
+    switch (_userType) {
+      case 'businessowner':
+        return _firestore.collection('businessUsers');
+      case 'freelancer':
+        return _firestore.collection('freelanceUsers');
+      default:
+        return _firestore.collection('users');
+    }
+  }
 
   Future<void> _pickNewImage() async {
     final pickedFile =
         await _imagePicker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    if (pickedFile != null && mounted) {
       setState(() => _newGroupImage = File(pickedFile.path));
     }
   }
@@ -104,14 +156,16 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
       files: {'image': _newGroupImage!.path},
     );
 
-    if (response['status'] == 'success') {
+    if (response['status'] == 'success' && mounted) {
       setState(() => _newGroupImageUrl = response['path']);
     }
   }
 
   Future<void> _updateGroupInfo() async {
     if (!_isAdmin) return;
-    _uploadNewImage();
+
+    await _uploadNewImage();
+
     try {
       final updateData = {
         'groupName': _groupNameController.text,
@@ -123,14 +177,16 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
           .collection('groups')
           .doc(widget.groupId)
           .update(updateData);
-      Navigator.pop(context, true);
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
     } catch (e) {
       // Handle error
     }
   }
 
   Future<void> _addParticipant(String userId) async {
-    if (!_isAdmin) return;
+    if (!_isAdmin || !mounted) return;
 
     setState(() {
       _participants.add(userId);
@@ -140,7 +196,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
   }
 
   Future<void> _removeParticipant(String userId) async {
-    if (!_isAdmin && userId != widget.currentUserId) return;
+    if ((!_isAdmin && userId != widget.currentUserId) || !mounted) return;
 
     setState(() {
       _participants.remove(userId);
@@ -171,9 +227,11 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
           .collection('messages')
           .get();
 
+      final batch = _firestore.batch();
       for (var doc in messages.docs) {
-        await doc.reference.delete();
+        batch.delete(doc.reference);
       }
+      await batch.commit();
 
       // Then delete the group
       await _firestore.collection('groups').doc(widget.groupId).delete();
@@ -213,7 +271,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
               : null,
         ),
         ..._participants.map((userId) => FutureBuilder<DocumentSnapshot>(
-              future: _firestore.collection('users').doc(userId).get(),
+              future: _getUsersCollection().doc(userId).get(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const SizedBox();
 
@@ -221,9 +279,11 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundImage: NetworkImage(
-                        '${MyApi.baseUrl}${user['profilePicture']}'),
+                        '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}'),
                   ),
-                  title: Text('${user['firstName']} ${user['lastName']}'),
+                  title: Text(_userType == 'user'
+                      ? '${user['firstName']} ${user['lastName']}'
+                      : user['businessName'] ?? 'Unknown'),
                   subtitle: userId == _adminId
                       ? Text('Admin',
                           style: GoogleFonts.roboto(color: Colors.green))
@@ -254,18 +314,21 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
   Widget _buildAddParticipantsPanel() {
     return Column(
       children: [
-        TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            labelText: 'Search users',
-            suffixIcon: IconButton(
-              icon: const Icon(FontAwesomeIcons.xmark),
-              onPressed: () => setState(() => _showAddParticipants = false),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              labelText: 'Search users',
+              suffixIcon: IconButton(
+                icon: const Icon(FontAwesomeIcons.xmark),
+                onPressed: () => setState(() => _showAddParticipants = false),
+              ),
             ),
+            onChanged: (value) {
+              // Implement search filtering if needed
+            },
           ),
-          onChanged: (value) {
-            // Implement search filtering if needed
-          },
         ),
         Expanded(
           child: ListView.builder(
@@ -334,10 +397,13 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _groupNameController,
-              enabled: _isAdmin,
-              decoration: const InputDecoration(labelText: 'Group Name'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _groupNameController,
+                enabled: _isAdmin,
+                decoration: const InputDecoration(labelText: 'Group Name'),
+              ),
             ),
             const SizedBox(height: 20),
             Expanded(child: _buildParticipantList()),

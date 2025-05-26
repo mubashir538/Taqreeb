@@ -72,16 +72,15 @@ class _SettingsState extends State<Settings> {
     final themeProvider =
         Provider.of<ThemeProvider>(context); // Get the ThemeProvider
 
+
     UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
         });
-
+    final MyColors = AppColors(context);
     return Scaffold(
-      backgroundColor: themeProvider.themeMode == ThemeMode.dark
-          ? MyColors.dark
-          : MyColors.white, // Use theme-based colors
+      backgroundColor: MyColors.dark, // Use theme-based colors
       body: Stack(
         children: [
           SingleChildScrollView(

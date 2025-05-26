@@ -18,14 +18,15 @@ class AIPackage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
     TextStyle heading = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.w400,
-        color: MyColors.white);
+        color: colors.white);
     TextStyle body = GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.015,
         fontWeight: FontWeight.w300,
-        color: MyColors.white);
+        color: colors.white);
 
     return Container(
       width: Screen.width(context) * 0.8,
@@ -41,7 +42,7 @@ class AIPackage extends StatelessWidget {
                 spreadRadius: 1,
                 offset: Offset(2, 2))
           ],
-          color: MyColors.darkLighter),
+          color: colors.darkLighter),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -52,12 +53,12 @@ class AIPackage extends StatelessWidget {
                   style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.026,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white)),
+                      color: colors.white)),
               Text(price,
                   style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.026,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white)),
+                      color: colors.white)),
             ],
           ),
           SizedBox(

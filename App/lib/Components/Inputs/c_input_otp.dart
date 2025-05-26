@@ -87,6 +87,8 @@ class _OTPBoxesState extends State<OTPBoxes> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -102,11 +104,11 @@ class _OTPBoxesState extends State<OTPBoxes> {
                 height: Screen.height(context) * 0.07,
                 width: Screen.height(context) * 0.07,
                 decoration: BoxDecoration(
-                  color: MyColors.darkLighter,
+                  color: colors.darkLighter,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: _focusNodes[index].hasFocus
-                        ? MyColors.red
+                        ? colors.red
                         : Colors.transparent,
                     width: 2,
                   ),

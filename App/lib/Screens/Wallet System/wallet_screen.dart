@@ -83,9 +83,11 @@ class _WalletScreenState extends State<WalletScreen> {
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
+        final colors = AppColors(context);
+
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _isLoading

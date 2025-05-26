@@ -89,9 +89,10 @@ class _AddImageState extends State<AddImage> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           Positioned(
@@ -121,12 +122,14 @@ class _AddImageState extends State<AddImage> {
   }
 
   Widget _buildImageUploadButton() {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
       child: Container(
         height: Screen.height(context) * 0.2,
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -150,12 +153,12 @@ class _AddImageState extends State<AddImage> {
                       width: Screen.width(context) * 0.9,
                       padding: EdgeInsets.all(Screen.max(context) * 0.02),
                       decoration: BoxDecoration(
-                        color: MyColors.darkLighter,
+                        color: colors.darkLighter,
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Icon(
                         FontAwesomeIcons.upload,
-                        color: MyColors.white,
+                        color: colors.white,
                         size: Screen.max(context) * 0.03,
                       ),
                     ),

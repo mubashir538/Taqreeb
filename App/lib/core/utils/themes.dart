@@ -1,33 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/utils/color.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppThemes {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    primaryColor: MyColors.red,
-    scaffoldBackgroundColor: MyColors.white,
+    primaryColor:Color(0xff242526), // red
+    scaffoldBackgroundColor: Color(0xffedf2f4), // white
     colorScheme: ColorScheme.light(
-      primary: MyColors.red,
-      secondary: MyColors.yellow,
+      primary: Color(0xffF13F5A), // red
+      secondary: Color(0xffFFC107), // yellow
+      background: Color(0xffedf2f4), // white
+      surface: Color(0xffffffff), // darkLighter in light mode
+      onBackground: Color(0xffffffff), // dark in light mode
+      onSurface: Color(0xff242526), // whiteDarker in light mode
     ),
     textTheme: TextTheme(
-      displayMedium: GoogleFonts.roboto(color: MyColors.dark),
-      displaySmall: GoogleFonts.roboto(color: MyColors.darkLighter),
+      displayMedium: GoogleFonts.roboto(color: Color(0xff18191A)), // dark in light mode
+      displaySmall: GoogleFonts.roboto(color: Color(0xff242526)), // whiteDarker in light mode
     ),
   );
 
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primaryColor: MyColors.darkLighter,
-    scaffoldBackgroundColor: MyColors.dark,
+    primaryColor: Color(0xff1e1e1e), // darkLighter
+    scaffoldBackgroundColor: Color(0xff121212), // dark
     colorScheme: ColorScheme.dark(
-      primary: MyColors.red,
-      secondary: MyColors.yellow,
+      primary: Color(0xffF13F5A), // red
+      secondary: Color(0xffFFC107), // yellow
+      background: Color(0xff121212), // dark
+      surface: Color(0xff2d2d2d), // darkLighter
+      onBackground: Color(0xffedf2f4), // white
+      onSurface: Color(0xffd9d9d9), // whiteDarker
     ),
     textTheme: TextTheme(
-      displayMedium: GoogleFonts.roboto(color: MyColors.white),
-      displaySmall: GoogleFonts.roboto(color: MyColors.whiteDarker),
+      displayMedium: GoogleFonts.roboto(color: Color(0xffedf2f4)), // white
+      displaySmall: GoogleFonts.roboto(color: Color(0xffd9d9d9)), // whiteDarker
     ),
   );
 }

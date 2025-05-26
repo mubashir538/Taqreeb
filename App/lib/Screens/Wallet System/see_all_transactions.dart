@@ -111,9 +111,12 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   @override
   Widget build(BuildContext context) {
+        final colors = AppColors(context);
+
     return Scaffold(
       body: Stack(
         children: [
+          
           SingleChildScrollView(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -140,15 +143,17 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   Widget buildTransactionSection(
       String title, List<Map<String, dynamic>> transactions) {
+        final colors = AppColors(context);
+
     return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: Screen.max(context) * 0.02), 
+          SizedBox(height: Screen.max(context) * 0.02),
           Text(
             title,
             style: GoogleFonts.roboto(
-              color: MyColors.red,
+              color: colors.red,
               fontSize: Screen.max(context) * 0.025,
               fontWeight: FontWeight.w600,
             ),

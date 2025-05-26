@@ -266,12 +266,14 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return PopScope(
       onPopInvokedWithResult: (didPop, result) async {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
         body: Stack(
           children: [
             _buildContent(),
@@ -283,6 +285,8 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Widget _buildContent() {
+    final colors = AppColors(context);
+
     return Stack(
       children: [
         SingleChildScrollView(
@@ -315,7 +319,7 @@ class _CreateEventState extends State<CreateEvent> {
           child: Container(
             width: Screen.width(context),
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: colors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -323,7 +327,7 @@ class _CreateEventState extends State<CreateEvent> {
             ),
             padding: EdgeInsets.all(Screen.max(context) * 0.02),
             child: ColoredButton(
-              text: _isEditMode ? "Edit Event" : "Create Event",
+              text: _isEditMode ? "Done" : "Create Event",
               onPressed: _submitEvent,
             ),
           ),
@@ -345,6 +349,7 @@ class _CreateEventState extends State<CreateEvent> {
         ),
         ResponsiveDropdown(
           focusNode: _formData.typeFocus,
+          selectedOption: _formData.type.text,
           onFieldSubmitted: (_) => _focusNext(_formData.dateFocus),
           items: _isLoading
               ? []

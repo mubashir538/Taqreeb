@@ -36,6 +36,8 @@ class _ProductInfoState extends State<ProductInfo> {
     double max = Screen.width(context) > Screen.height(context)
         ? Screen.width(context)
         : Screen.height(context);
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.only(top: max * 0.04),
       child: Column(
@@ -48,16 +50,15 @@ class _ProductInfoState extends State<ProductInfo> {
                 padding: EdgeInsets.symmetric(horizontal: max * 0.015),
                 child: Text("${widget.rating}",
                     style: GoogleFonts.roboto(
-                        color: MyColors.white,
+                        color: colors.white,
                         fontSize: max * 0.03,
                         fontWeight: FontWeight.w700)),
               ),
               for (int i = 0; i < int.parse(widget.rating.toString()[0]); i++)
-                Icon(Icons.star_rounded,
-                    color: MyColors.red, size: max * 0.025),
+                Icon(Icons.star_rounded, color: colors.red, size: max * 0.025),
               if (widget.rating.toString().length != 1)
                 Icon(Icons.star_half_rounded,
-                    color: MyColors.red, size: max * 0.025),
+                    color: colors.red, size: max * 0.025),
               for (int i = 0;
                   i <
                       (5 -
@@ -66,12 +67,12 @@ class _ProductInfoState extends State<ProductInfo> {
                               : (int.parse(widget.rating.toString()[0]) + 1)));
                   i++)
                 Icon(Icons.star_border_rounded,
-                    color: MyColors.red, size: max * 0.025),
+                    color: colors.red, size: max * 0.025),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: max * 0.015),
                 child: Text("(${formatNumber(widget.reviews)} reviews)",
                     style: GoogleFonts.roboto(
-                        color: MyColors.whiteDarker,
+                        color: colors.whiteDarker,
                         fontSize: max * 0.015,
                         fontWeight: FontWeight.w500)),
               ),

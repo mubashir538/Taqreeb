@@ -41,6 +41,8 @@ class _CategoryReviewState extends State<CategoryReview> {
   }
 
   Widget _buildHeaderRow() {
+    final colors = AppColors(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -49,7 +51,7 @@ class _CategoryReviewState extends State<CategoryReview> {
           style: _buildTextStyle(
             fontSize: Screen.max(context) * 0.025,
             fontWeight: FontWeight.w600,
-            color: MyColors.white,
+            color: colors.white,
           ),
         ),
         TextButton(
@@ -62,7 +64,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             'View All',
             style: _buildTextStyle(
               fontSize: Screen.max(context) * 0.015,
-              color: MyColors.red,
+              color: colors.red,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -80,6 +82,8 @@ class _CategoryReviewState extends State<CategoryReview> {
   }
 
   Widget _buildRatingSummary() {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.02),
       child: Column(
@@ -92,7 +96,7 @@ class _CategoryReviewState extends State<CategoryReview> {
                 style: GoogleFonts.poppins(
                   fontSize: Screen.height(context) * 0.035,
                   fontWeight: FontWeight.w700,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
               SizedBox(width: Screen.width(context) * 0.01),
@@ -103,7 +107,7 @@ class _CategoryReviewState extends State<CategoryReview> {
                   style: GoogleFonts.poppins(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w500,
-                    color: MyColors.white.withOpacity(0.6),
+                    color: colors.white.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -120,7 +124,7 @@ class _CategoryReviewState extends State<CategoryReview> {
                             .toInt()
                     ? FontAwesomeIcons.solidStar
                     : FontAwesomeIcons.star,
-                color: MyColors.yellow,
+                color: colors.yellow,
                 size: Screen.max(context) * 0.02,
               ),
             ),
@@ -130,7 +134,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             '${widget.listing['Listing']['ratingCount']} total reviews',
             style: _buildTextStyle(
               fontSize: Screen.max(context) * 0.015,
-              color: MyColors.white.withOpacity(0.7),
+              color: colors.white.withOpacity(0.7),
             ),
           ),
         ],
@@ -139,6 +143,8 @@ class _CategoryReviewState extends State<CategoryReview> {
   }
 
   Widget _buildStarRatingRow(String star) {
+    final colors = AppColors(context);
+
     final starNumber = int.tryParse(star.replaceAll('★', '')) ?? 5;
 
     // Get the count for this star from reviewData (e.g., s5 for 5★)
@@ -164,7 +170,7 @@ class _CategoryReviewState extends State<CategoryReview> {
               style: _buildTextStyle(
                 fontSize: Screen.max(context) * 0.015,
                 fontWeight: FontWeight.w500,
-                color: MyColors.white,
+                color: colors.white,
               ),
             ),
           ),
@@ -173,8 +179,8 @@ class _CategoryReviewState extends State<CategoryReview> {
             child: LinearProgressIndicator(
               value:
                   totalReviews == 0 || count == 0 ? 0.01 : count / totalReviews,
-              backgroundColor: MyColors.dark.withOpacity(0.3),
-              valueColor: AlwaysStoppedAnimation<Color>(MyColors.yellow),
+              backgroundColor: colors.dark.withOpacity(0.3),
+              valueColor: AlwaysStoppedAnimation<Color>(colors.yellow),
               minHeight: Screen.max(context) * 0.01,
               borderRadius: BorderRadius.circular(4),
             ),
@@ -187,7 +193,7 @@ class _CategoryReviewState extends State<CategoryReview> {
               style: _buildTextStyle(
                 fontSize: Screen.max(context) * 0.015,
                 fontWeight: FontWeight.w500,
-                color: MyColors.white,
+                color: colors.white,
               ),
               textAlign: TextAlign.right,
             ),
@@ -199,10 +205,12 @@ class _CategoryReviewState extends State<CategoryReview> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.dark.withOpacity(0.5),
+        color: colors.dark.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

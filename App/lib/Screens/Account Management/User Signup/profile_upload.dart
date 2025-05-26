@@ -113,7 +113,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
     return await MyApi.postMultipartRequest(
       endpoint: endpoint,
-      token: true,
+      token: _userType == 'Business' || _userType == 'Freelancer' ? true: false,
       body: body,
       files: files,
     );
@@ -211,8 +211,10 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -245,6 +247,8 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
   }
 
   Widget _buildProfileImageSection() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         GestureDetector(
@@ -255,7 +259,7 @@ class _ProfilePictureUploadState extends State<ProfilePictureUpload> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: MyColors.yellow, width: 5),
+                    border: Border.all(color: colors.yellow, width: 5),
                     shape: BoxShape.circle,
                   ),
                   child: ClipOval(

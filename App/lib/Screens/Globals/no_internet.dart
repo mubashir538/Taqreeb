@@ -11,8 +11,10 @@ class NoInternetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -29,13 +31,14 @@ class NoInternetScreen extends StatelessWidget {
                   SizedBox(
                     width: Screen.width(context) * 0.8,
                     height: Screen.height(context) * 0.4,
-                    child: Image.asset(MyImages.noInternet, fit: BoxFit.contain),
+                    child:
+                        Image.asset(MyImages.noInternet, fit: BoxFit.contain),
                   ),
                   SizedBox(height: Screen.max(context) * 0.02),
                   Text(
                     'No Internet Connection',
                     style: GoogleFonts.roboto(
-                        color: MyColors.red,
+                        color: colors.red,
                         fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w600),
                   ),
@@ -44,7 +47,7 @@ class NoInternetScreen extends StatelessWidget {
                     'Oops! Looks like you are not connected to the internet. Please check your internet connection and try again.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.roboto(
-                        color: MyColors.white,
+                        color: colors.white,
                         fontSize: Screen.max(context) * 0.015,
                         fontWeight: FontWeight.w400),
                   ),

@@ -55,6 +55,7 @@ class CalendarViewState extends State<CalendarView> {
   }
 
   Widget _buildDayWidget(DateTime day, DateTime focusedDay) {
+    final colors = AppColors(context);
     final isBooked = _isBooked(day);
     final isSelected = _isSelected(day);
     final isToday = isSameDay(day, DateTime.now());
@@ -62,21 +63,21 @@ class CalendarViewState extends State<CalendarView> {
         day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
 
     Color backgroundColor = Colors.transparent;
-    Color textColor = isWeekend ? MyColors.red : MyColors.white;
+    Color textColor = isWeekend ? colors.red : colors.white;
     Border? border;
 
     if (isToday) {
-      border = Border.all(color: MyColors.red, width: 1.5);
+      border = Border.all(color: colors.red, width: 1.5);
     }
 
     if (isBooked) {
-      backgroundColor = MyColors.red;
-      textColor = MyColors.white;
+      backgroundColor = colors.red;
+      textColor = colors.white;
     }
 
     if (isSelected) {
-      backgroundColor = MyColors.red;
-      textColor = MyColors.white;
+      backgroundColor = colors.red;
+      textColor = colors.white;
     }
 
     return Container(
@@ -101,10 +102,12 @@ class CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: MyColors.dark,
+        color: colors.dark,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -116,7 +119,7 @@ class CalendarViewState extends State<CalendarView> {
             children: [
               IconButton(
                 icon: Icon(FontAwesomeIcons.chevronLeft,
-                    color: MyColors.white, size: 16),
+                    color: colors.white, size: 16),
                 onPressed: () {
                   setState(() {
                     _focusedDay =
@@ -127,14 +130,14 @@ class CalendarViewState extends State<CalendarView> {
               Text(
                 '${_getMonthName(_focusedDay.month)} ${_focusedDay.year}',
                 style: GoogleFonts.poppins(
-                  color: MyColors.white,
+                  color: colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               IconButton(
                 icon: Icon(FontAwesomeIcons.chevronRight,
-                    color: MyColors.white, size: 16),
+                    color: colors.white, size: 16),
                 onPressed: () {
                   setState(() {
                     _focusedDay =
@@ -153,7 +156,7 @@ class CalendarViewState extends State<CalendarView> {
                 .map((day) => Text(
                       day,
                       style: GoogleFonts.poppins(
-                        color: day == 'S' ? MyColors.red : MyColors.white,
+                        color: day == 'S' ? colors.red : colors.white,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -190,13 +193,13 @@ class CalendarViewState extends State<CalendarView> {
                 color: Colors.transparent,
               ),
               selectedDecoration: BoxDecoration(
-                color: MyColors.red,
+                color: colors.red,
                 shape: BoxShape.circle,
               ),
-              defaultTextStyle: GoogleFonts.poppins(color: MyColors.white),
-              weekendTextStyle: GoogleFonts.poppins(color: MyColors.red),
+              defaultTextStyle: GoogleFonts.poppins(color: colors.white),
+              weekendTextStyle: GoogleFonts.poppins(color: colors.red),
               todayTextStyle: GoogleFonts.poppins(
-                color: MyColors.white,
+                color: colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -234,7 +237,7 @@ class CalendarViewState extends State<CalendarView> {
                   width: 12,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: MyColors.red,
+                    color: colors.red,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -242,7 +245,7 @@ class CalendarViewState extends State<CalendarView> {
                 Text(
                   'Selected/Booked dates',
                   style: GoogleFonts.poppins(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: 12,
                   ),
                 ),
@@ -256,14 +259,14 @@ class CalendarViewState extends State<CalendarView> {
                   height: 12,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: MyColors.red),
+                    border: Border.all(color: colors.red),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Today',
                   style: GoogleFonts.poppins(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: 12,
                   ),
                 ),

@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -423,6 +421,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Widget _buildSkeletonLoader() {
+    final colors = AppColors(context);
+
     return ListView.builder(
       itemCount: 5, // Number of skeleton items to show
       padding: EdgeInsets.symmetric(
@@ -431,8 +431,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
       ),
       itemBuilder: (context, index) {
         return Shimmer.fromColors(
-          baseColor: MyColors.ligthDark,
-          highlightColor: MyColors.darkLighter,
+          baseColor: colors.lightDark,
+          highlightColor: colors.darkLighter,
           child: Container(
             margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             padding: EdgeInsets.symmetric(
@@ -441,7 +441,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             ),
             width: Screen.width(context) * 0.9,
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: colors.darkLighter,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -530,9 +530,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     final double max = Screen.max(context);
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           Column(
@@ -569,6 +570,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Widget _buildSearchBar(double max) {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: max * 0.03),
       child: Row(
@@ -595,10 +598,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 child: Container(
                   padding: EdgeInsets.all(max * 0.015),
                   decoration: BoxDecoration(
-                    color: MyColors.red,
+                    color: colors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(FontAwesomeIcons.plus, color: MyColors.white),
+                  child: Icon(FontAwesomeIcons.plus, color: colors.white),
                 ),
               ),
             ),
@@ -608,6 +611,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Widget _buildCreateGroupButton(double max) {
+    final colors = AppColors(context);
+
     return Positioned(
       bottom: Screen.height(context) * 0.05,
       right: Screen.height(context) * 0.03,
@@ -618,7 +623,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: MyColors.dark.withAlpha(51),
+                color: colors.dark.withAlpha(51),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               )
@@ -628,7 +633,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
               topRight: Radius.circular(max * 0.05),
               bottomLeft: Radius.circular(max * 0.05),
             ),
-            color: MyColors.red,
+            color: colors.red,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -638,7 +643,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
               Text(
                 'Create Group',
                 style: GoogleFonts.roboto(
-                  color: MyColors.white,
+                  color: colors.white,
                   fontSize: max * 0.015,
                   fontWeight: FontWeight.w400,
                 ),

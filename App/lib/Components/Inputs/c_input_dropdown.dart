@@ -10,6 +10,7 @@ class ResponsiveDropdown extends StatefulWidget {
   final Function(String) onChanged;
   final Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
+  final String? selectedOption; // Add this parameter
 
   const ResponsiveDropdown({
     super.key,
@@ -18,6 +19,7 @@ class ResponsiveDropdown extends StatefulWidget {
     required this.items,
     required this.labelText,
     required this.onChanged,
+    this.selectedOption, // Initialize it here
   });
 
   @override
@@ -32,6 +34,11 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
   @override
   void initState() {
     super.initState();
+    // Set the initial selectedItem if selectedOption is provided and exists in items
+    if (widget.selectedOption != null &&
+        widget.items.contains(widget.selectedOption)) {
+      selectedItem = widget.selectedOption;
+    }
     _focusNode.addListener(_handleFocusChange);
     if (widget.focusNode != null) {
       widget.focusNode!.addListener(_handleFocusChange);
@@ -56,6 +63,8 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(vertical: Screen.height(context) * 0.01),
@@ -64,33 +73,32 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
         onSaved: (value) => widget.onFieldSubmitted,
         decoration: InputDecoration(
           labelText: widget.labelText,
-          contentPadding:
-              EdgeInsets.all( Screen.max(context) * 0.02),
+          contentPadding: EdgeInsets.all(Screen.max(context) * 0.02),
           labelStyle: GoogleFonts.roboto(
-            color: _isFocused ? MyColors.red : Colors.white.withAlpha(102),
+            color: _isFocused ? colors.red : Colors.white.withAlpha(102),
             fontSize: Screen.width(context) * 0.03,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: MyColors.white),
+            borderSide: BorderSide(color: colors.white),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: MyColors.red),
+            borderSide: BorderSide(color: colors.red),
           ),
           filled: true,
-          fillColor: MyColors.ligthDark,
+          fillColor: colors.lightDark,
         ),
-        dropdownColor: MyColors.darkLighter,
+        dropdownColor: colors.darkLighter,
         style: GoogleFonts.roboto(
-          color: MyColors.white,
+          color: colors.white,
           fontSize: Screen.width(context) * 0.035,
         ),
         value: selectedItem,
         isExpanded: true,
         icon: Icon(
           FontAwesomeIcons.caretDown,
-          color: _isFocused ? MyColors.red : MyColors.white,
+          color: _isFocused ? colors.red : colors.white,
         ),
         items: widget.items.map((item) {
           return DropdownMenuItem<String>(
@@ -99,9 +107,7 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
               children: [
                 Icon(
                   Icons.circle,
-                  color: item == selectedItem
-                      ? MyColors.red
-                      : MyColors.whiteDarker,
+                  color: item == selectedItem ? colors.red : colors.whiteDarker,
                   size: Screen.width(context) * 0.03,
                 ),
                 SizedBox(width: Screen.width(context) * 0.02),

@@ -103,9 +103,10 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -141,11 +142,13 @@ class _AddCategoryMoreDetailsState extends State<AddCategoryMoreDetails> {
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return SizedBox(
       height: Screen.height(context) * 0.5,
       child: Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(colors.white),
         ),
       ),
     );

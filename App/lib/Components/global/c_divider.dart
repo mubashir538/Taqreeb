@@ -8,6 +8,8 @@ class MyDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.01),
@@ -16,7 +18,7 @@ class MyDivider extends StatelessWidget {
         opacity: 0.4,
         child: Divider(
           thickness: thickness,
-          color: MyColors.whiteDarker,
+          color: colors.whiteDarker,
         ),
       ),
     );

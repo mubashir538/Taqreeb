@@ -8,6 +8,7 @@ import 'package:taqreeb/Components/Inputs/c_input_dropdown.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -128,7 +129,7 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: AppColors(context).dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -139,10 +140,12 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(
-                        height: (Screen.height(context) * 0.01) +
-                            UImanagement.headerHeight,
+                      Headersecondary(
+                        heading: 'OTP Verification',
+                        para: 'Unlock exclusive events - sign up now!',
+                        image: MyImages.signup1,
                       ),
+                      SizedBox(height: (Screen.height(context) * 0.01)),
                       _buildFormField(
                         labelText: "Gender",
                         items: genders,
@@ -173,9 +176,6 @@ class _SignupMoreInfoState extends State<SignupMoreInfo> {
             top: 0,
             child: Header(
               key: headerKey,
-              heading: 'OTP Verification',
-              para: 'Unlock exclusive events - sign up now!',
-              image: MyImages.signup1,
             ),
           ),
         ],

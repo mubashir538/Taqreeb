@@ -68,10 +68,12 @@ class _WishlistViewPageState extends State<WishlistViewPage> {
   }
 
   Widget _buildWishlistContent() {
+    final colors = AppColors(context);
+
     if (_wishlistController.isLoading) {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(colors.white),
         ),
       );
     }

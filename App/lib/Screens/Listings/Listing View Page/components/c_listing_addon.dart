@@ -101,19 +101,20 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     final priceController = TextEditingController();
     final headTypeController = TextEditingController();
     bool isPerHead = false;
+    final colors = AppColors(context);
 
     await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            backgroundColor: MyColors.dark,
+            backgroundColor: colors.dark,
             title: Text(
               'Add Add-Ons',
               style: _buildTextStyle(
                 fontSize: 0.02,
                 fontWeight: FontWeight.w600,
-                color: MyColors.yellow,
+                color: colors.yellow,
               ),
             ),
             content: Column(
@@ -295,6 +296,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     if (widget.listing['Addons'].isEmpty && !_isBusinessUser) {
       return const SizedBox.shrink();
     }
+    final colors = AppColors(context);
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -309,7 +311,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
             style: GoogleFonts.poppins(
               fontSize: Screen.max(context) * 0.025,
               fontWeight: FontWeight.w600,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.02),
@@ -349,10 +351,12 @@ class _CategoryAddonsState extends State<CategoryAddons> {
   }
 
   Widget _buildAddonCard(Map<String, dynamic> addon) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.45,
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(Screen.max(context) * 0.015),
@@ -368,7 +372,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                 style: GoogleFonts.poppins(
                   fontSize: Screen.max(context) * 0.018,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -382,7 +386,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
                   style: GoogleFonts.poppins(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.red,
+                    color: colors.red,
                   ),
                 ),
               ),
@@ -407,6 +411,8 @@ class _CategoryAddonsState extends State<CategoryAddons> {
 
   Widget _buildAddonItem(int index) {
     final addon = widget.listing['Addons'][index];
+    final colors = AppColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -414,7 +420,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
           'Add-On ${index + 1}',
           style: _buildTextStyle(
             fontWeight: FontWeight.w500,
-            color: MyColors.yellow,
+            color: colors.yellow,
           ),
         ),
         _buildEditableField(
@@ -445,10 +451,12 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     required VoidCallback onSave,
     required VoidCallback onEdit,
   }) {
+    final colors = AppColors(context);
+
     return isEditing
         ? TextField(
             controller: controller,
-            style: _buildTextStyle(color: MyColors.white),
+            style: _buildTextStyle(color: colors.white),
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               hintStyle: _buildTextStyle(color: Colors.grey),
@@ -456,7 +464,7 @@ class _CategoryAddonsState extends State<CategoryAddons> {
           )
         : Text(
             defaultValue,
-            style: _buildTextStyle(color: MyColors.white),
+            style: _buildTextStyle(color: colors.white),
           );
   }
 

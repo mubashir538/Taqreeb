@@ -46,9 +46,10 @@ class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
     final email = arguments['email'];
     final Map<String, dynamic> response = arguments['response'];
     final viewModel = Provider.of<ForgotPasswordVerifyCodeViewModel>(context);
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -79,7 +80,7 @@ class ForgotPasswordVerifyCodeState extends State<ForgotPasswordVerifyCode> {
                         ? 'Send Code Again'
                         : 'Send Code Again in ${viewModel.formatTime(viewModel.remainingTime)}',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: MediaQuery.of(context).size.width * 0.04,
                       decoration: viewModel.isResendEnabled
                           ? TextDecoration.underline

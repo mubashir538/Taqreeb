@@ -1,52 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/tokens.dart';
 
-class MyColors {
-  static Color red = Color(0xffF13F5A);
-  static Color white = Color(0xffffff);
-  static Color whiteDarker = Color(0xffe5e5e5);
-  static Color dark = Color(0xff121212);
-  static Color darkLighter = Color(0xff1e1e1e);
-  static Color ligthDark = Color(0xff2d2d2d);
-  static Color yellow = Color(0xffFFC107);
-  static Color green = Color(0xff7ae582);
-  static Color redonWhite = Color(0xffedf2f4);
-  static Color yellowonDark = Color(0xffffbe0b);
-
-  static void switchTheme() async {
-    final theme = await MyStorage.getToken(MyTokens.theme) ?? "";
-    if (theme == "Light") {
-      await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
-      MyColors.white = Color(0xffedf2f4);
-      MyColors.whiteDarker = Color(0xffd9d9d9);
-      MyColors.dark = Color(0xff18191A);
-      MyColors.darkLighter = Color(0xff242526);
-      MyColors.yellowonDark = Color(0xffffbe0b);
-    } else {
-      await MyStorage.saveToken(MyTokens.light, MyTokens.theme);
-      MyColors.dark = Color(0xffE0E1DD);
-      MyColors.yellowonDark = Color(0xffef233c);
-      MyColors.darkLighter = Color(0xffffffff);
-      MyColors.white = Color(0xff18191A);
-      MyColors.whiteDarker = Color(0xff242526);
-    }
+class AppColors {
+  final BuildContext context;
+  AppColors(this.context) {
+    // Initialize all colors based on current theme
+    _initializeColors();
   }
 
-  static void getTheme() async {
-    final theme = await MyStorage.getToken(MyTokens.theme) ?? "";
-    if (theme == MyTokens.light) {
-      MyColors.dark = Color(0xffE0E1DD);
-      MyColors.yellowonDark = Color(0xffef233c);
-      MyColors.darkLighter = Color(0xffffffff);
-      MyColors.white = Color(0xff18191A);
-      MyColors.whiteDarker = Color(0xff242526);
-    } else {
-      MyColors.white = Color(0xffedf2f4);
-      MyColors.whiteDarker = Color(0xffd9d9d9);
-      MyColors.dark = Color(0xff18191A);
-      MyColors.darkLighter = Color(0xff242526);
-      MyColors.yellowonDark = Color(0xffffbe0b);
-    }
+  late Color red;
+  late Color white;
+  late Color whiteDarker;
+  late Color dark;
+  late Color darkLighter;
+  late Color lightDark;
+  late Color yellow;
+  late Color green;
+  late Color redonWhite;
+  late Color yellowonDark;
+
+  void _initializeColors() {
+    red = Theme.of(context).colorScheme.primary;
+    white = Theme.of(context).colorScheme.onBackground;
+    whiteDarker = Theme.of(context).colorScheme.onSurface;
+    dark = Theme.of(context).scaffoldBackgroundColor;
+    darkLighter = Theme.of(context).primaryColor;
+    lightDark = Theme.of(context).colorScheme.surface;
+    yellow = Theme.of(context).colorScheme.secondary;
+    green = Color(0xff7ae582);
+    redonWhite = Theme.of(context).colorScheme.onBackground;
+    yellowonDark = Theme.of(context).colorScheme.secondary;
   }
 }

@@ -26,17 +26,18 @@ class ReviewCard extends StatelessWidget {
     double max = Screen.width(context) > Screen.height(context)
         ? Screen.width(context)
         : Screen.height(context);
+    final colors = AppColors(context);
 
     return Container(
       margin:
           EdgeInsets.symmetric(vertical: max * 0.01, horizontal: max * 0.02),
       padding: EdgeInsets.all(max * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(max * 0.01),
         boxShadow: [
           BoxShadow(
-            color: MyColors.dark.withAlpha(25),
+            color: colors.dark.withAlpha(25),
             blurRadius: 5,
             offset: Offset(0, 2),
           ),
@@ -60,7 +61,7 @@ class ReviewCard extends StatelessWidget {
                   Text(
                     name,
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: max * 0.015,
                       fontWeight: FontWeight.w700,
                     ),
@@ -68,7 +69,7 @@ class ReviewCard extends StatelessWidget {
                   Text(
                     days,
                     style: GoogleFonts.roboto(
-                      color: MyColors.whiteDarker,
+                      color: colors.whiteDarker,
                       fontSize: max * 0.013,
                       fontWeight: FontWeight.w500,
                     ),
@@ -81,11 +82,10 @@ class ReviewCard extends StatelessWidget {
           Row(
             children: [
               for (int i = 0; i < int.parse(stars[0]); i++)
-                Icon(Icons.star_rounded,
-                    color: MyColors.red, size: max * 0.025),
+                Icon(Icons.star_rounded, color: colors.red, size: max * 0.025),
               if (stars.length > 1)
                 Icon(Icons.star_half_rounded,
-                    color: MyColors.red, size: max * 0.025),
+                    color: colors.red, size: max * 0.025),
               for (int i = 0;
                   i <
                       (5 -
@@ -94,14 +94,14 @@ class ReviewCard extends StatelessWidget {
                               : (int.parse(stars[0]) + 1)));
                   i++)
                 Icon(Icons.star_border_rounded,
-                    color: MyColors.red, size: max * 0.025),
+                    color: colors.red, size: max * 0.025),
             ],
           ),
           SizedBox(height: max * 0.02),
           Text(
             message,
             style: GoogleFonts.roboto(
-              color: MyColors.white,
+              color: colors.white,
               fontSize: max * 0.015,
               fontWeight: FontWeight.w500,
             ),

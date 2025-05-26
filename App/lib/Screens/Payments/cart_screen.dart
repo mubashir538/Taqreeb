@@ -27,7 +27,6 @@ class _CartScreenState extends State<CartScreen> {
     _loadCart();
   }
 
-
   Future<void> _loadCart() async {
     _token = await MyStorage.getToken(MyTokens.accessToken);
     setState(() {
@@ -66,13 +65,15 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Cart'),
         centerTitle: true,
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.darkLighter,
+      backgroundColor: colors.darkLighter,
       body: FutureBuilder<Cart>(
         future: _cartFuture,
         builder: (context, snapshot) {
@@ -84,7 +85,7 @@ class _CartScreenState extends State<CartScreen> {
             return Center(
               child: Text(
                 'Failed to load cart\n${snapshot.error}',
-                style: GoogleFonts.roboto(color: MyColors.white),
+                style: GoogleFonts.roboto(color: colors.white),
                 textAlign: TextAlign.center,
               ),
             );
@@ -103,7 +104,7 @@ class _CartScreenState extends State<CartScreen> {
                   Text(
                     'Your cart is empty',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: 20,
                     ),
                   ),
@@ -111,7 +112,7 @@ class _CartScreenState extends State<CartScreen> {
                   Text(
                     'Add items to get started',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: 16,
                     ),
                   ),
@@ -137,7 +138,7 @@ class _CartScreenState extends State<CartScreen> {
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: MyColors.dark,
+                  color: colors.dark,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 child: Column(
@@ -148,14 +149,14 @@ class _CartScreenState extends State<CartScreen> {
                         Text(
                           'Total Items',
                           style: GoogleFonts.roboto(
-                            color: MyColors.white,
+                            color: colors.white,
                             fontSize: 16,
                           ),
                         ),
                         Text(
                           cart.totalItems.toString(),
                           style: GoogleFonts.roboto(
-                            color: MyColors.white,
+                            color: colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -169,14 +170,14 @@ class _CartScreenState extends State<CartScreen> {
                         Text(
                           'Total Price',
                           style: GoogleFonts.roboto(
-                            color: MyColors.white,
+                            color: colors.white,
                             fontSize: 18,
                           ),
                         ),
                         Text(
                           '\$${cart.totalPrice.toStringAsFixed(2)}',
                           style: GoogleFonts.roboto(
-                            color: MyColors.yellow,
+                            color: colors.yellow,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -207,9 +208,11 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCartItem(CartItem item) {
+    final colors = AppColors(context);
+
     return Card(
       margin: EdgeInsets.only(bottom: 16),
-      color: MyColors.dark,
+      color: colors.dark,
       child: Padding(
         padding: EdgeInsets.all(12),
         child: Column(
@@ -238,7 +241,7 @@ class _CartScreenState extends State<CartScreen> {
                       Text(
                         item.itemDetails['name'] ?? 'No Name',
                         style: GoogleFonts.roboto(
-                          color: MyColors.white,
+                          color: colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -249,7 +252,7 @@ class _CartScreenState extends State<CartScreen> {
                       Text(
                         _getItemDescription(item),
                         style: GoogleFonts.roboto(
-                          color: MyColors.white,
+                          color: colors.white,
                           fontSize: 14,
                         ),
                         maxLines: 2,
@@ -259,7 +262,7 @@ class _CartScreenState extends State<CartScreen> {
                       Text(
                         '\$${_getItemPrice(item).toStringAsFixed(2)}',
                         style: GoogleFonts.roboto(
-                          color: MyColors.yellow,
+                          color: colors.yellow,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -276,7 +279,7 @@ class _CartScreenState extends State<CartScreen> {
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(FontAwesomeIcons.minus, color: MyColors.white),
+                      icon: Icon(FontAwesomeIcons.minus, color: colors.white),
                       onPressed: item.quantity > 1
                           ? () => _updateQuantity(item.id, item.quantity - 1)
                           : null,
@@ -285,23 +288,23 @@ class _CartScreenState extends State<CartScreen> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       decoration: BoxDecoration(
-                        border: Border.all(color: MyColors.white),
+                        border: Border.all(color: colors.white),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         item.quantity.toString(),
-                        style: GoogleFonts.roboto(color: MyColors.white),
+                        style: GoogleFonts.roboto(color: colors.white),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(FontAwesomeIcons.plus, color: MyColors.white),
+                      icon: Icon(FontAwesomeIcons.plus, color: colors.white),
                       onPressed: () =>
                           _updateQuantity(item.id, item.quantity + 1),
                     ),
                   ],
                 ),
                 IconButton(
-                  icon: Icon(FontAwesomeIcons.trash, color: MyColors.red),
+                  icon: Icon(FontAwesomeIcons.trash, color: colors.red),
                   onPressed: () => _removeItem(item.id),
                 ),
               ],

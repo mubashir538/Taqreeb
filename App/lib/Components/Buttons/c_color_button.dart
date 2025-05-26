@@ -67,10 +67,13 @@ class ColoredButtonState extends State<ColoredButton> {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveColor = widget.buttonColor ?? MyColors.red;
+    final colors = AppColors(context);
+
+    final effectiveColor = widget.buttonColor ?? colors.red;
     final pressedColor = effectiveColor.withAlpha(204);
-    final defaultBorderRadius = widget.borderRadius ?? BorderRadius.circular(10);
-    
+    final defaultBorderRadius =
+        widget.borderRadius ?? BorderRadius.circular(10);
+
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: _handleTapUp,
@@ -90,7 +93,7 @@ class ColoredButtonState extends State<ColoredButton> {
               ? (_isPressed ? pressedColor : effectiveColor)
               : null,
           gradient: widget.gradient != null
-              ? (_isPressed 
+              ? (_isPressed
                   ? LinearGradient(
                       colors: [
                         pressedColor.withOpacity(0.8),
@@ -119,7 +122,7 @@ class ColoredButtonState extends State<ColoredButton> {
                 Icon(
                   widget.icon,
                   size: widget.iconSize ?? Screen.max(context) * 0.022,
-                  color: widget.iconColor ?? MyColors.redonWhite,
+                  color: widget.iconColor ?? colors.redonWhite,
                 ),
                 SizedBox(width: widget.gapBetweenIconAndText),
               ],
@@ -130,7 +133,7 @@ class ColoredButtonState extends State<ColoredButton> {
                       ? Screen.max(context) * 0.018
                       : widget.textSize,
                   fontWeight: FontWeight.w500,
-                  color: MyColors.redonWhite,
+                  color: colors.redonWhite,
                 ),
               ),
             ],

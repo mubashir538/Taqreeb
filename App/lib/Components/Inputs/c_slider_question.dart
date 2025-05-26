@@ -42,6 +42,8 @@ class _SliderQuestionState extends State<SliderQuestion> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       child: Column(
@@ -53,7 +55,7 @@ class _SliderQuestionState extends State<SliderQuestion> {
             child: Text(
               widget.question,
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: Screen.max(context) * 0.018,
               ),
             ),
@@ -63,7 +65,7 @@ class _SliderQuestionState extends State<SliderQuestion> {
             children: [
               IconButton(
                 onPressed: () => _updateValue(-50000),
-                icon: Icon(FontAwesomeIcons.minus, color: MyColors.red),
+                icon: Icon(FontAwesomeIcons.minus, color: colors.red),
               ),
               Expanded(
                 child: Slider(
@@ -78,13 +80,13 @@ class _SliderQuestionState extends State<SliderQuestion> {
                           (newValue / 10).round() * 10.toDouble();
                     });
                   },
-                  activeColor: MyColors.red,
-                  inactiveColor: MyColors.whiteDarker,
+                  activeColor: colors.red,
+                  inactiveColor: colors.whiteDarker,
                 ),
               ),
               IconButton(
                 onPressed: () => _updateValue(50000),
-                icon: Icon(FontAwesomeIcons.plus, color: MyColors.red),
+                icon: Icon(FontAwesomeIcons.plus, color: colors.red),
               ),
             ],
           ),

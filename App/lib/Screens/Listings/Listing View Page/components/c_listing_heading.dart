@@ -32,7 +32,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   late final TextEditingController _locationController;
   bool _isEditingName = false;
   bool _isEditingLocation = false;
-  Color _wishlistColor = MyColors.white;
+Color _wishlistColor = Color(0xFFFFFFFF);
   IconData _wishlistIcon = FontAwesomeIcons.heart;
   bool _isBusinessUser = false;
   Map<String, dynamic> events = {};
@@ -77,19 +77,23 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Future<void> _showEventSelectionDialog() async {
+    final colors = AppColors(context);
+
     await showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       builder: (context) => _buildEventSelectionDialog(),
     );
   }
 
   Widget _buildEventSelectionDialog() {
+    final colors = AppColors(context);
+
     final maxDimension = Screen.max(context);
     return Container(
       padding: EdgeInsets.all(maxDimension * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.dark,
+        color: colors.dark,
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(maxDimension * 0.05)),
       ),
@@ -101,7 +105,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
             style: _buildTextStyle(
                 fontSize: 0.025,
                 fontWeight: FontWeight.w500,
-                color: MyColors.white),
+                color: colors.white),
           ),
           SizedBox(height: maxDimension * 0.02),
           Expanded(
@@ -118,23 +122,25 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildEventItem(int index, double maxDimension) {
+    final colors = AppColors(context);
+
     final event = events['Event'][index];
     return Container(
       margin: EdgeInsets.only(bottom: maxDimension * 0.02),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(width: 1, color: MyColors.red),
-        color: MyColors.darkLighter,
+        border: Border.all(width: 1, color: colors.red),
+        color: colors.darkLighter,
       ),
       child: ExpansionTile(
         collapsedShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: MyColors.red,
-        collapsedBackgroundColor: MyColors.darkLighter,
+        backgroundColor: colors.red,
+        collapsedBackgroundColor: colors.darkLighter,
         title: Text(
           event['name'],
-          style: _buildTextStyle(fontSize: 0.015, color: MyColors.white),
+          style: _buildTextStyle(fontSize: 0.015, color: colors.white),
         ),
         children: (event['functions'] as List).map<Widget>((function) {
           return ListTile(
@@ -142,7 +148,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
               function['name'],
               style: _buildTextStyle(
                 fontSize: 0.015,
-                color: MyColors.whiteDarker,
+                color: colors.whiteDarker,
               ),
             ),
             onTap: () => _addToBookCart(function),
@@ -226,9 +232,11 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Future<void> _toggleWishlist() async {
+    final colors = AppColors(context);
+
     try {
       final endpoint =
-          _wishlistColor == MyColors.red ? 'wishlist/delete' : 'wishlist/add';
+          _wishlistColor == colors.red ? 'wishlist/delete' : 'wishlist/add';
       final response = await MyApi.postRequest(
         endpoint: endpoint,
         body: {
@@ -245,16 +253,16 @@ class _UpperHeadingsState extends State<UpperHeadings> {
 
       if (response['status'] == 'success') {
         setState(() {
-          if (_wishlistColor == MyColors.red) {
-            _wishlistColor = MyColors.white;
+          if (_wishlistColor == colors.red) {
+            _wishlistColor = colors.white;
             _wishlistIcon = FontAwesomeIcons.heart;
           } else {
             _wishlistIcon = FontAwesomeIcons.solidHeart;
-            _wishlistColor = MyColors.red;
+            _wishlistColor = colors.red;
           }
         });
         MyScaffold(
-          text: _wishlistColor == MyColors.red
+          text: _wishlistColor == colors.red
               ? 'Added to wishlist!'
               : 'Removed from wishlist!',
         ).show(context);
@@ -347,17 +355,19 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildNameEditField() {
+    final colors = AppColors(context);
+
     return Flexible(
       child: Column(
         children: [
           TextField(
             controller: _nameController,
-            style: _buildTextStyle(fontSize: 0.025, color: MyColors.white),
+            style: _buildTextStyle(fontSize: 0.025, color: colors.white),
             decoration: InputDecoration(
               hintText: 'Edit name',
               hintStyle: _buildTextStyle(
                 fontSize: 0.015,
-                color: MyColors.white.withAlpha(153),
+                color: colors.white.withAlpha(153),
               ),
               border: const OutlineInputBorder(),
             ),
@@ -372,6 +382,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildNameDisplay() {
+    final colors = AppColors(context);
+
     return Flexible(
       child: Column(
         children: [
@@ -387,7 +399,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                   style: _buildTextStyle(
                       fontSize: 0.02,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white),
+                      color: colors.white),
                 ),
               ),
               _isBusinessUser ? _buildDeleteButton() : _buildUserActions(),
@@ -404,6 +416,8 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildUserActions() {
+    final colors = AppColors(context);
+
     return Row(
       children: [
         GestureDetector(
@@ -419,7 +433,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
           onTap: _showEventSelectionDialog,
           child: Icon(
             FontAwesomeIcons.plus,
-            color: MyColors.yellow,
+            color: colors.yellow,
             size: Screen.max(context) * 0.03,
           ),
         ),
@@ -468,15 +482,17 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildLocationEditField() {
+    final colors = AppColors(context);
+
     return Flexible(
       child: Column(
         children: [
           TextField(
             controller: _locationController,
-            style: _buildTextStyle(color: MyColors.white),
+            style: _buildTextStyle(color: colors.white),
             decoration: InputDecoration(
               hintText: 'Edit location...',
-              hintStyle: _buildTextStyle(color: MyColors.white.withAlpha(153)),
+              hintStyle: _buildTextStyle(color: colors.white.withAlpha(153)),
               border: const OutlineInputBorder(),
             ),
           ),
@@ -504,18 +520,20 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildRatingDisplay() {
+    final colors = AppColors(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: MyColors.ligthDark,
+        color: colors.lightDark,
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Row(
         children: [
-          Icon(Icons.star, color: MyColors.yellow),
+          Icon(Icons.star, color: colors.yellow),
           Text(
             "${widget.listing['Listing']['rating']}",
-            style: _buildTextStyle(color: MyColors.white),
+            style: _buildTextStyle(color: colors.white),
           ),
         ],
       ),
@@ -523,11 +541,13 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   Widget _buildLocationDisplay() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Row(
           children: [
-            Icon(FontAwesomeIcons.locationDot, color: MyColors.white),
+            Icon(FontAwesomeIcons.locationDot, color: colors.white),
             SizedBox(width: Screen.width(context) * 0.01),
             SizedBox(
               width: Screen.width(context) * 0.6,
@@ -536,7 +556,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 3,
                 softWrap: true,
-                style: _buildTextStyle(color: MyColors.white),
+                style: _buildTextStyle(color: colors.white),
               ),
             ),
           ],
@@ -553,6 +573,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
   }
 
   void _checkWishList() async {
+
     final response = await MyApi.getRequest(
         refresh: true,
         endpoint: 'wishlist/check',
@@ -567,7 +588,7 @@ class _UpperHeadingsState extends State<UpperHeadings> {
     if (response['status'] == 'success') {
       if (response['is_in_wishlist']) {
         setState(() {
-          _wishlistColor = MyColors.red;
+          _wishlistColor = Color(0xffF13F5A);
           _wishlistIcon = FontAwesomeIcons.solidHeart;
         });
       }

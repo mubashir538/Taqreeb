@@ -73,10 +73,11 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
     final item = booking['listing'] ?? booking['product'] ?? booking['package'];
     final hasReviewed = booking['has_reviewed'] ?? false;
     final isCompleted = status == 'completed';
+    final colors = AppColors(context);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: MyColors.darkLighter,
+      color: colors.darkLighter,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -85,7 +86,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
             Text(
               item['name'],
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -93,11 +94,11 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
             const SizedBox(height: 8),
             Text(
               'Date: ${DateFormat('MMM dd, yyyy').format(bookingDate)}',
-              style: GoogleFonts.roboto(color: MyColors.white),
+              style: GoogleFonts.roboto(color: colors.white),
             ),
             Text(
               'Time: ${DateFormat('hh:mm a').format(bookingDate)}',
-              style: GoogleFonts.roboto(color: MyColors.white),
+              style: GoogleFonts.roboto(color: colors.white),
             ),
             Text(
               'Status: ${status.toUpperCase()}',
@@ -118,7 +119,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'How was your experience?',
-                    style: GoogleFonts.roboto(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: colors.white),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -130,7 +131,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                                   index < _selectedRatings[booking['id']]!
                               ? Icons.star
                               : Icons.star_border,
-                          color: MyColors.yellow,
+                          color: colors.yellow,
                         ),
                         onPressed: () => _setRating(booking['id'], index + 1),
                       );
@@ -156,7 +157,7 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
                 padding: EdgeInsets.only(top: 8),
                 child: Text(
                   'Thanks for your review!',
-                  style: GoogleFonts.roboto(color: MyColors.yellow),
+                  style: GoogleFonts.roboto(color: colors.yellow),
                 ),
               ),
           ],
@@ -166,42 +167,46 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
   }
 
   Color _getStatusColor(String status) {
+    final colors = AppColors(context);
+
     switch (status) {
       case 'confirmed':
-        return MyColors.green;
+        return colors.green;
       case 'cancelled':
-        return MyColors.red;
+        return colors.red;
       case 'pending':
-        return MyColors.yellow;
+        return colors.yellow;
       default:
-        return MyColors.white;
+        return colors.white;
     }
   }
 
   void _showCancelDialog(String bookingId) {
+    final colors = AppColors(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
         title: Text(
           'Cancel Booking',
-          style: GoogleFonts.roboto(color: MyColors.white),
+          style: GoogleFonts.roboto(color: colors.white),
         ),
         content: Text(
           'Are you sure you want to cancel this booking?',
-          style: GoogleFonts.roboto(color: MyColors.white),
+          style: GoogleFonts.roboto(color: colors.white),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('No', style: GoogleFonts.roboto(color: MyColors.white)),
+            child: Text('No', style: GoogleFonts.roboto(color: colors.white)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _cancelBooking(bookingId);
             },
-            child: Text('Yes', style: GoogleFonts.roboto(color: MyColors.red)),
+            child: Text('Yes', style: GoogleFonts.roboto(color: colors.red)),
           ),
         ],
       ),
@@ -210,19 +215,21 @@ class _UserBookingsScreenState extends State<UserBookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Bookings'),
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _bookings.isEmpty
               ? Center(
                   child: Text(
                     'No bookings found',
-                    style: GoogleFonts.roboto(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: colors.white),
                   ),
                 )
               : RefreshIndicator(

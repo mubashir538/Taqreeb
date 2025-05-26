@@ -76,6 +76,7 @@ class BusinessInfoEditViewModel with ChangeNotifier {
           if (data['businessInfo'] != null) {
             businessData.updateBusinessInfo(
               data['businessInfo'],
+              data['listingCount'],
               imageUrl: data['businessInfo']["profilepic"] != null
                   ? "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${data['businessInfo']["profilepic"]}"
                   : null,
@@ -164,6 +165,7 @@ class BusinessInfoEditViewModel with ChangeNotifier {
             'businessName': _nameController.text,
             'Description': _descriptionController.text,
           },
+          businessData.listings,
           imageUrl: newImageUrl,
         );
 

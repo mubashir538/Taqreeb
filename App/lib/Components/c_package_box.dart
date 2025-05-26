@@ -23,6 +23,8 @@ class PackageBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(10),
@@ -30,9 +32,9 @@ class PackageBox extends StatelessWidget {
         width: Screen.width(context) * 0.9,
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         decoration: BoxDecoration(
-          color: MyColors.ligthDark,
+          color: colors.lightDark,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: MyColors.whiteDarker, width: 0.5),
+          border: Border.all(color: colors.whiteDarker, width: 0.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black,
@@ -76,7 +78,7 @@ class PackageBox extends StatelessWidget {
                         style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.02,
                           fontWeight: FontWeight.w600,
-                          color: MyColors.white,
+                          color: colors.white,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -89,7 +91,7 @@ class PackageBox extends StatelessWidget {
                         style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w400,
-                          color: MyColors.whiteDarker,
+                          color: colors.whiteDarker,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -102,7 +104,7 @@ class PackageBox extends StatelessWidget {
                         style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.02,
                           fontWeight: FontWeight.w600,
-                          color: MyColors.red,
+                          color: colors.red,
                         ),
                       ),
                     ],

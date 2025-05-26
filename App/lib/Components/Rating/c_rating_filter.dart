@@ -71,6 +71,8 @@ class FilterButton extends StatelessWidget {
     double max = Screen.width(context) > Screen.height(context)
         ? Screen.width(context)
         : Screen.height(context);
+    final colors = AppColors(context);
+
     return Container(
       padding:
           EdgeInsets.symmetric(horizontal: max * 0.01, vertical: max * 0.007),
@@ -78,10 +80,10 @@ class FilterButton extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: max * 0.01),
       decoration: BoxDecoration(
         border: Border.all(
-            color: selected ? Colors.transparent : MyColors.whiteDarker,
+            color: selected ? Colors.transparent : colors.whiteDarker,
             width: 1),
         borderRadius: BorderRadius.circular(10),
-        color: selected ? MyColors.darkLighter : Colors.transparent,
+        color: selected ? colors.darkLighter : Colors.transparent,
       ),
       child: Center(
         child: Text(
@@ -89,7 +91,7 @@ class FilterButton extends StatelessWidget {
           style: GoogleFonts.roboto(
               fontSize: max * 0.015,
               fontWeight: FontWeight.w400,
-              color: selected ? MyColors.white : MyColors.whiteDarker),
+              color: selected ? colors.white : colors.whiteDarker),
         ),
       ),
     );

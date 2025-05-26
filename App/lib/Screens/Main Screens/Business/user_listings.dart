@@ -49,9 +49,11 @@ class YourListingsScreen extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     final controller = context.watch<YourListingsController>();
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildMainContent(context, controller),
@@ -63,10 +65,12 @@ class YourListingsScreen extends StatelessWidget {
 
   Widget _buildMainContent(
       BuildContext context, YourListingsController controller) {
+    final colors = AppColors(context);
+
     if (controller.isLoading) {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(MyColors.white),
+          valueColor: AlwaysStoppedAnimation(colors.white),
         ),
       );
     }
@@ -93,17 +97,21 @@ class YourListingsScreen extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
+    final colors = AppColors(context);
+
     return Text(
       "Your Listings",
       style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.025,
         fontWeight: FontWeight.w700,
-        color: MyColors.yellow,
+        color: colors.yellow,
       ),
     );
   }
 
   Widget _buildNoListingsContent(BuildContext context) {
+    final colors = AppColors(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +122,7 @@ class YourListingsScreen extends StatelessWidget {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w400,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.03),
@@ -135,6 +143,8 @@ class YourListingsScreen extends StatelessWidget {
   }
 
   Widget _buildNoBusinessContent(BuildContext context) {
+    final colors = AppColors(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +155,7 @@ class YourListingsScreen extends StatelessWidget {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w400,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.03),

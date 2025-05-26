@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from myapp.firebase_db import db
 from ..Serializers.auth_serializers import UserSerializer
+from datetime import datetime
 
 
 @api_view(['GET'])
@@ -42,7 +43,8 @@ def get_basic_userinfo(request,id):
 def edit_account_info_page(request):
     userid = request.data.get('userid')
     first_name = request.data.get('firstName')
-    profile_picture = request.data.get('profilePicture')
+    profile_picture = request.FILES.get('profilePicture')
+    print(profile_picture)
     gender = request.data.get('gender')
     city = request.data.get('city')
     lastname = request.data.get('lastName')
@@ -53,12 +55,15 @@ def edit_account_info_page(request):
     user.city = city
     if profile_picture:
         relative_path = user.profilePicture.replace('/media/', '', 1) 
+        print(relative_path)
         full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        print(full_path)
         full_path = full_path.replace('\\', '/')
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
-        file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profile_picture)
+        now = datetime.now().strftime('%Y%m%d_%H%M%S')
+        file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}_{now}.png', profile_picture)
         user.profilePicture = filestorage.url(file_path)   
         user.save(update_fields=["profilePicture",'firstName','lastName','gender','city'])
     else:
@@ -73,7 +78,7 @@ def edit_account_info_page(request):
         'gender': user.gender,
         'city': user.city
     },
-    timestamp=now()
+    timestamp= datetime.now()
 )
 
     firebase_user_data = {

@@ -11,7 +11,6 @@ import 'package:taqreeb/Screens/chat/Groups/member_info_group.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
-import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -131,7 +130,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       ),
     ).then((updated) {
       if (updated == true) {
-        _fetchGroupData(); // Refresh group data if updated
+        _fetchGroupData();
       }
     });
   }
@@ -188,6 +187,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
       if (pickedFile == null || !mounted) return;
 
+      final colors = AppColors(context);
+
       // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -197,11 +198,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               const SizedBox(width: 16),
               Text(
                 'Uploading image...',
-                style: GoogleFonts.roboto(color: MyColors.white),
+                style: GoogleFonts.roboto(color: colors.white),
               ),
             ],
           ),
-          backgroundColor: MyColors.darkLighter,
+          backgroundColor: colors.darkLighter,
         ),
       );
 
@@ -272,6 +273,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     final messageText = doc['message'];
     final timestamp = doc['timestamp'] as Timestamp?;
 
+    final colors = AppColors(context);
+
     return FutureBuilder<DocumentSnapshot>(
       future: _firestore.collection('users').doc(doc['senderId']).get(),
       builder: (context, snapshot) {
@@ -319,7 +322,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       Text(
                         senderName,
                         style: GoogleFonts.roboto(
-                          color: MyColors.yellow,
+                          color: colors.yellow,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),
@@ -330,8 +333,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color:
-                              isSentByMe ? MyColors.red : MyColors.darkLighter,
+                          color: isSentByMe ? colors.red : colors.darkLighter,
                           borderRadius: BorderRadius.only(
                             topLeft: isSentByMe
                                 ? const Radius.circular(16)
@@ -345,7 +347,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         ),
                         child: Text(
                           messageText,
-                          style: GoogleFonts.roboto(color: MyColors.white),
+                          style: GoogleFonts.roboto(color: colors.white),
                         ),
                       ),
                     if (messageType == 'image')
@@ -383,7 +385,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: MyColors.red.withAlpha(100),
+                                color: colors.red.withAlpha(100),
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -397,22 +399,22 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                               placeholder: (context, url) => Container(
                                 height: 200,
                                 width: 250,
-                                color: MyColors.darkLighter,
+                                color: colors.darkLighter,
                                 child: Center(
                                   child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                        MyColors.red),
+                                        colors.red),
                                   ),
                                 ),
                               ),
                               errorWidget: (context, url, error) => Container(
                                 height: 200,
                                 width: 250,
-                                color: MyColors.darkLighter,
+                                color: colors.darkLighter,
                                 child: Center(
                                   child: Icon(
                                     FontAwesomeIcons.exclamation,
-                                    color: MyColors.red,
+                                    color: colors.red,
                                   ),
                                 ),
                               ),
@@ -426,7 +428,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         child: Text(
                           _formatTimestamp(timestamp),
                           style: GoogleFonts.roboto(
-                            color: MyColors.whiteDarker,
+                            color: colors.whiteDarker,
                             fontSize: 12,
                           ),
                         ),
@@ -442,20 +444,22 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   }
 
   Widget _buildChatInput() {
+    final colors = AppColors(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      color: MyColors.ligthDark,
+      color: colors.lightDark,
       child: Row(
         children: [
           IconButton(
-            icon: Icon(FontAwesomeIcons.image, color: MyColors.yellow),
+            icon: Icon(FontAwesomeIcons.image, color: colors.yellow),
             onPressed: _sendImage,
             tooltip: 'Send Image',
           ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: MyColors.darkLighter,
+                color: colors.darkLighter,
                 borderRadius: BorderRadius.circular(30),
               ),
               child: Row(
@@ -464,11 +468,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _messageController,
-                      style: GoogleFonts.roboto(color: MyColors.white),
+                      style: GoogleFonts.roboto(color: colors.white),
                       decoration: InputDecoration(
                         hintText: "Type a message...",
                         hintStyle:
-                            GoogleFonts.roboto(color: MyColors.whiteDarker),
+                            GoogleFonts.roboto(color: colors.whiteDarker),
                         border: InputBorder.none,
                       ),
                       onSubmitted: _sendMessage,
@@ -482,10 +486,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: MyColors.red,
+              color: colors.red,
             ),
             child: IconButton(
-              icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+              icon: Icon(FontAwesomeIcons.paperPlane, color: colors.white),
               onPressed: () {
                 if (_messageController.text.trim().isNotEmpty) {
                   _sendMessage(_messageController.text);
@@ -500,10 +504,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   }
 
   Widget _buildGroupHeader() {
+    final colors = AppColors(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: MyColors.red,
+        color: colors.red,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -525,12 +531,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             },
             child: CircleAvatar(
               radius: 24,
-              backgroundColor: MyColors.white,
+              backgroundColor: colors.white,
               child: CircleAvatar(
                 radius: 22,
                 backgroundImage: NetworkImage(
                   _groupImage != null
-                      ? '${MyApi.baseUrl}${_groupImage!}'
+                      ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_groupImage!}'
                       : 'https://via.placeholder.com/150',
                 ),
               ),
@@ -544,7 +550,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 Text(
                   _groupName ?? 'Group',
                   style: GoogleFonts.roboto(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -555,7 +561,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   Text(
                     'Admin',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white.withAlpha(200),
+                      color: colors.white.withAlpha(200),
                       fontSize: 12,
                     ),
                   ),
@@ -565,7 +571,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           IconButton(
             icon: Icon(
               FontAwesomeIcons.users,
-              color: MyColors.white,
+              color: colors.white,
               size: 20,
             ),
             onPressed: () {
@@ -582,7 +588,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             IconButton(
               icon: Icon(
                 FontAwesomeIcons.gear,
-                color: MyColors.white,
+                color: colors.white,
                 size: 20,
               ),
               onPressed: _navigateToEditGroup,
@@ -594,6 +600,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   }
 
   Widget _buildMessageStream() {
+    final colors = AppColors(context);
+
     return Expanded(
       child: Stack(
         children: [
@@ -608,7 +616,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               if (!snapshot.hasData) {
                 return Center(
                   child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.red)),
+                      valueColor: AlwaysStoppedAnimation<Color>(colors.red)),
                 );
               }
 
@@ -629,12 +637,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               right: 20,
               child: FloatingActionButton(
                 mini: true,
-                backgroundColor: MyColors.red,
+                backgroundColor: colors.red,
+                onPressed: _scrollToBottom,
                 child: Icon(
                   Icons.arrow_downward,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
-                onPressed: _scrollToBottom,
               ),
             ),
         ],
@@ -644,23 +652,25 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
         body: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
+            valueColor: AlwaysStoppedAnimation<Color>(colors.red),
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: SafeArea(
         child: Column(
           children: [
-            const Header(),
+             Header(),
             _buildGroupHeader(),
             _buildMessageStream(),
             _buildChatInput(),

@@ -138,9 +138,11 @@ class _MyTextBoxState extends State<MyTextBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     final defaultBorderColor = widget.borderColor ?? Colors.transparent;
-    final focusedBorderColor = widget.focusedBorderColor ?? MyColors.red;
-    final errorBorderColor = widget.errorBorderColor ?? MyColors.red;
+    final focusedBorderColor = widget.focusedBorderColor ?? colors.red;
+    final errorBorderColor = widget.errorBorderColor ?? colors.red;
     final currentBorderColor = _isFocused
         ? focusedBorderColor
         : (widget.errorText != null && widget.errorText!.isNotEmpty
@@ -155,7 +157,7 @@ class _MyTextBoxState extends State<MyTextBox> {
           height: Screen.height(context) * 0.06,
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: widget.backgroundColor ?? MyColors.ligthDark,
+            color: widget.backgroundColor ?? colors.lightDark,
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 10),
             border: Border.all(
               color: currentBorderColor,
@@ -183,9 +185,9 @@ class _MyTextBoxState extends State<MyTextBox> {
                     child: Icon(
                       widget.prefixIcon,
                       color: _isFocused
-                          ? MyColors.red
+                          ? colors.red
                           : widget.prefixIconColor ??
-                              MyColors.white.withAlpha(153),
+                              colors.white.withAlpha(153),
                       size:
                           widget.prefixIconSize ?? Screen.max(context) * 0.025,
                     ),
@@ -233,14 +235,14 @@ class _MyTextBoxState extends State<MyTextBox> {
                     style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.018,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: widget.hintStyle ??
                           GoogleFonts.roboto(
-                            color: widget.hintColor ??
-                                MyColors.white.withAlpha(153),
+                            color:
+                                widget.hintColor ?? colors.white.withAlpha(153),
                             fontSize: Screen.max(context) * 0.015,
                           ),
                       border: InputBorder.none,
@@ -257,8 +259,10 @@ class _MyTextBoxState extends State<MyTextBox> {
                       });
                     },
                     child: Icon(
-                      _isObscured ? FontAwesomeIcons.eyeSlash :FontAwesomeIcons.eyeSlash,
-                      color: MyColors.white.withAlpha(153),
+                      _isObscured
+                          ? FontAwesomeIcons.eyeSlash
+                          : FontAwesomeIcons.eyeSlash,
+                      color: colors.white.withAlpha(153),
                     ),
                   ),
               ],
@@ -284,7 +288,7 @@ class _MyTextBoxState extends State<MyTextBox> {
             child: Text(
               '${_controller.text.length}/${widget.maxLength}',
               style: GoogleFonts.roboto(
-                color: MyColors.white.withAlpha(153),
+                color: colors.white.withAlpha(153),
                 fontSize: Screen.max(context) * 0.012,
               ),
             ),

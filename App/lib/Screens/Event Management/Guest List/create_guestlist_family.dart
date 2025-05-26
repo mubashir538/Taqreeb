@@ -10,6 +10,7 @@ import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:taqreeb/core/services/validations.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
 
@@ -26,8 +27,11 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
   final List<Map<String, String>> _guestList = [];
   final TextEditingController _familyNameController = TextEditingController();
   final TextEditingController _membersController = TextEditingController();
+  final TextEditingController _familyContactController =
+      TextEditingController();
   final FocusNode _familyNameFocus = FocusNode();
   final FocusNode _membersFocus = FocusNode();
+  final FocusNode _familyContactFocus = FocusNode();
 
   bool _isFunction = false;
   int _functionId = 0;
@@ -70,18 +74,33 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
   }
 
   void _addFamily() {
-    if (_familyNameController.text.isEmpty || _membersController.text.isEmpty) {
+    if (_familyNameController.text.isEmpty ||
+        _membersController.text.isEmpty ||
+        _familyContactController.text.isEmpty) {
       MyScaffold(text: 'Please fill all fields').show(context);
       return;
     }
+    if (Validations.validateName(_familyNameController.text) != "Ok") {
+      MyScaffold(text: Validations.validateName(_familyNameController.text))
+          .show(context);
+      return;
+    }
 
+    if (Validations.validateContact(_familyContactController.text) != "Ok") {
+      MyScaffold(
+              text: Validations.validateContact(_familyContactController.text))
+          .show(context);
+      return;
+    }
     setState(() {
       _guestList.add({
         'name': _familyNameController.text,
-        'members': _membersController.text
+        'members': _membersController.text,
+        'contact': _familyContactController.text
       });
       _familyNameController.clear();
       _membersController.clear();
+      _familyContactController.clear();
       _familyNameFocus.requestFocus();
     });
   }
@@ -108,7 +127,8 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
           'fid': _isFunction ? _functionId : 'None',
           'guesttype': 'Family',
           'FamilyName': guest['name'],
-          'member': guest['members']
+          'member': guest['members'],
+          'PersonContact': guest['contact'],
         },
       );
 
@@ -139,8 +159,10 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -189,10 +211,19 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
         MyTextBox(
           prefixIcon: FontAwesomeIcons.peopleGroup,
           focusNode: _membersFocus,
-          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+          onFieldSubmitted: (_) =>
+              FocusScope.of(context).requestFocus(_familyContactFocus),
           hint: 'No. of Members',
           isNum: true,
           valueController: _membersController,
+        ),
+        MyTextBox(
+          prefixIcon: FontAwesomeIcons.peopleGroup,
+          focusNode: _familyContactFocus,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+          hint: 'Family Contact',
+          isNum: true,
+          valueController: _familyContactController,
         ),
       ],
     );
@@ -210,7 +241,8 @@ class _CreateGuestListAddFamilyState extends State<CreateGuestListAddFamily> {
           ondelete: () => _removeFamily(index),
           mywidth: Screen.width(context) * 0.8,
           name: _guestList[index]['name'] ?? '',
-          contact: _guestList[index]['members'] ?? '',
+          members: int.parse(_guestList[index]['members'].toString()),
+          contact: _guestList[index]['contact'] ?? '',
         ),
       ),
     );

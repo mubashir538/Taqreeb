@@ -149,8 +149,10 @@ class _CreateGuestListAddPersonState extends State<CreateGuestListAddPerson> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),

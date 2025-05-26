@@ -109,10 +109,12 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
+        final colors = AppColors(context);
+
         return Container(
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.darkLighter,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
@@ -155,8 +157,10 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -193,9 +197,11 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
       ),
     );
   }
@@ -218,22 +224,23 @@ class _CreateGuestListListState extends State<CreateGuestListList> {
       onpressed: () {},
       ondelete: () => _deleteGuest(index),
       name: guest['name'] ?? '',
-      contact: guest['type'] == "Family"
-          ? guest['members']?.toString() ?? ''
-          : guest['phone'] ?? '',
+      contact: guest['phone'] ?? '',
+      members: guest['type'] == "Family" ? guest['members'] ?? 0 : 0,
     );
   }
 
   Widget _buildFloatingActionButton() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.all(Screen.max(context) * 0.03),
       child: FloatingActionButton(
-        backgroundColor: MyColors.red,
+        backgroundColor: colors.red,
         shape: CircleBorder(),
         onPressed: _showAddGuestOptions,
         child: Icon(
           FontAwesomeIcons.plus,
-          color: MyColors.dark,
+          color: colors.dark,
           size: Screen.max(context) * 0.03,
         ),
       ),

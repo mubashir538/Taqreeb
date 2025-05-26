@@ -39,6 +39,8 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
   }
 
   Widget _buildIndicator(int index) {
+    final colors = AppColors(context);
+
     final isActive = _currentIndex == index;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -48,20 +50,22 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
       height:
           isActive ? Screen.max(context) * 0.015 : Screen.max(context) * 0.01,
       decoration: BoxDecoration(
-        color: isActive ? MyColors.red : MyColors.whiteDarker,
+        color: isActive ? colors.red : colors.whiteDarker,
         borderRadius: BorderRadius.circular(10),
       ),
     );
   }
 
   Widget _buildIndicatorRow() {
+    final colors = AppColors(context);
+
     return Positioned(
       bottom: -(Screen.max(context) * 0.01),
       child: Container(
         height: Screen.max(context) * 0.05,
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.dark,
+          color: colors.dark,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10),
             topRight: Radius.circular(10),

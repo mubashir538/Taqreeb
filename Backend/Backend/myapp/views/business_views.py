@@ -11,6 +11,7 @@ from ..models.business_models import BusinessOwner,Freelancer
 from ..models.user_models import User
 from ..Serializers.auth_serializers import UserSerializer
 from ..models.listing_models import Listing
+from datetime import datetime
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -50,7 +51,8 @@ def business_owner_signup(request):
     filestorage = FileSystemStorage()
     file_path = filestorage.save(f'uploads/Business/cnic/Approval/Front/{userid}.png', cnic_front)
     file_path2 = filestorage.save(f'uploads/Business/cnic/Approval/Back/{userid}.png', cnic_back)
-    picture = filestorage.save(f'uploads/Business/profilePicture/{userid}.png', profile)
+    now = datetime.now().strftime('%Y%m%d_%H%M%S')
+    picture = filestorage.save(f'uploads/Business/profilePicture/{userid}_{now}.png', profile)
     owner = BusinessOwner.objects.get(userID=userid)
     owner.CNICBack = filestorage.url(file_path2)
     owner.CNICFront = filestorage.url(file_path)
@@ -68,6 +70,7 @@ def business_owner_signup(request):
         return Response({'status': 'error', 'message': f'Failed to store user data in Firebase: {str(e)}'})
     
     return Response({'status':'success'})
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def business_account_info_page(request,id,type):
@@ -85,7 +88,7 @@ def business_account_info_page(request,id,type):
         listing = Listing.objects.filter(freelancerID=business_info.id).count()
     else:
         types = list(Listing.objects.filter(ownerID=business_info.id).values_list('type', flat=True).distinct())
-        listing = Listing.objects.filter(ownerID=business_info.id).count()
+        listing = Listing.objects.filter(ownerID=business_info.id,status='active').count()
     return Response({'status':'success','businessInfo':business_serializer.data,'userinfo':serializer.data,'categories':list(types),'listingCount':listing})
 
 @api_view(['POST'])
@@ -111,10 +114,11 @@ def edit_business_info(request):
         if os.path.exists(full_path):
             os.remove(full_path)
         filestorage = FileSystemStorage()
+        now = datetime.now().strftime('%Y%m%d_%H%M%S')
         if user_type == 'freelancer':
-            file_path = filestorage.save(f'uploads/Business/profilePicture/{user.id}.png', profile_picture)
+            file_path = filestorage.save(f'uploads/Business/profilePicture/{user.id}_{now}.png', profile_picture)
         else:
-            file_path = filestorage.save(f'uploads/Freelancer/profilePicture/{user.id}.png', profile_picture)
+            file_path = filestorage.save(f'uploads/Freelancer/profilePicture/{user.id}_{now}.png', profile_picture)
         business.profilepic = filestorage.url(file_path)   
         business.save(update_fields=["profilepic",'businessName','Description'])
     else:
@@ -135,7 +139,8 @@ def freelancer_signup(request):
     freelancer = Freelancer(userID = user,businessName = business_name,cnic=cnic,portfolioLink = portfolio_link,Description = description,status='Pending')
     freelancer.save()
     filestorage = FileSystemStorage()
-    picture = filestorage.save(f'uploads/Freelancer/profilePicture/{user_id}.png',picture)
+    now = datetime.now().strftime('%Y%m%d_%H%M%S')
+    picture = filestorage.save(f'uploads/Freelancer/profilePicture/{user_id}_{now}.png',picture)
     owner = Freelancer.objects.get(userID=user_id)
     owner.profilepic = filestorage.url(picture)
     owner.save(update_fields=["profilepic"])

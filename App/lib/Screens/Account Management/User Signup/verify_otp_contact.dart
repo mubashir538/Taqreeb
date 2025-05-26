@@ -139,8 +139,10 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -166,7 +168,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
                           if (snapshot.hasError) {
                             return Text(
                               'Error loading OTP',
-                              style: GoogleFonts.roboto(color: MyColors.white),
+                              style: GoogleFonts.roboto(color: colors.white),
                             );
                           }
 
@@ -179,7 +181,7 @@ class _SignupContactOtpVerifyState extends State<SignupContactOtpVerify> {
                                   ? 'Send Code Again'
                                   : 'Send Code Again in ${_formatTime(_remainingTime)}',
                               style: GoogleFonts.roboto(
-                                color: MyColors.white,
+                                color: colors.white,
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.04,
                                 decoration: _isResendEnabled

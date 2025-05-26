@@ -30,12 +30,14 @@ class _CustomTabBarState extends State<CustomTabBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.all(Screen.max(context) * 0.01),
       margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.ligthDark, // Change to your color
+        color: colors.lightDark, // Change to your color
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -51,7 +53,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected ? MyColors.red : Colors.transparent,
+                  color: isSelected ? colors.red : Colors.transparent,
                   borderRadius: _getBorderRadius(index, widget.tabs.length),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -59,7 +61,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                   child: Text(
                     widget.tabs[index],
                     style: GoogleFonts.roboto(
-                      color: isSelected ? MyColors.white : MyColors.whiteDarker,
+                      color: isSelected ? colors.white : colors.whiteDarker,
                       fontWeight: FontWeight.w500,
                       fontSize: Screen.max(context) * 0.015,
                     ),

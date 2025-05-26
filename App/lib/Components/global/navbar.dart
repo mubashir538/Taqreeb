@@ -45,27 +45,29 @@ class _NavbarState extends State<Navbar> {
   Widget build(BuildContext context) {
     double iconSize = Screen.max(context) * 0.025;
     double tapAreaSize = iconSize + 20;
+    final colors = AppColors(context);
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-        border: Border.all(color: MyColors.white.withAlpha(123), width: 0.5)
-      ),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+          border: Border.all(color: colors.white.withAlpha(123), width: 0.5)),
       clipBehavior: Clip.hardEdge,
       child: BottomAppBar(
-        color: MyColors.darkLighter, // Let container color show through
+        color: colors.darkLighter, // Let container color show through
         elevation: 0, // No shadow needed
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             _buildNavItem(
+                colors: colors,
                 icon: MyIcons.home,
                 index: 0,
                 size: iconSize,
                 tapAreaSize: tapAreaSize,
                 label: 'Home'),
             _buildNavItem(
+                colors: colors,
                 icon: MyIcons.chats,
                 index: 1,
                 size: iconSize,
@@ -73,12 +75,14 @@ class _NavbarState extends State<Navbar> {
                 label: 'Chats'),
             SizedBox(width: Screen.width(context) * 0.05),
             _buildNavItem(
-                icon: MyIcons.events,
+                colors: colors,
+                icon: MyIcons.events ,
                 index: 2,
                 size: iconSize,
                 tapAreaSize: tapAreaSize,
-                label: 'Events'),
+                label: type == 'user' ? 'Events' : 'Listings'),
             _buildNavItem(
+                colors: colors,
                 icon: MyIcons.profile,
                 index: 3,
                 size: iconSize,
@@ -95,6 +99,7 @@ class _NavbarState extends State<Navbar> {
       required int index,
       required double size,
       required double tapAreaSize,
+      required AppColors colors,
       required String label}) {
     return GestureDetector(
       onTap: () => _onItemTapped(index),
@@ -108,8 +113,7 @@ class _NavbarState extends State<Navbar> {
               icon,
               width: size,
               height: size,
-              color:
-                  widget.selectedIndex == index ? MyColors.red : MyColors.white,
+              color: widget.selectedIndex == index ? colors.red : colors.white,
             ),
             SizedBox(
               height: Screen.max(context) * 0.005,
@@ -118,9 +122,8 @@ class _NavbarState extends State<Navbar> {
               label,
               style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.01,
-                  color: widget.selectedIndex == index
-                      ? MyColors.red
-                      : MyColors.white,
+                  color:
+                      widget.selectedIndex == index ? colors.red : colors.white,
                   fontWeight: widget.selectedIndex == index
                       ? FontWeight.w700
                       : FontWeight.w500),

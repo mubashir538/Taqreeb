@@ -43,9 +43,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
   @override
   Widget build(BuildContext context) {
     final maxDimension = _calculateMaxDimension(context);
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: _buildScreenContent(context, maxDimension),
     );
   }
@@ -69,7 +70,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           _buildRatingDistribution(),
           _buildDivider(context),
           _buildReviewsList(),
-          ],
+        ],
       ),
     );
   }
@@ -216,14 +217,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   Widget _buildLoadMoreButton(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context),
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
-      color: MyColors.darkLighter,
+      color: colors.darkLighter,
       child: Text(
         "Load More",
         style: GoogleFonts.roboto(
-          color: MyColors.red,
+          color: colors.red,
           fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w600,
         ),

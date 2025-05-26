@@ -177,16 +177,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   }
 
   Widget _buildGroupImagePicker() {
+    final colors = AppColors(context);
+
     return GestureDetector(
       onTap: _pickGroupImage,
       child: CircleAvatar(
         radius: 50,
         backgroundImage: _groupImage != null ? FileImage(_groupImage!) : null,
-        backgroundColor: MyColors.darkLighter,
+        backgroundColor: colors.darkLighter,
         child: _groupImage == null
             ? Icon(
                 FontAwesomeIcons.image,
-                color: MyColors.white,
+                color: colors.white,
                 size: 30,
               )
             : null,
@@ -196,6 +198,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   Widget _buildUserListItem(Map<String, dynamic> user) {
     final isSelected = _selectedUsers.contains(user);
+    final colors = AppColors(context);
 
     return GestureDetector(
       onTap: () => _toggleUserSelection(user),
@@ -206,7 +209,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         ),
         padding: EdgeInsets.all(Screen.width(context) * 0.04),
         decoration: BoxDecoration(
-          color: isSelected ? MyColors.red.withAlpha(51) : MyColors.darkLighter,
+          color: isSelected ? colors.red.withAlpha(51) : colors.darkLighter,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -214,11 +217,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           children: [
             Text(
               user['name'],
-              style: GoogleFonts.roboto(color: MyColors.white),
+              style: GoogleFonts.roboto(color: colors.white),
             ),
             Icon(
               isSelected ? FontAwesomeIcons.circleCheck : Icons.circle_outlined,
-              color: isSelected ? MyColors.red : MyColors.white,
+              color: isSelected ? colors.red : colors.white,
             ),
           ],
         ),
@@ -228,8 +231,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           Column(

@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
-import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_send.dart';
 import 'package:taqreeb/Components/Messages/c_message_receive.dart';
 import 'package:taqreeb/Components/global/header.dart';
@@ -174,8 +173,10 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         children: [
           const Header(),
@@ -186,7 +187,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                 Container(
                   padding: EdgeInsets.symmetric(
                       horizontal: Screen.max(context) * 0.03),
-                  decoration: BoxDecoration(color: MyColors.red),
+                  decoration: BoxDecoration(color: colors.red),
                   child: Column(
                     children: [
                       SizedBox(height: Screen.max(context) * 0.02),
@@ -195,7 +196,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                         children: [
                           CircleAvatar(
                             radius: Screen.max(context) * 0.05,
-                            backgroundColor: MyColors.white,
+                            backgroundColor: colors.white,
                             child: ClipOval(
                               child: Image.asset(
                                 MyImages.aiIcon,
@@ -214,7 +215,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                                   style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.025,
                                     fontWeight: FontWeight.w600,
-                                    color: MyColors.white,
+                                    color: colors.white,
                                   ),
                                 ),
                               ),
@@ -222,7 +223,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                                 "Always online",
                                 style: GoogleFonts.roboto(
                                   fontSize: Screen.max(context) * 0.015,
-                                  color: MyColors.whiteDarker,
+                                  color: colors.whiteDarker,
                                 ),
                               ),
                             ],
@@ -253,7 +254,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                             child: Container(
                               padding: EdgeInsets.all(12.0),
                               decoration: BoxDecoration(
-                                color: MyColors.darkLighter,
+                                color: colors.darkLighter,
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
                               child: Row(
@@ -261,13 +262,13 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                                 children: [
                                   CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                        MyColors.white),
+                                        colors.white),
                                   ),
                                   SizedBox(width: 8.0),
                                   Text(
                                     'Thinking...',
                                     style: GoogleFonts.roboto(
-                                      color: MyColors.white,
+                                      color: colors.white,
                                     ),
                                   ),
                                 ],
@@ -310,13 +311,15 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   }
 
   Widget _buildEventPlanCard() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.all(8.0),
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: MyColors.red.withAlpha(100)),
+        border: Border.all(color: colors.red.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,20 +329,20 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
             style: GoogleFonts.roboto(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: 10),
           _buildDetailRow('Event Type:', _currentEventPlan!['eventType']),
           _buildDetailRow('Date:', _currentEventPlan!['date']),
           _buildDetailRow('Guest Count:', _currentEventPlan!['guestCount']),
-          Divider(color: MyColors.white.withAlpha(76)),
+          Divider(color: colors.white.withAlpha(76)),
           _buildDetailRow('Venue:', _currentEventPlan!['venue']),
           _buildDetailRow('Venue Price:', _currentEventPlan!['venuePrice']),
           _buildDetailRow('Catering:', _currentEventPlan!['catering']),
           _buildDetailRow(
               'Catering Price:', _currentEventPlan!['cateringPrice']),
-          Divider(color: MyColors.white.withAlpha(76)),
+          Divider(color: colors.white.withAlpha(76)),
           _buildDetailRow('Total Budget:', _currentEventPlan!['totalBudget'],
               isBold: true),
           SizedBox(height: 15),
@@ -363,6 +366,8 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   }
 
   Widget _buildDetailRow(String label, String value, {bool isBold = false}) {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -371,7 +376,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
             label,
             style: GoogleFonts.roboto(
               fontWeight: FontWeight.w500,
-              color: MyColors.whiteDarker,
+              color: colors.whiteDarker,
             ),
           ),
           SizedBox(width: 10),
@@ -380,7 +385,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
               value,
               style: GoogleFonts.roboto(
                 fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
-                color: MyColors.white,
+                color: colors.white,
               ),
             ),
           ),
@@ -390,8 +395,10 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
   }
 
   Widget _buildMessageInput() {
+    final colors = AppColors(context);
+
     return Container(
-      color: MyColors.ligthDark,
+      color: colors.lightDark,
       padding: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -400,15 +407,15 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: MyColors.darkLighter,
+                  color: colors.darkLighter,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: TextField(
                   controller: _messageController,
-                  style: GoogleFonts.roboto(color: MyColors.white),
+                  style: GoogleFonts.roboto(color: colors.white),
                   decoration: InputDecoration(
                     hintText: " Type a message",
-                    hintStyle: GoogleFonts.roboto(color: MyColors.whiteDarker),
+                    hintStyle: GoogleFonts.roboto(color: colors.whiteDarker),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     border: InputBorder.none,
@@ -418,7 +425,7 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
             ),
             SizedBox(width: 8),
             IconButton(
-              icon: Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+              icon: Icon(FontAwesomeIcons.paperPlane, color: colors.white),
               onPressed: () {
                 if (_messageController.text.trim().isNotEmpty) {
                   _addUserMessage(_messageController.text);

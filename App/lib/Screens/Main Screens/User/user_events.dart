@@ -131,9 +131,10 @@ class _YourEventsState extends State<YourEvents> {
         _changeHeight(renderbox);
       },
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -202,11 +203,13 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildSkeletonItem() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
       child: Shimmer.fromColors(
-        baseColor: MyColors.ligthDark.withOpacity(0.6),
-        highlightColor: MyColors.ligthDark.withOpacity(0.3),
+        baseColor: colors.lightDark.withOpacity(0.6),
+        highlightColor: colors.lightDark.withOpacity(0.3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -280,6 +283,8 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildEventList() {
+    final colors = AppColors(context);
+
     if (_filteredEvents.isEmpty) {
       return Center(
         child: Column(
@@ -294,7 +299,7 @@ class _YourEventsState extends State<YourEvents> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),
@@ -317,7 +322,7 @@ class _YourEventsState extends State<YourEvents> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),
@@ -347,7 +352,7 @@ class _YourEventsState extends State<YourEvents> {
         final event = _filteredEvents[index];
         return FunctionCard(
           delete: () => _deleteEvent(event["id"], index),
-          color: MyColors.red,
+          color: colors.red,
           name: event["name"],
           head: 'Budget',
           budget: event["budget"].toString(),

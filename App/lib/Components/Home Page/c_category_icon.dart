@@ -16,6 +16,8 @@ class CategoryIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
@@ -48,7 +50,7 @@ class CategoryIcon extends StatelessWidget {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w300,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),

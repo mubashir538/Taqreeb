@@ -24,7 +24,7 @@ class ColorPickerTextBox extends StatefulWidget {
 }
 
 class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
-  Color selectedColor = MyColors.red;
+  Color selectedColor = Color(0xffF13F5A);
   OverlayEntry? _overlayEntry;
 
   String _colorToHex(Color color) {
@@ -40,6 +40,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
   void _showColorPicker() {
     double pickerWidth = Screen.width(context) * 0.9;
     double pickerHeight = Screen.height(context) * 0.7;
+    final colors = AppColors(context);
 
     Color tempColor = selectedColor;
     _overlayEntry = OverlayEntry(
@@ -52,7 +53,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
             height: pickerHeight,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: colors.darkLighter,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -83,8 +84,8 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                     _removeOverlay();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.red,
-                    foregroundColor: MyColors.white,
+                    backgroundColor: colors.red,
+                    foregroundColor: colors.white,
                   ),
                   child: const Text("Confirm"),
                 ),
@@ -105,6 +106,8 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return GestureDetector(
       onTap: () {
         if (_overlayEntry == null) {
@@ -118,7 +121,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
         height: Screen.height(context) * 0.06,
         width: Screen.width(context) * 0.9,
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -144,12 +147,12 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
                   style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.018,
                     fontWeight: FontWeight.w400,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                   decoration: InputDecoration(
                     hintText: widget.hint,
                     hintStyle: GoogleFonts.roboto(
-                      color: MyColors.white.withAlpha(153),
+                      color: colors.white.withAlpha(153),
                       fontSize: Screen.max(context) * 0.015,
                     ),
                     border: InputBorder.none,

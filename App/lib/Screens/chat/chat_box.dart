@@ -58,12 +58,13 @@ class _ChatBoxState extends State<ChatBox> {
 
   Widget _buildListingPreview() {
     if (_listing.isEmpty) return const SizedBox.shrink();
+    final colors = AppColors(context);
 
     return Container(
       margin: EdgeInsets.only(bottom: 8.0),
       padding: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
@@ -93,7 +94,7 @@ class _ChatBoxState extends State<ChatBox> {
                   style: GoogleFonts.roboto(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -103,7 +104,7 @@ class _ChatBoxState extends State<ChatBox> {
                   _listing['Listing']['description'] ?? '',
                   style: GoogleFonts.roboto(
                     fontSize: 14,
-                    color: MyColors.white.withAlpha(179),
+                    color: colors.white.withAlpha(179),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -114,7 +115,7 @@ class _ChatBoxState extends State<ChatBox> {
                       '', // Replace with your actual domain
                   style: GoogleFonts.roboto(
                     fontSize: 12,
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                   ),
                 ),
               ],
@@ -122,7 +123,7 @@ class _ChatBoxState extends State<ChatBox> {
           ),
           // Close button
           IconButton(
-            icon: Icon(FontAwesomeIcons.xmark, size: 20, color: MyColors.white),
+            icon: Icon(FontAwesomeIcons.xmark, size: 20, color: colors.white),
             onPressed: () {
               setState(() {
                 _listing = {};
@@ -449,6 +450,7 @@ class _ChatBoxState extends State<ChatBox> {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
+        final colors = AppColors(context);
 
         final messages = snapshot.data!.docs;
         final messageWidgets = <Widget>[];
@@ -467,7 +469,7 @@ class _ChatBoxState extends State<ChatBox> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: MyColors.darkLighter,
+                      color: colors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -498,8 +500,10 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         children: [
           const Header(),
@@ -507,7 +511,7 @@ class _ChatBoxState extends State<ChatBox> {
             Expanded(
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(colors.white),
                 ),
               ),
             )
@@ -519,7 +523,7 @@ class _ChatBoxState extends State<ChatBox> {
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: Screen.max(context) * 0.03),
-                    decoration: BoxDecoration(color: MyColors.red),
+                    decoration: BoxDecoration(color: colors.red),
                     child: Column(
                       children: [
                         SizedBox(height: Screen.max(context) * 0.02),
@@ -543,7 +547,7 @@ class _ChatBoxState extends State<ChatBox> {
                                     style: GoogleFonts.roboto(
                                       fontSize: Screen.max(context) * 0.025,
                                       fontWeight: FontWeight.w600,
-                                      color: MyColors.white,
+                                      color: colors.white,
                                     ),
                                   ),
                                 ),
@@ -551,7 +555,7 @@ class _ChatBoxState extends State<ChatBox> {
                                   _chatUserName ?? '',
                                   style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.015,
-                                    color: MyColors.whiteDarker,
+                                    color: colors.whiteDarker,
                                   ),
                                 ),
                               ],
@@ -575,8 +579,10 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
   Widget _buildChatInput() {
+    final colors = AppColors(context);
+
     return Container(
-      color: MyColors.ligthDark,
+      color: colors.lightDark,
       padding: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Column(
         children: [
@@ -586,7 +592,7 @@ class _ChatBoxState extends State<ChatBox> {
             child: Row(
               children: [
                 IconButton(
-                  icon: Icon(FontAwesomeIcons.image, color: MyColors.white),
+                  icon: Icon(FontAwesomeIcons.image, color: colors.white),
                   onPressed: _sendImage,
                 ),
                 Expanded(
@@ -594,7 +600,7 @@ class _ChatBoxState extends State<ChatBox> {
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: " Type a message",
-                      fillColor: MyColors.darkLighter,
+                      fillColor: colors.darkLighter,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -605,8 +611,7 @@ class _ChatBoxState extends State<ChatBox> {
                   ),
                 ),
                 IconButton(
-                  icon:
-                      Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+                  icon: Icon(FontAwesomeIcons.paperPlane, color: colors.white),
                   onPressed: () => _sendMessage(_messageController.text),
                 ),
               ],

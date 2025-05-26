@@ -251,9 +251,10 @@ class _HomePageState extends State<HomePage> {
         _changeHeight(renderbox);
       },
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           if (UImanagement.headerHeight > 0)
@@ -397,7 +398,7 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        Container(
+        SizedBox(
           width: Screen.width(context) * 0.9,
           child: Column(
             children: List.generate(3, (index) {
@@ -426,6 +427,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCategorySection() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Center(
@@ -441,7 +444,7 @@ class _HomePageState extends State<HomePage> {
                   style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w700,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
               ],
@@ -602,11 +605,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildLoadingMoreIndicator() {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(colors.white),
         ),
       ),
     );

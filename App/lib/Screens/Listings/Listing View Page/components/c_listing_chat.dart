@@ -27,6 +27,8 @@ class ChatIcon extends StatelessWidget {
     final double padding = maxDimension * 0.017;
     final double spacing = maxDimension * 0.01;
 
+    final colors = AppColors(context);
+
     return Positioned(
       bottom: Screen.height(context) * 0.05,
       right: Screen.height(context) * 0.03,
@@ -41,7 +43,7 @@ class ChatIcon extends StatelessWidget {
         child: Container(
           margin: margin,
           decoration: BoxDecoration(
-            color: MyColors.red,
+            color: colors.red,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30),
               bottomLeft: Radius.circular(30),
@@ -72,7 +74,7 @@ class ChatIcon extends StatelessWidget {
               Text(
                 'Chat',
                 style: GoogleFonts.roboto(
-                  color: MyColors.white,
+                  color: colors.white,
                   fontSize: fontSize,
                   fontWeight: FontWeight.w500,
                 ),

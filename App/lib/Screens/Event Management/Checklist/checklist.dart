@@ -171,11 +171,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   Future<void> _showAddItemDialog() async {
     final maxDimension = Screen.max(context);
+    final colors = AppColors(context);
 
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
@@ -201,7 +202,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             child: Text(
               "Cancel",
               style: GoogleFonts.roboto(
-                color: MyColors.red,
+                color: colors.red,
                 fontSize: maxDimension * 0.015,
                 fontWeight: FontWeight.w500,
               ),
@@ -218,7 +219,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
               "Add",
               style: GoogleFonts.roboto(
                 fontSize: maxDimension * 0.015,
-                color: MyColors.red,
+                color: colors.red,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -230,8 +231,10 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -271,12 +274,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildChecklistItems() {
+    final colors = AppColors(context);
+
     if (_checklistController.isLoading) {
       return Center(
         child: Padding(
           padding: EdgeInsets.only(top: Screen.height(context) * 0.3),
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(colors.white),
           ),
         ),
       );
@@ -295,6 +300,8 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildChecklistItem(int index) {
+    final colors = AppColors(context);
+
     final item = _checklistController.items[index];
     return Dismissible(
       key: Key(item["id"]?.toString() ?? item["description"]),
@@ -308,7 +315,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           horizontal: Screen.max(context) * 0.02,
         ),
         decoration: BoxDecoration(
-          color: MyColors.red.withAlpha(77),
+          color: colors.red.withAlpha(77),
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.centerRight,
@@ -318,7 +325,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         return await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: MyColors.dark,
+            backgroundColor: colors.dark,
             title: Text(
               "Delete Item",
               style: GoogleFonts.roboto(color: Colors.white),
@@ -332,14 +339,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                 onPressed: () => Navigator.pop(context, false),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.roboto(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: colors.red),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(
                   "Delete",
-                  style: GoogleFonts.roboto(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: colors.red),
                 ),
               ),
             ],
@@ -360,10 +367,10 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             horizontal: Screen.max(context) * 0.02,
           ),
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: MyColors.red,
+              color: colors.red,
               width: 1,
             ),
           ),
@@ -372,7 +379,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
               Checkbox(
                 value: item["isChecked"],
                 onChanged: (_) => _toggleChecklistItem(index),
-                activeColor: MyColors.red,
+                activeColor: colors.red,
               ),
               Expanded(
                 child: _editingIndex == index
@@ -432,12 +439,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildAddButton() {
+    final colors = AppColors(context);
+
     return FloatingActionButton(
       onPressed: _showAddItemDialog,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50),
       ),
-      backgroundColor: MyColors.red,
+      backgroundColor: colors.red,
       child: const Icon(FontAwesomeIcons.plus, color: Colors.white),
     );
   }

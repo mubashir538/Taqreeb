@@ -64,6 +64,8 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
+    final colors = AppColors(context);
+
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
@@ -71,25 +73,25 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.dark(
-              primary: MyColors.yellow,
-              onPrimary: MyColors.dark,
-              surface: MyColors.darkLighter,
-              onSurface: MyColors.white,
+              primary: colors.yellow,
+              onPrimary: colors.dark,
+              surface: colors.darkLighter,
+              onSurface: colors.white,
             ),
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: MyColors.darkLighter,
-              hourMinuteTextColor: MyColors.white,
-              dialHandColor: MyColors.yellow,
-              dialBackgroundColor: MyColors.dark.withAlpha(127),
-              hourMinuteColor: MyColors.dark.withAlpha(127),
-              entryModeIconColor: MyColors.yellow,
+              backgroundColor: colors.darkLighter,
+              hourMinuteTextColor: colors.white,
+              dialHandColor: colors.yellow,
+              dialBackgroundColor: colors.dark.withAlpha(127),
+              hourMinuteColor: colors.dark.withAlpha(127),
+              entryModeIconColor: colors.yellow,
 
               // ✅ Highlight selected AM/PM
               dayPeriodColor: WidgetStateColor.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return MyColors.red; // <-- highlight selected
+                  return colors.red; // <-- highlight selected
                 }
-                return MyColors.dark.withAlpha(127); // unselected
+                return colors.dark.withAlpha(127); // unselected
               }),
               dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
                 return states.contains(WidgetState.selected)
@@ -119,6 +121,7 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
     final maxDimension = Screen.width(context) > Screen.height(context)
         ? Screen.width(context)
         : Screen.height(context);
+    final colors = AppColors(context);
 
     return GestureDetector(
       onTap: () => _selectTime(context),
@@ -129,12 +132,12 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
           vertical: maxDimension * 0.015,
         ),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: widget.focusNode?.hasFocus ?? false
-                ? MyColors.yellow
-                : MyColors.whiteDarker,
+                ? colors.yellow
+                : colors.whiteDarker,
             width: 1,
           ),
         ),
@@ -149,13 +152,13 @@ class _TimeInputWidgetState extends State<TimeInputWidget> {
                     fontSize: maxDimension * 0.015,
                     fontWeight: FontWeight.w400,
                     color: _selectedTime != null
-                        ? MyColors.white
-                        : MyColors.whiteDarker,
+                        ? colors.white
+                        : colors.whiteDarker,
                   )),
             ),
             Icon(
               FontAwesomeIcons.clock,
-              color: MyColors.yellow,
+              color: colors.yellow,
               size: maxDimension * 0.02,
             ),
           ],

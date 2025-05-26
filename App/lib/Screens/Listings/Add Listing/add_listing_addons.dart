@@ -70,9 +70,10 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -103,6 +104,8 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   }
 
   Widget _buildTitle() {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
@@ -112,19 +115,21 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.025,
           fontWeight: FontWeight.w700,
-          color: MyColors.red,
+          color: colors.red,
         ),
       ),
     );
   }
 
   Widget _buildAddonsList() {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(20),
       ),
       child: _args['addons']?.isNotEmpty ?? false
@@ -145,11 +150,13 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   }
 
   Widget _buildAddonItem(Map<String, dynamic> addon) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.01),
       padding: EdgeInsets.all(Screen.max(context) * 0.015),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter.withOpacity(0.7),
+        color: colors.darkLighter.withOpacity(0.7),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -160,7 +167,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w600,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: Screen.max(context) * 0.01),
@@ -169,7 +176,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.w400,
-              color: MyColors.whiteDarker,
+              color: colors.whiteDarker,
             ),
           ),
         ],
@@ -202,15 +209,17 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
   }
 
   Widget _buildAddButton() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.all(Screen.max(context) * 0.02),
       child: FloatingActionButton(
-        backgroundColor: MyColors.red,
+        backgroundColor: colors.red,
         shape: CircleBorder(),
         onPressed: _navigateToAddAddon,
         child: Icon(
           FontAwesomeIcons.plus,
-          color: MyColors.white,
+          color: colors.white,
           size: Screen.max(context) * 0.03,
         ),
       ),

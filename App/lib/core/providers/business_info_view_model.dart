@@ -37,7 +37,9 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
         'businessowner/accountInfo/$userid/$_type',
         onSuccess: (token, data) {
           _userInfo = data['userinfo'] ?? {};
-          businessData.updateBusinessInfo(data['businessInfo'],
+          print('$data');
+          businessData.updateBusinessInfo(
+              data['businessInfo'], data['listingCount'],
               imageUrl:
                   "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${data['businessInfo']["profilepic"]}");
           _items = data['categories']?.cast<String>()?.toList() ?? [];

@@ -25,6 +25,8 @@ class MessageChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
@@ -34,7 +36,7 @@ class MessageChatButton extends StatelessWidget {
             vertical: Screen.max(context) * 0.02),
         width: mywidth == 0 ? Screen.width(context) * 0.9 : mywidth,
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -76,7 +78,7 @@ class MessageChatButton extends StatelessWidget {
                                 style: GoogleFonts.roboto(
                                   fontSize: Screen.max(context) * 0.015,
                                   fontWeight: FontWeight.w300,
-                                  color: MyColors.whiteDarker,
+                                  color: colors.whiteDarker,
                                 ),
                               )
                             : Container(),
@@ -94,14 +96,14 @@ class MessageChatButton extends StatelessWidget {
                           style: GoogleFonts.roboto(
                             fontSize: Screen.max(context) * 0.015,
                             fontWeight: FontWeight.w400,
-                            color: MyColors.whiteDarker,
+                            color: colors.whiteDarker,
                           ),
                         ),
                       ),
                       newMessage > 0
                           ? Container(
                               decoration: BoxDecoration(
-                                color: MyColors.red,
+                                color: colors.red,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               width: Screen.max(context) * 0.03,
@@ -112,7 +114,7 @@ class MessageChatButton extends StatelessWidget {
                                   style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.015,
                                     fontWeight: FontWeight.w400,
-                                    color: MyColors.white,
+                                    color: colors.white,
                                   ),
                                 ),
                               ),

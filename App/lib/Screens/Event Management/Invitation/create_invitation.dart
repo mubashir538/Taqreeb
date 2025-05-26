@@ -192,6 +192,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
   }
 
   Widget _buildFormContent() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         _buildSection(
@@ -314,8 +316,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     ),
                   ),
                   IconButton(
-                    icon:
-                        Icon(FontAwesomeIcons.circleMinus, color: MyColors.red),
+                    icon: Icon(FontAwesomeIcons.circleMinus, color: colors.red),
                     onPressed: () => removeProgramDetail(index),
                   ),
                 ],
@@ -325,7 +326,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: colors.red),
                   onPressed: addProgramDetail,
                 ),
               ),
@@ -382,8 +383,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   ),
                   if (contactInfo.length > 1)
                     IconButton(
-                      icon: Icon(FontAwesomeIcons.circleMinus,
-                          color: MyColors.red),
+                      icon:
+                          Icon(FontAwesomeIcons.circleMinus, color: colors.red),
                       onPressed: () => removeContactInfo(index),
                     ),
                 ],
@@ -393,7 +394,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: colors.red),
                   onPressed: addContactInfo,
                 ),
               ),
@@ -413,11 +414,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
 
   Widget _buildSection(
       {required String title, required List<Widget> children}) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       margin: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -428,7 +431,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.red,
+              color: colors.red,
             ),
           ),
           SizedBox(height: 10),

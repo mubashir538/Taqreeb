@@ -13,14 +13,14 @@ class BookingStatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _getStatusColor(status).withAlpha(51),
+        color: _getStatusColor(status,context).withAlpha(51),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _getStatusColor(status)),
+        border: Border.all(color: _getStatusColor(status,context)),
       ),
       child: Text(
         status.toUpperCase(),
         style: GoogleFonts.roboto(
-          color: _getStatusColor(status),
+          color: _getStatusColor(status,context),
           fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
@@ -28,18 +28,20 @@ class BookingStatusChip extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(String status, BuildContext context) {
+    final colors = AppColors(context);
+
     switch (status) {
       case 'confirmed':
-        return MyColors.green;
+        return colors.green;
       case 'cancelled':
-        return MyColors.red;
+        return colors.red;
       case 'pending':
-        return MyColors.yellow;
+        return colors.yellow;
       case 'completed':
-        return MyColors.green;
+        return colors.green;
       default:
-        return MyColors.white;
+        return colors.white;
     }
   }
 }

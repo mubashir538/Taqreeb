@@ -116,12 +116,14 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Booking Information'),
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.darkLighter,
+      backgroundColor: colors.darkLighter,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -132,7 +134,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   Text(
                     'Personal Information',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
                     ),
@@ -166,7 +168,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   Text(
                     'Booking Dates',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
                     ),
@@ -178,7 +180,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                   Text(
                     'Additional Notes',
                     style: GoogleFonts.roboto(
-                      color: MyColors.white,
+                      color: colors.white,
                       fontSize: Screen.max(context) * 0.025,
                       fontWeight: FontWeight.bold,
                     ),
@@ -201,13 +203,15 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
   }
 
   Widget _buildItemDateSelector(CartItem item) {
+    final colors = AppColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           item.itemDetails['name'],
           style: GoogleFonts.roboto(
-            color: MyColors.white,
+            color: colors.white,
             fontSize: Screen.max(context) * 0.02,
           ),
         ),
@@ -215,7 +219,7 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
         Container(
           padding: EdgeInsets.all(Screen.width(context) * 0.03),
           decoration: BoxDecoration(
-            color: MyColors.dark,
+            color: colors.dark,
             borderRadius: BorderRadius.circular(8),
           ),
           child: CalendarView(

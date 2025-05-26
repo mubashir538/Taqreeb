@@ -16,7 +16,10 @@ class CreateGuestList extends StatefulWidget {
 
 class _CreateGuestListState extends State<CreateGuestList> {
   Map<String, dynamic> args = {};
+
   void _showOptions(BuildContext context, double maxThing, double width) {
+    final colors = AppColors(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -24,7 +27,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
         return Container(
           padding: EdgeInsets.all(maxThing * 0.02),
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.darkLighter,
             borderRadius:
                 BorderRadius.vertical(top: Radius.circular(maxThing * 0.05)),
           ),
@@ -77,8 +80,10 @@ class _CreateGuestListState extends State<CreateGuestList> {
     double maxThing = Screen.width(context) > Screen.height(context)
         ? Screen.width(context)
         : Screen.height(context);
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -98,7 +103,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                         child: Text(
                           'No Guests Added yet',
                           style: GoogleFonts.roboto(
-                              color: MyColors.white, fontSize: maxThing * 0.02),
+                              color: colors.white, fontSize: maxThing * 0.02),
                         ),
                       )),
                 ],
@@ -114,7 +119,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
               child: Container(
                 padding: EdgeInsets.all(maxThing * 0.02),
                 decoration: BoxDecoration(
-                  color: MyColors.red,
+                  color: colors.red,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(maxThing * 0.05),
                     topRight: Radius.circular(maxThing * 0.05),
@@ -125,7 +130,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                   children: [
                     Icon(
                       FontAwesomeIcons.plus,
-                      color: MyColors.white,
+                      color: colors.white,
                       size: maxThing * 0.035,
                     ),
                     SizedBox(
@@ -134,7 +139,7 @@ class _CreateGuestListState extends State<CreateGuestList> {
                     Text(
                       'Add First Guest',
                       style: GoogleFonts.roboto(
-                          color: MyColors.white, fontSize: maxThing * 0.015),
+                          color: colors.white, fontSize: maxThing * 0.015),
                     )
                   ],
                 ),

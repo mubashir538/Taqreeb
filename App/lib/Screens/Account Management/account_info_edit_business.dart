@@ -71,8 +71,10 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           Consumer2<BusinessInfoEditViewModel, BusinessData>(
@@ -83,8 +85,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                     SizedBox(height: UImanagement.headerHeight),
                     if (!_initialLoadComplete)
                       Center(
-                          child:
-                              CircularProgressIndicator(color: MyColors.white))
+                          child: CircularProgressIndicator(color: colors.white))
                     else
                       _buildContent(viewModel, businessData),
                   ],
@@ -106,6 +107,8 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
 
   Widget _buildContent(
       BusinessInfoEditViewModel viewModel, BusinessData businessData) {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Container(
@@ -140,7 +143,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                       child: Container(
                         padding: EdgeInsets.all(Screen.max(context) * 0.02),
                         decoration: BoxDecoration(
-                          color: MyColors.whiteDarker,
+                          color: colors.whiteDarker,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
@@ -153,7 +156,7 @@ class _BusinessInfoEditState extends State<BusinessInfoEdit> {
                         child: Icon(
                           FontAwesomeIcons.pen,
                           size: Screen.max(context) * 0.025,
-                          color: MyColors.red,
+                          color: colors.red,
                         ),
                       ),
                     ),

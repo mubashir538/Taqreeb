@@ -53,6 +53,8 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: _navigateToDetail,
       child: Container(
@@ -69,7 +71,7 @@ class _ProductCardState extends State<ProductCard> {
             ),
           ],
           border: Border.all(
-            color: MyColors.whiteDarker,
+            color: colors.whiteDarker,
             width: 0.5,
           ),
         ),
@@ -112,7 +114,7 @@ class _ProductCardState extends State<ProductCard> {
                           _isWishlisted
                               ? FontAwesomeIcons.heart
                               : Icons.favorite_border,
-                          color: _isWishlisted ? MyColors.red : Colors.grey,
+                          color: _isWishlisted ? colors.red : Colors.grey,
                           size: Screen.max(context) * 0.025,
                         ),
                       ),
@@ -127,7 +129,7 @@ class _ProductCardState extends State<ProductCard> {
                 vertical: Screen.height(context) * 0.015,
               ),
               decoration: BoxDecoration(
-                color: MyColors.ligthDark,
+                color: colors.lightDark,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -163,7 +165,7 @@ class _ProductCardState extends State<ProductCard> {
                     children: [
                       Icon(
                         FontAwesomeIcons.star,
-                        color: MyColors.yellow,
+                        color: colors.yellow,
                         size: Screen.max(context) * 0.02,
                       ),
                       SizedBox(width: Screen.width(context) * 0.01),

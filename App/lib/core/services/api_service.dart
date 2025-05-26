@@ -299,7 +299,7 @@ class MyApi {
     try {
       response = await http
           .post(url, headers: headers, body: jsonEncode(body))
-          .timeout(const Duration(seconds: 10), onTimeout: () {
+          .timeout(const Duration(seconds: 20), onTimeout: () {
         if (context != null) {
           MyScaffold(text: 'Request timed out. Please try again.')
               .show(context);

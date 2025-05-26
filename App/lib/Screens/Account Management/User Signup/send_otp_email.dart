@@ -7,6 +7,7 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -109,19 +110,25 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Container(
               constraints: BoxConstraints(minHeight: Screen.height(context)),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: UImanagement.headerHeight),
+                      Headersecondary(
+                        heading: 'Email Verification',
+                        para: 'Enter Email to send one time password',
+                        image: MyImages.singupPng,
+                      ),
                       SizedBox(
                           height: Screen.height(context) * _topPaddingFactor),
                       MyTextBox(
@@ -156,9 +163,6 @@ class _SignupEmailOtpSendState extends State<SignupEmailOtpSend> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: 'Email Verification',
-              para: 'Enter Email to send one time password',
-              image: MyImages.singupPng,
             ),
           ),
         ],

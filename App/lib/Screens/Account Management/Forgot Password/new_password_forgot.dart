@@ -94,13 +94,14 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _email = args['email'].toString();
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(colors.white),
               ),
             )
           : SingleChildScrollView(
@@ -170,7 +171,7 @@ class _ForgotPasswordNewPasswordState extends State<ForgotPasswordNewPassword> {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.all( Screen.max(context) * 0.01),
+          padding: EdgeInsets.all(Screen.max(context) * 0.01),
           child: Icon(
             FontAwesomeIcons.circleCheck,
             size: 20,
