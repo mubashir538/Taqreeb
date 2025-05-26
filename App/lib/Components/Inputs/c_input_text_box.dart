@@ -16,22 +16,24 @@ class MyTextBox extends StatefulWidget {
   final TextEditingController valueController;
   final String? errorText;
   final Function(String)? onChanged;
-  final IconData? prefixIcon; // New parameter for prefix icon
-  final Color? prefixIconColor; // Color for prefix icon
-  final double? prefixIconSize; // Size for prefix icon
-  final EdgeInsetsGeometry? contentPadding; // Custom padding
-  final Color? backgroundColor; // Background color
-  final double? borderRadius; // Border radius
-  final Color? borderColor; // Border color
-  final Color? focusedBorderColor; // Focused border color
-  final Color? errorBorderColor; // Error border color
-  final Color? textColor; // Text color
-  final Color? hintColor; // Hint text color
-  final TextStyle? textStyle; // Custom text style
-  final TextStyle? hintStyle; // Custom hint style
-  final TextStyle? errorStyle; // Custom error style
-  final BoxShadow? boxShadow; // Custom shadow
-  final int? maxLength; // New parameter for max length
+  final IconData? prefixIcon;
+  final Color? prefixIconColor;
+  final double? prefixIconSize;
+  final EdgeInsetsGeometry? contentPadding;
+  final Color? backgroundColor;
+  final double? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+  final Color? errorBorderColor;
+  final Color? textColor;
+  final Color? hintColor;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
+  final TextStyle? errorStyle;
+  final BoxShadow? boxShadow;
+  final int? maxLength;
+  final bool phone; // New parameter for phone formatting
+  final bool cnic; // New parameter for CNIC formatting
 
   const MyTextBox({
     super.key,
@@ -60,7 +62,9 @@ class MyTextBox extends StatefulWidget {
     this.hintStyle,
     this.errorStyle,
     this.boxShadow,
-    this.maxLength, // Added maxLength parameter
+    this.maxLength,
+    this.phone = false,
+    this.cnic = false,
   });
 
   @override
@@ -73,6 +77,8 @@ class _MyTextBoxState extends State<MyTextBox> {
   bool _isFocused = false;
   late TextEditingController _controller;
   String _previousText = '';
+  late TextEditingController
+      _displayController; // Controller for displayed text
 
   @override
   void initState() {
@@ -80,6 +86,8 @@ class _MyTextBoxState extends State<MyTextBox> {
     _isObscured = widget.isPassword;
     _focusNode = widget.focusNode ?? FocusNode();
     _controller = widget.valueController;
+    _displayController =
+        TextEditingController(); // Initialize display controller
     _previousText = _controller.text;
 
     _focusNode.addListener(() {
@@ -93,6 +101,10 @@ class _MyTextBoxState extends State<MyTextBox> {
     if (widget.isPrice) {
       _controller.addListener(_formatPrice);
     }
+
+    // Initialize display text
+    _updateDisplayText();
+    _controller.addListener(_updateDisplayText);
   }
 
   @override
@@ -100,7 +112,42 @@ class _MyTextBoxState extends State<MyTextBox> {
     if (widget.isPrice) {
       _controller.removeListener(_formatPrice);
     }
+    _controller.removeListener(_updateDisplayText);
+    _displayController.dispose();
     super.dispose();
+  }
+
+  void _updateDisplayText() {
+    String text = _controller.text;
+    if (widget.phone) {
+      // Format phone number: xxxx-xxxxxxx
+      if (text.length > 4) {
+        _displayController.text =
+            '${text.substring(0, 4)}-${text.substring(4)}';
+      } else {
+        _displayController.text = text;
+      }
+    } else if (widget.cnic) {
+      // Format CNIC: xxxxx-xxxxxxx-x
+      if (text.length > 12) {
+        _displayController.text =
+            '${text.substring(0, 5)}-${text.substring(5, 12)}-${text.substring(12)}';
+      } else if (text.length > 5) {
+        _displayController.text =
+            '${text.substring(0, 5)}-${text.substring(5)}';
+      } else {
+        _displayController.text = text;
+      }
+    } else {
+      _displayController.text = text;
+    }
+
+    // Update cursor position
+    if (_focusNode.hasFocus) {
+      int cursorPosition = _displayController.text.length;
+      _displayController.selection =
+          TextSelection.collapsed(offset: cursorPosition);
+    }
   }
 
   void _formatPrice() {
@@ -134,6 +181,10 @@ class _MyTextBoxState extends State<MyTextBox> {
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
           (Match m) => '${m[1]},',
         );
+  }
+
+  String _removeFormatting(String text) {
+    return text.replaceAll(RegExp(r'[^0-9]'), '');
   }
 
   @override
@@ -178,7 +229,6 @@ class _MyTextBoxState extends State<MyTextBox> {
                 EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
             child: Row(
               children: [
-                // Prefix icon
                 if (widget.prefixIcon != null)
                   Padding(
                     padding: const EdgeInsets.only(right: 12),
@@ -192,45 +242,50 @@ class _MyTextBoxState extends State<MyTextBox> {
                           widget.prefixIconSize ?? Screen.max(context) * 0.025,
                     ),
                   ),
-
                 Expanded(
                   child: TextField(
-                    controller: _controller,
+                    controller: _displayController, // Use display controller
                     focusNode: _focusNode,
                     onSubmitted: widget.onFieldSubmitted,
                     onChanged: (value) {
+                      // Remove formatting to get raw value
+                      String rawValue = _removeFormatting(value);
+
                       // Enforce max length if specified
                       if (widget.maxLength != null &&
-                          value.length > widget.maxLength!) {
-                        _controller.text = _previousText;
-                        _controller.selection = TextSelection.collapsed(
-                          offset: _previousText.length,
-                        );
-                        return;
+                          rawValue.length > widget.maxLength!) {
+                        rawValue = rawValue.substring(0, widget.maxLength);
                       }
 
-                      _previousText = value;
+                      // Update the actual controller with raw value
+                      _controller.value = _controller.value.copyWith(
+                        text: rawValue,
+                        selection:
+                            TextSelection.collapsed(offset: rawValue.length),
+                        composing: TextRange.empty,
+                      );
 
                       if (widget.onChanged != null) {
-                        // Pass the raw number without commas to the callback
-                        String rawValue = widget.isPrice
-                            ? value.replaceAll(RegExp(r'[^0-9]'), '')
-                            : value;
                         widget.onChanged!(rawValue);
                       }
                     },
                     obscureText: widget.isPassword ? _isObscured : false,
-                    keyboardType: widget.isNum
+                    keyboardType: widget.isNum || widget.phone || widget.cnic
                         ? TextInputType.number
                         : widget.isPrice
                             ? TextInputType.numberWithOptions(decimal: true)
                             : TextInputType.text,
                     inputFormatters: [
-                      if (widget.isNum) FilteringTextInputFormatter.digitsOnly,
+                      if (widget.isNum || widget.phone || widget.cnic)
+                        FilteringTextInputFormatter.digitsOnly,
                       if (widget.isPrice)
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
                       if (widget.maxLength != null)
-                        LengthLimitingTextInputFormatter(widget.maxLength),
+                        LengthLimitingTextInputFormatter(widget.maxLength! +
+                            (widget.phone ? 1 : 0) +
+                            (widget.cnic
+                                ? 2
+                                : 0)), // Account for formatting characters
                     ],
                     style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.018,
@@ -246,9 +301,15 @@ class _MyTextBoxState extends State<MyTextBox> {
                             fontSize: Screen.max(context) * 0.015,
                           ),
                       border: InputBorder.none,
-                      counterText: '', // Remove default counter
+                      counterText: '',
                     ),
-                    maxLength: widget.maxLength, // Set max length
+                    maxLength: widget.maxLength != null
+                        ? widget.maxLength! +
+                            (widget.phone ? 1 : 0) +
+                            (widget.cnic
+                                ? 2
+                                : 0) // Account for formatting characters
+                        : null,
                   ),
                 ),
                 if (widget.isPassword)
@@ -281,7 +342,6 @@ class _MyTextBoxState extends State<MyTextBox> {
                   ),
             ),
           ),
-        // Show remaining characters counter if maxLength is specified
         if (widget.maxLength != null)
           Padding(
             padding: EdgeInsets.only(left: Screen.width(context) * 0.05),

@@ -1,148 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './ApprovalsPage.css';
-import ListingCard from './ListingCard';
-import VendorCard from './VendorCard';
+import React, { useState, useEffect } from "react";
+import "./ApprovalsPage.css";
+import ListingCard from "./ListingCard";
+import VendorCard from "./VendorCard";
+import apiService from "../../api/api";
 
 const ApprovalsPage = () => {
-  const [activeTab, setActiveTab] = useState('listings');
+  const [activeTab, setActiveTab] = useState("listings");
   const [selectedItems, setSelectedItems] = useState([]);
-  const [categoryFilter, setCategoryFilter] = useState('All Categories');
-  const [sortOption, setSortOption] = useState('newest');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
+  const [searchQuery, setSearchQuery] = useState("");
   const [listingsData, setListingsData] = useState([]);
+  const [vendorsData, setVendorsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    listings: { totalPending: 0, pendingByType: {} },
+    vendors: { totalPending: 0, pendingByType: {} },
+  });
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
     total: 0,
-    totalPages: 1
+    totalPages: 1,
   });
 
+  // Fetch stats for both listings and vendors
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get('/api/approvals/stats/');
-        setStats(response.data.pendingStats);
+        const [listingsResponse, vendorsResponse] = await Promise.all([
+          apiService.getApprovalStats(),
+          apiService.getVendorApprovalStats(),
+        ]);
+        setStats({
+          listings: listingsResponse.pendingStats || {
+            totalPending: 0,
+            pendingByType: {},
+          },
+          vendors: vendorsResponse.pendingStats || {
+            totalPending: 0,
+            pendingByType: {},
+          },
+        });
       } catch (err) {
-        console.error('Error fetching stats:', err);
+        console.error("Error fetching stats:", err);
       }
     };
     fetchStats();
   }, []);
 
+  // Fetch data based on active tab
   useEffect(() => {
-    const fetchPendingListings = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/api/approvals/listings/', {
-          params: {
-            type: categoryFilter === 'All Categories' ? null : categoryFilter,
+        setError(null);
+
+        if (activeTab === "listings") {
+          const response = await apiService.getPendingListings({
+            type: categoryFilter === "All Categories" ? null : categoryFilter,
             search: searchQuery,
             page: pagination.page,
-            page_size: pagination.pageSize
-          }
-        });
+            page_size: pagination.pageSize,
+          });
 
-        if (
-          typeof response.data === 'string' &&
-          response.data.startsWith('<!DOCTYPE html')
-        ) {
-          setError('Unexpected HTML response from server');
-          setLoading(false);
-          return;
-        }
-
-        const { listings = [], pagination: paginationData } = response.data;
-        setListingsData(listings);
-
-        if (paginationData) {
-          setPagination(prev => ({
+          setListingsData(response.listings || []);
+          setPagination((prev) => ({
             ...prev,
-            total: paginationData.total,
-            totalPages: paginationData.total_pages
+            total: response.pagination?.total || 0,
+            totalPages: response.pagination?.total_pages || 1,
           }));
         } else {
-          setPagination(prev => ({
+          const response = await apiService.getPendingVendors({
+            type: categoryFilter === "All Categories" ? null : categoryFilter,
+            search: searchQuery,
+            page: pagination.page,
+            page_size: pagination.pageSize,
+          });
+
+          setVendorsData(response.vendors || []);
+          setPagination((prev) => ({
             ...prev,
-            total: 0,
-            totalPages: 1
+            total: response.pagination?.total || 0,
+            totalPages: response.pagination?.total_pages || 1,
           }));
         }
-
-        setLoading(false);
       } catch (err) {
-        console.error('Error fetching listings:', err.response?.data || err.message);
-        setError(err.message);
+        console.error(`Error fetching ${activeTab}:`, err);
+        setError(err.message || "Failed to load data");
+      } finally {
         setLoading(false);
       }
     };
 
-    if (activeTab === 'listings') {
-      fetchPendingListings();
-    }
+    fetchData();
   }, [activeTab, categoryFilter, searchQuery, pagination.page]);
 
   const handleApprove = async () => {
+    if (selectedItems.length === 0) return;
+
     try {
-      await axios.post('/api/approvals/bulk-status/', {
-        ids: selectedItems,
-        status: 'active'
-      });
-      refreshListings();
+      if (activeTab === "listings") {
+        await apiService.bulkUpdateListingStatus(selectedItems, "active");
+      } else {
+        const vendorType =
+          vendorsData.find((v) => selectedItems.includes(v.id))?.type ||
+          "business";
+        await apiService.bulkUpdateVendorStatus(
+          selectedItems,
+          vendorType === "Freelancer" ? "freelancer" : "business",
+          "approved"
+        );
+      }
+      refreshData();
     } catch (err) {
-      console.error('Error approving listings:', err);
+      console.error("Error approving:", err);
+      setError("Failed to approve items");
     }
   };
 
   const handleReject = async () => {
+    if (selectedItems.length === 0) return;
+
     try {
-      await axios.post('/api/approvals/bulk-status/', {
-        ids: selectedItems,
-        status: 'rejected'
-      });
-      refreshListings();
+      if (activeTab === "listings") {
+        await apiService.bulkUpdateListingStatus(selectedItems, "rejected");
+      } else {
+        const vendorType =
+          vendorsData.find((v) => selectedItems.includes(v.id))?.type ||
+          "business";
+        await apiService.bulkUpdateVendorStatus(
+          selectedItems,
+          vendorType === "Freelancer" ? "freelancer" : "business",
+          "rejected"
+        );
+      }
+      refreshData();
     } catch (err) {
-      console.error('Error rejecting listings:', err);
+      console.error("Error rejecting:", err);
+      setError("Failed to reject items");
     }
   };
 
-  const refreshListings = async () => {
-    try {
-      const response = await axios.get('/api/approvals/listings/', {
-        params: {
-          page: pagination.page,
-          page_size: pagination.pageSize
-        }
-      });
-      setListingsData(response.data.listings || []);
-      setSelectedItems([]);
-    } catch (err) {
-      console.error('Error refreshing listings:', err);
-    }
+  const refreshData = () => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    setSelectedItems([]);
   };
 
   const handlePageChange = (newPage) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
+    setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
   const handleItemSelect = (id) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter(itemId => itemId !== id));
-    } else {
-      setSelectedItems([...selectedItems, id]);
-    }
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+    );
   };
 
   const handleSelectAll = () => {
-    const currentItems = listingsData.map(item => item.id);
-    if (Array.isArray(selectedItems) && Array.isArray(listingsData) && selectedItems.length === listingsData.length) {
-      setSelectedItems([]);
-    } else {
-      setSelectedItems(currentItems);
+    const currentItems =
+      activeTab === "listings"
+        ? listingsData.map((item) => item.id)
+        : vendorsData.map((item) => item.id);
+
+    setSelectedItems((prev) =>
+      prev.length === currentItems.length ? [] : currentItems
+    );
+  };
+
+  const getCategoryOptions = () => {
+    if (activeTab === "listings") {
+      return [
+        "All Categories",
+        ...Object.keys(stats.listings.pendingByType || {}),
+      ];
     }
+    return ["All Categories", "Business Owners", "Freelancers"];
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -151,11 +184,17 @@ const ApprovalsPage = () => {
   return (
     <div className="approvals-container">
       <div className="approvals-tabs">
-        <button className={`tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
-          Unapproved Listings ({stats?.totalPending || 0})
+        <button
+          className={`tab ${activeTab === "listings" ? "active" : ""}`}
+          onClick={() => setActiveTab("listings")}
+        >
+          Unapproved Listings ({stats.listings.totalPending || 0})
         </button>
-        <button className={`tab ${activeTab === 'vendors' ? 'active' : ''}`} onClick={() => setActiveTab('vendors')}>
-          Unapproved Vendors (8)
+        <button
+          className={`tab ${activeTab === "vendors" ? "active" : ""}`}
+          onClick={() => setActiveTab("vendors")}
+        >
+          Unapproved Vendors ({stats.vendors.totalPending || 0})
         </button>
       </div>
 
@@ -175,23 +214,12 @@ const ApprovalsPage = () => {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="category-select"
           >
-            <option value="All Categories">All {activeTab === 'listings' ? 'Categories' : 'Vendor Types'}</option>
-            {stats && Object.keys(stats.pendingByType).map(type => (
-              <option key={type} value={type}>{type}</option>
+            {getCategoryOptions().map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
-
-          <div className="sort-section">
-            <span>Sort by:</span>
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="sort-select"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-          </div>
         </div>
 
         <div className="select-all">
@@ -199,10 +227,11 @@ const ApprovalsPage = () => {
             type="checkbox"
             id="selectAll"
             checked={
-              Array.isArray(selectedItems) &&
-              Array.isArray(listingsData) &&
               selectedItems.length > 0 &&
-              selectedItems.length === listingsData.length
+              ((activeTab === "listings" &&
+                selectedItems.length === listingsData.length) ||
+                (activeTab === "vendors" &&
+                  selectedItems.length === vendorsData.length))
             }
             onChange={handleSelectAll}
           />
@@ -211,52 +240,58 @@ const ApprovalsPage = () => {
       </div>
 
       <div className="approval-cards">
-        {Array.isArray(listingsData) && listingsData.length > 0 ? (
-          listingsData.map(listing => (
-            activeTab === 'listings' ? (
+        {activeTab === "listings" ? (
+          listingsData.length > 0 ? (
+            listingsData.map((listing) => (
               <ListingCard
                 key={listing.id}
                 listing={listing}
                 isSelected={selectedItems.includes(listing.id)}
                 onSelect={handleItemSelect}
               />
-            ) : (
-              <VendorCard
-                key={listing.id}
-                vendor={listing}
-                isSelected={selectedItems.includes(listing.id)}
-                onSelect={handleItemSelect}
-              />
-            )
+            ))
+          ) : (
+            <div className="no-results">No pending listings found</div>
+          )
+        ) : vendorsData.length > 0 ? (
+          vendorsData.map((vendor) => (
+            <VendorCard
+              key={vendor.id}
+              vendor={vendor}
+              isSelected={selectedItems.includes(vendor.id)}
+              onSelect={handleItemSelect}
+            />
           ))
         ) : (
-          <div className="no-results">No pending {activeTab} found</div>
+          <div className="no-results">No pending vendors found</div>
         )}
       </div>
 
-      <div className="pagination-controls">
-        <button
-          onClick={() => handlePageChange(pagination.page - 1)}
-          disabled={pagination.page === 1}
-        >
-          &lt;
-        </button>
-        {[...Array(pagination.totalPages)].map((_, index) => (
+      {pagination.totalPages > 1 && (
+        <div className="pagination-controls">
           <button
-            key={index}
-            className={pagination.page === index + 1 ? 'active' : ''}
-            onClick={() => handlePageChange(index + 1)}
+            onClick={() => handlePageChange(pagination.page - 1)}
+            disabled={pagination.page === 1}
           >
-            {index + 1}
+            &lt;
           </button>
-        ))}
-        <button
-          onClick={() => handlePageChange(pagination.page + 1)}
-          disabled={pagination.page === pagination.totalPages}
-        >
-          &gt;
-        </button>
-      </div>
+          {[...Array(pagination.totalPages)].map((_, index) => (
+            <button
+              key={index}
+              className={pagination.page === index + 1 ? "active" : ""}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(pagination.page + 1)}
+            disabled={pagination.page === pagination.totalPages}
+          >
+            &gt;
+          </button>
+        </div>
+      )}
 
       <div className="approval-actions">
         <div className="action-buttons">

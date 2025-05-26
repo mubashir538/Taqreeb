@@ -156,6 +156,9 @@ urlpatterns = [
     path('api/approvals/listings/<int:pk>/', react.pending_listing_detail, name='pending-listing-detail'),
     path('api/approvals/listings/<int:pk>/status/', react.update_listing_status, name='update-listing-status'),
     path('api/approvals/bulk-status/', react.bulk_update_listing_status, name='bulk-update-status'),
+    path('api/approvals/vendors/stats/', react.pending_vendors_stats, name='pending-vendors-stats'),
+    path('api/approvals/vendors/', react.pending_vendors, name='pending-vendors'),
+    path('api/approvals/vendors/bulk-status/', react.bulk_update_vendor_status, name='bulk-update-vendor-status'),
     path('', include(router.urls)),
 ]
 if settings.DEBUG:

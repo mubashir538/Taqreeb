@@ -24,7 +24,7 @@ import pytz
 from django.core.paginator import Paginator,EmptyPage
 from ..Serializers.listing_serializers import ListingSerializer,PackagesSerializer,ProductsSerializer,PicturesListingSerializers
 from ..Serializers.service_serializers import VenueSerializer,CaterersSerializer,AddOnsSerializer
-from ..models.listing_types_models import Venue,Caterers
+from ..models.listing_types_models import Venue,Caterers,CarRenters,Decorators,PhotographyPlaces,Photographers,VideoEditors,GraphicDesigners
 from ..models.listing_models import Packages,AddOns,PicturesListings
 from ..models.product_models import Product
 from django.db.models import Q
@@ -309,6 +309,10 @@ def pending_approvals_stats(request):
         }
     })
 
+# In your views.py
+# In your views.py
+from django.forms.models import model_to_dict  # Add this import at the top
+
 @api_view(['GET'])
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
@@ -318,9 +322,20 @@ def pending_listings(request):
     search_query = request.query_params.get('search', None)
     page = int(request.query_params.get('page', 1))
     page_size = int(request.query_params.get('page_size', 10))
+    BASE_URL = request.build_absolute_uri('/')[:-1]
     
-    # Base queryset
-    queryset = Listing.objects.filter(status='pending').select_related('ownerID', 'freelancerID')
+    # Base queryset with all related data
+    queryset = Listing.objects.filter(status='pending').select_related(
+        'ownerID__userID', 
+        'freelancerID__userID'
+    ).prefetch_related(
+        'pictureslistings_set',
+        'packages_set',
+        'packages_set__picturespackages_set',
+        'product_set',
+        'product_set__picturesproducts_set',
+        'addons_set'
+    )
     
     # Apply filters
     if listing_type:
@@ -333,6 +348,30 @@ def pending_listings(request):
             Q(location__icontains=search_query)
         )
     
+    # Get service-specific details based on type
+    def get_service_details(listing):
+        service_details = None
+        if listing.type == 'Venue':
+            service_details = Venue.objects.filter(listingId=listing).first()
+        elif listing.type == 'Caterers':
+            service_details = Caterers.objects.filter(listingId=listing).first()
+        elif listing.type == 'Decorator':
+            service_details = Decorators.objects.filter(listingId=listing).first()
+        elif listing.type == 'Photographer':
+            service_details = Photographers.objects.filter(listingId=listing).first()
+        elif listing.type == 'VideoEditor':
+            service_details = VideoEditors.objects.filter(listingId=listing).first()
+        elif listing.type == 'GraphicDesigner':
+            service_details = GraphicDesigners.objects.filter(listingId=listing).first()
+        elif listing.type == 'CarRenter':
+            service_details = CarRenters.objects.filter(listingId=listing).first()
+        elif listing.type == 'PhotographyPlace':
+            service_details = PhotographyPlaces.objects.filter(listingId=listing).first()
+        
+        if service_details:
+            return model_to_dict(service_details, exclude=['id', 'listingId'])
+        return None
+
     # Pagination
     paginator = Paginator(queryset, page_size)
     try:
@@ -340,10 +379,70 @@ def pending_listings(request):
     except EmptyPage:
         listings = paginator.page(paginator.num_pages)
     
-    serializer = ListingSerializer(listings, many=True)
+    # Prepare response data
+    listing_data = []
+    
+    for listing in listings:
+        owner_name = None
+        if listing.ownerID:
+            owner_name = listing.ownerID.businessName
+        elif listing.freelancerID:
+            owner_name = listing.freelancerID.businessName or \
+                        f"{listing.freelancerID.userID.firstName} {listing.freelancerID.userID.lastName}"
+        
+        # Ensure picture paths are properly constructed
+        listing_images = []
+        for pic in listing.pictureslistings_set.all():
+            if pic.picturePath:
+                # Remove any leading slash to prevent double slashes
+                clean_path = pic.picturePath.lstrip('/')
+                listing_images.append(f"{BASE_URL}/app/{clean_path}")
+        
+        listing_data.append({
+            'id': listing.id,
+            'name': listing.name,
+            'type': listing.type,
+            'location': listing.location,
+            'description': listing.description,
+            'priceMin': listing.priceMin,
+            'priceMax': listing.priceMax,
+            'basicPrice': listing.basicPrice,
+            'rating': float(listing.rating),
+            'ratingCount': listing.ratingCount,
+            'status': listing.status,
+            'created_at': listing.created_at,
+            'booked_dates': listing.booked_dates,
+            'owner_name': owner_name,
+            'images': listing_images,
+            'packages': [{
+                'id': pkg.id,
+                'name': pkg.name,
+                'description': pkg.description,
+                'price': pkg.price,
+                'images': [f"{BASE_URL}/app/{pic.picturePath.lstrip('/')}" 
+                          for pic in pkg.picturespackages_set.all() if pic.picturePath]
+            } for pkg in listing.packages_set.all()],
+            'products': [{
+                'id': prod.id,
+                'name': prod.name,
+                'description': prod.description,
+                'price': float(prod.price),
+                'quantity': prod.quantity,
+                'images': [f"{BASE_URL}/app/{pic.picturePath.lstrip('/')}" 
+                          for pic in prod.picturesproducts_set.all() if pic.picturePath]
+            } for prod in listing.product_set.all()],
+            'addons': [{
+                'id': addon.id,
+                'name': addon.name,
+                'price': addon.price,
+                'isPer': addon.isPer,
+                'perType': addon.perType
+            } for addon in listing.addons_set.all()],
+            'serviceDetails': get_service_details(listing)
+        })
     
     return Response({
-        'listings': serializer.data,
+        'listings': listing_data,
         'pagination': {
             'total': paginator.count,
             'page': page,
@@ -351,6 +450,7 @@ def pending_listings(request):
             'total_pages': paginator.num_pages,
         }
     })
+
 
 @api_view(['GET'])
 @authentication_classes([ReactJWTAuthentication])
@@ -447,5 +547,138 @@ def bulk_update_listing_status(request):
     return Response({
         'success': True,
         'message': f'Updated {updated} listings to {new_status}',
+        'count': updated
+    })
+
+# Add these to your react_views.py
+
+@api_view(['GET'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def pending_vendors_stats(request):
+    # Count all pending vendors (both BusinessOwner and Freelancer)
+    pending_business = BusinessOwner.objects.filter(status='pending').count()
+    pending_freelancers = Freelancer.objects.filter(status='pending').count()
+    total_pending = pending_business + pending_freelancers
+    
+    return Response({
+        'pendingStats': {
+            'totalPending': total_pending,
+            'pendingByType': {
+                'Business Owners': pending_business,
+                'Freelancers': pending_freelancers
+            }
+        }
+    })
+
+# In your views.py
+# In your views.py
+@api_view(['GET'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def pending_vendors(request):
+    # Get pending business owners
+    pending_business = BusinessOwner.objects.filter(status='pending').select_related('userID')
+    # Get pending freelancers
+    pending_freelancers = Freelancer.objects.filter(status='pending').select_related('userID')
+    
+    # Combine and serialize
+    vendor_data = []
+    BASE_URL = request.build_absolute_uri('/')[:-1]  # Get base URL
+    
+    for business in pending_business:
+        vendor_data.append({
+            'id': business.id,
+            'type': 'Business Owner',
+            'name': business.businessName,
+            'user': {
+                'firstName': business.userID.firstName,
+                'lastName': business.userID.lastName,
+                'email': business.userID.email,
+                'contactNumber': business.userID.contactNumber,  # Changed from phone to contactNumber
+                'city': business.userID.city,
+                'profilePicture': f"{BASE_URL}/app{business.userID.profilePicture}" if business.userID.profilePicture else None,
+            },
+            'description': business.Description,
+            'cnic': business.cnic,
+            'cnicFront': f"{BASE_URL}/app{business.CNICFront}" if business.CNICFront else None,
+            'cnicBack': f"{BASE_URL}/app{business.CNICBack}" if business.CNICBack else None,
+            'profilePic': f"{BASE_URL}/app{business.profilepic}" if business.profilepic else None,
+            'created_at': business.userID.date_joined,
+            'balance': business.balance,
+            'status': business.status
+        })
+    
+    for freelancer in pending_freelancers:
+        vendor_data.append({
+            'id': freelancer.id,
+            'type': 'Freelancer',
+            'name': freelancer.businessName or f"{freelancer.userID.firstName} {freelancer.userID.lastName}",
+            'user': {
+                'firstName': freelancer.userID.firstName,
+                'lastName': freelancer.userID.lastName,
+                'email': freelancer.userID.email,
+                'contactNumber': freelancer.userID.contactNumber,  # Changed from phone to contactNumber
+                'city': freelancer.userID.city,
+                'profilePicture': freelancer.userID.profilePicture,
+            },
+            'description': freelancer.Description,
+            'cnic': freelancer.cnic,
+            'portfolioLink': freelancer.portfolioLink,
+            'profilePic': f"{BASE_URL}{freelancer.profilepic}" if freelancer.profilepic else None,
+            'created_at': freelancer.userID.date_joined,
+            'balance': freelancer.balance,
+            'status': freelancer.status
+        })
+    
+    # Pagination
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 10))
+    paginator = Paginator(vendor_data, page_size)
+    
+    try:
+        paginated_vendors = paginator.page(page)
+    except EmptyPage:
+        paginated_vendors = paginator.page(paginator.num_pages)
+    
+    return Response({
+        'vendors': list(paginated_vendors),
+        'pagination': {
+            'total': paginator.count,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': paginator.num_pages,
+        }
+    })
+
+@api_view(['POST'])
+@authentication_classes([ReactJWTAuthentication])
+@permission_classes([IsReactUser])
+def bulk_update_vendor_status(request):
+    vendor_ids = request.data.get('ids', [])
+    vendor_type = request.data.get('vendor_type')  # 'business' or 'freelancer'
+    new_status = request.data.get('status')
+    
+    if not vendor_ids:
+        return Response({'error': 'No vendors selected'}, status=400)
+    
+    if new_status not in ['approved', 'rejected']:
+        return Response({'error': 'Invalid status'}, status=400)
+    
+    updated = 0
+    if vendor_type == 'business':
+        updated = BusinessOwner.objects.filter(
+            id__in=vendor_ids,
+            status='pending'
+        ).update(status=new_status)
+    elif vendor_type == 'freelancer':
+        updated = Freelancer.objects.filter(
+            id__in=vendor_ids,
+            status='pending'
+        ).update(status=new_status)
+    
+    return Response({
+        'success': True,
+        'message': f'Updated {updated} vendors to {new_status}',
         'count': updated
     })

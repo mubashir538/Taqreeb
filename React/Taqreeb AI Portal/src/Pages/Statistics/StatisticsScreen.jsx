@@ -9,7 +9,7 @@ const StatisticsScreen = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const data = await apiService.get('dashboard-statistics/');
+        const data = await apiService.get('app/api/react/dashboard-statistics/');
         setStatisticsData(data);
         setLoading(false);
       } catch (error) {
