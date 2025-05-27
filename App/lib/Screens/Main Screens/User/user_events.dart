@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -137,13 +138,15 @@ class _YourEventsState extends State<YourEvents> {
       backgroundColor: colors.dark,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: UImanagement.headerHeight),
-                _buildSearchBox(),
-                _isLoading ? _buildLoadingIndicator() : _buildEventList(),
-              ],
+          ShowCaseWidget(
+            builder: (context) => SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: UImanagement.headerHeight),
+                  _buildSearchBox(),
+                  _isLoading ? _buildLoadingIndicator() : _buildEventList(),
+                ],
+              ),
             ),
           ),
           Positioned(

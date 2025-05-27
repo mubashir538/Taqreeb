@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
@@ -536,32 +537,34 @@ class _ChatsScreenState extends State<ChatsScreen> {
       backgroundColor: colors.dark,
       body: Stack(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Header(
-                heading: "Chats",
-                para: _type == 'user'
-                    ? "View your chats and groups below."
-                    : "View Your Customer Chats Below.",
-              ),
-              SizedBox(height: Screen.height(context) * 0.02),
-              _buildSearchBar(max),
-              _isLoading
-                  ? Expanded(child: _buildSkeletonLoader())
-                  : Expanded(
-                      child: RefreshIndicator(
-                        onRefresh: _initialize,
-                        child: SizedBox(
-                          width: Screen.width(context) * 0.9,
-                          child: ListView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: _buildChatList(),
+          ShowCaseWidget(
+            builder: (context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Header(
+                  heading: "Chats",
+                  para: _type == 'user'
+                      ? "View your chats and groups below."
+                      : "View Your Customer Chats Below.",
+                ),
+                SizedBox(height: Screen.height(context) * 0.02),
+                _buildSearchBar(max),
+                _isLoading
+                    ? Expanded(child: _buildSkeletonLoader())
+                    : Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: _initialize,
+                          child: SizedBox(
+                            width: Screen.width(context) * 0.9,
+                            child: ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: _buildChatList(),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-            ],
+              ],
+            ),
           ),
           if (_type == 'user') _buildCreateGroupButton(max),
         ],
