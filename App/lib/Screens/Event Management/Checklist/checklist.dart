@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -237,7 +238,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       backgroundColor: colors.dark,
       body: Stack(
         children: [
-          _buildContent(),
+          ShowCaseWidget(builder: (context) => _buildContent()),
           const Positioned(top: 0, child: Header()),
         ],
       ),

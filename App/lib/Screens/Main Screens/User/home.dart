@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
@@ -30,6 +31,13 @@ DateTime? entryTime;
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  GlobalKey _searchBoxKey = GlobalKey();
+  GlobalKey _imageSliderKey = GlobalKey();
+  GlobalKey _categorySectionKey = GlobalKey();
+  GlobalKey _aiPackageButtonKey = GlobalKey();
+  GlobalKey _contentSectionKey = GlobalKey();
+  GlobalKey _categoryIconKey = GlobalKey();
+  GlobalKey _listingsKey = GlobalKey();
 
   Map<String, dynamic> categories = {};
   Map<String, dynamic> demoImages = {};
@@ -258,25 +266,83 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           if (UImanagement.headerHeight > 0)
-            SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: UImanagement.headerHeight),
-                  _buildSearchBox(),
-                  _isLoading
-                      ? _buildSkeletonLoader()
-                      : Column(
-                          children: [
-                            _buildImageSlider(),
-                            _buildCategorySection(),
-                            _buildAIPackageButton(),
-                            _buildContentSection(),
-                          ],
+            ShowCaseWidget(
+              builder: (context) => SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: UImanagement.headerHeight),
+                    Showcase(
+                        key: _searchBoxKey,
+                        description:
+                            'Search for services, packages, or products',
+                        title: 'Search',
+                        targetShapeBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                  if (_isLoadingMore) _buildLoadingMoreIndicator(),
-                ],
+                        targetPadding: EdgeInsets.all(8),
+                        targetBorderRadius: BorderRadius.circular(8),
+                        overlayColor: colors.lightDark.withOpacity(0.5),
+                        child: _buildSearchBox()),
+                    _isLoading
+                        ? _buildSkeletonLoader()
+                        : Column(
+                            children: [
+                              Showcase(
+                                  key: _imageSliderKey,
+                                  description: 'Featured images slider',
+                                  title: 'Image Slider',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor:
+                                      colors.lightDark.withOpacity(0.5),
+                                  child: _buildImageSlider()),
+                              Showcase(
+                                  key: _categorySectionKey,
+                                  description: 'Browse categories',
+                                  title: 'Categories',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor:
+                                      colors.lightDark.withOpacity(0.5),
+                                  child: _buildCategorySection()),
+                              Showcase(
+                                  key: _aiPackageButtonKey,
+                                  description: 'Create a package using AI',
+                                  title: 'AI Package',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor:
+                                      colors.lightDark.withOpacity(0.5),
+                                  child: _buildAIPackageButton()),
+                              Showcase(
+                                  key: _contentSectionKey,
+                                  description:
+                                      'Browse listings, packages, and products',
+                                  title: 'Content Section',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor:
+                                      colors.lightDark.withOpacity(0.5),
+                                  child: _buildContentSection()),
+                            ],
+                          ),
+                    if (_isLoadingMore) _buildLoadingMoreIndicator(),
+                  ],
+                ),
               ),
             ),
           Positioned(
@@ -462,12 +528,33 @@ class _HomePageState extends State<HomePage> {
           child: ListView.builder(
             itemBuilder: (context, index) {
               final categoryName = categories['categories'][index]['name'];
-              return CategoryIcon(
-                onpressed: () => _handleCategoryClick(categoryName),
-                label: categoryName,
-                imageUrl:
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
-              );
+              if (index != 0) {
+                return CategoryIcon(
+                  onpressed: () => _handleCategoryClick(categoryName),
+                  label: categoryName,
+                  imageUrl:
+                      '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                );
+              } else {
+                return Showcase(
+                  key: _categoryIconKey,
+                  description: 'Click to explore $categoryName',
+                  title: 'Category',
+                  targetShapeBorder: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  targetPadding: EdgeInsets.all(8),
+                  targetBorderRadius: BorderRadius.circular(8),
+                  overlayColor: colors.lightDark.withOpacity(0.5),
+                  child: CategoryIcon(
+                    key: _categoryIconKey,
+                    onpressed: () => _handleCategoryClick(categoryName),
+                    label: categoryName,
+                    imageUrl:
+                        '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                  ),
+                );
+              }
             },
             itemCount: categories['categories'].length,
             scrollDirection: Axis.horizontal,
