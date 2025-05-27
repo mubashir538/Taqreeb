@@ -73,7 +73,7 @@ class _HeadersecondaryState extends State<Headersecondary> {
                       style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w400,
-                          color: colors.white),
+                          color: colors.redonWhite),
                     ),
                   ),
                   SizedBox(

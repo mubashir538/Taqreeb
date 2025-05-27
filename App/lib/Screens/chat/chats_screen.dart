@@ -601,7 +601,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     color: colors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(FontAwesomeIcons.plus, color: colors.white),
+                  child: Icon(FontAwesomeIcons.plus, color: colors.redonWhite),
                 ),
               ),
             ),
@@ -638,12 +638,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(FontAwesomeIcons.plus, color: Colors.white),
+              Icon(FontAwesomeIcons.plus, color: colors.redonWhite),
               SizedBox(width: Screen.width(context) * 0.02),
               Text(
                 'Create Group',
                 style: GoogleFonts.roboto(
-                  color: colors.white,
+                  color: colors.redonWhite,
                   fontSize: max * 0.015,
                   fontWeight: FontWeight.w400,
                 ),

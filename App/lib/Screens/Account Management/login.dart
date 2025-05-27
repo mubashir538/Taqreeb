@@ -114,22 +114,33 @@ class _LoginState extends State<Login> {
     return true;
   }
 
+  Future<bool> saveFCMToken() async {
+    try {
+      final response = await MyApi.postRequest(
+        endpoint: 'notification/saveFCM',
+        body: {
+          'token': await MyStorage.yourFCM(),
+          'userId': await MyStorage.getToken(MyTokens.userId),
+        },
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error saving FCM token: $e');
+      return false;
+    }
+  }
+
   Future<void> _handleSuccessfulLogin(Map<String, dynamic> response) async {
     await MyStorage.saveToken(response['refresh'], MyTokens.refreshToken);
     await MyStorage.saveToken(response['access'], MyTokens.accessToken);
     await MyStorage.saveToken(response['userid'].toString(), MyTokens.userId);
 
-    await MyApi.postRequest(
-      endpoint: 'notification/saveFCM',
-      body: {
-        'token': await MyStorage.yourFCM(),
-        'userId': await MyStorage.getToken(MyTokens.userId),
-      },
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-    );
+    await saveFCMToken();
 
     if (mounted) {
       Navigator.pushNamedAndRemoveUntil(

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
@@ -70,6 +73,7 @@ import 'package:taqreeb/Screens/Wallet%20System/wallet_screen.dart';
 import 'package:taqreeb/Screens/chat/Groups/chat_box_group.dart';
 import 'package:taqreeb/Screens/chat/Groups/create_group.dart';
 import 'package:taqreeb/Screens/chat/chat_box.dart';
+import 'package:taqreeb/Screens/chat/chats_screen.dart';
 import 'package:taqreeb/Screens/chat/search_new_user.dart';
 import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -118,11 +122,19 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   bool isHome = false;
+  StreamSubscription<RemoteMessage>? _notificationOpenedSubscription;
 
   @override
   void initState() {
     super.initState();
     _initializeApp();
+    _setupFirebaseNotifications();
+  }
+
+  @override
+  void dispose() {
+    _notificationOpenedSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _initializeApp() async {
@@ -137,6 +149,53 @@ class _MainAppState extends State<MainApp> {
         isHome = true;
       });
     }
+  }
+
+  void _setupFirebaseNotifications() {
+    // Handle when app is opened from terminated state
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null && message.data['type'] == 'message') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ChatsScreen(
+                  // userId: message.data['senderId'],
+                  ),
+            ),
+          );
+        });
+      }
+    });
+
+    // Handle when app is in background
+    _notificationOpenedSubscription =
+        FirebaseMessaging.onMessageOpenedApp.listen(
+      (RemoteMessage message) {
+        if (message.data['type'] == 'message') {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ChatsScreen(
+                  // userId: message.data['senderId'],
+                  ),
+            ),
+          );
+        }
+      },
+    );
+
+    // Optional: Handle foreground notifications
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // You can show a local notification or update UI
+      if (message.notification != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message.notification?.body ?? 'New message'),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -220,7 +279,7 @@ class _MainAppState extends State<MainApp> {
       '/BusinessInfoEdit': (context) => BusinessInfoEdit(), // Done
       '/YourListings': (context) => MainScreen(index: 2), // Done
       '/CreateGroup': (context) => CreateGroupScreen(), // Done
-      '/BusinessBookings': (context) => BusinessBookingsScreen(), // Done 
+      '/BusinessBookings': (context) => BusinessBookingsScreen(), // Done
       '/CreateInvitation': (context) => CreateInvitation(), // Done
       '/InvitationCardView': (context) => ViewInvitationCard(), // Done
       '/UpdateBookedSlots': (context) => ManageBookedSlotsScreen(), // Done
@@ -229,25 +288,27 @@ class _MainAppState extends State<MainApp> {
       '/AddCategory_Add_Addons': (context) => AddCategoryAddAddons(), // Done
       '/AddCategory_Addons': (context) => AddCategoryAddons(), // Done
       '/AddCategory_AddPackage': (context) => AddCategoryAddPackage(), // Done
-      '/AddCategory_Packages': (context) => AddCategoryPackages(),  // Done
-      '/AddCategory_AddProduct': (context) => AddCategoryAddProduct(),// Done
-      '/AddCategoryProducts': (context) => AddCategoryProducts(),// Done
-      '/AddCategory_AddImage': (context) => AddImage(),// Done
-      '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(),// Done
-      '/CategoryView_Caterers': (context) => CategoryViewCaterers(),// Done
-      '/CategoryView_Decorator': (context) => CategoryViewDecorator(),// Done
+      '/AddCategory_Packages': (context) => AddCategoryPackages(), // Done
+      '/AddCategory_AddProduct': (context) => AddCategoryAddProduct(), // Done
+      '/AddCategoryProducts': (context) => AddCategoryProducts(), // Done
+      '/AddCategory_AddImage': (context) => AddImage(), // Done
+      '/CategoryView_CarRenter': (context) => CategoryViewCarRenter(), // Done
+      '/CategoryView_Caterers': (context) => CategoryViewCaterers(), // Done
+      '/CategoryView_Decorator': (context) => CategoryViewDecorator(), // Done
       '/CategoryView_GraphicDesigner': (context) =>
-          CategoryViewGraphicDesigner(),// Done
-      '/CategoryView_Parlour': (context) => CategoryViewParlour(),// Done
-      '/CategoryView_Photographer': (context) => CategoryViewPhotographer(),// Done
+          CategoryViewGraphicDesigner(), // Done
+      '/CategoryView_Parlour': (context) => CategoryViewParlour(), // Done
+      '/CategoryView_Photographer': (context) =>
+          CategoryViewPhotographer(), // Done
       '/CategoryView_PhotographyPlace': (context) =>
-          CategoryViewPhotographyPlace(),// Done
-      '/CategoryView_Salon': (context) => CategoryViewSaloon(),// Done
-      '/CategoryView_Venue': (context) => CategoryViewVenue(),// Done
-      '/CategoryView_VideoEditor': (context) => CategoryViewVideoEditor(),// Done
-      '/ReviewPage': (context) => ReviewScreen(),// Done
+          CategoryViewPhotographyPlace(), // Done
+      '/CategoryView_Salon': (context) => CategoryViewSaloon(), // Done
+      '/CategoryView_Venue': (context) => CategoryViewVenue(), // Done
+      '/CategoryView_VideoEditor': (context) =>
+          CategoryViewVideoEditor(), // Done
+      '/ReviewPage': (context) => ReviewScreen(), // Done
       '/UserBookings': (context) => UserBookingsScreen(),
-      '/CartScreen': (context) => CartScreen(), 
+      '/CartScreen': (context) => CartScreen(),
       '/OrderSummary': (context) => OrderSummaryScreen(),
       '/PaymentDetails': (context) => SecurePaymentScreen(),
     };

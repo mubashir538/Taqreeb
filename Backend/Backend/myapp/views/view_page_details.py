@@ -62,7 +62,7 @@ def car_renter_view_page(request, listingid):
     review_data = ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
-                    'cars': cars.data,
+                    'products': cars.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data})
 
 @api_view(['GET'])
@@ -114,7 +114,7 @@ def caterer_view_page(request,listingid):
     review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,
     'bookedDates':booked_dates,
-    'menu':menu.data,
+    'products':menu.data,
                     'Addons': addons_serializer.data,'reviewData':review_data.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data})
 
@@ -245,6 +245,8 @@ def decorator_detail_page(request,listingId):
     package = Packages.objects.filter(listingId = listingId)
     review = Review.objects.filter(listingId =listingId)
     pic = PicturesListings.objects.filter(listingId=listingId)
+    product = Product.objects.filter(listingId=listingId)
+    items = ProductsSerializer(product, many=True)
     picture_serializer =PicturesListingSerializers(pic, many=True)
     review_serializer =ReviewSerializer( review, many = True)
     package_serializer =PackagesSerializer( package, many = True)
@@ -254,7 +256,7 @@ def decorator_detail_page(request,listingId):
     review_data= ReviewDetails.objects.get(listingId=listingId)
     review_data =ReviewDetailsSerializer(review_data,many=False)
     return Response({'status': 'success','View': serializer.data,'reviewData':review_data.data,
-                    'Addons': addons_serializer.data,
+                    'Addons': addons_serializer.data,'products':items.data,
     'Package': package_serializer.data,'Review': review_serializer.data, 'Listing': listing_serializer.data,'pictures':picture_serializer.data})
 
 @api_view(['POST'])

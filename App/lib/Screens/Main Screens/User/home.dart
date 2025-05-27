@@ -318,6 +318,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildImageSliderSkeleton() {
+    final colors = AppColors(context);
+
     return Container(
       height: Screen.height(context) * 0.25,
       margin: EdgeInsets.symmetric(
@@ -325,13 +327,15 @@ class _HomePageState extends State<HomePage> {
         vertical: Screen.height(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: Colors.grey[800],
+        color: colors.dark.withAlpha(123),
         borderRadius: BorderRadius.circular(10),
       ),
     );
   }
 
   Widget _buildCategorySectionSkeleton() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Container(
@@ -343,7 +347,7 @@ class _HomePageState extends State<HomePage> {
             height: 20,
             width: 150,
             decoration: BoxDecoration(
-              color: Colors.grey[800],
+              color: colors.dark.withAlpha(123),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -363,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                       width: 70,
                       height: 70,
                       decoration: BoxDecoration(
-                        color: Colors.grey[800],
+                        color: colors.dark.withAlpha(123),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -372,7 +376,7 @@ class _HomePageState extends State<HomePage> {
                       height: 12,
                       width: 70,
                       decoration: BoxDecoration(
-                        color: Colors.grey[800],
+                        color: colors.dark.withAlpha(123),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -387,6 +391,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildContentSectionSkeleton() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Container(
@@ -394,7 +400,7 @@ class _HomePageState extends State<HomePage> {
           height: 40,
           margin: EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[800],
+            color: colors.dark.withAlpha(123),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
@@ -406,7 +412,7 @@ class _HomePageState extends State<HomePage> {
                 height: 120,
                 margin: EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[800],
+                  color: colors.dark.withAlpha(123),
                   borderRadius: BorderRadius.circular(8),
                 ),
               );

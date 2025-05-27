@@ -27,7 +27,7 @@ class AppColors {
     lightDark = Theme.of(context).colorScheme.surface;
     yellow = Theme.of(context).colorScheme.secondary;
     green = Color(0xff7ae582);
-    redonWhite = Theme.of(context).colorScheme.onBackground;
+    redonWhite = Color(0xffedf2f4);
     yellowonDark = Theme.of(context).colorScheme.secondary;
   }
 }

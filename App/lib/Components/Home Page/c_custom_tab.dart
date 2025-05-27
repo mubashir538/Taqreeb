@@ -61,7 +61,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                   child: Text(
                     widget.tabs[index],
                     style: GoogleFonts.roboto(
-                      color: isSelected ? colors.white : colors.whiteDarker,
+                      color: isSelected ? colors.redonWhite : colors.whiteDarker,
                       fontWeight: FontWeight.w500,
                       fontSize: Screen.max(context) * 0.015,
                     ),

@@ -48,9 +48,9 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=$query&key=AlzaSy3NTbKIdIUJGedW-k7yw_9oeQcVTeQgO-T&components=country:pk'),
+            'https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=$query&key=AlzaSyTupm6TUJxeoGqvqM-NcWyPRvSrN8NRL8D&components=country:pk'),
       );
-
+ 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return (data['predictions'] as List)

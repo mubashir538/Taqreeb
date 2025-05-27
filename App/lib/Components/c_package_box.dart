@@ -1,8 +1,244 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taqreeb/core/services/cart_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/utils/color.dart';
+import 'package:taqreeb/core/services/flutter_storage.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 
+class PackageDetailsPopup extends StatefulWidget {
+  final String packageId;
+  final String packageName;
+  final String packageDetails;
+  final String packagePrice;
+  final List<String> imageUrls;
+  final VoidCallback onClose;
+  final VoidCallback? onAddToCart;
+
+  const PackageDetailsPopup({
+    super.key,
+    required this.packageId,
+    required this.packageName,
+    required this.packageDetails,
+    required this.packagePrice,
+    required this.imageUrls,
+    required this.onClose,
+    this.onAddToCart,
+  });
+
+  @override
+  State<PackageDetailsPopup> createState() => _PackageDetailsPopupState();
+}
+
+class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
+  late PageController _pageController;
+  int _currentPage = 0;
+  bool _isAddingToCart = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleAddToCart() async {
+    if (_isAddingToCart) return;
+
+    setState(() {
+      _isAddingToCart = true;
+    });
+
+    try {
+      final token = await MyStorage.getToken(MyTokens.accessToken);
+      await CartService.addToCart(
+        token: token!,
+        itemType: 'package',
+        itemId: widget.packageId,
+      );
+
+      if (widget.onAddToCart != null) {
+        widget.onAddToCart!();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Package added to cart')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add to cart: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isAddingToCart = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.all(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: colors.dark,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header with close button
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.packageName,
+                    style: GoogleFonts.roboto(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: colors.white),
+                    onPressed: widget.onClose,
+                  ),
+                ],
+              ),
+            ),
+
+            // Image carousel
+            Container(
+              height: Screen.height(context) * 0.3,
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: widget.imageUrls.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.imageUrls[index]),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Page indicator
+                  if (widget.imageUrls.length > 1)
+                    Positioned(
+                      bottom: 10,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          widget.imageUrls.length,
+                          (index) => Container(
+                            width: 8,
+                            height: 8,
+                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentPage == index
+                                  ? colors.white
+                                  : colors.white.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            // Package details
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Details',
+                    style: GoogleFonts.roboto(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    widget.packageDetails,
+                    style: GoogleFonts.roboto(
+                      fontSize: 16,
+                      color: colors.whiteDarker,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    widget.packagePrice,
+                    style: GoogleFonts.roboto(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: colors.yellow,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Add to cart button
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.red,
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: _isAddingToCart ? null : _handleAddToCart,
+                child: _isAddingToCart
+                    ? CircularProgressIndicator(color: colors.white)
+                    : Text(
+                        'Add to Cart',
+                        style: GoogleFonts.roboto(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: colors.white,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Modified PackageBox with optional popup functionality
 class PackageBox extends StatelessWidget {
   final String packageName;
   final String packageDetails;
@@ -10,6 +246,8 @@ class PackageBox extends StatelessWidget {
   final String imageUrl;
   final String packageId;
   final VoidCallback onPressed;
+  final bool showPopupOnTap;
+  final List<String>? popupImages;
 
   const PackageBox({
     super.key,
@@ -19,14 +257,36 @@ class PackageBox extends StatelessWidget {
     required this.imageUrl,
     this.packageId = "0",
     required this.onPressed,
+    this.showPopupOnTap = true,
+    this.popupImages,
   });
+
+  void _showPackageDetails(BuildContext context) {
+    if (!showPopupOnTap) {
+      onPressed();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => PackageDetailsPopup(
+        packageId: packageId,
+        packageName: packageName,
+        packageDetails: packageDetails,
+        packagePrice: packagePrice,
+        imageUrls: popupImages ?? [imageUrl],
+        onClose: () => Navigator.of(context).pop(),
+        onAddToCart: onPressed,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors(context);
 
     return InkWell(
-      onTap: onPressed,
+      onTap: () => _showPackageDetails(context),
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: Screen.width(context) * 0.9,

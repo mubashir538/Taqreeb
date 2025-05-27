@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_products.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -191,6 +192,7 @@ class _CategoryViewDecoratorState extends State<CategoryViewDecorator> {
               ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
+              CategoryProducts(listing: _listing),
               CategoryReview(
                 listing: _listing,
                 starsvalue: _starsValue,

@@ -273,7 +273,7 @@ class _HeaderState extends State<Header> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w400,
-                  color: colors.white,
+                  color: colors.redonWhite,
                 ),
               ),
             ),

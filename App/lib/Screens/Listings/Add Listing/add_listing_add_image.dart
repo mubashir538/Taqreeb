@@ -276,12 +276,16 @@ class ImageController {
         'location': args['location'] ?? '',
         'priceMin': args['pricemin'] ?? '',
         'priceMax': args['pricemax'] ?? '',
-        'products': _safeJsonEncode(args['products']),
+        if (args['category'].toString().toLowerCase() == 'caterer' ||
+            args['category'].toString().toLowerCase() == 'car renter' ||
+            args['category'].toString().toLowerCase() == 'decorator')
+          'products': _safeJsonEncode(args['products']),
         'packages': _safeJsonEncode(args['packages']),
         'addons': _safeJsonEncode(args['addons']),
-        'viewData': _safeJsonEncode(args['viewData']), // Added viewData
+        if (_safeJsonEncode(args['viewData']) != null)
+          'viewData': _safeJsonEncode(args['viewData']), // Added viewData
       };
-
+      print(data);
       // _addCategorySpecificData(data);
 
       final response = await MyApi.postMultipartRequest(

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django.conf import settings
 import os
+from rest_framework import status
 import random as rd
 from .helper_methods import create_view_for_category,create_listing,save_listing_pictures,save_packages,save_products,save_addons,get_picture,get_view_data,get_variable_name
 from ..models.listing_types_models import Venue,Caterers,CarRenters,Decorators,PhotographyPlaces,Photographers,VideoEditors,GraphicDesigners
@@ -164,42 +165,112 @@ def delete_listing(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def update_listing_fields(listing, data):
-    fields = {
+def update_listing_fields(request):
+    try:
+        data = request.data
+        listing_id = data.get('id')
+        if not listing_id:
+            return Response({'error': 'Listing ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            listing = Listing.objects.get(id=listing_id)
+        except Listing.DoesNotExist:
+            return Response({'error': 'Listing not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # # Verify the user owns this listing
+        # if listing.userId != request.user:
+        #     return Response({'error': 'You do not have permission to edit this listing'}, 
+        #                   status=status.HTTP_403_FORBIDDEN)
+
+        # Handle basic listing fields
+        basic_fields_updated = _update_basic_listing_fields(listing, data)
+        
+        # Handle type-specific fields
+        type_specific_updated = _update_type_specific_fields(listing, data)
+        
+        # Handle addon/package operations if present
+        if 'operation' in data:
+            addon_package_result = _handle_addon_package_operations(request, listing)
+            if addon_package_result:
+                return addon_package_result
+
+        if basic_fields_updated or type_specific_updated:
+            return Response({'status': 'success'})
+        else:
+            return Response({'error': 'No valid fields to update'}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        print(str(e))
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def _update_basic_listing_fields(listing, data):
+    fields_map = {
         'name': 'name',
         'location': 'location',
         'priceMin': 'priceMin',
         'priceMax': 'priceMax',
         'description': 'description'
     }
-    for key, attr in fields.items():
-        if data.get(key):
-            setattr(listing, attr, data[key])
+    
+    updated = False
+    update_fields = []
+    
+    for key, attr in fields_map.items():
+        if key in data:
+            value = data[key]
             if key in ['priceMin', 'priceMax']:
-                listing.basicPrice = int((int(listing.priceMin.replace(',', ''))) + int(listing.priceMax.replace(',', '')) / 2)
-                listing.save(update_fields=[attr, 'basicPrice'])
-            else:
-                listing.save(update_fields=[attr])
-            return True
-    return False
+                # Clean numeric values
+                value = str(value).replace(',', '').strip()
+                if not value.isdigit():
+                    continue
+            setattr(listing, attr, value)
+            update_fields.append(attr)
+            updated = True
+    
+    if updated:
+        # Recalculate basicPrice if price fields were updated
+        if 'priceMin' in update_fields or 'priceMax' in update_fields:
+            try:
+                price_min = int(listing.priceMin.replace(',', '')) if listing.priceMin else 0
+                price_max = int(listing.priceMax.replace(',', '')) if listing.priceMax else 0
+                listing.basicPrice = (price_min + price_max) // 2
+                update_fields.append('basicPrice')
+            except (ValueError, AttributeError):
+                pass
+        
+        listing.save(update_fields=update_fields)
+    
+    return updated
 
 
-def _update_venue_fields(view, data):
-    updated = []
-    if data.get('catering'):
-        view.catering = data['catering']
-        updated.append('catering')
-    if data.get('guestmin') or data.get('guestmax'):
-        view.guestminAllowed = data.get('guestmin')
-        view.guestmaxAllowed = data.get('guestmax')
-        updated += ['guestminAllowed', 'guestmaxAllowed']
-    if data.get('staff'):
-        view.staff = data['staff']
-        updated.append('staff')
-    if data.get('venuetype'):
-        view.venueType = data['venuetype']
-        updated.append('venueType')
-    view.save(update_fields=updated)
+def _update_venue_fields(venue, data):
+    updated_fields = []
+    
+    if 'catering' in data:
+        venue.catering = data['catering']
+        updated_fields.append('catering')
+    
+    if 'guestmin' in data:
+        venue.guestminAllowed = data['guestmin']
+        updated_fields.append('guestminAllowed')
+    
+    if 'guestmax' in data:
+        venue.guestmaxAllowed = data['guestmax']
+        updated_fields.append('guestmaxAllowed')
+    
+    if 'staff' in data:
+        venue.staff = data['staff']
+        updated_fields.append('staff')
+    
+    if 'venuetype' in data:
+        venue.venueType = data['venuetype']
+        updated_fields.append('venueType')
+    
+    if updated_fields:
+        venue.save(update_fields=updated_fields)
+    
+    return bool(updated_fields)
 
 
 def _update_type_specific_fields(listing, data):
@@ -214,90 +285,135 @@ def _update_type_specific_fields(listing, data):
         'GraphicDesigner': (GraphicDesigners, lambda v, d: _simple_update(v, d, 'portfoliolink')),
     }
 
-    model, updater = model_map.get(listing.type, (None, None))
-    if model and updater:
-        view = model.objects.get(listingId=listing)
-        updater(view, data)
+    model_info = model_map.get(listing.type)
+    if not model_info:
+        return False
+
+    model_class, updater = model_info
+    try:
+        view = model_class.objects.get(listingId=listing)
+        return updater(view, data)
+    except model_class.DoesNotExist:
+        return False
+
+
+def _simple_update(view, data, field_name):
+    if field_name in data:
+        setattr(view, field_name, data[field_name])
+        view.save(update_fields=[field_name])
         return True
     return False
 
 
-def _simple_update(view, data, key):
-    value = data.get(key)
-    if value:
-        setattr(view, key, value)
-        view.save(update_fields=[key])
+def _bulk_update(view, data, field_names):
+    updated_fields = []
+    for field_name in field_names:
+        if field_name in data:
+            setattr(view, field_name, data[field_name])
+            updated_fields.append(field_name)
+    
+    if updated_fields:
+        view.save(update_fields=updated_fields)
+        return True
+    return False
 
-
-def _bulk_update(view, data, keys):
-    updated = []
-    for key in keys:
-        if data.get(key):
-            setattr(view, key, data[key])
-            updated.append(key)
-    if updated:
-        view.save(update_fields=updated)
 
 def _handle_addon_package_operations(request, listing):
-    operation = request.data.get('operation', '').lower()
-    value = request.data.get('value', '').lower()
+    try:
+        data = request.data
+        operation = data.get('operation', '').lower()
+        value = data.get('value', '').lower()
 
-    if operation == 'add':
-        return _add_addon_or_package(request, listing, value)
-    elif operation == 'delete':
-        return _delete_addon_or_package(request, value)
-    elif operation == 'edit':
-        return _edit_addon_or_package(request, value)
-    return None
+        if operation == 'add':
+            return _add_addon_or_package(listing, data, value)
+        elif operation == 'delete':
+            return _delete_addon_or_package(data, value)
+        elif operation == 'edit':
+            return _edit_addon_or_package(data, value)
+        
+        return None
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def _add_addon_or_package(request, listing, value):
+def _add_addon_or_package(listing, data, value):
     if value == 'addon':
-        AddOns(
-            isPer=(request.data.get('perheadv') == "Yes"),
-            perType=request.data.get('headtypev'),
+        addon = AddOns(
+            isPer=(data.get('perheadv', '').lower() == "yes"),
+            perType=data.get('headtypev'),
             listingId=listing,
-            name=request.data.get('namev'),
-            price=request.data.get('pricev')
-        ).save()
-        addon_id = AddOns.objects.filter(listingId=listing).last().id
-        return Response({'status': 'success', 'id': addon_id})
+            name=data.get('namev'),
+            price=data.get('pricev')
+        )
+        addon.full_clean()  # Validate before save
+        addon.save()
+        return Response({'status': 'success', 'id': addon.id})
+    
     elif value == 'package':
-        Packages(
+        package = Packages(
             listingId=listing,
-            name=request.data.get('namev'),
-            description=request.data.get('descv'),
-            price=request.data.get('pricev')
-        ).save()
-        pack_id = Packages.objects.filter(listingId=listing).last().id
-        return Response({'status': 'success', 'id': pack_id})
+            name=data.get('namev'),
+            description=data.get('descv'),
+            price=data.get('pricev')
+        )
+        package.full_clean()  # Validate before save
+        package.save()
+        return Response({'status': 'success', 'id': package.id})
+    
+    return Response({'error': 'Invalid value parameter'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def _delete_addon_or_package(request, value):
-    idv = request.data.get('idv')
-    if value == 'addon':
-        AddOns.objects.filter(id=idv).delete()
-    elif value == 'package':
-        Packages.objects.filter(id=idv).delete()
-    return Response({'status': 'success'})
+def _delete_addon_or_package(data, value):
+    idv = data.get('idv')
+    if not idv:
+        return Response({'error': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-def _edit_addon_or_package(request, value):
-    idv = request.data.get('idv')
-    if value == 'addon':
-        addon = AddOns.objects.get(id=idv)
-        addon.name = request.data.get('namev')
-        addon.price = request.data.get('pricev')
-        addon.save(update_fields=['name', 'price'])
+    try:
+        if value == 'addon':
+            AddOns.objects.filter(id=idv).delete()
+        elif value == 'package':
+            Packages.objects.filter(id=idv).delete()
+        else:
+            return Response({'error': 'Invalid value parameter'}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response({'status': 'success'})
-    elif value == 'package':
-        pack = Packages.objects.get(id=idv)
-        pack.name = request.data.get('namev')
-        pack.description = request.data.get('descv')
-        pack.price = request.data.get('pricev')
-        pack.save(update_fields=['name', 'description', 'price'])
-        return Response({'status': 'success'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+def _edit_addon_or_package(data, value):
+    idv = data.get('idv')
+    if not idv:
+        return Response({'error': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        if value == 'addon':
+            addon = AddOns.objects.get(id=idv)
+            if 'namev' in data:
+                addon.name = data['namev']
+            if 'pricev' in data:
+                addon.price = data['pricev']
+            addon.save()
+            return Response({'status': 'success'})
+        
+        elif value == 'package':
+            package = Packages.objects.get(id=idv)
+            if 'namev' in data:
+                package.name = data['namev']
+            if 'descv' in data:
+                package.description = data['descv']
+            if 'pricev' in data:
+                package.price = data['pricev']
+            package.save()
+            return Response({'status': 'success'})
+        
+        return Response({'error': 'Invalid value parameter'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    except (AddOns.DoesNotExist, Packages.DoesNotExist):
+        return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def listing_with_views(request):

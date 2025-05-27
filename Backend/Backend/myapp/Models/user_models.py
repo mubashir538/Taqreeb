@@ -64,6 +64,21 @@ class FCMTokens(m.Model):
     token = m.TextField()
     userid = m.ForeignKey(User,on_delete=m.CASCADE)
 
+class NotificationLog(m.Model):
+    id = m.AutoField(primary_key=True)
+    sender = m.ForeignKey(User, on_delete=m.CASCADE, related_name='sent_notifications')
+    receiver = m.ForeignKey(User, on_delete=m.CASCADE, related_name='received_notifications')
+    message = m.TextField()
+    sent_at = m.DateTimeField(auto_now_add=True)
+    status = m.CharField(max_length=20, default='pending')  # 'sent', 'failed'
+    error_message = m.TextField(null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            m.Index(fields=['receiver', 'status']),
+            m.Index(fields=['sender']),
+        ]
+
 class BankDetails(m.Model):
     id = m.AutoField(primary_key=True)
     userID = m.ForeignKey(User,on_delete=m.CASCADE)

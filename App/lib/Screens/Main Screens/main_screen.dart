@@ -110,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
               child: Icon(
                 FontAwesomeIcons.plus,
                 size: Screen.max(context) * 0.03,
-                color: colors.white,
+                color: colors.redonWhite,
               ),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

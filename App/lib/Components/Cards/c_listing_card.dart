@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/core/utils/color.dart'; // Assuming MyColors is here
+import 'package:taqreeb/core/utils/color.dart'; // Assuming Mycolors is here
 
 class ProductCard extends StatefulWidget {
   final String imageUrl;
@@ -65,7 +65,7 @@ class _ProductCardState extends State<ProductCard> {
           borderRadius: BorderRadius.all(Radius.circular(20)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: colors.dark.withOpacity(0.2),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -100,11 +100,11 @@ class _ProductCardState extends State<ProductCard> {
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.white,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: colors.dark.withOpacity(0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -114,7 +114,7 @@ class _ProductCardState extends State<ProductCard> {
                           _isWishlisted
                               ? FontAwesomeIcons.heart
                               : Icons.favorite_border,
-                          color: _isWishlisted ? colors.red : Colors.grey,
+                          color: _isWishlisted ? colors.red : colors.whiteDarker,
                           size: Screen.max(context) * 0.025,
                         ),
                       ),
@@ -146,7 +146,7 @@ class _ProductCardState extends State<ProductCard> {
                     style: GoogleFonts.poppins(
                       fontSize: Screen.max(context) * 0.022,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: colors.white,
                     ),
                   ),
                   SizedBox(height: Screen.height(context) * 0.005),
@@ -157,7 +157,7 @@ class _ProductCardState extends State<ProductCard> {
                     style: GoogleFonts.poppins(
                       fontSize: Screen.max(context) * 0.016,
                       fontWeight: FontWeight.w400,
-                      color: Colors.white.withOpacity(0.8),
+                      color: colors.white.withOpacity(0.8),
                     ),
                   ),
                   SizedBox(height: Screen.height(context) * 0.01),
@@ -174,7 +174,7 @@ class _ProductCardState extends State<ProductCard> {
                         style: GoogleFonts.poppins(
                           fontSize: Screen.max(context) * 0.018,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white,
+                          color: colors.white,
                         ),
                       ),
                       const Spacer(),
@@ -183,7 +183,7 @@ class _ProductCardState extends State<ProductCard> {
                         style: GoogleFonts.poppins(
                           fontSize: Screen.max(context) * 0.014,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withOpacity(0.8),
+                          color: colors.white.withOpacity(0.8),
                           letterSpacing: 1.2,
                         ),
                       ),

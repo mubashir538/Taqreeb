@@ -19,6 +19,7 @@ class AppInitializer {
 
     // Initialize Firebase first
     await FirebaseService.initialize();
+    
 
     // Then remove splash screen
     FlutterNativeSplash.remove();

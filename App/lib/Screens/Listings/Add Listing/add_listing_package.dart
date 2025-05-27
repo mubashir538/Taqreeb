@@ -54,8 +54,15 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
   }
 
   void _navigateToAddImage() {
+    String path = '/AddCategory_AddImage';
+    if (_args['category'].toString().toLowerCase() == 'caterer' ||
+        _args['category'].toString().toLowerCase() == 'car renter' ||
+        _args['category'].toString().toLowerCase() == 'decorator') {
+      path = '/AddCategoryProducts';
+    }
+
     context.pushNamedTransition(
-        routeName: '/AddCategoryProducts',
+        routeName: path,
         type: PageTransitionType.rightToLeftWithFade,
         duration: Duration(milliseconds: 300),
         arguments: _args);
@@ -131,6 +138,7 @@ class _AddCategoryPackagesState extends State<AddCategoryPackages> {
 
   Widget _buildPackageItem(Map<String, dynamic> package) {
     return PackageBox(
+      showPopupOnTap: false,
       onPressed: () {},
       imageUrl: package['images'][0],
       packageDetails: package['details'],

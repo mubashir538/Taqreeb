@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
+import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
-import 'package:taqreeb/Components/c_package_box.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
@@ -14,21 +14,21 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
-class CategoryPackages extends StatefulWidget {
+class CategoryProducts extends StatefulWidget {
   final Map listing;
   final bool type;
 
-  const CategoryPackages({
+  const CategoryProducts({
     super.key,
     required this.listing,
     this.type = false,
   });
 
   @override
-  State<CategoryPackages> createState() => _CategoryPackagesState();
+  State<CategoryProducts> createState() => _CategoryProductsState();
 }
 
-class _CategoryPackagesState extends State<CategoryPackages> {
+class _CategoryProductsState extends State<CategoryProducts> {
   late final TextEditingController _nameController;
   late final TextEditingController _detailsController;
   late final TextEditingController _priceController;
@@ -62,7 +62,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     }
   }
 
-  Future<void> _handleAddOrEditPackage({int? index}) async {
+  Future<void> _handleAddOrEditProduct({int? index}) async {
     try {
       final response = await MyApi.postRequest(
         headers: {
@@ -73,8 +73,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
         body: {
           'id': widget.listing['Listing']['id'].toString(),
           'operation': index == null ? 'add' : 'edit',
-          'value': 'package',
-          if (index != null) 'idv': widget.listing['Package'][index]['id'],
+          'value': 'product',
+          if (index != null) 'idv': widget.listing['Product'][index]['id'],
           'namev': _nameController.text,
           'pricev': _priceController.text,
           'descv': _detailsController.text,
@@ -82,7 +82,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       );
 
       if (response['status'] == 'success') {
-        _updatePackageList(response, index);
+        _updateProductList(response, index);
         _showSuccessMessage(index == null ? 'Added' : 'Updated');
       } else {
         _showErrorMessage();
@@ -92,9 +92,9 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     }
   }
 
-  void _updatePackageList(Map response, int? index) {
-    final newPackage = {
-      'id': response['id'] ?? widget.listing['Package'][index!]['id'],
+  void _updateProductList(Map response, int? index) {
+    final newProduct = {
+      'id': response['id'] ?? widget.listing['Product'][index!]['id'],
       'name': _nameController.text,
       'description': _detailsController.text,
       'price': _priceController.text,
@@ -102,14 +102,14 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
     setState(() {
       if (index == null) {
-        widget.listing['Package'].add(newPackage);
+        widget.listing['Product'].add(newProduct);
       } else {
-        widget.listing['Package'][index] = newPackage;
+        widget.listing['Product'][index] = newProduct;
       }
     });
   }
 
-  Future<void> _handleDeletePackage(int index) async {
+  Future<void> _handleDeleteProduct(int index) async {
     try {
       final response = await MyApi.postRequest(
         headers: {
@@ -120,13 +120,13 @@ class _CategoryPackagesState extends State<CategoryPackages> {
         body: {
           'id': widget.listing['Listing']['id'].toString(),
           'operation': 'delete',
-          'value': 'package',
-          'idv': widget.listing['Package'][index]['id']
+          'value': 'product',
+          'idv': widget.listing['Product'][index]['id']
         },
       );
 
       if (response['status'] == 'success') {
-        setState(() => widget.listing['Package'].removeAt(index));
+        setState(() => widget.listing['Product'].removeAt(index));
         _showSuccessMessage('Deleted');
       } else {
         _showErrorMessage();
@@ -137,14 +137,14 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   }
 
   void _showSuccessMessage(String action) {
-    MyScaffold(text: 'Package $action Successfully!').show(context);
+    MyScaffold(text: 'Product $action Successfully!').show(context);
   }
 
   void _showErrorMessage() {
     MyScaffold(text: 'Something Went Wrong!').show(context);
   }
 
-  Widget _buildPackageDialog(
+  Widget _buildProductDialog(
     FocusNode nameFocus,
     FocusNode detailsFocus,
     FocusNode priceFocus,
@@ -156,7 +156,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       scrollable: true,
       backgroundColor: colors.dark,
       title: Text(
-        index == null ? 'Add Package' : 'Edit Package',
+        index == null ? 'Add Product' : 'Edit Product',
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.02,
           fontWeight: FontWeight.w600,
@@ -169,7 +169,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           mainAxisSize: MainAxisSize.min,
           children: [
             MyTextBox(
-              prefixIcon: FontAwesomeIcons.cubes,
+              prefixIcon: FontAwesomeIcons.box,
               focusNode: nameFocus,
               onFieldSubmitted: (_) =>
                   FocusScope.of(context).requestFocus(detailsFocus),
@@ -206,7 +206,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           width: Screen.width(context) * 0.3,
           textSize: Screen.max(context) * 0.015,
           onPressed: () async {
-            await _handleAddOrEditPackage(index: index);
+            await _handleAddOrEditProduct(index: index);
             Navigator.pop(context);
           },
         ),
@@ -214,16 +214,16 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     );
   }
 
-  void _showPackageDialog({int? index}) {
+  void _showProductDialog({int? index}) {
     final nameFocus = FocusNode();
     final detailsFocus = FocusNode();
     final priceFocus = FocusNode();
 
     if (index != null) {
-      final package = widget.listing['Package'][index];
-      _nameController.text = package['name'];
-      _detailsController.text = package['description'];
-      _priceController.text = package['price'].toString();
+      final product = widget.listing['Product'][index];
+      _nameController.text = product['name'];
+      _detailsController.text = product['description'];
+      _priceController.text = product['price'].toString();
     } else {
       _nameController.clear();
       _detailsController.clear();
@@ -232,7 +232,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
     showDialog(
       context: context,
-      builder: (context) => _buildPackageDialog(
+      builder: (context) => _buildProductDialog(
         nameFocus,
         detailsFocus,
         priceFocus,
@@ -245,22 +245,20 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     });
   }
 
-  Widget _buildPackageItem(Map package, int index) {
+  Widget _buildProductItem(Map product, int index) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: Screen.width(context) * 0.05,
       ),
       height: Screen.height(context) * 0.2,
-      child: PackageBox(
-        showPopupOnTap: _isBusinessUser ? false : true,
-        packageId: package['id'].toString(),
-        imageUrl: package['pictures'].isEmpty
-            ? 'https://picsum.photos/id/${DateTime.now().millisecondsSinceEpoch % 1000}/600/300'
-            : package['pictures'][0]['picturePath'],
-        packageDetails: package['description'],
-        packagePrice: package['price'].toString(),
-        packageName: package['name'],
-        onPressed: () {},
+      child: ProductBox(
+        productId: product['id'].toString(),
+        productImage: product['pictures'].isEmpty
+            ? null
+            : product['pictures'][0]['picturePath'],
+        productDescription: product['description'],
+        productPrice: product['price'].toString(),
+        productName: product['name'],
       ),
     );
   }
@@ -281,7 +279,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
             curve: Curves.easeInOut,
           );
         } else if (!isLeft &&
-            _currentPage < widget.listing['Package'].length - 1) {
+            _currentPage < widget.listing['Product'].length - 1) {
           _pageController.nextPage(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
@@ -301,7 +299,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            widget.listing['Package'].length,
+            widget.listing['Product'].length,
             (index) => Container(
               width: Screen.max(context) * 0.015,
               height: Screen.max(context) * 0.015,
@@ -322,8 +320,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     );
   }
 
-  Widget _buildPackageList() {
-    if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
+  Widget _buildProductList() {
+    if (widget.listing['Product'].isEmpty) return const SizedBox.shrink();
     final colors = AppColors(context);
 
     return Column(
@@ -336,10 +334,10 @@ class _CategoryPackagesState extends State<CategoryPackages> {
               onPageChanged: (index) {
                 setState(() => _currentPage = index);
               },
-              itemCount: widget.listing['Package'].length,
+              itemCount: widget.listing['Product'].length,
               itemBuilder: (context, index) {
-                return _buildPackageItem(
-                  widget.listing['Package'][index],
+                return _buildProductItem(
+                  widget.listing['Product'][index],
                   index,
                 );
               },
@@ -362,7 +360,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                     color: colors.yellow,
                     size: Screen.max(context) * 0.03,
                   ),
-                  onPressed: () => _showPackageDialog(index: _currentPage),
+                  onPressed: () => _showProductDialog(index: _currentPage),
                 ),
                 SizedBox(width: Screen.width(context) * 0.05),
                 IconButton(
@@ -371,7 +369,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                     color: colors.red,
                     size: Screen.max(context) * 0.03,
                   ),
-                  onPressed: () => _handleDeletePackage(_currentPage),
+                  onPressed: () => _handleDeleteProduct(_currentPage),
                 ),
                 SizedBox(width: Screen.width(context) * 0.05),
                 IconButton(
@@ -380,7 +378,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                     color: colors.yellow,
                     size: Screen.max(context) * 0.03,
                   ),
-                  onPressed: () => _showPackageDialog(),
+                  onPressed: () => _showProductDialog(),
                 ),
               ],
             ),
@@ -391,7 +389,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
+    if (widget.listing['products'].isEmpty) return const SizedBox.shrink();
 
     final colors = AppColors(context);
 
@@ -407,7 +405,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
               horizontal: Screen.width(context) * 0.05,
             ),
             child: Text(
-              'Packages',
+              'Products',
               style: GoogleFonts.poppins(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w600,
@@ -416,7 +414,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.02),
-          _buildPackageList(),
+          _buildProductList(),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: Screen.width(context) * 0.05,

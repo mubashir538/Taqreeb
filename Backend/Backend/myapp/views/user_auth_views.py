@@ -12,6 +12,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from firebase_admin import messaging
 from datetime import datetime
+import requests
+import os
+import pywhatkit as kit
 from ..models.user_models import User,UserActivity
 
 @api_view(['POST'])
@@ -116,22 +119,19 @@ def resend_otp_phone(request):
 def send_otp_phone(request):
     contact_number = request.data.get('contactNumber')
     country = '+92'
-    if contact_number.find(country) == -1:
+    if str(contact_number).find(country) == -1:
         if contact_number[0] == '0':
             contact_number = contact_number[1:]
         contact_number = country + contact_number
     print('contactNumber: ',contact_number)
     otp = rd.randint(100000,999999)
-    message = messaging.Message(
-            notification=messaging.Notification(
-                title="Your OTP Code",
-                body=f"Your Taqreeb verification code is {otp}. Do not share it with anyone."
-            ),
-            token=contact_number,
-        )
-
-    response = messaging.send(message)
-    print(response)
+    now = datetime.datetime.now()
+    kit.sendwhatmsg(
+    phone_no=contact_number,
+    message=f"Your OTP is: {otp}",
+    time_hour=now.hour,
+    time_min=now.minute + 1
+    )
     return Response({'status':'success','otp': otp,'contact':contact_number})
 
 @api_view(['POST'])
