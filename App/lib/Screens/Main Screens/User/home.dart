@@ -77,15 +77,6 @@ class _HomePageState extends State<HomePage> {
           _changeHeight(renderbox);
         },
       );
-      // ShowCaseWidget.of(context).startShowCase([
-      //   _searchBoxKey,
-      //   _imageSliderKey,
-      //   _categorySectionKey,
-      //   _categoryIconKey,
-      //   _aiPackageButtonKey,
-      //   _contentSectionKey,
-      //   _listingsKey
-      // ]);
     });
   }
 
