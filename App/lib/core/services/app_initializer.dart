@@ -16,23 +16,17 @@ import 'package:taqreeb/core/services/firebase_service.dart';
 class AppInitializer {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-
-    // Initialize Firebase first
     await FirebaseService.initialize();
     
-
-    // Then remove splash screen
     FlutterNativeSplash.remove();
   }
 
   static List<SingleChildWidget> getProviders() {
     return [
-      // Add BusinessData provider first since other providers depend on it
       ChangeNotifierProvider(create: (_) => BusinessData(), lazy: true),
       ChangeNotifierProvider(
           create: (_) => YourListingsController()..fetchData(), lazy: true),
 
-      // Existing providers
       ChangeNotifierProvider(
           create: (_) => BusinessSignupProvider(), lazy: true),
       ChangeNotifierProvider(
@@ -40,7 +34,6 @@ class AppInitializer {
 
       ChangeNotifierProvider(
           create: (_) => FreelancerSignupDescriptionViewModel()),
-      // Modified BusinessInfoEditViewModel provider
       ChangeNotifierProxyProvider<BusinessData, BusinessAccountInfoViewModel>(
         create: (context) => BusinessAccountInfoViewModel(
           context.read<BusinessData>(),
@@ -59,7 +52,6 @@ class AppInitializer {
         },
         lazy: true,
       ),
-      // Other existing providers
       ChangeNotifierProvider(
           create: (_) => ForgotPasswordVerifyCodeViewModel(), lazy: true),
       ChangeNotifierProvider(

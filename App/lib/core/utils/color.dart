@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class AppColors {
   final BuildContext context;
   AppColors(this.context) {
-    // Initialize all colors based on current theme
     _initializeColors();
   }
 

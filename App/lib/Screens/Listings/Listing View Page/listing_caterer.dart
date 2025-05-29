@@ -5,7 +5,6 @@ import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
@@ -26,7 +25,6 @@ class CategoryViewCaterers extends StatefulWidget {
 }
 
 class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
-  // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
   late final List<String> _values = [];
@@ -203,15 +201,6 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
-      ),
     );
   }
 

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -108,7 +107,6 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with close button
             Padding(
               padding: EdgeInsets.all(16),
               child: Row(
@@ -130,9 +128,8 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
               ),
             ),
 
-            // Image carousel (if images exist)
             if (hasImages)
-              Container(
+              SizedBox(
                 height: Screen.height(context) * 0.3,
                 child: Stack(
                   children: [
@@ -158,8 +155,6 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
                         );
                       },
                     ),
-
-                    // Page indicator
                     if (widget.productImages!.length > 1)
                       Positioned(
                         bottom: 10,
@@ -186,8 +181,6 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
                   ],
                 ),
               ),
-
-            // Product details
             Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -221,8 +214,6 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
                 ],
               ),
             ),
-
-            // Add to cart button (only if productId is not null)
             if (widget.productId.isNotEmpty)
               Padding(
                 padding: EdgeInsets.all(16),
@@ -387,7 +378,6 @@ class _ProductBoxState extends State<ProductBox> {
                           ),
                         ),
                       ),
-                      // Only show "Add to Cart" button if not showing popup
                       if (!widget.showPopupOnTap && widget.productId != null)
                         SizedBox(
                           width: Screen.width(context) * 0.25,

@@ -112,7 +112,7 @@ class _AddImageState extends State<AddImage> {
               const SizedBox(height: 10),
               _buildImageGrid(),
               SizedBox(
-                  height: Screen.height(context) * 0.1), // Space for button
+                  height: Screen.height(context) * 0.1), 
             ],
           ),
           _buildSubmitButton(),
@@ -283,10 +283,8 @@ class ImageController {
         'packages': _safeJsonEncode(args['packages']),
         'addons': _safeJsonEncode(args['addons']),
         if (_safeJsonEncode(args['viewData']) != null)
-          'viewData': _safeJsonEncode(args['viewData']), // Added viewData
+          'viewData': _safeJsonEncode(args['viewData']), 
       };
-      print(data);
-      // _addCategorySpecificData(data);
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'businessowner/addListings/',

@@ -70,7 +70,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     final themeProvider =
-        Provider.of<ThemeProvider>(context); // Get the ThemeProvider
+        Provider.of<ThemeProvider>(context); 
 
 
     UImanagement.getHeaderHeight(
@@ -78,9 +78,9 @@ class _SettingsState extends State<Settings> {
         callback: (renderbox) {
           changeHeight(renderbox);
         });
-    final MyColors = AppColors(context);
+    final mycolors = AppColors(context);
     return Scaffold(
-      backgroundColor: MyColors.dark, // Use theme-based colors
+      backgroundColor: mycolors.dark, 
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -92,7 +92,7 @@ class _SettingsState extends State<Settings> {
                   isLoading
                       ? CircularProgressIndicator(
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(MyColors.white),
+                              AlwaysStoppedAnimation<Color>(mycolors.white),
                         )
                       : Container(
                           constraints: BoxConstraints(
@@ -108,14 +108,14 @@ class _SettingsState extends State<Settings> {
                                       decoration: BoxDecoration(
                                         color: themeProvider.themeMode ==
                                                 ThemeMode.dark
-                                            ? MyColors.darkLighter
-                                            : MyColors.whiteDarker,
+                                            ? mycolors.darkLighter
+                                            : mycolors.whiteDarker,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.darkLighter
-                                                : MyColors.whiteDarker),
+                                                ? mycolors.darkLighter
+                                                : mycolors.whiteDarker),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -125,8 +125,8 @@ class _SettingsState extends State<Settings> {
                                             FontAwesomeIcons.building,
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.white
-                                                : MyColors.dark,
+                                                ? mycolors.white
+                                                : mycolors.dark,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -145,8 +145,8 @@ class _SettingsState extends State<Settings> {
                                                   color:
                                                       themeProvider.themeMode ==
                                                               ThemeMode.dark
-                                                          ? MyColors.white
-                                                          : MyColors.dark,
+                                                          ? mycolors.white
+                                                          : mycolors.dark,
                                                 ),
                                               ),
                                             ),
@@ -179,10 +179,10 @@ class _SettingsState extends State<Settings> {
                                                 );
                                               });
                                             },
-                                            activeColor: MyColors.white,
-                                            activeTrackColor: MyColors.green,
-                                            inactiveThumbColor: MyColors.white,
-                                            inactiveTrackColor: MyColors.red,
+                                            activeColor: mycolors.white,
+                                            activeTrackColor: mycolors.green,
+                                            inactiveThumbColor: mycolors.white,
+                                            inactiveTrackColor: mycolors.red,
                                           ),
                                         ],
                                       ),
@@ -209,14 +209,14 @@ class _SettingsState extends State<Settings> {
                                       decoration: BoxDecoration(
                                         color: themeProvider.themeMode ==
                                                 ThemeMode.dark
-                                            ? MyColors.darkLighter
-                                            : MyColors.whiteDarker,
+                                            ? mycolors.darkLighter
+                                            : mycolors.whiteDarker,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.darkLighter
-                                                : MyColors.whiteDarker),
+                                                ? mycolors.darkLighter
+                                                : mycolors.whiteDarker),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -226,8 +226,8 @@ class _SettingsState extends State<Settings> {
                                             FontAwesomeIcons.building,
                                             color: themeProvider.themeMode ==
                                                     ThemeMode.dark
-                                                ? MyColors.white
-                                                : MyColors.dark,
+                                                ? mycolors.white
+                                                : mycolors.dark,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -246,8 +246,8 @@ class _SettingsState extends State<Settings> {
                                                   color:
                                                       themeProvider.themeMode ==
                                                               ThemeMode.dark
-                                                          ? MyColors.white
-                                                          : MyColors.dark,
+                                                          ? mycolors.white
+                                                          : mycolors.dark,
                                                 ),
                                               ),
                                             ),
@@ -280,10 +280,10 @@ class _SettingsState extends State<Settings> {
                                                 );
                                               });
                                             },
-                                            activeColor: MyColors.white,
-                                            activeTrackColor: MyColors.green,
-                                            inactiveThumbColor: MyColors.white,
-                                            inactiveTrackColor: MyColors.red,
+                                            activeColor: mycolors.white,
+                                            activeTrackColor: mycolors.green,
+                                            inactiveThumbColor: mycolors.white,
+                                            inactiveTrackColor: mycolors.red,
                                           ),
                                         ],
                                       ),
@@ -316,7 +316,7 @@ class _SettingsState extends State<Settings> {
                                       TextButton(
                                           onPressed: () {
                                             themeProvider
-                                                .switchTheme(); // Use ThemeProvider
+                                                .switchTheme(); 
                                             Navigator.pushNamedAndRemoveUntil(
                                               context,
                                               '/HomePage',

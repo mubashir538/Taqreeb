@@ -73,7 +73,7 @@ class _AllTransactionsState extends State<AllTransactions> {
 
     for (var transaction in transactions) {
       DateTime transactionDate = DateTime.parse(
-          transaction['date']); // Ensure your DB returns a valid date string
+          transaction['date']); 
       String formattedDate = DateFormat('yyyy-MM-dd').format(transactionDate);
       String formattedMonth = DateFormat('yyyy-MM').format(transactionDate);
       String formattedYear = DateFormat('yyyy').format(transactionDate);
@@ -111,7 +111,6 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   @override
   Widget build(BuildContext context) {
-        final colors = AppColors(context);
 
     return Scaffold(
       body: Stack(
@@ -128,7 +127,7 @@ class _AllTransactionsState extends State<AllTransactions> {
                   Column(
                     children: groupedData.entries
                         .where((entry) => entry
-                            .value.isNotEmpty) // Show only non-empty sections
+                            .value.isNotEmpty) 
                         .map((entry) =>
                             buildTransactionSection(entry.key, entry.value))
                         .toList(),

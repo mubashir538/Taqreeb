@@ -6,7 +6,6 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 
-// ignore: must_be_immutable
 class Navbar extends StatefulWidget {
   Navbar(
       {super.key, required this.selectedIndex, required this.onValueChanged});
@@ -36,7 +35,6 @@ class _NavbarState extends State<Navbar> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getType();
   }
@@ -54,8 +52,8 @@ class _NavbarState extends State<Navbar> {
           border: Border.all(color: colors.white.withAlpha(123), width: 0.5)),
       clipBehavior: Clip.hardEdge,
       child: BottomAppBar(
-        color: colors.darkLighter, // Let container color show through
-        elevation: 0, // No shadow needed
+        color: colors.darkLighter,  
+        elevation: 0, 
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[

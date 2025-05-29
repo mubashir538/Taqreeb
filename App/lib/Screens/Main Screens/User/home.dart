@@ -31,18 +31,16 @@ DateTime? entryTime;
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  GlobalKey _searchBoxKey = GlobalKey();
-  GlobalKey _imageSliderKey = GlobalKey();
-  GlobalKey _categorySectionKey = GlobalKey();
-  GlobalKey _aiPackageButtonKey = GlobalKey();
-  GlobalKey _contentSectionKey = GlobalKey();
-  GlobalKey _categoryIconKey = GlobalKey();
-  GlobalKey _listingsKey = GlobalKey();
+  final GlobalKey _searchBoxKey = GlobalKey();
+  final GlobalKey _imageSliderKey = GlobalKey();
+  final GlobalKey _categorySectionKey = GlobalKey();
+  final GlobalKey _aiPackageButtonKey = GlobalKey();
+  final GlobalKey _contentSectionKey = GlobalKey();
+  final GlobalKey _categoryIconKey = GlobalKey();
 
   Map<String, dynamic> categories = {};
   Map<String, dynamic> demoImages = {};
 
-  // Separate data for each tab
   Map<String, dynamic> listings = {
     'results': {'HomeListing': [], 'pictures': []}
   };
@@ -57,7 +55,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoadingServices = false;
   bool _isLoadingMore = false;
   int _currentPage = 1;
-  int _currentTab = 0; // 0 = Listings, 1 = Packages, 2 = Products
+  int _currentTab = 0; 
   List<String> _myImages = [];
   GlobalKey headerKey = GlobalKey();
   FocusNode searchFocus = FocusNode();
@@ -651,13 +649,10 @@ class _HomePageState extends State<HomePage> {
       itemCount: packages['results']['HomePackages'].length,
       itemBuilder: (context, index) {
         final package = packages['results']['HomePackages'][index];
-        // You'll need to adjust this based on your Packages data structure
         return GestureDetector(
           onTap: () => _handleServiceClick(package['id'], package['name']),
           child: PackageBox(
             onPressed: () {
-              // TODO
-              // _handleServiceClick(package['id'], package['name']);
             },
             packageId: package['id'].toString(),
             packageDetails: package['description'].toString(),
@@ -679,7 +674,6 @@ class _HomePageState extends State<HomePage> {
       itemCount: products['results']['HomeProducts'].length,
       itemBuilder: (context, index) {
         final product = products['results']['HomeProducts'][index];
-        // You'll need to adjust this based on your Products data structure
         return GestureDetector(
           onTap: () => _handleServiceClick(product['id'], product['name']),
           child: ProductCard(

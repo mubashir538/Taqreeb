@@ -22,7 +22,6 @@ class _OTPBoxesState extends State<OTPBoxes> {
     _controllers = List.generate(4, (_) => TextEditingController());
     _focusNodes = List.generate(4, (_) => FocusNode());
 
-    // Auto-focus first field
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNodes[0].requestFocus();
     });
@@ -40,13 +39,11 @@ class _OTPBoxesState extends State<OTPBoxes> {
   }
 
   void _onTextChanged(int index, String value) {
-    // Only allow numeric input
     if (value.isNotEmpty && !RegExp(r'^[0-9]$').hasMatch(value)) {
       _controllers[index].text = '';
       return;
     }
 
-    // Handle pasted code (4 digits)
     if (value.length == 4 && index == 0) {
       for (int i = 0; i < 4; i++) {
         _controllers[i].text = value[i];
@@ -63,7 +60,7 @@ class _OTPBoxesState extends State<OTPBoxes> {
       if (index < 3) {
         _focusNodes[index + 1].requestFocus();
       } else {
-        _focusNodes[index].unfocus(); // Hide keyboard after last digit
+        _focusNodes[index].unfocus(); 
       }
     } else if (value.isEmpty && index > 0) {
       _focusNodes[index - 1].requestFocus();

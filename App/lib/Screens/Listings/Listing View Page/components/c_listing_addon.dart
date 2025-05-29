@@ -57,44 +57,40 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     setState(() => _isBusinessUser = isBusinessUser);
   }
 
-  Future<void> _saveAddon(int index) async {
-    final response = await MyApi.postRequest(
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      endpoint: 'businessowner/updateListings/',
-      body: {
-        'id': widget.listing['Listing']['id'].toString(),
-        'idv': widget.listing['Addons'][index]['id'].toString(),
-        'operation': 'edit',
-        'value': 'addon',
-        'namev': _headingControllers[index].text,
-        'pricev': _valueControllers[index].text
-      },
-    );
+  // Future<void> _saveAddon(int index) async {
+  //   final response = await MyApi.postRequest(
+  //     headers: {
+  //       'Authorization':
+  //           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+  //     },
+  //     endpoint: 'businessowner/updateListings/',
+  //     body: {
+  //       'id': widget.listing['Listing']['id'].toString(),
+  //       'idv': widget.listing['Addons'][index]['id'].toString(),
+  //       'operation': 'edit',
+  //       'value': 'addon',
+  //       'namev': _headingControllers[index].text,
+  //       'pricev': _valueControllers[index].text
+  //     },
+  //   );
 
-    if (!mounted) return;
+  //   if (!mounted) return;
 
-    if (response['status'] == 'success') {
-      setState(() {
-        widget.listing['Addons'][index]['name'] =
-            _headingControllers[index].text;
-        widget.listing['Addons'][index]['price'] =
-            _valueControllers[index].text;
-        _isEditingHeading[index] = false;
-        _isEditingValue[index] = false;
-      });
-      MyScaffold(text: 'Addon Updated Successfully!').show(context);
-    } else {
-      MyScaffold(text: 'Something Went Wrong!').show(context);
-    }
-  }
+  //   if (response['status'] == 'success') {
+  //     setState(() {
+  //       widget.listing['Addons'][index]['name'] =
+  //           _headingControllers[index].text;
+  //       widget.listing['Addons'][index]['price'] =
+  //           _valueControllers[index].text;
+  //       _isEditingHeading[index] = false;
+  //       _isEditingValue[index] = false;
+  //     });
+  //     MyScaffold(text: 'Addon Updated Successfully!').show(context);
+  //   } else {
+  //     MyScaffold(text: 'Something Went Wrong!').show(context);
+  //   }
+  // }
 
-  String _capitalize(String input) {
-    if (input.isEmpty) return input;
-    return input[0].toUpperCase() + input.substring(1).toLowerCase();
-  }
 
   Future<void> _showAddAddonDialog() async {
     final nameController = TextEditingController();
@@ -248,36 +244,37 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     });
   }
 
-  Future<void> _deleteAddon(int index) async {
-    final response = await MyApi.postRequest(
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      endpoint: 'businessowner/updateListings/',
-      body: {
-        'id': widget.listing['Listing']['id'].toString(),
-        'idv': widget.listing['Addons'][index]['id'].toString(),
-        'operation': 'delete',
-        'value': 'addon',
-      },
-    );
 
-    if (!mounted) return;
+  // Future<void> _deleteAddon(int index) async {
+  //   final response = await MyApi.postRequest(
+  //     headers: {
+  //       'Authorization':
+  //           'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+  //     },
+  //     endpoint: 'businessowner/updateListings/',
+  //     body: {
+  //       'id': widget.listing['Listing']['id'].toString(),
+  //       'idv': widget.listing['Addons'][index]['id'].toString(),
+  //       'operation': 'delete',
+  //       'value': 'addon',
+  //     },
+  //   );
 
-    if (response['status'] == 'success') {
-      setState(() {
-        widget.listing['Addons'].removeAt(index);
-        _headingControllers.removeAt(index);
-        _valueControllers.removeAt(index);
-        _isEditingHeading.removeAt(index);
-        _isEditingValue.removeAt(index);
-      });
-      MyScaffold(text: 'Addon Deleted Successfully!').show(context);
-    } else {
-      MyScaffold(text: 'Something Went Wrong!').show(context);
-    }
-  }
+  //   if (!mounted) return;
+
+  //   if (response['status'] == 'success') {
+  //     setState(() {
+  //       widget.listing['Addons'].removeAt(index);
+  //       _headingControllers.removeAt(index);
+  //       _valueControllers.removeAt(index);
+  //       _isEditingHeading.removeAt(index);
+  //       _isEditingValue.removeAt(index);
+  //     });
+  //     MyScaffold(text: 'Addon Deleted Successfully!').show(context);
+  //   } else {
+  //     MyScaffold(text: 'Something Went Wrong!').show(context);
+  //   }
+  // }
 
   TextStyle _buildTextStyle({
     double fontSize = 0.015,
@@ -397,121 +394,112 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     );
   }
 
-  Widget _buildAddonsList() {
-    return Column(
-      children: [
-        for (int i = 0; i < widget.listing['Addons'].length; i++)
-          Container(
-            margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
-            child: _buildAddonItem(i),
-          ),
-      ],
-    );
-  }
 
-  Widget _buildAddonItem(int index) {
-    final addon = widget.listing['Addons'][index];
-    final colors = AppColors(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Add-On ${index + 1}',
-          style: _buildTextStyle(
-            fontWeight: FontWeight.w500,
-            color: colors.yellow,
-          ),
-        ),
-        _buildEditableField(
-          controller: _headingControllers[index],
-          isEditing: _isEditingHeading[index],
-          defaultValue: _capitalize(addon['name']),
-          onSave: () => _saveAddon(index),
-          onEdit: () => setState(() => _isEditingHeading[index] = true),
-        ),
-        _buildEditableField(
-          controller: _valueControllers[index],
-          isEditing: _isEditingValue[index],
-          defaultValue: addon['isPer']
-              ? '${addon['price']}/${_capitalize(addon['perType'])}'
-              : addon['price'].toString(),
-          onSave: () => _saveAddon(index),
-          onEdit: () => setState(() => _isEditingValue[index] = true),
-        ),
-        if (_isBusinessUser) _buildAddonActions(index),
-      ],
-    );
-  }
+  // Widget _buildAddonItem(int index) {
+  //   final addon = widget.listing['Addons'][index];
+  //   final colors = AppColors(context);
 
-  Widget _buildEditableField({
-    required TextEditingController controller,
-    required bool isEditing,
-    required String defaultValue,
-    required VoidCallback onSave,
-    required VoidCallback onEdit,
-  }) {
-    final colors = AppColors(context);
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         'Add-On ${index + 1}',
+  //         style: _buildTextStyle(
+  //           fontWeight: FontWeight.w500,
+  //           color: colors.yellow,
+  //         ),
+  //       ),
+  //       _buildEditableField(
+  //         controller: _headingControllers[index],
+  //         isEditing: _isEditingHeading[index],
+  //         defaultValue: _capitalize(addon['name']),
+  //         onSave: () => _saveAddon(index),
+  //         onEdit: () => setState(() => _isEditingHeading[index] = true),
+  //       ),
+  //       _buildEditableField(
+  //         controller: _valueControllers[index],
+  //         isEditing: _isEditingValue[index],
+  //         defaultValue: addon['isPer']
+  //             ? '${addon['price']}/${_capitalize(addon['perType'])}'
+  //             : addon['price'].toString(),
+  //         onSave: () => _saveAddon(index),
+  //         onEdit: () => setState(() => _isEditingValue[index] = true),
+  //       ),
+  //       if (_isBusinessUser) _buildAddonActions(index),
+  //     ],
+  //   );
+  // }
 
-    return isEditing
-        ? TextField(
-            controller: controller,
-            style: _buildTextStyle(color: colors.white),
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintStyle: _buildTextStyle(color: Colors.grey),
-            ),
-          )
-        : Text(
-            defaultValue,
-            style: _buildTextStyle(color: colors.white),
-          );
-  }
+  // Widget _buildEditableField({
+  //   required TextEditingController controller,
+  //   required bool isEditing,
+  //   required String defaultValue,
+  //   required VoidCallback onSave,
+  //   required VoidCallback onEdit,
+  // }) {
+  //   final colors = AppColors(context);
 
-  Widget _buildAddonActions(int index) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildActionButton(
-          text: _isEditingHeading[index] ? 'Save' : 'Edit Name',
-          onPressed: _isEditingHeading[index]
-              ? () => _saveAddon(index)
-              : () => setState(() => _isEditingHeading[index] = true),
-        ),
-        SizedBox(width: Screen.max(context) * 0.02),
-        _buildActionButton(
-          text: _isEditingValue[index] ? 'Save' : 'Edit Price',
-          onPressed: _isEditingValue[index]
-              ? () => _saveAddon(index)
-              : () => setState(() => _isEditingValue[index] = true),
-        ),
-        SizedBox(width: Screen.max(context) * 0.02),
-        _buildActionButton(
-          text: 'Delete',
-          onPressed: () => _deleteAddon(index),
-        ),
-      ],
-    );
-  }
+  //   return isEditing
+  //       ? TextField(
+  //           controller: controller,
+  //           style: _buildTextStyle(color: colors.white),
+  //           decoration: InputDecoration(
+  //             border: const OutlineInputBorder(),
+  //             hintStyle: _buildTextStyle(color: Colors.grey),
+  //           ),
+  //         )
+  //       : Text(
+  //           defaultValue,
+  //           style: _buildTextStyle(color: colors.white),
+  //         );
+  // }
 
-  Widget _buildActionButton({
-    required String text,
-    required VoidCallback onPressed,
-  }) {
-    return ColoredButton(
-      text: text,
-      width: Screen.width(context) * 0.25,
-      textSize: Screen.max(context) * 0.015,
-      onPressed: onPressed,
-    );
-  }
+  // Widget _buildAddonActions(int index) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //     children: [
+  //       _buildActionButton(
+  //         text: _isEditingHeading[index] ? 'Save' : 'Edit Name',
+  //         onPressed: _isEditingHeading[index]
+  //             ? () => _saveAddon(index)
+  //             : () => setState(() => _isEditingHeading[index] = true),
+  //       ),
+  //       SizedBox(width: Screen.max(context) * 0.02),
+  //       _buildActionButton(
+  //         text: _isEditingValue[index] ? 'Save' : 'Edit Price',
+  //         onPressed: _isEditingValue[index]
+  //             ? () => _saveAddon(index)
+  //             : () => setState(() => _isEditingValue[index] = true),
+  //       ),
+  //       SizedBox(width: Screen.max(context) * 0.02),
+  //       _buildActionButton(
+  //         text: 'Delete',
+  //         onPressed: () => _deleteAddon(index),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildAddAddonButton() {
-    return ColoredButton(
-      text: 'Add New Add-On',
-      onPressed: _showAddAddonDialog,
-    );
-  }
+  // Widget _buildActionButton({
+  //   required String text,
+  //   required VoidCallback onPressed,
+  // }
+  // ) {
+  //   return ColoredButton(
+  //     text: text,
+  //     width: Screen.width(context) * 0.25,
+  //     textSize: Screen.max(context) * 0.015,
+  //     onPressed: onPressed,
+  //   );
+  // }
+
+  // Widget _buildAddAddonButton() {
+  //   return ColoredButton(
+  //     text: 'Add New Add-On',
+  //     onPressed: _showAddAddonDialog,
+  //   );
+  // }
 
   @override
   void dispose() {

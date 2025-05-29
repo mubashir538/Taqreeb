@@ -95,7 +95,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with close button
             Padding(
               padding: EdgeInsets.all(16),
               child: Row(
@@ -117,8 +116,7 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
               ),
             ),
 
-            // Image carousel
-            Container(
+            SizedBox(
               height: Screen.height(context) * 0.3,
               child: Stack(
                 children: [
@@ -144,7 +142,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
                     },
                   ),
 
-                  // Page indicator
                   if (widget.imageUrls.length > 1)
                     Positioned(
                       bottom: 10,
@@ -172,7 +169,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
               ),
             ),
 
-            // Package details
             Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -207,7 +203,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
               ),
             ),
 
-            // Add to cart button
             Padding(
               padding: EdgeInsets.all(16),
               child: ElevatedButton(
@@ -238,7 +233,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
   }
 }
 
-// Modified PackageBox with optional popup functionality
 class PackageBox extends StatelessWidget {
   final String packageName;
   final String packageDetails;
@@ -306,7 +300,6 @@ class PackageBox extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image on the left
             Container(
               width: Screen.width(context) * 0.35,
               height: Screen.width(context) * 0.4,
@@ -322,7 +315,6 @@ class PackageBox extends StatelessWidget {
               ),
             ),
 
-            // Content on the right
             Expanded(
               child: SizedBox(
                 height: Screen.height(context) * 0.2,
@@ -332,7 +324,6 @@ class PackageBox extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Package Name
                       Text(
                         packageName,
                         style: GoogleFonts.roboto(
@@ -345,7 +336,6 @@ class PackageBox extends StatelessWidget {
                       ),
                       SizedBox(height: Screen.max(context) * 0.01),
 
-                      // Package Details
                       Text(
                         packageDetails,
                         style: GoogleFonts.roboto(
@@ -357,8 +347,6 @@ class PackageBox extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: Screen.max(context) * 0.02),
-
-                      // Price only (no Add to Cart button)
                       Text(
                         packagePrice,
                         style: GoogleFonts.roboto(

@@ -8,11 +8,9 @@ import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/core/utils/images.dart';
 
 class FunctionDetail extends StatefulWidget {
   const FunctionDetail({super.key});
@@ -30,7 +28,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
   int _functionId = 0;
   int _eventId = 0;
   String _eventName = '';
-  String _eventType = '';
   bool _isLoading = true;
   bool _dataFetched = false;
 
@@ -64,7 +61,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
         _functionId = args['fid'];
         _eventName = args['event'];
         _eventId = args['eventid'];
-        _eventType = args['type'];
       });
       _fetchData();
     }

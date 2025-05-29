@@ -9,10 +9,10 @@ import 'package:taqreeb/core/services/tokens.dart';
 class BusinessAccountInfoViewModel with ChangeNotifier {
   BusinessData businessData;
   Map<String, dynamic> _userInfo = {};
-  bool _isLoading = false; // Initialize as false
+  bool _isLoading = false; 
   List<String> _items = [];
   String _type = "";
-  bool _hasData = false; // Add this flag
+  bool _hasData = false; 
 
   BusinessAccountInfoViewModel(this.businessData);
 
@@ -21,9 +21,7 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
   String get type => _type;
   Map<String, dynamic> get userInfo => _userInfo;
 
-// In BusinessAccountInfoViewModel
   Future<void> fetch(BuildContext context) async {
-    // Only fetch if we don't have data already
     if (_hasData) return;
 
     _isLoading = true;
@@ -37,14 +35,13 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
         'businessowner/accountInfo/$userid/$_type',
         onSuccess: (token, data) {
           _userInfo = data['userinfo'] ?? {};
-          print('$data');
           businessData.updateBusinessInfo(
               data['businessInfo'], data['listingCount'],
               imageUrl:
                   "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${data['businessInfo']["profilepic"]}");
           _items = data['categories']?.cast<String>()?.toList() ?? [];
           _isLoading = false;
-          _hasData = true; // Set flag to true
+          _hasData = true; 
           notifyListeners();
         },
         onError: () {

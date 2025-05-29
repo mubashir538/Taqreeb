@@ -60,25 +60,20 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   Future<void> _addChecklistItem(String text) async {
     setState(() => _checklistController.addItem(text));
     _textController.clear();
-
-    // Save immediately to server
     final success = await _checklistController.saveNewItem(text);
     if (!mounted) return;
 
     if (!success) {
       MyScaffold(text: 'Failed to add checklist item').show(context);
-      // Rollback if failed
       setState(() => _checklistController.items.removeLast());
     }
   }
 
   Future<void> _toggleChecklistItem(int index) async {
-    if (_editingIndex == index) return; // Don't toggle while editing
+    if (_editingIndex == index) return; 
 
     final previousState = _checklistController.items[index]["isChecked"];
     setState(() => _checklistController.toggleItem(index));
-
-    // Save immediately to server
     final success = await _checklistController.saveItemState(
       _checklistController.items[index],
     );
@@ -86,7 +81,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     if (!mounted) return;
 
     if (!success) {
-      // Revert if failed
       setState(
           () => _checklistController.items[index]["isChecked"] = previousState);
       MyScaffold(text: 'Failed to update checklist item').show(context);
@@ -108,7 +102,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     final newText = _editControllers[index]?.text.trim() ?? '';
 
     if (newText.isEmpty) {
-      // Delete the item if text is empty
       await _deleteChecklistItem(index);
       return;
     }
@@ -121,7 +114,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         _editingIndex = null;
       });
 
-      // Save immediately to server
       final success = await _checklistController.updateItemText(
         oldItem: oldItem,
         newText: newText,
@@ -130,7 +122,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       if (!mounted) return;
 
       if (!success) {
-        // Revert if failed
         setState(() {
           _checklistController.items[index]["description"] =
               oldItem["description"];
@@ -159,12 +150,10 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       _focusNodes.remove(index);
     });
 
-    // Delete immediately from server
     final success = await _checklistController.deleteItem(item);
     if (!mounted) return;
 
     if (!success) {
-      // Restore if failed
       setState(() => _checklistController.items.insert(index, item));
       MyScaffold(text: 'Failed to delete checklist item').show(context);
     }
@@ -493,7 +482,7 @@ class ChecklistController {
     items.add({
       "description": text,
       "isChecked": false,
-      "isNew": true, // Mark as new item
+      "isNew": true, 
     });
   }
 
@@ -515,7 +504,6 @@ class ChecklistController {
       );
 
       if (response['status'] == 'success') {
-        // Update the item with the ID from server
         if (response['checklistItem'] != null) {
           final newItem = items.last;
           newItem["id"] = response['checklistItem']['id'];
@@ -531,7 +519,6 @@ class ChecklistController {
 
   Future<bool> saveItemState(Map<String, dynamic> item) async {
     try {
-      // If it's a new item that hasn't been saved to server yet
       if (item["isNew"] == true) {
         return await saveNewItem(item["description"]);
       }
@@ -556,9 +543,8 @@ class ChecklistController {
     required String newText,
   }) async {
     try {
-      // If it's a new item that hasn't been saved to server yet
       if (oldItem["isNew"] == true) {
-        return true; // The text will be saved when toggled or when app closes
+        return true; 
       }
 
       final response = await MyApi.postRequest(
@@ -578,7 +564,6 @@ class ChecklistController {
 
   Future<bool> deleteItem(Map<String, dynamic> item) async {
     try {
-      // If it's a new item that hasn't been saved to server yet
       if (item["isNew"] == true) {
         return true;
       }

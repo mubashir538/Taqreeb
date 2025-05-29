@@ -130,7 +130,6 @@ class _LoginState extends State<Login> {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error saving FCM token: $e');
       return false;
     }
   }

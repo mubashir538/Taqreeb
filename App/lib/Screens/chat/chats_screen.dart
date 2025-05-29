@@ -41,7 +41,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
   bool _isSearching = false;
   String _type = 'businessowner';
 
-  // Stream subscriptions
   StreamSubscription? _chatsSubscription;
   StreamSubscription? _groupsSubscription;
 
@@ -68,7 +67,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
     _loggedInUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
     _type = await MyTokens.getBusinessType();
 
-    // Initialize collections based on user type
     if (_type == 'businessowner') {
       _chatsCollection = FirebaseFirestore.instance.collection('BusinessChats');
       _usersCollection = FirebaseFirestore.instance.collection('businessUsers');
@@ -83,13 +81,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }
 
     _groupsCollection = FirebaseFirestore.instance.collection('groups');
-
-    // Load cached data first for quick display
     await _loadCachedData();
-
-    // Set up real-time listeners
     _setupChatListeners();
-
     if (_type == 'user') {
       _setupGroupListeners();
     }
@@ -136,12 +129,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   void _setupChatListeners() {
     _chatsSubscription = _chatsCollection.snapshots().listen((snapshot) async {
       final updatedChats = await _processChats(snapshot.docs);
-
-      // Sort by last message time (newest first)
       updatedChats.sort(
           (a, b) => (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
-
-      // Update cache
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(
           'cached_chats', json.encode(_prepareForCache(updatedChats)));
@@ -171,16 +160,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
         .snapshots()
         .listen((snapshot) async {
       final updatedGroups = await _processGroups(snapshot.docs);
-
-      // Sort by last message time (newest first)
       updatedGroups.sort(
           (a, b) => (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
-
-      // Update cache
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(
           'cached_groups', json.encode(_prepareForCache(updatedGroups)));
-
       if (mounted) {
         setState(() {
           _groups = updatedGroups;
@@ -200,7 +184,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
     for (final chatDoc in chatDocs) {
       try {
-        // Get last message
         final lastMessage = await _chatsCollection
             .doc(chatDoc.id)
             .collection('messages')
@@ -252,7 +235,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
     for (final groupDoc in groupDocs) {
       try {
-        // Get last message
         final lastMessage = await _groupsCollection
             .doc(groupDoc.id)
             .collection('messages')
@@ -277,7 +259,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           'participants': groupDoc['participants'],
           'lastMessage': lastMessageText,
           'time': lastMessageTime,
-          'newMessages': 0, // You can implement group unread counts if needed
+          'newMessages': 0, 
           'isGroup': true,
         });
       } catch (e) {
@@ -328,7 +310,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   void _navigateToChatbox(String userId) async {
-    // Mark messages as read when opening chat
     final chat =
         _userChats.firstWhere((c) => c['userId'] == userId, orElse: () => {});
     if (chat.isNotEmpty && chat['newMessages'] > 0) {
@@ -358,35 +339,30 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final diff = now.difference(messageTime);
 
     if (diff.inDays > 7) {
-      return DateFormat('MM/dd/yy').format(messageTime); // Older than 1 week
+      return DateFormat('MM/dd/yy').format(messageTime); 
     } else if (diff.inDays > 1) {
-      return '${diff.inDays}d ago'; // 2-7 days ago
+      return '${diff.inDays}d ago'; 
     } else if (diff.inDays == 1) {
-      return 'Yesterday'; // Yesterday
+      return 'Yesterday'; 
     } else if (diff.inHours > 0) {
-      return '${diff.inHours}h ago'; // Hours ago
+      return '${diff.inHours}h ago'; 
     } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes}m ago'; // Minutes ago
+      return '${diff.inMinutes}m ago'; 
     } else {
-      return 'Just now'; // Less than a minute
+      return 'Just now'; 
     }
   }
 
   List<Widget> _buildChatList() {
-    // Combine all conversations into one list
     final List<Map<String, dynamic>> allConversations = [
       ..._userChats,
       if (_type == 'user') ..._groups,
     ];
-
-    // Sort by timestamp (newest first)
     allConversations.sort((a, b) {
       final aTime = a['time'] as Timestamp;
       final bTime = b['time'] as Timestamp;
-      return bTime.compareTo(aTime); // Descending order (newest first)
+      return bTime.compareTo(aTime); 
     });
-
-    // If searching, filter the combined list
     final displayConversations = _isSearching
         ? allConversations.where((convo) => convo['name']
             .toLowerCase()
@@ -425,7 +401,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final colors = AppColors(context);
 
     return ListView.builder(
-      itemCount: 5, // Number of skeleton items to show
+      itemCount: 5, 
       padding: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
         vertical: Screen.max(context) * 0.01,
@@ -448,7 +424,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Avatar placeholder
                 Container(
                   margin: EdgeInsets.only(right: Screen.max(context) * 0.03),
                   child: Container(
@@ -464,7 +439,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Name and time row
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: Screen.max(context) * 0.007),
@@ -472,7 +446,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Name placeholder
                             Container(
                               width: Screen.width(context) * 0.4,
                               height: Screen.max(context) * 0.02,
@@ -481,7 +454,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
-                            // Time placeholder
                             Container(
                               width: Screen.width(context) * 0.1,
                               height: Screen.max(context) * 0.015,
@@ -493,11 +465,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           ],
                         ),
                       ),
-                      // Message and badge row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Message placeholder
                           Container(
                             width: Screen.width(context) * 0.5,
                             height: Screen.max(context) * 0.015,
@@ -506,7 +476,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                          // Badge placeholder
                           Container(
                             width: Screen.max(context) * 0.03,
                             height: Screen.max(context) * 0.03,

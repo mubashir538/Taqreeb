@@ -180,7 +180,7 @@ class _YourEventsState extends State<YourEvents> {
           searchFocus.requestFocus();
         },
         onChanged: (value) {
-          _searchEvents(value); // Call the search method
+          _searchEvents(value); 
         },
         controller: _searchController,
         hint: 'Search Typing to Search',
@@ -198,7 +198,7 @@ class _YourEventsState extends State<YourEvents> {
       padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
       child: Column(
         children: List.generate(
-          5, // Number of skeleton items to show
+          5, 
           (index) => _buildSkeletonItem(),
         ),
       ),
@@ -216,23 +216,18 @@ class _YourEventsState extends State<YourEvents> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title placeholder
             Container(
               width: Screen.width(context) * 0.6,
               height: Screen.height(context) * 0.03,
               color: Colors.white,
             ),
             SizedBox(height: Screen.height(context) * 0.01),
-
-            // Budget placeholder
             Container(
               width: Screen.width(context) * 0.4,
               height: Screen.height(context) * 0.02,
               color: Colors.white,
             ),
             SizedBox(height: Screen.height(context) * 0.02),
-
-            // Three info placeholders
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -254,8 +249,6 @@ class _YourEventsState extends State<YourEvents> {
               ],
             ),
             SizedBox(height: Screen.height(context) * 0.02),
-
-            // Button placeholders
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -272,8 +265,6 @@ class _YourEventsState extends State<YourEvents> {
               ],
             ),
             SizedBox(height: Screen.height(context) * 0.02),
-
-            // Divider
             Container(
               width: double.infinity,
               height: 1,
@@ -332,7 +323,6 @@ class _YourEventsState extends State<YourEvents> {
             SizedBox(height: Screen.height(context) * 0.03),
             ColoredButton(
               onPressed: () {
-                // Navigate to the screen where user can add a new event
                 context.pushNamedTransition(
                     routeName: '/AddEvent',
                     type: PageTransitionType.rightToLeftWithFade,

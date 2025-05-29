@@ -31,7 +31,6 @@ class SearchService extends StatefulWidget {
 }
 
 class _SearchServiceState extends State<SearchService> {
-  // Data State
   final Map<String, dynamic> _args = {};
   final Map<String, dynamic> _categories = {};
   final Map<String, dynamic> _searchResults = {
@@ -41,8 +40,6 @@ class _SearchServiceState extends State<SearchService> {
   };
   final Map<String, dynamic> _additionalFilters = {};
   final Map<String, dynamic> _additionalSelections = {};
-
-  // Controllers
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -58,13 +55,11 @@ class _SearchServiceState extends State<SearchService> {
       TextEditingController(text: 'All');
 
   FocusNode searchFocus = FocusNode();
-
-  // UI State
   final GlobalKey _headerKey = GlobalKey();
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
-  int _currentTab = 0; // 0 = Listings, 1 = Packages, 2 = Products
+  int _currentTab = 0; 
   final List<String> _appliedFilters = [];
   final List<String> _filtersToApply = [];
 
@@ -145,8 +140,6 @@ class _SearchServiceState extends State<SearchService> {
         'max_rating': _ratingController.maxValue.toString(),
       'type': _getCurrentTabType(),
     };
-
-    // Add additional filters if they exist
     _additionalSelections.forEach((key, value) {
       if (value.isNotEmpty) {
         params[key] = value.join(',');
@@ -381,7 +374,7 @@ class _SearchServiceState extends State<SearchService> {
     final colors = AppColors(context);
 
     return ListView.builder(
-      itemCount: 5, // Number of skeleton items to show
+      itemCount: 5, 
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.symmetric(
@@ -394,7 +387,6 @@ class _SearchServiceState extends State<SearchService> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Image placeholder
                 Container(
                   width: double.infinity,
                   height: Screen.height(context) * 0.2,
@@ -404,24 +396,18 @@ class _SearchServiceState extends State<SearchService> {
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-
-                // Title placeholder
                 Container(
                   width: Screen.width(context) * 0.6,
                   height: Screen.height(context) * 0.025,
                   color: Colors.white,
                 ),
                 SizedBox(height: Screen.height(context) * 0.01),
-
-                // Subtitle placeholder
                 Container(
                   width: Screen.width(context) * 0.4,
                   height: Screen.height(context) * 0.02,
                   color: Colors.white,
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-
-                // Divider
                 Container(
                   width: double.infinity,
                   height: 1,
@@ -476,8 +462,6 @@ class _SearchServiceState extends State<SearchService> {
                 packagePrice: package['price'].toString(),
                 packageName: package['name'],
                 onPressed: () {
-                  // TODO
-                  // Implement Package Click
                 },
               );
             },

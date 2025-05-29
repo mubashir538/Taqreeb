@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/Components/Rating/c_listing_info.dart';
 import 'package:taqreeb/Components/Rating/c_rating_bar.dart';
 import 'package:taqreeb/Components/Rating/c_rating_filter.dart';
@@ -106,23 +105,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
       return;
     }
 
-    // Extract the star count from the filter text (e.g., "5 Stars" → 5)
     final starCount = int.parse(filter.split(' ')[0]);
 
     _filteredReviews = (_listing['Review'] as List).where((review) {
       final rating = double.parse(review['rating']);
-
-      // For 5 stars: show only 5-star reviews
       if (starCount == 5) return rating >= 4.5;
-      // For 4 stars: show 4-4.9
       if (starCount == 4) return rating >= 3.5 && rating < 4.5;
-      // For 3 stars: show 3-3.9
       if (starCount == 3) return rating >= 2.5 && rating < 3.5;
-      // For 2 stars: show 2-2.9
       if (starCount == 2) return rating >= 1.5 && rating < 2.5;
-      // For 1 star: show 1-1.9
       if (starCount == 1) return rating < 1.5;
-
       return false;
     }).toList();
   }
@@ -216,21 +207,5 @@ class _ReviewScreenState extends State<ReviewScreen> {
     }
   }
 
-  Widget _buildLoadMoreButton(BuildContext context) {
-    final colors = AppColors(context);
 
-    return Container(
-      width: Screen.width(context),
-      padding: EdgeInsets.all(Screen.max(context) * 0.02),
-      color: colors.darkLighter,
-      child: Text(
-        "Load More",
-        style: GoogleFonts.roboto(
-          color: colors.red,
-          fontSize: Screen.max(context) * 0.015,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
 }
