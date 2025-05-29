@@ -56,6 +56,7 @@ import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_photograp
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_salon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_venue.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/listing_video_editor.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/view_360.dart';
 import 'package:taqreeb/Screens/Listings/review_screen.dart';
 import 'package:taqreeb/Screens/Listings/user_wishlist.dart';
 import 'package:taqreeb/Screens/Main%20Screens/Business/business_bookings.dart';
@@ -247,6 +248,7 @@ class _MainAppState extends State<MainApp> {
       '/Settings': (context) => Settings(), // Done
       '/Signup_ContactOTPSend': (context) => SignupContactOtpSend(), // Done
       '/Signup_ContactOTPVerify': (context) => SignupContactOtpVerify(), // Done
+      '/360View': (context) => View360(), // Done
       '/Signup_EmailOTPSend': (context) => SignupEmailOtpSend(), // Done
       '/Signup_EmailOTPVerify': (context) => SignupEmailOtpVerify(), // Done
       '/Signup_MoreInfo': (context) => SignupMoreInfo(), // Done

@@ -340,8 +340,7 @@ class ListingFormController {
   // Controllers
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController locationController =
-      TextEditingController(text: 'fsd');
+  final TextEditingController locationController = TextEditingController();
   final TextEditingController priceminController = TextEditingController();
   final TextEditingController pricemaxController = TextEditingController();
   final TextEditingController typeController = TextEditingController();

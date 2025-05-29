@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
@@ -35,6 +37,8 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   bool _isBusinessUser = false;
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> _selectedImages = [];
 
   @override
   void initState() {
@@ -62,23 +66,55 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     }
   }
 
+  Future<void> _pickImages() async {
+    try {
+      final List<XFile> images = await _picker.pickMultiImage();
+      if (images.isNotEmpty) {
+        setState(() {
+          _selectedImages = images;
+        });
+      }
+    } catch (e) {
+      MyScaffold(text: 'Error selecting images: ${e.toString()}').show(context);
+    }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
   Future<void> _handleAddOrEditPackage({int? index}) async {
     try {
-      final response = await MyApi.postRequest(
+      if (_nameController.text.isEmpty || _priceController.text.isEmpty) {
+        MyScaffold(text: 'Name and Price are required').show(context);
+        return;
+      }
+
+      final Map<String, dynamic> body = {
+        'id': widget.listing['Listing']['id'].toString(),
+        'operation': index == null ? 'add' : 'edit',
+        'value': 'package',
+        if (index != null) 'idv': widget.listing['Package'][index]['id'],
+        'namev': _nameController.text,
+        'pricev': _priceController.text,
+        'descv': _detailsController.text,
+      };
+
+      final Map<String, dynamic> files = {};
+      if (_selectedImages.isNotEmpty) {
+        files['pictures'] = _selectedImages.map((img) => img.path).toList();
+      }
+
+      final response = await MyApi.postMultipartRequest(
+        endpoint: 'businessowner/updateListings/',
         headers: {
           'Authorization':
               'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
         },
-        endpoint: 'businessowner/updateListings/',
-        body: {
-          'id': widget.listing['Listing']['id'].toString(),
-          'operation': index == null ? 'add' : 'edit',
-          'value': 'package',
-          if (index != null) 'idv': widget.listing['Package'][index]['id'],
-          'namev': _nameController.text,
-          'pricev': _priceController.text,
-          'descv': _detailsController.text,
-        },
+        body: body,
+        files: files,
       );
 
       if (response['status'] == 'success') {
@@ -98,6 +134,9 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       'name': _nameController.text,
       'description': _detailsController.text,
       'price': _priceController.text,
+      'pictures': response['pictures'] ??
+          widget.listing['Package'][index]['pictures'] ??
+          [],
     };
 
     setState(() {
@@ -106,6 +145,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       } else {
         widget.listing['Package'][index] = newPackage;
       }
+      _selectedImages = [];
     });
   }
 
@@ -142,6 +182,57 @@ class _CategoryPackagesState extends State<CategoryPackages> {
 
   void _showErrorMessage() {
     MyScaffold(text: 'Something Went Wrong!').show(context);
+  }
+
+  Widget _buildImagePreview() {
+    if (_selectedImages.isEmpty) return const SizedBox();
+
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _selectedImages.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Stack(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    image: DecorationImage(
+                      image: FileImage(File(_selectedImages[index].path)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: GestureDetector(
+                    onTap: () => _removeImage(index),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: const Icon(
+                        FontAwesomeIcons.xmark,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildPackageDialog(
@@ -191,6 +282,23 @@ class _CategoryPackagesState extends State<CategoryPackages> {
               isPrice: true,
               valueController: _priceController,
             ),
+            SizedBox(height: Screen.height(context) * 0.02),
+            Text(
+              'Add Images (Max 5)',
+              style: GoogleFonts.roboto(
+                color: colors.white,
+                fontSize: Screen.max(context) * 0.018,
+              ),
+            ),
+            SizedBox(height: Screen.height(context) * 0.01),
+            _buildImagePreview(),
+            SizedBox(height: Screen.height(context) * 0.01),
+            ColoredButton(
+              text: 'Select Images',
+              width: Screen.width(context) * 0.5,
+              textSize: Screen.max(context) * 0.015,
+              onPressed: _pickImages,
+            ),
           ],
         ),
       ),
@@ -207,7 +315,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
           textSize: Screen.max(context) * 0.015,
           onPressed: () async {
             await _handleAddOrEditPackage(index: index);
-            Navigator.pop(context);
+            if (mounted) Navigator.pop(context);
           },
         ),
       ],
@@ -224,10 +332,12 @@ class _CategoryPackagesState extends State<CategoryPackages> {
       _nameController.text = package['name'];
       _detailsController.text = package['description'];
       _priceController.text = package['price'].toString();
+      _selectedImages = [];
     } else {
       _nameController.clear();
       _detailsController.clear();
       _priceController.clear();
+      _selectedImages = [];
     }
 
     showDialog(
@@ -323,27 +433,28 @@ class _CategoryPackagesState extends State<CategoryPackages> {
   }
 
   Widget _buildPackageList() {
-    if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
+    if (widget.listing['Package'].isEmpty) {
+      return _buildEmptyState();
+    }
+
     final colors = AppColors(context);
 
     return Column(
       children: [
         SizedBox(
           height: Screen.height(context) * 0.22,
-          child: SizedBox(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => _currentPage = index);
-              },
-              itemCount: widget.listing['Package'].length,
-              itemBuilder: (context, index) {
-                return _buildPackageItem(
-                  widget.listing['Package'][index],
-                  index,
-                );
-              },
-            ),
+          child: PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _currentPage = index);
+            },
+            itemCount: widget.listing['Package'].length,
+            itemBuilder: (context, index) {
+              return _buildPackageItem(
+                widget.listing['Package'][index],
+                index,
+              );
+            },
           ),
         ),
         SizedBox(height: Screen.height(context) * 0.02),
@@ -373,15 +484,6 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                   ),
                   onPressed: () => _handleDeletePackage(_currentPage),
                 ),
-                SizedBox(width: Screen.width(context) * 0.05),
-                IconButton(
-                  icon: Icon(
-                    FontAwesomeIcons.circlePlus,
-                    color: colors.yellow,
-                    size: Screen.max(context) * 0.03,
-                  ),
-                  onPressed: () => _showPackageDialog(),
-                ),
               ],
             ),
           ),
@@ -389,10 +491,36 @@ class _CategoryPackagesState extends State<CategoryPackages> {
     );
   }
 
+  Widget _buildEmptyState() {
+    final colors = AppColors(context);
+
+    if (!_isBusinessUser) {
+      return const SizedBox.shrink();
+    }
+
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            'No Packages Available',
+            style: GoogleFonts.poppins(
+              fontSize: Screen.max(context) * 0.02,
+              color: colors.white.withOpacity(0.7),
+            ),
+          ),
+          SizedBox(height: Screen.height(context) * 0.03),
+          ColoredButton(
+            text: 'Add New Package',
+            width: Screen.width(context) * 0.6,
+            onPressed: _showPackageDialog,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.listing['Package'].isEmpty) return const SizedBox.shrink();
-
     final colors = AppColors(context);
 
     return Padding(

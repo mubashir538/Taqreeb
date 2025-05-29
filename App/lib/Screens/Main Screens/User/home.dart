@@ -77,6 +77,15 @@ class _HomePageState extends State<HomePage> {
           _changeHeight(renderbox);
         },
       );
+      // ShowCaseWidget.of(context).startShowCase([
+      //   _searchBoxKey,
+      //   _imageSliderKey,
+      //   _categorySectionKey,
+      //   _categoryIconKey,
+      //   _aiPackageButtonKey,
+      //   _contentSectionKey,
+      //   _listingsKey
+      // ]);
     });
   }
 
@@ -345,7 +354,19 @@ class _HomePageState extends State<HomePage> {
             ),
           Positioned(
             top: 0,
-            child: Header(key: headerKey),
+            child: Header(
+              key: headerKey,
+              additionalIcons: [
+                HeaderIcon(
+                    icon: FontAwesomeIcons.cartShopping,
+                    onPressed: () {
+                      context.pushNamedTransition(
+                          routeName: '/CartScreen',
+                          type: PageTransitionType.fade,
+                          duration: Duration(milliseconds: 300));
+                    })
+              ],
+            ),
           ),
         ],
       ),
@@ -545,7 +566,6 @@ class _HomePageState extends State<HomePage> {
                   targetBorderRadius: BorderRadius.circular(8),
                   overlayColor: colors.lightDark.withOpacity(0.5),
                   child: CategoryIcon(
-                    key: _categoryIconKey,
                     onpressed: () => _handleCategoryClick(categoryName),
                     label: categoryName,
                     imageUrl:

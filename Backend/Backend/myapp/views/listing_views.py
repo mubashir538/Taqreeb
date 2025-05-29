@@ -7,13 +7,14 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django.conf import settings
 import os
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
 import random as rd
 from .helper_methods import create_view_for_category,create_listing,save_listing_pictures,save_packages,save_products,save_addons,get_picture,get_view_data,get_variable_name
 from ..models.listing_types_models import Venue,Caterers,CarRenters,Decorators,PhotographyPlaces,Photographers,VideoEditors,GraphicDesigners
 from ..models.event_models import Events,Functions,CheckList
 from ..models.user_models import User
-from ..models.listing_models import Listing,PicturesListings,Packages,AddOns
+from ..models.listing_models import Listing,PicturesListings,Packages,AddOns,PicturesPackages
 from ..Serializers.listing_serializers import ListingSerializer,PicturesListingSerializers,PackagesSerializer,ProductsSerializer
 from ..models.user_models import UserActivity
 from ..models.review_models import ReviewDetails
@@ -169,6 +170,7 @@ def update_listing_fields(request):
     try:
         data = request.data
         listing_id = data.get('id')
+        
         if not listing_id:
             return Response({'error': 'Listing ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -177,22 +179,21 @@ def update_listing_fields(request):
         except Listing.DoesNotExist:
             return Response({'error': 'Listing not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # # Verify the user owns this listing
-        # if listing.userId != request.user:
-        #     return Response({'error': 'You do not have permission to edit this listing'}, 
-        #                   status=status.HTTP_403_FORBIDDEN)
+        # Handle addon/package/product operations first
+        if 'operation' in data and 'value' in data:
+            operation = data.get('operation', '').lower()
+            value = data.get('value', '').lower()
+            
+            if value == 'package':
+                return _handle_package_with_files(request, listing, operation)
+            if value in ['addon', 'package', 'product']:
+                return _handle_item_operations(request, listing, operation, value)
 
         # Handle basic listing fields
         basic_fields_updated = _update_basic_listing_fields(listing, data)
         
         # Handle type-specific fields
         type_specific_updated = _update_type_specific_fields(listing, data)
-        
-        # Handle addon/package operations if present
-        if 'operation' in data:
-            addon_package_result = _handle_addon_package_operations(request, listing)
-            if addon_package_result:
-                return addon_package_result
 
         if basic_fields_updated or type_specific_updated:
             return Response({'status': 'success'})
@@ -203,6 +204,278 @@ def update_listing_fields(request):
         print(str(e))
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+def _handle_package_with_files(request, listing, operation):
+    try:
+        data = request.POST
+        files = request.FILES
+
+        if operation == 'add':
+            # Create new package
+            package = Packages(
+                listingId=listing,
+                name=data.get('namev'),
+                description=data.get('descv'),
+                price=data.get('pricev')
+            )
+            package.full_clean()
+            package.save()
+
+            # Handle file uploads
+            pictures = []
+            for file in files.getlist('pictures'):
+                picture = PicturesPackages(
+                    packageId=package,
+                    picturePath=file
+                )
+                picture.full_clean()
+                picture.save()
+                pictures.append({
+                    'id': picture.id,
+                    'picturePath': picture.picturePath.url
+                })
+
+            return Response({
+                'status': 'success',
+                'id': package.id,
+                'name': package.name,
+                'description': package.description,
+                'price': str(package.price),
+                'pictures': pictures
+            }, status=status.HTTP_201_CREATED)
+
+        elif operation == 'edit':
+            if 'idv' not in data:
+                return Response({'error': 'Package ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                package = Packages.objects.get(id=data['idv'], listingId=listing)
+                if 'namev' in data:
+                    package.name = data['namev']
+                if 'descv' in data:
+                    package.description = data['descv']
+                if 'pricev' in data:
+                    package.price = data['pricev']
+                package.full_clean()
+                package.save()
+
+                # Handle file uploads if any
+                pictures = list(PicturesPackages.objects.filter(packageId=package))
+                if files.getlist('pictures'):
+                    # Delete existing pictures if you want to replace them
+                    # PicturesPackages.objects.filter(packageId=package).delete()
+                    
+                    # Add new pictures
+                    for file in files.getlist('pictures'):
+                        picture = PicturesPackages(
+                            packageId=package,
+                            picturePath=file
+                        )
+                        picture.full_clean()
+                        picture.save()
+                        pictures.append(picture)
+
+                picture_data = [{
+                    'id': p.id,
+                    'picturePath': p.picturePath.url
+                } for p in pictures]
+
+                return Response({
+                    'status': 'success',
+                    'id': package.id,
+                    'name': package.name,
+                    'description': package.description,
+                    'price': str(package.price),
+                    'pictures': picture_data
+                })
+
+            except Packages.DoesNotExist:
+                return Response({'error': 'Package not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+        return Response({'error': 'Invalid operation'}, status=status.HTTP_400_BAD_REQUEST)
+
+    except ValidationError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def _handle_item_operations(request, listing, operation, item_type):
+    try:
+        data = request.data
+        
+        if operation == 'add':
+            return _add_item(listing, data, item_type)
+        elif operation == 'edit':
+            return _edit_item(listing, data, item_type)
+        elif operation == 'delete':
+            return _delete_item(listing, data, item_type)
+        else:
+            return Response({'error': 'Invalid operation'}, status=status.HTTP_400_BAD_REQUEST)
+            
+    except ValidationError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(str(e))
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def _add_item(listing, data, item_type):
+    # Common validation for all item types
+    required_fields = {
+        'addon': ['namev', 'pricev'],
+        'package': ['namev', 'pricev', 'descv'],
+        'product': ['namev', 'pricev', 'descv']
+    }[item_type]
+    
+    if not all(field in data for field in required_fields):
+        return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if item_type == 'addon':
+        # Create new addon
+        addon = AddOns(
+            listingId=listing,
+            name=data['namev'],
+            price=str(data['pricev']).replace(',',''),
+            isPer=data.get('perheadv', '').lower() == 'yes',
+            perType=str(data.get('headtypev', ''))
+        )
+        addon.full_clean()
+        addon.save()
+        
+        return Response({
+            'status': 'success',
+            'id': addon.id,
+            'name': addon.name,
+            'price': str(addon.price),
+            'isPer': addon.isPer,
+            'perType': addon.perType or ''
+        }, status=status.HTTP_201_CREATED)
+        
+    elif item_type == 'package':
+        # Create new package
+        package = Packages(
+            listingId=listing,
+            name=data['namev'],
+            description=data['descv'],
+            price=str(data['pricev']).replace(',','')
+        )
+        package.full_clean()
+        package.save()
+        
+        return Response({
+            'status': 'success',
+            'id': package.id,
+            'name': package.name,
+            'description': package.description,
+            'price': str(package.price)
+        }, status=status.HTTP_201_CREATED)
+        
+    elif item_type == 'product':
+        # Create new product
+        product = Product(
+            listingId=listing,
+            name=data['namev'],
+            description=data['descv'],
+            price=str(data['pricev']).replace(',','')
+        )
+        product.full_clean()
+        product.save()
+        
+        return Response({
+            'status': 'success',
+            'id': product.id,
+            'name': product.name,
+            'description': product.description,
+            'price': str(product.price)
+        }, status=status.HTTP_201_CREATED)
+
+def _edit_item(listing, data, item_type):
+    if 'idv' not in data:
+        return Response({'error': f'{item_type.capitalize()} ID is required'}, 
+                      status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        if item_type == 'addon':
+            addon = AddOns.objects.get(id=data['idv'], listingId=listing)
+            if 'namev' in data:
+                addon.name = data['namev']
+            if 'pricev' in data:
+                addon.price = str(data['pricev']).replace(',','')
+            if 'perheadv' in data:
+                addon.isPer = data['perheadv'].lower() == 'yes'
+            if 'headtypev' in data:
+                addon.perType = data['headtypev']
+            addon.full_clean()
+            addon.save()
+            
+            return Response({
+                'status': 'success',
+                'id': addon.id,
+                'name': addon.name,
+                'price': str(addon.price),
+                'isPer': addon.isPer,
+                'perType': addon.perType or ''
+            })
+            
+        elif item_type == 'package':
+            package = Packages.objects.get(id=data['idv'], listingId=listing)
+            if 'namev' in data:
+                package.name = data['namev']
+            if 'descv' in data:
+                package.description = data['descv']
+            if 'pricev' in data:
+                package.price = str(data['pricev']).replace(',','')
+            package.full_clean()
+            package.save()
+            
+            return Response({
+                'status': 'success',
+                'id': package.id,
+                'name': package.name,
+                'description': package.description,
+                'price': str(package.price)
+            })
+            
+        elif item_type == 'product':
+            product = Product.objects.get(id=data['idv'], listingId=listing)
+            if 'namev' in data:
+                product.name = data['namev']
+            if 'descv' in data:
+                product.description = data['descv']
+            if 'pricev' in data:
+                product.price = str(data['pricev']).replace(',','')
+            product.full_clean()
+            product.save()
+            
+            return Response({
+                'status': 'success',
+                'id': product.id,
+                'name': product.name,
+                'description': product.description,
+                'price': str(product.price)
+            })
+            
+    except (AddOns.DoesNotExist, Packages.DoesNotExist, Product.DoesNotExist):
+        return Response({'error': f'{item_type.capitalize()} not found'}, 
+                      status=status.HTTP_404_NOT_FOUND)
+
+def _delete_item(listing, data, item_type):
+    if 'idv' not in data:
+        return Response({'error': f'{item_type.capitalize()} ID is required'}, 
+                      status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        if item_type == 'addon':
+            AddOns.objects.get(id=data['idv'], listingId=listing).delete()
+        elif item_type == 'package':
+            Packages.objects.get(id=data['idv'], listingId=listing).delete()
+        elif item_type == 'product':
+            Product.objects.get(id=data['idv'], listingId=listing).delete()
+            
+        return Response({'status': 'success'})
+        
+    except (AddOns.DoesNotExist, Packages.DoesNotExist, Product.DoesNotExist):
+        return Response({'error': f'{item_type.capitalize()} not found'}, 
+                      status=status.HTTP_404_NOT_FOUND)
 
 def _update_basic_listing_fields(listing, data):
     fields_map = {
@@ -304,7 +577,6 @@ def _simple_update(view, data, field_name):
         return True
     return False
 
-
 def _bulk_update(view, data, field_names):
     updated_fields = []
     for field_name in field_names:
@@ -316,103 +588,6 @@ def _bulk_update(view, data, field_names):
         view.save(update_fields=updated_fields)
         return True
     return False
-
-
-def _handle_addon_package_operations(request, listing):
-    try:
-        data = request.data
-        operation = data.get('operation', '').lower()
-        value = data.get('value', '').lower()
-
-        if operation == 'add':
-            return _add_addon_or_package(listing, data, value)
-        elif operation == 'delete':
-            return _delete_addon_or_package(data, value)
-        elif operation == 'edit':
-            return _edit_addon_or_package(data, value)
-        
-        return None
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def _add_addon_or_package(listing, data, value):
-    if value == 'addon':
-        addon = AddOns(
-            isPer=(data.get('perheadv', '').lower() == "yes"),
-            perType=data.get('headtypev'),
-            listingId=listing,
-            name=data.get('namev'),
-            price=data.get('pricev')
-        )
-        addon.full_clean()  # Validate before save
-        addon.save()
-        return Response({'status': 'success', 'id': addon.id})
-    
-    elif value == 'package':
-        package = Packages(
-            listingId=listing,
-            name=data.get('namev'),
-            description=data.get('descv'),
-            price=data.get('pricev')
-        )
-        package.full_clean()  # Validate before save
-        package.save()
-        return Response({'status': 'success', 'id': package.id})
-    
-    return Response({'error': 'Invalid value parameter'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def _delete_addon_or_package(data, value):
-    idv = data.get('idv')
-    if not idv:
-        return Response({'error': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        if value == 'addon':
-            AddOns.objects.filter(id=idv).delete()
-        elif value == 'package':
-            Packages.objects.filter(id=idv).delete()
-        else:
-            return Response({'error': 'Invalid value parameter'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        return Response({'status': 'success'})
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def _edit_addon_or_package(data, value):
-    idv = data.get('idv')
-    if not idv:
-        return Response({'error': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        if value == 'addon':
-            addon = AddOns.objects.get(id=idv)
-            if 'namev' in data:
-                addon.name = data['namev']
-            if 'pricev' in data:
-                addon.price = data['pricev']
-            addon.save()
-            return Response({'status': 'success'})
-        
-        elif value == 'package':
-            package = Packages.objects.get(id=idv)
-            if 'namev' in data:
-                package.name = data['namev']
-            if 'descv' in data:
-                package.description = data['descv']
-            if 'pricev' in data:
-                package.price = data['pricev']
-            package.save()
-            return Response({'status': 'success'})
-        
-        return Response({'error': 'Invalid value parameter'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    except (AddOns.DoesNotExist, Packages.DoesNotExist):
-        return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -99,6 +99,7 @@ def edit_business_info(request):
     description = request.data.get('description')
     user_type = request.data.get('type')
     user = User.objects.get(id=userid)
+    print(user_type)
     if user_type == 'freelancer':
         business = Freelancer.objects.get(userID=user)
     else:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
+import 'package:taqreeb/Components/Inputs/c_input_location.dart';
 import 'package:taqreeb/Components/Inputs/c_question_group.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -33,7 +34,7 @@ class _EventFormData {
   final TextEditingController location = TextEditingController();
   final TextEditingController description = TextEditingController();
   final TextEditingController budget = TextEditingController();
-  final TextEditingController themeColor = TextEditingController();
+  // final TextEditingController themeColor = TextEditingController();
   final TextEditingController guestMin = TextEditingController();
   final TextEditingController guestMax = TextEditingController();
 
@@ -45,7 +46,7 @@ class _EventFormData {
   final FocusNode budgetFocus = FocusNode();
   final FocusNode guestMinFocus = FocusNode();
   final FocusNode guestMaxFocus = FocusNode();
-  final FocusNode themeColorFocus = FocusNode();
+  // final FocusNode themeColorFocus = FocusNode();
 
   void dispose() {
     eventName.dispose();
@@ -54,7 +55,7 @@ class _EventFormData {
     location.dispose();
     description.dispose();
     budget.dispose();
-    themeColor.dispose();
+    // themeColor.dispose();
     guestMin.dispose();
     guestMax.dispose();
     typeFocus.dispose();
@@ -134,7 +135,7 @@ class _CreateEventState extends State<CreateEvent> {
             _formData.location.text = eventDetail['location'];
             _formData.description.text = eventDetail['description'];
             _formData.budget.text = eventDetail['budget'].toString();
-            _formData.themeColor.text = eventDetail['themeColor'];
+            // _formData.themeColor.text = eventDetail['themeColor'];
             _formData.guestMax.text = eventDetail['guestsmax'].toString();
             _formData.guestMin.text = eventDetail['guestsmin'].toString();
             _isLoading = false;
@@ -206,7 +207,7 @@ class _CreateEventState extends State<CreateEvent> {
         'Location': _formData.location.text,
         if (_formData.description.text.isNotEmpty)
           'description': _formData.description.text,
-        'Theme': _formData.themeColor.text,
+        // 'Theme': _formData.themeColor.text,
         'Budget': _formData.budget.text,
         'EventId': _eventId,
         'guestmin': _formData.guestMin.text,
@@ -257,7 +258,7 @@ class _CreateEventState extends State<CreateEvent> {
     _formData.budgetFocus.unfocus();
     _formData.guestMinFocus.unfocus();
     _formData.guestMaxFocus.unfocus();
-    _formData.themeColorFocus.unfocus();
+    // _formData.themeColorFocus.unfocus();
     if (mounted) {
       _formData.dispose();
     }
@@ -301,15 +302,19 @@ class _CreateEventState extends State<CreateEvent> {
                 margin: EdgeInsets.symmetric(
                   horizontal: Screen.width(context) * 0.05,
                 ),
-                child: Column(
-                  children: [
-                    _buildBasicInfoSection(),
-                    _buildDescriptionSection(),
-                    _buildGuestInfoSection(),
-                    _buildBudgetSection(),
-                    SizedBox(height: Screen.height(context) * 0.1),
-                  ],
-                ),
+                child: _isLoading
+                    ? CircularProgressIndicator(
+                        color: colors.white,
+                      )
+                    : Column(
+                        children: [
+                          _buildBasicInfoSection(),
+                          _buildDescriptionSection(),
+                          _buildGuestInfoSection(),
+                          _buildBudgetSection(),
+                          SizedBox(height: Screen.height(context) * 0.1),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -370,19 +375,19 @@ class _CreateEventState extends State<CreateEvent> {
           question: '',
           valuecontroller: _formData.date,
         ),
-        MyTextBox(
-          prefixIcon: FontAwesomeIcons.locationDot,
-          focusNode: _formData.locationFocus,
-          onFieldSubmitted: (_) => _focusNext(_formData.themeColorFocus),
-          hint: "Location",
-          valueController: _formData.location,
-        ),
-        ColorPickerTextBox(
-          focusNode: _formData.themeColorFocus,
-          onFieldSubmitted: (_) => _focusNext(_formData.descriptionFocus),
-          hint: "Theme Color",
-          valueController: _formData.themeColor,
-        ),
+        LocationInputWidget(
+            locationController: _formData.location,
+            onLocationChanged: (value) {
+              if (mounted) {
+                setState(() => _formData.location.text = value);
+              }
+            }),
+        // ColorPickerTextBox(
+        //   focusNode: _formData.themeColorFocus,
+        //   onFieldSubmitted: (_) => _focusNext(_formData.descriptionFocus),
+        //   hint: "Theme Color",
+        //   valueController: _formData.themeColor,
+        // ),
       ],
     );
   }

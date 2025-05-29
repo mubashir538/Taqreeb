@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
@@ -22,11 +20,11 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
   Map<String, dynamic> get userInfo => _userInfo;
 
   Future<void> fetch(BuildContext context) async {
-    if (_hasData) return;
-
+    
     _isLoading = true;
     notifyListeners();
 
+    
     try {
       final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
       _type = await MyTokens.getBusinessType();

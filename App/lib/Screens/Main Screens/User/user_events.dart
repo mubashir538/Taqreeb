@@ -359,18 +359,22 @@ class _YourEventsState extends State<YourEvents> {
           ],
           type: 'Event',
           seePressed: () {
-            context.pushNamedTransition(
-                routeName: '/EventDetails',
-                type: PageTransitionType.rightToLeftWithFade,
-                duration: Duration(milliseconds: 300),
-                arguments: event["id"]);
+            context
+                .pushNamedTransition(
+                    routeName: '/EventDetails',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300),
+                    arguments: event["id"])
+                .then((value) => _fetchData());
           },
           editPressed: () {
-            context.pushNamedTransition(
-                routeName: '/EditEvent',
-                type: PageTransitionType.rightToLeftWithFade,
-                duration: Duration(milliseconds: 300),
-                arguments: event["id"].toString());
+            context
+                .pushNamedTransition(
+                    routeName: '/EditEvent',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300),
+                    arguments: event["id"].toString())
+                .then((value) => _fetchData());
           },
         );
       },

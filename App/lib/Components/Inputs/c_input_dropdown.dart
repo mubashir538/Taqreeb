@@ -19,7 +19,7 @@ class ResponsiveDropdown extends StatefulWidget {
     required this.items,
     required this.labelText,
     required this.onChanged,
-    this.selectedOption, // Initialize it here
+    this.selectedOption = '', // Initialize it here
   });
 
   @override
@@ -35,7 +35,7 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
   void initState() {
     super.initState();
     // Set the initial selectedItem if selectedOption is provided and exists in items
-    if (widget.selectedOption != null &&
+    if (widget.selectedOption != '' &&
         widget.items.contains(widget.selectedOption)) {
       selectedItem = widget.selectedOption;
     }
@@ -75,7 +75,7 @@ class ResponsiveDropdownState extends State<ResponsiveDropdown> {
           labelText: widget.labelText,
           contentPadding: EdgeInsets.all(Screen.max(context) * 0.02),
           labelStyle: GoogleFonts.roboto(
-            color: _isFocused ? colors.red : Colors.white.withAlpha(102),
+            color: _isFocused ? colors.red : colors.white.withAlpha(102),
             fontSize: Screen.width(context) * 0.03,
           ),
           enabledBorder: OutlineInputBorder(

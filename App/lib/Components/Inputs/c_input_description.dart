@@ -91,7 +91,7 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         vertical: Screen.max(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: colors.darkLighter,
+        color: colors.lightDark,
         border: Border.all(
           color: _isFocused ? colors.red : Colors.transparent,
           width: 2,

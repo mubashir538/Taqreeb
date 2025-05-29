@@ -37,6 +37,7 @@ class MyTokens {
   static const String acmaxprice = "acmaxprice";
   static const String moredetails = "moredetails";
   static const String addons = "addons";
+  static const String first_time = "first_time";
   static const String packages = "packages";
 
   static Future<String> 

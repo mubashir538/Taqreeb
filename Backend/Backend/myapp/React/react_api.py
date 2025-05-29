@@ -662,7 +662,7 @@ def bulk_update_vendor_status(request):
     if not vendor_ids:
         return Response({'error': 'No vendors selected'}, status=400)
     
-    if new_status not in ['approved', 'rejected']:
+    if new_status not in ['Approved', 'Rejected']:
         return Response({'error': 'Invalid status'}, status=400)
     
     updated = 0

@@ -177,48 +177,53 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     bool isPerHead,
     BuildContext context,
   ) async {
-    if (nameController.text.isEmpty || priceController.text.isEmpty) {
-      MyScaffold(text: 'Please Fill All the Fields!').show(context);
-      return;
-    }
+    try {
+      if (nameController.text.isEmpty || priceController.text.isEmpty) {
+        MyScaffold(text: 'Please Fill All the Fields!').show(context);
+        return;
+      }
 
-    if (isPerHead && headTypeController.text.isEmpty) {
-      MyScaffold(text: 'Please specify per head type').show(context);
-      return;
-    }
+      if (isPerHead && headTypeController.text.isEmpty) {
+        MyScaffold(text: 'Please specify per head type').show(context);
+        return;
+      }
 
-    final response = await MyApi.postRequest(
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      endpoint: 'businessowner/updateListings/',
-      body: {
-        'id': widget.listing['Listing']['id'].toString(),
-        'operation': 'add',
-        'value': 'addon',
-        'namev': nameController.text,
-        'pricev': priceController.text,
-        'perheadv': isPerHead ? 'Yes' : 'No',
-        'headtypev': isPerHead ? headTypeController.text : '',
-      },
-    );
-
-    if (!mounted) return;
-
-    if (response['status'] == 'success') {
-      _addNewAddon(
-        response['id'],
-        nameController.text,
-        priceController.text,
-        isPerHead,
-        headTypeController.text,
+      final response = await MyApi.postRequest(
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+        endpoint: 'businessowner/updateListings/',
+        body: {
+          'id': widget.listing['Listing']['id'].toString(),
+          'operation': 'add',
+          'value': 'addon',
+          'namev': nameController.text,
+          'pricev': priceController.text,
+          'perheadv': isPerHead ? 'Yes' : 'No',
+          'headtypev': isPerHead ? headTypeController.text : '',
+        },
       );
-      MyScaffold(text: 'Addon Added Successfully!').show(context);
-    } else {
-      MyScaffold(text: 'Failed to Add Addon!').show(context);
+
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        _addNewAddon(
+          response['id'].toString(), // Ensure ID is string
+          nameController.text,
+          priceController.text,
+          isPerHead,
+          headTypeController.text,
+        );
+        MyScaffold(text: 'Addon Added Successfully!').show(context);
+      } else {
+        MyScaffold(text: response['error'] ?? 'Failed to Add Addon!')
+            .show(context);
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      MyScaffold(text: 'Error: ${e.toString()}').show(context);
     }
-    Navigator.pop(context);
   }
 
   void _addNewAddon(

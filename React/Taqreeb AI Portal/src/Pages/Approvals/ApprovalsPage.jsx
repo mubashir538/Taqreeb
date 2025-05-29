@@ -109,7 +109,7 @@ const ApprovalsPage = () => {
         await apiService.bulkUpdateVendorStatus(
           selectedItems,
           vendorType === "Freelancer" ? "freelancer" : "business",
-          "approved"
+          "Approved"
         );
       }
       refreshData();

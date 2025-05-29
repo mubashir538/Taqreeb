@@ -9,19 +9,10 @@ class Events(m.Model):
     date =m.CharField(max_length=100)
     location =m.CharField(max_length=100)
     description =m.CharField(max_length=1100)
-    themeColor =m.CharField(max_length=100)
+    # themeColor =m.CharField(max_length=100)
     budget=  m.IntegerField()
     guestsmin = m.IntegerField(null=True)
     guestsmax = m.IntegerField(null=True) 
-
-class GuestList(m.Model):
-    id = m.AutoField(primary_key=True)
-    type = m.CharField(max_length=100)
-    name = m.CharField(max_length=100)
-    members = m.IntegerField(null=True)
-    phone = m.CharField(max_length=100,blank=True)
-    eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
-    functionId = m.IntegerField(null=True)
 
 class Functions(m.Model):
     id = m.AutoField(primary_key=True)
@@ -32,6 +23,16 @@ class Functions(m.Model):
     date = m.DateField(null=True)
     guestsmin = m.IntegerField(null=True)
     guestsmax = m.IntegerField(null=True)
+
+class GuestList(m.Model):
+    id = m.AutoField(primary_key=True)
+    type = m.CharField(max_length=100)
+    name = m.CharField(max_length=100)
+    members = m.IntegerField(null=True)
+    phone = m.CharField(max_length=100,blank=True)
+    eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
+    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE)
+
 
 class CheckList(m.Model):
     id = m.AutoField(primary_key=True)
