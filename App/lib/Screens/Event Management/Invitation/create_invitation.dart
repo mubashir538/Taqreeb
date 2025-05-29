@@ -34,8 +34,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
   TextEditingController sonController = TextEditingController();
   TextEditingController daughterController = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  TextEditingController locationController =
-      TextEditingController(text: 'North');
+  TextEditingController locationController = TextEditingController();
   TextEditingController fromNameController = TextEditingController();
   List<Map<String, TextEditingController>> programDetails = [];
   TextEditingController venueNameController = TextEditingController();
@@ -565,11 +564,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
           .toList(),
     };
     if (mounted) {
-      context.pushNamedTransition(
-          routeName: '/InvitationCardView',
-          type: PageTransitionType.rightToLeftWithFade,
-          duration: Duration(milliseconds: 300),
+      Navigator.pushReplacementNamed(context, '/InvitationCardView',
           arguments: {'data': formData});
+      // context.pushNamedTransition(
+      //     routeName: '/InvitationCardView',
+      //     type: PageTransitionType.rightToLeftWithFade,
+      //     duration: Duration(milliseconds: 300),
+      //     arguments: {'data': formData});
       MyScaffold(text: 'Creating Your Invitation Card, This may Take a While!')
           .show(context);
     }

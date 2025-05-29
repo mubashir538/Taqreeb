@@ -66,7 +66,7 @@ dev_dependencies:
 
 
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: "adaptive"
   ios: true
   remove_alpha_ios: true
   image_path: "assets/appIcon/taqreebicon.png"

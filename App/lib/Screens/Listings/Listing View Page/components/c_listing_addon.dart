@@ -58,36 +58,44 @@ class _CategoryAddonsState extends State<CategoryAddons> {
   }
 
   Future<void> _saveAddon(int index) async {
-    final response = await MyApi.postRequest(
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      endpoint: 'businessowner/updateListings/',
-      body: {
-        'id': widget.listing['Listing']['id'].toString(),
-        'idv': widget.listing['Addons'][index]['id'].toString(),
-        'operation': 'edit',
-        'value': 'addon',
-        'namev': _headingControllers[index].text,
-        'pricev': _valueControllers[index].text
-      },
-    );
+    try {
+      final response = await MyApi.postRequest(
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+        endpoint: 'businessowner/updateListings/',
+        body: {
+          'id': widget.listing['Listing']['id'].toString(),
+          'operation': 'edit',
+          'value': 'addon',
+          'idv': widget.listing['Addons'][index]['id'].toString(),
+          'namev': _headingControllers[index].text,
+          'pricev': _valueControllers[index].text,
+          // Include these if you need to update per-head settings
+          'perheadv': widget.listing['Addons'][index]['isPer'] ? 'Yes' : 'No',
+          'headtypev': widget.listing['Addons'][index]['perType'] ?? '',
+        },
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (response['status'] == 'success') {
-      setState(() {
-        widget.listing['Addons'][index]['name'] =
-            _headingControllers[index].text;
-        widget.listing['Addons'][index]['price'] =
-            _valueControllers[index].text;
-        _isEditingHeading[index] = false;
-        _isEditingValue[index] = false;
-      });
-      MyScaffold(text: 'Addon Updated Successfully!').show(context);
-    } else {
-      MyScaffold(text: 'Something Went Wrong!').show(context);
+      if (response['status'] == 'success') {
+        setState(() {
+          widget.listing['Addons'][index]['name'] =
+              _headingControllers[index].text;
+          widget.listing['Addons'][index]['price'] =
+              _valueControllers[index].text;
+          _isEditingHeading[index] = false;
+          _isEditingValue[index] = false;
+        });
+        MyScaffold(text: 'Addon Updated Successfully!').show(context);
+      } else {
+        MyScaffold(text: response['error'] ?? 'Something Went Wrong!')
+            .show(context);
+      }
+    } catch (e) {
+      MyScaffold(text: 'Error: ${e.toString()}').show(context);
     }
   }
 
@@ -181,48 +189,53 @@ class _CategoryAddonsState extends State<CategoryAddons> {
     bool isPerHead,
     BuildContext context,
   ) async {
-    if (nameController.text.isEmpty || priceController.text.isEmpty) {
-      MyScaffold(text: 'Please Fill All the Fields!').show(context);
-      return;
-    }
+    try {
+      if (nameController.text.isEmpty || priceController.text.isEmpty) {
+        MyScaffold(text: 'Please Fill All the Fields!').show(context);
+        return;
+      }
 
-    if (isPerHead && headTypeController.text.isEmpty) {
-      MyScaffold(text: 'Please specify per head type').show(context);
-      return;
-    }
+      if (isPerHead && headTypeController.text.isEmpty) {
+        MyScaffold(text: 'Please specify per head type').show(context);
+        return;
+      }
 
-    final response = await MyApi.postRequest(
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-      endpoint: 'businessowner/updateListings/',
-      body: {
-        'id': widget.listing['Listing']['id'].toString(),
-        'operation': 'add',
-        'value': 'addon',
-        'namev': nameController.text,
-        'pricev': priceController.text,
-        'perheadv': isPerHead ? 'Yes' : 'No',
-        'headtypev': isPerHead ? headTypeController.text : '',
-      },
-    );
-
-    if (!mounted) return;
-
-    if (response['status'] == 'success') {
-      _addNewAddon(
-        response['id'],
-        nameController.text,
-        priceController.text,
-        isPerHead,
-        headTypeController.text,
+      final response = await MyApi.postRequest(
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+        endpoint: 'businessowner/updateListings/',
+        body: {
+          'id': widget.listing['Listing']['id'].toString(),
+          'operation': 'add',
+          'value': 'addon',
+          'namev': nameController.text,
+          'pricev': priceController.text,
+          'perheadv': isPerHead ? 'Yes' : 'No',
+          'headtypev': isPerHead ? headTypeController.text : '',
+        },
       );
-      MyScaffold(text: 'Addon Added Successfully!').show(context);
-    } else {
-      MyScaffold(text: 'Failed to Add Addon!').show(context);
+
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
+        _addNewAddon(
+          response['id'].toString(), // Ensure ID is string
+          nameController.text,
+          priceController.text,
+          isPerHead,
+          headTypeController.text,
+        );
+        MyScaffold(text: 'Addon Added Successfully!').show(context);
+      } else {
+        MyScaffold(text: response['error'] ?? 'Failed to Add Addon!')
+            .show(context);
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      MyScaffold(text: 'Error: ${e.toString()}').show(context);
     }
-    Navigator.pop(context);
   }
 
   void _addNewAddon(
@@ -249,17 +262,17 @@ class _CategoryAddonsState extends State<CategoryAddons> {
   }
 
   Future<void> _deleteAddon(int index) async {
+  try {
     final response = await MyApi.postRequest(
       headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        'Authorization': 'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
       },
       endpoint: 'businessowner/updateListings/',
       body: {
         'id': widget.listing['Listing']['id'].toString(),
-        'idv': widget.listing['Addons'][index]['id'].toString(),
         'operation': 'delete',
         'value': 'addon',
+        'idv': widget.listing['Addons'][index]['id'].toString(),
       },
     );
 
@@ -275,9 +288,12 @@ class _CategoryAddonsState extends State<CategoryAddons> {
       });
       MyScaffold(text: 'Addon Deleted Successfully!').show(context);
     } else {
-      MyScaffold(text: 'Something Went Wrong!').show(context);
+      MyScaffold(text: response['error'] ?? 'Something Went Wrong!').show(context);
     }
+  } catch (e) {
+    MyScaffold(text: 'Error: ${e.toString()}').show(context);
   }
+}
 
   TextStyle _buildTextStyle({
     double fontSize = 0.015,

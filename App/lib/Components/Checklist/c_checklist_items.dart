@@ -28,7 +28,7 @@ class GuideButton extends StatelessWidget {
     final colors = AppColors(context);
 
     final containerHeight = Screen.max(context) * 0.08;
-    final iconSize = Screen.max(context) * 0.05;
+    final iconSize = Screen.max(context) * 0.03;
     final fontSize = Screen.max(context) * 0.015;
 
     final isLeftSvg = leftIconPath.isNotEmpty && leftIconPath.endsWith('svg');
@@ -42,7 +42,7 @@ class GuideButton extends StatelessWidget {
           height: containerHeight.clamp(60, 80.0),
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: colors.darkLighter,
+            color: colors.lightDark,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(

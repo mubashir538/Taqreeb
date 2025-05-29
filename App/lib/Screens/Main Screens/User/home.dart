@@ -31,13 +31,13 @@ DateTime? entryTime;
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  GlobalKey _searchBoxKey = GlobalKey();
-  GlobalKey _imageSliderKey = GlobalKey();
-  GlobalKey _categorySectionKey = GlobalKey();
-  GlobalKey _aiPackageButtonKey = GlobalKey();
-  GlobalKey _contentSectionKey = GlobalKey();
-  GlobalKey _categoryIconKey = GlobalKey();
-  GlobalKey _listingsKey = GlobalKey();
+  final GlobalKey _searchBoxKey = GlobalKey();
+  final GlobalKey _imageSliderKey = GlobalKey();
+  final GlobalKey _categorySectionKey = GlobalKey();
+  final GlobalKey _aiPackageButtonKey = GlobalKey();
+  final GlobalKey _contentSectionKey = GlobalKey();
+  final GlobalKey _categoryIconKey = GlobalKey();
+  final GlobalKey _listingsKey = GlobalKey();
 
   Map<String, dynamic> categories = {};
   Map<String, dynamic> demoImages = {};
@@ -79,6 +79,15 @@ class _HomePageState extends State<HomePage> {
           _changeHeight(renderbox);
         },
       );
+      // ShowCaseWidget.of(context).startShowCase([
+      //   _searchBoxKey,
+      //   _imageSliderKey,
+      //   _categorySectionKey,
+      //   _categoryIconKey,
+      //   _aiPackageButtonKey,
+      //   _contentSectionKey,
+      //   _listingsKey
+      // ]);
     });
   }
 
@@ -347,7 +356,19 @@ class _HomePageState extends State<HomePage> {
             ),
           Positioned(
             top: 0,
-            child: Header(key: headerKey),
+            child: Header(
+              key: headerKey,
+              additionalIcons: [
+                HeaderIcon(
+                    icon: FontAwesomeIcons.cartShopping,
+                    onPressed: () {
+                      context.pushNamedTransition(
+                          routeName: '/CartScreen',
+                          type: PageTransitionType.fade,
+                          duration: Duration(milliseconds: 300));
+                    })
+              ],
+            ),
           ),
         ],
       ),
@@ -547,7 +568,6 @@ class _HomePageState extends State<HomePage> {
                   targetBorderRadius: BorderRadius.circular(8),
                   overlayColor: colors.lightDark.withOpacity(0.5),
                   child: CategoryIcon(
-                    key: _categoryIconKey,
                     onpressed: () => _handleCategoryClick(categoryName),
                     label: categoryName,
                     imageUrl:

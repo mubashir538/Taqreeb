@@ -68,7 +68,7 @@ class MessageChatButton extends StatelessWidget {
                             style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white,
+                              color: colors.white,
                             ),
                           ),
                         ),

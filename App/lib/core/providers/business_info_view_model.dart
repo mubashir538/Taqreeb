@@ -24,11 +24,12 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
 // In BusinessAccountInfoViewModel
   Future<void> fetch(BuildContext context) async {
     // Only fetch if we don't have data already
-    if (_hasData) return;
+    // if (_hasData) return;
 
     _isLoading = true;
     notifyListeners();
 
+    
     try {
       final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
       _type = await MyTokens.getBusinessType();
@@ -37,7 +38,6 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
         'businessowner/accountInfo/$userid/$_type',
         onSuccess: (token, data) {
           _userInfo = data['userinfo'] ?? {};
-          print('$data');
           businessData.updateBusinessInfo(
               data['businessInfo'], data['listingCount'],
               imageUrl:
@@ -45,6 +45,7 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
           _items = data['categories']?.cast<String>()?.toList() ?? [];
           _isLoading = false;
           _hasData = true; // Set flag to true
+          print(data);
           notifyListeners();
         },
         onError: () {

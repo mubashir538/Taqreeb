@@ -12,6 +12,7 @@ from ..models.user_models import User
 def save_chat_image(request):
     userid = request.data.get('userid')
     image = request.FILES.get('image')
+    # print(f'saved image at {image}')
     filestorage = FileSystemStorage()
     filepath = filestorage.save(f'chats/{userid}/{rd.randint(1,1000)}.png', image)
     fileurl = filestorage.url(filepath)

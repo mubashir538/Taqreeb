@@ -25,7 +25,7 @@ class AddOns(m.Model):
     name = m.CharField(max_length=255)
     price = m.IntegerField()
     isPer = m.BooleanField()
-    perType = m.CharField(max_length=50)
+    perType = m.CharField(max_length=50,blank=True)
     listingId = m.ForeignKey(Listing,on_delete=m.CASCADE)
 
 class PicturesListings(m.Model):

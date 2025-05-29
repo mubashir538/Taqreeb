@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,11 +69,45 @@ class _SettingsState extends State<Settings> {
     });
   }
 
+  void _showLogoutDialog() {
+    WarningDialog(
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      actions: [
+        ColoredButton(
+          onPressed: () => Navigator.pop(context),
+          text: 'Cancel',
+          textSize: Screen.max(context) * 0.015,
+          width: Screen.width(context) * 0.3,
+        ),
+        ColoredButton(
+          onPressed: () async {
+            await MyApi.cacheManager.emptyCache();
+            await _handleLogout();
+          },
+          text: 'Logout',
+          width: Screen.width(context) * 0.3,
+          textSize: Screen.max(context) * 0.015,
+        ),
+      ],
+    ).showDialogBox(context);
+  }
+
+  Future<void> _handleLogout() async {
+    await MyApi.postRequest(
+      endpoint: 'notification/DeleteFCM',
+      body: {'token': await MyStorage.yourFCM()},
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider =
         Provider.of<ThemeProvider>(context); // Get the ThemeProvider
-
 
     UImanagement.getHeaderHeight(
         headerKey: headerKey,
@@ -106,16 +142,8 @@ class _SettingsState extends State<Settings> {
                                           .clamp(60, 80.0),
                                       width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
-                                        color: themeProvider.themeMode ==
-                                                ThemeMode.dark
-                                            ? MyColors.darkLighter
-                                            : MyColors.whiteDarker,
+                                        color: MyColors.lightDark,
                                         borderRadius: BorderRadius.circular(15),
-                                        border: Border.all(
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.darkLighter
-                                                : MyColors.whiteDarker),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -123,10 +151,7 @@ class _SettingsState extends State<Settings> {
                                         children: [
                                           Icon(
                                             FontAwesomeIcons.building,
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.white
-                                                : MyColors.dark,
+                                            color: MyColors.white,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -142,11 +167,7 @@ class _SettingsState extends State<Settings> {
                                                       Screen.max(context) *
                                                           0.015,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      themeProvider.themeMode ==
-                                                              ThemeMode.dark
-                                                          ? MyColors.white
-                                                          : MyColors.dark,
+                                                  color: MyColors.white,
                                                 ),
                                               ),
                                             ),
@@ -207,16 +228,8 @@ class _SettingsState extends State<Settings> {
                                           .clamp(60, 80.0),
                                       width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
-                                        color: themeProvider.themeMode ==
-                                                ThemeMode.dark
-                                            ? MyColors.darkLighter
-                                            : MyColors.whiteDarker,
+                                        color: MyColors.lightDark,
                                         borderRadius: BorderRadius.circular(15),
-                                        border: Border.all(
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.darkLighter
-                                                : MyColors.whiteDarker),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -224,10 +237,7 @@ class _SettingsState extends State<Settings> {
                                         children: [
                                           Icon(
                                             FontAwesomeIcons.building,
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.white
-                                                : MyColors.dark,
+                                            color: MyColors.white,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -243,11 +253,7 @@ class _SettingsState extends State<Settings> {
                                                       Screen.max(context) *
                                                           0.015,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      themeProvider.themeMode ==
-                                                              ThemeMode.dark
-                                                          ? MyColors.white
-                                                          : MyColors.dark,
+                                                  color: MyColors.white,
                                                 ),
                                               ),
                                             ),
@@ -344,6 +350,15 @@ class _SettingsState extends State<Settings> {
                                 },
                                 text: 'Edit Account Info',
                                 leftIcon: FontAwesomeIcons.pen,
+                                rightIcon: FontAwesomeIcons.chevronRight,
+                              ),
+                              GuideButton(
+                                onpressed: () {
+                                  _showLogoutDialog();
+                                },
+                                text: 'Logout',
+                                leftIcon:
+                                    FontAwesomeIcons.arrowRightFromBracket,
                                 rightIcon: FontAwesomeIcons.chevronRight,
                               ),
                             ],

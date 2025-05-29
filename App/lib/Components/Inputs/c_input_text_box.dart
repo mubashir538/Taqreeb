@@ -80,7 +80,7 @@ class _MyTextBoxState extends State<MyTextBox> {
     _isObscured = widget.isPassword;
     _focusNode = widget.focusNode ?? FocusNode();
     _controller = widget.valueController;
-    _previousText = _controller.text;
+    _previousText = _capitalize(_controller.text);
 
     _focusNode.addListener(() {
       if (mounted) {
@@ -101,6 +101,11 @@ class _MyTextBoxState extends State<MyTextBox> {
       _controller.removeListener(_formatPrice);
     }
     super.dispose();
+  }
+
+  String _capitalize(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
   void _formatPrice() {
@@ -199,7 +204,6 @@ class _MyTextBoxState extends State<MyTextBox> {
                     focusNode: _focusNode,
                     onSubmitted: widget.onFieldSubmitted,
                     onChanged: (value) {
-                      // Enforce max length if specified
                       if (widget.maxLength != null &&
                           value.length > widget.maxLength!) {
                         _controller.text = _previousText;
@@ -209,13 +213,21 @@ class _MyTextBoxState extends State<MyTextBox> {
                         return;
                       }
 
-                      _previousText = value;
+                      String capitalized = _capitalize(value);
+
+                      // Only update the controller if the capitalization changed the value
+                      if (value != capitalized) {
+                        _controller.text = capitalized;
+                        _controller.selection =
+                            TextSelection.collapsed(offset: capitalized.length);
+                      }
+
+                      _previousText = capitalized;
 
                       if (widget.onChanged != null) {
-                        // Pass the raw number without commas to the callback
                         String rawValue = widget.isPrice
-                            ? value.replaceAll(RegExp(r'[^0-9]'), '')
-                            : value;
+                            ? capitalized.replaceAll(RegExp(r'[^0-9]'), '')
+                            : capitalized;
                         widget.onChanged!(rawValue);
                       }
                     },

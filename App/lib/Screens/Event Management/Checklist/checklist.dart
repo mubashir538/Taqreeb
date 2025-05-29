@@ -25,10 +25,13 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   final Map<int, TextEditingController> _editControllers = {};
   final Map<int, FocusNode> _focusNodes = {};
   int? _editingIndex;
+  bool _isChanged = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_isChanged) return;
+    _isChanged = true;
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args != null) {
       _checklistController.initializeFromArgs(args as Map<String, dynamic>);

@@ -334,7 +334,7 @@ class _ChatBoxState extends State<ChatBox> {
       final response = await MyApi.postMultipartRequest(
         endpoint: 'saveChatImage/',
         body: {'userid': _currentUserId ?? ""},
-        files: {'image': File(pickedFile.path)},
+        files: {'image': pickedFile.path},
       );
 
       if (response['status'] != 'success') {
@@ -354,7 +354,7 @@ class _ChatBoxState extends State<ChatBox> {
           'receiverId': _chatUserId,
           'message': response['path'],
           'timestamp': FieldValue.serverTimestamp(),
-          'type': 'image',
+          'mtype': 'image',
         });
 
         transaction.set(
@@ -457,6 +457,7 @@ class _ChatBoxState extends State<ChatBox> {
         DateTime? lastMessageDate;
 
         for (final message in messages) {
+          messageWidgets.add(_buildMessageTile(message));
           final messageDate = message['timestamp']?.toDate() ?? DateTime.now();
 
           if (lastMessageDate == null ||
@@ -484,7 +485,6 @@ class _ChatBoxState extends State<ChatBox> {
               ),
             );
           }
-          messageWidgets.add(_buildMessageTile(message));
           lastMessageDate = messageDate;
         }
 
