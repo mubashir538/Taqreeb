@@ -49,7 +49,7 @@ class _CategorySlotsState extends State<CategorySlots> {
     }
 
     if (isBooked) {
-      backgroundColor = colors.red.withOpacity(0.7);
+      backgroundColor = colors.red.withAlpha(179);
       textColor = colors.white;
     }
 
@@ -85,7 +85,7 @@ class _CategorySlotsState extends State<CategorySlots> {
     return Container(
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: colors.dark.withOpacity(0.8),
+        color: colors.dark.withAlpha(204),
         borderRadius: BorderRadius.circular(Screen.max(context) * 0.02),
       ),
       child: Column(

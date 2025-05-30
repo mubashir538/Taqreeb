@@ -65,7 +65,7 @@ class _ProductCardState extends State<ProductCard> {
           borderRadius: BorderRadius.all(Radius.circular(20)),
           boxShadow: [
             BoxShadow(
-              color: colors.dark.withOpacity(0.2),
+              color: colors.dark.withAlpha(51),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -104,7 +104,7 @@ class _ProductCardState extends State<ProductCard> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: colors.dark.withOpacity(0.1),
+                              color: colors.dark.withAlpha(26),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -114,7 +114,8 @@ class _ProductCardState extends State<ProductCard> {
                           _isWishlisted
                               ? FontAwesomeIcons.heart
                               : Icons.favorite_border,
-                          color: _isWishlisted ? colors.red : colors.whiteDarker,
+                          color:
+                              _isWishlisted ? colors.red : colors.whiteDarker,
                           size: Screen.max(context) * 0.025,
                         ),
                       ),
@@ -157,7 +158,7 @@ class _ProductCardState extends State<ProductCard> {
                     style: GoogleFonts.poppins(
                       fontSize: Screen.max(context) * 0.016,
                       fontWeight: FontWeight.w400,
-                      color: colors.white.withOpacity(0.8),
+                      color: colors.white.withAlpha(204),
                     ),
                   ),
                   SizedBox(height: Screen.height(context) * 0.01),
@@ -183,7 +184,7 @@ class _ProductCardState extends State<ProductCard> {
                         style: GoogleFonts.poppins(
                           fontSize: Screen.max(context) * 0.014,
                           fontWeight: FontWeight.w500,
-                          color: colors.white.withOpacity(0.8),
+                          color: colors.white.withAlpha(204),
                           letterSpacing: 1.2,
                         ),
                       ),

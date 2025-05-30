@@ -78,7 +78,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
     TextStyle bodyStyle = GoogleFonts.roboto(
       fontSize: bodySize,
       fontWeight: FontWeight.w400,
-      color: colors.white.withOpacity(0.9),
+      color: colors.white.withAlpha(230),
     );
 
     TextStyle sectionTitleStyle = GoogleFonts.roboto(
@@ -146,7 +146,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                         Container(
                           width: Screen.width(context) * 0.3,
                           height: 2,
-                          color: colors.red.withOpacity(0.5),
+                          color: colors.red.withAlpha(128),
                         ),
                         SizedBox(height: Screen.height(context) * 0.02),
                         Container(
@@ -180,7 +180,7 @@ class _BusinessAccountInfoState extends State<BusinessAccountInfo> {
                         Container(
                           width: Screen.width(context) * 0.3,
                           height: 1,
-                          color: colors.red.withOpacity(0.3),
+                          color: colors.red.withAlpha(77),
                         ),
                         SizedBox(width: Screen.width(context) * 0.03),
                         Icon(

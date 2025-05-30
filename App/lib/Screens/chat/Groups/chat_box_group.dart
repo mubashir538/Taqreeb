@@ -512,7 +512,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         color: colors.red,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withAlpha(51),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

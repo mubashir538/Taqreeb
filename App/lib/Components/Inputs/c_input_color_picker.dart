@@ -57,7 +57,7 @@ class _ColorPickerTextBoxState extends State<ColorPickerTextBox> {
             Positioned.fill(
               child: GestureDetector(
                   onTap: _removeOverlay,
-                  child: Container(color: Colors.black.withOpacity(0.5))),
+                  child: Container(color: Colors.black.withAlpha(128))),
             ),
             // Color picker content
             Center(

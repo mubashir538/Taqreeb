@@ -109,6 +109,8 @@ class _SettingsState extends State<Settings> {
     final themeProvider =
         Provider.of<ThemeProvider>(context); 
 
+    final colors = AppColors(context);
+
     UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
@@ -142,7 +144,7 @@ class _SettingsState extends State<Settings> {
                                           .clamp(60, 80.0),
                                       width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
-                                        color: MyColors.lightDark,
+                                        color: colors.lightDark,
                                         borderRadius: BorderRadius.circular(15),
                                       ),
                                       child: Row(
@@ -151,7 +153,7 @@ class _SettingsState extends State<Settings> {
                                         children: [
                                           Icon(
                                             FontAwesomeIcons.building,
-                                            color: MyColors.white,
+                                            color: colors.white,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -167,7 +169,7 @@ class _SettingsState extends State<Settings> {
                                                       Screen.max(context) *
                                                           0.015,
                                                   fontWeight: FontWeight.w500,
-                                                  color: MyColors.white,
+                                                  color: colors.white,
                                                 ),
                                               ),
                                             ),
@@ -228,7 +230,7 @@ class _SettingsState extends State<Settings> {
                                           .clamp(60, 80.0),
                                       width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
-                                        color: MyColors.lightDark,
+                                        color: colors.lightDark,
                                         borderRadius: BorderRadius.circular(15),
                                       ),
                                       child: Row(
@@ -237,7 +239,7 @@ class _SettingsState extends State<Settings> {
                                         children: [
                                           Icon(
                                             FontAwesomeIcons.building,
-                                            color: MyColors.white,
+                                            color: colors.white,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -253,7 +255,7 @@ class _SettingsState extends State<Settings> {
                                                       Screen.max(context) *
                                                           0.015,
                                                   fontWeight: FontWeight.w500,
-                                                  color: MyColors.white,
+                                                  color: colors.white,
                                                 ),
                                               ),
                                             ),

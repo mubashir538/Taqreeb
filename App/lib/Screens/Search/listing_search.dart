@@ -382,8 +382,8 @@ class _SearchServiceState extends State<SearchService> {
             vertical: Screen.height(context) * 0.01,
           ),
           child: Shimmer.fromColors(
-            baseColor: colors.dark.withOpacity(0.6),
-            highlightColor: colors.dark.withOpacity(0.3),
+            baseColor: colors.dark.withAlpha(153),
+            highlightColor: colors.dark.withAlpha(77),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

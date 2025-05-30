@@ -46,7 +46,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _loadInitialData() async {
-    print('loadInitialData...');
     final viewModel = Provider.of<BusinessAccountInfoViewModel>(context, listen: false);
     await viewModel.fetch(context);
     String type = await MyTokens.getBusinessType();

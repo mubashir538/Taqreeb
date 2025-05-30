@@ -1,16 +1,17 @@
+import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/tokens.dart';
+import 'package:flutter/material.dart';
 
 class BusinessAccountInfoViewModel with ChangeNotifier {
   BusinessData businessData;
   Map<String, dynamic> _userInfo = {};
-  bool _isLoading = false; 
+  bool _isLoading = false;
   List<String> _items = [];
   String _type = "";
-  bool _hasData = false; 
 
   BusinessAccountInfoViewModel(this.businessData);
 
@@ -20,11 +21,9 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
   Map<String, dynamic> get userInfo => _userInfo;
 
   Future<void> fetch(BuildContext context) async {
-    
     _isLoading = true;
     notifyListeners();
 
-    
     try {
       final userid = await MyStorage.getToken(MyTokens.userId) ?? "";
       _type = await MyTokens.getBusinessType();
@@ -39,7 +38,6 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
                   "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${data['businessInfo']["profilepic"]}");
           _items = data['categories']?.cast<String>()?.toList() ?? [];
           _isLoading = false;
-          _hasData = true; 
           notifyListeners();
         },
         onError: () {

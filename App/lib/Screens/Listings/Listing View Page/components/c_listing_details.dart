@@ -358,7 +358,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             style: _buildTextStyle(
               fontSize: 0.016,
               fontWeight: FontWeight.w500,
-              color: colors.yellow.withOpacity(0.8),
+              color: colors.yellow.withAlpha(204),
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.008),

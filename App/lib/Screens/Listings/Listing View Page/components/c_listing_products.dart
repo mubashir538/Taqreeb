@@ -310,7 +310,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
                 shape: BoxShape.circle,
                 color: _currentPage == index
                     ? colors.red
-                    : colors.white.withOpacity(0.3),
+                    : colors.white.withAlpha(77),
               ),
             ),
           ),

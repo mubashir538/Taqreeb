@@ -96,8 +96,8 @@ class ColoredButtonState extends State<ColoredButton> {
               ? (_isPressed
                   ? LinearGradient(
                       colors: [
-                        pressedColor.withOpacity(0.8),
-                        pressedColor.withOpacity(0.9),
+                        pressedColor.withAlpha(204),
+                        pressedColor.withAlpha(230),
                       ],
                     )
                   : widget.gradient)

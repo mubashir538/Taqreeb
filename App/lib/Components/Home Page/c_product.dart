@@ -172,7 +172,7 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
                                 shape: BoxShape.circle,
                                 color: _currentPage == index
                                     ? colors.white
-                                    : colors.white.withOpacity(0.5),
+                                    : colors.white.withAlpha(128),
                               ),
                             ),
                           ),

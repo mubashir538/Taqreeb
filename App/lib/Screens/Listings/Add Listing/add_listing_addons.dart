@@ -156,7 +156,7 @@ class _AddCategoryAddonsState extends State<AddCategoryAddons> {
       margin: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.01),
       padding: EdgeInsets.all(Screen.max(context) * 0.015),
       decoration: BoxDecoration(
-        color: colors.darkLighter.withOpacity(0.7),
+        color: colors.darkLighter.withAlpha(179),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

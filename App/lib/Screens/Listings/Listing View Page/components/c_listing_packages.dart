@@ -422,7 +422,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
                 shape: BoxShape.circle,
                 color: _currentPage == index
                     ? colors.red
-                    : colors.white.withOpacity(0.3),
+                    : colors.white.withAlpha(77),
               ),
             ),
           ),
@@ -505,7 +505,7 @@ class _CategoryPackagesState extends State<CategoryPackages> {
             'No Packages Available',
             style: GoogleFonts.poppins(
               fontSize: Screen.max(context) * 0.02,
-              color: colors.white.withOpacity(0.7),
+              color: colors.white.withAlpha(179),
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.03),

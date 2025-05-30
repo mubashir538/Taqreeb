@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from ..paginations import RecommendationPagination
 from django.conf import settings
 import os
 from rest_framework.exceptions import ValidationError
@@ -20,7 +21,7 @@ from ..models.user_models import UserActivity
 from ..models.review_models import ReviewDetails
 from ..models.product_models import Product
 from ..models.business_models import BusinessOwner,Freelancer
-
+import random
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_listing_details(request, type):
@@ -707,26 +708,124 @@ def _search_products(filters):
     serializer = ProductsSerializer(queryset, many=True)
     return serializer.data
 
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def home_listings(request):
+#     listings = Listing.objects.filter(status='active').order_by('?')
+#     paginated_listings, paginator = _paginate_listings(request, listings)
+    
+#     listings_data = ListingSerializer(paginated_listings, many=True).data
+#     pictures = _get_listing_pictures(listings_data)
+
+#     return paginator.get_paginated_response({
+#         'status': 'success',
+#         'HomeListing': listings_data,
+#         'pictures': pictures
+#     })
+
+# def _paginate_listings(request, queryset):
+#     paginator = PageNumberPagination()
+#     paginator.page_size = request.GET.get('page_size', 10)
+#     result_page = paginator.paginate_queryset(queryset, request)
+#     return result_page, paginator
+
+# def _get_listing_pictures(listings_data):
+#     pictures = []
+#     for listing in listings_data:
+#         pic_qs = PicturesListings.objects.filter(listingId=listing['id'])
+#         pic_serializer = PicturesListingSerializers(pic_qs, many=True)
+#         pictures.append(pic_serializer.data)
+#     return pictures
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def home_listings(request):
-    listings = Listing.objects.filter(status='active').order_by('?')
-    paginated_listings, paginator = _paginate_listings(request, listings)
+    user = request.user
+    excluded_ids = request.GET.get('excluded_ids', '')
+    excluded_ids = [int(id) for id in excluded_ids.split(',') if id.isdigit()] if excluded_ids else []
     
+    # Get user's category preferences
+    user_preferences = get_user_preferences(user.id)
+    
+    # Get all active listings excluding already shown ones
+    base_query = Listing.objects.filter(status='active').exclude(id__in=excluded_ids)
+    
+    if not user_preferences:
+        # No user history - return random order
+        listings = base_query.order_by('?')
+    else:
+        # Get preferred categories (70% of results)
+        preferred_categories = [cat for cat, _ in user_preferences.most_common(3)]
+        preferred_query = base_query.filter(category__in=preferred_categories)
+        
+        # Get other categories (30% of results)
+        other_query = base_query.exclude(category__in=preferred_categories)
+        
+        # Calculate counts for each portion
+        total_count = base_query.count()
+        preferred_count = min(int(0.7 * total_count), preferred_query.count())
+        other_count = min(total_count - preferred_count, other_query.count())
+        
+        # Get listings from each portion
+        preferred_listings = list(preferred_query.order_by('?')[:preferred_count])
+        other_listings = list(other_query.order_by('?')[:other_count])
+        
+        # Combine and shuffle while maintaining ratio
+        listings = preferred_listings + other_listings
+        random.shuffle(listings)
+    
+    # Paginate the results
+    paginator = RecommendationPagination()
+    paginated_listings = paginator.paginate_queryset(listings, request)
+    
+    # Prepare response data
     listings_data = ListingSerializer(paginated_listings, many=True).data
     pictures = _get_listing_pictures(listings_data)
-
-    return paginator.get_paginated_response({
+    
+    # Get IDs of listings being returned to exclude in next request
+    returned_ids = [listing['id'] for listing in listings_data]
+    
+    response = paginator.get_paginated_response({
         'status': 'success',
         'HomeListing': listings_data,
-        'pictures': pictures
+        'pictures': pictures,
+        'excluded_ids': ','.join(map(str, excluded_ids + returned_ids))
     })
+    
+    return response
 
-def _paginate_listings(request, queryset):
-    paginator = PageNumberPagination()
-    paginator.page_size = request.GET.get('page_size', 10)
-    result_page = paginator.paginate_queryset(queryset, request)
-    return result_page, paginator
+def get_user_preferences(user_id):
+    """
+    Analyze user activity to determine category preferences.
+    Returns a Counter object with categories and their weights.
+    """
+    from collections import Counter
+    
+    # Get all relevant user activities
+    activities = UserActivity.objects.filter(
+        user_id=user_id,
+        action__in=['category_click', 'category_view_duration']
+    ).exclude(metadata__category__isnull=True)
+    
+    category_weights = Counter()
+    
+    for activity in activities:
+        category = activity.metadata.get('category')
+        if not category:
+            continue
+            
+        # Different weights for different actions
+        if activity.action == 'category_click':
+            weight = 1
+        elif activity.action == 'category_view_duration':
+            # Weight based on time spent (1 point per 30 seconds)
+            time_spent = activity.metadata.get('time_spent_seconds', 0)
+            weight = max(1, time_spent // 30)
+        
+        category_weights[category] += weight
+    
+    return category_weights
 
 def _get_listing_pictures(listings_data):
     pictures = []

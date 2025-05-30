@@ -211,8 +211,8 @@ class _YourEventsState extends State<YourEvents> {
     return Container(
       margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
       child: Shimmer.fromColors(
-        baseColor: colors.lightDark.withOpacity(0.6),
-        highlightColor: colors.lightDark.withOpacity(0.3),
+        baseColor: colors.lightDark.withAlpha(153),
+        highlightColor: colors.lightDark.withAlpha(77),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

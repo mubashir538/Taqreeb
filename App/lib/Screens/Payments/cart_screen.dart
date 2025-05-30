@@ -229,7 +229,7 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                         Text(
-                          '\Rs. ${cart.totalPrice.toStringAsFixed(2)}',
+                          'Rs. ${cart.totalPrice.toStringAsFixed(2)}',
                           style: GoogleFonts.roboto(
                             color: colors.yellow,
                             fontSize: 18,
@@ -318,7 +318,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '\Rs. ${_getItemPrice(item).toStringAsFixed(2)}',
+                        'Rs. ${_getItemPrice(item).toStringAsFixed(2)}',
                         style: GoogleFonts.roboto(
                           color: colors.yellow,
                           fontSize: 16,

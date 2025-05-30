@@ -107,7 +107,7 @@ class _CategoryReviewState extends State<CategoryReview> {
                   style: GoogleFonts.poppins(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w500,
-                    color: colors.white.withOpacity(0.6),
+                    color: colors.white.withAlpha(153),
                   ),
                 ),
               ),
@@ -134,7 +134,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             '${widget.listing['Listing']['ratingCount']} total reviews',
             style: _buildTextStyle(
               fontSize: Screen.max(context) * 0.015,
-              color: colors.white.withOpacity(0.7),
+              color: colors.white.withAlpha(179),
             ),
           ),
         ],
@@ -179,7 +179,7 @@ class _CategoryReviewState extends State<CategoryReview> {
             child: LinearProgressIndicator(
               value:
                   totalReviews == 0 || count == 0 ? 0.01 : count / totalReviews,
-              backgroundColor: colors.dark.withOpacity(0.3),
+              backgroundColor: colors.dark.withAlpha(77),
               valueColor: AlwaysStoppedAnimation<Color>(colors.yellow),
               minHeight: Screen.max(context) * 0.01,
               borderRadius: BorderRadius.circular(4),
@@ -210,7 +210,7 @@ class _CategoryReviewState extends State<CategoryReview> {
     return Container(
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: colors.dark.withOpacity(0.5),
+        color: colors.dark.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _aiPackageButtonKey = GlobalKey();
   final GlobalKey _contentSectionKey = GlobalKey();
   final GlobalKey _categoryIconKey = GlobalKey();
+  List<int> _excludedListingIds = [];
 
   Map<String, dynamic> categories = {};
   Map<String, dynamic> demoImages = {};
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoadingServices = false;
   bool _isLoadingMore = false;
   int _currentPage = 1;
-  int _currentTab = 0; 
+  int _currentTab = 0;
   List<String> _myImages = [];
   GlobalKey headerKey = GlobalKey();
   FocusNode searchFocus = FocusNode();
@@ -110,9 +111,83 @@ class _HomePageState extends State<HomePage> {
     }, context: mounted ? context : null);
   }
 
+  // Future<void> _fetchTabData({bool resetPagination = false}) async {
+  //   if (resetPagination) {
+  //     _currentPage = 1;
+  //   }
+
+  //   setState(() {
+  //     if (resetPagination) {
+  //       isLoadingServices = true;
+  //       if (_currentTab == 0) {
+  //         listings = {
+  //           'results': {'HomeListing': [], 'pictures': []}
+  //         };
+  //       } else if (_currentTab == 1) {
+  //         packages = {
+  //           'results': {'HomePackages': []}
+  //         };
+  //       } else {
+  //         products = {
+  //           'results': {'HomeProducts': []}
+  //         };
+  //       }
+  //     } else {
+  //       _isLoadingMore = true;
+  //     }
+  //   });
+
+  //   String endpoint;
+  //   if (_currentTab == 0) {
+  //     endpoint = 'home/listings/?page=$_currentPage&page_size=10';
+  //   } else if (_currentTab == 1) {
+  //     endpoint = 'home/packages/?page=$_currentPage&page_size=10';
+  //   } else {
+  //     endpoint = 'home/products/?page=$_currentPage&page_size=10';
+  //   }
+
+  //   await ApiCall.fetchAPI(endpoint, onSuccess: (token, data) {
+  //     if (mounted) {
+  //       setState(() {
+  //         if (_currentTab == 0) {
+  //           if (resetPagination) {
+  //             listings = data;
+  //           } else {
+  //             listings['results']['HomeListing']
+  //                 .addAll(data['results']['HomeListing']);
+  //             listings['results']['pictures']
+  //                 .addAll(data['results']['pictures']);
+  //           }
+  //         } else if (_currentTab == 1) {
+  //           if (resetPagination) {
+  //             packages = data;
+  //           } else {
+  //             packages['results']['HomePackages']
+  //                 .addAll(data['results']['HomePackages']);
+  //           }
+  //         } else {
+  //           if (resetPagination) {
+  //             products = data;
+  //           } else {
+  //             products['results']['HomeProducts']
+  //                 .addAll(data['results']['HomeProducts']);
+  //           }
+  //         }
+
+  //         isLoadingServices = false;
+  //         _isLoadingMore = false;
+  //         if (!resetPagination) {
+  //           _currentPage++;
+  //         }
+  //       });
+  //     }
+  //   }, context: mounted ? context : null);
+  // }
+
   Future<void> _fetchTabData({bool resetPagination = false}) async {
     if (resetPagination) {
       _currentPage = 1;
+      _excludedListingIds = []; // Reset excluded IDs when refreshing
     }
 
     setState(() {
@@ -138,7 +213,11 @@ class _HomePageState extends State<HomePage> {
 
     String endpoint;
     if (_currentTab == 0) {
+      // For listings, include excluded_ids in the request
       endpoint = 'home/listings/?page=$_currentPage&page_size=10';
+      if (_excludedListingIds.isNotEmpty) {
+        endpoint += '&excluded_ids=${_excludedListingIds.join(',')}';
+      }
     } else if (_currentTab == 1) {
       endpoint = 'home/packages/?page=$_currentPage&page_size=10';
     } else {
@@ -156,6 +235,14 @@ class _HomePageState extends State<HomePage> {
                   .addAll(data['results']['HomeListing']);
               listings['results']['pictures']
                   .addAll(data['results']['pictures']);
+            }
+            // Update excluded IDs with the new ones from the response
+            if (data['excluded_ids'] != null) {
+              _excludedListingIds = data['excluded_ids']
+                  .split(',')
+                  .where((id) => id.isNotEmpty)
+                  .map(int.parse)
+                  .toList();
             }
           } else if (_currentTab == 1) {
             if (resetPagination) {
@@ -281,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         targetPadding: EdgeInsets.all(8),
                         targetBorderRadius: BorderRadius.circular(8),
-                        overlayColor: colors.lightDark.withOpacity(0.5),
+                        overlayColor: colors.lightDark.withAlpha(128),
                         child: _buildSearchBox()),
                     _isLoading
                         ? _buildSkeletonLoader()
@@ -296,8 +383,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   targetPadding: EdgeInsets.all(8),
                                   targetBorderRadius: BorderRadius.circular(8),
-                                  overlayColor:
-                                      colors.lightDark.withOpacity(0.5),
+                                  overlayColor: colors.lightDark.withAlpha(128),
                                   child: _buildImageSlider()),
                               Showcase(
                                   key: _categorySectionKey,
@@ -308,8 +394,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   targetPadding: EdgeInsets.all(8),
                                   targetBorderRadius: BorderRadius.circular(8),
-                                  overlayColor:
-                                      colors.lightDark.withOpacity(0.5),
+                                  overlayColor: colors.lightDark.withAlpha(128),
                                   child: _buildCategorySection()),
                               Showcase(
                                   key: _aiPackageButtonKey,
@@ -320,8 +405,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   targetPadding: EdgeInsets.all(8),
                                   targetBorderRadius: BorderRadius.circular(8),
-                                  overlayColor:
-                                      colors.lightDark.withOpacity(0.5),
+                                  overlayColor: colors.lightDark.withAlpha(128),
                                   child: _buildAIPackageButton()),
                               Showcase(
                                   key: _contentSectionKey,
@@ -333,8 +417,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   targetPadding: EdgeInsets.all(8),
                                   targetBorderRadius: BorderRadius.circular(8),
-                                  overlayColor:
-                                      colors.lightDark.withOpacity(0.5),
+                                  overlayColor: colors.lightDark.withAlpha(128),
                                   child: _buildContentSection()),
                             ],
                           ),
@@ -555,7 +638,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   targetPadding: EdgeInsets.all(8),
                   targetBorderRadius: BorderRadius.circular(8),
-                  overlayColor: colors.lightDark.withOpacity(0.5),
+                  overlayColor: colors.lightDark.withAlpha(128),
                   child: CategoryIcon(
                     onpressed: () => _handleCategoryClick(categoryName),
                     label: categoryName,
@@ -663,8 +746,7 @@ class _HomePageState extends State<HomePage> {
         return GestureDetector(
           onTap: () => _handleServiceClick(package['id'], package['name']),
           child: PackageBox(
-            onPressed: () {
-            },
+            onPressed: () {},
             packageId: package['id'].toString(),
             packageDetails: package['description'].toString(),
             packagePrice: package['price'].toString(),
