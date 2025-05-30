@@ -1,2 +1,5 @@
 .env
 servicekey.json
+Backend\Backend\myapp\__pycache__
+Backend\Backend\myapp\Chatbot\__pycache__
+Backend\Backend\__pycache__
