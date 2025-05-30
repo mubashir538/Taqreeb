@@ -1,9 +1,12 @@
 import json
 import os
-from typing import Dict, List
+import re
+import random
+from typing import Dict, List, Optional, Tuple
 from datetime import datetime
-from .config import SYSTEM_MESSAGE
 from dotenv import load_dotenv
+from openai import OpenAI
+from .config import SYSTEM_MESSAGE
 from .functions import (
     get_event_types,
     get_function_types,
@@ -13,13 +16,10 @@ from .functions import (
     create_event,
     get_venue_recommendations
 )
-from openai import OpenAI
-import re
 from .data.event_types import EVENT_TYPES
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
-
 
 # Constants
 DEFAULT_LOCATION = "Karachi"
@@ -44,50 +44,254 @@ BUDGET_ALLOCATION = {
 }
 
 class EventPlanningChatbot:
-    def __init__(self, api_key: str = "", model: str = "mistral-saba-24b"):
+    def __init__(self, api_key: str = "", model: str = "deepseek-r1-distill-llama-70b"):
         self.client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1/")
         self.model = model
         self.conversation_state = {
             'step': 'init',
             'event_data': {
-                'name': None,
-                'type': None,
-                'date': datetime.now().strftime('%Y-%m-%d'),
+                'name': '',
+                'type': '',
+                'budget': 0,
+                'total_guests': 0,
+                'gender': '',
+                'venue_type': '',
                 'location': DEFAULT_LOCATION,
-                'budget': None,
-                'total_guests': None,
-                'gender': None,  # 'male' or 'female'
-                'venue_type': None,  # 'home' or 'hall'
+                'date': datetime.now().strftime('%Y-%m-%d'),
                 'functions': {}
             },
             'current_function': None,
-            'confirmed_services': {}
+            'confirmed_services': {},
+            'current_service': None,
+            'retry_count': 0
         }
-        self.conversation_history = []
+        self.conversation_histories = {}
+        self.function_schemas = self._initialize_function_schemas()
+        self.available_functions = self._initialize_available_functions()
+
+    def _initialize_function_schemas(self):
+        """Initialize all function schemas for the chatbot"""
+        return [
+            {
+                "name": "get_event_types",
+                "description": "Get all available event types",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+            },
+            {
+                "name": "get_function_types",
+                "description": "Get function types for an event type",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "event_type_id": {
+                            "type": "integer",
+                            "description": "ID of the event type"
+                        }
+                    },
+                    "required": []
+                }
+            },
+            {
+                "name": "search_listings",
+                "description": "Search for service listings",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "service_type": {"type": "string"},
+                        "location": {"type": "string"},
+                        "min_price": {"type": "integer"},
+                        "max_price": {"type": "integer"},
+                        "min_capacity": {"type": "integer"},
+                        "max_capacity": {"type": "integer"}
+                    },
+                    "required": ["service_type"]
+                }
+            },
+            {
+                "name": "get_listing_details",
+                "description": "Get detailed information about a specific listing",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "listing_id": {"type": "integer"}
+                    },
+                    "required": ["listing_id"]
+                }
+            },
+            {
+                "name": "check_date_availability",
+                "description": "Check if a listing is available on a specific date",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "listing_id": {"type": "integer"},
+                        "date": {"type": "string"}
+                    },
+                    "required": ["listing_id", "date"]
+                }
+            },
+            {
+                "name": "create_event",
+                "description": "Create a new event with all its functions in the database",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "user_id": {"type": "integer"},
+                        "event_name": {"type": "string"},
+                        "event_type_id": {"type": "integer"},
+                        "total_budget": {"type": "number"},
+                        "functions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "function_type_id": {"type": "integer"},
+                                    "budget": {"type": "number"},
+                                    "date": {"type": "string"},
+                                    "guest_count": {"type": "integer"},
+                                    "services": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "listing_id": {"type": "integer"},
+                                                "notes": {"type": "string"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "notes": {"type": "string"}
+                    },
+                    "required": ["user_id", "event_name", "event_type_id", "total_budget", "functions"]
+                }
+            },
+            {
+                "name": "get_venue_recommendations",
+                "description": "Get personalized venue recommendations based on event requirements",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "event_type": {"type": "string"},
+                        "location": {"type": "string"},
+                        "guest_count": {"type": "integer"},
+                        "budget_range": {
+                            "type": "array",
+                            "items": {"type": "integer"}
+                        }
+                    },
+                    "required": ["event_type", "guest_count", "budget_range"]
+                }
+            }
+        ]
+
+    def _initialize_available_functions(self):
+        """Map function names to their implementations"""
+        return {
+            "get_event_types": get_event_types,
+            "get_function_types": get_function_types,
+            "search_listings": search_listings,
+            "get_listing_details": get_listing_details,
+            "check_date_availability": check_date_availability,
+            "create_event": create_event,
+            "get_venue_recommendations": get_venue_recommendations
+        }
+
+    def get_or_create_history(self, user_id: str) -> List[Dict[str, str]]:
+        """Get or initialize conversation history for a user"""
+        if user_id not in self.conversation_histories:
+            self.conversation_histories[user_id] = [
+                {"role": "system", "content": SYSTEM_MESSAGE}
+            ]
+        return self.conversation_histories[user_id]
+
+    def add_message(self, user_id: str, message: str) -> None:
+        """Add a user message to the conversation history"""
+        history = self.get_or_create_history(user_id)
+        history.append({"role": "user", "content": message})
 
     def process_message(self, user_id: str, message: str) -> dict:
+        """Main method to process user messages and maintain conversation flow"""
         try:
-            # Add user message to history
-            self.conversation_history.append({"role": "user", "content": message})
-            
-            # Process based on current step
-            if self.conversation_state['step'] == 'init':
-                return self._handle_initial_info(message)
-            elif self.conversation_state['step'] == 'select_functions':
-                return self._handle_function_selection(message)
-            elif self.conversation_state['step'] == 'function_details':
-                return self._handle_function_details(message)
-            elif self.conversation_state['step'] == 'service_selection':
-                return self._handle_service_selection(message)
-            elif self.conversation_state['step'] == 'confirmation':
-                return self._handle_confirmation(message)
-                
-        except Exception as e:
-            return {"response": f"Error: {str(e)}", "status": "error"}
+            # Initialize conversation history
+            history = self.get_or_create_history(user_id)
+            self.add_message(user_id, message)
 
-    def _handle_initial_info(self, message):
+            # Handle reset commands
+            if message.lower() in ['reset', 'start over', 'new event']:
+                self._reset_conversation(user_id)
+                return {
+                    "response": "Okay, let's start over. What type of event would you like to plan?",
+                    "status": "init"
+                }
+
+            # Process based on current step
+            current_step = self.conversation_state['step']
+            print(f"Current step: {current_step}")
+            print(f"Conversation state: {self.conversation_state}")
+            print(f"Conversation history: {history}")
+            if current_step == 'init':
+                return self._handle_initial_info(message, user_id)
+            elif current_step == 'select_functions':
+                return self._handle_function_selection(message, user_id)
+            elif current_step == 'function_details':
+                return self._handle_function_details(message, user_id)
+            elif current_step == 'service_selection':
+                return self._handle_service_selection(message, user_id)
+            elif current_step == 'confirmation':
+                return self._handle_confirmation(message, user_id)
+            else:
+                return self._handle_unknown_state(user_id)
+
+        except Exception as e:
+            print(f"Error processing message: {str(e)}")
+            self.conversation_state['retry_count'] += 1
+            
+            if self.conversation_state['retry_count'] > 3:
+                self._reset_conversation(user_id)
+                return {
+                    "response": "I'm having trouble understanding. Let's start over.",
+                    "status": "error",
+                    "data": {"reset": True}
+                }
+            
+            return {
+                "response": f"Sorry, I didn't understand that. Could you please rephrase?",
+                "status": "error",
+                "data": {"error": str(e)}
+            }
+
+    def _reset_conversation(self, user_id: str) -> None:
+        """Reset the conversation state and history"""
+        self.conversation_state = {
+            'step': 'init',
+            'event_data': {
+                'name': '',
+                'type': '',
+                'budget': 0,
+                'total_guests': 0,
+                'gender': '',
+                'venue_type': '',
+                'location': DEFAULT_LOCATION,
+                'date': datetime.now().strftime('%Y-%m-%d'),
+                'functions': {}
+            },
+            'current_function': None,
+            'confirmed_services': {},
+            'current_service': None,
+            'retry_count': 0
+        }
+        self.conversation_histories[user_id] = [
+            {"role": "system", "content": SYSTEM_MESSAGE}
+        ]
+
+    def _handle_initial_info(self, message: str, user_id: str) -> dict:
         """Collect initial event information"""
-        # Extract info from message using regex
         self._extract_event_info(message)
         
         # Check what's still missing
@@ -95,7 +299,8 @@ class EventPlanningChatbot:
         if not self.conversation_state['event_data']['name']:
             missing.append("event name")
         if not self.conversation_state['event_data']['type']:
-            missing.append("event type (from: {})".format(", ".join(get_event_types())))
+            event_types = [et['name'] for et in get_event_types()]
+            missing.append(f"event type (from: {', '.join(event_types)})")
         if not self.conversation_state['event_data']['budget']:
             missing.append("total budget")
         if not self.conversation_state['event_data']['total_guests']:
@@ -106,20 +311,26 @@ class EventPlanningChatbot:
             missing.append("venue type (home/hall)")
             
         if missing:
+            response = "I still need: " + ", ".join(missing)
+            if len(missing) > 3:
+                response += "\nPlease provide this information one piece at a time."
             return {
-                "response": "I still need: " + ", ".join(missing),
+                "response": response,
                 "status": "in_progress"
             }
         else:
             self.conversation_state['step'] = 'select_functions'
+            event_type_id = self._get_event_type_id(self.conversation_state['event_data']['type'])
+            functions = get_function_types(event_type_id)
+            function_names = [f['name'] for f in functions]
+            
             return {
-                "response": "Great! Now please tell me which functions you'd like to include (e.g., Engagement, Mehndi, Valima).",
+                "response": f"Great! Now please tell me which functions you'd like to include (e.g., {', '.join(function_names[:3])}).",
                 "status": "in_progress"
             }
 
-    def _handle_function_selection(self, message):
+    def _handle_function_selection(self, message: str, user_id: str) -> dict:
         """Handle selection of functions for the event"""
-        # Get available function types for this event type
         event_type_id = self._get_event_type_id(self.conversation_state['event_data']['type'])
         functions = get_function_types(event_type_id)
         
@@ -153,7 +364,7 @@ class EventPlanningChatbot:
             "status": "in_progress"
         }
 
-    def _handle_function_details(self, message):
+    def _handle_function_details(self, message: str, user_id: str) -> dict:
         """Collect details for each function"""
         current_func = self.conversation_state['current_function']
         func_data = self.conversation_state['event_data']['functions'][current_func]
@@ -191,7 +402,7 @@ class EventPlanningChatbot:
                 self.conversation_state['current_function'] = list(self.conversation_state['event_data']['functions'].keys())[0]
                 return self._start_service_selection()
 
-    def _start_service_selection(self):
+    def _start_service_selection(self) -> dict:
         """Begin the service selection process for the current function"""
         func_name = self.conversation_state['current_function']
         func_data = self.conversation_state['event_data']['functions'][func_name]
@@ -245,281 +456,352 @@ class EventPlanningChatbot:
         self.conversation_state['step'] = 'confirmation'
         return self._generate_event_summary()
 
-    def _extract_event_info(self, message):
+    def _handle_service_selection(self, message: str, user_id: str) -> dict:
+        """Handle user selection of a service option"""
+        current_func = self.conversation_state['current_function']
+        current_service = self.conversation_state['current_service']
+        options = current_service['options']
+
+        # Check if user wants to skip this service
+        if 'skip' in message.lower():
+            # Move to next service or finish
+            return self._move_to_next_service_or_finish()
+
+        # Try to parse selection number
+        try:
+            selection = int(re.search(r'\d+', message).group())
+            if 1 <= selection <= len(options):
+                selected_option = options[selection-1]
+
+                # Store the selected service
+                self.conversation_state['event_data']['functions'][current_func]['services'][current_service['type']] = {
+                    'id': selected_option['id'],
+                    'name': selected_option['name'],
+                    'price': selected_option['price_range']['max'],  # Use max as conservative estimate
+                    'details': selected_option
+                }
+
+                # Move to next service or finish
+                return self._move_to_next_service_or_finish()
+            else:
+                return {
+                    "response": f"Please select a number between 1 and {len(options)}, or 'skip'.",
+                    "status": "in_progress"
+                }
+        except (AttributeError, ValueError):
+            return {
+                "response": "I didn't understand your selection. Please reply with the number of your choice or 'skip'.",
+                "status": "in_progress"
+            }
+
+    def _handle_confirmation(self, message: str, user_id: str) -> dict:
+        """Handle final confirmation or edits to the event plan"""
+        if 'confirm' in message.lower():
+            # Create the event in the database
+            event_data = self.conversation_state['event_data']
+            functions = []
+
+            for func_name, func_details in event_data['functions'].items():
+                functions.append({
+                    'function_type_id': self._get_function_type_id(func_name),
+                    'budget': func_details['budget'],
+                    'date': func_details['date'],
+                    'guest_count': func_details['guests'],
+                    'services': [{
+                        'listing_id': service['id'],
+                        'notes': f"Selected via chatbot for {func_name}"
+                    } for service in func_details['services'].values()]
+                })
+
+            result = create_event(
+                user_id=1,  # Replace with actual user ID
+                event_name=event_data['name'],
+                event_type_id=self._get_event_type_id(event_data['type']),
+                total_budget=event_data['budget'],
+                functions=functions,
+                notes="Created via chatbot"
+            )
+
+            if result.get('success'):
+                self.conversation_state['step'] = 'complete'
+                return {
+                    "response": f"Your event has been created! Event ID: {result['event_id']}",
+                    "status": "complete"
+                }
+            else:
+                return {
+                    "response": f"Error creating event: {result.get('error', 'Unknown error')}",
+                    "status": "error"
+                }
+
+        elif 'edit' in message.lower():
+            # Reset to initial state but keep collected data
+            self.conversation_state['step'] = 'init'
+            return {
+                "response": "What would you like to change? You can modify: name, type, budget, guests, or venue type.",
+                "status": "in_progress"
+            }
+        else:
+            return {
+                "response": "Please reply with 'confirm' to save this event or 'edit' to make changes.",
+                "status": "confirmation"
+            }
+
+    def _handle_unknown_state(self, user_id: str) -> dict:
+        """Handle cases where the conversation state is unknown"""
+        self.conversation_state['retry_count'] += 1
+        
+        if self.conversation_state['retry_count'] > 2:
+            self._reset_conversation(user_id)
+            return {
+                "response": "I'm having trouble understanding. Let's start over. What type of event would you like to plan?",
+                "status": "init"
+            }
+        
+        return {
+            "response": "I'm not sure what to do next. Could you please clarify or say 'reset' to start over?",
+            "status": "error"
+        }
+
+    def _extract_event_info(self, message: str) -> None:
         """Extract event information from user message"""
+        event_data = self.conversation_state['event_data']
+        
         # Extract event name
-        if not self.conversation_state['event_data']['name']:
+        if not event_data['name']:
             name_match = re.search(r'(?:event name|name of event)[:\s]*(.+)', message, re.IGNORECASE)
             if name_match:
-                self.conversation_state['event_data']['name'] = name_match.group(1).strip()
+                event_data['name'] = name_match.group(1).strip()
         
         # Extract event type
-        if not self.conversation_state['event_data']['type']:
+        if not event_data['type']:
             for event_type in get_event_types():
                 if event_type['name'].lower() in message.lower():
-                    self.conversation_state['event_data']['type'] = event_type['name']
+                    event_data['type'] = event_type['name']
                     break
         
         # Extract budget
-        if not self.conversation_state['event_data']['budget']:
+        if not event_data['budget']:
             budget_match = re.search(r'(?:budget|price)[:\s]*(\d+)', message, re.IGNORECASE)
             if budget_match:
-                self.conversation_state['event_data']['budget'] = float(budget_match.group(1))
+                event_data['budget'] = float(budget_match.group(1))
         
         # Extract guests
-        if not self.conversation_state['event_data']['total_guests']:
+        if not event_data['total_guests']:
             guests_match = re.search(r'(?:guests|people|attendees)[:\s]*(\d+)', message, re.IGNORECASE)
             if guests_match:
-                self.conversation_state['event_data']['total_guests'] = int(guests_match.group(1))
+                event_data['total_guests'] = int(guests_match.group(1))
         
         # Extract gender
-        if not self.conversation_state['event_data']['gender']:
+        if not event_data['gender']:
             if 'male' in message.lower():
-                self.conversation_state['event_data']['gender'] = 'male'
+                event_data['gender'] = 'male'
             elif 'female' in message.lower():
-                self.conversation_state['event_data']['gender'] = 'female'
+                event_data['gender'] = 'female'
         
         # Extract venue type
-        if not self.conversation_state['event_data']['venue_type']:
+        if not event_data['venue_type']:
             if 'home' in message.lower():
-                self.conversation_state['event_data']['venue_type'] = 'home'
+                event_data['venue_type'] = 'home'
             elif 'hall' in message.lower() or 'venue' in message.lower():
-                self.conversation_state['event_data']['venue_type'] = 'hall'
+                event_data['venue_type'] = 'hall'
 
-    def _search_services(self, service_type, location, guests, budget):
-        """Search for services based on criteria"""
-        filters = {
-            'service_type': service_type,
-            'location': location if location.lower() not in ['home', 'street'] else None,
-            'max_price': budget
-        }
-        
-        if service_type == 'Venue':
-            filters['min_capacity'] = guests
-            filters['max_capacity'] = guests * 1.2  # Allow 20% buffer
-        
-        return search_listings(**filters)
+        # Extract location if specified
+        location_match = re.search(r'(?:location|city|place)[:\s]*(.+)', message, re.IGNORECASE)
+        if location_match and location_match.group(1).lower() not in ['home', 'street']:
+            event_data['location'] = location_match.group(1).strip()
 
-    def _generate_event_summary(self):
+    def _extract_function_details(self, message: str, function_name: str) -> None:
+        """Extract function details (budget, guests, date, location) from message"""
+        func_data = self.conversation_state['event_data']['functions'][function_name]
+
+        # Extract budget
+        if not func_data['budget']:
+            budget_match = re.search(r'(?:budget|price)[:\s]*(\d+)', message, re.IGNORECASE)
+            if budget_match:
+                func_data['budget'] = float(budget_match.group(1))
+
+        # Extract guest count
+        if not func_data['guests']:
+            guests_match = re.search(r'(?:guests|people|attendees)[:\s]*(\d+)', message, re.IGNORECASE)
+            if guests_match:
+                func_data['guests'] = int(guests_match.group(1))
+
+        # Extract date (format: YYYY-MM-DD)
+        if func_data['date'] == self.conversation_state['event_data']['date']:  # Only if not already customized
+            date_match = re.search(r'(\d{4}-\d{2}-\d{2})|(\d{1,2}/\d{1,2}/\d{4})', message)
+            if date_match:
+                date_str = date_match.group(1) or date_match.group(2)
+                try:
+                    func_data['date'] = datetime.strptime(date_str, '%Y-%m-%d').strftime('%Y-%m-%d') if date_match.group(1) \
+                        else datetime.strptime(date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
+                except ValueError:
+                    pass
+                
+        # Extract location
+        if func_data['location'] == self.conversation_state['event_data']['location']:  # Only if not already customized
+            location_match = re.search(r'(?:location|venue|place)[:\s]*(.+)', message, re.IGNORECASE)
+            if location_match and location_match.group(1).lower() not in ['home', 'street']:
+                func_data['location'] = location_match.group(1).strip()
+
+    def _search_services(self, service_type: str, location: str, guests: int, budget: float) -> List[Dict]:
+        """Search for services based on criteria with fallback logic"""
+        try:
+            # First try with all criteria
+            filters = {
+                'service_type': service_type,
+                'location': location if location.lower() not in ['home', 'street'] else None,
+                'max_price': budget
+            }
+            
+            if service_type == 'Venue':
+                filters['min_capacity'] = guests
+                filters['max_capacity'] = guests * 1.2  # Allow 20% buffer
+            
+            results = search_listings(**filters)
+            
+            # If no results, try relaxing the location constraint
+            if not results and location:
+                del filters['location']
+                results = search_listings(**filters)
+                
+            # If still no results, try relaxing the price constraint
+            if not results and budget > 0:
+                filters['max_price'] = budget * 1.5  # Increase budget by 50%
+                results = search_listings(**filters)
+                
+            # If still no results, try removing capacity filter for venues
+            if not results and service_type == 'Venue' and 'min_capacity' in filters:
+                del filters['min_capacity']
+                del filters['max_capacity']
+                results = search_listings(**filters)
+                
+            return results
+            
+        except Exception as e:
+            print(f"Error searching services: {str(e)}")
+            return []
+
+    def _format_service_options(self, service_type: str, options: List[Dict]) -> str:
+        """Format service options for display to user"""
+        if not options:
+            return f"No {service_type} options found within your budget. We'll skip this service."
+
+        response = f"Here are some {service_type} options:\n"
+        for i, option in enumerate(options[:3], 1):  # Show top 3 options
+            response += f"{i}. {option['name']} - {option['location']}\n"
+            response += f"   Price Range: PKR {option['price_range']['min']} - {option['price_range']['max']}\n"
+            if 'capacity' in option:
+                response += f"   Capacity: {option['capacity']['min']} - {option['capacity']['max']} guests\n"
+            response += f"   Rating: {option['rating'] or 'Not rated'}\n\n"
+
+        response += "Please reply with the number of your preferred option, or 'skip' to skip this service."
+        return response
+
+    def _move_to_next_service_or_finish(self) -> dict:
+        """Helper to move to next service or finish service selection"""
+        # Determine next service to recommend
+        func_name = self.conversation_state['current_function']
+        func_data = self.conversation_state['event_data']['functions'][func_name]
+        remaining_budget = func_data['budget'] - sum(
+            s['price'] for s in func_data['services'].values()
+        )
+
+        # Get services already selected
+        selected_services = set(func_data['services'].keys())
+
+        # Find next service to recommend
+        for service_type in SERVICE_PRIORITY:
+            if service_type not in selected_services and remaining_budget > 0:
+                service_budget = min(
+                    remaining_budget, 
+                    func_data['budget'] * BUDGET_ALLOCATION.get(service_type, 0)
+                )
+
+                # Skip services not needed based on venue type
+                if service_type == 'Venue' and self.conversation_state['event_data']['venue_type'] == 'home':
+                    continue
+
+                # Skip gender-specific services
+                if service_type == 'Salon' and self.conversation_state['event_data']['gender'] == 'male':
+                    continue
+                if service_type == 'Parlor' and self.conversation_state['event_data']['gender'] == 'female':
+                    continue
+
+                # Search for services
+                results = self._search_services(
+                    service_type,
+                    func_data['location'],
+                    func_data['guests'],
+                    service_budget
+                )
+
+                if results:
+                    self.conversation_state['current_service'] = {
+                        'type': service_type,
+                        'options': results,
+                        'budget': service_budget
+                    }
+                    return {
+                        "response": self._format_service_options(service_type, results),
+                        "status": "in_progress"
+                    }
+
+        # If no more services to recommend, move to next function or finish
+        all_functions = list(self.conversation_state['event_data']['functions'].keys())
+        current_index = all_functions.index(self.conversation_state['current_function'])
+
+        if current_index + 1 < len(all_functions):
+            # Move to next function
+            self.conversation_state['current_function'] = all_functions[current_index + 1]
+            return self._start_service_selection()
+        else:
+            # All functions processed
+            self.conversation_state['step'] = 'confirmation'
+            return self._generate_event_summary()
+
+    def _generate_event_summary(self) -> dict:
         """Generate a summary of the planned event"""
-        summary = f"Event: {self.conversation_state['event_data']['name']}\n"
-        summary += f"Type: {self.conversation_state['event_data']['type']}\n"
-        summary += f"Total Budget: {self.conversation_state['event_data']['budget']}\n"
+        event_data = self.conversation_state['event_data']
+        summary = f"Event: {event_data['name']}\n"
+        summary += f"Type: {event_data['type']}\n"
+        summary += f"Total Budget: PKR {event_data['budget']:,.2f}\n"
         summary += "Functions:\n"
         
-        for func_name, func_data in self.conversation_state['event_data']['functions'].items():
+        for func_name, func_data in event_data['functions'].items():
             summary += f"- {func_name}:\n"
-            summary += f"  Budget: {func_data['budget']}\n"
+            summary += f"  Budget: PKR {func_data['budget']:,.2f}\n"
             summary += f"  Guests: {func_data['guests']}\n"
             summary += f"  Location: {func_data['location']}\n"
             summary += f"  Date: {func_data['date']}\n"
             summary += "  Services:\n"
             
             for service_type, service in func_data['services'].items():
-                summary += f"    {service_type}: {service['name']} (PKR {service['price']})\n"
+                summary += f"    {service_type}: {service['name']} (PKR {service['price']:,.2f})\n"
         
         summary += "\nDoes this look good? Type 'confirm' to save or 'edit' to make changes."
         return {"response": summary, "status": "confirmation"}
 
-    # ... (additional methods for handling confirmation, saving events, etc.)    def has_event_data(self):
-        return bool(self.conversation_state['event_data']['event_type'])
+    def _get_event_type_id(self, event_type_name: str) -> Optional[int]:
+        """Get event type ID from name"""
+        for event_type in get_event_types():
+            if event_type['name'].lower() == event_type_name.lower():
+                return event_type['id']
+        return None
 
-    def has_function_data(self, function_name):
-        return function_name in self.conversation_state['event_data']['functions']
+    def _get_function_type_id(self, function_name: str) -> Optional[int]:
+        """Get function type ID from name"""
+        for function_type in get_function_types():
+            if function_type['name'].lower() == function_name.lower():
+                return function_type['id']
+        return None
 
-    def get_missing_fields(self, required_fields):
-        """Check which required fields are missing from current state"""
-        current_data = self.get_current_data_context()
-        return [field for field in required_fields if field not in current_data]
-
-    def load_state(self, state):
-        self.conversation_state = state
-    
-    def get_state(self):
-        return self.conversation_state
-        
-    def get_or_create_history(self, user_id: str) -> List[Dict[str, str]]:
-        """Get existing conversation history or create a new one"""
-        if user_id not in self.conversation_histories:
-            self.conversation_histories[user_id] = [
-                {"role": "system", "content": SYSTEM_MESSAGE}
-            ]
-        return self.conversation_histories[user_id]
-
-    def add_message(self, user_id: str, message: str) -> None:
-        """Add a user message to the conversation history"""
-        history = self.get_or_create_history(user_id)
-        history.append({"role": "user", "content": message})
-
-    def process_message(self, user_id: str, message: str) -> dict:
-        print(f"\n=== NEW MESSAGE ===\nUser ID: {user_id}\nMessage: {message}")
-        """Enhanced process_message with state persistence and error recovery"""
-        if self.conversation_state['step'] == 'initial':
-            self._parse_initial_message(message)
-        try:
-            if self._handle_numeric_input(message):
-                # Don't process further if we handled it as a numeric response
-                return self._continue_flow(user_id)
-            
-            # Load existing conversation state if available
-            conversation_state = self._load_conversation_state(user_id)
-            print(f"Loaded State: {json.dumps(conversation_state, indent=2)}")
-
-            # Initialize history from state or create new
-            if user_id not in self.conversation_histories:
-                if conversation_state and 'history' in conversation_state:
-                    self.conversation_histories[user_id] = conversation_state['history']
-                else:
-                    self.conversation_histories[user_id] = [
-                        {"role": "system", "content": SYSTEM_MESSAGE}
-                    ]
-
-            # Add user message to history
-            self.add_message(user_id, message)
-            history = self.conversation_histories[user_id]
-
-            # Prepare API call with error handling
-            try:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=history,
-                    tools=[
-                        {"type": "function", "function": schema}
-                        for schema in self.function_schemas
-                    ],
-                    tool_choice="auto",
-                )
-                print("\n=== SENDING TO OPENAI ===")
-                print(f"Model: {self.model}")
-                print("Message History:")
-                for idx, msg in enumerate(history):
-                    print(f"{idx}. {msg['role']}: {msg.get('content', '[function call]')}")
-                response_message = response.choices[0].message
-            except Exception as api_error:
-                # Save state before failing
-                self._save_conversation_state(user_id, {
-                    'history': history,
-                    'error_count': conversation_state.get('error_count', 0) + 1
-                })
-                raise Exception(f"API Error: {str(api_error)}")
-
-            # Process function calls if any
-            if response_message.tool_calls:
-                assistant_response = self._handle_function_calls(
-                    user_id, 
-                    history, 
-                    response_message.tool_calls
-                )
-            else:
-                assistant_response = response_message.content
-                history.append({"role": "assistant", "content": assistant_response})
-
-            # Check if this is a final plan response
-            is_final_plan = self._is_final_plan_response(assistant_response)
-            event_data = None
-            if is_final_plan:
-                event_data = self._parse_final_plan(assistant_response)
-                # Store the complete plan in state
-                conversation_state['final_plan'] = event_data
-
-            # Save successful state
-            self._save_conversation_state(user_id, {
-                'history': history,
-                'current_step': self._determine_next_step(assistant_response),
-                'final_plan': event_data if is_final_plan else None,
-                'last_response': assistant_response
-            })
-
-            return {
-                'response': assistant_response,
-                'is_final_plan': is_final_plan,
-                'event_data': event_data,
-                'status': 'success'
-            }
-
-        except Exception as e:
-            # Return error while preserving existing state
-            return {
-                'response': f"Error: {str(e)}",
-                'is_final_plan': False,
-                'event_data': None,
-                'status': 'error'
-            }
-
-    def _parse_initial_message(self, message):
-        # Look for event type patterns
-        for event_type in EVENT_TYPES:
-            if event_type.lower() in message.lower():
-                self.conversation_state['event_data']['event_type'] = event_type
-                self.conversation_state['step'] = 'selecting_functions'
-                break
-            
-        # Look for budget patterns
-        budget_matches = re.findall(r'\$?\d+(?:,\d{3})*(?:\.\d{2})?', message)
-        if budget_matches:
-            self.conversation_state['event_data']['total_budget'] = float(budget_matches[0].replace('$', '').replace(',', ''))
-
-        # Look for guest count
-        guest_matches = re.findall(r'(\d+)\s+(?:guests|people|attendees)', message, re.IGNORECASE)
-        if guest_matches:
-            self.conversation_state['event_data']['guest_count'] = int(guest_matches[0])
-
-    def get_next_questions(self):
-        """Determine what information we still need in a single batch"""
-        missing = []
-
-        if not self.has_event_data():
-            missing.append("What type of event would you like to plan?")
-        elif not self.conversation_state['current_function']:
-            missing.append("Which functions would you like to include?")
-        else:
-            func_data = self.get_current_function_data()
-            required_fields = ['budget', 'date', 'guest_count']
-            missing_fields = self.get_missing_fields(required_fields)
-
-            if missing_fields:
-                missing.append(f"For the {self.conversation_state['current_function']}, we need: {', '.join(missing_fields)}")
-
-        return " ".join(missing) if missing else None
-
-    def confirm_details(self):
-        """Ask user to confirm collected details before proceeding"""
-        confirmation_text = "Please confirm these details:\n"
-        # Build confirmation text from state
-        # ...
-        return confirmation_text
-    
-    def _handle_numeric_input(self, message):
-        """Process numeric inputs based on current context"""
-        current_step = self.conversation_state['step']
-
-        if current_step == 'awaiting_guest_count':
-            try:
-                guests = int(message)
-                self.conversation_state['event_data']['functions'][
-                    self.conversation_state['current_function']
-                ]['guest_count'] = guests
-                self.conversation_state['step'] = 'selecting_services'
-                return True
-            except ValueError:
-                return False
-
-        elif current_step == 'awaiting_budget':
-            # Similar handling for budget
-            pass
-        
-        return False
-    
-
-    def _handle_function_calls(self, user_id, history, tool_calls):
+    def _handle_function_calls(self, user_id: str, history: List[Dict], tool_calls: List) -> str:
         """Handle function calls and return final assistant response"""
-        print("\n=== FUNCTION CALLS DETECTED ===")
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_args = json.loads(tool_call.function.arguments)
-            print(f"\nCalling Function: {function_name}")
-            print(f"Arguments: {json.dumps(function_args, indent=2)}")
-
+            
             # Log function call in history
             history.append({
                 "role": "assistant",
@@ -535,21 +817,23 @@ class EventPlanningChatbot:
             })
 
             try:
-                if function_name not in self.available_functions:
-                    print(f"⚠️ Function not available! Available functions: {list(self.available_functions.keys())}")
-            
-            
-                function_response = self.available_functions[function_name](
-                    **function_args
-                )
-                print(f"Function Result: {json.dumps(function_response, indent=2)}")
-                history.append({
-                    "role": "tool",
-                    "tool_call_id": tool_call.id,
-                    "content": json.dumps(function_response),
-                })
+                if function_name in self.available_functions:
+                    function_response = self.available_functions[function_name](**function_args)
+                    history.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(function_response),
+                    })
+                else:
+                    history.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps({
+                            "error": f"Function {function_name} not available",
+                            "failed_function": function_name
+                        }),
+                    })
             except Exception as func_error:
-                print(f"🚨 Function Error: {str(func_error)}")
                 history.append({
                     "role": "tool",
                     "tool_call_id": tool_call.id,
@@ -558,57 +842,74 @@ class EventPlanningChatbot:
                         "failed_function": function_name
                     }),
                 })
-            
 
         # Get final response after function calls
         second_response = self.client.chat.completions.create(
             model=self.model, 
             messages=history
         )
-        print("\n=== OPENAI RESPONSE ===")
-        print(f"Finish Reason: {second_response.choices[0].finish_reason}")
-        print(f"Message Content: {second_response.choices[0].message.content}")
-        print("Tool Calls:")
-        if second_response.choices[0].message.tool_calls:
-            for tool in second_response.choices[0].message.tool_calls:
-                print(f"- {tool.function.name}: {tool.function.arguments}")
-        else:
-            print("No tool calls")
         return second_response.choices[0].message.content
 
-    def _format_response(self, response):
-        """Ensure response is properly formatted text"""
-        if isinstance(response, dict):
-            # Handle dictionary responses
-            if 'response' in response:
-                return str(response['response'])
-            return json.dumps(response, indent=2)
-        elif isinstance(response, str):
-            return response
-        return str(response)
-
-    def _load_conversation_state(self, user_id: str) -> dict:
-        """Load conversation state from persistent storage"""
-        # Implement your storage mechanism here (database, Redis, etc.)
-        # Return empty dict if no state exists
-        return {}  # Replace with actual implementation
-
-    def _save_conversation_state(self, user_id: str, state: dict):
-        """Save conversation state to persistent storage"""
-        # Implement your storage mechanism here
-        pass
-
-    def _is_final_plan_response(self, response_text: str) -> bool:
-        """Determine if the response contains a complete event plan"""
-        markers = ["Event:", "Functions:", "Budget:", "Services:"]
-        return all(marker in response_text for marker in markers)
-
-    def _parse_final_plan(self, response_text: str) -> dict:
-        """Parse the structured event plan from the response"""
-        # Implement your parsing logic here
-        return {}  # Replace with actual implementation
-
-    def _determine_next_step(self, response_text: str) -> str:
-        """Determine the next step in the conversation flow"""
-        # Implement your step detection logic
-        return "unknown" 
+    def _generate_random_event(self) -> dict:
+        """Generate a random event when there's confusion in user input"""
+        event_types = [et['name'] for et in get_event_types()]
+        event_type = random.choice(event_types)
+        event_type_id = self._get_event_type_id(event_type)
+        functions = get_function_types(event_type_id)
+        
+        # Create a basic event structure
+        event_data = {
+            'name': f"Sample {event_type} Event",
+            'type': event_type,
+            'budget': random.randint(50000, 500000),
+            'total_guests': random.randint(50, 500),
+            'gender': random.choice(['male', 'female']),
+            'venue_type': random.choice(['home', 'hall']),
+            'location': DEFAULT_LOCATION,
+            'date': (datetime.now() + timedelta(days=random.randint(30, 365))).strftime('%Y-%m-%d'),
+            'functions': {}
+        }
+        
+        # Select 1-3 random functions
+        selected_functions = random.sample([f['name'] for f in functions], k=random.randint(1, min(3, len(functions))))
+        
+        for func_name in selected_functions:
+            event_data['functions'][func_name] = {
+                'date': event_data['date'],
+                'location': event_data['location'],
+                'budget': round(event_data['budget'] / len(selected_functions)),
+                'guests': round(event_data['total_guests'] * random.uniform(0.7, 1.3)),
+                'services': {}
+            }
+            
+            # Add random services
+            services_to_add = random.sample(SERVICE_PRIORITY, k=random.randint(2, 5))
+            for service_type in services_to_add:
+                # Skip venue if home
+                if service_type == 'Venue' and event_data['venue_type'] == 'home':
+                    continue
+                    
+                # Skip gender-specific services
+                if service_type == 'Salon' and event_data['gender'] == 'male':
+                    continue
+                if service_type == 'Parlor' and event_data['gender'] == 'female':
+                    continue
+                    
+                # Search for services
+                results = self._search_services(
+                    service_type,
+                    event_data['location'],
+                    event_data['total_guests'],
+                    event_data['budget'] * BUDGET_ALLOCATION.get(service_type, 0.1)
+                )
+                
+                if results:
+                    selected = random.choice(results)
+                    event_data['functions'][func_name]['services'][service_type] = {
+                        'id': selected['id'],
+                        'name': selected['name'],
+                        'price': selected['price_range']['max'],
+                        'details': selected
+                    }
+        
+        return event_data
