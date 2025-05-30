@@ -36,7 +36,7 @@ class ProductsSerializer(s.ModelSerializer):
     pictures = PicturesProductsSerializer(
         many=True,
         read_only=True,
-        source='picturesproducts_set'  # This is the default related_name for reverse FK
+        source='picturesproducts_set' 
     )
     
     class Meta:
@@ -82,7 +82,6 @@ class ListingSerializer(s.ModelSerializer):
         valid_dates = []
         for date_str in value:
             try:
-                # Validate date format
                 parsed_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
                 valid_dates.append(parsed_date.isoformat())
             except (ValueError, AttributeError):

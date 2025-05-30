@@ -1,5 +1,5 @@
 from django.contrib.auth.backends import ModelBackend
-from .models import User, ReactUser
+from ..models import User, ReactUser
 
 class FlutterUserAuthBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):

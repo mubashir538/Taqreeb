@@ -9,7 +9,6 @@ class CartItemSerializer(s.ModelSerializer):
     class Meta:
         model = m.CartItem
         fields = ['id', 'item_type', 'item_id', 'quantity', 'added_at', 'item_details']
-        # Remove the extra_kwargs with coerce_to_string
     
     def get_item_details(self, obj):
         if obj.item_type == 'listing':

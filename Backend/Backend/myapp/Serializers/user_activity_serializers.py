@@ -20,10 +20,10 @@ class BankDetailsSerializer(s.ModelSerializer):
         model = m.BankDetails
         fields = [
             'bankName',
-            'masked_account_number',  # This will show the masked version
+            'masked_account_number',  
         ]
         extra_kwargs = {
-            'accountNumber': {'write_only': True}  # Hide original in responses
+            'accountNumber': {'write_only': True}  
         }
     
     def get_masked_account_number(self, obj):
@@ -31,10 +31,8 @@ class BankDetailsSerializer(s.ModelSerializer):
         if not obj.accountNumber:
             return None
         
-        # Get last 4 digits
         visible_digits = 4
         num_length = len(obj.accountNumber)
         last_digits = obj.accountNumber[-visible_digits:]
         
-        # Return masked version (e.g., ******1234)
         return '*' * (num_length - visible_digits) + last_digits

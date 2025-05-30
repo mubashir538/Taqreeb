@@ -22,7 +22,7 @@ class ReactUser(AbstractBaseUser, PermissionsMixin):
         verbose_name='groups',
         blank=True,
         help_text='The groups this user belongs to.',
-        related_name="react_user_set",  # Unique related_name
+        related_name="react_user_set",  
         related_query_name="react_user",
     )
     user_permissions = models.ManyToManyField(
@@ -30,7 +30,7 @@ class ReactUser(AbstractBaseUser, PermissionsMixin):
         verbose_name='user permissions',
         blank=True,
         help_text='Specific permissions for this user.',
-        related_name="react_user_set",  # Unique related_name
+        related_name="react_user_set",  
         related_query_name="react_user",
     )
     

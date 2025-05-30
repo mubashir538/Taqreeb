@@ -20,7 +20,6 @@ import datetime
 from django.db.models import Avg, Count, Sum
 from datetime import datetime, date
 from django.utils import timezone
-import pytz
 from django.core.paginator import Paginator,EmptyPage
 from ..Serializers.listing_serializers import ListingSerializer,PackagesSerializer,ProductsSerializer,PicturesListingSerializers
 from ..Serializers.service_serializers import VenueSerializer,CaterersSerializer,AddOnsSerializer
@@ -76,7 +75,6 @@ def react_user_profile(request):
     Returns user data if properly authenticated
     """
     try:
-        # Verify this is a ReactUser (not regular User)
         if not isinstance(request.user, ReactUser):
             return Response(
                 {"error": "Invalid user type - ReactUser required"},
@@ -105,13 +103,13 @@ def react_user_profile(request):
 def dashboard_most_used_services(request):
     now = timezone.now()
     data = []
-    for month in range(1, 8):  # Jan to July
+    for month in range(1, 8):  
         count = UserActivity.objects.filter(
             action='service_click',
             timestamp__year=now.year,
             timestamp__month=month
         ).count()
-        month_name = date(1900, month, 1).strftime('%b')  # Corrected
+        month_name = date(1900, month, 1).strftime('%b') 
         data.append({'month': month_name, 'count': count})
 
     return Response({'status': 'success', 'data': data})
@@ -140,14 +138,10 @@ def dashboard_top_categories(request):
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
 def dashboard_recent_activity(request):
-    # Get current time in UTC
     now = timezone.now()
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = now.replace(hour=23, minute=59, second=59, microsecond=999999)
-
-    # Define Pakistan timezone
     pakistan_timezone = pytz.timezone('Asia/Karachi')
-
     orders = Order.objects.filter(created_at__gte=today_start, created_at__lte=today_end)
     reviews = Review.objects.filter(date__gte=today_start, date__lte=today_end)
     users = User.objects.filter(date_joined__gte=today_start, date_joined__lte=today_end)
@@ -156,7 +150,6 @@ def dashboard_recent_activity(request):
 
     for order in orders:
         user_name = f"{order.user.firstName} {order.user.lastName}"
-        # Convert order.created_at to Pakistan time
         local_time = order.created_at.astimezone(pakistan_timezone)
         time_formatted = local_time.strftime('%I:%M %p')
         activities.append({
@@ -166,7 +159,6 @@ def dashboard_recent_activity(request):
 
     for review in reviews:
         user_name = f"{review.userID.firstName} {review.userID.lastName}"
-        # Convert review.date to Pakistan time
         local_time = review.date.astimezone(pakistan_timezone)
         time_formatted = local_time.strftime('%I:%M %p')
         activities.append({
@@ -176,7 +168,6 @@ def dashboard_recent_activity(request):
 
     for user in users:
         full_name = f"{user.firstName} {user.lastName}"
-        # Convert user.date_joined to Pakistan time
         local_time = user.date_joined.astimezone(pakistan_timezone)
         time_formatted = local_time.strftime('%I:%M %p')
         activities.append({
@@ -221,7 +212,7 @@ def dashboard_top_search_terms(request):
 @permission_classes([IsReactUser])
 def dashboard_most_searched(request):
     today = timezone.now().date()
-    days = [today - timedelta(days=i) for i in range(6, -1, -1)]  # Past 7 days
+    days = [today - timedelta(days=i) for i in range(6, -1, -1)]  
     counts = []
 
     for day in days:
@@ -248,7 +239,7 @@ def dashboard_statistics(request):
     daily_active_users = UserActivity.objects.filter(timestamp__gte=today_start).values('user').distinct().count()
     searches_today = UserActivity.objects.filter(action='search', timestamp__gte=today_start).count()
     new_users_today = User.objects.filter(date_joined__gte=today_start).count()
-    average_session_time = 25  # Hardcoded for now
+    average_session_time = 25  
     total_users = User.objects.count()
     total_events = Events.objects.count()
     total_vendors = BusinessOwner.objects.count() + Freelancer.objects.count()
@@ -280,20 +271,14 @@ def dashboard_statistics(request):
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
 def pending_approvals_stats(request):
-    # Count all pending listings
     total_pending = Listing.objects.filter(status='pending').count()
-    
-    # Count by category/type
     pending_by_type = Listing.objects.filter(status='pending').values('type').annotate(count=Count('id'))
-    
-    # Recent pending (last 7 days)
     week_ago = timezone.now() - timezone.timedelta(days=7)
     recent_pending = Listing.objects.filter(
         status='pending', 
         created_at__gte=week_ago
     ).count()
     
-    # Oldest pending (older than 30 days)
     month_ago = timezone.now() - timezone.timedelta(days=30)
     oldest_pending = Listing.objects.filter(
         status='pending', 
@@ -309,22 +294,17 @@ def pending_approvals_stats(request):
         }
     })
 
-# In your views.py
-# In your views.py
-from django.forms.models import model_to_dict  # Add this import at the top
+from django.forms.models import model_to_dict  
 
 @api_view(['GET'])
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
 def pending_listings(request):
-    # Get query parameters
     listing_type = request.query_params.get('type', None)
     search_query = request.query_params.get('search', None)
     page = int(request.query_params.get('page', 1))
     page_size = int(request.query_params.get('page_size', 10))
     BASE_URL = request.build_absolute_uri('/')[:-1]
-    
-    # Base queryset with all related data
     queryset = Listing.objects.filter(status='pending').select_related(
         'ownerID__userID', 
         'freelancerID__userID'
@@ -337,7 +317,6 @@ def pending_listings(request):
         'addons_set'
     )
     
-    # Apply filters
     if listing_type:
         queryset = queryset.filter(type=listing_type)
     
@@ -348,7 +327,6 @@ def pending_listings(request):
             Q(location__icontains=search_query)
         )
     
-    # Get service-specific details based on type
     def get_service_details(listing):
         service_details = None
         if listing.type == 'Venue':
@@ -372,14 +350,12 @@ def pending_listings(request):
             return model_to_dict(service_details, exclude=['id', 'listingId'])
         return None
 
-    # Pagination
     paginator = Paginator(queryset, page_size)
     try:
         listings = paginator.page(page)
     except EmptyPage:
         listings = paginator.page(paginator.num_pages)
     
-    # Prepare response data
     listing_data = []
     
     for listing in listings:
@@ -390,11 +366,9 @@ def pending_listings(request):
             owner_name = listing.freelancerID.businessName or \
                         f"{listing.freelancerID.userID.firstName} {listing.freelancerID.userID.lastName}"
         
-        # Ensure picture paths are properly constructed
         listing_images = []
         for pic in listing.pictureslistings_set.all():
             if pic.picturePath:
-                # Remove any leading slash to prevent double slashes
                 clean_path = pic.picturePath.lstrip('/')
                 listing_images.append(f"{BASE_URL}/app/{clean_path}")
         
@@ -460,28 +434,18 @@ def pending_listing_detail(request, pk):
         listing = Listing.objects.get(pk=pk, status='pending')
     except Listing.DoesNotExist:
         return Response({'error': 'Listing not found'}, status=404)
-    
-    # Get the base listing data
     listing_serializer = ListingSerializer(listing)
-    
-    # Get service-specific details based on type
     service_details = None
     if listing.type == 'Venue':
         service_details = Venue.objects.filter(listingId=listing).first()
     elif listing.type == 'Caterers':
         service_details = Caterers.objects.filter(listingId=listing).first()
-    # Add other service types...
-    
-    # Serialize service details if they exist
-    service_serializer = None
+        service_serializer = None
     if service_details:
         if listing.type == 'Venue':
             service_serializer = VenueSerializer(service_details)
         elif listing.type == 'Caterers':
             service_serializer = CaterersSerializer(service_details)
-        # Add other serializers...
-    
-    # Get packages and products
     packages = Packages.objects.filter(listingId=listing)
     products = Product.objects.filter(listingId=listing)
     
@@ -510,13 +474,10 @@ def update_listing_status(request, pk):
     if new_status not in ['active', 'rejected']:
         return Response({'error': 'Invalid status'}, status=400)
     
-    # Update status
     listing.status = new_status
     listing.save()
     
-    # If approved, you might want to do additional actions here
     if new_status == 'active':
-        # Example: Send notification to owner
         pass
     
     return Response({
@@ -538,7 +499,6 @@ def bulk_update_listing_status(request):
     if new_status not in ['active', 'rejected']:
         return Response({'error': 'Invalid status'}, status=400)
     
-    # Update all listings
     updated = Listing.objects.filter(
         pk__in=listing_ids,
         status='pending'
@@ -550,13 +510,10 @@ def bulk_update_listing_status(request):
         'count': updated
     })
 
-# Add these to your react_views.py
-
 @api_view(['GET'])
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
 def pending_vendors_stats(request):
-    # Count all pending vendors (both BusinessOwner and Freelancer)
     pending_business = BusinessOwner.objects.filter(status='pending').count()
     pending_freelancers = Freelancer.objects.filter(status='pending').count()
     total_pending = pending_business + pending_freelancers
@@ -571,20 +528,14 @@ def pending_vendors_stats(request):
         }
     })
 
-# In your views.py
-# In your views.py
 @api_view(['GET'])
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
 def pending_vendors(request):
-    # Get pending business owners
     pending_business = BusinessOwner.objects.filter(status='pending').select_related('userID')
-    # Get pending freelancers
     pending_freelancers = Freelancer.objects.filter(status='pending').select_related('userID')
-    
-    # Combine and serialize
     vendor_data = []
-    BASE_URL = request.build_absolute_uri('/')[:-1]  # Get base URL
+    BASE_URL = request.build_absolute_uri('/')[:-1]  
     
     for business in pending_business:
         vendor_data.append({
@@ -595,7 +546,7 @@ def pending_vendors(request):
                 'firstName': business.userID.firstName,
                 'lastName': business.userID.lastName,
                 'email': business.userID.email,
-                'contactNumber': business.userID.contactNumber,  # Changed from phone to contactNumber
+                'contactNumber': business.userID.contactNumber,  
                 'city': business.userID.city,
                 'profilePicture': f"{BASE_URL}/app{business.userID.profilePicture}" if business.userID.profilePicture else None,
             },
@@ -618,7 +569,7 @@ def pending_vendors(request):
                 'firstName': freelancer.userID.firstName,
                 'lastName': freelancer.userID.lastName,
                 'email': freelancer.userID.email,
-                'contactNumber': freelancer.userID.contactNumber,  # Changed from phone to contactNumber
+                'contactNumber': freelancer.userID.contactNumber,  
                 'city': freelancer.userID.city,
                 'profilePicture': freelancer.userID.profilePicture,
             },
@@ -630,8 +581,6 @@ def pending_vendors(request):
             'balance': freelancer.balance,
             'status': freelancer.status
         })
-    
-    # Pagination
     page = int(request.query_params.get('page', 1))
     page_size = int(request.query_params.get('page_size', 10))
     paginator = Paginator(vendor_data, page_size)
@@ -656,7 +605,7 @@ def pending_vendors(request):
 @permission_classes([IsReactUser])
 def bulk_update_vendor_status(request):
     vendor_ids = request.data.get('ids', [])
-    vendor_type = request.data.get('vendor_type')  # 'business' or 'freelancer'
+    vendor_type = request.data.get('vendor_type')  
     new_status = request.data.get('status')
     
     if not vendor_ids:
