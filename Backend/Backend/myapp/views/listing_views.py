@@ -179,7 +179,6 @@ def update_listing_fields(request):
         except Listing.DoesNotExist:
             return Response({'error': 'Listing not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Handle addon/package/product operations first
         if 'operation' in data and 'value' in data:
             operation = data.get('operation', '').lower()
             value = data.get('value', '').lower()
@@ -189,10 +188,8 @@ def update_listing_fields(request):
             if value in ['addon', 'package', 'product']:
                 return _handle_item_operations(request, listing, operation, value)
 
-        # Handle basic listing fields
         basic_fields_updated = _update_basic_listing_fields(listing, data)
         
-        # Handle type-specific fields
         type_specific_updated = _update_type_specific_fields(listing, data)
 
         if basic_fields_updated or type_specific_updated:
@@ -210,7 +207,6 @@ def _handle_package_with_files(request, listing, operation):
         files = request.FILES
 
         if operation == 'add':
-            # Create new package
             package = Packages(
                 listingId=listing,
                 name=data.get('namev'),
@@ -220,7 +216,6 @@ def _handle_package_with_files(request, listing, operation):
             package.full_clean()
             package.save()
 
-            # Handle file uploads
             pictures = []
             for file in files.getlist('pictures'):
                 picture = PicturesPackages(
@@ -258,13 +253,8 @@ def _handle_package_with_files(request, listing, operation):
                 package.full_clean()
                 package.save()
 
-                # Handle file uploads if any
                 pictures = list(PicturesPackages.objects.filter(packageId=package))
                 if files.getlist('pictures'):
-                    # Delete existing pictures if you want to replace them
-                    # PicturesPackages.objects.filter(packageId=package).delete()
-                    
-                    # Add new pictures
                     for file in files.getlist('pictures'):
                         picture = PicturesPackages(
                             packageId=package,
@@ -319,7 +309,6 @@ def _handle_item_operations(request, listing, operation, item_type):
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def _add_item(listing, data, item_type):
-    # Common validation for all item types
     required_fields = {
         'addon': ['namev', 'pricev'],
         'package': ['namev', 'pricev', 'descv'],
@@ -330,7 +319,6 @@ def _add_item(listing, data, item_type):
         return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
     
     if item_type == 'addon':
-        # Create new addon
         addon = AddOns(
             listingId=listing,
             name=data['namev'],
@@ -351,7 +339,6 @@ def _add_item(listing, data, item_type):
         }, status=status.HTTP_201_CREATED)
         
     elif item_type == 'package':
-        # Create new package
         package = Packages(
             listingId=listing,
             name=data['namev'],
@@ -370,7 +357,6 @@ def _add_item(listing, data, item_type):
         }, status=status.HTTP_201_CREATED)
         
     elif item_type == 'product':
-        # Create new product
         product = Product(
             listingId=listing,
             name=data['namev'],
@@ -493,7 +479,6 @@ def _update_basic_listing_fields(listing, data):
         if key in data:
             value = data[key]
             if key in ['priceMin', 'priceMax']:
-                # Clean numeric values
                 value = str(value).replace(',', '').strip()
                 if not value.isdigit():
                     continue
@@ -502,7 +487,6 @@ def _update_basic_listing_fields(listing, data):
             updated = True
     
     if updated:
-        # Recalculate basicPrice if price fields were updated
         if 'priceMin' in update_fields or 'priceMax' in update_fields:
             try:
                 price_min = int(listing.priceMin.replace(',', '')) if listing.priceMin else 0

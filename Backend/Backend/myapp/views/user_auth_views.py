@@ -184,7 +184,6 @@ def forgot_password_page(request):
             return Response({'status': 'error'})
     else:
         user = User.objects.filter(contactNumber=contact).first()
-        # OTP Send Contact Number
     if user != None:
         return Response({'status':'error', 'message': 'Enter a Valid Email or Phone Number'})
     else:

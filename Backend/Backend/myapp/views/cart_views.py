@@ -100,7 +100,6 @@ class CartViewSet(viewsets.ModelViewSet):
             cart, _ = Cart.objects.get_or_create(user=request.user)
             serializer = self.get_serializer(cart)
             print(serializer.data['items'])
-            # Transform the response to match frontend expectations
             response_data = {
                 'status': 'success',
                 'id': str(serializer.data['id']),
@@ -120,7 +119,6 @@ class CartViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def list(self, request, *args, **kwargs):
-        # For the list view, we'll just return the user's cart
         return self.retrieve(request, *args, **kwargs)
     
 
@@ -133,7 +131,6 @@ class CartItemViewSet(viewsets.ModelViewSet):
         return cart.items.all()
     
     def perform_create(self, serializer):
-        # Automatically associate with the user's cart
         cart = Cart.objects.get_or_create(user=self.request.user)[0]
         serializer.save(cart=cart)
     

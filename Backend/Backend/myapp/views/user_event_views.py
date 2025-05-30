@@ -43,7 +43,6 @@ def edit_event(request):
     date = request.data.get('Date')
     location = request.data.get('Location')
     description = request.data.get('description')
-    # theme_color = request.data.get('Theme')
     budget = request.data.get('Budget')
     guestmin= request.data.get('guestmin')
     guestmax = request.data.get('guestmax')
@@ -57,7 +56,6 @@ def edit_event(request):
     edit_event.date = date
     edit_event.location = location
     edit_event.description = description
-    # edit_event.themeColor = theme_color
     edit_event.budget = budget
     edit_event.save(update_fields=['name','guestsmin','guestsmax','type','date','location','description','budget'])
     UserActivity.objects.create(
@@ -82,7 +80,6 @@ def create_event(request):
     date = request.data.get('Date')
     location = request.data.get('Location')
     description = request.data.get('description')
-    # theme_color = request.data.get('Theme')
     budget = request.data.get('Budget')
     budget = int(budget.replace(",", ""))
     guestmin= request.data.get('guestmin')

@@ -241,8 +241,6 @@ class InvitationGenerator:
 
         return total_height
 
-    # ----------------- Helper Methods -----------------
-
     def _calculate_line_height(self, line, font, max_width):
         """Calculate height for a single line or wrapped line"""
         if not line.strip():
@@ -409,11 +407,9 @@ class InvitationGenerator:
 
     def _draw_two_column_sections(self, draw, program, contact, safe_zones, y_position):
         """Draw program and contact sections side by side in two columns"""
-        padding = safe_zones['img_width'] * 0.03 * 2  # Same padding calculation as before
+        padding = safe_zones['img_width'] * 0.03 * 2 
         program_font = self._get_font('regular')
         contact_font = self._get_font('regular')
-
-        # Calculate max widths for both columns
         max_program_text = max(
             [draw.textlength(f"{i.get('name', '').capitalize()} ...... {i.get('time', '')}", font=program_font) 
             for i in program]
@@ -432,16 +428,13 @@ class InvitationGenerator:
         column_gap = padding
         true_combined_width = max_program_text + column_gap + max_contact_text
 
-        # Calculate heights for both sections
         program_height = self._calculate_section_height(program, max_program_text)
         contact_height = self._calculate_section_height(contact, max_contact_text)
         max_height = max(program_height, contact_height)
 
-        # Calculate starting positions
         start_x = safe_zones['left'] + (safe_zones['width'] - true_combined_width) / 2
         start_y = y_position + (safe_zones['bottom'] - y_position - max_height) / 2
 
-        # Draw program section
         program_x = start_x
         program_y = start_y
         program_header = "Program"
@@ -450,7 +443,6 @@ class InvitationGenerator:
                  fill=safe_zones['primary_color'], font=program_header_font)
         program_y += program_header_font.size + 20
 
-        # Adjust program font size
         program_font_size = max(program_font.size - 4, 24)
         try:
             program_font = ImageFont.truetype(program_font.path, program_font_size)
@@ -463,7 +455,6 @@ class InvitationGenerator:
                      fill=safe_zones['secondary_color'], font=program_font)
             program_y += program_font.size + 10
 
-        # Draw contact section
         contact_x = program_x + max_program_text + column_gap
         contact_y = start_y
 
@@ -473,7 +464,6 @@ class InvitationGenerator:
                  fill=safe_zones['primary_color'], font=contact_header_font)
         contact_y += contact_header_font.size + 20
 
-        # Adjust contact font size
         contact_font_size = max(contact_font.size - 4, 24)
         try:
             contact_font = ImageFont.truetype(contact_font.path, contact_font_size)
@@ -509,7 +499,6 @@ class InvitationGenerator:
         section_height = self._calculate_section_height(items, safe_zones['width'])
         start_y = y_position + (safe_zones['bottom'] - y_position - section_height) / 2
 
-        # Draw section header
         section_header_font = self._get_font('bold1')
         section_header_width = section_header_font.getlength(title)
         section_header_x = safe_zones['left'] + (safe_zones['width'] - section_header_width) / 2
@@ -517,14 +506,13 @@ class InvitationGenerator:
                  fill=safe_zones['primary_color'], font=section_header_font)
         current_y = start_y + section_header_font.size + 20
 
-        # Draw section items
-        if isinstance(items, list) and all(isinstance(item, dict) for item in items):  # Program details
+        if isinstance(items, list) and all(isinstance(item, dict) for item in items): 
             for item in items:
                 program_text = f"{item.get('name', 'Event')}: {item.get('time', '')}"
                 draw.text((safe_zones['left'], current_y), program_text, 
                          fill=safe_zones['secondary_color'], font=section_font)
                 current_y += section_font.size + 10
-        else:  # Contact info
+        else:  
             for contact in items:
                 if ":" in contact:
                     name, number = contact.split(":", 1)
@@ -569,8 +557,7 @@ class InvitationGenerator:
             name1 = basic_info.get('name1', 'Groom')
             name2 = basic_info.get('name2', 'Bride')
 
-            # Determine order based on similarity to host name
-            if so and do:  # Only compare if both exist
+            if so and do:  
                 so_ratio = difflib.SequenceMatcher(None, so, host_name).ratio()
                 do_ratio = difflib.SequenceMatcher(None, do, host_name).ratio()
                 if so_ratio > do_ratio:
@@ -590,7 +577,6 @@ class InvitationGenerator:
                         (f"{basic_info.get('s/o', '')}", 'regular', primary_color),
                     ]
             else:
-                # Default order if comparison isn't possible
                 names_section = [
                     (f"{name1}", 'script', primary_color),
                     ("With", 'bold2', primary_color),
@@ -650,7 +636,6 @@ class InvitationGenerator:
                 (basic_info.get('location', ''), 'regular', secondary_color)
             ]
 
-        # Default for other event types
         return [
             ("Let's Celebrate", 'regular', primary_color),
             (f"{basic_info.get('name1', 'Event')}", 'bold2', primary_color),

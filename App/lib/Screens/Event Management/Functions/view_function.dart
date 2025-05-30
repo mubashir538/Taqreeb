@@ -306,20 +306,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
     );
   }
 
-  // Widget _buildEventHeader() {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
-  //     child: Text(
-  //       _eventName,
-  //       style: GoogleFonts.roboto(
-  //         fontSize: Screen.max(context) * 0.03,
-  //         fontWeight: FontWeight.w700,
-  //         color: MyColors.yellow,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildFunctionCard(
     Map<String, dynamic> function,
     List<String> headings,
