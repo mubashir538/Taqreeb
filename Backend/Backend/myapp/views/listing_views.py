@@ -757,10 +757,10 @@ def home_listings(request):
     else:
         # Get preferred categories (70% of results)
         preferred_categories = [cat for cat, _ in user_preferences.most_common(3)]
-        preferred_query = base_query.filter(category__in=preferred_categories)
+        preferred_query = base_query.filter(type__in=preferred_categories)
         
         # Get other categories (30% of results)
-        other_query = base_query.exclude(category__in=preferred_categories)
+        other_query = base_query.exclude(type__in=preferred_categories)
         
         # Calculate counts for each portion
         total_count = base_query.count()

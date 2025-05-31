@@ -268,6 +268,7 @@ class MyApi {
     required String endpoint,
     Map<String, String>? headers,
     required dynamic body,
+    timeout = const Duration(seconds: 20),
     BuildContext? context,
   }) async {
     // Check internet first
@@ -299,7 +300,7 @@ class MyApi {
     try {
       response = await http
           .post(url, headers: headers, body: jsonEncode(body))
-          .timeout(const Duration(seconds: 20), onTimeout: () {
+          .timeout(timeout, onTimeout: () {
         if (context != null) {
           MyScaffold(text: 'Request timed out. Please try again.')
               .show(context);
@@ -461,7 +462,6 @@ class MyApi {
       };
     }
   }
-
 
   static Future<dynamic> deleteRequest({
     required String endpoint,
@@ -648,6 +648,7 @@ class MyApi {
   }) async {
     return await postRequest(
       endpoint: 'chatbot/',
+      timeout: const Duration(seconds: 20),
       body: {
         'user_id': userId,
         'message': message,
