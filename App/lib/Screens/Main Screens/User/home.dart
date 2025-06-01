@@ -5,6 +5,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
+import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Home%20Page/c_image_slider.dart';
 import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
@@ -751,7 +752,7 @@ class _HomePageState extends State<HomePage> {
             packageDetails: package['description'].toString(),
             packagePrice: package['price'].toString(),
             imageUrl: package['pictures'].length != 0
-                ? package['pictures'][0]
+                ? package['pictures'][0]['picturePath']
                 : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
             packageName: package['name'],
           ),
@@ -767,18 +768,15 @@ class _HomePageState extends State<HomePage> {
       itemCount: products['results']['HomeProducts'].length,
       itemBuilder: (context, index) {
         final product = products['results']['HomeProducts'][index];
-        return GestureDetector(
-          onTap: () => _handleServiceClick(product['id'], product['name']),
-          child: ProductCard(
-            listingType: 'product',
-            listingid: product['id'].toString(),
-            imageUrl: product['image'] ??
-                "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
-            venueName: product['name'],
-            rating: product['rating']?.toString() ?? '0',
-            location: product['location'] ?? '',
-            type: 'product',
-          ),
+        return ProductBox(
+          productId: product['id'].toString(),
+          productDescription: product['description'],
+          productPrice: product['price'].toString(),
+          productImage: product['pictures'].length != 0
+              ? MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+                  product['pictures'][0]
+              : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+          productName: product['name'],
         );
       },
     );

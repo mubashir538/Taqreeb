@@ -25,9 +25,16 @@ class MyStorage {
   }
 
   static Future<String?> yourFCM() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    return token;
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+      print("FCM Token: $token");
+      return token;
+    } catch (e) {
+      print("Error fetching FCM token: $e");
+      return null;
+    }
   }
+
   static Future<void> saveChatHistory(String key, String history) async {
     await _storage.write(key: key, value: history);
   }

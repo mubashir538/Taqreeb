@@ -413,8 +413,10 @@ class EventPlanningChatbotState extends State<EventPlanningChatbot> {
                 child: TextField(
                   controller: _messageController,
                   style: GoogleFonts.roboto(color: colors.white),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
                   decoration: InputDecoration(
-                    hintText: " Type a message",
+                    hintText: "Type a message",
                     hintStyle: GoogleFonts.roboto(color: colors.whiteDarker),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),

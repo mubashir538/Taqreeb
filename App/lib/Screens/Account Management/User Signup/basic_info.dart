@@ -350,11 +350,11 @@ class _BasicSignupState extends State<BasicSignup> {
                         icon: MyIcons.google,
                         onPressed: _handleGoogleSignIn,
                       ),
-                      _buildSocialLoginButton(
-                        colors: colors,
-                        icon: MyIcons.facebook,
-                        onPressed: () => AuthService().signInWithFacebook(),
-                      ),
+                      // _buildSocialLoginButton(
+                      //   colors: colors,
+                      //   icon: MyIcons.facebook,
+                      //   onPressed: () => AuthService().signInWithFacebook(),
+                      // ),
                     ],
                   ),
                 ],

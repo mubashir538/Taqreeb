@@ -222,6 +222,12 @@ class _ChatBoxState extends State<ChatBox> {
   Future<void> _markMessagesAsRead() async {
     try {
       final chatId = _getChatId();
+
+      final docRef = _firestore.collection(_messageCollection).doc(chatId);
+      final docSnapshot = await docRef.get();
+      if (!docSnapshot.exists) {
+        return;
+      }
       await _firestore.collection(_messageCollection).doc(chatId).update({
         'unreadMessages.$_currentUserId': 0,
       });
@@ -626,8 +632,9 @@ class _ChatBoxState extends State<ChatBox> {
       endpoint: 'error/application',
       body: {'error': error},
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error)),
-    );
+
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text(error)),
+    // );
   }
 }

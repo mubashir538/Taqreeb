@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taqreeb/core/services/cart_service.dart';
@@ -115,7 +116,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
                 ],
               ),
             ),
-
             SizedBox(
               height: Screen.height(context) * 0.3,
               child: Stack(
@@ -141,7 +141,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
                       );
                     },
                   ),
-
                   if (widget.imageUrls.length > 1)
                     Positioned(
                       bottom: 10,
@@ -168,7 +167,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
                 ],
               ),
             ),
-
             Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -202,7 +200,6 @@ class _PackageDetailsPopupState extends State<PackageDetailsPopup> {
                 ],
               ),
             ),
-
             Padding(
               padding: EdgeInsets.all(16),
               child: ElevatedButton(
@@ -284,6 +281,7 @@ class PackageBox extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: Screen.width(context) * 0.9,
+        height: Screen.height(context) * 0.2,
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         decoration: BoxDecoration(
           color: colors.lightDark,
@@ -309,12 +307,11 @@ class PackageBox extends StatelessWidget {
                   bottomLeft: Radius.circular(10),
                 ),
                 image: DecorationImage(
-                  image: NetworkImage(imageUrl),
+                  image: CachedNetworkImageProvider(imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-
             Expanded(
               child: SizedBox(
                 height: Screen.height(context) * 0.2,
@@ -335,7 +332,6 @@ class PackageBox extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: Screen.max(context) * 0.01),
-
                       Text(
                         packageDetails,
                         style: GoogleFonts.roboto(

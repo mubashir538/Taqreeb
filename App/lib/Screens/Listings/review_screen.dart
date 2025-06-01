@@ -122,6 +122,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     return ListView.builder(
       itemBuilder: (context, index) {
         final review = _filteredReviews[index];
+        print(review);
         return _isLoading
             ? Container()
             : ReviewCard(

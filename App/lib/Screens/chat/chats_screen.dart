@@ -79,7 +79,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
       _chatsCollection = FirebaseFirestore.instance.collection('chats');
       _usersCollection = FirebaseFirestore.instance.collection('users');
     }
-
     _groupsCollection = FirebaseFirestore.instance.collection('groups');
     await _loadCachedData();
     _setupChatListeners();
@@ -209,7 +208,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           'userId': otherUserId,
           'chatId': chatDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture'] ?? ''}',
+              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type == 'user'?'profilePicture':'profile'] ?? ''}',
           'name': _type == 'user'
               ? '${userDoc['firstName'] ?? ''} ${userDoc['lastName'] ?? ''}'
               : userDoc['businessName'] ?? 'Unknown',
@@ -259,7 +258,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           'participants': groupDoc['participants'],
           'lastMessage': lastMessageText,
           'time': lastMessageTime,
-          'newMessages': 0, 
+          'newMessages': 0,
           'isGroup': true,
         });
       } catch (e) {
@@ -339,17 +338,17 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final diff = now.difference(messageTime);
 
     if (diff.inDays > 7) {
-      return DateFormat('MM/dd/yy').format(messageTime); 
+      return DateFormat('MM/dd/yy').format(messageTime);
     } else if (diff.inDays > 1) {
-      return '${diff.inDays}d ago'; 
+      return '${diff.inDays}d ago';
     } else if (diff.inDays == 1) {
-      return 'Yesterday'; 
+      return 'Yesterday';
     } else if (diff.inHours > 0) {
-      return '${diff.inHours}h ago'; 
+      return '${diff.inHours}h ago';
     } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes}m ago'; 
+      return '${diff.inMinutes}m ago';
     } else {
-      return 'Just now'; 
+      return 'Just now';
     }
   }
 
@@ -361,7 +360,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
     allConversations.sort((a, b) {
       final aTime = a['time'] as Timestamp;
       final bTime = b['time'] as Timestamp;
-      return bTime.compareTo(aTime); 
+      return bTime.compareTo(aTime);
     });
     final displayConversations = _isSearching
         ? allConversations.where((convo) => convo['name']
@@ -401,7 +400,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final colors = AppColors(context);
 
     return ListView.builder(
-      itemCount: 5, 
+      itemCount: 5,
       padding: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
         vertical: Screen.max(context) * 0.01,

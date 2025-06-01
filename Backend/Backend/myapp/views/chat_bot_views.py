@@ -23,7 +23,7 @@ def chatbot_api(request):
         
         return JsonResponse({
             'response': processed_response['text'],
-            'formatted_response': processed_response['formatted_text'],
+            'formatted_response': processed_response['formatted_text'],     
             'is_bold': processed_response['is_bold']
         })
         

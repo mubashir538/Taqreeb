@@ -105,7 +105,7 @@ class _MyTextBoxState extends State<MyTextBox> {
 
   String _capitalize(String input) {
     if (input.isEmpty) return input;
-    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+    return input[0].toUpperCase() + input.substring(1);
   }
 
   void _formatPrice() {

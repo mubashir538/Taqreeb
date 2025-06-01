@@ -31,7 +31,7 @@ class GuestList(m.Model):
     members = m.IntegerField(null=True)
     phone = m.CharField(max_length=100,blank=True)
     eventId = m.ForeignKey(Events,on_delete=m.CASCADE)
-    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE)
+    functionId = m.ForeignKey(Functions,on_delete=m.CASCADE,null=True)
 
 
 class CheckList(m.Model):

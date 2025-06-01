@@ -59,7 +59,7 @@ class _SearchServiceState extends State<SearchService> {
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
-  int _currentTab = 0; 
+  int _currentTab = 0;
   final List<String> _appliedFilters = [];
   final List<String> _filtersToApply = [];
 
@@ -374,7 +374,7 @@ class _SearchServiceState extends State<SearchService> {
     final colors = AppColors(context);
 
     return ListView.builder(
-      itemCount: 5, 
+      itemCount: 5,
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.symmetric(
@@ -449,7 +449,7 @@ class _SearchServiceState extends State<SearchService> {
     return _searchResults['packages'].isEmpty
         ? _buildEmptyState()
         : ListView.builder(
-          shrinkWrap: true,
+            shrinkWrap: true,
             itemCount: _searchResults['packages'].length,
             itemBuilder: (context, index) {
               final package = _searchResults['packages'][index];
@@ -461,8 +461,7 @@ class _SearchServiceState extends State<SearchService> {
                 packageDetails: package['description'],
                 packagePrice: package['price'].toString(),
                 packageName: package['name'],
-                onPressed: () {
-                },
+                onPressed: () {},
               );
             },
           );
@@ -480,7 +479,9 @@ class _SearchServiceState extends State<SearchService> {
                 productName: product['name'],
                 productDescription: product['description'],
                 productPrice: product['price'].toString(),
-                productImage: product['pictures']?[0]['picturePath'] ?? '',
+                productImage: product['pictures'].length == 0
+                    ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                    : product['pictures']?[0]['picturePath'] ?? '',
               );
             },
           );

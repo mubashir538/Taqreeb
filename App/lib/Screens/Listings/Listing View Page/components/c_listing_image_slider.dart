@@ -6,12 +6,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class ImageSliderCategory extends StatefulWidget {
   final List<String> imageUrls;
-  final bool show360Button; // Add this to control 360° button visibility
+  final bool show360Button;
+  final String? videoUrl;
 
   const ImageSliderCategory({
     super.key,
     required this.imageUrls,
-    this.show360Button = true,
+    this.videoUrl,
+    this.show360Button = false,
   });
 
   @override
@@ -40,7 +42,7 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
 
   void _navigateTo360View(BuildContext context) {
     // Replace with your 360° view screen navigation
-    Navigator.pushNamed(context, '/360View');
+    Navigator.pushNamed(context, '/360View', arguments: widget.videoUrl);
   }
 
   Widget _build360Button() {
@@ -191,5 +193,3 @@ class FullScreenImage extends StatelessWidget {
     );
   }
 }
-
-// Create this screen for 360° view

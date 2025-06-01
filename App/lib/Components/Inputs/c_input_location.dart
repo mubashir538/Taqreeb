@@ -24,20 +24,17 @@ class LocationInputWidget extends StatefulWidget {
 
 class LocationInputWidgetState extends State<LocationInputWidget> {
   late TextEditingController _textController;
-  late FocusNode _focusNode;
   String _currentLocation = "Unknown Location";
 
   @override
   void initState() {
     super.initState();
-    _textController =
-        TextEditingController(text: widget.locationController.text);
-    _focusNode = FocusNode();
+    _textController = widget.locationController;
   }
 
   @override
   void dispose() {
-    _textController.dispose();
+    // _textController.dispose();
     // _focusNode.dispose();
     super.dispose();
   }
@@ -48,9 +45,10 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=$query&key=AlzaSyTupm6TUJxeoGqvqM-NcWyPRvSrN8NRL8D&components=country:pk'),
+            'https://maps.gomaps.pro/maps/api/place/autocomplete/json?input=${query}&key=AlzaSyW3Xu7bxUoHKh5QrcoWy3rOzNZVvNU50oO&components=country:pk'),
       );
- 
+
+      print("Response: ${response.statusCode}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return (data['predictions'] as List)
@@ -74,6 +72,7 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
           accuracy: LocationAccuracy.high,
         ),
       );
+      print(position);
 
       setState(() {
         _currentLocation = "${position.latitude}, ${position.longitude}";
@@ -97,14 +96,6 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
             children: [
               Expanded(
                 child: TypeAheadField<String>(
-                  builder: (context, controller, focusNode) {
-                    return MyTextBox(
-                      prefixIcon: FontAwesomeIcons.locationPin,
-                      hint: 'Location',
-                      valueController: _textController,
-                      focusNode: _focusNode,
-                    );
-                  },
                   suggestionsCallback: _fetchSuggestions,
                   itemBuilder: (context, suggestion) {
                     return ListTile(
@@ -113,10 +104,19 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
                     );
                   },
                   onSelected: (suggestion) {
-                    setState(() {
-                      _textController.text = suggestion;
-                      widget.onLocationChanged(suggestion);
-                    });
+                    print('selected');
+                    widget.onLocationChanged(suggestion);
+                  },
+                  builder: (context, controller, focusNode) {
+                    return MyTextBox(
+                      prefixIcon: FontAwesomeIcons.locationPin,
+                      hint: 'Location',
+                      valueController: controller,
+                      focusNode: focusNode,
+                      onChanged: (text) {
+                        widget.onLocationChanged(text);
+                      },
+                    );
                   },
                 ),
               ),

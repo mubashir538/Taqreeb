@@ -6,6 +6,7 @@ import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/core/utils/icons.dart';
 
+// ignore: must_be_immutable
 class Navbar extends StatefulWidget {
   Navbar(
       {super.key, required this.selectedIndex, required this.onValueChanged});

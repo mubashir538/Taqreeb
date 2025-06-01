@@ -177,7 +177,7 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
 
     return Column(
       children: [
-        ImageSliderCategory(imageUrls: _imageUrls),
+        ImageSliderCategory(imageUrls: _imageUrls,show360Button: true,videoUrl: _listing['videoLink']),
         Container(
           width: Screen.width(context),
           color: colors.dark,

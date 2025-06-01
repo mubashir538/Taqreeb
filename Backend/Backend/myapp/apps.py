@@ -13,6 +13,6 @@ class MyappConfig(AppConfig):
             firebase_app = initialize_app(cred)
             from myapp import firebase_db
             firebase_db.db = firestore.client()
+        from myapp import chatbotConfig
         from .Chatbot.chatbot import EventBookingChatbot
-        from .chatbotConfig import chatbot
-        chatbot = EventBookingChatbot()
+        chatbotConfig.chatbot = EventBookingChatbot()

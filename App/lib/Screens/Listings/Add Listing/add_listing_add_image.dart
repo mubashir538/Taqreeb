@@ -72,6 +72,7 @@ class _AddImageState extends State<AddImage> {
     if (!mounted) return;
 
     if (response['status'] == 'success') {
+      MyScaffold(text: 'Service added for Approval').show(context);
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/HomePage',
@@ -293,7 +294,7 @@ class ImageController {
       );
 
       return response ??
-          {'status': 'error', 'message': 'No response from server'};
+          {'status': 'error', 'message': 'Please Try Again Later'};
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }

@@ -1,4 +1,4 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -102,12 +102,24 @@ class _SettingsState extends State<Settings> {
             'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
       },
     );
+    await Future.wait([
+      MyStorage.deleteToken(MyTokens.refreshToken),
+      MyStorage.deleteToken(MyTokens.accessToken),
+      MyStorage.deleteToken(MyTokens.userId),
+      MyStorage.deleteToken(MyTokens.userType),
+      MyStorage.deleteToken(MyTokens.isBusinessOwner),
+    ]);
+    if (mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/Login',
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider =
-        Provider.of<ThemeProvider>(context); 
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     final colors = AppColors(context);
 
@@ -118,7 +130,7 @@ class _SettingsState extends State<Settings> {
         });
     final mycolors = AppColors(context);
     return Scaffold(
-      backgroundColor: mycolors.dark, 
+      backgroundColor: mycolors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -323,8 +335,7 @@ class _SettingsState extends State<Settings> {
                                           child: Text('Cancel')),
                                       TextButton(
                                           onPressed: () {
-                                            themeProvider
-                                                .switchTheme(); 
+                                            themeProvider.switchTheme();
                                             Navigator.pushNamedAndRemoveUntil(
                                               context,
                                               '/HomePage',

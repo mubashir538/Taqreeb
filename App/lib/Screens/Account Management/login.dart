@@ -176,13 +176,13 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<void> _handleFacebookSignIn() async {
-    try {
-      await AuthService().signInWithFacebook();
-    } catch (e) {
-      _showErrorDialog("Error", "Facebook sign-in failed");
-    }
-  }
+  // Future<void> _handleFacebookSignIn() async {
+  //   try {
+  //     await AuthService().signInWithFacebook();
+  //   } catch (e) {
+  //     _showErrorDialog("Error", "Facebook sign-in failed");
+  //   }
+  // }
 
   Future<void> _handleSocialLoginSuccess(Map<String, dynamic> response) async {
     await MyStorage.saveToken(response['refresh'].toString(), 'refresh');
@@ -307,11 +307,11 @@ class _LoginState extends State<Login> {
                                 onPressed: _handleGoogleSignIn,
                                 icon: MyIcons.google,
                               ),
-                              SizedBox(width: Screen.width(context) * 0.05),
-                              IconedButton(
-                                onPressed: _handleFacebookSignIn,
-                                icon: MyIcons.facebook,
-                              ),
+                              // SizedBox(width: Screen.width(context) * 0.05),
+                              // IconedButton(
+                              //   onPressed: _handleFacebookSignIn,
+                              //   icon: MyIcons.facebook,
+                              // ),
                             ])
                       ],
                     ),

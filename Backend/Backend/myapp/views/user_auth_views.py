@@ -93,7 +93,7 @@ def account_signup_page(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resend_otp_email(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower()
     otp = request.data.get('otp')
     subject = 'OTP for Taqreeb'
     message = f''' The Otp for your Taqreeb App is
@@ -137,7 +137,7 @@ def send_otp_phone(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def send_otp_email(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower()
     if not User.objects.filter(email=email).exists():
         otp = rd.randint(1000,9999)
         subject = 'The OTP for Taqreeb'
@@ -192,7 +192,7 @@ def forgot_password_page(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resend_otp(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower()
     otp = request.data.get('otp')
     if str(email).find('@') != -1:
         subject = 'The OTP for Taqreeb'

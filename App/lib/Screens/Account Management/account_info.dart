@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -184,7 +185,7 @@ class _AccountInfoState extends State<AccountInfo> {
             ),
             child: CircleAvatar(
               radius: Screen.width(context) * 0.1,
-              backgroundImage: NetworkImage(
+              backgroundImage: CachedNetworkImageProvider(
                 "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_user['profilePicture']}",
               ),
             ),
@@ -230,7 +231,7 @@ class _AccountInfoState extends State<AccountInfo> {
   Widget _buildInfoCard(
       double size, IconData icon, String text, String heading) {
     final colors = AppColors(context);
-    
+
     return Column(
       children: [
         Container(

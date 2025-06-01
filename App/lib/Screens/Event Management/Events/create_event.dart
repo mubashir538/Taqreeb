@@ -182,6 +182,13 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   bool _validateForm() {
+    print(_formData.location.text);
+    print(_formData.eventName.text);
+
+    print(_formData.type.text);
+    print(_formData.date.text);
+    print(_formData.budget.text);
+
     return _formData.eventName.text.isNotEmpty &&
         _formData.type.text.isNotEmpty &&
         _formData.date.text.isNotEmpty &&

@@ -19,6 +19,7 @@ class Listing(m.Model):
     status = m.CharField(max_length=20,default='active')
     booked_dates = m.JSONField(default=list)
     created_at = m.DateTimeField(default=timezone.now)
+    videoLink = m.CharField(max_length=200,blank=True)
 
 class AddOns(m.Model):
     id = m.AutoField(primary_key=True)

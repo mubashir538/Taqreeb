@@ -86,8 +86,8 @@ import 'package:taqreeb/core/utils/themes.dart';
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // AppConfig.fetchIp();
-  // Preserve splash screen with required widgetsBinding parameter
+  
+  
   FlutterNativeSplash.preserve(
     widgetsBinding: widgetsBinding,
   );
@@ -101,12 +101,10 @@ void main() async {
       child: FutureBuilder(
         future: initialization,
         builder: (context, snapshot) {
-          // Remove splash when done
           if (snapshot.connectionState == ConnectionState.done) {
             FlutterNativeSplash.remove();
             return MainApp();
           }
-          // Show empty container while loading
           return const SizedBox.shrink();
         },
       ),

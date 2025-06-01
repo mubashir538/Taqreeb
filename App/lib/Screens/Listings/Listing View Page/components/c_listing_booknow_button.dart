@@ -86,16 +86,16 @@ class _BookNowButtonState extends State<BookNowButton> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Screen.width(context) * 0.02),
-              child: ColoredButton(
-                text: 'Book Now',
-                onPressed: _handleBookNow,
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(
+          //         horizontal: Screen.width(context) * 0.02),
+          //     child: ColoredButton(
+          //       text: 'Book Now',
+          //       onPressed: _handleBookNow,
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(

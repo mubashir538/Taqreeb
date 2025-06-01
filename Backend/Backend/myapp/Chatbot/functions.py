@@ -13,6 +13,8 @@ from ..models.listing_types_models import (
     GraphicDesigners
 )
 
+from django.utils import timezone
+
 from ..models.listing_models import Listing
 
 def search_services(
@@ -393,22 +395,103 @@ def get_venue_recommendations(
 
 def initiate_booking(
     user_id: str,
-    date: str,
-    customer_name: str,
-    customer_email: str,
-    customer_phone: str,
+    event_name: str,
     event_type: str,
-    estimated_guests: int,
+    event_date: str,
+    main_location: str,
+    total_guests: int,
+    total_budget: int,
+    functions: List[Dict],
+    customer_name: str,
     special_requests: Optional[str] = None,
 ) -> Dict:
-    """Initiate a booking request for a venue."""
-    # Note: You'll need to implement the actual booking logic with your models
-    # This is a placeholder implementation
+    """
+    Initiate a booking request with all collected event details.
+    
+    Args:
+        user_id: ID of the user making the booking
+        event_name: Name of the overall event
+        event_type: Type of the main event
+        event_date: Main event date
+        main_location: Primary location for the event
+        total_guests: Total expected guests across all functions
+        total_budget: Total budget for the entire event
+        functions: List of function details including:
+            - function_name: Name of the function
+            - function_type: Type of function
+            - function_date: Date of the function
+            - function_location: Location of the function
+            - function_budget: Budget allocated for this function
+            - selected_services: List of services selected for this function
+        customer_name: Name of the primary contact
+        customer_email: Email of the primary contact
+        customer_phone: Phone number of the primary contact
+        special_requests: Any special requests or notes
+    
+    Returns:
+        Dictionary with booking confirmation details
+    """
+    # Generate a booking ID (you might want to use a more robust method)
+    booking_id = f"BK-{event_date.replace('-', '')}-{user_id[:4]}"
+    
+    # Prepare the booking summary
+    booking_summary = {
+        "booking_id": booking_id,
+        "event_name": event_name,
+        "event_type": event_type,
+        "event_date": event_date,
+        "main_location": main_location,
+        "total_guests": total_guests,
+        "total_budget": total_budget,
+        "customer_details": {
+            "name": customer_name,
+        },
+        "functions": [],
+        "special_requests": special_requests,
+        "status": "pending_confirmation",
+        "created_at": str(timezone.now()),
+    }
+    
+    # Add function details
+    for function in functions:
+        function_details = {
+            "function_name": function.get('function_name'),
+            "function_type": function.get('function_type'),
+            "function_date": function.get('function_date'),
+            "function_location": function.get('function_location'),
+            "function_budget": function.get('function_budget'),
+            "services": []
+        }
+        
+        # Add service details for each function
+        for service in function.get('selected_services', []):
+            service_details = {
+                "service_type": service.get('type'),
+                "service_id": service.get('id'),
+                "service_name": service.get('name'),
+                "price_range": service.get('price_range'),
+                "location": service.get('location'),
+            }
+            function_details['services'].append(service_details)
+        
+        booking_summary['functions'].append(function_details)
+    
+    # In a real implementation, you would save this to your database here
+    # For example:
+    # booking = Booking.objects.create(
+    #     user_id=user_id,
+    #     booking_id=booking_id,
+    #     details=booking_summary,
+    #     status='pending_confirmation'
+    # )
     
     return {
         "booking_initiated": True,
-        "date": date,
-        "customer_name": customer_name,
-        "next_steps": "Our team will contact you within 24 hours to confirm your booking and discuss details.",
-        "confirmation_sent_to": customer_email,
+        "booking_id": booking_id,
+        "booking_summary": booking_summary,
+        "next_steps": (
+            "Thanks for Creating the Event from Us "
+            "Let me know if you want to create another Event."
+        ),
     }
+

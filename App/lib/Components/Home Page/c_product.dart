@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -127,7 +128,6 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
                 ],
               ),
             ),
-
             if (hasImages)
               SizedBox(
                 height: Screen.height(context) * 0.3,
@@ -148,7 +148,7 @@ class _ProductDetailsPopupState extends State<ProductDetailsPopup> {
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                               image:
-                                  FileImage(File(widget.productImages![index])),
+                                  CachedNetworkImageProvider(widget.productImages![index]),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -273,6 +273,7 @@ class _ProductBoxState extends State<ProductBox> {
   bool _isAddingToCart = false;
 
   void _showProductDetails(BuildContext context) {
+    print('Product tapped: ${widget.productId}');
     if (!widget.showPopupOnTap || widget.productId == null) {
       _addToCart();
       return;
@@ -335,7 +336,9 @@ class _ProductBoxState extends State<ProductBox> {
     final colors = AppColors(context);
 
     return InkWell(
-      onTap: () => _showProductDetails,
+      onTap: () {
+        _showProductDetails(context);
+      },
       child: Container(
         margin: EdgeInsets.symmetric(
           horizontal: Screen.max(context) * 0.03,
@@ -355,7 +358,7 @@ class _ProductBoxState extends State<ProductBox> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   image: DecorationImage(
-                    image: FileImage(File(widget.productImage!)),
+                    image: CachedNetworkImageProvider(widget.productImage!),
                     fit: BoxFit.cover,
                   ),
                 ),

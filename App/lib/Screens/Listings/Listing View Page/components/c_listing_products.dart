@@ -321,7 +321,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
   }
 
   Widget _buildProductList() {
-    if (widget.listing['Product'].isEmpty) return const SizedBox.shrink();
+    if (widget.listing['products'].isEmpty) return const SizedBox.shrink();
     final colors = AppColors(context);
 
     return Column(
@@ -334,10 +334,10 @@ class _CategoryProductsState extends State<CategoryProducts> {
               onPageChanged: (index) {
                 setState(() => _currentPage = index);
               },
-              itemCount: widget.listing['Product'].length,
+              itemCount: widget.listing['products'].length,
               itemBuilder: (context, index) {
                 return _buildProductItem(
-                  widget.listing['Product'][index],
+                  widget.listing['products'][index],
                   index,
                 );
               },

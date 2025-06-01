@@ -1,6 +1,6 @@
 
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from firebase_admin import messaging,exceptions
 from django.utils import timezone
@@ -34,65 +34,86 @@ def send_notification(request):
         
         if not receiver_tokens:
             return Response({'status': 'success', 'message': 'No valid tokens found for receiver'})
-        
-        notification = messaging.Notification(
-            title=sender_name,
-            body=message,
-            image=sender.profilePicture if sender.profilePicture else None
-        )
-        
-        message_obj = messaging.MulticastMessage(
-            notification=notification,
-            tokens=list(receiver_tokens),
-            data={
-                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                'type': 'message',
-                'senderId': str(sender_id),
-                'receiverId': str(receiver_id),
-                'message': message
-            }
-        )
-        
-        notification_log = NotificationLog.objects.create(
-            sender=sender,
-            receiver_id=receiver_id,
-            message=message,
-            status='pending'
-        )
-        
-        try:
-            response = messaging.send_multicast(message_obj)
             
-            notification_log.status = 'sent'
-            notification_log.save()
+        # message_obj = messaging.MulticastMessage(
+        #     notification=notification,
+        #     tokens=list(receiver_tokens),
+        #     data={
+        #         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+        #         'type': 'message',
+        #         'senderId': str(sender_id),
+        #         'receiverId': str(receiver_id),
+        #         'message': message
+        #     }
+        # )
+        
+        # notification_log = NotificationLog.objects.create(
+        #     sender=sender,
+        #     receiver_id=receiver_id,
+        #     message=message,
+        #     status='pending'
+        # )
+        
+        # try:
+        #     response = messaging.send_multicast(message_obj)
             
-            if response.failure_count > 0:
-                for idx, resp in enumerate(response.responses):
-                    if not resp.success:
-                        token = receiver_tokens[idx]
-                        print(f"Failed to send to token {token}: {resp.exception}")
+        #     notification_log.status = 'sent'
+        #     notification_log.save()
+            
+        #     if response.failure_count > 0:
+        #         for idx, resp in enumerate(response.responses):
+        #             if not resp.success:
+        #                 token = receiver_tokens[idx]
+        #                 print(f"Failed to send to token {token}: {resp.exception}")
                         
-                        if isinstance(resp.exception, exceptions.InvalidArgumentError):
-                            FCMTokens.objects.filter(token=token).delete()
+        #                 if isinstance(resp.exception, exceptions.InvalidArgumentError):
+        #                     FCMTokens.objects.filter(token=token).delete()
             
+        response = [] 
+        tokens = list(receiver_tokens)
+        for token in tokens:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                     title=sender_name,
+                    body=message,
+                    image=sender.profilePicture if sender.profilePicture else None
+        ),
+                token=token,
+            )
+            response.append(messaging.send(message))
+    
             return Response({
                 'status': 'success',
-                'sent_count': response.success_count,
-                'failure_count': response.failure_count,
+                'sent_count': len(response),
                 'total_tokens': len(receiver_tokens)
             })
             
-        except Exception as e:
-            notification_log.status = 'failed'
-            notification_log.error_message = str(e)
-            notification_log.save()
-            
-            print(f"Error sending notification: {str(e)}")
-            return Response({'status': 'error', 'message': str(e)}, status=500)
-        
     except Exception as e:
         print(f"Error in send_notification: {str(e)}")
         return Response({'status': 'error', 'message': str(e)}, status=500)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def test_notification(request):
+    tokens = FCMTokens.objects.filter(
+            userid=User.objects.get(id=17),
+            token__isnull=False
+        ).exclude(token='').values_list('token', flat=True)
+    response = [] 
+    tokens = list(tokens)
+    for token in tokens:
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title='Test',
+                body='Hello from test',
+            ),
+            token=token,
+        )
+        response.append(messaging.send(message))
+
+    # response = messaging.send_multicast(message)
+    print('Successfully sent message:', response )
+    return Response({'status':'success'})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -100,6 +121,8 @@ def save_fcm_token(request):
     token = request.data.get('token')
     userid = request.data.get('userId')
     userid = User.objects.get(id=userid)
+    if FCMTokens.objects.filter(userid=userid,token=token).exists():
+        return Response({'status':'success'})
     FCMTokens(userid=userid,token=token).save()
     return Response({'status':'success'})
 

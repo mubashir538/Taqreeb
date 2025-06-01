@@ -119,6 +119,7 @@ class MyApi {
       return _handleNetworkError(cacheKey, e.toString(), context);
     } on HttpException catch (e) {
       if (context != null) {
+        print('Runnig...');
         MyScaffold(
                 text: 'Server is not working. Please try again after sometime.')
             .show(context);
