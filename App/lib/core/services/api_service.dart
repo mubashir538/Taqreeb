@@ -649,7 +649,7 @@ class MyApi {
   }) async {
     return await postRequest(
       endpoint: 'chatbot/',
-      timeout: const Duration(seconds: 20),
+      timeout: const Duration(seconds: 40),
       body: {
         'user_id': userId,
         'message': message,

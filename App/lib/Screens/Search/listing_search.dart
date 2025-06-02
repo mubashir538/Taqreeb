@@ -608,7 +608,7 @@ class _SearchServiceState extends State<SearchService> {
                         valuecontroller: _dateController,
                       ),
                     ),
-                    SizedBox(height: Screen.height(context) * 0.1),
+                    SizedBox(height: Screen.height(context) * 0.5),
                   ],
                 ),
               ),
@@ -622,6 +622,7 @@ class _SearchServiceState extends State<SearchService> {
                   },
                 ),
               )
+              
             ],
           ),
         );

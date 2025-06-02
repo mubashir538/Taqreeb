@@ -72,7 +72,6 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
           accuracy: LocationAccuracy.high,
         ),
       );
-      print(position);
 
       setState(() {
         _currentLocation = "${position.latitude}, ${position.longitude}";
@@ -96,6 +95,7 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
             children: [
               Expanded(
                 child: TypeAheadField<String>(
+                  controller: _textController,
                   suggestionsCallback: _fetchSuggestions,
                   itemBuilder: (context, suggestion) {
                     return ListTile(
@@ -104,8 +104,11 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
                     );
                   },
                   onSelected: (suggestion) {
-                    print('selected');
                     widget.onLocationChanged(suggestion);
+                    setState(() {
+                      _textController.text = suggestion;
+
+                    });
                   },
                   builder: (context, controller, focusNode) {
                     return MyTextBox(
@@ -115,6 +118,9 @@ class LocationInputWidgetState extends State<LocationInputWidget> {
                       focusNode: focusNode,
                       onChanged: (text) {
                         widget.onLocationChanged(text);
+                        setState(() {
+                          controller.text =  _textController.text;
+                        });
                       },
                     );
                   },

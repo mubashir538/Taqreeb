@@ -8,6 +8,7 @@ import 'package:taqreeb/Components/Messages/c_message_receive.dart';
 import 'package:taqreeb/Components/Messages/c_message_send.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/encryption.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -24,6 +25,7 @@ class _ChatBoxState extends State<ChatBox> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final EncryptionService _encryptionService = EncryptionService();
   final ScrollController _scrollController = ScrollController();
 
   String? _currentUserId;
@@ -241,12 +243,15 @@ class _ChatBoxState extends State<ChatBox> {
 
     try {
       final chatId = _getChatId();
+      final encryptedMessage =   _encryptionService.encryptMessage(text);
+
       final messageData = {
         'senderId': _currentUserId,
         'receiverId': _chatUserId,
-        'message': text,
+        'message': encryptedMessage,
         'timestamp': FieldValue.serverTimestamp(),
         'mtype': 'text',
+        'isEncrypted': true,
       };
 
       if (_listing.isNotEmpty) {
@@ -331,10 +336,10 @@ class _ChatBoxState extends State<ChatBox> {
       );
       if (pickedFile == null) return;
 
-      // Show loading indicator
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Uploading image...')),
-      );
+      // // Show loading indicator
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('Uploading image...')),
+      // );
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'saveChatImage/',
@@ -346,6 +351,7 @@ class _ChatBoxState extends State<ChatBox> {
         throw Exception(response['message'] ?? 'Failed to upload image');
       }
 
+      final encryptedPath = _encryptionService.encryptMessage(response['path']);
       final chatId = _getChatId();
       final newMessageRef = _firestore
           .collection(_messageCollection)
@@ -357,9 +363,10 @@ class _ChatBoxState extends State<ChatBox> {
         transaction.set(newMessageRef, {
           'senderId': _currentUserId,
           'receiverId': _chatUserId,
-          'message': response['path'],
+          'message': encryptedPath,
           'timestamp': FieldValue.serverTimestamp(),
           'mtype': 'image',
+          'isEncrypted': true,
         });
 
         transaction.set(
@@ -420,9 +427,18 @@ class _ChatBoxState extends State<ChatBox> {
   Widget _buildMessageTile(DocumentSnapshot doc) {
     final isSentByMe = doc['senderId'] == _currentUserId;
     final messageType = doc['mtype'];
-    final message = doc['message'];
+    var message = doc['message'];
+    final isEncrypted = doc['isEncrypted'] ?? false;
     final timestamp = doc['timestamp'] as Timestamp?;
     final time = timestamp != null ? _formatTimestamp(timestamp) : '';
+
+    if (isEncrypted && messageType == 'text') {
+      try {
+        message = _encryptionService.decryptMessage(message);
+      } catch (e) {
+        message = "Could not decrypt message";
+      }
+    }
 
     if (messageType == 'text') {
       return isSentByMe
@@ -431,6 +447,7 @@ class _ChatBoxState extends State<ChatBox> {
     } else if (messageType == 'image') {
       final imageUrl =
           '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$message';
+      
       return isSentByMe
           ? SendMessage(text: '', time: time, imageUrl: imageUrl)
           : RecieveMessage(text: '', time: time, imageUrl: imageUrl);
