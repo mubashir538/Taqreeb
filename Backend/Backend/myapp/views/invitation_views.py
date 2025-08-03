@@ -563,7 +563,7 @@ class InvitationGenerator:
                 if so_ratio > do_ratio:
                     names_section = [
                         (f"{name1}", 'script', primary_color),
-                        (f"{basic_info.get('s/o', '')}", 'script', primary_color),
+                        (f"{basic_info.get('s/o', '')}", 'regular', primary_color),
                         ("With", 'bold2', primary_color),
                         (f"{name2}", 'script', primary_color),
                         (f"{basic_info.get('d/o', '')}", 'regular', primary_color),

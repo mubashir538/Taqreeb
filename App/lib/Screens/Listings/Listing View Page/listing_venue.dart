@@ -174,10 +174,10 @@ class CategoryViewVenueState extends State<CategoryViewVenue> {
 
   Widget _buildContent() {
     final colors = AppColors(context);
-
+    print('content:' + _listing['Listing'].toString());
     return Column(
       children: [
-        ImageSliderCategory(imageUrls: _imageUrls,show360Button: true,videoUrl: _listing['videoLink']),
+        ImageSliderCategory(imageUrls: _imageUrls,show360Button: true,videoUrl: _listing['Listing']['videoLink']),
         Container(
           width: Screen.width(context),
           color: colors.dark,

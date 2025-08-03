@@ -393,7 +393,7 @@ def get_venue_recommendations(
     return venues
 
 
-def initiate_booking(
+def create_event(
     user_id: str,
     event_name: str,
     event_type: str,

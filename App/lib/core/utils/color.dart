@@ -30,3 +30,4 @@ class AppColors {
     yellowonDark = Theme.of(context).colorScheme.secondary;
   }
 }
+

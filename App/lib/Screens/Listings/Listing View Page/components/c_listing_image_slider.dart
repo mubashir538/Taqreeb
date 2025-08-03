@@ -42,6 +42,7 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
 
   void _navigateTo360View(BuildContext context) {
     // Replace with your 360° view screen navigation
+    print('url: ${widget.videoUrl}');
     Navigator.pushNamed(context, '/360View', arguments: widget.videoUrl);
   }
 

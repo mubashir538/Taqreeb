@@ -8,7 +8,7 @@ from .functions import (
     # check_availability,
     get_service_details,
     get_venue_recommendations,
-    initiate_booking,
+    create_event,
     search_services,
 )
 from openai import OpenAI
@@ -28,7 +28,7 @@ class EventBookingChatbot:
         # self.model = "llama3-70b-8192"          # slower intelligent model
         # self.model = "llama-3.3-70b-specdec"
         # self.model = "deepseek-r1-distill-llama-70b"
-        self.model = "mistral-saba-24b"
+        self.model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
         # To Store conversation history by user
         self.conversation_histories = {}
@@ -38,7 +38,7 @@ class EventBookingChatbot:
             "search_services": search_services,
             "get_venue_details": get_service_details,
             # "check_availability": check_availability,
-            "initiate_booking": initiate_booking,
+            "create_event": create_event,
             # "get_venue_recommendations": get_venue_recommendations,
         }
 
@@ -225,8 +225,8 @@ class EventBookingChatbot:
             #     }
             # },
             {
-                "name": "initiate_booking",
-                "description": "Initiate a booking request for a venue",
+                "name": "create_event",
+                "description": "create a event for the user",
                 "parameters": {
                     "type": "object",
                     "properties": {

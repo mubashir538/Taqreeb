@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 import 'package:video_player/video_player.dart';
 
 class View360 extends StatefulWidget {
@@ -9,25 +10,28 @@ class View360 extends StatefulWidget {
 }
 
 class _View360State extends State<View360> {
-  late VideoPlayerController _controller;
-  late String videoUrl;
+  late String videoUrl = '';
   bool _isInitialized = false;
+  late VideoPlayerController _controller;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args != null && args is String) {
+      print('args: $args');
       _initializeVideo(args);
     }
   }
 
   void _initializeVideo(String url) {
     if (videoUrl == url && _isInitialized) return;
-    
+
     videoUrl = url;
-    _controller?.dispose(); // Dispose previous controller if exists
-    _controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
+    print('venue url: $videoUrl');
+    print(videoUrl);
+    _controller = VideoPlayerController.networkUrl(Uri.parse(
+        MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) + videoUrl))
       ..initialize().then((_) {
         if (!mounted) return;
         setState(() {
@@ -46,11 +50,13 @@ class _View360State extends State<View360> {
       });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   if (_controller != null) {
+  //     _controller.dispose();
+  //   }
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,7 @@ class _View360State extends State<View360> {
       body: Stack(
         children: [
           Center(
-            child: _isInitialized
+            child: _isInitialized && _controller.value.isInitialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),

@@ -157,13 +157,13 @@ class _AccountInfoState extends State<AccountInfo> {
               if (await MyTokens.getBusinessType() == 'user') {
                 context.pushNamedTransition(
                     routeName: '/AccountInfoEdit',
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300));
+                    type: PageTransitionType.bottomToTopPop,
+                    duration: Duration(milliseconds: 300)).then((value) => _fetchData());
               } else {
                 context.pushNamedTransition(
                     routeName: '/BusinessAccountInfoEdit',
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300));
+                    type: PageTransitionType.bottomToTopPop,
+                    duration: Duration(milliseconds: 300)).then((value) => _fetchData());
               }
             }),
       ],

@@ -393,7 +393,7 @@ class _CartScreenState extends State<CartScreen> {
       case 'listing':
         return (item.itemDetails['priceMin'] ?? 0).toDouble() * item.quantity;
       case 'product':
-        return (item.itemDetails['price'] ?? 0).toDouble() * item.quantity;
+        return (double.tryParse(item.itemDetails['price']) ?? 0.0) * item.quantity;
       case 'package':
         return (item.itemDetails['price'] ?? 0).toDouble() * item.quantity;
       default:
