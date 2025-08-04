@@ -1,2 +1,6 @@
 .env
 servicekey.json
+Backend/Backend/*/.pyc
+**/*.pyc
+**/*.bin
+

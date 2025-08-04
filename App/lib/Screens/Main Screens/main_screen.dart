@@ -102,8 +102,8 @@ class _MainScreenState extends State<MainScreen> {
                     routeName: _isBusinessOwner || _isFreelancer
                         ? '/AddCategory_List'
                         : '/CreateEvent',
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300));
+                    type: PageTransitionType.fade,
+                    duration: Duration(milliseconds: 200));
               },
               backgroundColor: colors.red,
               shape: const CircleBorder(),

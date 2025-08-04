@@ -240,7 +240,7 @@ class _ProductCardState extends State<ProductCard> {
     }
     context.pushNamedTransition(
         routeName: path,
-        type: PageTransitionType.rightToLeftWithFade,
+        type: PageTransitionType.bottomToTop,
         duration: Duration(milliseconds: 300),
         arguments: {
           'id': int.parse(widget.listingid),

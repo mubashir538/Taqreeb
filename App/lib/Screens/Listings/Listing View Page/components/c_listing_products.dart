@@ -299,7 +299,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            widget.listing['Products'].length,
+            widget.listing['products'].length,
             (index) => Container(
               width: Screen.max(context) * 0.015,
               height: Screen.max(context) * 0.015,

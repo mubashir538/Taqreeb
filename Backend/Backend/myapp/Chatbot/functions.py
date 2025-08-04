@@ -215,7 +215,6 @@ def search_services(
     
     return results
 
-
 def get_service_details(listing_id: str) -> Dict:
     """Get detailed information about a specific service using Django ORM."""
     try:
@@ -311,7 +310,6 @@ def get_service_details(listing_id: str) -> Dict:
     
     return result
 
-
 def get_venue_recommendations(
     event_type: str,
     location: str,
@@ -391,7 +389,6 @@ def get_venue_recommendations(
     # Sort by recommendation score
     venues.sort(key=lambda x: x["recommendation_score"], reverse=True)
     return venues
-
 
 def create_event(
     user_id: str,

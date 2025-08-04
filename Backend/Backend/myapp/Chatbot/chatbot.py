@@ -37,10 +37,8 @@ class EventBookingChatbot:
         self.available_functions = {
             "search_services": search_services,
             "get_venue_details": get_service_details,
-            # "check_availability": check_availability,
             "create_event": create_event,
-            # "get_venue_recommendations": get_venue_recommendations,
-        }
+         }
 
         # Define function schemas for OpenAI
         self.function_schemas = [
