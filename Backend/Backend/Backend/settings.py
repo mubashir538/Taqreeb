@@ -44,8 +44,11 @@ CORS_ALLOWED_ORIGINS = [
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+
+load_dotenv()
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p2a4e9s^tjo01sth&oz0wo58#8b4z&sg_d)m_u03ezj2a5cpz@'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -194,7 +197,6 @@ AUTH_USER_MODEL = 'myapp.User'
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
 
 
 MEDIA_URL = '/media/'
