@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
-from ..Chatbot.chatbot import EventBookingChatbot
+from myapp.chatbotConfig import chatbot
 
 @csrf_exempt
 @require_POST
@@ -15,7 +15,7 @@ def chatbot_api(request):
         if not user_id or not message:
             return JsonResponse({'error': 'user_id and message are required'}, status=400)
         
-        chatbot = EventBookingChatbot()
+        
         response = chatbot.process_message(user_id, message)
         
         # Process the response to remove "think" attribute and format bold text
@@ -23,11 +23,12 @@ def chatbot_api(request):
         
         return JsonResponse({
             'response': processed_response['text'],
-            'formatted_response': processed_response['formatted_text'],
+            'formatted_response': processed_response['formatted_text'],     
             'is_bold': processed_response['is_bold']
         })
         
     except Exception as e:
+        print(e)
         return JsonResponse({'error': str(e)}, status=500)
 
 def process_chatbot_response(response):

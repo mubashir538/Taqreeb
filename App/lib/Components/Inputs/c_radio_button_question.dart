@@ -25,6 +25,8 @@ class RadioButtonQuestion extends StatefulWidget {
 class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
@@ -39,7 +41,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                       vertical: Screen.max(context) * 0.01),
                   child: Text(widget.question,
                       style: GoogleFonts.roboto(
-                          color: MyColors.white,
+                          color: colors.white,
                           fontSize: Screen.max(context) * 0.018)),
                 ),
           widget.options.length > 2
@@ -50,7 +52,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                       RadioListTile<String>(
                         title: Text(option,
                             style: GoogleFonts.roboto(
-                              color: MyColors.whiteDarker,
+                              color: colors.whiteDarker,
                               fontWeight: FontWeight.w300,
                               fontSize: Screen.max(context) * 0.015,
                             )),
@@ -62,7 +64,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                           });
                           widget.onChanged(value);
                         },
-                        activeColor: MyColors.yellow,
+                        activeColor: colors.yellow,
                       ),
                   ],
                 )
@@ -73,7 +75,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                         child: RadioListTile<String>(
                           title: Text(option,
                               style: GoogleFonts.roboto(
-                                color: MyColors.whiteDarker,
+                                color: colors.whiteDarker,
                                 fontWeight: FontWeight.w300,
                                 fontSize: Screen.max(context) * 0.015,
                               )),
@@ -85,7 +87,7 @@ class _RadioButtonQuestionState extends State<RadioButtonQuestion> {
                             });
                             widget.onChanged(value);
                           },
-                          activeColor: MyColors.yellow,
+                          activeColor: colors.yellow,
                         ),
                       ),
                   ],

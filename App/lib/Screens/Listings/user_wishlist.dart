@@ -48,7 +48,7 @@ class _WishlistViewPageState extends State<WishlistViewPage> {
     if (pictures.isEmpty || pictures[0]['picturePath'] == " ") {
       return "https://picsum.photos/id/${DateTime.now().millisecondsSinceEpoch % 50 + 1}/600/300";
     }
-    return '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${pictures[0]['picturePath']}';
+    return '${pictures[0]['picturePath']}';
   }
 
   @override
@@ -68,10 +68,12 @@ class _WishlistViewPageState extends State<WishlistViewPage> {
   }
 
   Widget _buildWishlistContent() {
+    final colors = AppColors(context);
+
     if (_wishlistController.isLoading) {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(colors.white),
         ),
       );
     }

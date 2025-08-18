@@ -26,11 +26,13 @@ class TransactionCard extends StatefulWidget {
 class _TransactionCardState extends State<TransactionCard> {
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -43,13 +45,13 @@ class _TransactionCardState extends State<TransactionCard> {
               children: [
                 CircleAvatar(
                   backgroundColor:
-                      widget.type == "Deposit" ? MyColors.red : MyColors.green,
+                      widget.type == "Deposit" ? colors.red : colors.green,
                   radius: Screen.max(context) * 0.03,
                   child: Icon(
                     widget.type == "Deposit"
                         ? FontAwesomeIcons.arrowDown
                         : FontAwesomeIcons.arrowUp,
-                    color: MyColors.white.withAlpha(200),
+                    color: colors.white.withAlpha(200),
                     size: 30,
                   ),
                 ),
@@ -64,7 +66,7 @@ class _TransactionCardState extends State<TransactionCard> {
                       style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.017,
                         fontWeight: FontWeight.w400,
-                        color: MyColors.white,
+                        color: colors.white,
                       ),
                     ),
                     Text(
@@ -72,7 +74,7 @@ class _TransactionCardState extends State<TransactionCard> {
                       style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.013,
                         fontWeight: FontWeight.w300,
-                        color: MyColors.white,
+                        color: colors.white,
                       ),
                     ),
                   ],
@@ -84,7 +86,7 @@ class _TransactionCardState extends State<TransactionCard> {
               style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.017,
                 fontWeight: FontWeight.w400,
-                color: widget.type == "Deposit" ? MyColors.red : MyColors.green,
+                color: widget.type == "Deposit" ? colors.red : colors.green,
               ),
             ),
           ],

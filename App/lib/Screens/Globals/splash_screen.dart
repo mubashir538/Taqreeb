@@ -36,6 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
     _initializeApp();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    // AppConfig.fetchIp();
   }
 
   void _startProgressTimer() {
@@ -65,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    MyColors.getTheme();
+    // colors.getTheme();
     await MyStorage.saveToken(MyTokens.dark, MyTokens.theme);
 
     // First check internet connection
@@ -99,11 +100,8 @@ class _SplashScreenState extends State<SplashScreen> {
     final String? userId = await MyStorage.getToken(MyTokens.userId);
 
     Timer.periodic(const Duration(seconds: 5), (timer) async {
-      bool success = await preApiCall({
-        'header': header,
-        'isLoggedIn': isLoggedIn,
-        'userId': userId
-      });
+      bool success = await preApiCall(
+          {'header': header, 'isLoggedIn': isLoggedIn, 'userId': userId});
 
       if (success) {
         timer.cancel();
@@ -197,8 +195,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -210,7 +210,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: Screen.height(context) * 0.05),
             Container(
               decoration: BoxDecoration(
-                color: MyColors.whiteDarker,
+                color: colors.whiteDarker,
                 borderRadius: BorderRadius.circular(20),
               ),
               width: Screen.width(context) * 0.5,
@@ -219,8 +219,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     BorderRadius.circular(20), // same radius as container
                 child: LinearProgressIndicator(
                   value: _progressValue,
-                  backgroundColor: MyColors.whiteDarker,
-                  valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
+                  backgroundColor: colors.whiteDarker,
+                  valueColor: AlwaysStoppedAnimation<Color>(colors.red),
                   minHeight: Screen.height(context) * 0.02,
                 ),
               ),

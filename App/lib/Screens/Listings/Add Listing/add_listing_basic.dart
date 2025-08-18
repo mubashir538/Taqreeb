@@ -177,7 +177,6 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
         type: PageTransitionType.rightToLeftWithFade,
         duration: Duration(milliseconds: 300),
         arguments: args);
-        
   }
 
   @override
@@ -187,8 +186,10 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
       callback: _updateHeaderHeight,
     );
 
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -199,10 +200,12 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
   }
 
   Widget _buildContent() {
+    final colors = AppColors(context);
+
     return RefreshIndicator(
-      color: MyColors.red,
+      color: colors.red,
       displacement: Screen.height(context) * 0.2,
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       onRefresh: _handleRefresh,
       child: SingleChildScrollView(
         child: Column(
@@ -247,6 +250,8 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
   }
 
   Widget _buildCharacterCounter() {
+    final colors = AppColors(context);
+
     return SizedBox(
       width: Screen.width(context) * 0.9,
       child: Row(
@@ -255,7 +260,7 @@ class _AddCategoryListingState extends State<AddCategoryListing> {
           Text(
             "${_formController.charactersLeft} characters left",
             style: GoogleFonts.roboto(
-              color: MyColors.white,
+              color: colors.white,
               fontSize: Screen.max(context) * 0.015,
               fontWeight: FontWeight.w300,
             ),
@@ -335,8 +340,7 @@ class ListingFormController {
   // Controllers
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController locationController =
-      TextEditingController(text: 'fsd');
+  final TextEditingController locationController = TextEditingController();
   final TextEditingController priceminController = TextEditingController();
   final TextEditingController pricemaxController = TextEditingController();
   final TextEditingController typeController = TextEditingController();

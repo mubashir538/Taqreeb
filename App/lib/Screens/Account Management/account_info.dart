@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -75,9 +76,10 @@ class _AccountInfoState extends State<AccountInfo> {
         _changeHeight(renderbox);
       },
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -102,6 +104,8 @@ class _AccountInfoState extends State<AccountInfo> {
   }
 
   Widget _buildIntroText() {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
@@ -113,16 +117,18 @@ class _AccountInfoState extends State<AccountInfo> {
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w400,
-          color: MyColors.white,
+          color: colors.white,
         ),
       ),
     );
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
       ),
     );
   }
@@ -151,13 +157,13 @@ class _AccountInfoState extends State<AccountInfo> {
               if (await MyTokens.getBusinessType() == 'user') {
                 context.pushNamedTransition(
                     routeName: '/AccountInfoEdit',
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300));
+                    type: PageTransitionType.bottomToTop,
+                    duration: Duration(milliseconds: 300)).then((value) => _fetchData());
               } else {
                 context.pushNamedTransition(
                     routeName: '/BusinessAccountInfoEdit',
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300));
+                    type: PageTransitionType.bottomToTop,
+                    duration: Duration(milliseconds: 300)).then((value) => _fetchData());
               }
             }),
       ],
@@ -165,6 +171,8 @@ class _AccountInfoState extends State<AccountInfo> {
   }
 
   Widget _buildUserProfile(double size) {
+    final colors = AppColors(context);
+
     return SizedBox(
       width: Screen.width(context) * 0.9,
       child: Row(
@@ -173,12 +181,12 @@ class _AccountInfoState extends State<AccountInfo> {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: MyColors.yellow, width: 3),
+              border: Border.all(color: colors.yellow, width: 3),
             ),
             child: CircleAvatar(
               radius: Screen.width(context) * 0.1,
-              backgroundImage: NetworkImage(
-                "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_user['profilePicture']}",
+              backgroundImage: CachedNetworkImageProvider(
+                "${_user['profilePicture']}",
               ),
             ),
           ),
@@ -195,7 +203,7 @@ class _AccountInfoState extends State<AccountInfo> {
                   style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.025,
                     fontWeight: FontWeight.w700,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
               ),
@@ -209,7 +217,7 @@ class _AccountInfoState extends State<AccountInfo> {
                   style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.015,
                     fontWeight: FontWeight.w500,
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                   ),
                 ),
               ),
@@ -222,11 +230,13 @@ class _AccountInfoState extends State<AccountInfo> {
 
   Widget _buildInfoCard(
       double size, IconData icon, String text, String heading) {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.darkLighter,
             borderRadius: BorderRadius.circular(10),
           ),
           padding: EdgeInsets.all(Screen.max(context) * 0.03),
@@ -241,7 +251,7 @@ class _AccountInfoState extends State<AccountInfo> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w700,
-                  color: MyColors.yellow,
+                  color: colors.yellow,
                 ),
               ),
               SizedBox(height: Screen.max(context) * 0.02),
@@ -252,7 +262,7 @@ class _AccountInfoState extends State<AccountInfo> {
                   Icon(
                     icon,
                     size: size,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                   SizedBox(width: Screen.max(context) * 0.03),
                   SizedBox(
@@ -268,7 +278,7 @@ class _AccountInfoState extends State<AccountInfo> {
                       style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
-                        color: MyColors.white,
+                        color: colors.white,
                       ),
                     ),
                   ),

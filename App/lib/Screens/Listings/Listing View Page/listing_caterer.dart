@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_products.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
@@ -25,7 +25,6 @@ class CategoryViewCaterers extends StatefulWidget {
 }
 
 class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
-  // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
   late final List<String> _values = [];
@@ -154,20 +153,24 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
       ),
     );
   }
 
   Widget _buildContent() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         ImageSliderCategory(imageUrls: _imageUrls),
         Container(
           width: Screen.width(context),
-          color: MyColors.dark,
+          color: colors.dark,
           padding: EdgeInsets.symmetric(
             horizontal: Screen.width(context) * 0.04,
             vertical: Screen.height(context) * 0.01,
@@ -189,6 +192,7 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
               ),
               CategoryAddons(listing: _listing),
               CategoryPackages(listing: _listing),
+              CategoryProducts(listing: _listing),
               CategoryReview(
                 listing: _listing,
                 starsvalue: _starsValue,
@@ -200,24 +204,17 @@ class _CategoryViewCaterersState extends State<CategoryViewCaterers> {
     );
   }
 
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     UImanagement.getHeaderHeight(
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

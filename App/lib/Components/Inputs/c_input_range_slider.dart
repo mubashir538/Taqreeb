@@ -53,6 +53,8 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.02),
       child: Column(
@@ -60,10 +62,10 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
         children: [
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: MyColors.red,
-              inactiveTrackColor: MyColors.whiteDarker,
-              thumbColor: MyColors.red,
-              overlayColor: MyColors.red.withAlpha(51),
+              activeTrackColor: colors.red,
+              inactiveTrackColor: colors.whiteDarker,
+              thumbColor: colors.red,
+              overlayColor: colors.red.withAlpha(51),
               valueIndicatorTextStyle: GoogleFonts.roboto(
                 color: Colors.white,
                 fontSize: Screen.max(context) * 0.015,
@@ -110,13 +112,13 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
                   widget.startLabel == ""
                       ? 'Rs. ${NumberFormat("#,##0").format(currentRange.start.round())}'
                       : widget.startLabel,
-                  style: GoogleFonts.roboto(color: MyColors.white),
+                  style: GoogleFonts.roboto(color: colors.white),
                 ),
                 Text(
                   widget.endLabel == ""
                       ? 'Rs. ${NumberFormat("#,##0").format(currentRange.end.round())}'
                       : widget.endLabel,
-                  style: GoogleFonts.roboto(color: MyColors.white),
+                  style: GoogleFonts.roboto(color: colors.white),
                 ),
               ],
             ),

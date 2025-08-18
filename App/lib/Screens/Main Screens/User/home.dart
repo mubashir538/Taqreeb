@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
 import 'package:taqreeb/Components/Home%20Page/c_custom_tab.dart';
+import 'package:taqreeb/Components/Home%20Page/c_product.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Home%20Page/c_image_slider.dart';
 import 'package:taqreeb/Components/Home%20Page/c_category_icon.dart';
@@ -30,11 +32,17 @@ DateTime? entryTime;
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _searchBoxKey = GlobalKey();
+  final GlobalKey _imageSliderKey = GlobalKey();
+  final GlobalKey _categorySectionKey = GlobalKey();
+  final GlobalKey _aiPackageButtonKey = GlobalKey();
+  final GlobalKey _contentSectionKey = GlobalKey();
+  final GlobalKey _categoryIconKey = GlobalKey();
+  List<int> _excludedListingIds = [];
 
   Map<String, dynamic> categories = {};
   Map<String, dynamic> demoImages = {};
 
-  // Separate data for each tab
   Map<String, dynamic> listings = {
     'results': {'HomeListing': [], 'pictures': []}
   };
@@ -49,7 +57,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoadingServices = false;
   bool _isLoadingMore = false;
   int _currentPage = 1;
-  int _currentTab = 0; // 0 = Listings, 1 = Packages, 2 = Products
+  int _currentTab = 0;
   List<String> _myImages = [];
   GlobalKey headerKey = GlobalKey();
   FocusNode searchFocus = FocusNode();
@@ -104,9 +112,83 @@ class _HomePageState extends State<HomePage> {
     }, context: mounted ? context : null);
   }
 
+  // Future<void> _fetchTabData({bool resetPagination = false}) async {
+  //   if (resetPagination) {
+  //     _currentPage = 1;
+  //   }
+
+  //   setState(() {
+  //     if (resetPagination) {
+  //       isLoadingServices = true;
+  //       if (_currentTab == 0) {
+  //         listings = {
+  //           'results': {'HomeListing': [], 'pictures': []}
+  //         };
+  //       } else if (_currentTab == 1) {
+  //         packages = {
+  //           'results': {'HomePackages': []}
+  //         };
+  //       } else {
+  //         products = {
+  //           'results': {'HomeProducts': []}
+  //         };
+  //       }
+  //     } else {
+  //       _isLoadingMore = true;
+  //     }
+  //   });
+
+  //   String endpoint;
+  //   if (_currentTab == 0) {
+  //     endpoint = 'home/listings/?page=$_currentPage&page_size=10';
+  //   } else if (_currentTab == 1) {
+  //     endpoint = 'home/packages/?page=$_currentPage&page_size=10';
+  //   } else {
+  //     endpoint = 'home/products/?page=$_currentPage&page_size=10';
+  //   }
+
+  //   await ApiCall.fetchAPI(endpoint, onSuccess: (token, data) {
+  //     if (mounted) {
+  //       setState(() {
+  //         if (_currentTab == 0) {
+  //           if (resetPagination) {
+  //             listings = data;
+  //           } else {
+  //             listings['results']['HomeListing']
+  //                 .addAll(data['results']['HomeListing']);
+  //             listings['results']['pictures']
+  //                 .addAll(data['results']['pictures']);
+  //           }
+  //         } else if (_currentTab == 1) {
+  //           if (resetPagination) {
+  //             packages = data;
+  //           } else {
+  //             packages['results']['HomePackages']
+  //                 .addAll(data['results']['HomePackages']);
+  //           }
+  //         } else {
+  //           if (resetPagination) {
+  //             products = data;
+  //           } else {
+  //             products['results']['HomeProducts']
+  //                 .addAll(data['results']['HomeProducts']);
+  //           }
+  //         }
+
+  //         isLoadingServices = false;
+  //         _isLoadingMore = false;
+  //         if (!resetPagination) {
+  //           _currentPage++;
+  //         }
+  //       });
+  //     }
+  //   }, context: mounted ? context : null);
+  // }
+
   Future<void> _fetchTabData({bool resetPagination = false}) async {
     if (resetPagination) {
       _currentPage = 1;
+      _excludedListingIds = []; // Reset excluded IDs when refreshing
     }
 
     setState(() {
@@ -132,7 +214,11 @@ class _HomePageState extends State<HomePage> {
 
     String endpoint;
     if (_currentTab == 0) {
+      // For listings, include excluded_ids in the request
       endpoint = 'home/listings/?page=$_currentPage&page_size=10';
+      if (_excludedListingIds.isNotEmpty) {
+        endpoint += '&excluded_ids=${_excludedListingIds.join(',')}';
+      }
     } else if (_currentTab == 1) {
       endpoint = 'home/packages/?page=$_currentPage&page_size=10';
     } else {
@@ -150,6 +236,14 @@ class _HomePageState extends State<HomePage> {
                   .addAll(data['results']['HomeListing']);
               listings['results']['pictures']
                   .addAll(data['results']['pictures']);
+            }
+            // Update excluded IDs with the new ones from the response
+            if (data['excluded_ids'] != null) {
+              _excludedListingIds = data['excluded_ids']
+                  .split(',')
+                  .where((id) => id.isNotEmpty)
+                  .map(int.parse)
+                  .toList();
             }
           } else if (_currentTab == 1) {
             if (resetPagination) {
@@ -179,8 +273,7 @@ class _HomePageState extends State<HomePage> {
 
   void _loadImages() {
     _myImages = demoImages['images']
-        .map((value) =>
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${value["image"]}')
+        .map((value) => '${value["image"]}')
         .cast<String>()
         .toList();
   }
@@ -251,36 +344,103 @@ class _HomePageState extends State<HomePage> {
         _changeHeight(renderbox);
       },
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           if (UImanagement.headerHeight > 0)
-            SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: UImanagement.headerHeight),
-                  _buildSearchBox(),
-                  _isLoading
-                      ? _buildSkeletonLoader()
-                      : Column(
-                          children: [
-                            _buildImageSlider(),
-                            _buildCategorySection(),
-                            _buildAIPackageButton(),
-                            _buildContentSection(),
-                          ],
+            ShowCaseWidget(
+              builder: (context) => SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: UImanagement.headerHeight),
+                    Showcase(
+                        key: _searchBoxKey,
+                        description:
+                            'Search for services, packages, or products',
+                        title: 'Search',
+                        targetShapeBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                  if (_isLoadingMore) _buildLoadingMoreIndicator(),
-                ],
+                        targetPadding: EdgeInsets.all(8),
+                        targetBorderRadius: BorderRadius.circular(8),
+                        overlayColor: colors.lightDark.withAlpha(128),
+                        child: _buildSearchBox()),
+                    _isLoading
+                        ? _buildSkeletonLoader()
+                        : Column(
+                            children: [
+                              Showcase(
+                                  key: _imageSliderKey,
+                                  description: 'Featured images slider',
+                                  title: 'Image Slider',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor: colors.lightDark.withAlpha(128),
+                                  child: _buildImageSlider()),
+                              Showcase(
+                                  key: _categorySectionKey,
+                                  description: 'Browse categories',
+                                  title: 'Categories',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor: colors.lightDark.withAlpha(128),
+                                  child: _buildCategorySection()),
+                              Showcase(
+                                  key: _aiPackageButtonKey,
+                                  description: 'Create a package using AI',
+                                  title: 'AI Package',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor: colors.lightDark.withAlpha(128),
+                                  child: _buildAIPackageButton()),
+                              Showcase(
+                                  key: _contentSectionKey,
+                                  description:
+                                      'Browse listings, packages, and products',
+                                  title: 'Content Section',
+                                  targetShapeBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  targetPadding: EdgeInsets.all(8),
+                                  targetBorderRadius: BorderRadius.circular(8),
+                                  overlayColor: colors.lightDark.withAlpha(128),
+                                  child: _buildContentSection()),
+                            ],
+                          ),
+                    if (_isLoadingMore) _buildLoadingMoreIndicator(),
+                  ],
+                ),
               ),
             ),
           Positioned(
             top: 0,
-            child: Header(key: headerKey),
+            child: Header(
+              key: headerKey,
+              additionalIcons: [
+                HeaderIcon(
+                    icon: FontAwesomeIcons.cartShopping,
+                    onPressed: () {
+                      context.pushNamedTransition(
+                          routeName: '/CartScreen',
+                          type: PageTransitionType.fade,
+                          duration: Duration(milliseconds: 300));
+                    })
+              ],
+            ),
           ),
         ],
       ),
@@ -317,6 +477,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildImageSliderSkeleton() {
+    final colors = AppColors(context);
+
     return Container(
       height: Screen.height(context) * 0.25,
       margin: EdgeInsets.symmetric(
@@ -324,13 +486,15 @@ class _HomePageState extends State<HomePage> {
         vertical: Screen.height(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: Colors.grey[800],
+        color: colors.dark.withAlpha(123),
         borderRadius: BorderRadius.circular(10),
       ),
     );
   }
 
   Widget _buildCategorySectionSkeleton() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Container(
@@ -342,7 +506,7 @@ class _HomePageState extends State<HomePage> {
             height: 20,
             width: 150,
             decoration: BoxDecoration(
-              color: Colors.grey[800],
+              color: colors.dark.withAlpha(123),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -362,7 +526,7 @@ class _HomePageState extends State<HomePage> {
                       width: 70,
                       height: 70,
                       decoration: BoxDecoration(
-                        color: Colors.grey[800],
+                        color: colors.dark.withAlpha(123),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -371,7 +535,7 @@ class _HomePageState extends State<HomePage> {
                       height: 12,
                       width: 70,
                       decoration: BoxDecoration(
-                        color: Colors.grey[800],
+                        color: colors.dark.withAlpha(123),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -386,6 +550,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildContentSectionSkeleton() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Container(
@@ -393,11 +559,11 @@ class _HomePageState extends State<HomePage> {
           height: 40,
           margin: EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[800],
+            color: colors.dark.withAlpha(123),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        Container(
+        SizedBox(
           width: Screen.width(context) * 0.9,
           child: Column(
             children: List.generate(3, (index) {
@@ -405,7 +571,7 @@ class _HomePageState extends State<HomePage> {
                 height: 120,
                 margin: EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: Colors.grey[800],
+                  color: colors.dark.withAlpha(123),
                   borderRadius: BorderRadius.circular(8),
                 ),
               );
@@ -426,6 +592,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCategorySection() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         Center(
@@ -441,7 +609,7 @@ class _HomePageState extends State<HomePage> {
                   style: GoogleFonts.roboto(
                     fontSize: Screen.max(context) * 0.02,
                     fontWeight: FontWeight.w700,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
               ],
@@ -453,12 +621,30 @@ class _HomePageState extends State<HomePage> {
           child: ListView.builder(
             itemBuilder: (context, index) {
               final categoryName = categories['categories'][index]['name'];
-              return CategoryIcon(
-                onpressed: () => _handleCategoryClick(categoryName),
-                label: categoryName,
-                imageUrl:
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
-              );
+              if (index != 0) {
+                return CategoryIcon(
+                  onpressed: () => _handleCategoryClick(categoryName),
+                  label: categoryName,
+                  imageUrl: '${categories['categories'][index]['picture']}',
+                );
+              } else {
+                return Showcase(
+                  key: _categoryIconKey,
+                  description: 'Click to explore $categoryName',
+                  title: 'Category',
+                  targetShapeBorder: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  targetPadding: EdgeInsets.all(8),
+                  targetBorderRadius: BorderRadius.circular(8),
+                  overlayColor: colors.lightDark.withAlpha(128),
+                  child: CategoryIcon(
+                    onpressed: () => _handleCategoryClick(categoryName),
+                    label: categoryName,
+                    imageUrl: '${categories['categories'][index]['picture']}',
+                  ),
+                );
+              }
             },
             itemCount: categories['categories'].length,
             scrollDirection: Axis.horizontal,
@@ -526,7 +712,7 @@ class _HomePageState extends State<HomePage> {
         final imageUrl = listings['results']['pictures'][index].isNotEmpty
             ? (listings['results']['pictures'][index][0]['picturePath'] == " "
                 ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['results']['pictures'][index][0]['picturePath']}')
+                : '${listings['results']['pictures'][index][0]['picturePath']}')
             : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300";
 
         return GestureDetector(
@@ -555,19 +741,15 @@ class _HomePageState extends State<HomePage> {
       itemCount: packages['results']['HomePackages'].length,
       itemBuilder: (context, index) {
         final package = packages['results']['HomePackages'][index];
-        // You'll need to adjust this based on your Packages data structure
         return GestureDetector(
           onTap: () => _handleServiceClick(package['id'], package['name']),
           child: PackageBox(
-            onPressed: () {
-              // TODO
-              // _handleServiceClick(package['id'], package['name']);
-            },
+            onPressed: () {},
             packageId: package['id'].toString(),
             packageDetails: package['description'].toString(),
             packagePrice: package['price'].toString(),
             imageUrl: package['pictures'].length != 0
-                ? package['pictures'][0]
+                ? package['pictures'][0]['picturePath']
                 : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
             packageName: package['name'],
           ),
@@ -583,30 +765,28 @@ class _HomePageState extends State<HomePage> {
       itemCount: products['results']['HomeProducts'].length,
       itemBuilder: (context, index) {
         final product = products['results']['HomeProducts'][index];
-        // You'll need to adjust this based on your Products data structure
-        return GestureDetector(
-          onTap: () => _handleServiceClick(product['id'], product['name']),
-          child: ProductCard(
-            listingType: 'product',
-            listingid: product['id'].toString(),
-            imageUrl: product['image'] ??
-                "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
-            venueName: product['name'],
-            rating: product['rating']?.toString() ?? '0',
-            location: product['location'] ?? '',
-            type: 'product',
-          ),
+        return ProductBox(
+          productId: product['id'].toString(),
+          productDescription: product['description'],
+          productPrice: product['price'].toString(),
+          productImage: product['pictures'].length != 0
+              ? MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1) +
+                  product['pictures'][0]
+              : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300",
+          productName: product['name'],
         );
       },
     );
   }
 
   Widget _buildLoadingMoreIndicator() {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(colors.white),
         ),
       ),
     );

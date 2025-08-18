@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,17 +38,49 @@ class _LoginState extends State<Login> {
   final GlobalKey _headerKey = GlobalKey();
   bool _isLoading = false;
 
+  int _failedAttempts = 0;
+  DateTime? _lastFailedAttempt;
+  bool _isLoginBlocked = false;
+  int _remainingTime = 180;
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _measureHeaderHeight());
+    _checkBlockedStatus();
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _timer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _checkBlockedStatus() async {
+    final lastAttempt = await MyStorage.getToken('last_failed_attempt');
+    final attempts =
+        int.tryParse(await MyStorage.getToken('failed_attempts') ?? '0') ?? 0;
+
+    if (lastAttempt != null && attempts >= 3) {
+      final lastAttemptTime = DateTime.parse(lastAttempt);
+      final now = DateTime.now();
+      final difference = now.difference(lastAttemptTime).inSeconds;
+
+      if (difference < 180) {
+        setState(() {
+          _isLoginBlocked = true;
+          _remainingTime = 180 - difference;
+          _failedAttempts = attempts;
+          _startTimer();
+        });
+      } else {
+        // Reset if block time has passed
+        await MyStorage.saveToken('0', 'failed_attempts');
+      }
+    }
   }
 
   void _measureHeaderHeight() {
@@ -63,7 +97,11 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _handleLogin() async {
-    if (!_validateCredentials()) return;
+    if (_isLoginBlocked) return;
+    if (!_validateCredentials()) {
+      _handleFailedLogin("Invalid Credentials");
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -76,20 +114,63 @@ class _LoginState extends State<Login> {
         },
       );
 
+      print(response);
       if (response == null || response['status'] != 'success') {
-        _showErrorDialog(
-            "Error", response?['message'] ?? "Invalid Credentials");
+        print('failed..');
+        _handleFailedLogin(response?['message'] ?? "Invalid Credentials");
         return;
       }
 
+      // Reset attempts on successful login
+      await MyStorage.saveToken('0', 'failed_attempts');
       await _handleSuccessfulLogin(response);
     } catch (e) {
-      _showErrorDialog("Error", "Something went wrong!");
+      _handleFailedLogin("Something went wrong!");
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _handleFailedLogin(String message) {
+    setState(() {
+      _failedAttempts++;
+      _lastFailedAttempt = DateTime.now();
+    });
+
+    // Save attempts to storage
+    MyStorage.saveToken(_failedAttempts.toString(), 'failed_attempts');
+    MyStorage.saveToken(
+        _lastFailedAttempt!.toIso8601String(), 'last_failed_attempt');
+    print(_failedAttempts.toString());
+    if (_failedAttempts >= 3) {
+      setState(() {
+        _isLoginBlocked = true;
+        _remainingTime = 180;
+      });
+      _startTimer();
+    }
+
+    _showErrorDialog("Error", message);
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remainingTime > 0) {
+        setState(() {
+          _remainingTime--;
+        });
+      } else {
+        setState(() {
+          _isLoginBlocked = false;
+          _failedAttempts = 0;
+        });
+        MyStorage.saveToken('0', 'failed_attempts');
+        timer.cancel();
+      }
+    });
   }
 
   bool _validateCredentials() {
@@ -114,22 +195,32 @@ class _LoginState extends State<Login> {
     return true;
   }
 
+  Future<bool> saveFCMToken() async {
+    try {
+      final response = await MyApi.postRequest(
+        endpoint: 'notification/saveFCM',
+        body: {
+          'token': await MyStorage.yourFCM(),
+          'userId': await MyStorage.getToken(MyTokens.userId),
+        },
+        headers: {
+          'Authorization':
+              'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> _handleSuccessfulLogin(Map<String, dynamic> response) async {
     await MyStorage.saveToken(response['refresh'], MyTokens.refreshToken);
     await MyStorage.saveToken(response['access'], MyTokens.accessToken);
     await MyStorage.saveToken(response['userid'].toString(), MyTokens.userId);
 
-    await MyApi.postRequest(
-      endpoint: 'notification/saveFCM',
-      body: {
-        'token': await MyStorage.yourFCM(),
-        'userId': await MyStorage.getToken(MyTokens.userId),
-      },
-      headers: {
-        'Authorization':
-            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
-      },
-    );
+    await saveFCMToken();
 
     if (mounted) {
       Navigator.pushNamedAndRemoveUntil(
@@ -163,14 +254,6 @@ class _LoginState extends State<Login> {
       }
     } catch (e) {
       _showErrorDialog("Error", "Google sign-in failed");
-    }
-  }
-
-  Future<void> _handleFacebookSignIn() async {
-    try {
-      await AuthService().signInWithFacebook();
-    } catch (e) {
-      _showErrorDialog("Error", "Facebook sign-in failed");
     }
   }
 
@@ -219,8 +302,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           if (UImanagement.headerHeight > 0)
@@ -249,26 +334,35 @@ class _LoginState extends State<Login> {
                           valueController: _emailController,
                         ),
                         MyTextBox(
-                          prefixIcon: FontAwesomeIcons.lock,
-                          focusNode: _passwordFocus,
-                          onFieldSubmitted: (_) => _passwordFocus.unfocus(),
-                          hint: "Enter Password",
-                          isPassword: true,
-                          valueController: _passwordController,
-                        ),
+                            prefixIcon: FontAwesomeIcons.lock,
+                            focusNode: _passwordFocus,
+                            onFieldSubmitted: (_) => _passwordFocus.unfocus(),
+                            hint: "Enter Password",
+                            isPassword: true,
+                            valueController: _passwordController),
+                        if (_isLoginBlocked)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: Text(
+                              "Too many failed attempts. Please try again in ${_remainingTime ~/ 60}:${(_remainingTime % 60).toString().padLeft(2, '0')}",
+                              style: TextStyle(color: colors.red),
+                            ),
+                          ),
                         SizedBox(
                           width: Screen.width(context) * 0.9,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               InkWell(
-                                onTap: _navigateToForgotPassword,
+                                onTap: _isLoginBlocked
+                                    ? null
+                                    : _navigateToForgotPassword,
                                 child: Text(
                                   "Forgot Password?",
                                   style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.013,
                                     fontWeight: FontWeight.w400,
-                                    color: MyColors.red,
+                                    color: colors.red,
                                   ),
                                 ),
                               ),
@@ -278,11 +372,13 @@ class _LoginState extends State<Login> {
                         SizedBox(height: Screen.height(context) * 0.03),
                         ColoredButton(
                           text: "Login",
-                          onPressed: _isLoading ? null : _handleLogin,
+                          onPressed: _isLoading || _isLoginBlocked
+                              ? null
+                              : _handleLogin,
                         ),
                         BorderButton(
                           text: "Signup",
-                          onPressed: _navigateToSignup,
+                          onPressed: _isLoginBlocked ? null : _navigateToSignup,
                         ),
                         SizedBox(
                           height: Screen.height(context) * 0.05,
@@ -292,14 +388,16 @@ class _LoginState extends State<Login> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconedButton(
-                                onPressed: _handleGoogleSignIn,
+                                onPressed: _isLoginBlocked
+                                    ? null
+                                    : _handleGoogleSignIn,
                                 icon: MyIcons.google,
                               ),
-                              SizedBox(width: Screen.width(context) * 0.05),
-                              IconedButton(
-                                onPressed: _handleFacebookSignIn,
-                                icon: MyIcons.facebook,
-                              ),
+                              // SizedBox(width: Screen.width(context) * 0.05),
+                              // IconedButton(
+                              //   onPressed: _handleFacebookSignIn,
+                              //   icon: MyIcons.facebook,
+                              // ),
                             ])
                       ],
                     ),
@@ -318,4 +416,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-

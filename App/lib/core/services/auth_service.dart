@@ -12,22 +12,15 @@ class AuthService {
 
   Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      // Trigger Google Sign-In
       await googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) return {};
-
-      // Obtain authentication details from Google
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-
-      // Create credential for Firebase
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
-      // Sign in to Firebase
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;

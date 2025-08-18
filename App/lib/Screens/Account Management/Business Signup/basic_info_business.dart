@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/providers/business_signup_provider.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
@@ -46,55 +47,66 @@ class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: SizedBox(
+            child: Container(
+              constraints: BoxConstraints(minHeight: Screen.height(context)),
               width: Screen.width(context),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    height: (Screen.height(context) * 0.05) +
-                        UImanagement.headerHeight,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Headersecondary(
+                        heading: 'Sign Up',
+                        para:
+                            'Unlock Success with Just One Click - Join Our Community Today!',
+                        image: MyImages.businessSignup,
+                      ),
+                      SizedBox(height: (Screen.height(context) * 0.05)),
+                      Consumer<BusinessSignupProvider>(
+                        builder: (context, provider, child) {
+                          return Column(
+                            children: [
+                              MyTextBox(
+                                prefixIcon: FontAwesomeIcons.building,
+                                hint: 'Enter Business Name',
+                                focusNode: provider.profileNameFocusNode,
+                                valueController: provider.profileNameController,
+                                onFieldSubmitted: (_) {
+                                  FocusScope.of(context).unfocus();
+                                },
+                              ),
+                              MyTextBox(
+                                prefixIcon: FontAwesomeIcons.addressCard,
+                                hint: 'Enter CNIC Number',
+                                focusNode: provider.cnicFocusNode,
+                                isNum: true,
+                                valueController: provider.cnicController,
+                                onFieldSubmitted: (_) {
+                                  FocusScope.of(context).requestFocus(
+                                      provider.profileNameFocusNode);
+                                },
+                              ),
+                              ColoredButton(
+                                onPressed: () {
+                                  provider.validateAndSave(context);
+                                },
+                                text: 'Continue',
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  Consumer<BusinessSignupProvider>(
-                    builder: (context, provider, child) {
-                      return Column(
-                        children: [
-                          MyTextBox(
-                            prefixIcon: FontAwesomeIcons.building,
-                            hint: 'Enter Business Name',
-                            focusNode: provider.profileNameFocusNode,
-                            valueController: provider.profileNameController,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context).unfocus();
-                            },
-                          ),
-                          MyTextBox(
-                            prefixIcon: FontAwesomeIcons.addressCard,
-                            hint: 'Enter CNIC Number',
-                            focusNode: provider.cnicFocusNode,
-                            isNum: true,
-                            valueController: provider.cnicController,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(provider.profileNameFocusNode);
-                            },
-                          ),
-                          ColoredButton(
-                            onPressed: () {
-                              provider.validateAndSave(context);
-                            },
-                            text: 'Continue',
-                          ),
-                          ProgressBar(progress: 1),
-                        ],
-                      );
-                    },
-                  ),
+                  ProgressBar(progress: 1),
                 ],
               ),
             ),
@@ -103,10 +115,6 @@ class _BusinessSignupBasicInfoState extends State<BusinessSignupBasicInfo> {
             top: 0,
             child: Header(
               key: headerKey,
-              heading: 'Sign Up',
-              para:
-                  'Unlock Success with Just One Click - Join Our Community Today!',
-              image: MyImages.businessSignup,
             ),
           ),
         ],

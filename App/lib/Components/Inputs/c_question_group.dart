@@ -22,7 +22,7 @@ class QuestionGroup extends StatelessWidget {
           child: Text(
             heading,
             style: GoogleFonts.roboto(
-                color: MyColors.yellow,
+                color: AppColors(context).yellow,
                 fontWeight: FontWeight.w500,
                 fontSize: Screen.max(context) * 0.02),
           ),

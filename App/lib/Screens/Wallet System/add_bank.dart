@@ -40,8 +40,10 @@ class _AddBankState extends State<AddBank> {
       callback: _updateHeaderHeight,
     );
 
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -57,7 +59,7 @@ class _AddBankState extends State<AddBank> {
                     width: Screen.width(context) * 0.9,
                     padding: EdgeInsets.all(Screen.max(context) * 0.03),
                     decoration: BoxDecoration(
-                      color: MyColors.darkLighter,
+                      color: colors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -68,7 +70,7 @@ class _AddBankState extends State<AddBank> {
                           style: GoogleFonts.roboto(
                             fontSize: Screen.max(context) * 0.025,
                             fontWeight: FontWeight.w700,
-                            color: MyColors.red,
+                            color: colors.red,
                           ),
                         ),
                         SizedBox(height: Screen.max(context) * 0.03),
@@ -126,7 +128,20 @@ class _AddBankState extends State<AddBank> {
                           child: ColoredButton(
                             text: "Add Bank Account",
                             onPressed: () async {
-                              // Handle bank account submission
+                              if (selectedBank == null ||
+                                  accountNumberController.text.isEmpty ||
+                                  ibanController.text.isEmpty ||
+                                  accountNameController.text.isEmpty) {
+                                MyScaffold(text: 'Please fill all the details')
+                                    .show(context);
+                                return;
+                              }
+                              if (ibanController.text.length != 24) {
+                                MyScaffold(text: 'Invalid IBAN Number')
+                                    .show(context);
+                                return;
+                              }
+
                               final response = await MyApi.postRequest(
                                   endpoint: 'Payments/addBank/',
                                   body: {

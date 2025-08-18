@@ -15,6 +15,8 @@ class IconedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(
@@ -25,7 +27,7 @@ class IconedButton extends StatelessWidget {
           height:
               Screen.width(context) * 0.15, // Same as width for perfect circle
           decoration: BoxDecoration(
-            color: MyColors.ligthDark,
+            color: colors.lightDark,
             shape: BoxShape.circle, // Makes it a perfect circle
             boxShadow: [
               BoxShadow(

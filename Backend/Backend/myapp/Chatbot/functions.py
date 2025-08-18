@@ -1,12 +1,23 @@
-import sqlite3
 from typing import Dict, List, Optional
+from django.db.models import Q
+from ..models.listing_types_models import (
+    Venue,
+    Caterers,
+    Decorators,
+    CarRenters,
+    PhotographyPlaces,
+    Parlors,
+    Salons,
+    Photographers,
+)
+from ..models.user_models import User
+import random
 
+from ..models.event_models import Events
+from django.utils import timezone
 
-def get_db_connection():
-    """Helper function to create database connection"""
-    return sqlite3.connect("listings.db", check_same_thread=False)
+from ..models.listing_models import Listing
 
-# Function definitions that will be exposed to the assistant
 def search_services(
     location: Optional[str] = None,
     min_capacity: Optional[int] = None,
@@ -35,227 +46,270 @@ def search_services(
     has_salon: Optional[bool] = None,
     has_portfolio: Optional[bool] = None,
 ) -> List[Dict]:
-    """Search for services based on criteria provided."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    query = """
-    SELECT * FROM listings 
-    WHERE 1=1
-    """
-    params = []
-
-    if listing_type:
-        query += " AND Type = ?"
-        params.append(listing_type)
-
+    """Search for services based on criteria provided using Django ORM."""
+    # Start with base queryset
+    queryset = Listing.objects.filter(status='active')
+    
+    # Apply general filters that apply to all listings
     if location:
-        query += " AND Location LIKE ?"
-        params.append(f"%{location}%")
-
-    if min_capacity:
-        query += " AND [Guest Min Allowed] <= ?"
-        params.append(min_capacity)
-
-    if max_capacity:
-        query += " AND [Guest Max Allowed] >= ?"
-        params.append(max_capacity)
-
+        queryset = queryset.filter(location__icontains=location)
     if min_price:
-        query += " AND [Price Min] >= ?"
-        params.append(min_price)
-
+        queryset = queryset.filter(priceMin__gte=min_price)
     if max_price:
-        query += " AND [Price Max] <= ?"
-        params.append(max_price)
-
-    if venue_type:
-        query += " AND [Venue Type] LIKE ?"
-        params.append(f"%{venue_type}%")
-
-    if catering:
-        query += " AND [Catering] LIKE ?"
-        params.append(f"%{catering}%")
-
-    if name:
-        query += " AND Name LIKE ?"
-        params.append(f"%{name}%")
-
-    if venue_staff:
-        query += " AND [Venue Staff] LIKE ?"
-        params.append(f"%{venue_staff}%")
-
+        queryset = queryset.filter(priceMax__lte=max_price)
     if basic_price:
-        query += " AND [Basic Price] <= ?"
-        params.append(basic_price)
-
+        queryset = queryset.filter(basicPrice__lte=basic_price)
+    if name:
+        queryset = queryset.filter(name__icontains=name)
+    if listing_type:
+        queryset = queryset.filter(type=listing_type)
     if owner_id:
-        query += " AND [Owner ID] = ?"
-        params.append(owner_id)
-
+        queryset = queryset.filter(ownerID=owner_id)
     if freelancer_id:
-        query += " AND [Freelancer ID] = ?"
-        params.append(freelancer_id)
-
-    if caterer_service_type:
-        query += " AND [Caterer Service Type] LIKE ?"
-        params.append(f"%{caterer_service_type}%")
-
-    if catering_options:
-        query += " AND [Catering Options] LIKE ?"
-        params.append(f"%{catering_options}%")
-
-    if caterer_staff:
-        query += " AND [Caterer Staff] LIKE ?"
-        params.append(f"%{caterer_staff}%")
-
-    if caterer_expertise:
-        query += " AND [Caterer Expertise] LIKE ?"
-        params.append(f"%{caterer_expertise}%")
-
-    if car_rental_service_type:
-        query += " AND [Car Rental Service Type] LIKE ?"
-        params.append(f"%{car_rental_service_type}%")
-
-    if decorator_type:
-        query += " AND [Decorator Type] LIKE ?"
-        params.append(f"%{decorator_type}%")
-
-    if decorator_catering:
-        query += " AND [Decorator Catering] LIKE ?"
-        params.append(f"%{decorator_catering}%")
-
-    if decorator_staff:
-        query += " AND [Decorator Staff] LIKE ?"
-        params.append(f"%{decorator_staff}%")
-
-    if photography_place_type:
-        query += " AND [Photography Place Type] LIKE ?"
-        params.append(f"%{photography_place_type}%")
-
-    if has_parlor is not None:
-        query += " AND [Parlor Exists] = ?"
-        params.append("Yes" if has_parlor else "No")
-
-    if has_salon is not None:
-        query += " AND [Salon Exists] = ?"
-        params.append("Yes" if has_salon else "No")
-
-    if has_portfolio is not None and has_portfolio:
-        query += " AND [Photographer Portfolio] IS NOT NULL AND [Photographer Portfolio] != ''"
-
-    print(">> query", query)
-    print(">> params", params)
-
-    cursor.execute(query, params)
-    print('Cursor: ',cursor)
-    columns = [description[0] for description in cursor.description]
-    print('columns: ',columns)
+        queryset = queryset.filter(freelancerID=freelancer_id)
+    
+    # Now handle type-specific filters
     results = []
-
-    for row in cursor.fetchall():
-        service_dict = dict(zip(columns, row))
-        result = {
-            "id": service_dict["Listing ID"],
-            "name": service_dict["Name"],
-            "location": service_dict["Location"],
+    for listing in queryset:
+        include = True
+        listing_data = {
+            "id": listing.id,
+            "name": listing.name,
+            "location": listing.location,
             "price_range": {
-                "min": service_dict["Price Min"],
-                "max": service_dict["Price Max"],
+                "min": listing.priceMin,
+                "max": listing.priceMax,
             },
-            "basic_price": service_dict["Basic Price"],
-            "description": service_dict["Description"],
-            "type": service_dict["Type"],
+            "basic_price": listing.basicPrice,
+            "description": listing.description,
+            "type": listing.type,
         }
-
-        # Add type-specific fields
-        if service_dict["Type"] == "Venue":
-            result.update(
-                {
-                    "venue_type": service_dict["Venue Type"],
-                    "catering": service_dict["Catering"],
-                    "staff": service_dict["Venue Staff"],
-                    "capacity": {
-                        "min": service_dict["Guest Min Allowed"],
-                        "max": service_dict["Guest Max Allowed"],
-                    },
-                }
-            )
-        elif service_dict["Type"] == "Caterer":
-            result.update(
-                {
-                    "caterer_service_type": service_dict["Caterer Service Type"],
-                    "catering_options": service_dict["Catering Options"],
-                    "staff": service_dict["Caterer Staff"],
-                    "expertise": service_dict["Caterer Expertise"],
-                }
-            )
-        elif service_dict["Type"] == "Decorator":
-            result.update(
-                {
-                    "decorator_type": service_dict["Decorator Type"],
-                    "catering": service_dict["Decorator Catering"],
-                    "staff": service_dict["Decorator Staff"],
-                }
-            )
-        elif service_dict["Type"] == "Car Renter":
-            result.update(
-                {"car_rental_service_type": service_dict["Car Rental Service Type"]}
-            )
-        elif service_dict["Type"] == "Photographer":
-            result.update({"portfolio": service_dict["Photographer Portfolio"]})
-        elif service_dict["Type"] == "Photography Place":
-            result.update({"place_type": service_dict["Photography Place Type"]})
-        elif service_dict["Type"] == "Parlour":
-            result.update({"parlor_exists": service_dict["Parlor Exists"]})
-        elif service_dict["Type"] == "Salon":
-            result.update({"salon_exists": service_dict["Salon Exists"]})
-
-        results.append(result)
-
-    conn.close()
-    print("*" * 50)
-    print(results)
-    print("*" * 50)
+        
+        # Handle each listing type with its specific filters
+        if listing.type == "Venue":
+            try:
+                venue = Venue.objects.get(listingId=listing)
+                if min_capacity and venue.guestminAllowed > min_capacity:
+                    include = False
+                if max_capacity and venue.guestmaxAllowed < max_capacity:
+                    include = False
+                if venue_type and venue_type.lower() not in venue.venueType.lower():
+                    include = False
+                if catering and catering.lower() not in venue.catering.lower():
+                    include = False
+                if venue_staff and venue_staff.lower() not in venue.staff.lower():
+                    include = False
+                
+                if include:
+                    listing_data.update({
+                        "venue_type": venue.venueType,
+                        "catering": venue.catering,
+                        "staff": venue.staff,
+                        "capacity": {
+                            "min": venue.guestminAllowed,
+                            "max": venue.guestmaxAllowed,
+                        },
+                    })
+            except Venue.DoesNotExist:
+                include = False
+                
+        elif listing.type == "Caterer":
+            try:
+                caterer = Caterers.objects.get(listingId=listing)
+                if caterer_service_type and caterer_service_type.lower() not in caterer.serviceType.lower():
+                    include = False
+                if catering_options and catering_options.lower() not in caterer.cateringOptions.lower():
+                    include = False
+                if caterer_staff and caterer_staff.lower() not in caterer.staff.lower():
+                    include = False
+                if caterer_expertise and caterer_expertise.lower() not in caterer.expertise.lower():
+                    include = False
+                
+                if include:
+                    listing_data.update({
+                        "caterer_service_type": caterer.serviceType,
+                        "catering_options": caterer.cateringOptions,
+                        "staff": caterer.staff,
+                        "expertise": caterer.expertise,
+                    })
+            except Caterers.DoesNotExist:
+                include = False
+                
+        elif listing.type == "Decorator":
+            try:
+                decorator = Decorators.objects.get(listingId=listing)
+                if decorator_type and decorator_type.lower() not in decorator.decorType.lower():
+                    include = False
+                if decorator_catering and decorator_catering.lower() not in decorator.catering.lower():
+                    include = False
+                if decorator_staff and decorator_staff.lower() not in decorator.staff.lower():
+                    include = False
+                
+                if include:
+                    listing_data.update({
+                        "decorator_type": decorator.decorType,
+                        "catering": decorator.catering,
+                        "staff": decorator.staff,
+                    })
+            except Decorators.DoesNotExist:
+                include = False
+                
+        elif listing.type == "Car Renter":
+            try:
+                car_renter = CarRenters.objects.get(listingId=listing)
+                if car_rental_service_type and car_rental_service_type.lower() not in car_renter.serviceType.lower():
+                    include = False
+                
+                if include:
+                    listing_data.update({
+                        "car_rental_service_type": car_renter.serviceType,
+                    })
+            except CarRenters.DoesNotExist:
+                include = False
+                
+        elif listing.type == "Photographer":
+            try:
+                photographer = Photographers.objects.get(listingId=listing)
+                if has_portfolio and not photographer.portfolioLink:
+                    include = False
+                
+                if include:
+                    listing_data.update({
+                        "portfolio": photographer.portfolioLink,
+                    })
+            except Photographers.DoesNotExist:
+                include = False
+                
+        elif listing.type == "Photography Place":
+            try:
+                photo_place = PhotographyPlaces.objects.get(listingId=listing)
+                if photography_place_type and photography_place_type.lower() not in photo_place.type.lower():
+                    include = False
+                
+                if include:
+                    listing_data.update({
+                        "place_type": photo_place.type,
+                    })
+            except PhotographyPlaces.DoesNotExist:
+                include = False
+                
+        elif listing.type == "Parlour":
+            if has_parlor is not None:
+                include = has_parlor
+                
+            if include:
+                listing_data.update({
+                    "parlor_exists": True,
+                })
+                
+        elif listing.type == "Salon":
+            if has_salon is not None:
+                include = has_salon
+                
+            if include:
+                listing_data.update({
+                    "salon_exists": True,
+                })
+        
+        if include:
+            results.append(listing_data)
+    
     return results
 
-
-def get_service_details(venue_id: str) -> Dict:
-    """Get detailed information about a specific service."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    query = "SELECT * FROM listings WHERE [Listing ID] = ?"
-    cursor.execute(query, (venue_id,))
-
-    columns = [description[0] for description in cursor.description]
-    row = cursor.fetchone()
-
-    if not row:
-        conn.close()
-        return {"error": "Venue not found"}
-
-    venue_dict = dict(zip(columns, row))
+def get_service_details(listing_id: str) -> Dict:
+    """Get detailed information about a specific service using Django ORM."""
+    try:
+        listing = Listing.objects.get(id=listing_id)
+    except Listing.DoesNotExist:
+        return {"error": "Service not found"}
+    
     result = {
-        "id": venue_dict["Listing ID"],
-        "name": venue_dict["Name"],
-        "location": venue_dict["Location"],
-        "capacity": {
-            "min": venue_dict["Guest Min Allowed"],
-            "max": venue_dict["Guest Max Allowed"],
-        },
-        "price_range": {"min": venue_dict["Price Min"], "max": venue_dict["Price Max"]},
-        "basic_price": venue_dict["Basic Price"],
-        "description": venue_dict["Description"],
-        "type": venue_dict["Type"],
-        "venue_type": venue_dict["Venue Type"],
-        "catering": venue_dict["Catering"],
-        "staff": venue_dict["Venue Staff"],
+        "id": listing.id,
+        "name": listing.name,
+        "location": listing.location,
+        "price_range": {"min": listing.priceMin, "max": listing.priceMax},
+        "basic_price": listing.basicPrice,
+        "description": listing.description,
+        "type": listing.type,
     }
-
-    conn.close()
+    
+    # Add type-specific details
+    if listing.type == "Venue":
+        try:
+            venue = Venue.objects.get(listingId=listing)
+            result.update({
+                "capacity": {
+                    "min": venue.guestminAllowed,
+                    "max": venue.guestmaxAllowed,
+                },
+                "venue_type": venue.venueType,
+                "catering": venue.catering,
+                "staff": venue.staff,
+            })
+        except Venue.DoesNotExist:
+            pass
+            
+    elif listing.type == "Caterer":
+        try:
+            caterer = Caterers.objects.get(listingId=listing)
+            result.update({
+                "caterer_service_type": caterer.serviceType,
+                "catering_options": caterer.cateringOptions,
+                "staff": caterer.staff,
+                "expertise": caterer.expertise,
+            })
+        except Caterers.DoesNotExist:
+            pass
+            
+    elif listing.type == "Decorator":
+        try:
+            decorator = Decorators.objects.get(listingId=listing)
+            result.update({
+                "decorator_type": decorator.decorType,
+                "catering": decorator.catering,
+                "staff": decorator.staff,
+            })
+        except Decorators.DoesNotExist:
+            pass
+            
+    elif listing.type == "Car Renter":
+        try:
+            car_renter = CarRenters.objects.get(listingId=listing)
+            result.update({
+                "car_rental_service_type": car_renter.serviceType,
+            })
+        except CarRenters.DoesNotExist:
+            pass
+            
+    elif listing.type == "Photographer":
+        try:
+            photographer = Photographers.objects.get(listingId=listing)
+            result.update({
+                "portfolio": photographer.portfolioLink,
+            })
+        except Photographers.DoesNotExist:
+            pass
+            
+    elif listing.type == "Photography Place":
+        try:
+            photo_place = PhotographyPlaces.objects.get(listingId=listing)
+            result.update({
+                "place_type": photo_place.type,
+            })
+        except PhotographyPlaces.DoesNotExist:
+            pass
+            
+    elif listing.type == "Parlour":
+        result.update({
+            "parlor_exists": True,
+        })
+        
+    elif listing.type == "Salon":
+        result.update({
+            "salon_exists": True,
+        })
+    
     return result
-
 
 def get_venue_recommendations(
     event_type: str,
@@ -263,116 +317,283 @@ def get_venue_recommendations(
     guest_count: int,
     budget_level: tuple,  # (min_price, max_price)
 ) -> List[Dict]:
-    """Get personalized venue recommendations based on event requirements."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    query = """
-    SELECT * FROM listings 
-    WHERE Type = 'Venue'
-    AND [Guest Min Allowed] <= ?
-    AND [Guest Max Allowed] >= ?
-    AND [Price Min] >= ?
-    AND [Price Max] <= ?
-    """
-
+    """Get personalized venue recommendations based on event requirements using Django ORM."""
+    # Start with base queryset
+    queryset = Listing.objects.filter(
+        type='Venue',
+        status='active'
+    )
+    
+    # Apply basic filters
     if location:
-        query += " AND Location LIKE ?"
-        params = [
-            guest_count,
-            guest_count,
-            budget_level[0],
-            budget_level[1],
-            f"%{location}%",
-        ]
-    else:
-        params = [guest_count, guest_count, budget_level[0], budget_level[1]]
-
-    cursor.execute(query, params)
-    columns = [description[0] for description in cursor.description]
-    results = []
-
-    for row in cursor.fetchall():
-        venue_dict = dict(zip(columns, row))
-
-        # Calculate recommendation score
-        score = 0
-
-        # Score based on capacity match
-        capacity_ratio = venue_dict["Guest Max Allowed"] / guest_count
-        if 1.0 <= capacity_ratio <= 1.5:
-            score += 30
-        elif 1.5 < capacity_ratio <= 2.5:
-            score += 20
-        elif capacity_ratio > 2.5:
-            score += 10
-        else:
-            score += max(0, int(capacity_ratio * 30))
-
-        # Score based on price match
-        price_mid = (venue_dict["Price Min"] + venue_dict["Price Max"]) / 2
-        budget_mid = (budget_level[0] + budget_level[1]) / 2
-        price_ratio = min(price_mid, budget_mid) / max(price_mid, budget_mid)
-        score += int(price_ratio * 30)
-
-        result = {
-            "id": venue_dict["Listing ID"],
-            "name": venue_dict["Name"],
-            "location": venue_dict["Location"],
-            "capacity": {
-                "min": venue_dict["Guest Min Allowed"],
-                "max": venue_dict["Guest Max Allowed"],
-            },
-            "price_range": {
-                "min": venue_dict["Price Min"],
-                "max": venue_dict["Price Max"],
-            },
-            "description": venue_dict["Description"],
-            "type": venue_dict["Venue Type"],
-            "catering": venue_dict["Catering"],
-            "staff": venue_dict["Venue Staff"],
-            "recommendation_score": score,
-        }
-
-        results.append(result)
-
-    conn.close()
-
+        queryset = queryset.filter(location__icontains=location)
+    
+    # We'll filter venues in Python to properly calculate recommendation scores
+    venues = []
+    for listing in queryset:
+        try:
+            venue = Venue.objects.get(listingId=listing)
+            
+            # Check capacity and budget constraints
+            if (venue.guestminAllowed > guest_count or 
+                venue.guestmaxAllowed < guest_count or
+                listing.priceMin > budget_level[1] or 
+                listing.priceMax < budget_level[0]):
+                continue
+                
+            # Calculate recommendation score
+            score = 0
+            
+            # Score based on capacity match
+            capacity_ratio = venue.guestmaxAllowed / guest_count
+            if 1.0 <= capacity_ratio <= 1.5:
+                score += 30
+            elif 1.5 < capacity_ratio <= 2.5:
+                score += 20
+            elif capacity_ratio > 2.5:
+                score += 10
+            else:
+                score += max(0, int(capacity_ratio * 30))
+                
+            # Score based on price match
+            price_mid = (listing.priceMin + listing.priceMax) / 2
+            budget_mid = (budget_level[0] + budget_level[1]) / 2
+            price_ratio = min(price_mid, budget_mid) / max(price_mid, budget_mid)
+            score += int(price_ratio * 30)
+            
+            # Add event type matching if needed
+            # (You might want to add this based on your business logic)
+            
+            venue_data = {
+                "id": listing.id,
+                "name": listing.name,
+                "location": listing.location,
+                "capacity": {
+                    "min": venue.guestminAllowed,
+                    "max": venue.guestmaxAllowed,
+                },
+                "price_range": {
+                    "min": listing.priceMin,
+                    "max": listing.priceMax,
+                },
+                "description": listing.description,
+                "type": venue.venueType,
+                "catering": venue.catering,
+                "staff": venue.staff,
+                "recommendation_score": score,
+            }
+            
+            venues.append(venue_data)
+        except Venue.DoesNotExist:
+            continue
+    
     # Sort by recommendation score
-    results.sort(key=lambda x: x["recommendation_score"], reverse=True)
-    return results
+    venues.sort(key=lambda x: x["recommendation_score"], reverse=True)
+    return venues
 
-
-def initiate_booking(
-    venue_id: str,
-    date: str,
-    customer_name: str,
-    customer_email: str,
-    customer_phone: str,
+def create_event(
+    user_id: str,
+    event_name: str,
     event_type: str,
-    estimated_guests: int,
+    event_date: str,
+    main_location: str,
+    total_guests: int,
+    total_budget: int,
+    functions: List[Dict],
+    customer_name: str,
     special_requests: Optional[str] = None,
 ) -> Dict:
-    """Initiate a booking request for a venue."""
-    # If we need to have do availibility check
-    # availability = check_availability(venue_id, date)
-
-    # if not availability["available"]:
-    #     return {
-    #         "booking_initiated": False,
-    #         "reason": "Venue not available on requested date",
-    #         "suggested_alternatives": availability.get("suggested_alternatives", []),
-    #     }
-
-    # booking_id = f"BK{datetime.now().strftime('%Y%m%d%H%M%S')}"
-
+    """
+    Initiate a booking request with all collected event details.
+    
+    Args:
+        user_id: ID of the user making the booking
+        event_name: Name of the overall event
+        event_type: Type of the main event
+        event_date: Main event date
+        main_location: Primary location for the event
+        total_guests: Total expected guests across all functions
+        total_budget: Total budget for the entire event
+        functions: List of function details including:
+            - function_name: Name of the function
+            - function_type: Type of function
+            - function_date: Date of the function
+            - function_location: Location of the function
+            - function_budget: Budget allocated for this function
+            - selected_services: List of services selected for this function
+        customer_name: Name of the primary contact
+        customer_email: Email of the primary contact
+        customer_phone: Phone number of the primary contact
+        special_requests: Any special requests or notes
+    
+    Returns:
+        Dictionary with booking confirmation details
+    """
+    # Generate a booking ID (you might want to use a more robust method)
+    booking_id = f"BK-{event_date.replace('-', '')}-{user_id[:4]}"
+    
+    # Prepare the booking summary
+    booking_summary = {
+        "booking_id": booking_id,
+        "event_name": event_name,
+        "event_type": event_type,
+        "event_date": event_date,
+        "main_location": main_location,
+        "total_guests": total_guests,
+        "total_budget": total_budget,
+        "customer_details": {
+            "name": customer_name,
+        },
+        "functions": [],
+        "special_requests": special_requests,
+        "status": "pending_confirmation",
+        "created_at": str(timezone.now()),
+    }
+    
+    # Add function details
+    for function in functions:
+        function_details = {
+            "function_name": function.get('function_name'),
+            "function_type": function.get('function_type'),
+            "function_date": function.get('function_date'),
+            "function_location": function.get('function_location'),
+            "function_budget": function.get('function_budget'),
+            "services": []
+        }
+        
+        # Add service details for each function
+        for service in function.get('selected_services', []):
+            service_details = {
+                "service_type": service.get('type'),
+                "service_id": service.get('id'),
+                "service_name": service.get('name'),
+                "price_range": service.get('price_range'),
+                "location": service.get('location'),
+            }
+            function_details['services'].append(service_details)
+        
+        booking_summary['functions'].append(function_details)
+    
+    # In a real implementation, you would save this to your database here
+    # For example:
+    # booking = Booking.objects.create(
+    #     user_id=user_id,
+    #     booking_id=booking_id,
+    #     details=booking_summary,
+    #     status='pending_confirmation'
+    # )
+    
     return {
         "booking_initiated": True,
-        "venue_id": venue_id,
-        # "booking_id": booking_id,
-        # "venue_name": availability["venue_name"],
-        "date": date,
-        "customer_name": customer_name,
-        "next_steps": "Our team will contact you within 24 hours to confirm your booking and discuss details.",
-        "confirmation_sent_to": customer_email,
+        "booking_id": booking_id,
+        "booking_summary": booking_summary,
+        "next_steps": (
+            "Thanks for Creating the Event from Us "
+            "Let me know if you want to create another Event."
+        ),
     }
+
+def select_event_functions(event_type: str, budget: int, wedding_side: str = None, user_id: str = None, event_functions_map: dict = None) -> list:
+    """
+    Selects functions for an event based on event type, total budget, priority, and wedding side (if applicable).
+    Distributes any leftover budget after minimums to the selected functions.
+    """
+    if event_functions_map is None:
+        # Ideally, pass your event_functions mapping from the chatbot init or config
+        raise ValueError("event_functions_map must be provided")
+    
+    # Get the function dictionary for this event type
+    event_functions = event_functions_map.get(event_type, {})
+    if event_type == "Wedding" and wedding_side:
+        # Only include functions matching the side or with no 'side' key
+        event_functions = {k: v for k, v in event_functions.items()
+                           if v.get('side', '').upper() in [wedding_side[0].upper()] or 'side' not in v}
+
+    # Prepare and sort by priority
+    sorted_funcs = sorted(event_functions.items(), key=lambda x: x[1]['priority'])
+
+    selected = []
+    used_budget = 0
+
+    # Step 1: Select functions by min_budget until budget runs out
+    for fname, fdata in sorted_funcs:
+        min_bud = fdata.get("min_budget", 0)
+        if used_budget + min_bud <= budget:
+            selected.append({
+                "name": f"{User.objects.get(id=user_id)} {fname}" if user_id else fname,
+                "budget": min_bud,
+                "type": fname,
+                "priority": fdata.get("priority"),
+            })
+            used_budget += min_bud
+
+    # Step 2: Distribute leftover budget
+    leftover = budget - used_budget
+    if selected and leftover > 0:
+        # Distribute equally (could use proportional to min_budget for more fairness)
+        add_per_function = leftover // len(selected)
+        for func in selected:
+            func["budget"] += add_per_function
+        # Any remaining (due to integer division), add to first function
+        selected[0]["budget"] += leftover % len(selected)
+
+    return selected
+
+def calculate_guest_count( event_size: str, specified_guests: int = None) -> Dict[str, int]:
+        """
+        Calculate the min and max number of guests based on the event size and user input.
+        """
+        if specified_guests:
+            # If the user specifies the guest count
+            guests_min = specified_guests - 50
+            guests_max = specified_guests + 50
+        else:
+            # If the user doesn't specify guests, use event size to determine guest count
+            if event_size == "Big Event":
+                # Calculate average of top 5 events with the most guests (For simplicity, we'll use random values here)
+                max_guests = random.randint(300, 500)
+                guests_min = max_guests - 50
+                guests_max = max_guests + 50
+            elif event_size == "Small Event":
+                # Calculate average of 5 events with the least guests
+                min_guests = random.randint(50, 100)  # Replace with actual data
+                guests_min = min_guests - 50
+                guests_max = min_guests + 50
+            else:
+                # Average event size (we can use median values)
+                avg_guests = random.randint(150, 300)  # Replace with actual data
+                guests_min = avg_guests - 50
+                guests_max = avg_guests + 50
+
+        return {"guestsmin": guests_min, "guestsmax": guests_max}
+
+def collect_event_details( user_id: str, event_type: str, budget: str, event_size: str = "Average", specified_guests: str = None, location: str = "Karachi") -> Dict:
+    """
+    Collect and return event details based on user inputs and calculated values.
+    """
+
+
+    budget = int(budget.replace("k", "000").replace('K','000').replace(',','').replace('lakh','00000').replace('L','00000'))
+    specified_guests = int(specified_guests)
+
+    user_id = int(user_id.replace('user',''))
+    print('userID: '+ str(user_id))
+    print('userID: '+ str(User.objects.get(id=user_id).firstName))
+    # Step 1: Collect the basic event details from the user
+    event_name = f"{User.objects.get(id=user_id).firstName} {event_type}"
+    description = f"This is a Basic Event of {event_type} for the {user_id}"
+    # Step 2: Calculate guests based on event size and user input
+    guest_counts = calculate_guest_count(event_size, specified_guests)
+    
+    # Step 3: Return the collected event details
+    event_details = {
+        "event_name": event_name,
+        "type": event_type,
+        "date": None,  # As the date is not collected yet
+        "location": location,
+        "description": description,
+        "budget": budget,
+        "guestsmin": guest_counts["guestsmin"],
+        "guestsmax": guest_counts["guestsmax"]
+    }
+    return event_details

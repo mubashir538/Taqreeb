@@ -11,6 +11,8 @@ class ChecklistItemsAdder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Center(
       child: Container(
           margin: EdgeInsets.all(Screen.max(context) * 0.01),
@@ -21,7 +23,7 @@ class ChecklistItemsAdder extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                color: MyColors.whiteDarker,
+                color: colors.whiteDarker,
                 width: 1.5,
               ),
               borderRadius: BorderRadius.circular(50)),
@@ -33,11 +35,11 @@ class ChecklistItemsAdder extends StatelessWidget {
                   style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w500,
-                      color: MyColors.whiteDarker)),
+                      color: colors.whiteDarker)),
               add
                   ? Icon(
                       FontAwesomeIcons.plus,
-                      color: MyColors.whiteDarker,
+                      color: colors.whiteDarker,
                     )
                   : Container(),
             ],

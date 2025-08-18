@@ -8,11 +8,9 @@ import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Cards/c_listing_card.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/core/utils/images.dart';
 
 class FunctionDetail extends StatefulWidget {
   const FunctionDetail({super.key});
@@ -30,7 +28,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
   int _functionId = 0;
   int _eventId = 0;
   String _eventName = '';
-  String _eventType = '';
   bool _isLoading = true;
   bool _dataFetched = false;
 
@@ -64,7 +61,6 @@ class _FunctionDetailState extends State<FunctionDetail> {
         _functionId = args['fid'];
         _eventName = args['event'];
         _eventId = args['eventid'];
-        _eventType = args['type'];
       });
       _fetchData();
     }
@@ -169,8 +165,10 @@ class _FunctionDetailState extends State<FunctionDetail> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -208,9 +206,11 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
       ),
     );
   }
@@ -266,6 +266,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
       {required String text,
       required IconData icon,
       required VoidCallback onTap}) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -274,7 +276,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
           Screen.max(context) * 0.02,
         ),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         width: Screen.width(context) * 0.8,
@@ -285,51 +287,39 @@ class _FunctionDetailState extends State<FunctionDetail> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(icon,
-                    color: MyColors.red, size: Screen.max(context) * 0.025),
+                    color: colors.red, size: Screen.max(context) * 0.025),
                 SizedBox(width: Screen.max(context) * 0.02),
                 Text(
                   text,
                   style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white),
+                      color: colors.white),
                 ),
               ],
             ),
             Icon(FontAwesomeIcons.chevronRight,
-                color: MyColors.whiteDarker, size: Screen.max(context) * 0.02),
+                color: colors.whiteDarker, size: Screen.max(context) * 0.02),
           ],
         ),
       ),
     );
   }
 
-  // Widget _buildEventHeader() {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
-  //     child: Text(
-  //       _eventName,
-  //       style: GoogleFonts.roboto(
-  //         fontSize: Screen.max(context) * 0.03,
-  //         fontWeight: FontWeight.w700,
-  //         color: MyColors.yellow,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildFunctionCard(
     Map<String, dynamic> function,
     List<String> headings,
     List<dynamic> values,
   ) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
       margin: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(16)),
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
       ),
       child: Column(
         children: [
@@ -341,6 +331,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   Widget _buildFunctionHeader(Map<String, dynamic> function) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(
@@ -351,7 +343,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
-        color: MyColors.red,
+        color: colors.red,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -362,7 +354,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.018,
               fontWeight: FontWeight.w400,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           Text(
@@ -370,7 +362,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.025,
               fontWeight: FontWeight.w700,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
         ],
@@ -379,10 +371,12 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   Widget _buildFunctionBody(List<String> headings, List<dynamic> values) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
@@ -399,6 +393,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   Widget _buildBudgetRow() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.only(
           bottom: Screen.max(context) * 0.005,
@@ -417,7 +413,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
                 _functionDetails['Fuctions']?['budget']?.toString() ?? ''),
             style: _buildTextStyle(
                 fontWeight: FontWeight.w600,
-                color: MyColors.white.withAlpha(200)),
+                color: colors.white.withAlpha(200)),
           ),
         ],
       ),
@@ -425,6 +421,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   List<Widget> _buildInfoRows(List<String> headings, List<dynamic> values) {
+    final colors = AppColors(context);
+
     return headings.map((heading) {
       return Container(
         margin: EdgeInsets.symmetric(
@@ -444,7 +442,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
               values[headings.indexOf(heading)],
               style: _buildTextStyle(
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white.withAlpha(200)),
+                  color: colors.white.withAlpha(200)),
             ),
           ],
         ),
@@ -453,6 +451,8 @@ class _FunctionDetailState extends State<FunctionDetail> {
   }
 
   List<Widget> _buildBookingList() {
+    final colors = AppColors(context);
+
     return _bookingList.map((booking) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,7 +464,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
               style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.w600,
-                color: MyColors.white,
+                color: colors.white,
               ),
             ),
           ),
@@ -487,7 +487,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     if (booking['pictures'] != null &&
         booking['pictures'].isNotEmpty &&
         booking['pictures'][0]['picturePath'] != " ") {
-      return '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${booking['pictures'][0]['picturePath']}';
+      return '${booking['pictures'][0]['picturePath']}';
     }
     return "https://picsum.photos/id/${DateTime.now().millisecondsSinceEpoch % 100}/600/300";
   }

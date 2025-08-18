@@ -32,12 +32,11 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
   @override
   void initState() {
     super.initState();
-    // Pre-fill user info if available
     _loadUserInfo();
   }
 
   Future<void> _loadUserInfo() async {
-    // You can implement this to pre-fill user info from storage
+    // Implement user info loading if needed
   }
 
   void _handleDateSelection(DateTime date, CartItem item) {
@@ -58,23 +57,39 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
   }
 
   bool _validateForm() {
-    // Add your validation logic here
-    return _nameController.text.isNotEmpty &&
+    // Validate all required fields
+    bool isValid = _nameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         _phoneController.text.isNotEmpty;
+
+    // Validate that listings have selected dates
+    bool hasListingDates = true;
+    for (var item in widget.cart.items) {
+      if (item.itemType == 'listing' &&
+          !_selectedDates.values.any((items) => items.contains(item))) {
+        hasListingDates = false;
+        break;
+      }
+    }
+
+    return isValid && hasListingDates;
   }
 
   Future<void> _proceedToPayment() async {
     if (!_validateForm()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
-      );
-      return;
-    }
+      String errorMessage = 'Please fill all required fields';
 
-    if (_selectedDates.isEmpty) {
+      // Check if listings have dates selected
+      for (var item in widget.cart.items) {
+        if (item.itemType == 'listing' &&
+            !_selectedDates.values.any((items) => items.contains(item))) {
+          errorMessage = 'Please select dates for all listings';
+          break;
+        }
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one date')),
+        SnackBar(content: Text(errorMessage)),
       );
       return;
     }
@@ -82,7 +97,6 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Prepare booking info
       final bookingInfo = {
         'customer_info': {
           'name': _nameController.text,
@@ -93,18 +107,22 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
         },
         'selected_dates':
             _selectedDates.keys.map((date) => date.toIso8601String()).toList(),
+        'selected_items': _selectedDates.entries
+            .map((entry) => {
+                  'date': entry.key.toIso8601String(),
+                  'items': entry.value.map((item) => item.id).toList(),
+                })
+            .toList(),
       };
 
-      // Navigate to order summary with the booking info
       context.pushNamedTransition(
-        routeName: '/OrderSummary',
-        type: PageTransitionType.rightToLeftWithFade,
-        duration: Duration(milliseconds: 300),
-        arguments: {
-          'cart': widget.cart,
-          'bookingInfo': bookingInfo,
-        },
-      );
+          routeName: '/OrderSummary',
+          type: PageTransitionType.rightToLeftWithFade,
+          duration: Duration(milliseconds: 300),
+          arguments: {
+            'cart': widget.cart,
+            'bookingInfo': bookingInfo,
+          });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
@@ -116,12 +134,14 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Booking Information'),
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.darkLighter,
+      backgroundColor: colors.darkLighter,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -129,14 +149,8 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Personal Information',
-                    style: GoogleFonts.roboto(
-                      color: MyColors.white,
-                      fontSize: Screen.max(context) * 0.025,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  // Personal Information Section
+                  _buildSectionTitle('Personal Information'),
                   SizedBox(height: Screen.height(context) * 0.02),
                   MyTextBox(
                     prefixIcon: FontAwesomeIcons.user,
@@ -163,26 +177,23 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
                     valueController: _idNumberController,
                   ),
                   SizedBox(height: Screen.height(context) * 0.03),
-                  Text(
-                    'Booking Dates',
-                    style: GoogleFonts.roboto(
-                      color: MyColors.white,
-                      fontSize: Screen.max(context) * 0.025,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+
+                  // Booking Dates Section (only for listings)
+                  if (widget.cart.items
+                      .any((item) => item.itemType == 'listing'))
+                    _buildSectionTitle('Booking Dates'),
                   SizedBox(height: Screen.height(context) * 0.02),
-                  ...widget.cart.items
-                      .map((item) => _buildItemDateSelector(item)),
+                  ...widget.cart.items.map((item) {
+                    if (item.itemType == 'listing') {
+                      return _buildItemDateSelector(item);
+                    } else {
+                      return _buildNonDateItem(item);
+                    }
+                  }),
+
+                  // Additional Notes Section
                   SizedBox(height: Screen.height(context) * 0.03),
-                  Text(
-                    'Additional Notes',
-                    style: GoogleFonts.roboto(
-                      color: MyColors.white,
-                      fontSize: Screen.max(context) * 0.025,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  _buildSectionTitle('Additional Notes'),
                   SizedBox(height: Screen.height(context) * 0.02),
                   MyTextBox(
                     prefixIcon: FontAwesomeIcons.noteSticky,
@@ -200,34 +211,79 @@ class _BookingInformationScreenState extends State<BookingInformationScreen> {
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    final colors = AppColors(context);
+    return Text(
+      title,
+      style: GoogleFonts.roboto(
+        color: colors.white,
+        fontSize: Screen.max(context) * 0.025,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Widget _buildItemDateSelector(CartItem item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          item.itemDetails['name'],
-          style: GoogleFonts.roboto(
-            color: MyColors.white,
-            fontSize: Screen.max(context) * 0.02,
+    final colors = AppColors(context);
+
+    return item.itemDetails['booked_dates'].length == 0
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.itemDetails['name'] ?? 'Unnamed Listing',
+                style: GoogleFonts.roboto(
+                  color: colors.white,
+                  fontSize: Screen.max(context) * 0.02,
+                ),
+              ),
+              SizedBox(height: Screen.height(context) * 0.01),
+              Container(
+                padding: EdgeInsets.all(Screen.width(context) * 0.03),
+                decoration: BoxDecoration(
+                  color: colors.dark,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: CalendarView(
+                  bookedDates: (item.itemDetails['booked_dates'] ?? [])
+                      .map((date) => DateTime.parse(date))
+                      .toList(),
+                  onDateSelected: (date) => _handleDateSelection(date, item),
+                  isSelectionMode: true,
+                ),
+              ),
+              SizedBox(height: Screen.height(context) * 0.02),
+            ],
+          );
+  }
+
+  Widget _buildNonDateItem(CartItem item) {
+    final colors = AppColors(context);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
+      child: Row(
+        children: [
+          Icon(
+            item.itemType == 'product'
+                ? FontAwesomeIcons.box
+                : FontAwesomeIcons.boxesStacked,
+            color: colors.white,
+            size: Screen.max(context) * 0.03,
           ),
-        ),
-        SizedBox(height: Screen.height(context) * 0.01),
-        Container(
-          padding: EdgeInsets.all(Screen.width(context) * 0.03),
-          decoration: BoxDecoration(
-            color: MyColors.dark,
-            borderRadius: BorderRadius.circular(8),
+          SizedBox(width: Screen.width(context) * 0.03),
+          Expanded(
+            child: Text(
+              '${item.itemDetails['name'] ?? 'Unnamed ${item.itemType}'} (Qty: ${item.quantity})',
+              style: GoogleFonts.roboto(
+                color: colors.white,
+                fontSize: Screen.max(context) * 0.02,
+              ),
+            ),
           ),
-          child: CalendarView(
-            bookedDates: (item.itemDetails['booked_dates'] ?? [])
-                .map((date) => DateTime.parse(date))
-                .toList(),
-            onDateSelected: (date) => _handleDateSelection(date, item),
-            isSelectionMode: true,
-          ),
-        ),
-        SizedBox(height: Screen.height(context) * 0.02),
-      ],
+        ],
+      ),
     );
   }
 

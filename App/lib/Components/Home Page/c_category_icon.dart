@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,8 @@ class CategoryIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: () => onpressed(),
       child: Container(
@@ -32,7 +35,7 @@ class CategoryIcon extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Colors.white,
                 image: DecorationImage(
-                  image: NetworkImage(imageUrl),
+                  image: CachedNetworkImageProvider(imageUrl),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -48,7 +51,7 @@ class CategoryIcon extends StatelessWidget {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w300,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),

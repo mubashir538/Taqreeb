@@ -25,8 +25,10 @@ class GuideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     final containerHeight = Screen.max(context) * 0.08;
-    final iconSize = Screen.max(context) * 0.05;
+    final iconSize = Screen.max(context) * 0.03;
     final fontSize = Screen.max(context) * 0.015;
 
     final isLeftSvg = leftIconPath.isNotEmpty && leftIconPath.endsWith('svg');
@@ -40,7 +42,7 @@ class GuideButton extends StatelessWidget {
           height: containerHeight.clamp(60, 80.0),
           width: Screen.width(context) * 0.9,
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.lightDark,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -63,7 +65,7 @@ class GuideButton extends StatelessWidget {
                     : Icon(
                         leftIcon,
                         size: iconSize.clamp(20.0, 40.0),
-                        color: MyColors.white,
+                        color: colors.white,
                       ),
               ),
               Expanded(
@@ -73,7 +75,7 @@ class GuideButton extends StatelessWidget {
                   style: GoogleFonts.roboto(
                     fontSize: fontSize.clamp(14.0, 22.0),
                     fontWeight: FontWeight.w500,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
               ),
@@ -94,7 +96,7 @@ class GuideButton extends StatelessWidget {
                     : Icon(
                         rightIcon,
                         size: iconSize.clamp(20.0, 40.0),
-                        color: MyColors.white,
+                        color: colors.white,
                       ),
               ),
             ],

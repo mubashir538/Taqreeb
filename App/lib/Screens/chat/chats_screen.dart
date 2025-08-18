@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -10,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/Components/Home%20Page/c_search_box.dart';
 import 'package:taqreeb/Components/Messages/c_message_chat.dart';
@@ -42,7 +41,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
   bool _isSearching = false;
   String _type = 'businessowner';
 
-  // Stream subscriptions
   StreamSubscription? _chatsSubscription;
   StreamSubscription? _groupsSubscription;
 
@@ -69,7 +67,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
     _loggedInUserId = await MyStorage.getToken(MyTokens.userId) ?? "";
     _type = await MyTokens.getBusinessType();
 
-    // Initialize collections based on user type
     if (_type == 'businessowner') {
       _chatsCollection = FirebaseFirestore.instance.collection('BusinessChats');
       _usersCollection = FirebaseFirestore.instance.collection('businessUsers');
@@ -82,15 +79,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
       _chatsCollection = FirebaseFirestore.instance.collection('chats');
       _usersCollection = FirebaseFirestore.instance.collection('users');
     }
-
     _groupsCollection = FirebaseFirestore.instance.collection('groups');
-
-    // Load cached data first for quick display
     await _loadCachedData();
-
-    // Set up real-time listeners
     _setupChatListeners();
-
     if (_type == 'user') {
       _setupGroupListeners();
     }
@@ -137,12 +128,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   void _setupChatListeners() {
     _chatsSubscription = _chatsCollection.snapshots().listen((snapshot) async {
       final updatedChats = await _processChats(snapshot.docs);
-
-      // Sort by last message time (newest first)
       updatedChats.sort(
           (a, b) => (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
-
-      // Update cache
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(
           'cached_chats', json.encode(_prepareForCache(updatedChats)));
@@ -172,16 +159,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
         .snapshots()
         .listen((snapshot) async {
       final updatedGroups = await _processGroups(snapshot.docs);
-
-      // Sort by last message time (newest first)
       updatedGroups.sort(
           (a, b) => (b['time'] as Timestamp).compareTo(a['time'] as Timestamp));
-
-      // Update cache
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(
           'cached_groups', json.encode(_prepareForCache(updatedGroups)));
-
       if (mounted) {
         setState(() {
           _groups = updatedGroups;
@@ -201,7 +183,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
     for (final chatDoc in chatDocs) {
       try {
-        // Get last message
         final lastMessage = await _chatsCollection
             .doc(chatDoc.id)
             .collection('messages')
@@ -227,7 +208,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           'userId': otherUserId,
           'chatId': chatDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture'] ?? ''}',
+              '${userDoc[_type == 'user'?'profilePicture':'profile'] ?? ''}',
           'name': _type == 'user'
               ? '${userDoc['firstName'] ?? ''} ${userDoc['lastName'] ?? ''}'
               : userDoc['businessName'] ?? 'Unknown',
@@ -253,7 +234,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
     for (final groupDoc in groupDocs) {
       try {
-        // Get last message
         final lastMessage = await _groupsCollection
             .doc(groupDoc.id)
             .collection('messages')
@@ -273,12 +253,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
         processedGroups.add({
           'groupId': groupDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] != '' ? groupDoc['groupImageUrl'] : '/media/display/group.png'}',
+              '${groupDoc['groupImageUrl'] != '' ? groupDoc['groupImageUrl'] : 'https://vflfmnwflrhimhqerjve.supabase.co/storage/v1/object/public/taqreeb/display/group.png'}',
           'name': groupDoc['groupName'],
           'participants': groupDoc['participants'],
           'lastMessage': lastMessageText,
           'time': lastMessageTime,
-          'newMessages': 0, // You can implement group unread counts if needed
+          'newMessages': 0,
           'isGroup': true,
         });
       } catch (e) {
@@ -329,7 +309,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   void _navigateToChatbox(String userId) async {
-    // Mark messages as read when opening chat
     final chat =
         _userChats.firstWhere((c) => c['userId'] == userId, orElse: () => {});
     if (chat.isNotEmpty && chat['newMessages'] > 0) {
@@ -359,35 +338,30 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final diff = now.difference(messageTime);
 
     if (diff.inDays > 7) {
-      return DateFormat('MM/dd/yy').format(messageTime); // Older than 1 week
+      return DateFormat('MM/dd/yy').format(messageTime);
     } else if (diff.inDays > 1) {
-      return '${diff.inDays}d ago'; // 2-7 days ago
+      return '${diff.inDays}d ago';
     } else if (diff.inDays == 1) {
-      return 'Yesterday'; // Yesterday
+      return 'Yesterday';
     } else if (diff.inHours > 0) {
-      return '${diff.inHours}h ago'; // Hours ago
+      return '${diff.inHours}h ago';
     } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes}m ago'; // Minutes ago
+      return '${diff.inMinutes}m ago';
     } else {
-      return 'Just now'; // Less than a minute
+      return 'Just now';
     }
   }
 
   List<Widget> _buildChatList() {
-    // Combine all conversations into one list
     final List<Map<String, dynamic>> allConversations = [
       ..._userChats,
       if (_type == 'user') ..._groups,
     ];
-
-    // Sort by timestamp (newest first)
     allConversations.sort((a, b) {
       final aTime = a['time'] as Timestamp;
       final bTime = b['time'] as Timestamp;
-      return bTime.compareTo(aTime); // Descending order (newest first)
+      return bTime.compareTo(aTime);
     });
-
-    // If searching, filter the combined list
     final displayConversations = _isSearching
         ? allConversations.where((convo) => convo['name']
             .toLowerCase()
@@ -423,16 +397,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Widget _buildSkeletonLoader() {
+    final colors = AppColors(context);
+
     return ListView.builder(
-      itemCount: 5, // Number of skeleton items to show
+      itemCount: 5,
       padding: EdgeInsets.symmetric(
         horizontal: Screen.max(context) * 0.02,
         vertical: Screen.max(context) * 0.01,
       ),
       itemBuilder: (context, index) {
         return Shimmer.fromColors(
-          baseColor: MyColors.ligthDark,
-          highlightColor: MyColors.darkLighter,
+          baseColor: colors.lightDark,
+          highlightColor: colors.darkLighter,
           child: Container(
             margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
             padding: EdgeInsets.symmetric(
@@ -441,13 +417,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
             ),
             width: Screen.width(context) * 0.9,
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: colors.darkLighter,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Avatar placeholder
                 Container(
                   margin: EdgeInsets.only(right: Screen.max(context) * 0.03),
                   child: Container(
@@ -463,7 +438,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Name and time row
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: Screen.max(context) * 0.007),
@@ -471,7 +445,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Name placeholder
                             Container(
                               width: Screen.width(context) * 0.4,
                               height: Screen.max(context) * 0.02,
@@ -480,7 +453,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
-                            // Time placeholder
                             Container(
                               width: Screen.width(context) * 0.1,
                               height: Screen.max(context) * 0.015,
@@ -492,11 +464,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           ],
                         ),
                       ),
-                      // Message and badge row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Message placeholder
                           Container(
                             width: Screen.width(context) * 0.5,
                             height: Screen.max(context) * 0.015,
@@ -505,7 +475,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                          // Badge placeholder
                           Container(
                             width: Screen.max(context) * 0.03,
                             height: Screen.max(context) * 0.03,
@@ -530,37 +499,40 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     final double max = Screen.max(context);
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Header(
-                heading: "Chats",
-                para: _type == 'user'
-                    ? "View your chats and groups below."
-                    : "View Your Customer Chats Below.",
-              ),
-              SizedBox(height: Screen.height(context) * 0.02),
-              _buildSearchBar(max),
-              _isLoading
-                  ? Expanded(child: _buildSkeletonLoader())
-                  : Expanded(
-                      child: RefreshIndicator(
-                        onRefresh: _initialize,
-                        child: SizedBox(
-                          width: Screen.width(context) * 0.9,
-                          child: ListView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: _buildChatList(),
+          ShowCaseWidget(
+            builder: (context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Header(
+                  heading: "Chats",
+                  para: _type == 'user'
+                      ? "View your chats and groups below."
+                      : "View Your Customer Chats Below.",
+                ),
+                SizedBox(height: Screen.height(context) * 0.02),
+                _buildSearchBar(max),
+                _isLoading
+                    ? Expanded(child: _buildSkeletonLoader())
+                    : Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: _initialize,
+                          child: SizedBox(
+                            width: Screen.width(context) * 0.9,
+                            child: ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: _buildChatList(),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-            ],
+              ],
+            ),
           ),
           if (_type == 'user') _buildCreateGroupButton(max),
         ],
@@ -569,6 +541,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Widget _buildSearchBar(double max) {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: max * 0.03),
       child: Row(
@@ -595,10 +569,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 child: Container(
                   padding: EdgeInsets.all(max * 0.015),
                   decoration: BoxDecoration(
-                    color: MyColors.red,
+                    color: colors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(FontAwesomeIcons.plus, color: MyColors.white),
+                  child: Icon(FontAwesomeIcons.plus, color: colors.redonWhite),
                 ),
               ),
             ),
@@ -608,6 +582,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 
   Widget _buildCreateGroupButton(double max) {
+    final colors = AppColors(context);
+
     return Positioned(
       bottom: Screen.height(context) * 0.05,
       right: Screen.height(context) * 0.03,
@@ -618,7 +594,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: MyColors.dark.withAlpha(51),
+                color: colors.dark.withAlpha(51),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               )
@@ -628,17 +604,17 @@ class _ChatsScreenState extends State<ChatsScreen> {
               topRight: Radius.circular(max * 0.05),
               bottomLeft: Radius.circular(max * 0.05),
             ),
-            color: MyColors.red,
+            color: colors.red,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(FontAwesomeIcons.plus, color: Colors.white),
+              Icon(FontAwesomeIcons.plus, color: colors.redonWhite),
               SizedBox(width: Screen.width(context) * 0.02),
               Text(
                 'Create Group',
                 style: GoogleFonts.roboto(
-                  color: MyColors.white,
+                  color: colors.redonWhite,
                   fontSize: max * 0.015,
                   fontWeight: FontWeight.w400,
                 ),

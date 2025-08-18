@@ -43,7 +43,8 @@ def show_guest(request):
         guests = GuestList.objects.filter(eventId=event,functionId__isnull=True)
     else:
         functionid= request.data.get('FunctionID')
-        guests = GuestList.objects.filter(eventId=event,functionId=functionid)
+        function = Events.objects.get(id=functionid)
+        guests = GuestList.objects.filter(eventId=event,functionId=function)
     guest_list_serializer = GuestListSerializer(guests,many=True)
     return Response({'status': 'success', 'Guests':guest_list_serializer.data})
 

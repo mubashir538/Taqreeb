@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
@@ -12,34 +13,31 @@ import 'package:taqreeb/core/providers/business_edit_info_view_model.dart';
 import 'package:taqreeb/core/providers/business_info_view_model.dart';
 import 'package:taqreeb/core/providers/forgot_password_provider.dart';
 import 'package:taqreeb/core/services/firebase_service.dart';
+import 'package:taqreeb/firebase_options.dart';
 
 class AppInitializer {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Initialize Firebase first
-    await FirebaseService.initialize();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await FirebaseService.setup();
 
-    // Then remove splash screen
     FlutterNativeSplash.remove();
   }
 
   static List<SingleChildWidget> getProviders() {
     return [
-      // Add BusinessData provider first since other providers depend on it
       ChangeNotifierProvider(create: (_) => BusinessData(), lazy: true),
       ChangeNotifierProvider(
           create: (_) => YourListingsController()..fetchData(), lazy: true),
-
-      // Existing providers
       ChangeNotifierProvider(
           create: (_) => BusinessSignupProvider(), lazy: true),
       ChangeNotifierProvider(
           create: (_) => ForgotPasswordProvider(), lazy: true),
-
       ChangeNotifierProvider(
           create: (_) => FreelancerSignupDescriptionViewModel()),
-      // Modified BusinessInfoEditViewModel provider
       ChangeNotifierProxyProvider<BusinessData, BusinessAccountInfoViewModel>(
         create: (context) => BusinessAccountInfoViewModel(
           context.read<BusinessData>(),
@@ -48,7 +46,6 @@ class AppInitializer {
             previous!..businessData = businessData,
         lazy: true,
       ),
-
       ChangeNotifierProxyProvider<BusinessData, BusinessInfoEditViewModel>(
         create: (context) => BusinessInfoEditViewModel(
           context.read<BusinessData>(),
@@ -58,7 +55,6 @@ class AppInitializer {
         },
         lazy: true,
       ),
-      // Other existing providers
       ChangeNotifierProvider(
           create: (_) => ForgotPasswordVerifyCodeViewModel(), lazy: true),
       ChangeNotifierProvider(

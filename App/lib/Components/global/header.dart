@@ -151,13 +151,14 @@ class _HeaderState extends State<Header> {
         widget.image.isNotEmpty;
     final isSvg = widget.image.endsWith('.svg');
     final additionalIcons = widget.additionalIcons?.take(2).toList() ?? [];
+    final colors = AppColors(context);
 
     return Container(
       height: hasContent ? null : Screen.height(context) * 0.1,
       width: Screen.width(context),
       padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.red,
+        color: colors.red,
         borderRadius: hasContent
             ? const BorderRadius.only(
                 bottomLeft: Radius.circular(20),
@@ -184,7 +185,7 @@ class _HeaderState extends State<Header> {
                         },
                         child: Icon(
                           FontAwesomeIcons.chevronLeft,
-                          color: MyColors.redonWhite,
+                          color: colors.redonWhite,
                           size: Screen.max(context) * 0.03,
                         ),
                       ),
@@ -199,7 +200,7 @@ class _HeaderState extends State<Header> {
                     style: GoogleFonts.pacifico(
                       fontSize: Screen.max(context) * 0.03,
                       fontWeight: FontWeight.w500,
-                      color: MyColors.redonWhite,
+                      color: colors.redonWhite,
                     ),
                   ),
                 ),
@@ -215,7 +216,7 @@ class _HeaderState extends State<Header> {
                               onTap: headerIcon.onPressed,
                               child: Icon(
                                 headerIcon.icon,
-                                color: headerIcon.color ?? MyColors.redonWhite,
+                                color: headerIcon.color ?? colors.redonWhite,
                                 size: Screen.max(context) * 0.03,
                               ),
                             ),
@@ -236,7 +237,7 @@ class _HeaderState extends State<Header> {
                         },
                         child: Icon(
                           widget.icon,
-                          color: MyColors.redonWhite,
+                          color: colors.redonWhite,
                           size: Screen.max(context) * 0.03,
                         ),
                       ),
@@ -253,7 +254,7 @@ class _HeaderState extends State<Header> {
               style: GoogleFonts.roboto(
                 fontSize: Screen.max(context) * 0.025,
                 fontWeight: FontWeight.w700,
-                color: MyColors.yellow,
+                color: colors.yellow,
               ),
             ),
             SizedBox(
@@ -272,7 +273,7 @@ class _HeaderState extends State<Header> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.015,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.redonWhite,
                 ),
               ),
             ),

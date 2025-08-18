@@ -58,18 +58,15 @@ class Validations {
       return 'Service name is too long';
     }
 
-    // Ensure the name contains at least one letter
     if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
       return 'Service name must contain letters in it';
     }
 
-    // Allow letters, numbers, spaces, and common service name characters
     RegExp validChars = RegExp(r"^[a-zA-Z0-9\s\.\'\-\&\#]+$");
     if (!validChars.hasMatch(value)) {
       return 'Service name contains invalid characters';
     }
 
-    // Prevent repeated special characters
     RegExp repeatedSpecials = RegExp(r"[\'\.\-\&\#]{2,}");
     if (repeatedSpecials.hasMatch(value)) {
       return 'Service name has repeated special characters';

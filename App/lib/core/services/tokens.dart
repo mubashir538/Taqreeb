@@ -37,9 +37,11 @@ class MyTokens {
   static const String acmaxprice = "acmaxprice";
   static const String moredetails = "moredetails";
   static const String addons = "addons";
+  static const String firsttime = "first_time";
   static const String packages = "packages";
 
-  static Future<String> getBusinessType() async {
+  static Future<String> 
+  getBusinessType() async {
     String type;
 
     if (await MyStorage.exists(MyTokens.isBusinessOwner)) {

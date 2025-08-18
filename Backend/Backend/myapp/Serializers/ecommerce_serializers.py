@@ -1,7 +1,7 @@
 from rest_framework import serializers as s
-from .listing_serializers import ListingSerializer,PackagesSerializer,ProductsSerializer
-
+from .listing_serializers import ListingSerializer,PackagesSerializer,ProductsSerializer,PicturesListingSerializers
 from ..models import booking_models as m
+from ..models.listing_models import PicturesListings
 
 class CartItemSerializer(s.ModelSerializer):
     item_details = s.SerializerMethodField()
@@ -13,7 +13,14 @@ class CartItemSerializer(s.ModelSerializer):
     def get_item_details(self, obj):
         if obj.item_type == 'listing':
             item = m.Listing.objects.filter(id=obj.item_id).first()
-            return ListingSerializer(item).data if item else None
+            if item:
+                item = ListingSerializer(item).data
+                item['pictures'] = PicturesListingSerializers(PicturesListings.objects.filter(listingId=item['id']).first()).data
+                print(item)
+            
+            else:
+                item = None
+            return item
         elif obj.item_type == 'product':
             item = m.Product.objects.filter(id=obj.item_id).first()
             return ProductsSerializer(item).data if item else None
@@ -22,6 +29,15 @@ class CartItemSerializer(s.ModelSerializer):
             return PackagesSerializer(item).data if item else None
         return None
     
+    def to_representation(self, instance):
+        """
+        Convert the item_id to string in the serialized output
+        """
+        representation = super().to_representation(instance)
+        representation['item_id'] = str(representation['item_id'])
+        return representation
+
+
 class CartSerializer(s.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
     total_items = s.SerializerMethodField()

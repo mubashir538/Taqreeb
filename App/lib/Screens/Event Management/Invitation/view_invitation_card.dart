@@ -234,7 +234,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                     if (!_isLoadingTemplates && templates.isNotEmpty)
                       Column(
                         children: [
-                           Text(
+                          Text(
                             'Available Templates',
                             style: GoogleFonts.roboto(
                               fontSize: 18,
@@ -269,8 +269,7 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(6),
                                       child: CachedNetworkImage(
-                                        imageUrl:
-                                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${template['imageUrl']}',
+                                        imageUrl: '${template['imageUrl']}',
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.cover,
@@ -279,7 +278,8 @@ class _ViewInvitationCardState extends State<ViewInvitationCard> {
                                           child: CircularProgressIndicator(),
                                         ),
                                         errorWidget: (context, url, error) =>
-                                            const Icon(FontAwesomeIcons.exclamation),
+                                            const Icon(
+                                                FontAwesomeIcons.exclamation),
                                       ),
                                     ),
                                   ),

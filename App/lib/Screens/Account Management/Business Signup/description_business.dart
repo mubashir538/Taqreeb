@@ -7,6 +7,7 @@ import 'package:taqreeb/Components/Inputs/c_input_description.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -100,6 +101,8 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -112,9 +115,12 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(
-                          height: UImanagement.headerHeight +
-                              Screen.height(context) * 0.05),
+                      Headersecondary(
+                        heading: "Create a Description",
+                        para: 'Your Description Creates a Great Impact on the\n'
+                            'customers and can help your get more clients',
+                      ),
+                      SizedBox(height: Screen.height(context) * 0.05),
                       DescriptionBox(
                         valueController: _descriptionController,
                         onChanged: _updateCharacterCount,
@@ -127,7 +133,7 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
                             Text(
                               "$_charactersLeft characters left",
                               style: GoogleFonts.roboto(
-                                color: MyColors.red,
+                                color: colors.red,
                                 fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
                               ),
@@ -154,9 +160,6 @@ class _BusinessSignupDescriptionState extends State<BusinessSignupDescription> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: "Create a Description",
-              para: 'Your Description Creates a Great Impact on the\n'
-                  'customers and can help your get more clients',
             ),
           ),
         ],

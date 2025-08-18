@@ -6,10 +6,10 @@ from .config import SYSTEM_MESSAGE
 from dotenv import load_dotenv
 from .functions import (
     # check_availability,
-    get_service_details,
-    get_venue_recommendations,
-    initiate_booking,
+    get_service_details,collect_event_details,
+    create_event,
     search_services,
+    select_event_functions
 )
 from openai import OpenAI
 
@@ -28,7 +28,7 @@ class EventBookingChatbot:
         # self.model = "llama3-70b-8192"          # slower intelligent model
         # self.model = "llama-3.3-70b-specdec"
         # self.model = "deepseek-r1-distill-llama-70b"
-        self.model = "mistral-saba-24b"
+        self.model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
         # To Store conversation history by user
         self.conversation_histories = {}
@@ -37,9 +37,47 @@ class EventBookingChatbot:
         self.available_functions = {
             "search_services": search_services,
             "get_venue_details": get_service_details,
-            # "check_availability": check_availability,
-            "initiate_booking": initiate_booking,
-            # "get_venue_recommendations": get_venue_recommendations,
+            "create_event": create_event,
+            "collect_event_details": collect_event_details,
+            "select_event_functions":select_event_functions
+         }
+        
+        self.event_functions = {
+               "Wedding": {
+        "Mehendi": {"priority": 2, "min_budget": 100000},
+        "Baraat": {"priority": 1, "min_budget": 600000,"side": "B"},
+        "Valima": {"priority": 1, "min_budget": 600000,"side": "G"},
+        "Engagement": {"priority": 4, "min_budget": 100000},
+        "Dholki": {"priority": 3, "min_budget": 50000},
+        "Bridal Shower": {"priority": 5, "min_budget": 50000,"side": "B"},
+        "Qawali Night": {"priority": 6, "min_budget": 100000},
+    },
+        "Birthday": {
+        "Pre Birthday": {"priority": 2, "min_budget": 50000},
+        "Post Birthday": {"priority": 3, "min_budget": 50000},
+        "Birthday": {"priority": 1, "min_budget": 50000},
+    },
+    "Corporate Event": {
+        "Corporate Meeting": {"priority": 1, "min_budget": 200000},
+        "Corporate Party": {"priority": 2, "min_budget": 300000},
+    },
+    "Baby Shower": {
+        "Baby Shower": {"priority": 1, "min_budget": 100000},
+    },
+    "Graduation Party": {
+        "Graduation Party": {"priority": 1, "min_budget": 150000},
+    },
+    "Others": {
+        "Others": {"priority": 1, "min_budget": 50000},
+    },
+    "Religious Event": {
+        "Millad": {"priority": 1, "min_budget": 50000},
+        "Qawali Night": {"priority": 2, "min_budget": 100000},
+    },
+    "Friends Party": {
+        "Bachelor Party": {"priority": 1, "min_budget": 150000},
+        "Reunion Party": {"priority": 2, "min_budget": 100000},
+    },
         }
 
         # Define function schemas for OpenAI
@@ -195,38 +233,45 @@ class EventBookingChatbot:
                     "required": ["venue_id"],
                 },
             },
-            # {
-            #     "name": "get_venue_recommendations",
-            #     "description": "Get personalized venue recommendations based on event requirements",
-            #     "parameters": {
-            #         "type": "object",
-            #         "properties": {
-            #             "event_type": {
-            #                 "type": "string",
-            #                 "description": "Type of event (wedding, conference, party, etc.)",
-            #             },
-            #             "location": {
-            #                 "type": "string",
-            #                 "description": "Preferred location",
-            #             },
-            #             "guest_count": {
-            #                 "type": "integer",
-            #                 "description": "Expected number of guests",
-            #             },
-            #             "budget_level": {
-            #                 "type": "array",
-            #                 "items": {"type": "number"},
-            #                 "minItems": 2,
-            #                 "maxItems": 2,
-            #                 "description": "Budget level tuple (min, max)"
-            #             }
-            #         },
-            #         "required": ["event_type", "location", "guest_count", "budget_level"]
-            #     }
-            # },
-            {
-                "name": "initiate_booking",
-                "description": "Initiate a booking request for a venue",
+           {
+               "name": "collect_event_details",
+               "description": "collects the event details and returns them to proceed to the next phase",
+               "parameters": {
+                   "type": "object",
+                   "properties": {
+                       "user_id": {
+                           "type": "string",
+                           "description": "ID of the user",
+                       },
+                       "event_type" :{
+                           "type": "string",
+                           "description": "Type fo the event the User has selected",
+                       },
+                       "budget": {
+                           "type": "string",
+                           "description": "The budget of the user for the event",
+                       },
+                       "event_size": {
+                           "type": "string",
+                           "description": "The Size of the event the User has selected like (Big event, small event or average event)",
+                       },
+                       "specified_guests": {
+                        "type": "string",
+                           "description": "The Average number of guests user has specified",
+                           'optional': True
+                       },
+                       "location":{
+                           "type": "string",
+                           "description": "The Location or the user where he wants to do the event otherwise the location will be Karachi",
+                           'optional': True
+                       }
+                   },
+                   "required": ["user_id", "event_type", "budget", "event_size"],
+               },
+           },
+           {
+                "name": "create_event",
+                "description": "create a event for the user",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -275,13 +320,52 @@ class EventBookingChatbot:
                     ],
                 },
             },
+    {
+    "name": "select_event_functions",
+    "description": (
+        "Selects which functions (e.g. Mehendi, Baraat, Valima, etc.) to include for an event based on: "
+        "the event type, the total available budget, and—if a Wedding—the side (bride or groom). "
+        "Functions are selected in order of priority (lowest number = highest priority), each requiring a minimum budget. "
+        "Stop adding new functions when the next would exceed the remaining budget. "
+        "If budget is left over after all possible functions are added, distribute the remaining budget equally among selected functions. "
+        "Only select Wedding functions appropriate for the specified side (bride/groom) where relevant."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "event_type": {
+                "type": "string",
+                "description": "The type of event (e.g. Wedding, Birthday, Corporate, etc.)."
+            },
+            "budget": {
+                "type": "integer",
+                "description": "The total budget available for all event functions."
+            },
+            "wedding_side": {
+                "type": "string",
+                "description": "For Wedding events, specify if it is for the bride's or groom's side. Required for Weddings, ignored otherwise."
+            },
+            "user_id": {
+                "type": "string",
+                "description": "The ID of the user making the request."
+            },
+            "event_functions_map": {
+            "value" :self.event_functions,
+                "type": "object",
+                "description": "A mapping of event types to their respective functions, priorities, and minimum budgets. which is event_functions "
+            }
+        },
+        "required": ["event_type", "budget", "user_id"]
+    }
+}
+
         ]
 
     def get_or_create_history(self, user_id: str) -> List[Dict[str, str]]:
         """Get existing conversation history or create a new one"""
         if user_id not in self.conversation_histories:
             self.conversation_histories[user_id] = [
-                {"role": "system", "content": SYSTEM_MESSAGE}
+                {"role": "system", "content": SYSTEM_MESSAGE + "\n" + "Your User Id is " + user_id}
             ]
         return self.conversation_histories[user_id]
 
@@ -296,6 +380,8 @@ class EventBookingChatbot:
         self.add_message(user_id, message)
         history = self.conversation_histories[user_id]
 
+
+        print(history)
         # Get response from OpenAI
         response = self.client.chat.completions.create(
             model=self.model,

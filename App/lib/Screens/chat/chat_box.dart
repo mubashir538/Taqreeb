@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,6 +8,7 @@ import 'package:taqreeb/Components/Messages/c_message_receive.dart';
 import 'package:taqreeb/Components/Messages/c_message_send.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/core/services/api_service.dart';
+import 'package:taqreeb/core/services/encryption.dart';
 import 'package:taqreeb/core/services/flutter_storage.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/tokens.dart';
@@ -25,6 +25,7 @@ class _ChatBoxState extends State<ChatBox> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final EncryptionService _encryptionService = EncryptionService();
   final ScrollController _scrollController = ScrollController();
 
   String? _currentUserId;
@@ -58,12 +59,13 @@ class _ChatBoxState extends State<ChatBox> {
 
   Widget _buildListingPreview() {
     if (_listing.isEmpty) return const SizedBox.shrink();
+    final colors = AppColors(context);
 
     return Container(
       margin: EdgeInsets.only(bottom: 8.0),
       padding: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
@@ -77,7 +79,7 @@ class _ChatBoxState extends State<ChatBox> {
               borderRadius: BorderRadius.circular(8.0),
               image: DecorationImage(
                 image: NetworkImage(
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['pictures'][0]['picturePath'] ?? ''}'),
+                    '${_listing['pictures'][0]['picturePath'] ?? ''}'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -93,7 +95,7 @@ class _ChatBoxState extends State<ChatBox> {
                   style: GoogleFonts.roboto(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -103,7 +105,7 @@ class _ChatBoxState extends State<ChatBox> {
                   _listing['Listing']['description'] ?? '',
                   style: GoogleFonts.roboto(
                     fontSize: 14,
-                    color: MyColors.white.withAlpha(179),
+                    color: colors.white.withAlpha(179),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -114,7 +116,7 @@ class _ChatBoxState extends State<ChatBox> {
                       '', // Replace with your actual domain
                   style: GoogleFonts.roboto(
                     fontSize: 12,
-                    color: MyColors.yellow,
+                    color: colors.yellow,
                   ),
                 ),
               ],
@@ -122,7 +124,7 @@ class _ChatBoxState extends State<ChatBox> {
           ),
           // Close button
           IconButton(
-            icon: Icon(FontAwesomeIcons.xmark, size: 20, color: MyColors.white),
+            icon: Icon(FontAwesomeIcons.xmark, size: 20, color: colors.white),
             onPressed: () {
               setState(() {
                 _listing = {};
@@ -202,7 +204,7 @@ class _ChatBoxState extends State<ChatBox> {
             : _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
         _chatUserName = _type.isNotEmpty ? _type : userDoc['username'];
         _chatUserImage =
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type.isNotEmpty ? 'profile' : 'profilePicture']}';
+            '${userDoc[_type.isNotEmpty ? 'profile' : 'profilePicture']}';
       });
     } catch (e) {
       _handleError('Error fetching chat user details: $e');
@@ -222,6 +224,12 @@ class _ChatBoxState extends State<ChatBox> {
   Future<void> _markMessagesAsRead() async {
     try {
       final chatId = _getChatId();
+
+      final docRef = _firestore.collection(_messageCollection).doc(chatId);
+      final docSnapshot = await docRef.get();
+      if (!docSnapshot.exists) {
+        return;
+      }
       await _firestore.collection(_messageCollection).doc(chatId).update({
         'unreadMessages.$_currentUserId': 0,
       });
@@ -235,12 +243,15 @@ class _ChatBoxState extends State<ChatBox> {
 
     try {
       final chatId = _getChatId();
+      final encryptedMessage =   _encryptionService.encryptMessage(text);
+
       final messageData = {
         'senderId': _currentUserId,
         'receiverId': _chatUserId,
-        'message': text,
+        'message': encryptedMessage,
         'timestamp': FieldValue.serverTimestamp(),
         'mtype': 'text',
+        'isEncrypted': true,
       };
 
       if (_listing.isNotEmpty) {
@@ -325,21 +336,22 @@ class _ChatBoxState extends State<ChatBox> {
       );
       if (pickedFile == null) return;
 
-      // Show loading indicator
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Uploading image...')),
-      );
+      // // Show loading indicator
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('Uploading image...')),
+      // );
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'saveChatImage/',
         body: {'userid': _currentUserId ?? ""},
-        files: {'image': File(pickedFile.path)},
+        files: {'image': pickedFile.path},
       );
 
       if (response['status'] != 'success') {
         throw Exception(response['message'] ?? 'Failed to upload image');
       }
 
+      final encryptedPath = _encryptionService.encryptMessage(response['path']);
       final chatId = _getChatId();
       final newMessageRef = _firestore
           .collection(_messageCollection)
@@ -351,9 +363,10 @@ class _ChatBoxState extends State<ChatBox> {
         transaction.set(newMessageRef, {
           'senderId': _currentUserId,
           'receiverId': _chatUserId,
-          'message': response['path'],
+          'message': encryptedPath,
           'timestamp': FieldValue.serverTimestamp(),
-          'type': 'image',
+          'mtype': 'image',
+          'isEncrypted': true,
         });
 
         transaction.set(
@@ -414,9 +427,18 @@ class _ChatBoxState extends State<ChatBox> {
   Widget _buildMessageTile(DocumentSnapshot doc) {
     final isSentByMe = doc['senderId'] == _currentUserId;
     final messageType = doc['mtype'];
-    final message = doc['message'];
+    var message = doc['message'];
+    final isEncrypted = doc['isEncrypted'] ?? false;
     final timestamp = doc['timestamp'] as Timestamp?;
     final time = timestamp != null ? _formatTimestamp(timestamp) : '';
+
+    if (isEncrypted && messageType == 'text') {
+      try {
+        message = _encryptionService.decryptMessage(message);
+      } catch (e) {
+        message = "Could not decrypt message";
+      }
+    }
 
     if (messageType == 'text') {
       return isSentByMe
@@ -424,7 +446,8 @@ class _ChatBoxState extends State<ChatBox> {
           : RecieveMessage(text: message, time: time);
     } else if (messageType == 'image') {
       final imageUrl =
-          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$message';
+          '$message';
+      
       return isSentByMe
           ? SendMessage(text: '', time: time, imageUrl: imageUrl)
           : RecieveMessage(text: '', time: time, imageUrl: imageUrl);
@@ -449,12 +472,14 @@ class _ChatBoxState extends State<ChatBox> {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
+        final colors = AppColors(context);
 
         final messages = snapshot.data!.docs;
         final messageWidgets = <Widget>[];
         DateTime? lastMessageDate;
 
         for (final message in messages) {
+          messageWidgets.add(_buildMessageTile(message));
           final messageDate = message['timestamp']?.toDate() ?? DateTime.now();
 
           if (lastMessageDate == null ||
@@ -467,7 +492,7 @@ class _ChatBoxState extends State<ChatBox> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: MyColors.darkLighter,
+                      color: colors.darkLighter,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -482,7 +507,6 @@ class _ChatBoxState extends State<ChatBox> {
               ),
             );
           }
-          messageWidgets.add(_buildMessageTile(message));
           lastMessageDate = messageDate;
         }
 
@@ -498,8 +522,10 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         children: [
           const Header(),
@@ -507,7 +533,7 @@ class _ChatBoxState extends State<ChatBox> {
             Expanded(
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(colors.white),
                 ),
               ),
             )
@@ -519,7 +545,7 @@ class _ChatBoxState extends State<ChatBox> {
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: Screen.max(context) * 0.03),
-                    decoration: BoxDecoration(color: MyColors.red),
+                    decoration: BoxDecoration(color: colors.red),
                     child: Column(
                       children: [
                         SizedBox(height: Screen.max(context) * 0.02),
@@ -543,7 +569,7 @@ class _ChatBoxState extends State<ChatBox> {
                                     style: GoogleFonts.roboto(
                                       fontSize: Screen.max(context) * 0.025,
                                       fontWeight: FontWeight.w600,
-                                      color: MyColors.white,
+                                      color: colors.white,
                                     ),
                                   ),
                                 ),
@@ -551,7 +577,7 @@ class _ChatBoxState extends State<ChatBox> {
                                   _chatUserName ?? '',
                                   style: GoogleFonts.roboto(
                                     fontSize: Screen.max(context) * 0.015,
-                                    color: MyColors.whiteDarker,
+                                    color: colors.whiteDarker,
                                   ),
                                 ),
                               ],
@@ -575,8 +601,10 @@ class _ChatBoxState extends State<ChatBox> {
   }
 
   Widget _buildChatInput() {
+    final colors = AppColors(context);
+
     return Container(
-      color: MyColors.ligthDark,
+      color: colors.lightDark,
       padding: EdgeInsets.all(Screen.max(context) * 0.01),
       child: Column(
         children: [
@@ -586,7 +614,7 @@ class _ChatBoxState extends State<ChatBox> {
             child: Row(
               children: [
                 IconButton(
-                  icon: Icon(FontAwesomeIcons.image, color: MyColors.white),
+                  icon: Icon(FontAwesomeIcons.image, color: colors.white),
                   onPressed: _sendImage,
                 ),
                 Expanded(
@@ -594,7 +622,7 @@ class _ChatBoxState extends State<ChatBox> {
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: " Type a message",
-                      fillColor: MyColors.darkLighter,
+                      fillColor: colors.darkLighter,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -605,8 +633,7 @@ class _ChatBoxState extends State<ChatBox> {
                   ),
                 ),
                 IconButton(
-                  icon:
-                      Icon(FontAwesomeIcons.paperPlane, color: MyColors.white),
+                  icon: Icon(FontAwesomeIcons.paperPlane, color: colors.white),
                   onPressed: () => _sendMessage(_messageController.text),
                 ),
               ],
@@ -622,8 +649,9 @@ class _ChatBoxState extends State<ChatBox> {
       endpoint: 'error/application',
       body: {'error': error},
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error)),
-    );
+
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text(error)),
+    // );
   }
 }

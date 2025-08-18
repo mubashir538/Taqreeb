@@ -9,13 +9,15 @@ class MyScaffold {
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(
       BuildContext context) {
+    final colors = AppColors(context);
+
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text,
           style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.015,
-              color: MyColors.white,
+              color: colors.white,
               fontWeight: FontWeight.w500)),
-      backgroundColor: MyColors.red.withAlpha(200),
+      backgroundColor: colors.red.withAlpha(200),
     ));
   }
 }

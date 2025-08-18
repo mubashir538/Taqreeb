@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -131,18 +132,21 @@ class _YourEventsState extends State<YourEvents> {
         _changeHeight(renderbox);
       },
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: UImanagement.headerHeight),
-                _buildSearchBox(),
-                _isLoading ? _buildLoadingIndicator() : _buildEventList(),
-              ],
+          ShowCaseWidget(
+            builder: (context) => SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: UImanagement.headerHeight),
+                  _buildSearchBox(),
+                  _isLoading ? _buildLoadingIndicator() : _buildEventList(),
+                ],
+              ),
             ),
           ),
           Positioned(
@@ -176,7 +180,7 @@ class _YourEventsState extends State<YourEvents> {
           searchFocus.requestFocus();
         },
         onChanged: (value) {
-          _searchEvents(value); // Call the search method
+          _searchEvents(value); 
         },
         controller: _searchController,
         hint: 'Search Typing to Search',
@@ -194,7 +198,7 @@ class _YourEventsState extends State<YourEvents> {
       padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
       child: Column(
         children: List.generate(
-          5, // Number of skeleton items to show
+          5, 
           (index) => _buildSkeletonItem(),
         ),
       ),
@@ -202,31 +206,28 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildSkeletonItem() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
       child: Shimmer.fromColors(
-        baseColor: MyColors.ligthDark.withOpacity(0.6),
-        highlightColor: MyColors.ligthDark.withOpacity(0.3),
+        baseColor: colors.lightDark.withAlpha(153),
+        highlightColor: colors.lightDark.withAlpha(77),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title placeholder
             Container(
               width: Screen.width(context) * 0.6,
               height: Screen.height(context) * 0.03,
               color: Colors.white,
             ),
             SizedBox(height: Screen.height(context) * 0.01),
-
-            // Budget placeholder
             Container(
               width: Screen.width(context) * 0.4,
               height: Screen.height(context) * 0.02,
               color: Colors.white,
             ),
             SizedBox(height: Screen.height(context) * 0.02),
-
-            // Three info placeholders
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -248,8 +249,6 @@ class _YourEventsState extends State<YourEvents> {
               ],
             ),
             SizedBox(height: Screen.height(context) * 0.02),
-
-            // Button placeholders
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -266,8 +265,6 @@ class _YourEventsState extends State<YourEvents> {
               ],
             ),
             SizedBox(height: Screen.height(context) * 0.02),
-
-            // Divider
             Container(
               width: double.infinity,
               height: 1,
@@ -280,6 +277,8 @@ class _YourEventsState extends State<YourEvents> {
   }
 
   Widget _buildEventList() {
+    final colors = AppColors(context);
+
     if (_filteredEvents.isEmpty) {
       return Center(
         child: Column(
@@ -294,7 +293,7 @@ class _YourEventsState extends State<YourEvents> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),
@@ -317,14 +316,13 @@ class _YourEventsState extends State<YourEvents> {
                 style: GoogleFonts.roboto(
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w400,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),
             SizedBox(height: Screen.height(context) * 0.03),
             ColoredButton(
               onPressed: () {
-                // Navigate to the screen where user can add a new event
                 context.pushNamedTransition(
                     routeName: '/AddEvent',
                     type: PageTransitionType.rightToLeftWithFade,
@@ -347,7 +345,7 @@ class _YourEventsState extends State<YourEvents> {
         final event = _filteredEvents[index];
         return FunctionCard(
           delete: () => _deleteEvent(event["id"], index),
-          color: MyColors.red,
+          color: colors.red,
           name: event["name"],
           head: 'Budget',
           budget: event["budget"].toString(),
@@ -361,18 +359,22 @@ class _YourEventsState extends State<YourEvents> {
           ],
           type: 'Event',
           seePressed: () {
-            context.pushNamedTransition(
-                routeName: '/EventDetails',
-                type: PageTransitionType.rightToLeftWithFade,
-                duration: Duration(milliseconds: 300),
-                arguments: event["id"]);
+            context
+                .pushNamedTransition(
+                    routeName: '/EventDetails',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300),
+                    arguments: event["id"])
+                .then((value) => _fetchData());
           },
           editPressed: () {
-            context.pushNamedTransition(
-                routeName: '/EditEvent',
-                type: PageTransitionType.rightToLeftWithFade,
-                duration: Duration(milliseconds: 300),
-                arguments: event["id"].toString());
+            context
+                .pushNamedTransition(
+                    routeName: '/EditEvent',
+                    type: PageTransitionType.rightToLeftWithFade,
+                    duration: Duration(milliseconds: 300),
+                    arguments: event["id"].toString())
+                .then((value) => _fetchData());
           },
         );
       },

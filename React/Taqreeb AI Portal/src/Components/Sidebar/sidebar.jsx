@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 import { FaHome, FaChartBar, FaBars, FaTimes, FaCheckCircle } from "react-icons/fa"; // Added FaCheckCircle for Approvals icon
+import logo from "../../assets/logo.png";
+
 
 const Sidebar = () => {
   const location = useLocation();
@@ -35,7 +37,7 @@ const Sidebar = () => {
       {isSidebarOpen && (
         <>
           <div className="logo">
-            <img src="/logo.png" alt="Logo" />
+            <img src={logo} alt="Logo" />
             <div className="logo-text"></div>
             <div className="logo-subtext"></div>
           </div>

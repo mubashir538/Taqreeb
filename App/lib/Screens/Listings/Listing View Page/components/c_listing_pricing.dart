@@ -113,13 +113,15 @@ class _PricingSectionState extends State<PricingSection> {
   }
 
   Widget _buildPriceRangeRow() {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(
           horizontal: Screen.width(context) * 0.05,
           vertical: Screen.height(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -131,7 +133,7 @@ class _PricingSectionState extends State<PricingSection> {
             style: _buildTextStyle(
               fontSize: 0.018,
               fontWeight: FontWeight.w600,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.02),
@@ -147,7 +149,7 @@ class _PricingSectionState extends State<PricingSection> {
                     style: _buildTextStyle(
                       fontSize: 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white.withAlpha(123),
+                      color: colors.white.withAlpha(123),
                     ),
                   ),
                   Text(
@@ -155,7 +157,7 @@ class _PricingSectionState extends State<PricingSection> {
                     style: _buildTextStyle(
                       fontSize: 0.025,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                   ),
                 ],
@@ -168,7 +170,7 @@ class _PricingSectionState extends State<PricingSection> {
                     style: _buildTextStyle(
                       fontSize: 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white.withAlpha(123),
+                      color: colors.white.withAlpha(123),
                     ),
                   ),
                   Text(
@@ -176,7 +178,7 @@ class _PricingSectionState extends State<PricingSection> {
                     style: _buildTextStyle(
                       fontSize: 0.025,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                   ),
                 ],
@@ -189,13 +191,15 @@ class _PricingSectionState extends State<PricingSection> {
   }
 
   Widget _buildBasicPriceRow() {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.9,
       padding: EdgeInsets.symmetric(
           horizontal: Screen.width(context) * 0.05,
           vertical: Screen.height(context) * 0.04),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -207,7 +211,7 @@ class _PricingSectionState extends State<PricingSection> {
             style: _buildTextStyle(
               fontSize: 0.018,
               fontWeight: FontWeight.w400,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           Container(
@@ -215,7 +219,7 @@ class _PricingSectionState extends State<PricingSection> {
                 horizontal: Screen.width(context) * 0.03,
                 vertical: Screen.height(context) * 0.008),
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: colors.darkLighter,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -223,7 +227,7 @@ class _PricingSectionState extends State<PricingSection> {
               style: _buildTextStyle(
                 fontSize: 0.025,
                 fontWeight: FontWeight.w600,
-                color: MyColors.white,
+                color: colors.white,
               ),
             ),
           ),
@@ -239,12 +243,14 @@ class _PricingSectionState extends State<PricingSection> {
     required TextEditingController controller,
     required VoidCallback onSave,
   }) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.symmetric(
           horizontal: Screen.width(context) * 0.05,
           vertical: Screen.height(context) * 0.015),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.lightDark,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -255,7 +261,7 @@ class _PricingSectionState extends State<PricingSection> {
             style: _buildTextStyle(
               fontSize: 0.018,
               fontWeight: FontWeight.w600,
-              color: MyColors.yellow,
+              color: colors.yellow,
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.01),
@@ -266,11 +272,11 @@ class _PricingSectionState extends State<PricingSection> {
               style: _buildTextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 0.016,
-                color: MyColors.white,
+                color: colors.white,
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: MyColors.darkLighter,
+                fillColor: colors.darkLighter,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
@@ -291,7 +297,7 @@ class _PricingSectionState extends State<PricingSection> {
                   horizontal: Screen.width(context) * 0.03,
                   vertical: Screen.height(context) * 0.015),
               decoration: BoxDecoration(
-                color: MyColors.darkLighter,
+                color: colors.lightDark,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -299,14 +305,14 @@ class _PricingSectionState extends State<PricingSection> {
                 style: _buildTextStyle(
                   fontSize: 0.016,
                   fontWeight: FontWeight.w500,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
             ),
           SizedBox(height: Screen.height(context) * 0.015),
           Align(
             alignment: Alignment.centerRight,
-            child: Container(
+            child: SizedBox(
               width: Screen.width(context) * 0.3,
               child: ColoredButton(
                 text: isEditing ? "Save" : "Edit",

@@ -173,8 +173,13 @@ def save_packages(listing, packages):
                 description=pkg.get('details')
             )
             package_obj.save()
+            storage = FileSystemStorage()
+            count = 1
             for image in pkg.get('images', []):
-                PicturesPackages(packageId=package_obj, picturePath=image).save()
+                path = storage.save(f'uploads/Packages/{package_obj.id}-{count}.png', image)
+                PicturesPackages(packageId=package_obj, picturePath=
+            storage.url(path)).save()
+                count +=1
     except Exception as e:
         print(f"Package saving error: {e}")
 

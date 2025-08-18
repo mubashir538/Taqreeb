@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_date_question.dart';
@@ -34,8 +33,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
   TextEditingController sonController = TextEditingController();
   TextEditingController daughterController = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  TextEditingController locationController =
-      TextEditingController(text: 'North');
+  TextEditingController locationController = TextEditingController();
   TextEditingController fromNameController = TextEditingController();
   List<Map<String, TextEditingController>> programDetails = [];
   TextEditingController venueNameController = TextEditingController();
@@ -192,6 +190,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
   }
 
   Widget _buildFormContent() {
+    final colors = AppColors(context);
+
     return Column(
       children: [
         _buildSection(
@@ -314,8 +314,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     ),
                   ),
                   IconButton(
-                    icon:
-                        Icon(FontAwesomeIcons.circleMinus, color: MyColors.red),
+                    icon: Icon(FontAwesomeIcons.circleMinus, color: colors.red),
                     onPressed: () => removeProgramDetail(index),
                   ),
                 ],
@@ -325,7 +324,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: colors.red),
                   onPressed: addProgramDetail,
                 ),
               ),
@@ -382,8 +381,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   ),
                   if (contactInfo.length > 1)
                     IconButton(
-                      icon: Icon(FontAwesomeIcons.circleMinus,
-                          color: MyColors.red),
+                      icon:
+                          Icon(FontAwesomeIcons.circleMinus, color: colors.red),
                       onPressed: () => removeContactInfo(index),
                     ),
                 ],
@@ -393,7 +392,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  icon: Icon(FontAwesomeIcons.circlePlus, color: MyColors.red),
+                  icon: Icon(FontAwesomeIcons.circlePlus, color: colors.red),
                   onPressed: addContactInfo,
                 ),
               ),
@@ -413,11 +412,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
 
   Widget _buildSection(
       {required String title, required List<Widget> children}) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       margin: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -428,7 +429,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
             style: GoogleFonts.roboto(
               fontSize: Screen.max(context) * 0.02,
               fontWeight: FontWeight.w700,
-              color: MyColors.red,
+              color: colors.red,
             ),
           ),
           SizedBox(height: 10),
@@ -562,11 +563,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
           .toList(),
     };
     if (mounted) {
-      context.pushNamedTransition(
-          routeName: '/InvitationCardView',
-          type: PageTransitionType.rightToLeftWithFade,
-          duration: Duration(milliseconds: 300),
+      Navigator.pushReplacementNamed(context, '/InvitationCardView',
           arguments: {'data': formData});
+      // context.pushNamedTransition(
+      //     routeName: '/InvitationCardView',
+      //     type: PageTransitionType.rightToLeftWithFade,
+      //     duration: Duration(milliseconds: 300),
+      //     arguments: {'data': formData});
       MyScaffold(text: 'Creating Your Invitation Card, This may Take a While!')
           .show(context);
     }

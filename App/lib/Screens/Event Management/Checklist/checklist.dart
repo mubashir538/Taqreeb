@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
@@ -24,10 +25,13 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   final Map<int, TextEditingController> _editControllers = {};
   final Map<int, FocusNode> _focusNodes = {};
   int? _editingIndex;
+  bool _isChanged = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_isChanged) return;
+    _isChanged = true;
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args != null) {
       _checklistController.initializeFromArgs(args as Map<String, dynamic>);
@@ -59,25 +63,20 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   Future<void> _addChecklistItem(String text) async {
     setState(() => _checklistController.addItem(text));
     _textController.clear();
-
-    // Save immediately to server
     final success = await _checklistController.saveNewItem(text);
     if (!mounted) return;
 
     if (!success) {
       MyScaffold(text: 'Failed to add checklist item').show(context);
-      // Rollback if failed
       setState(() => _checklistController.items.removeLast());
     }
   }
 
   Future<void> _toggleChecklistItem(int index) async {
-    if (_editingIndex == index) return; // Don't toggle while editing
+    if (_editingIndex == index) return; 
 
     final previousState = _checklistController.items[index]["isChecked"];
     setState(() => _checklistController.toggleItem(index));
-
-    // Save immediately to server
     final success = await _checklistController.saveItemState(
       _checklistController.items[index],
     );
@@ -85,7 +84,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     if (!mounted) return;
 
     if (!success) {
-      // Revert if failed
       setState(
           () => _checklistController.items[index]["isChecked"] = previousState);
       MyScaffold(text: 'Failed to update checklist item').show(context);
@@ -107,7 +105,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
     final newText = _editControllers[index]?.text.trim() ?? '';
 
     if (newText.isEmpty) {
-      // Delete the item if text is empty
       await _deleteChecklistItem(index);
       return;
     }
@@ -120,7 +117,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         _editingIndex = null;
       });
 
-      // Save immediately to server
       final success = await _checklistController.updateItemText(
         oldItem: oldItem,
         newText: newText,
@@ -129,7 +125,6 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       if (!mounted) return;
 
       if (!success) {
-        // Revert if failed
         setState(() {
           _checklistController.items[index]["description"] =
               oldItem["description"];
@@ -158,12 +153,10 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
       _focusNodes.remove(index);
     });
 
-    // Delete immediately from server
     final success = await _checklistController.deleteItem(item);
     if (!mounted) return;
 
     if (!success) {
-      // Restore if failed
       setState(() => _checklistController.items.insert(index, item));
       MyScaffold(text: 'Failed to delete checklist item').show(context);
     }
@@ -171,11 +164,12 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   Future<void> _showAddItemDialog() async {
     final maxDimension = Screen.max(context);
+    final colors = AppColors(context);
 
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
@@ -201,7 +195,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             child: Text(
               "Cancel",
               style: GoogleFonts.roboto(
-                color: MyColors.red,
+                color: colors.red,
                 fontSize: maxDimension * 0.015,
                 fontWeight: FontWeight.w500,
               ),
@@ -218,7 +212,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
               "Add",
               style: GoogleFonts.roboto(
                 fontSize: maxDimension * 0.015,
-                color: MyColors.red,
+                color: colors.red,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -230,11 +224,13 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
-          _buildContent(),
+          ShowCaseWidget(builder: (context) => _buildContent()),
           const Positioned(top: 0, child: Header()),
         ],
       ),
@@ -271,12 +267,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildChecklistItems() {
+    final colors = AppColors(context);
+
     if (_checklistController.isLoading) {
       return Center(
         child: Padding(
           padding: EdgeInsets.only(top: Screen.height(context) * 0.3),
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(colors.white),
           ),
         ),
       );
@@ -295,6 +293,8 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildChecklistItem(int index) {
+    final colors = AppColors(context);
+
     final item = _checklistController.items[index];
     return Dismissible(
       key: Key(item["id"]?.toString() ?? item["description"]),
@@ -308,7 +308,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
           horizontal: Screen.max(context) * 0.02,
         ),
         decoration: BoxDecoration(
-          color: MyColors.red.withAlpha(77),
+          color: colors.red.withAlpha(77),
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.centerRight,
@@ -318,7 +318,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
         return await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: MyColors.dark,
+            backgroundColor: colors.dark,
             title: Text(
               "Delete Item",
               style: GoogleFonts.roboto(color: Colors.white),
@@ -332,14 +332,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
                 onPressed: () => Navigator.pop(context, false),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.roboto(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: colors.red),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(
                   "Delete",
-                  style: GoogleFonts.roboto(color: MyColors.red),
+                  style: GoogleFonts.roboto(color: colors.red),
                 ),
               ),
             ],
@@ -360,10 +360,10 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
             horizontal: Screen.max(context) * 0.02,
           ),
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.darkLighter,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: MyColors.red,
+              color: colors.red,
               width: 1,
             ),
           ),
@@ -372,7 +372,7 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
               Checkbox(
                 value: item["isChecked"],
                 onChanged: (_) => _toggleChecklistItem(index),
-                activeColor: MyColors.red,
+                activeColor: colors.red,
               ),
               Expanded(
                 child: _editingIndex == index
@@ -432,12 +432,14 @@ class _CreateChecklistItemsState extends State<CreateChecklistItems> {
   }
 
   Widget _buildAddButton() {
+    final colors = AppColors(context);
+
     return FloatingActionButton(
       onPressed: _showAddItemDialog,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50),
       ),
-      backgroundColor: MyColors.red,
+      backgroundColor: colors.red,
       child: const Icon(FontAwesomeIcons.plus, color: Colors.white),
     );
   }
@@ -483,7 +485,7 @@ class ChecklistController {
     items.add({
       "description": text,
       "isChecked": false,
-      "isNew": true, // Mark as new item
+      "isNew": true, 
     });
   }
 
@@ -505,7 +507,6 @@ class ChecklistController {
       );
 
       if (response['status'] == 'success') {
-        // Update the item with the ID from server
         if (response['checklistItem'] != null) {
           final newItem = items.last;
           newItem["id"] = response['checklistItem']['id'];
@@ -521,7 +522,6 @@ class ChecklistController {
 
   Future<bool> saveItemState(Map<String, dynamic> item) async {
     try {
-      // If it's a new item that hasn't been saved to server yet
       if (item["isNew"] == true) {
         return await saveNewItem(item["description"]);
       }
@@ -546,9 +546,8 @@ class ChecklistController {
     required String newText,
   }) async {
     try {
-      // If it's a new item that hasn't been saved to server yet
       if (oldItem["isNew"] == true) {
-        return true; // The text will be saved when toggled or when app closes
+        return true; 
       }
 
       final response = await MyApi.postRequest(
@@ -568,7 +567,6 @@ class ChecklistController {
 
   Future<bool> deleteItem(Map<String, dynamic> item) async {
     try {
-      // If it's a new item that hasn't been saved to server yet
       if (item["isNew"] == true) {
         return true;
       }

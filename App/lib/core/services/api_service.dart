@@ -79,15 +79,7 @@ class MyApi {
       }
 
       // Network request with timeout
-      final response =
-          await http.get(url, headers: headers).timeout(timeout, onTimeout: () {
-        if (context != null) {
-          MyScaffold(text: 'Request timed out. Please try again.')
-              .show(context);
-        }
-        throw TimeoutException(
-            'The request timed out after ${timeout.inSeconds} seconds');
-      });
+      final response = await http.get(url, headers: headers);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // Save to cache (non-blocking)
@@ -119,6 +111,7 @@ class MyApi {
       return _handleNetworkError(cacheKey, e.toString(), context);
     } on HttpException catch (e) {
       if (context != null) {
+        print('Runnig...');
         MyScaffold(
                 text: 'Server is not working. Please try again after sometime.')
             .show(context);
@@ -268,6 +261,7 @@ class MyApi {
     required String endpoint,
     Map<String, String>? headers,
     required dynamic body,
+    timeout = const Duration(seconds: 20),
     BuildContext? context,
   }) async {
     // Check internet first
@@ -299,7 +293,7 @@ class MyApi {
     try {
       response = await http
           .post(url, headers: headers, body: jsonEncode(body))
-          .timeout(const Duration(seconds: 10), onTimeout: () {
+          .timeout(timeout, onTimeout: () {
         if (context != null) {
           MyScaffold(text: 'Request timed out. Please try again.')
               .show(context);
@@ -647,6 +641,7 @@ class MyApi {
   }) async {
     return await postRequest(
       endpoint: 'chatbot/',
+      timeout: const Duration(seconds: 40),
       body: {
         'user_id': userId,
         'message': message,

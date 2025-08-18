@@ -100,9 +100,9 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
         await MyStorage.saveToken(response['email'], 'semail');
         if (mounted) {
           context.pushNamedTransition(
-        routeName: '/Signup_MoreInfo',
-        type: PageTransitionType.rightToLeftWithFade,
-        duration: Duration(milliseconds: 300));
+              routeName: '/Signup_MoreInfo',
+              type: PageTransitionType.rightToLeftWithFade,
+              duration: Duration(milliseconds: 300));
         }
       } else {
         _showErrorDialog('Invalid OTP', 'The entered OTP is incorrect.');
@@ -139,9 +139,10 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
     //   });
     //   return const Scaffold(body: Center(child: CircularProgressIndicator()));
     // }
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -167,7 +168,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                           if (snapshot.hasError) {
                             return Text(
                               'Error loading OTP',
-                              style: GoogleFonts.roboto(color: MyColors.white),
+                              style: GoogleFonts.roboto(color: colors.white),
                             );
                           }
 
@@ -180,7 +181,7 @@ class _SignupEmailOtpVerifyState extends State<SignupEmailOtpVerify> {
                                   ? 'Send Code Again'
                                   : 'Send Code Again in ${_formatTime(_remainingTime)}',
                               style: GoogleFonts.roboto(
-                                color: MyColors.white,
+                                color: colors.white,
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.04,
                                 decoration: _isResendEnabled

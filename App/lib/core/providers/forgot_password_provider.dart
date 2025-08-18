@@ -53,7 +53,12 @@ class ForgotPasswordProvider with ChangeNotifier {
             type: PageTransitionType.rightToLeftWithFade,
             duration: Duration(milliseconds: 300),
             arguments: {'email': contact, 'response': response});
-      } else {
+      } else if(response['status'] == 'error') {
+        MyScaffold(text: 'You Already have an Account, Try a Different Email')
+            .show(context);
+        return;
+      }
+      else {
         MyScaffold(text: 'Something Went Wrong!').show(context);
       }
     } catch (e) {

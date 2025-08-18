@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taqreeb/Components/Buttons/c_border_button.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
 class FunctionCard extends StatelessWidget {
@@ -11,6 +10,7 @@ class FunctionCard extends StatelessWidget {
   final List<String> headings;
   final List<String> values;
   final String type;
+  final String editText;
   final Function editPressed;
   final Function seePressed;
   final Color color;
@@ -21,6 +21,7 @@ class FunctionCard extends StatelessWidget {
       {super.key,
       this.width = 0.9,
       required this.delete,
+      this.editText = '',
       required this.color,
       required this.type,
       required this.headings,
@@ -49,13 +50,15 @@ class FunctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Center(
       child: Container(
         margin: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
         width: Screen.width(context) * width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20)),
-          color: MyColors.ligthDark,
+          color: colors.lightDark,
         ),
         child: Column(
           children: [
@@ -101,7 +104,7 @@ class FunctionCard extends StatelessWidget {
             Container(
               margin:
                   EdgeInsets.symmetric(vertical: Screen.max(context) * 0.03),
-              width: Screen.width(context) * (width-0.1),
+              width: Screen.width(context) * (width - 0.1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -115,14 +118,14 @@ class FunctionCard extends StatelessWidget {
                           style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
-                              color: MyColors.white),
+                              color: colors.white),
                         ),
                         Text(
                           _formatNumberWithCommas(budget),
                           style: GoogleFonts.roboto(
                               fontSize: Screen.max(context) * 0.02,
                               fontWeight: FontWeight.w500,
-                              color: MyColors.white),
+                              color: colors.white),
                         ),
                       ],
                     ),
@@ -139,14 +142,14 @@ class FunctionCard extends StatelessWidget {
                             style: GoogleFonts.roboto(
                                 fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
-                                color: MyColors.white),
+                                color: colors.white),
                           ),
                           Text(
                             values[headings.indexOf(items)],
                             style: GoogleFonts.roboto(
                                 fontSize: Screen.max(context) * 0.015,
                                 fontWeight: FontWeight.w300,
-                                color: MyColors.white),
+                                color: colors.white),
                           ),
                         ],
                       ),
@@ -157,10 +160,12 @@ class FunctionCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         BorderButton(
-                          text: type.toLowerCase() == 'event'
-                              ? 'Edit Event'
-                              : 'Edit Function',
-                          width: Screen.width(context) * (width/2-0.07),
+                          text: editText != ''
+                              ? editText
+                              : type.toLowerCase() == 'event'
+                                  ? 'Edit Event'
+                                  : 'Edit Function',
+                          width: Screen.width(context) * (width / 2 - 0.07),
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {
                             editPressed();
@@ -168,7 +173,7 @@ class FunctionCard extends StatelessWidget {
                         ),
                         BorderButton(
                           text: 'See Details',
-                          width: Screen.width(context) * (width/2-0.07),
+                          width: Screen.width(context) * (width / 2 - 0.07),
                           textSize: Screen.max(context) * 0.015,
                           onPressed: () {
                             seePressed();

@@ -1,5 +1,5 @@
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,action
 from ..models.booking_models import BookingCart
 from ..models.listing_models import PicturesListings
 from ..Serializers.booking_serializers import BookingCartSerializer
@@ -16,6 +16,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, permissions, status
+
 
 
 @api_view(['GET'])
@@ -95,9 +96,31 @@ class CartViewSet(viewsets.ModelViewSet):
         return Cart.objects.filter(user=self.request.user)
     
     def retrieve(self, request, *args, **kwargs):
-        cart = Cart.objects.get_or_create(user=request.user)
-        serializer = self.get_serializer(cart)
-        return Response(serializer.data)
+        try:
+            cart, _ = Cart.objects.get_or_create(user=request.user)
+            serializer = self.get_serializer(cart)
+            print(serializer.data['items'])
+            response_data = {
+                'status': 'success',
+                'id': str(serializer.data['id']),
+                'user': str(serializer.data['user']),
+                'created_at': serializer.data['created_at'],
+                'updated_at': serializer.data['updated_at'],
+                'items': serializer.data['items'],
+                'total_items': serializer.data['total_items'],
+                'total_price': float(serializer.data['total_price'])
+            }
+            return Response(response_data)
+        except Exception as e:
+            print(e)
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def list(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
 
 class CartItemViewSet(viewsets.ModelViewSet):
     serializer_class = CartItemSerializer
@@ -106,6 +129,18 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         cart, _ = Cart.objects.get_or_create(user=self.request.user)
         return cart.items.all()
+    
+    def perform_create(self, serializer):
+        cart = Cart.objects.get_or_create(user=self.request.user)[0]
+        serializer.save(cart=cart)
+    
+    @action(detail=False, methods=['post'], url_path='add_item')
+    def add_item(self, request):
+        cart = Cart.objects.get_or_create(user=request.user)[0]
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(cart=cart)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def create(self, request, *args, **kwargs):
         cart, _ = Cart.objects.get_or_create(user=request.user)

@@ -69,10 +69,11 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
     final status = booking['status'];
     final item = booking['listing'] ?? booking['product'] ?? booking['package'];
     final user = booking['user'];
+    final colors = AppColors(context);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: MyColors.darkLighter,
+      color: colors.darkLighter,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -81,7 +82,7 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
             Text(
               item['name'],
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -89,15 +90,15 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
             const SizedBox(height: 8),
             Text(
               'Customer: ${user['firstName']} ${user['lastName']}',
-              style: GoogleFonts.roboto(color: MyColors.white),
+              style: GoogleFonts.roboto(color: colors.white),
             ),
             Text(
               'Date: ${DateFormat('MMM dd, yyyy').format(bookingDate)}',
-              style: GoogleFonts.roboto(color: MyColors.white),
+              style: GoogleFonts.roboto(color: colors.white),
             ),
             Text(
               'Time: ${DateFormat('hh:mm a').format(bookingDate)}',
-              style: GoogleFonts.roboto(color: MyColors.white),
+              style: GoogleFonts.roboto(color: colors.white),
             ),
             Text(
               'Status: ${status.toUpperCase()}',
@@ -140,33 +141,37 @@ class _BusinessBookingsScreenState extends State<BusinessBookingsScreen> {
   }
 
   Color _getStatusColor(String status) {
+    final colors = AppColors(context);
+
     switch (status) {
       case 'confirmed':
-        return MyColors.green;
+        return colors.green;
       case 'cancelled':
-        return MyColors.red;
+        return colors.red;
       case 'completed':
-        return MyColors.green;
+        return colors.green;
       default:
-        return MyColors.white;
+        return colors.white;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Business Bookings'),
-        backgroundColor: MyColors.dark,
+        backgroundColor: colors.dark,
       ),
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _bookings.isEmpty
               ? Center(
                   child: Text(
                     'No bookings found',
-                    style: GoogleFonts.roboto(color: MyColors.white),
+                    style: GoogleFonts.roboto(color: colors.white),
                   ),
                 )
               : RefreshIndicator(

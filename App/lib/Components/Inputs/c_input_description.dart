@@ -80,6 +80,8 @@ class _DescriptionStateBox extends State<DescriptionBox> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       height: Screen.height(context) * 0.3,
@@ -89,9 +91,9 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         vertical: Screen.max(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.lightDark,
         border: Border.all(
-          color: _isFocused ? MyColors.red : Colors.transparent,
+          color: _isFocused ? colors.red : Colors.transparent,
           width: 2,
         ),
         borderRadius: BorderRadius.circular(20),
@@ -111,14 +113,14 @@ class _DescriptionStateBox extends State<DescriptionBox> {
         onChanged: widget.onChanged,
         maxLines: 50,
         style: GoogleFonts.roboto(
-          color: MyColors.white,
+          color: colors.white,
           fontSize: Screen.max(context) * 0.015,
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintStyle: GoogleFonts.roboto(
-            color: MyColors.white.withAlpha(153),
+            color: colors.white.withAlpha(153),
             fontSize: Screen.max(context) * 0.015,
             fontWeight: FontWeight.w300,
           ),

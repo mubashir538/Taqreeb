@@ -28,7 +28,8 @@ class NormalQuestion extends StatelessWidget {
             child: Text(
               question,
               style: GoogleFonts.roboto(
-                  color: MyColors.white, fontSize: Screen.max(context) * 0.018),
+                  color: AppColors(context).white,
+                  fontSize: Screen.max(context) * 0.018),
             ),
           ),
           MyTextBox(

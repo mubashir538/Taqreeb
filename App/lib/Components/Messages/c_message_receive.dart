@@ -25,13 +25,14 @@ class RecieveMessage extends StatelessWidget {
 
   Widget _buildListingPreview(BuildContext context) {
     if (listing == null) return const SizedBox.shrink();
+    final colors = AppColors(context);
 
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -43,7 +44,7 @@ class RecieveMessage extends StatelessWidget {
             style: GoogleFonts.roboto(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: MyColors.white,
+              color: colors.white,
             ),
           ),
           SizedBox(height: 8),
@@ -55,7 +56,7 @@ class RecieveMessage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: CachedNetworkImage(
                 imageUrl:
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listing!['picture']}',
+                    listing!['picture'],
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 150,
@@ -71,7 +72,7 @@ class RecieveMessage extends StatelessWidget {
               listing!['description'] ?? '',
               style: GoogleFonts.roboto(
                 fontSize: 14,
-                color: MyColors.white.withAlpha(178),
+                color: colors.white.withAlpha(178),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -84,7 +85,7 @@ class RecieveMessage extends StatelessWidget {
             'www.taqreeb.com', // Replace with your actual domain
             style: GoogleFonts.roboto(
               fontSize: 12,
-              color: MyColors.yellow,
+              color: colors.yellow,
             ),
           ),
         ],
@@ -94,6 +95,8 @@ class RecieveMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Screen.max(context) * 0.02),
       margin: EdgeInsets.only(bottom: Screen.max(context) * 0.02),
@@ -105,7 +108,7 @@ class RecieveMessage extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: Screen.width(context) * 0.7),
             padding: EdgeInsets.all(Screen.max(context) * 0.02),
             decoration: BoxDecoration(
-              color: MyColors.darkLighter,
+              color: colors.darkLighter,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(0),
                 bottomLeft: Radius.circular(15),
@@ -134,18 +137,18 @@ class RecieveMessage extends StatelessWidget {
                     style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: isBold ? FontWeight.bold : FontWeight.w400,
-                      color: isBold ? MyColors.yellow : MyColors.white,
+                      color: isBold ? colors.yellow : colors.white,
                     ),
                   ),
                 if (audioUrl != null)
                   Row(
                     children: [
-                      Icon(Icons.audiotrack, color: MyColors.white),
+                      Icon(Icons.audiotrack, color: colors.white),
                       SizedBox(width: 8),
                       Text(
                         "Voice Note",
                         style: GoogleFonts.roboto(
-                          color: MyColors.white,
+                          color: colors.white,
                           fontSize: Screen.max(context) * 0.015,
                         ),
                       ),

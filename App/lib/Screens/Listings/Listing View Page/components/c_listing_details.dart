@@ -174,10 +174,12 @@ class _CategoryDetailsState extends State<CategoryDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     if (_isLoading) {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(MyColors.white),
+          valueColor: AlwaysStoppedAnimation(colors.white),
         ),
       );
     }
@@ -208,6 +210,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
   }
 
   Widget _buildDetailCard(int index) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.45,
       margin: EdgeInsets.only(bottom: Screen.height(context) * 0.02),
@@ -216,7 +220,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
         vertical: Screen.height(context) * 0.03,
       ),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(20),
       ),
       child: _isBusinessUser
@@ -231,6 +235,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     if (isGuestRange) {
       return _buildGuestRangeEditor(index);
     }
+    final colors = AppColors(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +245,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           style: _buildTextStyle(
             fontSize: 0.018,
             fontWeight: FontWeight.w600,
-            color: MyColors.yellow,
+            color: colors.yellow,
           ),
         ),
         SizedBox(height: Screen.height(context) * 0.01),
@@ -252,7 +257,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   vertical: Screen.height(context) * 0.01,
                 ),
                 decoration: BoxDecoration(
-                  color: MyColors.darkLighter,
+                  color: colors.darkLighter,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -260,7 +265,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   style: _buildTextStyle(
                     fontSize: 0.016,
                     fontWeight: FontWeight.w500,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
               ),
@@ -289,6 +294,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     final parts = widget.values[index].split('-');
     final isEditingMin = _isEditGuestMin && _isEditing[index];
     final isEditingMax = _isEditGuestMax && _isEditing[index];
+    final colors = AppColors(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,7 +304,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           style: _buildTextStyle(
             fontSize: 0.018,
             fontWeight: FontWeight.w600,
-            color: MyColors.yellow,
+            color: colors.yellow,
           ),
         ),
         SizedBox(height: Screen.height(context) * 0.015),
@@ -341,6 +347,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
     required VoidCallback onEdit,
     required VoidCallback onSave,
   }) {
+    final colors = AppColors(context);
+
     return Flexible(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,7 +358,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             style: _buildTextStyle(
               fontSize: 0.016,
               fontWeight: FontWeight.w500,
-              color: MyColors.yellow.withOpacity(0.8),
+              color: colors.yellow.withAlpha(204),
             ),
           ),
           SizedBox(height: Screen.height(context) * 0.008),
@@ -360,11 +368,11 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   style: _buildTextStyle(
                     fontSize: 0.016,
                     fontWeight: FontWeight.w500,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: MyColors.darkLighter,
+                    fillColor: colors.darkLighter,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none,
@@ -386,7 +394,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                     vertical: Screen.height(context) * 0.015,
                   ),
                   decoration: BoxDecoration(
-                    color: MyColors.darkLighter,
+                    color: colors.darkLighter,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -394,7 +402,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                     style: _buildTextStyle(
                       fontSize: 0.016,
                       fontWeight: FontWeight.w500,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                   ),
                 ),
@@ -414,12 +422,14 @@ class _CategoryDetailsState extends State<CategoryDetails> {
   }
 
   Widget _buildEditField(int index) {
+    final colors = AppColors(context);
+
     if (_dropdownChoices[index].isNotEmpty) {
       return DropdownButtonFormField<String>(
-        dropdownColor: MyColors.darkLighter,
+        dropdownColor: colors.darkLighter,
         decoration: InputDecoration(
           filled: true,
-          fillColor: MyColors.darkLighter,
+          fillColor: colors.darkLighter,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
@@ -429,7 +439,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             vertical: Screen.height(context) * 0.015,
           ),
           hintText: 'Select ${widget.headings[index]}...',
-          hintStyle: _buildTextStyle(color: MyColors.whiteDarker),
+          hintStyle: _buildTextStyle(color: colors.whiteDarker),
         ),
         value: widget.values[index].isEmpty ? null : widget.values[index],
         items: _dropdownChoices[index].map((choice) {
@@ -437,7 +447,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             value: choice,
             child: Text(
               choice,
-              style: _buildTextStyle(color: MyColors.white),
+              style: _buildTextStyle(color: colors.white),
             ),
           );
         }).toList(),
@@ -454,11 +464,11 @@ class _CategoryDetailsState extends State<CategoryDetails> {
       style: _buildTextStyle(
         fontSize: 0.016,
         fontWeight: FontWeight.w500,
-        color: MyColors.white,
+        color: colors.white,
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: MyColors.darkLighter,
+        fillColor: colors.darkLighter,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
@@ -477,6 +487,8 @@ class _CategoryDetailsState extends State<CategoryDetails> {
   }
 
   Widget _buildReadOnlyDetail(int index) {
+    final colors = AppColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -486,16 +498,16 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           style: _buildTextStyle(
             fontSize: 0.015,
             fontWeight: FontWeight.w400,
-            color: MyColors.white.withAlpha(123),
+            color: colors.white.withAlpha(123),
           ),
         ),
-        widget.headings[index] == 'portfolio Link'
+        widget.headings[index].toLowerCase() == 'Portfolio Link'.toLowerCase()
             ? InkWell(
                 onTap: () => _launchUrl(widget.values[index]),
                 child: Icon(
                   FontAwesomeIcons.link,
                   size: Screen.max(context) * 0.025,
-                  color: MyColors.white.withAlpha(123),
+                  color: colors.white.withAlpha(123),
                 ),
               )
             : Text(
@@ -503,7 +515,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                 style: _buildTextStyle(
                   fontSize: 0.02,
                   fontWeight: FontWeight.w600,
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               ),
       ],

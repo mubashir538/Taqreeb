@@ -52,8 +52,10 @@ class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
         callback: (renderbox) {
           changeHeight(renderbox);
         });
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SizedBox(
@@ -84,13 +86,13 @@ class _BusinessSignupCNICUploadState extends State<BusinessSignupCNICUpload> {
                                     height: Screen.height(context) * 0.2,
                                     fit: BoxFit.contain,
                                   ),
-                            onTap: () => () => Picture.pickImage(context,
+                            onTap: ()  => Picture.pickImage(context,
                                 callback: (file) =>
                                     setState(() => frontImage = file)),
                           ),
                         ),
                         BorderButton(
-                          onPressed: () => () => Picture.pickImage(context,
+                          onPressed: () => Picture.pickImage(context,
                               callback: (file) =>
                                   setState(() => frontImage = file)),
                           text: 'Upload CNIC Front',

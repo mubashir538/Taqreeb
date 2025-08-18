@@ -15,6 +15,7 @@ dependencies:
   dio: ^5.8.0+1
   mime: ^2.0.0
   flutter_chat_ui: ^1.6.15
+  video_player: ^2.9.5
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
   flutter_colorpicker: ^1.0.3
@@ -37,6 +38,7 @@ dependencies:
   google_maps_flutter: ^2.10.0
   flutter_google_places_sdk: ^0.3.2+1
   url_launcher: ^6.3.1
+  showcaseview: ^4.0.1
   place_picker_google: ^0.0.14
   geolocator: ^13.0.2
   flutter_typeahead: ^5.2.0
@@ -50,10 +52,12 @@ dependencies:
   screenshot: ^3.0.0
   provider: ^6.1.2
   cached_network_image: ^3.4.1
+  encrypt: ^5.0.3
+  pointycastle: ^3.6.2
   flutter_cache_manager: ^3.4.1
   visibility_detector: ^0.4.0+2
   shared_preferences: ^2.5.3
-  page_transition: ^2.2.1
+  page_transition: ^2.2.1 
   animate_do: ^4.2.0
   shimmer: ^3.0.0
 
@@ -63,8 +67,9 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.2
   flutter_lints: ^5.0.0
 
+
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: "adaptive"
   ios: true
   remove_alpha_ios: true
   image_path: "assets/appIcon/taqreebicon.png"

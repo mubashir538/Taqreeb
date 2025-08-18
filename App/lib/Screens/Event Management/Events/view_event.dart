@@ -11,7 +11,6 @@ import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/utils/color.dart';
 import 'package:taqreeb/Components/global/header.dart';
-import 'package:taqreeb/core/utils/icons.dart';
 import 'package:taqreeb/core/utils/images.dart';
 
 class EventDetails extends StatefulWidget {
@@ -108,8 +107,10 @@ class _EventDetailsState extends State<EventDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -135,7 +136,7 @@ class _EventDetailsState extends State<EventDetails> {
                         vertical: Screen.max(context) * 0.015,
                         horizontal: Screen.max(context) * 0.03),
                     decoration: BoxDecoration(
-                        color: MyColors.red,
+                        color: colors.red,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(Screen.max(context) * 0.05),
                           topRight: Radius.circular(Screen.max(context) * 0.05),
@@ -177,9 +178,11 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
       ),
     );
   }
@@ -192,8 +195,7 @@ class _EventDetailsState extends State<EventDetails> {
         _buildEventInfoSection(),
         SizedBox(height: Screen.height(context) * 0.02),
         SizedBox(
-          width: Screen.width(context) * 0.8,
-          child: _buildFunctionsList()),
+            width: Screen.width(context) * 0.8, child: _buildFunctionsList()),
         _buildActionButtons(),
         SizedBox(height: Screen.height(context) * 0.1),
       ],
@@ -208,12 +210,14 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   Widget _buildEventHeader() {
+    final colors = AppColors(context);
+
     return Text(
       _eventData.eventDetails['name'],
       style: GoogleFonts.roboto(
         fontSize: Screen.max(context) * 0.03,
         fontWeight: FontWeight.w700,
-        color: MyColors.yellow,
+        color: colors.yellow,
       ),
     );
   }
@@ -265,12 +269,14 @@ class _EventDetailsState extends State<EventDetails> {
 
   Widget _buildInfoCard(String label, IconData icon, String value,
       TextStyle headingStyle, TextStyle textStyle) {
+    final colors = AppColors(context);
+
     return Container(
       width: Screen.width(context) * 0.45,
       margin: EdgeInsets.all(Screen.max(context) * 0.01),
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -278,8 +284,7 @@ class _EventDetailsState extends State<EventDetails> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Icon(icon,
-                color: MyColors.yellow, size: Screen.max(context) * 0.02),
+            Icon(icon, color: colors.yellow, size: Screen.max(context) * 0.02),
             SizedBox(width: Screen.max(context) * 0.01),
             Text(label, style: headingStyle),
           ]),
@@ -290,13 +295,15 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   Widget _buildFunctionsList() {
+    final colors = AppColors(context);
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _eventData.functions.length,
       itemBuilder: (context, index) => FunctionCard(
         delete: () => _deleteFunction(index),
-        color: MyColors.red,
+        color: colors.red,
         width: 0.8,
         name: _eventData.functions[index]['name'],
         type: _eventData.functions[index]['type'],
@@ -368,6 +375,8 @@ class _EventDetailsState extends State<EventDetails> {
       {required String text,
       required IconData icon,
       required VoidCallback onTap}) {
+    final colors = AppColors(context);
+
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -376,7 +385,7 @@ class _EventDetailsState extends State<EventDetails> {
           Screen.max(context) * 0.02,
         ),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(10),
         ),
         width: Screen.width(context) * 0.8,
@@ -387,19 +396,19 @@ class _EventDetailsState extends State<EventDetails> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(icon,
-                    color: MyColors.red, size: Screen.max(context) * 0.025),
+                    color: colors.red, size: Screen.max(context) * 0.025),
                 SizedBox(width: Screen.max(context) * 0.02),
                 Text(
                   text,
                   style: GoogleFonts.roboto(
                       fontSize: Screen.max(context) * 0.015,
                       fontWeight: FontWeight.w400,
-                      color: MyColors.white),
+                      color: colors.white),
                 ),
               ],
             ),
             Icon(FontAwesomeIcons.chevronRight,
-                color: MyColors.whiteDarker, size: Screen.max(context) * 0.02),
+                color: colors.whiteDarker, size: Screen.max(context) * 0.02),
           ],
         ),
       ),
@@ -417,12 +426,13 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   TextStyle _buildTextStyle({required FontWeight fontWeight}) {
+    final colors = AppColors(context);
+
     return GoogleFonts.roboto(
       fontSize:
           Screen.max(context) * (fontWeight == FontWeight.w600 ? 0.02 : 0.015),
       fontWeight: fontWeight,
-      color:
-          fontWeight == FontWeight.w600 ? MyColors.white : MyColors.whiteDarker,
+      color: fontWeight == FontWeight.w600 ? colors.white : colors.whiteDarker,
     );
   }
 }

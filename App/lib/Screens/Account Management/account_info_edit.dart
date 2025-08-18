@@ -78,7 +78,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     locationcontroller.text = user['city'];
     genderController.text = user['gender'];
     image =
-        "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
+        "${user['profilePicture']}";
   }
 
   @override
@@ -96,7 +96,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
         'city': locationcontroller.text,
         'gender': genderController.text
       }, files: {
-        'profilePicture': _selectedImage
+        'profilePicture': _selectedImage!.path
       });
 
       if (response['status'] == 'success') {
@@ -147,8 +147,10 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
         callback: (renderbox) {
           changeHeight(renderbox);
         });
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -160,8 +162,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                 isLoading
                     ? Center(
                         child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(MyColors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
                       ))
                     : Column(
                         children: [
@@ -210,7 +211,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                             padding: EdgeInsets.all(
                                                 Screen.max(context) * 0.02),
                                             decoration: BoxDecoration(
-                                              color: MyColors.whiteDarker,
+                                              color: colors.whiteDarker,
                                               shape: BoxShape.circle,
                                               boxShadow: [
                                                 BoxShadow(
@@ -223,7 +224,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
                                             child: Icon(
                                               FontAwesomeIcons.pen,
                                               size: Screen.max(context) * 0.025,
-                                              color: MyColors.red,
+                                              color: colors.red,
                                             ),
                                           ),
                                         ),

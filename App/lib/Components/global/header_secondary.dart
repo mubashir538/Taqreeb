@@ -30,12 +30,13 @@ class _HeadersecondaryState extends State<Headersecondary> {
           ? true
           : false;
     }
+    final colors = AppColors(context);
 
     return Container(
       height: hasSomething ? null : Screen.height(context) * 0.1,
       width: Screen.width(context),
       decoration: BoxDecoration(
-        color: MyColors.red,
+        color: colors.red,
         borderRadius: hasSomething
             ? BorderRadius.only(
                 bottomLeft: Radius.circular(20),
@@ -54,7 +55,7 @@ class _HeadersecondaryState extends State<Headersecondary> {
                     style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.025,
                         fontWeight: FontWeight.w700,
-                        color: MyColors.yellow),
+                        color: colors.yellow),
                   ),
                   SizedBox(
                       height: widget.para.isNotEmpty || widget.image.isNotEmpty
@@ -72,7 +73,7 @@ class _HeadersecondaryState extends State<Headersecondary> {
                       style: GoogleFonts.roboto(
                           fontSize: Screen.max(context) * 0.015,
                           fontWeight: FontWeight.w400,
-                          color: MyColors.white),
+                          color: colors.redonWhite),
                     ),
                   ),
                   SizedBox(

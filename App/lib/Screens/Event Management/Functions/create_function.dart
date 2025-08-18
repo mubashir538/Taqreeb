@@ -223,6 +223,7 @@ class _CreateFunctionState extends State<CreateFunction> {
       _navigateAfterSubmit();
     } else if (response['status'] == 'BudgetError') {
       _showBudgetWarning();
+      Navigator.pop(context);
     } else {
       _showErrorMessage();
     }
@@ -278,9 +279,10 @@ class _CreateFunctionState extends State<CreateFunction> {
       headerKey: headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           _buildContent(),
@@ -349,18 +351,23 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   Widget _buildTypeDropdown() {
-    return ResponsiveDropdown(
-      focusNode: _formData.typeFocus,
-      onFieldSubmitted: (_) => _focusNext(_formData.guestMinFocus),
-      items: _isLoading
-          ? []
-          : _functionTypes['functionTypes']
-              .map((val) => val['name'].toString())
-              .cast<String>()
-              .toList(),
-      labelText: 'Function Type',
-      onChanged: (value) => setState(() => _formData.type.text = value),
-    );
+    return _isLoading
+        ? CircularProgressIndicator(
+            color: AppColors(context).white,
+          )
+        : ResponsiveDropdown(
+            focusNode: _formData.typeFocus,
+            selectedOption: _formData.type.text,
+            onFieldSubmitted: (_) => _focusNext(_formData.guestMinFocus),
+            items: _isLoading
+                ? []
+                : _functionTypes['functionTypes']
+                    .map((val) => val['name'].toString())
+                    .cast<String>()
+                    .toList(),
+            labelText: 'Function Type',
+            onChanged: (value) => setState(() => _formData.type.text = value),
+          );
   }
 
   Widget _buildDateField() {
@@ -395,12 +402,14 @@ class _CreateFunctionState extends State<CreateFunction> {
   }
 
   Widget _buildSubmitButton() {
+    final colors = AppColors(context);
+
     return Positioned(
       bottom: 0,
       child: Container(
         width: Screen.width(context),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),

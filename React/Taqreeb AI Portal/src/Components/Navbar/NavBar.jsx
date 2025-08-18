@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./NavBar.css";
 import { FaBell, FaUserCircle, FaCheckCircle } from "react-icons/fa";
+import logo from "../../assets/logo.png";
 
 const NavBar = () => {
   const location = useLocation();
@@ -26,7 +27,7 @@ const NavBar = () => {
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-logo">
-          <img src="/logo.png" alt="Logo" />
+          <img src={logo} alt="Logo" />
         </Link>
       </div>
 

@@ -50,6 +50,8 @@ urlpatterns = [
     path('notification/saveFCM',nm.save_fcm_token, name = 'saveFCMToken'),
     path('notification/DeleteFCM',nm.delete_fcm_token, name = 'DeleteFCMToken'),
     path('notification/sendNotification',nm.send_notification, name = 'send_notification'),
+    path('test/notification',nm.test_notification, name = 'test_notification'),
+    path('user/id/<int:oid>/<str:type>',mv.ownerToUser, name = 'ownerToUser'),
     path('resendOTP/email',am.resend_otp_email, name = 'resendOTPEmail'),
     path('resendOTP/forgot',am.resend_otp, name = 'resendOTP'),
     path('sendOTP/phone',am.send_otp_phone,name='sendOTPPhone'), 
@@ -118,7 +120,7 @@ urlpatterns = [
     path('show/guest/',gv.show_guest,name='ShowGuest'),
     path('Delete/guest/',gv.delete_guest,name='DeleteGuest'),
     path('show/checklist/<int:eventid>',cv.showchecklist,name='ShowGuest'),
-    path('show/checklist/<int:eventid>/<int:functionId>',cv.showchecklist,name='ShowGuest'),
+    path('show/checklist/<int:eventid>/<int:functionid>',cv.showchecklist,name='ShowGuest'),
     path('add/checklist',lm.add_list_item,name='AddChecklist'),
     path('update/checklist',lm.update_list_item,name='UpdateChecklist'),
     path('delete/checklist',lm.delete_list_item,name='DeleteChecklist'),
@@ -156,6 +158,9 @@ urlpatterns = [
     path('api/approvals/listings/<int:pk>/', react.pending_listing_detail, name='pending-listing-detail'),
     path('api/approvals/listings/<int:pk>/status/', react.update_listing_status, name='update-listing-status'),
     path('api/approvals/bulk-status/', react.bulk_update_listing_status, name='bulk-update-status'),
+    path('api/approvals/vendors/stats/', react.pending_vendors_stats, name='pending-vendors-stats'),
+    path('api/approvals/vendors/', react.pending_vendors, name='pending-vendors'),
+    path('api/approvals/vendors/bulk-status/', react.bulk_update_vendor_status, name='bulk-update-vendor-status'),
     path('', include(router.urls)),
 ]
 if settings.DEBUG:

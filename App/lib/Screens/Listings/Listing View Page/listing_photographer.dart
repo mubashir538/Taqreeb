@@ -4,7 +4,6 @@ import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/user_logs.dart';
 import 'package:taqreeb/Components/Dialogs%20&%20Toasts/my_scaffold.dart';
-import 'package:taqreeb/Components/global/c_divider.dart';
 import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_addon.dart';
 import 'package:taqreeb/Screens/Listings/Listing%20View%20Page/components/c_listing_chat.dart';
@@ -27,7 +26,6 @@ class CategoryViewPhotographer extends StatefulWidget {
 }
 
 class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
-  // State variables
   late final Map<String, dynamic> _listing;
   late final List<String> _imageUrls = [];
   late final List<String> _values = [];
@@ -152,20 +150,24 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
   }
 
   Widget _buildLoadingIndicator() {
+        final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(MyColors.white),
+        valueColor: AlwaysStoppedAnimation<Color>(colors.white),
       ),
     );
   }
 
   Widget _buildContent() {
+        final colors = AppColors(context);
+
     return Column(
       children: [
         ImageSliderCategory(imageUrls: _imageUrls),
         Container(
           width: Screen.width(context),
-          color: MyColors.dark,
+          color: colors.dark,
           padding: EdgeInsets.symmetric(
             horizontal: Screen.width(context) * 0.04,
             vertical: Screen.height(context) * 0.01,
@@ -204,14 +206,14 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
     );
   }
 
-  Widget _buildDivider() {
-    return SizedBox(
-      height: Screen.height(context) * 0.05,
-      child: Center(
-        child: MyDivider(width: Screen.width(context) * 0.85),
-      ),
-    );
-  }
+  // Widget _buildDivider() {
+  //   return SizedBox(
+  //     height: Screen.height(context) * 0.05,
+  //     child: Center(
+  //       child: MyDivider(width: Screen.width(context) * 0.85),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -219,9 +221,11 @@ class _CategoryViewPhotographerState extends State<CategoryViewPhotographer> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+        final colors = AppColors(context);
+
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(

@@ -13,6 +13,7 @@ class RatingDistribution extends StatelessWidget {
     double max = Screen.width(context) > Screen.height(context)
         ? Screen.width(context)
         : Screen.height(context);
+    final colors = AppColors(context);
 
     return Container(
       padding: EdgeInsets.all(max * 0.02),
@@ -22,7 +23,7 @@ class RatingDistribution extends StatelessWidget {
           Text(
             "Rating Distribution",
             style: GoogleFonts.roboto(
-              color: MyColors.whiteDarker,
+              color: colors.whiteDarker,
               fontSize: max * 0.02,
               fontWeight: FontWeight.w700,
             ),
@@ -38,7 +39,7 @@ class RatingDistribution extends StatelessWidget {
                     child: Text(
                       "${entry.key}★ ${entry.value}%",
                       style: GoogleFonts.roboto(
-                        color: MyColors.whiteDarker,
+                        color: colors.whiteDarker,
                         fontSize: max * 0.013,
                         fontWeight: FontWeight.w500,
                       ),
@@ -50,7 +51,7 @@ class RatingDistribution extends StatelessWidget {
                       minHeight: Screen.height(context) * 0.02,
                       value: entry.value == 0 ? 1 / 100 : entry.value / 100,
                       backgroundColor: Colors.transparent,
-                      valueColor: AlwaysStoppedAnimation<Color>(MyColors.red),
+                      valueColor: AlwaysStoppedAnimation<Color>(colors.red),
                     ),
                   ),
                 ],

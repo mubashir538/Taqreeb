@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:taqreeb/Components/Buttons/c_color_button.dart';
 import 'package:taqreeb/core/providers/theme_provider.dart';
 import 'package:taqreeb/core/services/api_calls.dart';
+import 'package:taqreeb/core/services/api_service.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,21 +69,68 @@ class _SettingsState extends State<Settings> {
     });
   }
 
+  void _showLogoutDialog() {
+    WarningDialog(
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      actions: [
+        ColoredButton(
+          onPressed: () => Navigator.pop(context),
+          text: 'Cancel',
+          textSize: Screen.max(context) * 0.015,
+          width: Screen.width(context) * 0.3,
+        ),
+        ColoredButton(
+          onPressed: () async {
+            await MyApi.cacheManager.emptyCache();
+            await _handleLogout();
+          },
+          text: 'Logout',
+          width: Screen.width(context) * 0.3,
+          textSize: Screen.max(context) * 0.015,
+        ),
+      ],
+    ).showDialogBox(context);
+  }
+
+  Future<void> _handleLogout() async {
+    await MyApi.postRequest(
+      endpoint: 'notification/DeleteFCM',
+      body: {'token': await MyStorage.yourFCM()},
+      headers: {
+        'Authorization':
+            'Bearer ${await MyStorage.getToken(MyTokens.accessToken)}'
+      },
+    );
+    await Future.wait([
+      MyStorage.deleteToken(MyTokens.refreshToken),
+      MyStorage.deleteToken(MyTokens.accessToken),
+      MyStorage.deleteToken(MyTokens.userId),
+      MyStorage.deleteToken(MyTokens.userType),
+      MyStorage.deleteToken(MyTokens.isBusinessOwner),
+    ]);
+    if (mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/Login',
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final themeProvider =
-        Provider.of<ThemeProvider>(context); // Get the ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    final colors = AppColors(context);
 
     UImanagement.getHeaderHeight(
         headerKey: headerKey,
         callback: (renderbox) {
           changeHeight(renderbox);
         });
-
+    final mycolors = AppColors(context);
     return Scaffold(
-      backgroundColor: themeProvider.themeMode == ThemeMode.dark
-          ? MyColors.dark
-          : MyColors.white, // Use theme-based colors
+      backgroundColor: mycolors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -93,7 +142,7 @@ class _SettingsState extends State<Settings> {
                   isLoading
                       ? CircularProgressIndicator(
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(MyColors.white),
+                              AlwaysStoppedAnimation<Color>(mycolors.white),
                         )
                       : Container(
                           constraints: BoxConstraints(
@@ -107,16 +156,8 @@ class _SettingsState extends State<Settings> {
                                           .clamp(60, 80.0),
                                       width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
-                                        color: themeProvider.themeMode ==
-                                                ThemeMode.dark
-                                            ? MyColors.darkLighter
-                                            : MyColors.whiteDarker,
+                                        color: colors.lightDark,
                                         borderRadius: BorderRadius.circular(15),
-                                        border: Border.all(
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.darkLighter
-                                                : MyColors.whiteDarker),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -124,10 +165,7 @@ class _SettingsState extends State<Settings> {
                                         children: [
                                           Icon(
                                             FontAwesomeIcons.building,
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.white
-                                                : MyColors.dark,
+                                            color: colors.white,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -143,11 +181,7 @@ class _SettingsState extends State<Settings> {
                                                       Screen.max(context) *
                                                           0.015,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      themeProvider.themeMode ==
-                                                              ThemeMode.dark
-                                                          ? MyColors.white
-                                                          : MyColors.dark,
+                                                  color: colors.white,
                                                 ),
                                               ),
                                             ),
@@ -180,10 +214,10 @@ class _SettingsState extends State<Settings> {
                                                 );
                                               });
                                             },
-                                            activeColor: MyColors.white,
-                                            activeTrackColor: MyColors.green,
-                                            inactiveThumbColor: MyColors.white,
-                                            inactiveTrackColor: MyColors.red,
+                                            activeColor: mycolors.white,
+                                            activeTrackColor: mycolors.green,
+                                            inactiveThumbColor: mycolors.white,
+                                            inactiveTrackColor: mycolors.red,
                                           ),
                                         ],
                                       ),
@@ -208,16 +242,8 @@ class _SettingsState extends State<Settings> {
                                           .clamp(60, 80.0),
                                       width: Screen.width(context) * 0.9,
                                       decoration: BoxDecoration(
-                                        color: themeProvider.themeMode ==
-                                                ThemeMode.dark
-                                            ? MyColors.darkLighter
-                                            : MyColors.whiteDarker,
+                                        color: colors.lightDark,
                                         borderRadius: BorderRadius.circular(15),
-                                        border: Border.all(
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.darkLighter
-                                                : MyColors.whiteDarker),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -225,10 +251,7 @@ class _SettingsState extends State<Settings> {
                                         children: [
                                           Icon(
                                             FontAwesomeIcons.building,
-                                            color: themeProvider.themeMode ==
-                                                    ThemeMode.dark
-                                                ? MyColors.white
-                                                : MyColors.dark,
+                                            color: colors.white,
                                             size: Screen.max(context) * 0.02,
                                           ),
                                           Flexible(
@@ -244,11 +267,7 @@ class _SettingsState extends State<Settings> {
                                                       Screen.max(context) *
                                                           0.015,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      themeProvider.themeMode ==
-                                                              ThemeMode.dark
-                                                          ? MyColors.white
-                                                          : MyColors.dark,
+                                                  color: colors.white,
                                                 ),
                                               ),
                                             ),
@@ -281,10 +300,10 @@ class _SettingsState extends State<Settings> {
                                                 );
                                               });
                                             },
-                                            activeColor: MyColors.white,
-                                            activeTrackColor: MyColors.green,
-                                            inactiveThumbColor: MyColors.white,
-                                            inactiveTrackColor: MyColors.red,
+                                            activeColor: mycolors.white,
+                                            activeTrackColor: mycolors.green,
+                                            inactiveThumbColor: mycolors.white,
+                                            inactiveTrackColor: mycolors.red,
                                           ),
                                         ],
                                       ),
@@ -316,8 +335,7 @@ class _SettingsState extends State<Settings> {
                                           child: Text('Cancel')),
                                       TextButton(
                                           onPressed: () {
-                                            themeProvider
-                                                .switchTheme(); // Use ThemeProvider
+                                            themeProvider.switchTheme();
                                             Navigator.pushNamedAndRemoveUntil(
                                               context,
                                               '/HomePage',
@@ -345,6 +363,15 @@ class _SettingsState extends State<Settings> {
                                 },
                                 text: 'Edit Account Info',
                                 leftIcon: FontAwesomeIcons.pen,
+                                rightIcon: FontAwesomeIcons.chevronRight,
+                              ),
+                              GuideButton(
+                                onpressed: () {
+                                  _showLogoutDialog();
+                                },
+                                text: 'Logout',
+                                leftIcon:
+                                    FontAwesomeIcons.arrowRightFromBracket,
                                 rightIcon: FontAwesomeIcons.chevronRight,
                               ),
                             ],

@@ -55,7 +55,7 @@ class _NewUserSearchState extends State<NewUserSearch> {
           return {
             'userId': userDoc.id,
             'chatimage':
-                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture'] ?? ''}',
+                '${userDoc['profilePicture'] ?? ''}',
             'name': '${userDoc['firstName']} ${userDoc['lastName']}',
           };
         }).toList();
@@ -73,7 +73,8 @@ class _NewUserSearchState extends State<NewUserSearch> {
     context.pushNamedTransition(
         routeName: '/ChatBox',
         type: PageTransitionType.rightToLeftWithFade,
-        duration: Duration(milliseconds: 300),arguments: {'userId': userId});
+        duration: Duration(milliseconds: 300),
+        arguments: {'userId': userId});
   }
 
   void _handleError(String error) {
@@ -120,8 +121,10 @@ class _NewUserSearchState extends State<NewUserSearch> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

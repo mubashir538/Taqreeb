@@ -31,7 +31,6 @@ class SearchService extends StatefulWidget {
 }
 
 class _SearchServiceState extends State<SearchService> {
-  // Data State
   final Map<String, dynamic> _args = {};
   final Map<String, dynamic> _categories = {};
   final Map<String, dynamic> _searchResults = {
@@ -41,8 +40,6 @@ class _SearchServiceState extends State<SearchService> {
   };
   final Map<String, dynamic> _additionalFilters = {};
   final Map<String, dynamic> _additionalSelections = {};
-
-  // Controllers
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -58,13 +55,11 @@ class _SearchServiceState extends State<SearchService> {
       TextEditingController(text: 'All');
 
   FocusNode searchFocus = FocusNode();
-
-  // UI State
   final GlobalKey _headerKey = GlobalKey();
   String _token = '';
   bool _isLoading = true;
   bool _isChanged = false;
-  int _currentTab = 0; // 0 = Listings, 1 = Packages, 2 = Products
+  int _currentTab = 0;
   final List<String> _appliedFilters = [];
   final List<String> _filtersToApply = [];
 
@@ -94,6 +89,9 @@ class _SearchServiceState extends State<SearchService> {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args != null) {
         _args.addAll(args as Map<String, dynamic>);
+        setState(() {
+          _categoryController.text = _args['category'] ?? 'All';
+        });
       }
       _isChanged = true;
       _fetchData();
@@ -142,8 +140,6 @@ class _SearchServiceState extends State<SearchService> {
         'max_rating': _ratingController.maxValue.toString(),
       'type': _getCurrentTabType(),
     };
-
-    // Add additional filters if they exist
     _additionalSelections.forEach((key, value) {
       if (value.isNotEmpty) {
         params[key] = value.join(',');
@@ -248,6 +244,8 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   Widget _buildFilterChips() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.only(top: Screen.max(context) * 0.02),
       width: Screen.width(context) * 0.9,
@@ -259,7 +257,7 @@ class _SearchServiceState extends State<SearchService> {
               margin: const EdgeInsets.symmetric(horizontal: 5),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: MyColors.whiteDarker,
+                color: colors.whiteDarker,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -267,7 +265,7 @@ class _SearchServiceState extends State<SearchService> {
                   Text(
                     filter,
                     style: GoogleFonts.montserrat(
-                      color: MyColors.dark,
+                      color: colors.dark,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -297,7 +295,7 @@ class _SearchServiceState extends State<SearchService> {
                     child: Icon(
                       FontAwesomeIcons.xmark,
                       size: 16,
-                      color: MyColors.dark,
+                      color: colors.dark,
                     ),
                   ),
                 ],
@@ -310,6 +308,8 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   Widget _buildSearchBar() {
+    final colors = AppColors(context);
+
     return Container(
       margin: EdgeInsets.only(top: Screen.max(context) * 0.05),
       child: SizedBox(
@@ -332,7 +332,7 @@ class _SearchServiceState extends State<SearchService> {
                   icon: Icon(
                     FontAwesomeIcons.bars,
                     size: Screen.max(context) * 0.03,
-                    color: MyColors.white,
+                    color: colors.white,
                   ),
                 ),
                 if (_appliedFilters.contains("Category") &&
@@ -342,7 +342,7 @@ class _SearchServiceState extends State<SearchService> {
                     icon: Icon(
                       FontAwesomeIcons.filter,
                       size: Screen.max(context) * 0.03,
-                      color: MyColors.white,
+                      color: colors.white,
                     ),
                   ),
               ],
@@ -371,8 +371,10 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   Widget _buildSkeletonLoader() {
+    final colors = AppColors(context);
+
     return ListView.builder(
-      itemCount: 5, // Number of skeleton items to show
+      itemCount: 5,
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.symmetric(
@@ -380,12 +382,11 @@ class _SearchServiceState extends State<SearchService> {
             vertical: Screen.height(context) * 0.01,
           ),
           child: Shimmer.fromColors(
-            baseColor: MyColors.dark.withOpacity(0.6),
-            highlightColor: MyColors.dark.withOpacity(0.3),
+            baseColor: colors.dark.withAlpha(153),
+            highlightColor: colors.dark.withAlpha(77),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Image placeholder
                 Container(
                   width: double.infinity,
                   height: Screen.height(context) * 0.2,
@@ -395,24 +396,18 @@ class _SearchServiceState extends State<SearchService> {
                   ),
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-
-                // Title placeholder
                 Container(
                   width: Screen.width(context) * 0.6,
                   height: Screen.height(context) * 0.025,
                   color: Colors.white,
                 ),
                 SizedBox(height: Screen.height(context) * 0.01),
-
-                // Subtitle placeholder
                 Container(
                   width: Screen.width(context) * 0.4,
                   height: Screen.height(context) * 0.02,
                   color: Colors.white,
                 ),
                 SizedBox(height: Screen.height(context) * 0.02),
-
-                // Divider
                 Container(
                   width: double.infinity,
                   height: 1,
@@ -431,6 +426,7 @@ class _SearchServiceState extends State<SearchService> {
         ? _buildEmptyState()
         : ListView.builder(
             itemCount: _searchResults['listings'].length,
+            shrinkWrap: true,
             itemBuilder: (context, index) {
               final listing = _searchResults['listings'][index];
               return ProductCard(
@@ -453,6 +449,7 @@ class _SearchServiceState extends State<SearchService> {
     return _searchResults['packages'].isEmpty
         ? _buildEmptyState()
         : ListView.builder(
+            shrinkWrap: true,
             itemCount: _searchResults['packages'].length,
             itemBuilder: (context, index) {
               final package = _searchResults['packages'][index];
@@ -464,10 +461,7 @@ class _SearchServiceState extends State<SearchService> {
                 packageDetails: package['description'],
                 packagePrice: package['price'].toString(),
                 packageName: package['name'],
-                onPressed: () {
-                  // TODO
-                  // Implement Package Click
-                },
+                onPressed: () {},
               );
             },
           );
@@ -485,18 +479,22 @@ class _SearchServiceState extends State<SearchService> {
                 productName: product['name'],
                 productDescription: product['description'],
                 productPrice: product['price'].toString(),
-                productImage: product['pictures']?[0]['picturePath'] ?? '',
+                productImage: product['pictures'].length == 0
+                    ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
+                    : product['pictures']?[0]['picturePath'] ?? '',
               );
             },
           );
   }
 
   Widget _buildEmptyState() {
+    final colors = AppColors(context);
+
     return Center(
       child: Text(
         'No results found',
         style: GoogleFonts.montserrat(
-          color: MyColors.white,
+          color: colors.white,
           fontSize: 18,
         ),
       ),
@@ -504,6 +502,8 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void _showFilterPopup(BuildContext context) {
+    final colors = AppColors(context);
+
     final ScrollController scrollController = ScrollController();
     showModalBottomSheet(
       context: context,
@@ -514,7 +514,7 @@ class _SearchServiceState extends State<SearchService> {
           padding: EdgeInsets.all(Screen.max(context) * 0.02),
           constraints: BoxConstraints(maxHeight: Screen.max(context) * 0.8),
           decoration: BoxDecoration(
-            color: MyColors.darkLighter,
+            color: colors.darkLighter,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(Screen.max(context) * 0.05),
             ),
@@ -531,7 +531,7 @@ class _SearchServiceState extends State<SearchService> {
                       style: GoogleFonts.roboto(
                         fontSize: Screen.max(context) * 0.03,
                         fontWeight: FontWeight.bold,
-                        color: MyColors.red,
+                        color: colors.red,
                       ),
                     ),
                     _buildFilterSection(
@@ -608,7 +608,7 @@ class _SearchServiceState extends State<SearchService> {
                         valuecontroller: _dateController,
                       ),
                     ),
-                    SizedBox(height: Screen.height(context) * 0.1),
+                    SizedBox(height: Screen.height(context) * 0.5),
                   ],
                 ),
               ),
@@ -622,6 +622,7 @@ class _SearchServiceState extends State<SearchService> {
                   },
                 ),
               )
+              
             ],
           ),
         );
@@ -632,6 +633,8 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   Widget _buildFilterSection({required String title, required Widget child}) {
+    final colors = AppColors(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -640,7 +643,7 @@ class _SearchServiceState extends State<SearchService> {
           style: GoogleFonts.roboto(
             fontSize: Screen.max(context) * 0.02,
             fontWeight: FontWeight.w500,
-            color: MyColors.yellow,
+            color: colors.yellow,
           ),
         ),
         child,
@@ -649,9 +652,11 @@ class _SearchServiceState extends State<SearchService> {
   }
 
   void _showAdditionalFilterPopup(BuildContext context) {
+    final colors = AppColors(context);
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -668,7 +673,7 @@ class _SearchServiceState extends State<SearchService> {
                     style: GoogleFonts.roboto(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: MyColors.yellow,
+                      color: colors.yellow,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -683,7 +688,7 @@ class _SearchServiceState extends State<SearchService> {
                               style: GoogleFonts.roboto(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: MyColors.yellow,
+                                color: colors.yellow,
                               ),
                             ),
                             CheckBoxQuestion(
@@ -700,7 +705,7 @@ class _SearchServiceState extends State<SearchService> {
                                 });
                               },
                             ),
-                            Divider(color: MyColors.whiteDarker),
+                            Divider(color: colors.whiteDarker),
                           ],
                         );
                       }).toList(),
@@ -730,8 +735,10 @@ class _SearchServiceState extends State<SearchService> {
       callback: (renderbox) => _updateHeaderHeight(renderbox),
     );
 
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         children: [
           Header(key: _headerKey),
@@ -744,9 +751,10 @@ class _SearchServiceState extends State<SearchService> {
                   onTabChanged: _handleTabChange,
                 ),
                 if (_appliedFilters.isNotEmpty) _buildFilterChips(),
-                Expanded(child: SizedBox(
-                  width: Screen.width(context) * 0.9,
-                  child: _buildContent())),
+                Expanded(
+                    child: SizedBox(
+                        width: Screen.width(context) * 0.9,
+                        child: _buildContent())),
               ],
             ),
           ),

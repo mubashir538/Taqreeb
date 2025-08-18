@@ -21,11 +21,11 @@ const HomeScreen = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const searched = await apiService.get('dashboard_most_searched/');
-      const used = await apiService.get('dashboard_most_used_services/');
-      const categories = await apiService.get('dashboard_top_categories/');
-      const activities = await apiService.get('dashboard_recent_activity/');
-      const searchTerms = await apiService.get('dashboard_top_search_terms/');
+      const searched = await apiService.get('app/api/react/dashboard_most_searched/');
+      const used = await apiService.get('app/api/react/dashboard_most_used_services/');
+      const categories = await apiService.get('app/api/react/dashboard_top_categories/');
+      const activities = await apiService.get('app/api/react/dashboard_recent_activity/');
+      const searchTerms = await apiService.get('app/api/react/dashboard_top_search_terms/');
 
       setMostSearchedItems(searched.data);
       setMostUsedServices(used.data);

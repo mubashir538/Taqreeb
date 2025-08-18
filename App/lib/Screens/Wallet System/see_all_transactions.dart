@@ -73,7 +73,7 @@ class _AllTransactionsState extends State<AllTransactions> {
 
     for (var transaction in transactions) {
       DateTime transactionDate = DateTime.parse(
-          transaction['date']); // Ensure your DB returns a valid date string
+          transaction['date']); 
       String formattedDate = DateFormat('yyyy-MM-dd').format(transactionDate);
       String formattedMonth = DateFormat('yyyy-MM').format(transactionDate);
       String formattedYear = DateFormat('yyyy').format(transactionDate);
@@ -111,9 +111,11 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Stack(
         children: [
+          
           SingleChildScrollView(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -125,7 +127,7 @@ class _AllTransactionsState extends State<AllTransactions> {
                   Column(
                     children: groupedData.entries
                         .where((entry) => entry
-                            .value.isNotEmpty) // Show only non-empty sections
+                            .value.isNotEmpty) 
                         .map((entry) =>
                             buildTransactionSection(entry.key, entry.value))
                         .toList(),
@@ -140,15 +142,17 @@ class _AllTransactionsState extends State<AllTransactions> {
 
   Widget buildTransactionSection(
       String title, List<Map<String, dynamic>> transactions) {
+        final colors = AppColors(context);
+
     return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: Screen.max(context) * 0.02), 
+          SizedBox(height: Screen.max(context) * 0.02),
           Text(
             title,
             style: GoogleFonts.roboto(
-              color: MyColors.red,
+              color: colors.red,
               fontSize: Screen.max(context) * 0.025,
               fontWeight: FontWeight.w600,
             ),

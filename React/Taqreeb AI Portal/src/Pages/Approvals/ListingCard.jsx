@@ -1,35 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './ListingCard.css';
+import React, { useState } from "react";
+import "./ListingCard.css";
 
 const ListingCard = ({ listing, isSelected, onSelect }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [details, setDetails] = useState(null);
-  const [loadingDetails, setLoadingDetails] = useState(false);
-  const [error, setError] = useState(null);
 
-  const toggleExpand = async (e) => {
-    if (e.target.type !== 'checkbox') {
-      if (!isExpanded && !details) {
-        setLoadingDetails(true);
-        try {
-          const response = await axios.get(`/api/approvals/listings/${listing.id}/`);
-          setDetails(response.data);
-        } catch (err) {
-          setError('Failed to load details');
-          console.error('Error fetching details:', err);
-        } finally {
-          setLoadingDetails(false);
-        }
-      }
+  const toggleExpand = (e) => {
+    if (!e.target.closest(".card-checkbox")) {
       setIsExpanded(!isExpanded);
     }
   };
 
+  if (!listing) return null;
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "No date";
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-PK", {
+      style: "currency",
+      currency: "PKR",
+      minimumFractionDigits: 0,
+    })
+      .format(amount)
+      .replace("PKR", "Rs.");
+  };
+
+  const renderServiceDetails = () => {
+    if (!listing.serviceDetails) return null;
+
+    const details = [];
+    for (const [key, value] of Object.entries(listing.serviceDetails)) {
+      if (value && value !== "None" && value !== "") {
+        details.push(
+          <p key={key}>
+            <strong>
+              {key
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())}
+              :
+            </strong>{" "}
+            {value}
+          </p>
+        );
+      }
+    }
+
+    return (
+      <div className="section">
+        <h4>{listing.type} Details</h4>
+        {details}
+      </div>
+    );
+  };
+
   return (
-    <div className={`approval-card ${isExpanded ? 'expanded' : ''}`} onClick={toggleExpand}>
+    <div
+      className={`listing-card ${isExpanded ? "expanded" : ""}`}
+      onClick={toggleExpand}
+    >
       <div className="card-checkbox" onClick={(e) => e.stopPropagation()}>
-        <input 
+        <input
           type="checkbox"
           checked={isSelected}
           onChange={() => onSelect(listing.id)}
@@ -42,74 +75,151 @@ const ListingCard = ({ listing, isSelected, onSelect }) => {
           <span className="listing-type">{listing.type}</span>
         </div>
 
-        <p className="submitted-by">
-          Submitted by: {listing.ownerID?.name || listing.freelancerID?.name || 'Unknown'}
-        </p>
+        <p className="submitted-by">Submitted by: {listing.owner_name}</p>
 
         <div className="card-details">
-          <div className="detail-item">📍 {listing.location || 'Unknown Location'}</div>
-          <div className="detail-item">💰 ${listing.priceMin} - ${listing.priceMax}</div>
-          <div className="detail-item">⭐ {listing.rating} ({listing.ratingCount} reviews)</div>
+          <div className="detail-item">📍 {listing.location}</div>
+          <div className="detail-item">
+            💰 {formatCurrency(listing.priceMin)} -{" "}
+            {formatCurrency(listing.priceMax)}
+          </div>
+          <div className="detail-item">
+            ⭐ {listing.rating} ({listing.ratingCount} reviews)
+          </div>
         </div>
 
         {isExpanded && (
           <div className="expanded-content">
             <div className="status-badge">Pending Review</div>
 
-            {error && <div className="error-message">{error}</div>}
-            {loadingDetails && <div className="loading-details">Loading details...</div>}
+            <div className="section">
+              <h4>Basic Information</h4>
+              <p>
+                <strong>Created:</strong> {formatDate(listing.created_at)}
+              </p>
+              <p>
+                <strong>Base Price:</strong>{" "}
+                {formatCurrency(listing.basicPrice)}
+              </p>
+              <p>
+                <strong>Status:</strong> {listing.status}
+              </p>
+              {listing.booked_dates && listing.booked_dates.length > 0 && (
+                <p>
+                  <strong>Booked Dates:</strong>{" "}
+                  {listing.booked_dates.join(", ")}
+                </p>
+              )}
+            </div>
 
-            {!loadingDetails && details && (
-              <>
-                <div className="section">
-                  <h4>Description</h4>
-                  <p>{listing.description || 'No description provided.'}</p>
-                </div>
+            <div className="section">
+              <h4>Description</h4>
+              <p>{listing.description}</p>
+            </div>
 
-                {details?.packages?.length > 0 && (
-                  <div className="section">
-                    <h4>Pricing</h4>
-                    <ul>
-                      {details.packages.map(pkg => (
-                        <li key={pkg.id}>
-                          <strong>{pkg.name}:</strong> ${pkg.price}
-                          {pkg.description && <> — {pkg.description}</>}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+            {renderServiceDetails()}
 
-                {details?.images?.length > 0 && (
-                  <div className="section">
-                    <h4>Images</h4>
-                    <div className="images-grid">
-                      {details.images.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={img.picturePath}
-                          alt={`Image ${idx}`}
-                          className="thumbnail"
-                        />
-                      ))}
+            {listing.images.length > 0 && (
+              <div className="section">
+                <h4>Listing Images ({listing.images.length})</h4>
+                <div className="images-grid">
+                  {listing.images.map((img, idx) => (
+                    <div key={idx} className="image-container">
+                      <img
+                        src={img}
+                        alt={`Listing ${idx}`}
+                        className="listing-image"
+                        onError={(e) => (e.target.style.display = "none")}
+                      />
                     </div>
-                  </div>
-                )}
-
-                <div className="section">
-                  <h4>Contact</h4>
-                  <p>Email: {listing.ownerID?.email || listing.freelancerID?.email || 'N/A'}</p>
-                  <p>Phone: {listing.ownerID?.phone || listing.freelancerID?.phone || 'N/A'}</p>
+                  ))}
                 </div>
+              </div>
+            )}
 
-                <div className="section">
-                  <h4>Documents</h4>
-                  <ul>
-                    <li>📄 Terms and Conditions.pdf</li>
-                    <li>📄 License.pdf</li>
-                  </ul>
+            {listing.packages.length > 0 && (
+              <div className="section">
+                <h4>Packages ({listing.packages.length})</h4>
+                <div className="packages-grid">
+                  {listing.packages.map((pkg) => (
+                    <div key={pkg.id} className="package-card">
+                      <h5>
+                        {pkg.name} - {formatCurrency(pkg.price)}
+                      </h5>
+                      <p>{pkg.description}</p>
+                      {pkg.images.length > 0 && (
+                        <div className="package-images">
+                          {pkg.images.map((img, idx) => (
+                            <div key={idx} className="image-container">
+                              <img
+                                src={img}
+                                alt={`Package ${pkg.name}`}
+                                className="package-image"
+                                onError={(e) =>
+                                  (e.target.style.display = "none")
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              </>
+              </div>
+            )}
+
+            {listing.products.length > 0 && (
+              <div className="section">
+                <h4>Products ({listing.products.length})</h4>
+                <div className="products-grid">
+                  {listing.products.map((prod) => (
+                    <div key={prod.id} className="product-card">
+                      <h5>
+                        {prod.name} - {formatCurrency(prod.price)}
+                      </h5>
+                      <p>{prod.description}</p>
+                      <p>
+                        <strong>Quantity:</strong> {prod.quantity}
+                      </p>
+                      {prod.images.length > 0 && (
+                        <div className="product-images">
+                          {prod.images.map((img, idx) => (
+                            <div key={idx} className="image-container">
+                              <img
+                                src={img}
+                                alt={prod.name}
+                                className="product-image"
+                                onError={(e) =>
+                                  (e.target.style.display = "none")
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {listing.addons.length > 0 && (
+              <div className="section">
+                <h4>Add-ons ({listing.addons.length})</h4>
+                <div className="addons-grid">
+                  {listing.addons.map((addon) => (
+                    <div key={addon.id} className="addon-card">
+                      <h5>
+                        {addon.name} - {formatCurrency(addon.price)}
+                      </h5>
+                      <p>
+                        {addon.isPer ? `Per ${addon.perType}` : "One-time fee"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         )}

@@ -126,9 +126,11 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
   }
 
   Widget _buildLoadingIndicator() {
+    final colors = AppColors(context);
+
     return Center(
       child: CircularProgressIndicator(
-        color: MyColors.yellow,
+        color: colors.yellow,
       ),
     );
   }
@@ -164,6 +166,8 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
   }
 
   Widget _buildInstructions() {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: Screen.width(context) * 0.05,
@@ -173,7 +177,7 @@ class _ManageBookedSlotsScreenState extends State<ManageBookedSlotsScreen> {
         'Tap on dates to mark them as booked. Tap again to unmark.',
         style: GoogleFonts.roboto(
           fontSize: Screen.max(context) * 0.02,
-          color: MyColors.yellow,
+          color: colors.yellow,
         ),
         textAlign: TextAlign.center,
       ),

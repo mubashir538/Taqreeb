@@ -8,6 +8,7 @@ import 'package:taqreeb/Components/global/header.dart';
 import 'package:taqreeb/Components/Inputs/c_input_text_box.dart';
 import 'package:taqreeb/Components/c_progress_bar.dart';
 import 'package:taqreeb/Components/global/c_divider.dart';
+import 'package:taqreeb/Components/global/header_secondary.dart';
 import 'package:taqreeb/core/services/phone_auth_service.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
@@ -111,8 +112,10 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -123,10 +126,15 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(
-                        height: (Screen.height(context) * _topPaddingFactor) +
-                            UImanagement.headerHeight,
+                      Headersecondary(
+                        heading: 'Contact Verification',
+                        para:
+                            'Enter Phone number to send one time password',
+                        image: MyImages.singupPng,
                       ),
+                      SizedBox(
+                          height:
+                              (Screen.height(context) * _topPaddingFactor)),
                       MyTextBox(
                         focusNode: _contactFocus,
                         onFieldSubmitted: (_) =>
@@ -137,7 +145,8 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
                         valueController: _contactController,
                       ),
                       SizedBox(
-                        height: Screen.height(context) * _dividerHeightFactor,
+                        height:
+                            Screen.height(context) * _dividerHeightFactor,
                         child: const Center(child: MyDivider()),
                       ),
                       ColoredButton(
@@ -160,9 +169,6 @@ class _SignupContactOtpSendState extends State<SignupContactOtpSend> {
             top: 0,
             child: Header(
               key: _headerKey,
-              heading: 'Contact Verification',
-              para: 'Enter Phone number to send one time password',
-              image: MyImages.singupPng,
             ),
           ),
         ],

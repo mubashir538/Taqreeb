@@ -84,8 +84,10 @@ class _MainScreenState extends State<MainScreen> {
     final currentPageList =
         _isBusinessOwner || _isFreelancer ? _businessPages : _pages;
 
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -100,15 +102,15 @@ class _MainScreenState extends State<MainScreen> {
                     routeName: _isBusinessOwner || _isFreelancer
                         ? '/AddCategory_List'
                         : '/CreateEvent',
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300));
+                    type: PageTransitionType.fade,
+                    duration: Duration(milliseconds: 200));
               },
-              backgroundColor: MyColors.red,
+              backgroundColor: colors.red,
               shape: const CircleBorder(),
               child: Icon(
                 FontAwesomeIcons.plus,
                 size: Screen.max(context) * 0.03,
-                color: MyColors.white,
+                color: colors.redonWhite,
               ),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

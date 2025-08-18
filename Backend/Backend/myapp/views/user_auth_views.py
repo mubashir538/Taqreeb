@@ -11,6 +11,10 @@ from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from firebase_admin import messaging
+from datetime import datetime
+import requests
+import os
+import pywhatkit as kit
 from ..models.user_models import User,UserActivity
 
 @api_view(['POST'])
@@ -52,7 +56,7 @@ def account_signup_page(request):
             'city': user.city,
             'gender': user.gender,
         },
-        timestamp=now()
+        timestamp=datetime.now()
     )
 
     if contact_type=='email':
@@ -62,7 +66,8 @@ def account_signup_page(request):
 
     if profile_picture:
             filestorage = FileSystemStorage()
-            file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}.png', profile_picture)
+            now = datetime.now().strftime('%Y%m%d_%H%M%S')
+            file_path = filestorage.save(f'uploads/users/profilePicture/{user.id}_{now}.png', profile_picture)
             user.profilePicture = filestorage.url(file_path)   
             user.save(update_fields=["profilePicture"])
     
@@ -88,7 +93,7 @@ def account_signup_page(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resend_otp_email(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower()
     otp = request.data.get('otp')
     subject = 'OTP for Taqreeb'
     message = f''' The Otp for your Taqreeb App is
@@ -114,28 +119,25 @@ def resend_otp_phone(request):
 def send_otp_phone(request):
     contact_number = request.data.get('contactNumber')
     country = '+92'
-    if contact_number.find(country) == -1:
+    if str(contact_number).find(country) == -1:
         if contact_number[0] == '0':
             contact_number = contact_number[1:]
         contact_number = country + contact_number
     print('contactNumber: ',contact_number)
     otp = rd.randint(100000,999999)
-    message = messaging.Message(
-            notification=messaging.Notification(
-                title="Your OTP Code",
-                body=f"Your Taqreeb verification code is {otp}. Do not share it with anyone."
-            ),
-            token=contact_number,
-        )
-
-    response = messaging.send(message)
-    print(response)
+    now = datetime.datetime.now()
+    kit.sendwhatmsg(
+    phone_no=contact_number,
+    message=f"Your OTP is: {otp}",
+    time_hour=now.hour,
+    time_min=now.minute + 1
+    )
     return Response({'status':'success','otp': otp,'contact':contact_number})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def send_otp_email(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower()
     if not User.objects.filter(email=email).exists():
         otp = rd.randint(1000,9999)
         subject = 'The OTP for Taqreeb'
@@ -151,15 +153,20 @@ def send_otp_email(request):
             return Response({'status': 'error'})
     else:
         return Response({'status': 'error','message': 'Email Already Exists'})
-    
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def forgot_password_page(request):
     contact = request.data.get('email')
     if request.data.get('email'):
         contact = request.data.get('email')
+        if not User.objects.filter(email=contact).exists():
+            return Response({'status': 'error','message': 'This Account Does not Exist'})
     else:
         contact = request.data.get('phone')
+        if not User.objects.filter(email=contact).exists():
+            return Response({'status': 'error','message': 'This Account Does not Exist'})
+        
     otp = rd.randint(1000,9999)
     if str(contact).find('@') != -1:
         user = User.objects.filter(email=contact).first()
@@ -177,7 +184,6 @@ def forgot_password_page(request):
             return Response({'status': 'error'})
     else:
         user = User.objects.filter(contactNumber=contact).first()
-        # OTP Send Contact Number
     if user != None:
         return Response({'status':'error', 'message': 'Enter a Valid Email or Phone Number'})
     else:
@@ -186,7 +192,7 @@ def forgot_password_page(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resend_otp(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower()
     otp = request.data.get('otp')
     if str(email).find('@') != -1:
         subject = 'The OTP for Taqreeb'

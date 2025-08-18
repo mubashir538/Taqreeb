@@ -248,10 +248,10 @@ class _BasicSignupState extends State<BasicSignup> {
     );
   }
 
-  Widget _buildSocialLoginButton({
-    required String icon,
-    required VoidCallback onPressed,
-  }) {
+  Widget _buildSocialLoginButton(
+      {required String icon,
+      required VoidCallback onPressed,
+      required AppColors colors}) {
     return InkWell(
       onTap: onPressed,
       child: Container(
@@ -262,7 +262,7 @@ class _BasicSignupState extends State<BasicSignup> {
         height: Screen.height(context) * 0.06,
         width: Screen.height(context) * 0.06,
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(50),
         ),
         child: Center(
@@ -278,8 +278,10 @@ class _BasicSignupState extends State<BasicSignup> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -337,20 +339,22 @@ class _BasicSignupState extends State<BasicSignup> {
                     child: Text(
                       "Already a Member? Login",
                       style: GoogleFonts.roboto(
-                          color: MyColors.red, fontWeight: FontWeight.w400),
+                          color: colors.red, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildSocialLoginButton(
+                        colors: colors,
                         icon: MyIcons.google,
                         onPressed: _handleGoogleSignIn,
                       ),
-                      _buildSocialLoginButton(
-                        icon: MyIcons.facebook,
-                        onPressed: () => AuthService().signInWithFacebook(),
-                      ),
+                      // _buildSocialLoginButton(
+                      //   colors: colors,
+                      //   icon: MyIcons.facebook,
+                      //   onPressed: () => AuthService().signInWithFacebook(),
+                      // ),
                     ],
                   ),
                 ],

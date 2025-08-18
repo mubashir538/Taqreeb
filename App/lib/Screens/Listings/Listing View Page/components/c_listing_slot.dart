@@ -33,27 +33,29 @@ class _CategorySlotsState extends State<CategorySlots> {
     final isBooked = _isBooked(day);
     final isSelected = isSameDay(_selectedDay, day);
     final isToday = isSameDay(day, DateTime.now());
-    final isWeekend = day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
+    final isWeekend =
+        day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
+    final colors = AppColors(context);
 
     Color backgroundColor = Colors.transparent;
-    Color textColor = isWeekend ? MyColors.red : MyColors.white;
+    Color textColor = isWeekend ? colors.red : colors.white;
     Border? border;
 
     if (isToday) {
       border = Border.all(
-        color: MyColors.red,
+        color: colors.red,
         width: Screen.max(context) * 0.003,
       );
     }
 
     if (isBooked) {
-      backgroundColor = MyColors.red.withOpacity(0.7);
-      textColor = MyColors.white;
+      backgroundColor = colors.red.withAlpha(179);
+      textColor = colors.white;
     }
 
     if (isSelected) {
-      backgroundColor = MyColors.red;
-      textColor = MyColors.white;
+      backgroundColor = colors.red;
+      textColor = colors.white;
     }
 
     return Container(
@@ -78,10 +80,12 @@ class _CategorySlotsState extends State<CategorySlots> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Container(
       padding: EdgeInsets.all(Screen.max(context) * 0.02),
       decoration: BoxDecoration(
-        color: MyColors.dark.withOpacity(0.8),
+        color: colors.dark.withAlpha(204),
         borderRadius: BorderRadius.circular(Screen.max(context) * 0.02),
       ),
       child: Column(
@@ -94,19 +98,20 @@ class _CategorySlotsState extends State<CategorySlots> {
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.chevronLeft,
-                  color: MyColors.white,
+                  color: colors.white,
                   size: Screen.max(context) * 0.025,
                 ),
                 onPressed: () {
                   setState(() {
-                    _focusedDay = DateTime(_focusedDay.year, _focusedDay.month - 1);
+                    _focusedDay =
+                        DateTime(_focusedDay.year, _focusedDay.month - 1);
                   });
                 },
               ),
               Text(
                 '${_getMonthName(_focusedDay.month)} ${_focusedDay.year}',
                 style: GoogleFonts.poppins(
-                  color: MyColors.white,
+                  color: colors.white,
                   fontSize: Screen.max(context) * 0.025,
                   fontWeight: FontWeight.w600,
                 ),
@@ -114,12 +119,13 @@ class _CategorySlotsState extends State<CategorySlots> {
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.chevronRight,
-                  color: MyColors.white,
+                  color: colors.white,
                   size: Screen.max(context) * 0.025,
                 ),
                 onPressed: () {
                   setState(() {
-                    _focusedDay = DateTime(_focusedDay.year, _focusedDay.month + 1);
+                    _focusedDay =
+                        DateTime(_focusedDay.year, _focusedDay.month + 1);
                   });
                 },
               ),
@@ -134,7 +140,7 @@ class _CategorySlotsState extends State<CategorySlots> {
                 .map((day) => Text(
                       day,
                       style: GoogleFonts.poppins(
-                        color: day == 'S' ? MyColors.red : MyColors.white,
+                        color: day == 'S' ? colors.red : colors.white,
                         fontSize: Screen.max(context) * 0.02,
                         fontWeight: FontWeight.w500,
                       ),
@@ -177,13 +183,13 @@ class _CategorySlotsState extends State<CategorySlots> {
                 color: Colors.transparent,
               ),
               selectedDecoration: BoxDecoration(
-                color: MyColors.red,
+                color: colors.red,
                 shape: BoxShape.circle,
               ),
-              defaultTextStyle: GoogleFonts.poppins(color: MyColors.white),
-              weekendTextStyle: GoogleFonts.poppins(color: MyColors.red),
+              defaultTextStyle: GoogleFonts.poppins(color: colors.white),
+              weekendTextStyle: GoogleFonts.poppins(color: colors.red),
               todayTextStyle: GoogleFonts.poppins(
-                color: MyColors.white,
+                color: colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -221,7 +227,7 @@ class _CategorySlotsState extends State<CategorySlots> {
                   width: Screen.max(context) * 0.015,
                   height: Screen.max(context) * 0.015,
                   decoration: BoxDecoration(
-                    color: MyColors.red,
+                    color: colors.red,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -229,7 +235,7 @@ class _CategorySlotsState extends State<CategorySlots> {
                 Text(
                   'Booked dates',
                   style: GoogleFonts.poppins(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: Screen.max(context) * 0.015,
                   ),
                 ),
@@ -243,14 +249,14 @@ class _CategorySlotsState extends State<CategorySlots> {
                   height: Screen.max(context) * 0.015,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: MyColors.red),
+                    border: Border.all(color: colors.red),
                   ),
                 ),
                 SizedBox(width: Screen.width(context) * 0.02),
                 Text(
                   'Today',
                   style: GoogleFonts.poppins(
-                    color: MyColors.white,
+                    color: colors.white,
                     fontSize: Screen.max(context) * 0.015,
                   ),
                 ),
@@ -264,19 +270,32 @@ class _CategorySlotsState extends State<CategorySlots> {
 
   String _getMonthName(int month) {
     switch (month) {
-      case 1: return 'January';
-      case 2: return 'February';
-      case 3: return 'March';
-      case 4: return 'April';
-      case 5: return 'May';
-      case 6: return 'June';
-      case 7: return 'July';
-      case 8: return 'August';
-      case 9: return 'September';
-      case 10: return 'October';
-      case 11: return 'November';
-      case 12: return 'December';
-      default: return '';
+      case 1:
+        return 'January';
+      case 2:
+        return 'February';
+      case 3:
+        return 'March';
+      case 4:
+        return 'April';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'October';
+      case 11:
+        return 'November';
+      case 12:
+        return 'December';
+      default:
+        return '';
     }
   }
 }

@@ -13,7 +13,7 @@ class ApiCall {
     bool refresh = false,
     String type = 'get',
     Map<String, dynamic>? body = const {},
-    Map<String, dynamic>? params, // Add params parameter
+    Map<String, dynamic>? params, 
   }) async {
     final token = await MyStorage.getToken(MyTokens.accessToken) ?? "";
     final dynamic data;
@@ -23,7 +23,7 @@ class ApiCall {
         context: context,
         refresh: refresh,
         headers: {'Authorization': 'Bearer $token'},
-        params: params, // Pass params to getRequest
+        params: params, 
       );
     } else {
       data = await MyApi.postRequest(
@@ -55,14 +55,12 @@ class ApiCall {
       required List<String> values,
       required List<String> starsvalue,
       List<String> searchValues = const []}) {
-    // Clear existing data
     imageUrls.clear();
     addonsheadings.clear();
     addonsvalues.clear();
     values.clear();
     starsvalue.clear();
 
-    // Update listing details
     for (var i = 0; i < listing['pictures'].length; i++) {
       imageUrls.add(listing['pictures'][i]['picturePath']);
     }
@@ -90,8 +88,6 @@ class ApiCall {
     starsvalue.add('(${listing['reviewData']['s3'].toString()})');
     starsvalue.add('(${listing['reviewData']['s2'].toString()})');
     starsvalue.add('(${listing['reviewData']['s1'].toString()})');
-
-    // Update state
-    updateState(false, true); // Set isLoading = false, ischange = true
+    updateState(false, true); 
   }
 }

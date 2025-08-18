@@ -8,6 +8,7 @@ import 'package:taqreeb/core/models/business_data_model.dart';
 import 'package:taqreeb/core/providers/business_edit_info_view_model.dart';
 import 'package:taqreeb/core/providers/business_info_view_model.dart';
 import 'package:taqreeb/core/services/screen_size.dart';
+import 'package:taqreeb/core/services/tokens.dart';
 import 'package:taqreeb/core/services/ui_management.dart';
 import 'package:taqreeb/core/utils/color.dart';
 
@@ -21,7 +22,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final GlobalKey _headerKey = GlobalKey();
   bool _isLoading = true;
-
+  String _type = 'business';
   @override
   void initState() {
     super.initState();
@@ -45,11 +46,14 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _loadInitialData() async {
-    final viewModel =
-        Provider.of<BusinessAccountInfoViewModel>(context, listen: false);
+    final viewModel = Provider.of<BusinessAccountInfoViewModel>(context, listen: false);
     await viewModel.fetch(context);
+    String type = await MyTokens.getBusinessType();
     if (mounted) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _type = type;
+        _isLoading = false;
+      });
     }
   }
 
@@ -64,11 +68,12 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildProfileCard(BusinessData businessData) {
     final businessInfo = businessData.businessInfo;
-    final listingCount = businessData.businessInfo['listingCount'] ?? 0;
+    final listingCount = businessData.listings;
 
     final profileImage = businessData.profileImageUrl != null
         ? NetworkImage(businessData.profileImageUrl!)
         : const AssetImage('assets/default_profile.png') as ImageProvider;
+    final colors = AppColors(context);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -76,7 +81,7 @@ class _DashboardState extends State<Dashboard> {
         vertical: Screen.max(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: MyColors.darkLighter,
+        color: colors.darkLighter,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -90,7 +95,7 @@ class _DashboardState extends State<Dashboard> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: MyColors.red,
+            backgroundColor: colors.red,
             radius: Screen.height(context) * 0.05,
             backgroundImage: profileImage,
           ),
@@ -101,7 +106,7 @@ class _DashboardState extends State<Dashboard> {
               Text(
                 businessInfo['businessName'] ?? 'No Business Name',
                 style: GoogleFonts.roboto(
-                  color: MyColors.yellow,
+                  color: colors.yellow,
                   fontSize: Screen.max(context) * 0.02,
                   fontWeight: FontWeight.w700,
                 ),
@@ -110,7 +115,7 @@ class _DashboardState extends State<Dashboard> {
               Text(
                 "$listingCount Active Listings",
                 style: GoogleFonts.roboto(
-                  color: MyColors.white.withAlpha(172),
+                  color: colors.white.withAlpha(172),
                   fontSize: Screen.max(context) * 0.015,
                 ),
               ),
@@ -126,13 +131,15 @@ class _DashboardState extends State<Dashboard> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final colors = AppColors(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: Screen.max(context) * 0.01),
         padding: EdgeInsets.all(Screen.max(context) * 0.02),
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
@@ -146,11 +153,11 @@ class _DashboardState extends State<Dashboard> {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: MyColors.red,
+              backgroundColor: colors.red,
               radius: Screen.width(context) * 0.05,
               child: Icon(
                 icon,
-                color: MyColors.white,
+                color: colors.white,
                 size: Screen.width(context) * 0.05,
               ),
             ),
@@ -158,7 +165,7 @@ class _DashboardState extends State<Dashboard> {
             Text(
               title,
               style: GoogleFonts.roboto(
-                color: MyColors.white,
+                color: colors.white,
                 fontSize: Screen.max(context) * 0.02,
                 fontWeight: FontWeight.w500,
               ),
@@ -166,7 +173,7 @@ class _DashboardState extends State<Dashboard> {
             const Spacer(),
             Icon(
               FontAwesomeIcons.chevronRight,
-              color: MyColors.white,
+              color: colors.white,
               size: Screen.max(context) * 0.02,
             ),
           ],
@@ -177,8 +184,10 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: Stack(
@@ -186,7 +195,7 @@ class _DashboardState extends State<Dashboard> {
             if (_isLoading)
               Center(
                 child: CircularProgressIndicator(
-                  color: MyColors.white,
+                  color: colors.white,
                 ),
               )
             else
@@ -267,7 +276,9 @@ class _DashboardState extends State<Dashboard> {
               top: 0,
               child: Header(
                 key: _headerKey,
-                heading: "Business Dashboard",
+                heading: _type == 'freelancer'
+                    ? "Freelancer Dashboard"
+                    : "Business Dashboard",
               ),
             ),
           ],

@@ -72,6 +72,7 @@ class _AddImageState extends State<AddImage> {
     if (!mounted) return;
 
     if (response['status'] == 'success') {
+      MyScaffold(text: 'Service added for Approval').show(context);
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/HomePage',
@@ -89,9 +90,10 @@ class _AddImageState extends State<AddImage> {
       headerKey: _headerKey,
       callback: _updateHeaderHeight,
     );
+    final colors = AppColors(context);
 
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Stack(
         children: [
           Positioned(
@@ -111,7 +113,7 @@ class _AddImageState extends State<AddImage> {
               const SizedBox(height: 10),
               _buildImageGrid(),
               SizedBox(
-                  height: Screen.height(context) * 0.1), // Space for button
+                  height: Screen.height(context) * 0.1), 
             ],
           ),
           _buildSubmitButton(),
@@ -121,12 +123,14 @@ class _AddImageState extends State<AddImage> {
   }
 
   Widget _buildImageUploadButton() {
+    final colors = AppColors(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Screen.width(context) * 0.05),
       child: Container(
         height: Screen.height(context) * 0.2,
         decoration: BoxDecoration(
-          color: MyColors.darkLighter,
+          color: colors.darkLighter,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -150,12 +154,12 @@ class _AddImageState extends State<AddImage> {
                       width: Screen.width(context) * 0.9,
                       padding: EdgeInsets.all(Screen.max(context) * 0.02),
                       decoration: BoxDecoration(
-                        color: MyColors.darkLighter,
+                        color: colors.darkLighter,
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Icon(
                         FontAwesomeIcons.upload,
-                        color: MyColors.white,
+                        color: colors.white,
                         size: Screen.max(context) * 0.03,
                       ),
                     ),
@@ -273,13 +277,15 @@ class ImageController {
         'location': args['location'] ?? '',
         'priceMin': args['pricemin'] ?? '',
         'priceMax': args['pricemax'] ?? '',
-        'products': _safeJsonEncode(args['products']),
+        if (args['category'].toString().toLowerCase() == 'caterer' ||
+            args['category'].toString().toLowerCase() == 'car renter' ||
+            args['category'].toString().toLowerCase() == 'decorator')
+          'products': _safeJsonEncode(args['products']),
         'packages': _safeJsonEncode(args['packages']),
         'addons': _safeJsonEncode(args['addons']),
-        'viewData': _safeJsonEncode(args['viewData']), // Added viewData
+        if (_safeJsonEncode(args['viewData']) != null)
+          'viewData': _safeJsonEncode(args['viewData']), 
       };
-
-      // _addCategorySpecificData(data);
 
       final response = await MyApi.postMultipartRequest(
         endpoint: 'businessowner/addListings/',
@@ -288,7 +294,7 @@ class ImageController {
       );
 
       return response ??
-          {'status': 'error', 'message': 'No response from server'};
+          {'status': 'error', 'message': 'Please Try Again Later'};
     } catch (e) {
       return {'status': 'error', 'message': e.toString()};
     }

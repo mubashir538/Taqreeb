@@ -10,8 +10,10 @@ class AIPackageFunctionDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors(context);
+
     return Scaffold(
-      backgroundColor: MyColors.dark,
+      backgroundColor: colors.dark,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
