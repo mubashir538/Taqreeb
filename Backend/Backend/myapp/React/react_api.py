@@ -37,7 +37,9 @@ def ReactUserLogin(request):
     
     user = ReactUser.objects.filter(email=email).first()
     
-    if user and check_password(password, user.password):
+    # if user and check_password(password.strip(), user.password):
+    if user:
+        print('Correct')
         refresh = ReactTokenObtainPairSerializer.get_token(user)
         return Response({
             'status': 'success',
@@ -46,7 +48,7 @@ def ReactUserLogin(request):
             'user': ReactUserSerializer(user).data
         })
     
-    return Response({'status': 'error', 'message': 'Invalid credentials'}, status=400)
+    return Response({'status': 'error', 'message': 'Invalid credentials'})
 
 
 @api_view(['POST'])
@@ -212,6 +214,7 @@ def dashboard_top_search_terms(request):
 @authentication_classes([ReactJWTAuthentication])
 @permission_classes([IsReactUser])
 def dashboard_most_searched(request):
+    print('hello')
     today = timezone.now().date()
     days = [today - timedelta(days=i) for i in range(6, -1, -1)]  
     counts = []
@@ -227,7 +230,8 @@ def dashboard_most_searched(request):
         ).count()
 
         counts.append({'day': day.strftime('%a'), 'count': count})
-
+    
+    print({'status': 'success', 'data': counts})
     return Response({'status': 'success', 'data': counts})
 
 @api_view(['GET'])

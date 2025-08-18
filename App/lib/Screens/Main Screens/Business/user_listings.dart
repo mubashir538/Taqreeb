@@ -202,6 +202,6 @@ class YourListingsScreen extends StatelessWidget {
     if (pictures.isEmpty || pictures[0]['picturePath'] == ' ') {
       return "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300";
     }
-    return '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${pictures[0]['picturePath']}';
+    return '${pictures[0]['picturePath']}';
   }
 }

@@ -79,7 +79,7 @@ class _ChatBoxState extends State<ChatBox> {
               borderRadius: BorderRadius.circular(8.0),
               image: DecorationImage(
                 image: NetworkImage(
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_listing['pictures'][0]['picturePath'] ?? ''}'),
+                    '${_listing['pictures'][0]['picturePath'] ?? ''}'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -204,7 +204,7 @@ class _ChatBoxState extends State<ChatBox> {
             : _capitalizeName('${userDoc['firstName']} ${userDoc['lastName']}');
         _chatUserName = _type.isNotEmpty ? _type : userDoc['username'];
         _chatUserImage =
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type.isNotEmpty ? 'profile' : 'profilePicture']}';
+            '${userDoc[_type.isNotEmpty ? 'profile' : 'profilePicture']}';
       });
     } catch (e) {
       _handleError('Error fetching chat user details: $e');
@@ -446,7 +446,7 @@ class _ChatBoxState extends State<ChatBox> {
           : RecieveMessage(text: message, time: time);
     } else if (messageType == 'image') {
       final imageUrl =
-          '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$message';
+          '$message';
       
       return isSentByMe
           ? SendMessage(text: '', time: time, imageUrl: imageUrl)

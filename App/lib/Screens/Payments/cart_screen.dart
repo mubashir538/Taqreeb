@@ -281,10 +281,9 @@ class _CartScreenState extends State<CartScreen> {
                     borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
                       image: NetworkImage(
-                        
                         item.itemDetails['pictures'].length == 0
                             ? 'https://picsum.photos/200/300'
-                            : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${item.itemType == 'listing' ? item.itemDetails['pictures']['picturePath'] : item.itemDetails['pictures']?[0]?['picturePath']}'
+                            : '${item.itemType == 'listing' ? item.itemDetails['pictures']['picturePath'] : item.itemDetails['pictures']?[0]?['picturePath']}'
                                 '',
                       ),
                       fit: BoxFit.cover,
@@ -393,7 +392,8 @@ class _CartScreenState extends State<CartScreen> {
       case 'listing':
         return (item.itemDetails['priceMin'] ?? 0).toDouble() * item.quantity;
       case 'product':
-        return (double.tryParse(item.itemDetails['price']) ?? 0.0) * item.quantity;
+        return (double.tryParse(item.itemDetails['price']) ?? 0.0) *
+            item.quantity;
       case 'package':
         return (item.itemDetails['price'] ?? 0).toDouble() * item.quantity;
       default:

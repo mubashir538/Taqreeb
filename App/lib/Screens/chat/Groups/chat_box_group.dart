@@ -284,8 +284,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
         final senderData = snapshot.data!;
         final senderName = senderData['firstName'];
-        final senderImage =
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${senderData['profilePicture']}';
+        final senderImage = '${senderData['profilePicture']}';
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
@@ -362,8 +361,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                               child: Stack(
                                 children: [
                                   CachedNetworkImage(
-                                    imageUrl:
-                                        '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
+                                    imageUrl: '$messageText',
                                     fit: BoxFit.contain,
                                   ),
                                   Positioned(
@@ -391,8 +389,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: CachedNetworkImage(
-                              imageUrl:
-                                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$messageText',
+                              imageUrl: '$messageText',
                               height: 200,
                               width: 250,
                               fit: BoxFit.cover,
@@ -536,7 +533,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 radius: 22,
                 backgroundImage: NetworkImage(
                   _groupImage != null
-                      ? '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_groupImage!}'
+                      ? '${_groupImage!}'
                       : 'https://via.placeholder.com/150',
                 ),
               ),
@@ -670,7 +667,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-             Header(),
+            Header(),
             _buildGroupHeader(),
             _buildMessageStream(),
             _buildChatInput(),

@@ -50,7 +50,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
   }
 
   Future<void> _getUserType() async {
-    _userType = await MyTokens.getBusinessType() ;
+    _userType = await MyTokens.getBusinessType();
   }
 
   Future<void> _fetchGroupData() async {
@@ -278,8 +278,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 final user = snapshot.data!;
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}'),
+                    backgroundImage: NetworkImage('${user['profilePicture']}'),
                   ),
                   title: Text(_userType == 'user'
                       ? '${user['firstName']} ${user['lastName']}'
@@ -337,8 +336,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
               final user = _availableUsers[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}'),
+                  backgroundImage: NetworkImage('${user['profilePicture']}'),
                 ),
                 title: Text(user['name']),
                 trailing: IconButton(
@@ -388,9 +386,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 radius: 50,
                 backgroundImage: _newGroupImage != null
                     ? FileImage(_newGroupImage!)
-                    : NetworkImage(
-                            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$_newGroupImageUrl')
-                        as ImageProvider,
+                    : NetworkImage('$_newGroupImageUrl') as ImageProvider,
                 child: _isAdmin
                     ? const Icon(FontAwesomeIcons.pen, size: 30)
                     : null,

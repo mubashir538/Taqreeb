@@ -9,10 +9,11 @@ from ..models.listing_types_models import (
     Parlors,
     Salons,
     Photographers,
-    VideoEditors,
-    GraphicDesigners
 )
+from ..models.user_models import User
+import random
 
+from ..models.event_models import Events
 from django.utils import timezone
 
 from ..models.listing_models import Listing
@@ -492,3 +493,107 @@ def create_event(
         ),
     }
 
+def select_event_functions(event_type: str, budget: int, wedding_side: str = None, user_id: str = None, event_functions_map: dict = None) -> list:
+    """
+    Selects functions for an event based on event type, total budget, priority, and wedding side (if applicable).
+    Distributes any leftover budget after minimums to the selected functions.
+    """
+    if event_functions_map is None:
+        # Ideally, pass your event_functions mapping from the chatbot init or config
+        raise ValueError("event_functions_map must be provided")
+    
+    # Get the function dictionary for this event type
+    event_functions = event_functions_map.get(event_type, {})
+    if event_type == "Wedding" and wedding_side:
+        # Only include functions matching the side or with no 'side' key
+        event_functions = {k: v for k, v in event_functions.items()
+                           if v.get('side', '').upper() in [wedding_side[0].upper()] or 'side' not in v}
+
+    # Prepare and sort by priority
+    sorted_funcs = sorted(event_functions.items(), key=lambda x: x[1]['priority'])
+
+    selected = []
+    used_budget = 0
+
+    # Step 1: Select functions by min_budget until budget runs out
+    for fname, fdata in sorted_funcs:
+        min_bud = fdata.get("min_budget", 0)
+        if used_budget + min_bud <= budget:
+            selected.append({
+                "name": f"{User.objects.get(id=user_id)} {fname}" if user_id else fname,
+                "budget": min_bud,
+                "type": fname,
+                "priority": fdata.get("priority"),
+            })
+            used_budget += min_bud
+
+    # Step 2: Distribute leftover budget
+    leftover = budget - used_budget
+    if selected and leftover > 0:
+        # Distribute equally (could use proportional to min_budget for more fairness)
+        add_per_function = leftover // len(selected)
+        for func in selected:
+            func["budget"] += add_per_function
+        # Any remaining (due to integer division), add to first function
+        selected[0]["budget"] += leftover % len(selected)
+
+    return selected
+
+def calculate_guest_count( event_size: str, specified_guests: int = None) -> Dict[str, int]:
+        """
+        Calculate the min and max number of guests based on the event size and user input.
+        """
+        if specified_guests:
+            # If the user specifies the guest count
+            guests_min = specified_guests - 50
+            guests_max = specified_guests + 50
+        else:
+            # If the user doesn't specify guests, use event size to determine guest count
+            if event_size == "Big Event":
+                # Calculate average of top 5 events with the most guests (For simplicity, we'll use random values here)
+                max_guests = random.randint(300, 500)
+                guests_min = max_guests - 50
+                guests_max = max_guests + 50
+            elif event_size == "Small Event":
+                # Calculate average of 5 events with the least guests
+                min_guests = random.randint(50, 100)  # Replace with actual data
+                guests_min = min_guests - 50
+                guests_max = min_guests + 50
+            else:
+                # Average event size (we can use median values)
+                avg_guests = random.randint(150, 300)  # Replace with actual data
+                guests_min = avg_guests - 50
+                guests_max = avg_guests + 50
+
+        return {"guestsmin": guests_min, "guestsmax": guests_max}
+
+def collect_event_details( user_id: str, event_type: str, budget: str, event_size: str = "Average", specified_guests: str = None, location: str = "Karachi") -> Dict:
+    """
+    Collect and return event details based on user inputs and calculated values.
+    """
+
+
+    budget = int(budget.replace("k", "000").replace('K','000').replace(',','').replace('lakh','00000').replace('L','00000'))
+    specified_guests = int(specified_guests)
+
+    user_id = int(user_id.replace('user',''))
+    print('userID: '+ str(user_id))
+    print('userID: '+ str(User.objects.get(id=user_id).firstName))
+    # Step 1: Collect the basic event details from the user
+    event_name = f"{User.objects.get(id=user_id).firstName} {event_type}"
+    description = f"This is a Basic Event of {event_type} for the {user_id}"
+    # Step 2: Calculate guests based on event size and user input
+    guest_counts = calculate_guest_count(event_size, specified_guests)
+    
+    # Step 3: Return the collected event details
+    event_details = {
+        "event_name": event_name,
+        "type": event_type,
+        "date": None,  # As the date is not collected yet
+        "location": location,
+        "description": description,
+        "budget": budget,
+        "guestsmin": guest_counts["guestsmin"],
+        "guestsmax": guest_counts["guestsmax"]
+    }
+    return event_details

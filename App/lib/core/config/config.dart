@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 
 class AppConfig {
-  //static const String ngrok = 'https://c1f8-202-47-47-248.ngrok-free.app';
+  // static const String ngrok = 'https://c1f8-202-47-47-248.ngrok-free.app';
   static String ipFromGoogle =
       'https://docs.google.com/document/d/1Mhizi_P-xZyllsPCWAGjkmtWK9FC_IVM54GqO5Ifefg/export?format=txt';
 
@@ -15,7 +15,8 @@ class AppConfig {
     return '';
   }
 
-  static String ngrok = 'https://8ee9a64b92bb.ngrok-free.app';
+  // static String ngrok = 'https://django-backend-p4xc.onrender.com';
+  static String ngrok = 'https://c78020ce9ba3.ngrok-free.app';
   static String baseUrl = "${AppConfig.ngrok}/app/";
   static const String appName = "Taqreeb App";
   static const String version = "1.0.0";

@@ -55,7 +55,7 @@ class _NewUserSearchState extends State<NewUserSearch> {
           return {
             'userId': userDoc.id,
             'chatimage':
-                '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc['profilePicture'] ?? ''}',
+                '${userDoc['profilePicture'] ?? ''}',
             'name': '${userDoc['firstName']} ${userDoc['lastName']}',
           };
         }).toList();

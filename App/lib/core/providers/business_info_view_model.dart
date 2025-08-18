@@ -35,7 +35,7 @@ class BusinessAccountInfoViewModel with ChangeNotifier {
           businessData.updateBusinessInfo(
               data['businessInfo'], data['listingCount'],
               imageUrl:
-                  "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${data['businessInfo']["profilepic"]}");
+                  "${data['businessInfo']["profilepic"]}");
           _items = data['categories']?.cast<String>()?.toList() ?? [];
           _isLoading = false;
           notifyListeners();

@@ -273,8 +273,7 @@ class _HomePageState extends State<HomePage> {
 
   void _loadImages() {
     _myImages = demoImages['images']
-        .map((value) =>
-            '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${value["image"]}')
+        .map((value) => '${value["image"]}')
         .cast<String>()
         .toList();
   }
@@ -626,8 +625,7 @@ class _HomePageState extends State<HomePage> {
                 return CategoryIcon(
                   onpressed: () => _handleCategoryClick(categoryName),
                   label: categoryName,
-                  imageUrl:
-                      '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                  imageUrl: '${categories['categories'][index]['picture']}',
                 );
               } else {
                 return Showcase(
@@ -643,8 +641,7 @@ class _HomePageState extends State<HomePage> {
                   child: CategoryIcon(
                     onpressed: () => _handleCategoryClick(categoryName),
                     label: categoryName,
-                    imageUrl:
-                        '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${categories['categories'][index]['picture']}',
+                    imageUrl: '${categories['categories'][index]['picture']}',
                   ),
                 );
               }
@@ -715,7 +712,7 @@ class _HomePageState extends State<HomePage> {
         final imageUrl = listings['results']['pictures'][index].isNotEmpty
             ? (listings['results']['pictures'][index][0]['picturePath'] == " "
                 ? "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300"
-                : '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listings['results']['pictures'][index][0]['picturePath']}')
+                : '${listings['results']['pictures'][index][0]['picturePath']}')
             : "https://picsum.photos/id/${Random().nextInt(49) + 1}/600/300";
 
         return GestureDetector(

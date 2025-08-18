@@ -24,7 +24,7 @@ class _ImageSliderCategoryState extends State<ImageSliderCategory> {
   int _currentIndex = 0;
 
   String _getImageUrl(String path) {
-    return '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$path';
+    return '$path';
   }
 
   void _openFullScreenImage(BuildContext context, String imageUrl) {

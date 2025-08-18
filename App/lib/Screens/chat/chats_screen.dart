@@ -208,7 +208,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
           'userId': otherUserId,
           'chatId': chatDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${userDoc[_type == 'user'?'profilePicture':'profile'] ?? ''}',
+              '${userDoc[_type == 'user'?'profilePicture':'profile'] ?? ''}',
           'name': _type == 'user'
               ? '${userDoc['firstName'] ?? ''} ${userDoc['lastName'] ?? ''}'
               : userDoc['businessName'] ?? 'Unknown',
@@ -253,7 +253,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         processedGroups.add({
           'groupId': groupDoc.id,
           'chatimage':
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${groupDoc['groupImageUrl'] != '' ? groupDoc['groupImageUrl'] : '/media/display/group.png'}',
+              '${groupDoc['groupImageUrl'] != '' ? groupDoc['groupImageUrl'] : 'https://vflfmnwflrhimhqerjve.supabase.co/storage/v1/object/public/taqreeb/display/group.png'}',
           'name': groupDoc['groupName'],
           'participants': groupDoc['participants'],
           'lastMessage': lastMessageText,

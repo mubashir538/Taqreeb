@@ -1,7 +1,7 @@
 // src/api/apiService.js
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000"; // Base URL without the endpoint
+const API_BASE_URL = "127.0.0.1:8000"; // Base URL without the endpoint
 
 class ApiService {
   constructor() {

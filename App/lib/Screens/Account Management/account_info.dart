@@ -186,7 +186,7 @@ class _AccountInfoState extends State<AccountInfo> {
             child: CircleAvatar(
               radius: Screen.width(context) * 0.1,
               backgroundImage: CachedNetworkImageProvider(
-                "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${_user['profilePicture']}",
+                "${_user['profilePicture']}",
               ),
             ),
           ),

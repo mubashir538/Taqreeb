@@ -487,7 +487,7 @@ class _FunctionDetailState extends State<FunctionDetail> {
     if (booking['pictures'] != null &&
         booking['pictures'].isNotEmpty &&
         booking['pictures'][0]['picturePath'] != " ") {
-      return '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${booking['pictures'][0]['picturePath']}';
+      return '${booking['pictures'][0]['picturePath']}';
     }
     return "https://picsum.photos/id/${DateTime.now().millisecondsSinceEpoch % 100}/600/300";
   }

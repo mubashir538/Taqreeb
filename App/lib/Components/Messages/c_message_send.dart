@@ -54,7 +54,7 @@ class SendMessage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: CachedNetworkImage(
                 imageUrl:
-                    '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${listing!['picture']}',
+                    '${listing!['picture']}',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 150,

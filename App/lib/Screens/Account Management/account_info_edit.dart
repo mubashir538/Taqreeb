@@ -78,7 +78,7 @@ class _AccountInfoEditState extends State<AccountInfoEdit> {
     locationcontroller.text = user['city'];
     genderController.text = user['gender'];
     image =
-        "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${user['profilePicture']}";
+        "${user['profilePicture']}";
   }
 
   @override

@@ -70,7 +70,7 @@ class MembersScreen extends StatelessWidget {
         children: [
           CircleAvatar(
             backgroundImage: NetworkImage(
-              '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${member['profilePicture']}',
+              '${member['profilePicture']}',
             ),
             radius: avatarRadius,
           ),

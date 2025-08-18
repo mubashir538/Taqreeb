@@ -78,7 +78,7 @@ class BusinessInfoEditViewModel with ChangeNotifier {
               data['businessInfo'],
               data['listingCount'],
               imageUrl: data['businessInfo']["profilepic"] != null
-                  ? "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${data['businessInfo']["profilepic"]}"
+                  ? "${data['businessInfo']["profilepic"]}"
                   : null,
             );
             _nameController.text = data['businessInfo']['businessName'] ?? '';
@@ -155,7 +155,7 @@ class BusinessInfoEditViewModel with ChangeNotifier {
       }
       if (response['status'] == 'success') {
         final newImageUrl = response['profilepic'] != null
-            ? "${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}${response['profilepic']}"
+            ? "${response['profilepic']}"
             : null;
 
         // Explicitly update the profile image

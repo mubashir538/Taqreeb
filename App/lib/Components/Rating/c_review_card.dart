@@ -50,7 +50,7 @@ class ReviewCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                  '${MyApi.baseUrl.substring(0, MyApi.baseUrl.length - 1)}$profileUrl',
+                  '$profileUrl',
                 ),
                 radius: max * 0.03,
               ),

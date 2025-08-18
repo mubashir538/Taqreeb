@@ -79,15 +79,7 @@ class MyApi {
       }
 
       // Network request with timeout
-      final response =
-          await http.get(url, headers: headers).timeout(timeout, onTimeout: () {
-        if (context != null) {
-          MyScaffold(text: 'Request timed out. Please try again.')
-              .show(context);
-        }
-        throw TimeoutException(
-            'The request timed out after ${timeout.inSeconds} seconds');
-      });
+      final response = await http.get(url, headers: headers);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // Save to cache (non-blocking)
